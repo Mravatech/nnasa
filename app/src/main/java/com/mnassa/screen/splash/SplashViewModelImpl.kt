@@ -1,38 +1,53 @@
 package com.mnassa.screen.splash
 
-import android.util.Log
+import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
  */
 class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
     override val startup: BroadcastChannel<Int> = ConflatedBroadcastChannel()
+    private var lastProducedItem: Int = 0
 
     constructor() {
-        Log.e("TEST", "VM Constructor")
+        Timber.e("TEST VM Constructor")
     }
 
-    override fun onCreated() {
-        Log.e("TEST", "VM onCreated")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Timber.e("TEST VM onCreated")
+
+        val from = savedInstanceState?.getInt(EXTRA_NUMBER, 100) ?: 100
 
         launchCoroutineUI {
 
-            (100 downTo 0).forEach {
-                Log.e("TEST", "VM countdown: $it")
+            (from downTo 0).forEach {
+                Timber.e("TEST VM countdown: $it")
 
                 startup.send(it)
+                lastProducedItem = it
                 delay(5000L)
             }
         }
     }
 
+    override fun saveInstanceState(outBundle: Bundle) {
+        super.saveInstanceState(outBundle)
+        outBundle.putInt(EXTRA_NUMBER, lastProducedItem)
+    }
+
     override fun onCleared() {
         super.onCleared()
-        Log.e("TEST", "VM onCleared()")
+        Timber.e("TEST VM onCleared()")
+    }
+
+    companion object {
+        private const val EXTRA_NUMBER = "EXTRA_NUMBER"
     }
 }

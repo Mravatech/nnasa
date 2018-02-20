@@ -154,7 +154,8 @@ deps.stetho = stetho
 //============================================== OTHER ============================================
 def other = [:]
 other.billing = 'com.android.billingclient:billing:1.0'
-other.leak = 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
+other.logger =  'com.jakewharton.timber:timber:4.6.1'
 deps.other = other
 //=============================================== TESTS ============================================
 def tests = [:]

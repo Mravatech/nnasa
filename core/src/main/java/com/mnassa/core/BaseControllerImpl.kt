@@ -37,6 +37,7 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
      * */
     abstract val layoutId: Int
     abstract override val viewModel: VM
+    private var isOnCreateCalled = false
 
 
     //Lifecycle
@@ -58,10 +59,12 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
     init {
         addLifecycleListener(object : LifecycleListener() {
 
+            private var savedInstanceState: Bundle? = null
             override fun preCreateView(controller: Controller) {
-                if (!args.getBoolean(EXTRA_IS_ON_CREATE_CALLED, false)) {
-                    onCreated()
-                    args.putBoolean(EXTRA_IS_ON_CREATE_CALLED, true)
+                if (!isOnCreateCalled) {
+                    onCreated(savedInstanceState)
+                    savedInstanceState = null
+                    isOnCreateCalled = true
                 }
             }
 
@@ -76,6 +79,14 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
 
             override fun preDestroy(controller: Controller) {
                 viewModel.onCleared()
+            }
+
+            override fun onSaveInstanceState(controller: Controller, outState: Bundle) {
+                viewModel.saveInstanceState(outState)
+            }
+
+            override fun onRestoreInstanceState(controller: Controller, savedInstanceState: Bundle) {
+                this.savedInstanceState = savedInstanceState
             }
         })
 
@@ -107,17 +118,13 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
     /**
      * Invokes once after [BaseControllerImpl] creation, when it has [getApplicationContext]
      */
-    open fun onCreated() {
-        viewModel.onCreated()
+    open fun onCreated(savedInstanceState: Bundle?) {
+        viewModel.onCreate(savedInstanceState)
     }
 
     open fun onViewCreated(view: View) {
     }
 
     open fun onViewDestroyed(view: View) {
-    }
-
-    companion object {
-        private const val EXTRA_IS_ON_CREATE_CALLED = "EXTRA_IS_ON_CREATE_CALLED"
     }
 }

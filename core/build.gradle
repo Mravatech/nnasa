@@ -38,6 +38,9 @@ dependencies {
     //arch
     implementation deps.archComponents.viewModel
 
+    //other
+    implementation deps.other.logger
+
     //kotlin
     implementation deps.kotlin.stdlib
     implementation deps.coroutines.core

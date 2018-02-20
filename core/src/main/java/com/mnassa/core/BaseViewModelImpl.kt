@@ -1,6 +1,7 @@
 package com.mnassa.core
 
 import android.arch.lifecycle.ViewModel
+import android.os.Bundle
 import android.support.annotation.CallSuper
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
@@ -10,7 +11,11 @@ import com.mnassa.core.addons.SubscriptionsContainerDelegate
  */
 abstract class BaseViewModelImpl : ViewModel(), BaseViewModel, SubscriptionContainer by SubscriptionsContainerDelegate() {
 
-    override fun onCreated() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+    }
+
+    override fun saveInstanceState(outBundle: Bundle) {
 
     }
 

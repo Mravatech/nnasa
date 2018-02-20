@@ -146,6 +146,10 @@ dependencies {
     implementation deps.di.core
     implementation deps.di.android
 
+    //other
+    implementation deps.other.logger
+    implementation deps.other.leak
+
     //kotlin
     implementation deps.kotlin.stdlib
 }

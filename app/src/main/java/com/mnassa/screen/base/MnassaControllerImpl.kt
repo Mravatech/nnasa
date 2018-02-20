@@ -1,6 +1,7 @@
 package com.mnassa.screen.base
 
 import android.content.Context
+import android.os.Bundle
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
 import com.github.salomonbrys.kodein.android.AndroidScope
@@ -41,9 +42,9 @@ abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>
 
     }
 
-    override fun onCreated() {
+    override fun onCreated(savedInstanceState: Bundle?) {
         initializeInjector()
-        super.onCreated()
+        super.onCreated(savedInstanceState)
     }
 
     private companion object {
