@@ -31,7 +31,8 @@ dependencies {
     implementation deps.support.annotations
 
     //dependency injection
-    implementation deps.di
+    implementation deps.di.core
+    implementation deps.di.android
 
     //kotlin
     implementation deps.kotlin.stdlib

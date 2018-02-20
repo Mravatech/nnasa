@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleRegistryOwner
+import com.mnassa.core.addons.SubscriptionContainer
+import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.EmitableCompositeEventListener
 import com.mnassa.core.events.OnActivityResultEvent
@@ -55,6 +57,14 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
 
     init {
         addLifecycleListener(object : LifecycleListener() {
+
+            override fun preCreateView(controller: Controller) {
+                if (!args.getBoolean(EXTRA_IS_ON_CREATE_CALLED, false)) {
+                    onCreated()
+                    args.putBoolean(EXTRA_IS_ON_CREATE_CALLED, true)
+                }
+            }
+
             override fun postCreateView(controller: Controller, view: View) {
                 onViewCreated(view)
             }
@@ -71,7 +81,6 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
 
         lifecycleRegistryOwner.lifecycle.addObserver(GenericLifecycleObserver { _, event -> lifecycleEmitter.emit(event)})
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
             inflater.inflate(layoutId, container, false)
@@ -95,9 +104,20 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
                 shouldShowRequestPermissionRationale.toList()))
     }
 
+    /**
+     * Invokes once after [BaseControllerImpl] creation, when it has [getApplicationContext]
+     */
+    open fun onCreated() {
+        viewModel.onCreated()
+    }
+
     open fun onViewCreated(view: View) {
     }
 
     open fun onViewDestroyed(view: View) {
+    }
+
+    companion object {
+        private const val EXTRA_IS_ON_CREATE_CALLED = "EXTRA_IS_ON_CREATE_CALLED"
     }
 }

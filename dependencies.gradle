@@ -106,7 +106,14 @@ mapper.processor     = "org.mapstruct:mapstruct-processor:${versions.mapStruct}"
 deps.mapper = mapper
 
 //=============================================== DI ===============================================
-deps.di = 'com.github.salomonbrys.kodein:kodein:4.1.0'
+versions.kodein = '4.1.0'
+
+def di = [:]
+
+di.core = "com.github.salomonbrys.kodein:kodein:${versions.kodein}"
+di.android = "com.github.salomonbrys.kodein:kodein-android:${versions.kodein}"
+
+deps.di = di
 
 //============================================== NETWORK ===========================================
 versions.okHttp = '3.9.1'

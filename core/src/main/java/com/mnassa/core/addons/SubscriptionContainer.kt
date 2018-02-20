@@ -1,4 +1,4 @@
-package com.mnassa.core
+package com.mnassa.core.addons
 
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
@@ -85,25 +85,25 @@ fun Job.bind(subscriptionContainer: SubscriptionContainer): Job {
  * Creates coroutine, which will be automatically added to the subscription container
  */
 fun SubscriptionContainer.launchCoroutineWorker(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                                block: suspend CoroutineScope.() -> Unit): Job =
+                                                                       block: suspend CoroutineScope.() -> Unit): Job =
         launch(context = WORKER_POOL, start = start, block = block).bind(this)
 
 /**
  * Creates coroutine, which will be automatically added to the subscription container
  */
 fun SubscriptionContainer.launchCoroutineUI(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                            block: suspend CoroutineScope.() -> Unit): Job =
+                                                                   block: suspend CoroutineScope.() -> Unit): Job =
         launch(context = UI_POOL, start = start, block = block).bind(this)
 
 fun <T> SubscriptionContainer.asyncWorker(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                          block: suspend CoroutineScope.() -> T): Deferred<T> {
+                                                                 block: suspend CoroutineScope.() -> T): Deferred<T> {
     val result = async(context = WORKER_POOL, start = start, block = block)
     result.bind(this)
     return result
 }
 
 fun <T> SubscriptionContainer.asyncUI(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                      block: suspend CoroutineScope.() -> T): Deferred<T> {
+                                                             block: suspend CoroutineScope.() -> T): Deferred<T> {
     val result = async(context = UI_POOL, start = start, block = block)
     result.bind(this)
     return result
