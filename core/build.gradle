@@ -21,12 +21,25 @@ android {
         encoding "UTF-8"
     }
     sourceSets { main.java.srcDirs += 'src/main/kotlin' }
+    kotlin { experimental { coroutines 'enable' } }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //support
     implementation deps.support.appcompat
     implementation deps.support.annotations
+
+    //conductor
+    implementation deps.conductor.core
+    implementation deps.conductor.lifecycle
+
+    //arch
+    implementation deps.archComponents.viewModel
+
+    //kotlin
     implementation deps.kotlin.stdlib
+    implementation deps.coroutines.core
+    implementation deps.coroutines.android
 }

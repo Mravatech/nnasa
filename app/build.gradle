@@ -131,6 +131,13 @@ dependencies {
     implementation deps.glide.glide
     kapt deps.glide.glideCompiler
 
+    //mapper
+    implementation deps.mapper.core
+    kapt deps.mapper.processor
+
+    //dependency injection
+    implementation deps.di
+
     //kotlin
     implementation deps.kotlin.stdlib
 }

@@ -26,7 +26,13 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //support
     implementation deps.support.appcompat
     implementation deps.support.annotations
+
+    //dependency injection
+    implementation deps.di
+
+    //kotlin
     implementation deps.kotlin.stdlib
 }
