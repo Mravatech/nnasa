@@ -43,7 +43,7 @@ class App : Application(), KodeinAware {
                 return
             }
 
-//            FakeCrashLibrary.log(priority, tag, message)
+//            FakeCrashLibrary.log(priority, tag, showMessageChannel)
 //            if (t != null) {
 //                if (priority == Log.ERROR) {
 //                    FakeCrashLibrary.logError(t)

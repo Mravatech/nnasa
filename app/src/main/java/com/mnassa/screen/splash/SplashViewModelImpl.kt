@@ -3,7 +3,6 @@ package com.mnassa.screen.splash
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
@@ -13,8 +12,8 @@ import timber.log.Timber
  * Created by Peter on 2/20/2018.
  */
 class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), SplashViewModel {
-    override val countDown: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
-    override val message: RendezvousChannel<String> = RendezvousChannel()
+    override val progressChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val showMessageChannel: RendezvousChannel<String> = RendezvousChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +25,14 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : Mnassa
             (from downTo 0).forEach {
                 Timber.e("TEST VM countdown: $it")
 
-                countDown.send(it)
+                progressChannel.send(it)
                 delay(50_00L)
             }
         }
 
         launchCoroutineUI {
             (0 .. 100).forEach {
-                message.send(it.toString())
+                showMessageChannel.send(it.toString())
             }
         }
     }
@@ -42,7 +41,7 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : Mnassa
 
     override fun saveInstanceState(outBundle: Bundle) {
         super.saveInstanceState(outBundle)
-        countDown.valueOrNull?.let { outBundle.putInt(EXTRA_NUMBER, it) }
+        progressChannel.valueOrNull?.let { outBundle.putInt(EXTRA_NUMBER, it) }
     }
 
     override fun onCleared() {

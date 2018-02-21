@@ -27,7 +27,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
         Timber.e("TEST Controller onViewCreated")
 
         val job = launchCoroutineUI {
-            viewModel.countDown.consumeEach {
+            viewModel.progressChannel.consumeEach {
                 view.tvTimer.text = it.toString()
                 if (it == 0) {
                     openNextScreen()
@@ -40,7 +40,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
 
         launchCoroutineUI {
             delay(3_000L)
-            viewModel.message.consumeEach {
+            viewModel.showMessageChannel.consumeEach {
                 Timber.e("TESTTTTT: consuemed $it")
                 Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
                 delay(2_000L)
