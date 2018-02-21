@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
 import com.github.salomonbrys.kodein.*
 import com.mnassa.data.converter.UserProfileConverter
+import com.mnassa.data.network.networkModule
 import com.mnassa.data.repository.UserRepositoryImpl
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -31,6 +32,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
         import(repositoryModule)
         import(interactorModule)
         import(otherModule)
+        import(networkModule)
     }
 }
 
@@ -49,7 +51,7 @@ private val convertersModule = Kodein.Module {
 }
 
 private val repositoryModule = Kodein.Module {
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance()) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance()) }
 }
 
 private val interactorModule = Kodein.Module {

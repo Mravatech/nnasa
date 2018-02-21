@@ -126,6 +126,7 @@ network.okhttp =        "com.squareup.okhttp3:okhttp:$versions.okHttp"
 network.logging =       "com.squareup.okhttp3:logging-interceptor:$versions.okHttp"
 network.retrofit =      "com.squareup.retrofit2:retrofit:$versions.retrofit"
 network.rxadapter  =    "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+network.coroutineAdapter = 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
 network.gsonconverter = "com.squareup.retrofit2:converter-gson:$versions.retrofitGson"
 deps.network = network
 
@@ -177,6 +178,7 @@ ext.deps = deps
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ext {
-    databaseNameRelease = 'db.db'
-    databaseNameDev = 'dbDev.db'
+    endpointRelease = 'https://release.com'
+    endpointPreRelease = 'https://pre-release.com'
+    endpointDev = 'https://dev.com'
 }

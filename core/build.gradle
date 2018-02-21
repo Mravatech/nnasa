@@ -10,12 +10,9 @@ android {
         targetSdkVersion build_versions.target_sdk
     }
     buildTypes {
-        release {
-
-        }
-        debug {
-
-        }
+        release { }
+        preRelease { }
+        debug { }
     }
     compileOptions {
         encoding "UTF-8"

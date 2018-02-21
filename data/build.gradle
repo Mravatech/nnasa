@@ -11,12 +11,9 @@ android {
         targetSdkVersion build_versions.target_sdk
     }
     buildTypes {
-        release {
-
-        }
-        debug {
-
-        }
+        release { }
+        preRelease { }
+        debug { }
     }
     compileOptions {
         encoding "UTF-8"
@@ -34,9 +31,14 @@ dependencies {
     implementation deps.support.appcompat
     implementation deps.support.annotations
 
+    //network
+    implementation deps.network.retrofit
+    implementation deps.network.coroutineAdapter
+    implementation deps.network.gsonconverter
+    implementation deps.network.logging
+
     //mapper
     implementation deps.mapper.core
-//    kapt deps.mapper.processor
 
     //dependency injection
     implementation deps.di.core

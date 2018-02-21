@@ -25,4 +25,5 @@ class AppInfoProviderImpl(private val context: Context) : AppInfoProvider {
     override val versionCode: Int = BuildConfig.VERSION_CODE
     override val versionName: String = BuildConfig.VERSION_NAME
     override val osVersion: String = Build.VERSION.RELEASE
+    override val endpoint: String = BuildConfig.ENDPOINT
 }

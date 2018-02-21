@@ -10,4 +10,5 @@ interface AppInfoProvider {
     val versionCode: Int
     val versionName: String
     val osVersion: String
+    val endpoint: String
 }

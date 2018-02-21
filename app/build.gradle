@@ -65,6 +65,12 @@ android {
             keyAlias 'android'
             keyPassword 'android'
         }
+        preRelease {
+            storeFile file("../keystore/key.jks") //TODO: add release keystore
+            storePassword 'android'
+            keyAlias 'android'
+            keyPassword 'android'
+        }
         release {
             storeFile file("../keystore/key.jks") //TODO: add release keystore
             storePassword 'android'
@@ -81,6 +87,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
+        preRelease {
+            minifyEnabled true
+            debuggable false
+            multiDexEnabled = false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.preRelease
+        }
         debug {
             minifyEnabled false
             debuggable true
@@ -90,13 +103,15 @@ android {
     }
 
     applicationVariants.all { variant ->
-        println("Iterating variant: " + variant.getName())
         switch (variant.getName()) {
             case 'release':
-                variant.buildConfigField "String", "DB_NAME", "\"${globalConfiguration['databaseNameRelease']}\""
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointRelease']}\""
+                break
+            case 'preRelease':
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreRelease']}\""
                 break
             case 'debug':
-                variant.buildConfigField "String", "DB_NAME", "\"${globalConfiguration['databaseNameDev']}\""
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointDev']}\""
                 break
         }
     }
@@ -133,7 +148,6 @@ dependencies {
 
     //mapper
     implementation deps.mapper.core
-//    kapt deps.mapper.processor
 
     //arch
     implementation deps.archComponents.viewModel
