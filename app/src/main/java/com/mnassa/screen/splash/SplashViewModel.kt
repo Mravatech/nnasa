@@ -7,5 +7,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 2/20/2018.
  */
 interface SplashViewModel : MnassaViewModel {
-    val startup: BroadcastChannel<Int>
+    val countDown: BroadcastChannel<Int>
 }

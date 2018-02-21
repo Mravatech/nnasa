@@ -3,7 +3,6 @@ package com.mnassa.screen.splash
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
@@ -12,8 +11,7 @@ import timber.log.Timber
  * Created by Peter on 2/20/2018.
  */
 class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
-    override val startup: BroadcastChannel<Int> = ConflatedBroadcastChannel()
-    private var lastProducedItem: Int = 0
+    override val countDown: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
 
     constructor() {
         Timber.e("TEST VM Constructor")
@@ -26,12 +24,10 @@ class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
         val from = savedInstanceState?.getInt(EXTRA_NUMBER, 100) ?: 100
 
         launchCoroutineUI {
-
             (from downTo 0).forEach {
                 Timber.e("TEST VM countdown: $it")
 
-                startup.send(it)
-                lastProducedItem = it
+                countDown.send(it)
                 delay(5000L)
             }
         }
@@ -39,7 +35,7 @@ class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
 
     override fun saveInstanceState(outBundle: Bundle) {
         super.saveInstanceState(outBundle)
-        outBundle.putInt(EXTRA_NUMBER, lastProducedItem)
+        countDown.valueOrNull?.let { outBundle.putInt(EXTRA_NUMBER, it) }
     }
 
     override fun onCleared() {

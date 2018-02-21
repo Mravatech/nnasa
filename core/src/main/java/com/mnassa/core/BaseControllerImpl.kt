@@ -18,6 +18,7 @@ import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.core.permissions.OnRequestPermissionsResultEvent
 import com.mnassa.core.permissions.PermissionsManager
 import com.mnassa.core.permissions.PermissionsManagerDelegate
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
@@ -37,7 +38,7 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
      * */
     abstract val layoutId: Int
     abstract override val viewModel: VM
-    private var isOnCreateCalled = false
+    private var isViewModelInitialized = false
 
 
     //Lifecycle
@@ -61,10 +62,10 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
 
             private var savedInstanceState: Bundle? = null
             override fun preCreateView(controller: Controller) {
-                if (!isOnCreateCalled) {
+                if (!isViewModelInitialized) {
                     onCreated(savedInstanceState)
                     savedInstanceState = null
-                    isOnCreateCalled = true
+                    isViewModelInitialized = true
                 }
             }
 
@@ -78,6 +79,8 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
             }
 
             override fun preDestroy(controller: Controller) {
+                Timber.e("TEST preDestroy controller $controller: isBeingDestroyed=$isBeingDestroyed; isDestroyed=$isDestroyed")
+
                 viewModel.onCleared()
             }
 

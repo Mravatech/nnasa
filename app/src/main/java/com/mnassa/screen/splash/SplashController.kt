@@ -12,13 +12,9 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/20/2018.
  */
-class SplashController : MnassaControllerImpl<SplashViewModel> {
+class SplashController : MnassaControllerImpl<SplashViewModel>() {
     override val layoutId: Int = R.layout.controller_splash
     override val viewModel: SplashViewModel by instance()
-
-    constructor() {
-        Timber.e("TEST Controller constructor")
-    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -26,7 +22,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel> {
         Timber.e("TEST Controller onViewCreated")
 
         val job = launchCoroutineUI {
-            viewModel.startup.consumeEach {
+            viewModel.countDown.consumeEach {
                 view.tvTimer.text = it.toString()
             }
         }
@@ -37,5 +33,9 @@ class SplashController : MnassaControllerImpl<SplashViewModel> {
 
     companion object {
         fun newInstance() = SplashController()
+    }
+
+    init {
+        Timber.e("TEST Controller constructor")
     }
 }

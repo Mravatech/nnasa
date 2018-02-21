@@ -28,14 +28,16 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
     }
 
     override fun initializeInjector() {
+        val applicationContext = App.context
+
         val activityModule = Kodein.Module {
             Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MnassaViewModelImpl)
-            Bind<Context>(erased()) with InstanceBinding(erased(), requireNotNull(App.context))
+            Bind<Context>(erased()) with InstanceBinding(erased(), applicationContext)
             import(provideOverridingModule(), allowOverride = true)
         }
 
         val kodein = Kodein {
-            extend(App.context.appKodein(), allowOverride = true)
+            extend(applicationContext.appKodein(), allowOverride = true)
             import(activityModule, allowOverride = true)
         }
 
