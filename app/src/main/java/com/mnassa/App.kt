@@ -8,10 +8,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.android.autoAndroidModule
 import com.github.salomonbrys.kodein.lazy
-import com.mnassa.di.convertersModule
-import com.mnassa.di.interactorModule
-import com.mnassa.di.repositoryModule
-import com.mnassa.di.viewModelsModule
+import com.mnassa.di.*
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
 
@@ -22,10 +19,7 @@ import timber.log.Timber
 class App : Application(), KodeinAware {
     override val kodein: Kodein by Kodein.lazy {
         import(autoAndroidModule(this@App))
-        import(viewModelsModule)
-        import(convertersModule)
-        import(repositoryModule)
-        import(interactorModule)
+        registerAppModules(this)
     }
 
     override fun onCreate() {
