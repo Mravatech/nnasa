@@ -31,6 +31,9 @@ dependencies {
     implementation deps.support.appcompat
     implementation deps.support.annotations
 
+    //firebase
+    implementation deps.playServices.firebase_auth
+
     //network
     implementation deps.network.retrofit
     implementation deps.network.coroutineAdapter

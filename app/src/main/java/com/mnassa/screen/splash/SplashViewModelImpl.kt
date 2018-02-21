@@ -5,7 +5,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
@@ -14,6 +14,7 @@ import timber.log.Timber
  */
 class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), SplashViewModel {
     override val countDown: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val message: RendezvousChannel<String> = RendezvousChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +27,13 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : Mnassa
                 Timber.e("TEST VM countdown: $it")
 
                 countDown.send(it)
-                delay(50L)
+                delay(50_00L)
+            }
+        }
+
+        launchCoroutineUI {
+            (0 .. 100).forEach {
+                message.send(it.toString())
             }
         }
     }

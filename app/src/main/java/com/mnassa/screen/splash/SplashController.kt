@@ -1,6 +1,7 @@
 package com.mnassa.screen.splash
 
 import android.view.View
+import android.widget.Toast
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
@@ -10,6 +11,7 @@ import com.mnassa.screen.login.LoginController
 import com.mnassa.screen.main.MainController
 import kotlinx.android.synthetic.main.controller_splash.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
 /**
@@ -34,6 +36,15 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
         }
         job.invokeOnCompletion {
             Timber.e("TEST Controller invokeOnCompletion")
+        }
+
+        launchCoroutineUI {
+            delay(3_000L)
+            viewModel.message.consumeEach {
+                Timber.e("TESTTTTT: consuemed $it")
+                Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
+                delay(2_000L)
+            }
         }
     }
 

@@ -168,4 +168,4 @@ dependencies {
     implementation deps.kotlin.stdlib
 }
 
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
