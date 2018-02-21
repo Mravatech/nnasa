@@ -8,4 +8,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface SplashViewModel : MnassaViewModel {
     val countDown: BroadcastChannel<Int>
+    suspend fun isLoggedIn(): Boolean
 }

@@ -1,10 +1,13 @@
 package com.mnassa.screen.splash
 
 import android.view.View
+import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.LoginController
+import com.mnassa.screen.main.MainController
 import kotlinx.android.synthetic.main.controller_splash.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -24,11 +27,23 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
         val job = launchCoroutineUI {
             viewModel.countDown.consumeEach {
                 view.tvTimer.text = it.toString()
+                if (it == 0) {
+                    openNextScreen()
+                }
             }
         }
         job.invokeOnCompletion {
             Timber.e("TEST Controller invokeOnCompletion")
         }
+    }
+
+    private suspend fun openNextScreen() {
+        val nextScreen = when {
+            viewModel.isLoggedIn() -> MainController.newInstance()
+            else -> LoginController.newInstance()
+        }
+
+        router.replaceTopController(RouterTransaction.with(nextScreen))
     }
 
     companion object {

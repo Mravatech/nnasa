@@ -2,6 +2,8 @@ package com.mnassa.screen.splash
 
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.delay
@@ -10,12 +12,8 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/20/2018.
  */
-class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
+class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), SplashViewModel {
     override val countDown: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
-
-    constructor() {
-        Timber.e("TEST VM Constructor")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +26,12 @@ class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
                 Timber.e("TEST VM countdown: $it")
 
                 countDown.send(it)
-                delay(5000L)
+                delay(50L)
             }
         }
     }
+
+    override suspend fun isLoggedIn(): Boolean = loginInteractor.isLoggedIn()
 
     override fun saveInstanceState(outBundle: Bundle) {
         super.saveInstanceState(outBundle)
@@ -41,6 +41,10 @@ class SplashViewModelImpl : MnassaViewModelImpl, SplashViewModel {
     override fun onCleared() {
         super.onCleared()
         Timber.e("TEST VM onCleared()")
+    }
+
+    init {
+        Timber.e("TEST VM Constructor")
     }
 
     companion object {

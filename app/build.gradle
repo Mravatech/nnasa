@@ -133,7 +133,7 @@ dependencies {
 
     //mapper
     implementation deps.mapper.core
-    kapt deps.mapper.processor
+//    kapt deps.mapper.processor
 
     //arch
     implementation deps.archComponents.viewModel

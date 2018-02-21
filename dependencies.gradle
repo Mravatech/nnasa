@@ -98,11 +98,12 @@ conductor.lifecycle = 'com.bluelinelabs:conductor-archlifecycle:0.1.1'
 deps.conductor = conductor
 
 //============================================== MAPPER ===========================================
-versions.mapStruct = '1.2.0.Final'
+//versions.mapStruct = '1.2.0.Final'
 
 def mapper = [:]
-mapper.core          = "org.mapstruct:mapstruct-jdk8:${versions.mapStruct}"
-mapper.processor     = "org.mapstruct:mapstruct-processor:${versions.mapStruct}"
+//mapper.core          = "org.mapstruct:mapstruct-jdk8:${versions.mapStruct}"
+//mapper.processor     = "org.mapstruct:mapstruct-processor:${versions.mapStruct}"
+mapper.core =            'com.androidkotlincore:entityconverter:0.0.3'
 deps.mapper = mapper
 
 //=============================================== DI ===============================================
