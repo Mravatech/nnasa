@@ -3,7 +3,7 @@ package com.mnassa.data.converter
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
-import com.mnassa.data.repository.SomInternalUserProfile
+import com.google.firebase.auth.FirebaseUser
 import com.mnassa.domain.models.impl.UserProfileImpl
 
 /**
@@ -14,10 +14,10 @@ class UserProfileConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertUser)
     }
 
-    private fun convertUser(input: SomInternalUserProfile): UserProfileImpl {
+    private fun convertUser(input: FirebaseUser): UserProfileImpl {
         return UserProfileImpl(
-                id = input.id.toString(),
-                name = input.name
+                id = input.uid,
+                name = input.displayName ?: ""
         )
     }
 }

@@ -8,11 +8,13 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface LoginViewModel : MnassaViewModel {
     val openScreenChannel: ReceiveChannel<ScreenType>
+    val showMessageChannel: ReceiveChannel<String>
 
     fun requestVerificationCode(phoneNumber: String)
     fun login(verificationCode: String)
 
     enum class ScreenType {
+        ENTER_VERIFICATION_CODE,
         MAIN
     }
 

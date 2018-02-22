@@ -26,7 +26,7 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : Mnassa
                 Timber.e("TEST VM countdown: $it")
 
                 progressChannel.send(it)
-                delay(50_00L)
+                delay(50L)
             }
         }
 

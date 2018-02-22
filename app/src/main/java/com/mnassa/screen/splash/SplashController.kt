@@ -41,7 +41,6 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
         launchCoroutineUI {
             delay(3_000L)
             viewModel.showMessageChannel.consumeEach {
-                Timber.e("TESTTTTT: consuemed $it")
                 Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
                 delay(2_000L)
             }

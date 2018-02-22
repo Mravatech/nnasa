@@ -2,6 +2,8 @@ package com.mnassa.data.repository
 
 import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
+import com.androidkotlincore.entityconverter.convert
+import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.api.UsersApi
 import com.mnassa.domain.models.UserProfile
 import com.mnassa.domain.repository.UserRepository
@@ -12,24 +14,8 @@ import com.mnassa.domain.repository.UserRepository
 class UserRepositoryImpl(private val context: Context, private val converter: ConvertersContext, private val usersApi: UsersApi) : UserRepository {
 
     override suspend fun getCurrentUser(): UserProfile? {
-        //TODO: use Firebase here
+        val user = FirebaseAuth.getInstance().currentUser
 
-//        try {
-//            val userNetwork = usersApi.getUser().await()
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//        }
-//
-//        val profile = SomInternalUserProfile(1, "Name1")
-//
-//        return converter.convert(profile)
-
-        return null
-    }
-
-    private companion object {
-
+        return if (user != null) converter.convert(user) else null
     }
 }
-
-data class SomInternalUserProfile(val id: Int, val name: String)

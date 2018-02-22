@@ -1,9 +1,14 @@
 package com.mnassa.screen.main
 
 import android.view.View
+import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.LoginController
+import kotlinx.android.synthetic.main.controller_main.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 2/21/2018.
@@ -14,6 +19,20 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+        view.btnLogout.setOnClickListener {
+            viewModel.logout()
+        }
+
+        launchCoroutineUI {
+            viewModel.openScreenChannel.consumeEach {
+                val controller = when (it) {
+                    MainViewModel.ScreenType.LOGIN -> LoginController.newInstance()
+                }
+
+                router.replaceTopController(RouterTransaction.with(controller))
+            }
+        }
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.mnassa.screen.login
 
 import android.view.View
+import android.widget.Toast
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
@@ -34,7 +35,16 @@ class LoginController : MnassaControllerImpl<LoginViewModel>() {
                     LoginViewModel.ScreenType.MAIN -> {
                         router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
                     }
+                    LoginViewModel.ScreenType.ENTER_VERIFICATION_CODE -> {
+
+                    }
                 }
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.showMessageChannel.consumeEach {
+                Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
             }
         }
     }

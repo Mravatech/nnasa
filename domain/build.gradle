@@ -37,4 +37,5 @@ dependencies {
 
     //kotlin
     implementation deps.kotlin.stdlib
+    implementation deps.coroutines.core
 }

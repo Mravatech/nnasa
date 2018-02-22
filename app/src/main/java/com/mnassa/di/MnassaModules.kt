@@ -42,7 +42,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
     bind<LoginViewModel>() with provider { LoginViewModelImpl(instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl() }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
