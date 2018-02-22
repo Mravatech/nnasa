@@ -1,10 +1,9 @@
 package com.mnassa.data.service
 
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.*
+import com.google.firebase.database.FirebaseDatabase
+import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.service.LoginService
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
@@ -25,9 +24,13 @@ class LoginServiceImpl : LoginService {
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 async {
-                    signIn(credential)
-                    sendChannel.send(VerificationCodeResponseImpl.OnVerificationCompleted(credential))
-                    sendChannel.close()
+                    try {
+                        signIn(credential)
+                        sendChannel.send(VerificationCodeResponseImpl.OnVerificationCompleted(credential))
+                        sendChannel.close()
+                    } catch (e: Exception) {
+                        sendChannel.close(e)
+                    }
                 }
             }
 
@@ -67,6 +70,7 @@ class LoginServiceImpl : LoginService {
             FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
                 when {
                     it.isSuccessful -> continuation.resume(it.result)
+                    it.exception is FirebaseAuthInvalidCredentialsException -> continuation.resumeWithException(LoginInteractor.InvalidVerificationCode())
                     else -> continuation.resumeWithException(it.exception
                             ?: IllegalStateException())
                 }

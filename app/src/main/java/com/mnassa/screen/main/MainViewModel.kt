@@ -1,6 +1,7 @@
 package com.mnassa.screen.main
 
 import com.mnassa.screen.base.MnassaViewModel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -8,7 +9,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface MainViewModel : MnassaViewModel {
     val openScreenChannel: ReceiveChannel<ScreenType>
-
+    val userName: BroadcastChannel<String>
 
     fun logout()
 

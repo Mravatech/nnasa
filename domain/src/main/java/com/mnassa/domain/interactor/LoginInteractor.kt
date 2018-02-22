@@ -11,4 +11,6 @@ interface LoginInteractor {
     suspend fun requestVerificationCode(phoneNumber: String): Channel<LoginService.VerificationCodeResponse>
     suspend fun signIn(verificationSMSCode: String, response: LoginService.VerificationCodeResponse)
     suspend fun signOut()
+
+    class InvalidVerificationCode : IllegalArgumentException()
 }

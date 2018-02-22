@@ -33,6 +33,12 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
                 router.replaceTopController(RouterTransaction.with(controller))
             }
         }
+
+        launchCoroutineUI {
+            viewModel.userName.consumeEach {
+                view.tvUserName.text = "Hi, $it"
+            }
+        }
     }
 
     companion object {

@@ -134,9 +134,10 @@ dependencies {
     implementation deps.support.constraintLayout
 
     //firebase
-    implementation deps.playServices.firebase_core
-    implementation deps.playServices.firebase_auth
-    implementation deps.playServices.firebase_auth_service
+    implementation deps.firebase.core
+    implementation deps.firebase.auth
+    implementation deps.firebase.auth_service
+    implementation deps.firebase.database
 
     //coroutines
     implementation deps.coroutines.core

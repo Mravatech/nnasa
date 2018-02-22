@@ -4,7 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseUser
-import com.mnassa.domain.models.impl.UserProfileImpl
+import com.mnassa.domain.models.impl.UserProfileModelImpl
 
 /**
  * Created by Peter on 2/21/2018.
@@ -14,8 +14,8 @@ class UserProfileConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertUser)
     }
 
-    private fun convertUser(input: FirebaseUser): UserProfileImpl {
-        return UserProfileImpl(
+    private fun convertUser(input: FirebaseUser): UserProfileModelImpl {
+        return UserProfileModelImpl(
                 id = input.uid,
                 name = input.displayName ?: ""
         )

@@ -64,14 +64,17 @@ playServices.locations = ["com.google.android.gms:play-services-location:$versio
     exclude module: 'support-v7'
 }]
 playServices.playServicesGradlePlugin = "com.google.gms:google-services:$versions.playServicesGradlePluginVersion"
+deps.playServices = playServices
 
 //========================================== FIREBASE ==============================================
 versions.firebase = '11.8.0'
-playServices.firebase_core =            "com.google.firebase:firebase-core:$versions.firebase"
-playServices.firebase_auth =            "com.google.firebase:firebase-auth:$versions.firebase"
-playServices.firebase_auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
+def firebase = [:]
+firebase.core =            "com.google.firebase:firebase-core:$versions.firebase"
+firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
+firebase.auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
+firebase.database =        "com.google.firebase:firebase-database:$versions.firebase"
 
-deps.playServices = playServices
+deps.firebase = firebase
 
 //============================================== KOTLIN ============================================
 versions.kotlin = '1.2.21'

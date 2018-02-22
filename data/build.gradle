@@ -32,7 +32,8 @@ dependencies {
     implementation deps.support.annotations
 
     //firebase
-    implementation deps.playServices.firebase_auth
+    implementation deps.firebase.auth
+    implementation deps.firebase.database
 
     //network
     implementation deps.network.retrofit

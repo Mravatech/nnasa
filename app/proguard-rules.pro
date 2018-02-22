@@ -21,6 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 #KodeIn
+#Firebase
 -keepattributes Signature
 
 #Coroutines
