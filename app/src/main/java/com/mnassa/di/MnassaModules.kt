@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.registerConverter
 import com.github.salomonbrys.kodein.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.converter.UserProfileConverter
 import com.mnassa.data.network.networkModule
 import com.mnassa.data.repository.TagRepositoryImpl
@@ -46,13 +47,14 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
     bind<LoginViewModel>() with provider { LoginViewModelImpl(instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
         converter.registerConverter(UserProfileConverter::class.java)
+        converter.registerConverter(TagConverter::class.java)
         converter
     }
 }
@@ -65,7 +67,7 @@ private val repositoryModule = Kodein.Module {
     }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<TagRepository>() with singleton { TagRepositoryImpl() }
+    bind<TagRepository>() with singleton { TagRepositoryImpl(instance()) }
 }
 
 private val serviceModule = Kodein.Module {

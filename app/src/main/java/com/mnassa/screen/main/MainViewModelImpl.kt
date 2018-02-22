@@ -4,9 +4,10 @@ import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.repository.TagRepository
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
 /**
@@ -14,7 +15,8 @@ import timber.log.Timber
  */
 class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
-        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), MainViewModel {
+        private val userProfileInteractor: UserProfileInteractor,
+        private val tagRepo: TagRepository) : MnassaViewModelImpl(), MainViewModel {
     override val openScreenChannel: RendezvousChannel<MainViewModel.ScreenType> = RendezvousChannel()
     override val userName: ConflatedBroadcastChannel<String> = ConflatedBroadcastChannel()
 
@@ -26,6 +28,14 @@ class MainViewModelImpl(
             val id = profile.id
             Timber.e("UID = $id")
             userName.send(profile.name)
+        }
+
+        launchCoroutineUI {
+            tagRepo.load().consumeEachIndexed {
+                Timber.e("TAGGG = ${it.index} -> ${it.value}")
+                if (it.index % 10 == 0) delay(3_000)
+                if (it.index == 55) return@launchCoroutineUI
+            }
         }
     }
 
