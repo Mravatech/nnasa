@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MnassaHeader1">
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="MnassaHeader2" parent="MnassaHeader1">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="MnassaText" parent="MnassaHeader2">
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+</resources>

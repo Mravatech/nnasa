@@ -82,6 +82,7 @@ def kotlin = [:]
 kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
 kotlin.gradlePlugin =   "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.androidExtensions = 'androidx.core:core-ktx:0.1'
 deps.kotlin = kotlin
 
 versions.coroutines = '0.22.2'
@@ -182,6 +183,6 @@ ext.deps = deps
 
 ext {
     endpointRrod = 'https://release.com'
-    endpointPreProd = 'https://pre-release.com'
-    endpointDev = 'https://dev.com'
+    endpointPreProd = 'https://mnassa4dev.firebaseio.com/'
+    endpointDev = 'https://fir-test-b7667.firebaseio.com/'
 }

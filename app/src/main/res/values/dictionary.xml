@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="login_enter_phone_title">_login_label_title</string>
+    <string name="login_verify_me">_login_button_verify</string>
+    <string name="login_terms_part_1">_login_label_termsInfo</string>
+    <string name="login_terms_part_2">_login_label_termsInfoSuffix</string>
+    <string name="login_your_phone">_login_phone_placeholder</string>
+    <string name="login_enter_code_title">_pin_label_title</string>
+    <string name="login_enter_code_resend_after">_pin_resendingTextMask</string>
+    <string name="login_enter_code_resend_code">_pin_resendingText</string>
+</resources>

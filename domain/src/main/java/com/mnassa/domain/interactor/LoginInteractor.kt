@@ -8,9 +8,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface LoginInteractor {
     suspend fun isLoggedIn(): Boolean
-    suspend fun requestVerificationCode(phoneNumber: String): ReceiveChannel<LoginService.VerificationCodeResponse>
+    suspend fun requestVerificationCode(phoneNumber: String, previousResponse: LoginService.VerificationCodeResponse? = null): ReceiveChannel<LoginService.VerificationCodeResponse>
     suspend fun signIn(verificationSMSCode: String, response: LoginService.VerificationCodeResponse)
     suspend fun signOut()
 
-    class InvalidVerificationCode : IllegalArgumentException()
+    class InvalidVerificationCode : IllegalArgumentException("Invalid code")
 }

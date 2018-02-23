@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "137305299528",
+    "firebase_url": "https://mnassa4dev.firebaseio.com",
+    "project_id": "mnassa4dev",
+    "storage_bucket": "mnassa4dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137305299528:android:ae433feb59eb389e",
+        "android_client_info": {
+          "package_name": "com.mnassa.stage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137305299528-g3rmb8m1tc0vassdorsnivr9kpi7hogr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mnassa.stage",
+            "certificate_hash": "bca47406bfa0eda32ab808faf2a81fc42d6a2141"
+          }
+        },
+        {
+          "client_id": "137305299528-i1b16b7vbrrp2t636u4v3iaotc75ct07.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNKhG4LEZSe_Qa9DRR0b63fk11tZnZ5mw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137305299528-i1b16b7vbrrp2t636u4v3iaotc75ct07.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "137305299528-7b4n68vhqtg9ic9cfdq9gvs3k3ksg91l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "isddesign.mnassa4"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -88,16 +88,18 @@ android {
             signingConfig signingConfigs.release
         }
         stage {
-            minifyEnabled true
-            debuggable false
+            applicationIdSuffix ".stage"
+            minifyEnabled false
+            debuggable true
             multiDexEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.stage
         }
         debug {
+            applicationIdSuffix ".dev"
             minifyEnabled false
             debuggable true
-            multiDexEnabled = true
+            multiDexEnabled = false
             signingConfig signingConfigs.debug
         }
     }
@@ -164,6 +166,7 @@ dependencies {
     //other
     implementation deps.other.logger
     implementation deps.other.leak
+    implementation deps.stetho.runtime
 
     //network
     implementation deps.network.retrofit
@@ -173,6 +176,7 @@ dependencies {
 
     //kotlin
     implementation deps.kotlin.stdlib
+    implementation deps.kotlin.androidExtensions
 }
 
 apply plugin: 'com.google.gms.google-services'

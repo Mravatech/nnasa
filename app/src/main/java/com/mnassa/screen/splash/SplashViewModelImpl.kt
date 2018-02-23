@@ -17,18 +17,12 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : Mnassa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val from = savedInstanceState?.getInt(EXTRA_NUMBER, 100) ?: 100
+        val from = savedInstanceState?.getInt(EXTRA_NUMBER, 10) ?: 10
 
         launchCoroutineUI {
             (from downTo 0).forEach {
                 progressChannel.send(it)
                 delay(50L)
-            }
-        }
-
-        launchCoroutineUI {
-            (0 .. 100).forEach {
-                showMessageChannel.send(it.toString())
             }
         }
     }
