@@ -16,6 +16,31 @@ import kotlin.coroutines.experimental.suspendCoroutine
  */
 private const val DEFAULT_LIMIT = 10 //just for testing. TODO: replace to 100
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Loading single value
+internal suspend inline fun <reified T : Model> get(databaseReference: DatabaseReference, path: String, id: String): T? {
+    return suspendCoroutine { continuation ->
+        databaseReference.child(path).child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot?) {
+                continuation.resume(snapshot?.run {
+                    val res = getValue(T::class.java)
+                    res?.id = id
+                    res
+                })
+            }
+        })
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Simple pagination without handling content changes
 internal inline fun <reified T : Model> load(databaseReference: DatabaseReference, path: String, limit: Int = DEFAULT_LIMIT): Channel<T> {
     val channel = ArrayChannel<T>(limit)
     async {
@@ -37,7 +62,7 @@ internal inline fun <reified T : Model> load(databaseReference: DatabaseReferenc
     return channel
 }
 
-internal suspend inline fun <reified T : Model> loadPortion(databaseReference: DatabaseReference, path: String, offset: String? = null, limit: Int = DEFAULT_LIMIT): List<T> {
+private suspend inline fun <reified T : Model> loadPortion(databaseReference: DatabaseReference, path: String, offset: String? = null, limit: Int = DEFAULT_LIMIT): List<T> {
     val ref = databaseReference.child(path)
     val query = if (offset == null) {
         ref.orderByKey().limitToFirst(limit)
@@ -69,3 +94,4 @@ internal suspend inline fun <reified T : Model> loadPortion(databaseReference: D
         })
     }
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////

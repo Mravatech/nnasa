@@ -3,11 +3,11 @@ package com.mnassa
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.autoAndroidModule
 import com.google.firebase.FirebaseApp
 import com.mnassa.di.*
+import com.mnassa.other.CrashReportingTree
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
 
@@ -36,23 +36,6 @@ class App : Application(), KodeinAware {
         }
     }
 
-    /** A tree which logs important information for crash reporting.  */
-    private class CrashReportingTree : Timber.Tree() {
-        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-            if (priority == Log.VERBOSE || priority == Log.DEBUG) {
-                return
-            }
-
-//            FakeCrashLibrary.log(priority, tag, showMessageChannel)
-//            if (t != null) {
-//                if (priority == Log.ERROR) {
-//                    FakeCrashLibrary.logError(t)
-//                } else if (priority == Log.WARN) {
-//                    FakeCrashLibrary.logWarning(t)
-//                }
-//            }
-        }
-    }
 
     companion object {
         @SuppressLint("StaticFieldLeak")

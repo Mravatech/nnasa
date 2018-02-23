@@ -18,6 +18,11 @@ class TagRepositoryImpl(private val converter: ConvertersContext, private val da
         return load<TagBean>(databaseReference, TABLE_NAME).map { converter.convert<TagModel>(it) }
     }
 
+    override suspend fun get(id: String): TagModel? {
+        val tagBean: TagBean? = get(databaseReference, TABLE_NAME, id)
+        return tagBean?.run { converter.convert(this) }
+    }
+
     companion object {
         private const val TABLE_NAME = "tags"
     }

@@ -8,4 +8,5 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface TagRepository {
     fun load(): ReceiveChannel<TagModel>
+    suspend fun get(id: String): TagModel?
 }

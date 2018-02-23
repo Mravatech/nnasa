@@ -28,10 +28,14 @@ class MainViewModelImpl(
             userName.send(profile.name)
         }
 
+        //Just for test
         launchCoroutineUI {
             tagRepo.load().consumeEachIndexed {
                 Timber.e("TAGGG = ${it.index} -> ${it.value}")
                 if (it.index % 10 == 0 && it.index != 0) delay(3_000)
+
+                val x = tagRepo.get(it.value.id)
+                assert(x?.nameEn == it.value.nameEn)
             }
         }
     }
