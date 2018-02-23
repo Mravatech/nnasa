@@ -7,6 +7,7 @@ import com.google.firebase.database.ValueEventListener
 import com.mnassa.domain.models.Model
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
+import timber.log.Timber
 import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
@@ -14,7 +15,48 @@ import kotlin.coroutines.experimental.suspendCoroutine
  */
 private const val DEFAULT_LIMIT = 10 //just for testing. TODO: replace to 100
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////// MAPPING ///////////////////////////////////////////////
+
+private inline fun <reified T : Model> mapSingleValue(dataSnapshot: DataSnapshot?): T? {
+    return dataSnapshot?.run {
+        val res = getValue(T::class.java)
+        res?.id = key
+        res
+    }
+}
+
+private inline fun <reified T : Model> mapListOfValues(dataSnapshot: DataSnapshot?): List<T> {
+    if (dataSnapshot == null) return emptyList()
+    return dataSnapshot.children.map { requireNotNull(mapSingleValue<T>(it)) }
+}
+
+////////////////////////////////// LOAD DATA WITH CHANGES HANDLING /////////////////////////////////
+// Subscribe to list of values changes
+internal inline fun <reified T : Model> getObservable(databaseReference: DatabaseReference, path: String): ReceiveChannel<List<T>> {
+    val channel = RendezvousChannel<List<T>>()
+
+    databaseReference.child(path).addValueEventListener(object : ValueEventListener {
+        override fun onCancelled(error: DatabaseError) {
+            channel.close(error.toException())
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+            val listener = this
+            async {
+                try {
+                    channel.send(mapListOfValues(dataSnapshot))
+                } catch (e: ClosedSendChannelException) {
+                    databaseReference.child(path).removeEventListener(listener)
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
+            }
+        }
+    })
+
+    return channel
+}
+
 // Subscribe to single value changes
 internal inline fun <reified T : Model> getObservable(databaseReference: DatabaseReference, path: String, id: String): ReceiveChannel<T?> {
     val channel = RendezvousChannel<T?>()
@@ -28,15 +70,11 @@ internal inline fun <reified T : Model> getObservable(databaseReference: Databas
             val listener = this
             async {
                 try {
-                    val data = dataSnapshot?.run {
-                        val res = getValue(T::class.java)
-                        res?.id = key
-                        res
-                    }
-                    channel.send(data)
-
+                    channel.send(mapSingleValue(dataSnapshot))
                 } catch (e: ClosedSendChannelException) {
                     databaseReference.child(path).removeEventListener(listener)
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
             }
         }
@@ -45,7 +83,7 @@ internal inline fun <reified T : Model> getObservable(databaseReference: Databas
     return channel
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// LOAD DATA WITHOUT CHANGES HANDLING /////////////////////////////
 // Loading list of values
 internal suspend inline fun <reified T : Model> get(databaseReference: DatabaseReference, path: String): List<T> {
     return loadPortion(databaseReference, path, null, Int.MAX_VALUE)
@@ -60,17 +98,13 @@ internal suspend inline fun <reified T : Model> get(databaseReference: DatabaseR
             }
 
             override fun onDataChange(snapshot: DataSnapshot?) {
-                continuation.resume(snapshot?.run {
-                    val res = getValue(T::class.java)
-                    res?.id = id
-                    res
-                })
+                continuation.resume(mapSingleValue(snapshot))
             }
         })
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// LOAD DATA WITHOUT CHANGES HANDLING USING PAGINATION/////////////////////
 // Simple pagination without handling content changes
 internal inline fun <reified T : Model> load(databaseReference: DatabaseReference, path: String, limit: Int = DEFAULT_LIMIT): Channel<T> {
     val channel = ArrayChannel<T>(limit)
@@ -88,6 +122,8 @@ internal inline fun <reified T : Model> load(databaseReference: DatabaseReferenc
             }
         } catch (e: ClosedSendChannelException) {
             //skip this exception
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
     return channel
@@ -114,11 +150,8 @@ private suspend inline fun <reified T : Model> loadPortion(databaseReference: Da
                     return
                 }
 
-                val result = snapshot.children.map {
-                    val mapped = requireNotNull(it.getValue(T::class.java))
-                    mapped.id = it.key
-                    mapped
-                }.filterIndexed { index, _ -> !(index == 0 && offset != null) }
+                val result = mapListOfValues<T>(snapshot)
+                        .filterIndexed { index, _ -> !(index == 0 && offset != null) }
 
                 continuation.resume(result)
             }
