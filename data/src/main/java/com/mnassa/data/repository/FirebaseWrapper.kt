@@ -6,9 +6,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.mnassa.domain.models.Model
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayChannel
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
+import kotlinx.coroutines.experimental.channels.*
 import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
@@ -17,9 +15,42 @@ import kotlin.coroutines.experimental.suspendCoroutine
 private const val DEFAULT_LIMIT = 10 //just for testing. TODO: replace to 100
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// Subscribe to single value changes
+internal inline fun <reified T : Model> getObservable(databaseReference: DatabaseReference, path: String, id: String): ReceiveChannel<T?> {
+    val channel = RendezvousChannel<T?>()
+
+    databaseReference.child(path).child(id).addValueEventListener(object : ValueEventListener {
+        override fun onCancelled(error: DatabaseError) {
+            channel.close(error.toException())
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+            val listener = this
+            async {
+                try {
+                    val data = dataSnapshot?.run {
+                        val res = getValue(T::class.java)
+                        res?.id = key
+                        res
+                    }
+                    channel.send(data)
+
+                } catch (e: ClosedSendChannelException) {
+                    databaseReference.child(path).removeEventListener(listener)
+                }
+            }
+        }
+    })
+
+    return channel
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
+// Loading list of values
+internal suspend inline fun <reified T : Model> get(databaseReference: DatabaseReference, path: String): List<T> {
+    return loadPortion(databaseReference, path, null, Int.MAX_VALUE)
+}
+
 // Loading single value
 internal suspend inline fun <reified T : Model> get(databaseReference: DatabaseReference, path: String, id: String): T? {
     return suspendCoroutine { continuation ->
