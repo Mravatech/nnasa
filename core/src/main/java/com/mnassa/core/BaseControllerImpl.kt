@@ -18,7 +18,6 @@ import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.core.permissions.OnRequestPermissionsResultEvent
 import com.mnassa.core.permissions.PermissionsManager
 import com.mnassa.core.permissions.PermissionsManagerDelegate
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
@@ -79,8 +78,6 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
             }
 
             override fun preDestroy(controller: Controller) {
-                Timber.e("TEST preDestroy controller $controller: isBeingDestroyed=$isBeingDestroyed; isDestroyed=$isDestroyed")
-
                 viewModel.onCleared()
             }
 

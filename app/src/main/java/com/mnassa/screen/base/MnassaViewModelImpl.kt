@@ -3,15 +3,12 @@ package com.mnassa.screen.base
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.CallSuper
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.KodeinInjected
-import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
 import com.github.salomonbrys.kodein.android.AndroidScope
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.bindings.ScopeRegistry
-import com.github.salomonbrys.kodein.erased
 import com.mnassa.App
 import com.mnassa.core.BaseViewModelImpl
 import java.util.*

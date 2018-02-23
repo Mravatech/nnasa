@@ -25,16 +25,13 @@ class MainViewModelImpl(
 
         launchCoroutineUI {
             val profile = userProfileInteractor.getProfile()
-            val id = profile.id
-            Timber.e("UID = $id")
             userName.send(profile.name)
         }
 
         launchCoroutineUI {
             tagRepo.load().consumeEachIndexed {
                 Timber.e("TAGGG = ${it.index} -> ${it.value}")
-                if (it.index % 10 == 0) delay(3_000)
-                if (it.index == 55) return@launchCoroutineUI
+                if (it.index % 10 == 0 && it.index != 0) delay(3_000)
             }
         }
     }

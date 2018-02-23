@@ -2,13 +2,11 @@ package com.mnassa.data.service
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
-import com.google.firebase.database.FirebaseDatabase
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.service.LoginService
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import timber.log.Timber
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -76,8 +74,6 @@ class LoginServiceImpl : LoginService {
                 }
             }
         }
-
-        Timber.i("User ${authResult.user.displayName} and id ${authResult.user.uid} was signed in!")
     }
 
     override suspend fun signOut() {

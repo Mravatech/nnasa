@@ -60,14 +60,14 @@ private val convertersModule = Kodein.Module {
 }
 
 private val repositoryModule = Kodein.Module {
-    bind<FirebaseDatabase>() with provider {
+    bind<FirebaseDatabase>() with singleton {
         val result = FirebaseDatabase.getInstance()
         result.setPersistenceEnabled(true)
         result
     }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<TagRepository>() with singleton { TagRepositoryImpl(instance()) }
+    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {

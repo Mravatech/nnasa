@@ -4,10 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.KodeinAware
+import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.autoAndroidModule
-import com.github.salomonbrys.kodein.lazy
+import com.google.firebase.FirebaseApp
 import com.mnassa.di.*
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
@@ -25,6 +24,7 @@ class App : Application(), KodeinAware {
     override fun onCreate() {
         APP_CONTEXT = this
         super.onCreate()
+        FirebaseApp.initializeApp(this)
 
         if (BuildConfig.DEBUG) {
             if (LeakCanary.isInAnalyzerProcess(this)) return

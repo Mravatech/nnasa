@@ -41,7 +41,6 @@ class LoginViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaV
     }
 
     override fun login(verificationCode: String) {
-
         if (!this::verificationResponse.isInitialized) {
             launchCoroutineUI {
                 showMessageChannel.send("Verification response does not found!")

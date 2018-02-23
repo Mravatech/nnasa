@@ -12,7 +12,6 @@ import com.mnassa.screen.main.MainController
 import kotlinx.android.synthetic.main.controller_splash.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
@@ -24,18 +23,13 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        Timber.e("TEST Controller onViewCreated")
-
-        val job = launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.progressChannel.consumeEach {
                 view.tvTimer.text = it.toString()
                 if (it == 0) {
                     openNextScreen()
                 }
             }
-        }
-        job.invokeOnCompletion {
-            Timber.e("TEST Controller invokeOnCompletion")
         }
 
         launchCoroutineUI {
@@ -58,9 +52,5 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
 
     companion object {
         fun newInstance() = SplashController()
-    }
-
-    init {
-        Timber.e("TEST Controller constructor")
     }
 }
