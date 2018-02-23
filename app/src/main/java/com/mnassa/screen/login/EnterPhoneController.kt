@@ -14,9 +14,9 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/21/2018.
  */
-class LoginController : MnassaControllerImpl<LoginViewModel>() {
+class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
     override val layoutId: Int = R.layout.controller_login
-    override val viewModel: LoginViewModel by instance()
+    override val viewModel: EnterPhoneViewModel by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -32,10 +32,10 @@ class LoginController : MnassaControllerImpl<LoginViewModel>() {
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 when (it) {
-                    LoginViewModel.ScreenType.MAIN -> {
+                    EnterPhoneViewModel.ScreenType.MAIN -> {
                         router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
                     }
-                    LoginViewModel.ScreenType.ENTER_VERIFICATION_CODE -> {
+                    EnterPhoneViewModel.ScreenType.ENTER_VERIFICATION_CODE -> {
 
                     }
                 }
@@ -50,6 +50,6 @@ class LoginController : MnassaControllerImpl<LoginViewModel>() {
     }
 
     companion object {
-        fun newInstance() = LoginController()
+        fun newInstance() = EnterPhoneController()
     }
 }

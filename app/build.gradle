@@ -165,6 +165,12 @@ dependencies {
     implementation deps.other.logger
     implementation deps.other.leak
 
+    //network
+    implementation deps.network.retrofit
+    implementation deps.network.coroutineAdapter
+    implementation deps.network.gsonconverter
+    implementation deps.network.logging
+
     //kotlin
     implementation deps.kotlin.stdlib
 }

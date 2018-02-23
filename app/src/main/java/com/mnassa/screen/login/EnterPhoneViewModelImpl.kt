@@ -12,10 +12,10 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/21/2018.
  */
-class LoginViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), LoginViewModel {
+class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: LoginService.VerificationCodeResponse //TODO: save to Bundle
 
-    override val openScreenChannel: RendezvousChannel<LoginViewModel.ScreenType> = RendezvousChannel()
+    override val openScreenChannel: RendezvousChannel<EnterPhoneViewModel.ScreenType> = RendezvousChannel()
     override val showMessageChannel: RendezvousChannel<String> = RendezvousChannel()
 
     private var requestVerificationCodeJob: Job? = null
@@ -28,9 +28,9 @@ class LoginViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaV
 
                     when {
                         //wait for confirm code
-                        verificationResponse.isVerificationNeeded -> openScreenChannel.send(LoginViewModel.ScreenType.ENTER_VERIFICATION_CODE)
+                        verificationResponse.isVerificationNeeded -> openScreenChannel.send(EnterPhoneViewModel.ScreenType.ENTER_VERIFICATION_CODE)
                         //if user have been verified automatically
-                        else -> openScreenChannel.send(LoginViewModel.ScreenType.MAIN)
+                        else -> openScreenChannel.send(EnterPhoneViewModel.ScreenType.MAIN)
                     }
                 }
             } catch (e: Exception) {
@@ -51,7 +51,7 @@ class LoginViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaV
         launchCoroutineUI {
             try {
                 loginInteractor.signIn(verificationCode, verificationResponse)
-                openScreenChannel.send(LoginViewModel.ScreenType.MAIN)
+                openScreenChannel.send(EnterPhoneViewModel.ScreenType.MAIN)
             } catch (e: Exception) {
                 Timber.e(e)
                 showMessageChannel.send(e.localizedMessage)

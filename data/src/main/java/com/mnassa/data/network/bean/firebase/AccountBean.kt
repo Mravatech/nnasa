@@ -9,7 +9,7 @@ import java.util.*
  */
 
 @IgnoreExtraProperties
-data class AccountBean(
+internal data class AccountBean(
         @PropertyName("avatar")
         val avatar: String,
         @PropertyName("createdAt")

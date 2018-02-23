@@ -44,10 +44,6 @@ dependencies {
     //mapper
     implementation deps.mapper.core
 
-    //dependency injection
-    implementation deps.di.core
-    implementation deps.di.android
-
     //other
     implementation deps.other.logger
 

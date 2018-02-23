@@ -65,7 +65,7 @@ class LoginServiceImpl : LoginService {
     }
 
     private suspend fun signIn(credential: PhoneAuthCredential) {
-        val authResult = suspendCoroutine<AuthResult> { continuation ->
+        suspendCoroutine<AuthResult> { continuation ->
             FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
                 when {
                     it.isSuccessful -> continuation.resume(it.result)

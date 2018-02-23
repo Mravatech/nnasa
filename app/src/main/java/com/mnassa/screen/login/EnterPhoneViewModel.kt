@@ -6,7 +6,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 /**
  * Created by Peter on 2/21/2018.
  */
-interface LoginViewModel : MnassaViewModel {
+interface EnterPhoneViewModel : MnassaViewModel {
     val openScreenChannel: ReceiveChannel<ScreenType>
     val showMessageChannel: ReceiveChannel<String>
 

@@ -29,7 +29,6 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
 
         val activityModule = Kodein.Module {
             Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MnassaViewModelImpl)
-            Bind<Context>(erased()) with InstanceBinding(erased(), applicationContext)
             import(provideOverridingModule(), allowOverride = true)
         }
 

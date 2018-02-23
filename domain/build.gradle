@@ -28,10 +28,6 @@ dependencies {
     implementation deps.support.appcompat
     implementation deps.support.annotations
 
-    //dependency injection
-    implementation deps.di.core
-    implementation deps.di.android
-
     //other
     implementation deps.other.logger
 

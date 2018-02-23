@@ -26,7 +26,6 @@ abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>
     override fun initializeInjector() {
         val activityModule = Kodein.Module {
             Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MnassaControllerImpl)
-            Bind<Context>(erased()) with InstanceBinding(erased(), requireNotNull(applicationContext))
             import(provideOverridingModule(), allowOverride = true)
         }
 
