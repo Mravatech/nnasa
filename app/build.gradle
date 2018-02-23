@@ -65,7 +65,7 @@ android {
             keyAlias 'android'
             keyPassword 'android'
         }
-        preRelease {
+        stage {
             storeFile file("../keystore/key.jks") //TODO: add release keystore
             storePassword 'android'
             keyAlias 'android'
@@ -87,12 +87,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-        preRelease {
+        stage {
             minifyEnabled true
             debuggable false
             multiDexEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.preRelease
+            signingConfig signingConfigs.stage
         }
         debug {
             minifyEnabled false
@@ -105,10 +105,10 @@ android {
     applicationVariants.all { variant ->
         switch (variant.getName()) {
             case 'release':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointRelease']}\""
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointRrod']}\""
                 break
-            case 'preRelease':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreRelease']}\""
+            case 'stage':
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreProd']}\""
                 break
             case 'debug':
                 variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointDev']}\""

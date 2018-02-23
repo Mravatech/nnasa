@@ -11,7 +11,7 @@ android {
     }
     buildTypes {
         release { }
-        preRelease { }
+        stage { }
         debug { }
     }
     compileOptions {

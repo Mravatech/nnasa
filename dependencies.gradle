@@ -181,7 +181,7 @@ ext.deps = deps
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ext {
-    endpointRelease = 'https://release.com'
-    endpointPreRelease = 'https://pre-release.com'
+    endpointRrod = 'https://release.com'
+    endpointPreProd = 'https://pre-release.com'
     endpointDev = 'https://dev.com'
 }
