@@ -21,10 +21,11 @@ class DictionaryInteractorImpl(private val repository: DictionaryRepository) : D
                 }
             }
         } catch (e: Exception) {
+            //TODO: ask Vlad about permissions
             //must never happen
             Timber.e(e)
             delay(5_000L)
-            handleDictionaryUpdates()
+            return handleDictionaryUpdates()
         }
     }
 
