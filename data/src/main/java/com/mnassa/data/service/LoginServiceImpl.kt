@@ -6,6 +6,7 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.service.LoginService
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
@@ -16,7 +17,7 @@ import kotlin.coroutines.experimental.suspendCoroutine
  */
 class LoginServiceImpl : LoginService {
 
-    override suspend fun requestVerificationCode(phoneNumber: String): Channel<LoginService.VerificationCodeResponse> {
+    override suspend fun requestVerificationCode(phoneNumber: String): ReceiveChannel<LoginService.VerificationCodeResponse> {
         val sendChannel: Channel<LoginService.VerificationCodeResponse> = RendezvousChannel()
 
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {

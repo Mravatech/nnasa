@@ -1,8 +1,1 @@
-<manifest package="com.mnassa.data"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- TODO: minSDK lib version will be changed to 16 -->
-    <uses-sdk android:minSdkVersion="19"
-        tools:overrideLibrary="com.androidkotlincore.entityconverter"/>
-</manifest>
+<manifest package="com.mnassa.data"/>

@@ -106,7 +106,7 @@ deps.conductor = conductor
 def mapper = [:]
 //mapper.core          = "org.mapstruct:mapstruct-jdk8:${versions.mapStruct}"
 //mapper.processor     = "org.mapstruct:mapstruct-processor:${versions.mapStruct}"
-mapper.core =            'com.androidkotlincore:entityconverter:0.0.3'
+mapper.core =            'com.androidkotlincore:entityconverter:0.0.4'
 deps.mapper = mapper
 
 //=============================================== DI ===============================================
