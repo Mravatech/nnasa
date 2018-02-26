@@ -6,7 +6,8 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.service.LoginService
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import kotlinx.coroutines.experimental.JobCancellationException
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -16,8 +17,8 @@ import timber.log.Timber
 class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: LoginService.VerificationCodeResponse
 
-    override val openScreenChannel: RendezvousChannel<EnterPhoneViewModel.OpenScreenCommand> = RendezvousChannel()
-    override val showMessageChannel: RendezvousChannel<String> = RendezvousChannel()
+    override val openScreenChannel: ArrayBroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val errorMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +46,11 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
                         else -> openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.MainScreen())
                     }
                 }
+            } catch (e: JobCancellationException) {
+                Timber.d(e)
             } catch (e: Exception) {
                 Timber.e(e)
-                showMessageChannel.send(e.message ?: "")
+                errorMessageChannel.send(e.message ?: "")
             }
         }
     }

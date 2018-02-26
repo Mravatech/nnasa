@@ -45,6 +45,7 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             }, 0, termsAndCond.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
 
+            tvTermsAndConditions.append(" ")
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
@@ -55,6 +56,7 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             etPhoneNumber.addTextChangedListener(PhoneNumberFormattingTextWatcher())
             etPhoneNumber.addTextChangedListener(SimpleTextWatcher {
                 btnVerifyMe.isEnabled = isPhoneValid(it)
+                ilPhoneNumber.error = null
             })
             etPhoneNumber.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -79,8 +81,8 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         }
 
         launchCoroutineUI {
-            viewModel.showMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+            viewModel.errorMessageChannel.consumeEach {
+                view.ilPhoneNumber.error = it
             }
         }
     }

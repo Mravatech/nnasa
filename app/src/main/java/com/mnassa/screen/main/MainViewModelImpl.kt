@@ -5,6 +5,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 
@@ -14,7 +15,7 @@ import kotlinx.coroutines.experimental.channels.RendezvousChannel
 class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
         private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), MainViewModel {
-    override val openScreenChannel: RendezvousChannel<MainViewModel.ScreenType> = RendezvousChannel()
+    override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
     override val userName: ConflatedBroadcastChannel<String> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {

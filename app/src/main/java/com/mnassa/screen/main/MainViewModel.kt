@@ -8,7 +8,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  * Created by Peter on 2/21/2018.
  */
 interface MainViewModel : MnassaViewModel {
-    val openScreenChannel: ReceiveChannel<ScreenType>
+    val openScreenChannel: BroadcastChannel<ScreenType>
     val userName: BroadcastChannel<String>
 
     fun logout()

@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.delay
  */
 class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), SplashViewModel {
     override val progressChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
-    override val showMessageChannel: RendezvousChannel<String> = RendezvousChannel()
+    override val showMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

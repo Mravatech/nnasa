@@ -6,6 +6,8 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.service.LoginService
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.JobCancellationException
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -15,8 +17,8 @@ import timber.log.Timber
  */
 class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterCodeViewModel {
 
-    override val openScreenChannel: RendezvousChannel<EnterCodeViewModel.OpenScreenCommand> = RendezvousChannel()
-    override val showMessageChannel: RendezvousChannel<String> = RendezvousChannel()
+    override val openScreenChannel: ArrayBroadcastChannel<EnterCodeViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val showMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
     override lateinit var verificationResponse: LoginService.VerificationCodeResponse
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +50,8 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
                         else -> openScreenChannel.send(EnterCodeViewModel.OpenScreenCommand.MainScreen())
                     }
                 }
+            } catch (e: JobCancellationException) {
+                Timber.d(e)
             } catch (e: Exception) {
                 Timber.e(e)
                 showMessageChannel.send(e.message ?: "")
@@ -63,6 +67,8 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
             try {
                 loginInteractor.signIn(code, verificationResponse)
                 openScreenChannel.send(EnterCodeViewModel.OpenScreenCommand.MainScreen())
+            } catch (e: JobCancellationException) {
+                Timber.d(e)
             } catch (e: Exception) {
                 Timber.e(e)
                 showMessageChannel.send(e.message ?: "")
