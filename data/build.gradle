@@ -1,0 +1,54 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion build_versions.compile_sdk
+    buildToolsVersion build_versions.build_tools
+
+    defaultConfig {
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
+    }
+    buildTypes {
+        release { }
+        stage { }
+        debug { }
+    }
+    compileOptions {
+        encoding "UTF-8"
+    }
+    sourceSets { main.java.srcDirs += 'src/main/kotlin' }
+    kotlin { experimental { coroutines 'enable' } }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation deps.domain
+
+    //support
+    implementation deps.support.appcompat
+    implementation deps.support.annotations
+
+    //firebase
+    implementation deps.firebase.auth
+    implementation deps.firebase.database
+
+    //network
+    implementation deps.network.retrofit
+    implementation deps.network.coroutineAdapter
+    implementation deps.network.gsonconverter
+    implementation deps.network.logging
+
+    //mapper
+    implementation deps.mapper.core
+
+    //other
+    implementation deps.other.logger
+
+    //kotlin
+    implementation deps.kotlin.stdlib
+    implementation deps.kotlin.androidExtensions
+    implementation deps.coroutines.core
+}

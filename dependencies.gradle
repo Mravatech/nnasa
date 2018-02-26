@@ -1,0 +1,188 @@
+ext.deps = [:]
+def versions = [:]
+
+def deps = [:]
+
+deps.applicationId = "com.mnassa"
+//=============================================== MODULES===========================================
+deps.core = project(":core")
+deps.data = project(":data")
+deps.domain = project(":domain")
+
+//============================================== BUILD =============================================
+versions.androidGradlePluginVersion = '3.0.1'
+deps.androidGradlePlugin = "com.android.tools.build:gradle:$versions.androidGradlePluginVersion"
+
+def build_versions = [:]
+build_versions.min_sdk = 19
+build_versions.target_sdk = 26
+build_versions.compile_sdk = 26
+build_versions.build_tools = "26.0.2"
+ext.build_versions = build_versions
+
+//=============================================== SUPPORT ==========================================
+versions.support = "27.0.2"
+
+def support = [:]
+support.annotations =   "com.android.support:support-annotations:$versions.support"
+support.appcompat =     "com.android.support:appcompat-v7:$versions.support"
+support.design =        "com.android.support:design:$versions.support"
+support.cardview =      "com.android.support:cardview-v7:$versions.support"
+support.percent =       "com.android.support:percent:$versions.support"
+support.recyclerview =  "com.android.support:recyclerview-v7:$versions.support"
+support.supportV4 =     "com.android.support:support-v4:$versions.support"
+support.exif =          "com.android.support:exifinterface:$versions.support"
+support.constraintLayout = 'com.android.support.constraint:constraint-layout:1.0.2'
+deps.support = support
+
+//============================================= ARCH COMPONENTS ====================================
+
+def archComponents = [:]
+archComponents.viewModel = "android.arch.lifecycle:viewmodel:1.1.0"
+archComponents.paging = "android.arch.paging:runtime:1.0.0-alpha5"
+deps.archComponents = archComponents
+
+//database:
+def database = [:]
+versions.archComponents = '1.0.0'
+database.roomRuntime =              "android.arch.persistence.room:runtime:$versions.archComponents"
+database.roomAnnotationProcessor =  "android.arch.persistence.room:compiler:$versions.archComponents"
+database.roomRxAdapter =            "android.arch.persistence.room:rxjava2:$versions.archComponents"
+deps.database = database
+
+//============================================= PLAY SERVICES ======================================
+versions.playServices = "11.6.0"
+versions.playServicesGradlePluginVersion = '3.2.0'
+
+def playServices = [:]
+playServices.maps = ["com.google.android.gms:play-services-maps:$versions.playServices", {
+    exclude module: 'support-v4'
+    exclude module: 'support-v7'
+}]
+playServices.locations = ["com.google.android.gms:play-services-location:$versions.playServices", {
+    exclude module: 'support-v4'
+    exclude module: 'support-v7'
+}]
+playServices.playServicesGradlePlugin = "com.google.gms:google-services:$versions.playServicesGradlePluginVersion"
+deps.playServices = playServices
+
+//========================================== FIREBASE ==============================================
+versions.firebase = '11.8.0'
+def firebase = [:]
+firebase.core =            "com.google.firebase:firebase-core:$versions.firebase"
+firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
+firebase.auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
+firebase.database =        "com.google.firebase:firebase-database:$versions.firebase"
+
+deps.firebase = firebase
+
+//============================================== KOTLIN ============================================
+versions.kotlin = '1.2.21'
+def kotlin = [:]
+kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.gradlePlugin =   "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.androidExtensions = 'androidx.core:core-ktx:0.1'
+deps.kotlin = kotlin
+
+versions.coroutines = '0.22.2'
+def coroutines = [:]
+coroutines.core =       "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+coroutines.android =    "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+coroutines.rx =         "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.coroutines"
+deps.coroutines = coroutines
+
+//============================================= CONDUCTOR ==========================================
+
+def conductor = [:]
+
+conductor.core = 'com.bluelinelabs:conductor:2.1.4'
+conductor.lifecycle = 'com.bluelinelabs:conductor-archlifecycle:0.1.1'
+
+deps.conductor = conductor
+
+//============================================== MAPPER ===========================================
+//versions.mapStruct = '1.2.0.Final'
+
+def mapper = [:]
+//mapper.core          = "org.mapstruct:mapstruct-jdk8:${versions.mapStruct}"
+//mapper.processor     = "org.mapstruct:mapstruct-processor:${versions.mapStruct}"
+mapper.core =            'com.androidkotlincore:entityconverter:0.0.4'
+deps.mapper = mapper
+
+//=============================================== DI ===============================================
+versions.kodein = '4.1.0'
+
+def di = [:]
+
+di.core = "com.github.salomonbrys.kodein:kodein:${versions.kodein}"
+di.android = "com.github.salomonbrys.kodein:kodein-android:${versions.kodein}"
+
+deps.di = di
+
+//============================================== NETWORK ===========================================
+versions.okHttp = '3.9.1'
+versions.retrofit = '2.3.0'
+versions.retrofitGson = '2.2.0'
+
+def network = [:]
+network.okhttp =        "com.squareup.okhttp3:okhttp:$versions.okHttp"
+network.logging =       "com.squareup.okhttp3:logging-interceptor:$versions.okHttp"
+network.retrofit =      "com.squareup.retrofit2:retrofit:$versions.retrofit"
+network.rxadapter  =    "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+network.coroutineAdapter = 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
+network.gsonconverter = "com.squareup.retrofit2:converter-gson:$versions.retrofitGson"
+deps.network = network
+
+//=============================================== GLIDE ============================================
+versions.glideVersion = '4.3.1'
+versions.glideAnnoVersion = '4.3.1'
+versions.glideTransformersVersion = '3.0.1'
+
+def glide = [:]
+glide.glide            = "com.github.bumptech.glide:glide:$versions.glideVersion"
+glide.glideOkHttp      = "com.github.bumptech.glide:okhttp3-integration:$versions.glideVersion"
+glide.glideAnno        = "com.github.bumptech.glide:compiler:$versions.glideAnnoVersion"
+glide.glideTransformers= "jp.wasabeef:glide-transformations:$versions.glideTransformersVersion"
+glide.glideCompiler    = "com.github.bumptech.glide:compiler:$versions.glideVersion"
+deps.glide = glide
+
+//============================================= DEEPLINK ===========================================
+def deeplink = [:]
+deeplink.runtime = "com.airbnb:deeplinkdispatch:3.1.0"
+deeplink.processor="com.airbnb:deeplinkdispatch-processor:3.1.0"
+deps.deeplink = deeplink
+//============================================== STETHO ============================================
+def stetho = [:]
+stetho.runtime = "com.facebook.stetho:stetho:1.5.0"
+stetho.http = "com.facebook.stetho:stetho-okhttp3:1.5.0"
+deps.stetho = stetho
+//============================================== OTHER ============================================
+def other = [:]
+other.billing = 'com.android.billingclient:billing:1.0'
+other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
+other.logger =  'com.jakewharton.timber:timber:4.6.1'
+deps.other = other
+//=============================================== TESTS ============================================
+def tests = [:]
+tests.junit = 'junit:junit:4.12'
+deps.tests = tests
+//============================================ REPOSITORIES ========================================
+static def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven {
+        url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
+    }
+}
+ext.addRepos = this.&addRepos
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+ext.deps = deps
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ext {
+    endpointRrod = 'https://release.com'
+    endpointPreProd = 'https://mnassa4dev.firebaseio.com/'
+    endpointDev = 'https://fir-test-b7667.firebaseio.com/'
+}
