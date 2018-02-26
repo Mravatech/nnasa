@@ -27,6 +27,8 @@ import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.LoginService
 import com.mnassa.other.AppInfoProviderImpl
+import com.mnassa.screen.profile.ProfileViewModel
+import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.screen.login.entercode.EnterCodeViewModel
 import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
@@ -59,6 +61,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
+    bind<ProfileViewModel>() with provider { ProfileViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

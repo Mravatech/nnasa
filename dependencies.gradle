@@ -147,6 +147,13 @@ glide.glideTransformers= "jp.wasabeef:glide-transformations:$versions.glideTrans
 glide.glideCompiler    = "com.github.bumptech.glide:compiler:$versions.glideVersion"
 deps.glide = glide
 
+//============================================= U-CROP ===========================================
+versions.ucrop = '2.2.1'
+
+def ucrop = [:]
+ucrop.general =          "com.github.yalantis:ucrop:$versions.ucrop"
+deps.ucrop = ucrop
+
 //============================================= DEEPLINK ===========================================
 def deeplink = [:]
 deeplink.runtime = "com.airbnb:deeplinkdispatch:3.1.0"
@@ -174,6 +181,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.maven {
         url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
     }
+    handler.maven { url "https://jitpack.io" }
 }
 ext.addRepos = this.&addRepos
 
