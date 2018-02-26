@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.service.LoginService
+import com.mnassa.domain.model.AccountModel
+import com.mnassa.domain.model.PhoneVerificationModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -8,9 +9,15 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface LoginInteractor {
     suspend fun isLoggedIn(): Boolean
-    suspend fun requestVerificationCode(phoneNumber: String, previousResponse: LoginService.VerificationCodeResponse? = null): ReceiveChannel<LoginService.VerificationCodeResponse>
-    suspend fun signIn(verificationSMSCode: String, response: LoginService.VerificationCodeResponse)
+    suspend fun requestVerificationCode(
+            phoneNumber: String,
+            previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
+
+    @Throws(InvalidVerificationCode::class)
+    suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<AccountModel>
     suspend fun signOut()
+
+
 
     class InvalidVerificationCode : IllegalArgumentException("Invalid code")
 }

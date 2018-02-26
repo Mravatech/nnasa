@@ -3,7 +3,7 @@ package com.mnassa.screen.login.enterphone
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.service.LoginService
+import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
@@ -15,7 +15,7 @@ import timber.log.Timber
  * Created by Peter on 2/21/2018.
  */
 class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
-    private lateinit var verificationResponse: LoginService.VerificationCodeResponse
+    private lateinit var verificationResponse: PhoneVerificationModel
 
     override val openScreenChannel: ArrayBroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
     override val errorMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
@@ -39,11 +39,9 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
                     verificationResponse = it
 
                     when {
-                        //wait for confirm code
-                        verificationResponse.isVerificationNeeded -> openScreenChannel.send(
-                                EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(verificationResponse))
-                        //if user have been verified automatically
-                        else -> openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.MainScreen())
+                        it.isVerified -> signIn(it)
+                        else -> openScreenChannel.send(
+                                EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
                     }
                 }
             } catch (e: JobCancellationException) {
@@ -53,6 +51,14 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
                 errorMessageChannel.send(e.message ?: "")
             }
         }
+    }
+
+    private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
+        val accounts = loginInteractor.signIn(phoneVerificationModel)
+        Timber.e("$accounts")
+
+
+        openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.MainScreen())
     }
 
     override fun saveInstanceState(outBundle: Bundle) {

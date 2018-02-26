@@ -3,12 +3,11 @@ package com.mnassa.screen.login.entercode
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.service.LoginService
+import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -18,8 +17,8 @@ import timber.log.Timber
 class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterCodeViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<EnterCodeViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    override val showMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
-    override lateinit var verificationResponse: LoginService.VerificationCodeResponse
+    override val errorMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
+    override lateinit var verificationResponse: PhoneVerificationModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,37 +40,39 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
                 val phoneNumber = verificationResponse.phoneNumber
                 loginInteractor.requestVerificationCode(phoneNumber).consumeEach {
                     verificationResponse = it
-                    when {
-                        verificationResponse.isVerificationNeeded -> {
-                            //do nothing
-                            //wait for confirm code
-                        }
-                    //if user have been verified automatically
-                        else -> openScreenChannel.send(EnterCodeViewModel.OpenScreenCommand.MainScreen())
+                    if (it.isVerified) {
+                        signIn()
                     }
                 }
             } catch (e: JobCancellationException) {
                 Timber.d(e)
             } catch (e: Exception) {
                 Timber.e(e)
-                showMessageChannel.send(e.message ?: "")
+                errorMessageChannel.send(e.message ?: "")
             }
         }
     }
 
-    private var loginJob: Job? = null
     override fun verifyCode(code: String) {
-        loginJob?.cancel()
+        signIn(code)
+    }
 
-        loginJob = launchCoroutineUI {
+    private var signInJob: Job? = null
+    private fun signIn(code: String? = null) {
+        signInJob?.cancel()
+
+        signInJob = launchCoroutineUI {
+
             try {
-                loginInteractor.signIn(code, verificationResponse)
+                loginInteractor.signIn(verificationResponse, code)
                 openScreenChannel.send(EnterCodeViewModel.OpenScreenCommand.MainScreen())
             } catch (e: JobCancellationException) {
                 Timber.d(e)
+            } catch (e: LoginInteractor.InvalidVerificationCode) {
+                Timber.d(e)
             } catch (e: Exception) {
                 Timber.e(e)
-                showMessageChannel.send(e.message ?: "")
+                errorMessageChannel.send(e.message ?: "")
             }
         }
     }

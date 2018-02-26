@@ -4,7 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseUser
-import com.mnassa.domain.models.impl.UserProfileModelImpl
+import com.mnassa.domain.model.impl.UserProfileModelImpl
 
 /**
  * Created by Peter on 2/21/2018.

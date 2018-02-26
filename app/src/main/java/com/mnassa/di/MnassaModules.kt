@@ -10,11 +10,12 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.Coroutin
 import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.converter.TranslatedWordConverter
 import com.mnassa.data.converter.UserProfileConverter
-import com.mnassa.data.network.api.UsersApi
+import com.mnassa.data.network.RetrofitConfig
+import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.repository.DictionaryRepositoryImpl
 import com.mnassa.data.repository.TagRepositoryImpl
 import com.mnassa.data.repository.UserRepositoryImpl
-import com.mnassa.data.service.LoginServiceImpl
+import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -22,17 +23,21 @@ import com.mnassa.domain.interactor.impl.DictionaryInteractorImpl
 import com.mnassa.domain.interactor.impl.LoginInteractorImpl
 import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
-import com.mnassa.domain.service.LoginService
+import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.other.AppInfoProviderImpl
+import com.mnassa.other.LanguageProviderImpl
 import com.mnassa.screen.login.entercode.EnterCodeViewModel
 import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
+import com.mnassa.screen.registration.RegistrationViewModel
+import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -59,6 +64,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
+    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {
@@ -78,13 +84,13 @@ private val repositoryModule = Kodein.Module {
         result
     }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
-    bind<LoginService>() with singleton { LoginServiceImpl() }
+    bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl() }
 }
 
 private val interactorModule = Kodein.Module {
@@ -94,23 +100,17 @@ private val interactorModule = Kodein.Module {
 }
 
 private val networkModule = Kodein.Module {
+    bind<RetrofitConfig>() with singleton { RetrofitConfig(instance(), instance(), instance()) }
     bind<Retrofit>() with singleton {
-        val appInfoProvider: AppInfoProvider = instance()
-        val baseUrl = appInfoProvider.endpoint
-
-        Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+        instance<RetrofitConfig>().makeRetrofit()
     }
-
-    bind<UsersApi>() with singleton {
+    bind<FirebaseAuthApi>() with singleton {
         val retrofit: Retrofit = instance()
-        retrofit.create(UsersApi::class.java)
+        retrofit.create(FirebaseAuthApi::class.java)
     }
 }
 
 private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
+    bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
 }

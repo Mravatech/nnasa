@@ -3,11 +3,13 @@ package com.mnassa.data.repository
 import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.bean.firebase.TranslatedWordBean
 import com.mnassa.data.repository.dictionary.DictionaryPreferences
 import com.mnassa.data.repository.dictionary.DictionaryResources
-import com.mnassa.domain.models.EmptyWord
-import com.mnassa.domain.models.TranslatedWord
+import com.mnassa.domain.model.EmptyWord
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.DictionaryRepository
 import kotlinx.coroutines.experimental.async
@@ -27,26 +29,25 @@ class DictionaryRepositoryImpl(
     private val dictionaryResources = DictionaryResources(context, appInfoProvider)
 
     override suspend fun getMobileUiVersion(): ReceiveChannel<Int> {
-        return getObservable<Int>(databaseReference, path = "clientData", id = "mobileUiVersion").map { requireNotNull(it) }
+        return databaseReference.child("clientData").child("mobileUiVersion").toValueChannel<Int>().map { requireNotNull(it) }
     }
 
-    override suspend fun loadDictionary(): List<TranslatedWord> {
+    override suspend fun loadDictionary(): List<TranslatedWordModel> {
         return async {
-            val dictionary = get<TranslatedWordBean>(
-                    databaseReference,
-                    path = "dictionary/mobileUi"
-            ).filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
-            converter.convertCollection(dictionary, TranslatedWord::class.java)
+            val dictionary = databaseReference.child("dictionary").child("mobileUi")
+                    .awaitList<TranslatedWordBean>()
+                    .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
+            converter.convertCollection(dictionary, TranslatedWordModel::class.java)
         }.await()
     }
 
     override fun getLocalDictionaryVersion(): Int = dictionaryPreferences.getDictionaryVersion()
 
-    override fun saveLocalDictionary(version: Int, dictionary: List<TranslatedWord>) {
+    override fun saveLocalDictionary(version: Int, dictionary: List<TranslatedWordModel>) {
         dictionaryPreferences.saveDictionary(version, dictionary)
         dictionaryResources.print(dictionary)
     }
 
-    override fun getLocalWord(id: String): TranslatedWord =
+    override fun getLocalWord(id: String): TranslatedWordModel =
             dictionaryPreferences.getWord(id) ?: dictionaryResources.getWord(id) ?: EmptyWord
 }

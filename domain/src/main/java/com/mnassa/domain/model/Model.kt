@@ -1,4 +1,4 @@
-package com.mnassa.domain.models
+package com.mnassa.domain.model
 
 import java.io.Serializable
 
