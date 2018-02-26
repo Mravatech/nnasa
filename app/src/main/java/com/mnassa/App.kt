@@ -3,6 +3,7 @@ package com.mnassa
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.facebook.stetho.Stetho
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.autoAndroidModule
 import com.google.firebase.FirebaseApp
@@ -35,6 +36,7 @@ class App : Application(), KodeinAware {
             LeakCanary.install(this)
 
             Timber.plant(Timber.DebugTree())
+            Stetho.initializeWithDefaults(this)
         } else {
             Timber.plant(CrashReportingTree())
         }

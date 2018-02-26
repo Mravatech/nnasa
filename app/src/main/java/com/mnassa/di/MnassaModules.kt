@@ -27,8 +27,10 @@ import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.LoginService
 import com.mnassa.other.AppInfoProviderImpl
-import com.mnassa.screen.login.EnterPhoneViewModel
-import com.mnassa.screen.login.EnterPhoneViewModelImpl
+import com.mnassa.screen.login.entercode.EnterCodeViewModel
+import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
@@ -55,7 +57,8 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
+    bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -77,7 +80,7 @@ private val repositoryModule = Kodein.Module {
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {

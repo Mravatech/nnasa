@@ -17,7 +17,8 @@ class TranslatedWordConverter : ConvertersContextRegistrationCallback {
     private fun convert(input: TranslatedWordBean): TranslatedWordImpl {
         return TranslatedWordImpl(
                 id = input.id,
-                engTranslate = input.eng,
-                arabicTranslate = input.ar)
+                engTranslate = input.en,
+                arabicTranslate = input.ar,
+                info = input.info)
     }
 }

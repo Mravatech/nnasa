@@ -8,13 +8,15 @@ import com.mnassa.domain.models.HasId
  * Created by Peter on 2/23/2018.
  */
 @IgnoreExtraProperties
-data class TranslatedWordBean(
+internal data class TranslatedWordBean(
         override var id: String,
 
         @PropertyName("info")
-        val eng: String?,
+        val info: String,
         @PropertyName("ar")
-        val ar: String?
+        val ar: String?,
+        @PropertyName("en")
+        val en: String?
 ) : HasId {
-    constructor() : this("", null, null)
+    constructor() : this("", "", null, null)
 }

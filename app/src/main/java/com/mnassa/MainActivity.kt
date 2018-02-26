@@ -3,7 +3,6 @@ package com.mnassa
 import android.app.Activity
 import android.app.FragmentManager
 import android.app.LoaderManager
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope
 
         router = Conductor.attachRouter(this, container, savedInstanceState)
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(SplashController.newInstance())) //TODO: maybe provide controllers
+            router.setRoot(RouterTransaction.with(SplashController.newInstance()))
         }
     }
 
