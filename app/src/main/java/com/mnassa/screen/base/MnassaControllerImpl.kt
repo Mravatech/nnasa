@@ -1,6 +1,5 @@
 package com.mnassa.screen.base
 
-import android.content.Context
 import android.os.Bundle
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
@@ -15,7 +14,7 @@ import java.util.*
 /**
  * Created by Peter on 2/20/2018.
  */
-abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>(), MnassaController<VM>, AndroidInjector<MnassaController<VM>, AndroidScope<MnassaController<VM>>> {
+abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, AndroidInjector<MnassaController<VM>, AndroidScope<MnassaController<VM>>> {
     final override val injector = KodeinInjector()
     final override val kodeinComponent = super.kodeinComponent
     final override val kodeinScope: AndroidScope<MnassaController<VM>> = object : AndroidScope<MnassaController<VM>> {
@@ -23,10 +22,12 @@ abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>
         override fun removeFromScope(context: MnassaController<VM>): ScopeRegistry? = CONTEXT_SCOPES.remove(context)
     }
 
+    constructor(params: Bundle): super(params)
+    constructor(): super()
+
     override fun initializeInjector() {
         val activityModule = Kodein.Module {
             Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MnassaControllerImpl)
-            Bind<Context>(erased()) with InstanceBinding(erased(), requireNotNull(applicationContext))
             import(provideOverridingModule(), allowOverride = true)
         }
 

@@ -5,6 +5,6 @@ import java.io.Serializable
 /**
  * Created by Peter on 2/22/2018.
  */
-interface Model : Serializable {
-    var id: String
+interface Model : Serializable, HasId {
+    override var id: String
 }

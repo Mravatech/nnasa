@@ -20,6 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-dontwarn
+
 #KodeIn
 #Firebase
 -keepattributes Signature

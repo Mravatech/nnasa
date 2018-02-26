@@ -4,20 +4,18 @@ import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.repository.TagRepository
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.delay
-import timber.log.Timber
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.RendezvousChannel
 
 /**
  * Created by Peter on 2/21/2018.
  */
 class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
-        private val userProfileInteractor: UserProfileInteractor,
-        private val tagRepo: TagRepository) : MnassaViewModelImpl(), MainViewModel {
-    override val openScreenChannel: RendezvousChannel<MainViewModel.ScreenType> = RendezvousChannel()
+        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), MainViewModel {
+    override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
     override val userName: ConflatedBroadcastChannel<String> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,17 +24,6 @@ class MainViewModelImpl(
         launchCoroutineUI {
             val profile = userProfileInteractor.getProfile()
             userName.send(profile.name)
-        }
-
-        //Just for test
-        launchCoroutineUI {
-            tagRepo.load().consumeEachIndexed {
-                Timber.e("TAGGG = ${it.index} -> ${it.value}")
-                if (it.index % 10 == 0 && it.index != 0) delay(3_000)
-
-                val x = tagRepo.get(it.value.id)
-                assert(x?.nameEn == it.value.nameEn)
-            }
         }
     }
 

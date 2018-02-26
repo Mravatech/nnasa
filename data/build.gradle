@@ -44,14 +44,11 @@ dependencies {
     //mapper
     implementation deps.mapper.core
 
-    //dependency injection
-    implementation deps.di.core
-    implementation deps.di.android
-
     //other
     implementation deps.other.logger
 
     //kotlin
     implementation deps.kotlin.stdlib
+    implementation deps.kotlin.androidExtensions
     implementation deps.coroutines.core
 }

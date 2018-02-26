@@ -79,15 +79,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "722363446482-norpe59pd5e5593i9m66luvt4aqautu1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "isddesign.mnassa4"
               }
-            },
-            {
-              "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },
@@ -138,15 +138,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "722363446482-norpe59pd5e5593i9m66luvt4aqautu1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "isddesign.mnassa4"
               }
-            },
-            {
-              "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },
@@ -189,15 +189,66 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "722363446482-norpe59pd5e5593i9m66luvt4aqautu1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "isddesign.mnassa4"
               }
-            },
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722363446482:android:977536cf7fb62b39",
+        "android_client_info": {
+          "package_name": "com.mnassa.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "722363446482-lv246fn3841rfcju1up0gcm6kkonq6k5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mnassa.dev",
+            "certificate_hash": "bca47406bfa0eda32ab808faf2a81fc42d6a2141"
+          }
+        },
+        {
+          "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1rZJ-P8V6Y2-Adzc1WH-2DYCivYEnGfg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
             {
               "client_id": "722363446482-br0sgk4mqgs56rf1rki4plc2hjfc28an.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "722363446482-norpe59pd5e5593i9m66luvt4aqautu1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "isddesign.mnassa4"
+              }
             }
           ]
         },
