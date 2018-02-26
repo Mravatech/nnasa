@@ -1,6 +1,7 @@
 package com.mnassa.data.network
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.other.AppInfoProvider
@@ -18,7 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitConfig(
         private val appInfoProvider: AppInfoProvider,
         private val languageProvider: LanguageProvider,
-        private val userProfileInteractor: UserProfileInteractor) {
+        private val userProfileInteractor: UserProfileInteractor,
+        private val gson: Gson) {
 
     fun makeRetrofit(): Retrofit {
         val baseUrl = appInfoProvider.endpoint
@@ -26,7 +28,7 @@ class RetrofitConfig(
         val okHttpBuilder = OkHttpClient.Builder()
 
         if (appInfoProvider.isDebug) {
-            okHttpBuilder.addInterceptor(StethoInterceptor())
+            okHttpBuilder.addNetworkInterceptor(StethoInterceptor())
             okHttpBuilder.addInterceptor(HttpLoggingInterceptor())
         }
 
@@ -47,7 +49,7 @@ class RetrofitConfig(
         val retrofitBuilder = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
 
         return retrofitBuilder.client(okHttpBuilder.build()).build()
     }

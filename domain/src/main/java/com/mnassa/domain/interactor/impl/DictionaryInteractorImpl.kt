@@ -21,7 +21,6 @@ class DictionaryInteractorImpl(private val repository: DictionaryRepository) : D
                 }
             }
         } catch (e: Exception) {
-            //TODO: ask Vlad about permissions
             //must never happen
             Timber.e(e)
             delay(5_000L)
@@ -30,4 +29,7 @@ class DictionaryInteractorImpl(private val repository: DictionaryRepository) : D
     }
 
     override fun getWord(key: String): TranslatedWordModel = repository.getLocalWord(key)
+
+    override val noInternetMessage: String = "NO INTERNET!"
+    override val somethingWentWrongMessage: String = "SOMETHING WENT WRONG!"
 }

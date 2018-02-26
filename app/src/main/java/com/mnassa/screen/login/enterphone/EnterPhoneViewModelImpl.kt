@@ -55,7 +55,7 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
 
     private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
         val accounts = loginInteractor.signIn(phoneVerificationModel)
-        Timber.e("$accounts")
+        Timber.e("${accounts.joinToString()}")
 
 
         openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.MainScreen())

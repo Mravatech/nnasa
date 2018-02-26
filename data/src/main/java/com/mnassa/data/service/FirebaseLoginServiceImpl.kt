@@ -7,6 +7,7 @@ import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.CheckPhoneRequest
+import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
@@ -14,20 +15,20 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 2/21/2018.
  */
-class FirebaseLoginServiceImpl(private val authApi: FirebaseAuthApi) : FirebaseLoginService {
+class FirebaseLoginServiceImpl(
+        private val authApi: FirebaseAuthApi,
+        private val networkErrorHandler: NetworkExceptionHandler) : FirebaseLoginService {
 
     override suspend fun checkPhone(phoneNumber: String, promoCode: String?) {
         try {
             authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).await()
-        } catch (e: HttpException) {
-            ---- TODO
-            e.response().errorBody()?.
+        } catch (e: Throwable) {
+            throw networkErrorHandler.handle(e)
         }
     }
 
@@ -76,9 +77,9 @@ class FirebaseLoginServiceImpl(private val authApi: FirebaseAuthApi) : FirebaseL
     override suspend fun signIn(verificationSMSCode: String?, response: PhoneVerificationModel) {
         when {
             verificationSMSCode == null && response is VerificationCodeResponseImpl.OnVerificationCompleted ->
-                    signIn(response.credential)
+                signIn(response.credential)
             verificationSMSCode != null && response is VerificationCodeResponseImpl.OnCodeSent ->
-                    signIn(PhoneAuthProvider.getCredential(response.verificationId, verificationSMSCode))
+                signIn(PhoneAuthProvider.getCredential(response.verificationId, verificationSMSCode))
         }
     }
 
@@ -101,6 +102,7 @@ class FirebaseLoginServiceImpl(private val authApi: FirebaseAuthApi) : FirebaseL
         class OnVerificationCompleted(phoneNumber: String, val credential: PhoneAuthCredential) : VerificationCodeResponseImpl(isVerified = true, phoneNumber = phoneNumber) {
 
             constructor(parcel: Parcel) : this(parcel.readString(), parcel.readParcelable<PhoneAuthCredential>(PhoneAuthCredential::class.java.classLoader))
+
             override fun writeToParcel(dest: Parcel, flags: Int) {
                 dest.writeString(phoneNumber)
                 dest.writeParcelable(credential, 0)
@@ -114,7 +116,7 @@ class FirebaseLoginServiceImpl(private val authApi: FirebaseAuthApi) : FirebaseL
             }
         }
 
-         class OnCodeSent(
+        class OnCodeSent(
                 phoneNumber: String,
                 val verificationId: String,
                 val token: PhoneAuthProvider.ForceResendingToken?) : VerificationCodeResponseImpl(isVerified = false, phoneNumber = phoneNumber) {
