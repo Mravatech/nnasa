@@ -16,20 +16,6 @@
             android:layout_centerInParent="true"
             android:layout_margin="8dp"
             android:contentDescription="@null" />
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fabAddPhoto"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginTop="50dp" />-->
-
-        <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/fabAddPhoto"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:text="Add your profile Photo" />-->
     </RelativeLayout>
 
 
@@ -37,7 +23,7 @@
         android:id="@+id/buttonWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnCrop"
+        android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
         android:orientation="horizontal"
         android:weightSum="2">
@@ -46,8 +32,8 @@
             android:id="@+id/btnTakePhotoFromCamera"
             style="@style/MnassaButton"
             android:layout_width="0dp"
-            android:layout_margin="8dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:layout_weight="1"
             tools:text="Take Photo" />
 
@@ -55,18 +41,10 @@
             android:id="@+id/btnTakePhotoFromGallery"
             style="@style/MnassaButton"
             android:layout_width="0dp"
-            android:layout_margin="8dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:layout_weight="1"
             tools:text="Take Photo From Camera" />
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btnCrop"
-        style="@style/MnassaButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        tools:text="Crop Photo" />
 </RelativeLayout>
