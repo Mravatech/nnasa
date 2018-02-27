@@ -3,6 +3,7 @@ package com.mnassa.screen.profile
 import android.net.Uri
 import android.os.Bundle
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Job
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,8 +17,9 @@ class ProfileViewModelImpl : MnassaViewModelImpl(), ProfileViewModel {
 
 
     }
-
+    private var sendJob: Job? = null
     override fun sendToStorage(uri: Uri) {
+        sendJob?.cancel()
        // create interactor for sanding data to storage
     }
 

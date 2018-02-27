@@ -19,7 +19,7 @@ import java.io.File
 class CropActivity : AppCompatActivity() {
 
     private var mUri: Uri? = null
-    private var cachedUri: Uri? = null
+    private lateinit var cachedUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class CropActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_CAMERA) {
-            mUri = if (data != null) data.data else mUri
+            mUri = data?.data ?: mUri
             cropImage()
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_GALLERY) {
             mUri = data?.data
@@ -64,8 +64,8 @@ class CropActivity : AppCompatActivity() {
     }
 
     private fun cropImage() {
-        if (mUri != null) {
-            UCrop.of(mUri!!, cachedUri!!)
+        mUri?.let {
+            UCrop.of(it, cachedUri)
                     .start(this)
         }
     }
