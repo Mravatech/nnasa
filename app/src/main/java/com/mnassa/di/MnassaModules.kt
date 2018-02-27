@@ -12,17 +12,21 @@ import com.mnassa.data.converter.TranslatedWordConverter
 import com.mnassa.data.converter.UserProfileConverter
 import com.mnassa.data.network.api.UsersApi
 import com.mnassa.data.repository.DictionaryRepositoryImpl
+import com.mnassa.data.repository.StorageRepositoryImpl
 import com.mnassa.data.repository.TagRepositoryImpl
 import com.mnassa.data.repository.UserRepositoryImpl
 import com.mnassa.data.service.LoginServiceImpl
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.interactor.impl.DictionaryInteractorImpl
 import com.mnassa.domain.interactor.impl.LoginInteractorImpl
+import com.mnassa.domain.interactor.impl.StorageInteractorImpl
 import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.DictionaryRepository
+import com.mnassa.domain.repository.StorageRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.LoginService
@@ -61,7 +65,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
-    bind<ProfileViewModel>() with provider { ProfileViewModelImpl() }
+    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -84,6 +88,7 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -94,6 +99,7 @@ private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
+    bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
 }
 
 private val networkModule = Kodein.Module {

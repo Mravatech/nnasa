@@ -9,7 +9,9 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_crop.view.*
 import android.net.Uri
 import android.support.annotation.IntRange
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.CropActivity
+import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -41,9 +43,18 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
 
         onActivityResult.subscribe {
             if (it.resultCode == Activity.RESULT_OK && it.requestCode == REQUEST_CODE_CROP) {
-                setImage(it.data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT))
+                val uri: Uri? = it.data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
+                uri?.let {
+                    viewModel.sendToStorage(it)
+                }
             } else if (it.resultCode == CropActivity.GET_PHOTO_ERROR) {
                 Timber.i("CropActivity.GET_PHOTO_ERROR")
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.imageUploadedChannel.consumeEach {
+                setImage(it)
             }
         }
     }
@@ -55,8 +66,8 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
         }
     }
 
-    private fun setImage(resultUri: Uri?) {
-        resultUri?.let {
+    private fun setImage(result: String?) {
+        result?.let {
             Glide.with(view?.ivCropImage).load(it).into(view?.ivCropImage)
         }
     }

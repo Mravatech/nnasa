@@ -73,6 +73,7 @@ firebase.core =            "com.google.firebase:firebase-core:$versions.firebase
 firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
 firebase.auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
 firebase.database =        "com.google.firebase:firebase-database:$versions.firebase"
+firebase.storage =         "com.google.firebase:firebase-storage:$versions.firebase"
 
 deps.firebase = firebase
 
