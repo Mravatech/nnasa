@@ -1,6 +1,8 @@
 package com.mnassa.core
 
 import android.arch.lifecycle.*
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +13,11 @@ import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.EmitableCompositeEventListener
+import com.mnassa.core.events.OnActivityResultEvent
 import com.mnassa.core.events.impl.SimpleCompositeEventListener
+import com.mnassa.core.permissions.OnRequestPermissionsResultEvent
+import com.mnassa.core.permissions.PermissionsManager
+import com.mnassa.core.permissions.PermissionsManagerDelegate
 
 /**
  * Created by Peter on 2/20/2018.
@@ -39,6 +45,16 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
     private val lifecycleEmitter: EmitableCompositeEventListener<Lifecycle.Event> = SimpleCompositeEventListener()
     override val lifecycle: CompositeEventListener<Lifecycle.Event> = lifecycleEmitter
     override fun getLifecycle(): LifecycleRegistry = lifecycleRegistryOwner.lifecycle
+
+    //OnActivityResult
+    private val onActivityResultEmitter: EmitableCompositeEventListener<OnActivityResultEvent> = SimpleCompositeEventListener()
+    override val onActivityResult: CompositeEventListener<OnActivityResultEvent> = onActivityResultEmitter
+
+    //OnRequestPermissionsResult
+    private val onRequestPermissionResultEmitter: EmitableCompositeEventListener<OnRequestPermissionsResultEvent> = SimpleCompositeEventListener()
+    override val permissions: PermissionsManager by lazy {
+        PermissionsManagerDelegate(onRequestPermissionResultEmitter, view = { this })
+    }
 
     init {
         addLifecycleListener(object : LifecycleListener() {
@@ -79,6 +95,25 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View =
             inflater.inflate(layoutId, container, false)
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        onActivityResultEmitter.emit(OnActivityResultEvent(requestCode, resultCode, data))
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        val shouldShowRequestPermissionRationale = BooleanArray(permissions.size) {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[it])
+        }
+
+        onRequestPermissionResultEmitter.emit(OnRequestPermissionsResultEvent(
+                requestCode,
+                permissions.toList(),
+                grantResults.toList(),
+                shouldShowRequestPermissionRationale.toList()))
+    }
 
     /**
      * Invokes once after [BaseControllerImpl] creation, when it has [getApplicationContext]
