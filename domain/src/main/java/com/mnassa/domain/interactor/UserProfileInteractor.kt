@@ -8,6 +8,8 @@ import com.mnassa.domain.model.UserProfileModel
 interface UserProfileInteractor {
 
     suspend fun getProfile(): UserProfileModel
+    suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String)
+    suspend fun createOrganizationAccount(companyName: String, userName: String, city: String)
 
     suspend fun getToken(): String?
     suspend fun getAccountId(): String?

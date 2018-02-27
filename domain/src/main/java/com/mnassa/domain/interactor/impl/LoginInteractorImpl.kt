@@ -29,4 +29,8 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
     override suspend fun signOut() {
         loginService.signOut()
     }
+
+    override suspend fun selectAccount(account: AccountModel) {
+        userRepository.setCurrentUserAccount(account)
+    }
 }

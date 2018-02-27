@@ -55,10 +55,18 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
 
     private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
         val accounts = loginInteractor.signIn(phoneVerificationModel)
-        Timber.e("${accounts.joinToString()}")
 
+        val nextScreen = when {
+            accounts.isEmpty() -> EnterPhoneViewModel.OpenScreenCommand.Registration()
+            accounts.size == 1 -> {
+                loginInteractor.selectAccount(accounts.first())
+                EnterPhoneViewModel.OpenScreenCommand.MainScreen()
+            }
+            else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)
+        }
 
-        openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.MainScreen())
+        openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.Registration())
+//        openScreenChannel.send(nextScreen)
     }
 
     override fun saveInstanceState(outBundle: Bundle) {

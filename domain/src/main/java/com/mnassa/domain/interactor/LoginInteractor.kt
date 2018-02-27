@@ -17,6 +17,8 @@ interface LoginInteractor {
     suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<AccountModel>
     suspend fun signOut()
 
+    suspend fun selectAccount(account: AccountModel)
+
 
 
     class InvalidVerificationCode : IllegalArgumentException("Invalid code")

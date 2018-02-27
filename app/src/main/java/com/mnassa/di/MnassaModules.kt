@@ -38,8 +38,10 @@ import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
-import com.mnassa.screen.registration.RegistrationViewModel
-import com.mnassa.screen.registration.RegistrationViewModelImpl
+import com.mnassa.screen.registration.first.RegistrationViewModel
+import com.mnassa.screen.registration.first.RegistrationViewModelImpl
+import com.mnassa.screen.registration.second.PersonalInfoViewModel
+import com.mnassa.screen.registration.second.PersonalInfoViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -65,7 +67,8 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
-    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl() }
+    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
+    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

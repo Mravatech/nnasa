@@ -15,7 +15,9 @@ import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.other.SimpleTextWatcher
 import com.mnassa.other.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.registration.first.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -69,6 +71,12 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
                     is EnterCodeViewModel.OpenScreenCommand.MainScreen -> {
                         router.popToRoot()
                         router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
+                    }
+                    is EnterCodeViewModel.OpenScreenCommand.RegistrationScreen -> {
+                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
+                    }
+                    is EnterCodeViewModel.OpenScreenCommand.SelectAccount -> {
+                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance(it.accounts)))
                     }
                 }
             }

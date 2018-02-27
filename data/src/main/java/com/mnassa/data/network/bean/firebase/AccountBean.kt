@@ -27,6 +27,9 @@ internal data class AccountBean(
         @PropertyName("abilities")
         var abilitiesInternal: List<AccountAbilityBean>
 ) : AccountModel {
+
+    constructor(): this("",null,"","",null,"","", emptyList())
+
     override var abilities: List<AccountAbility> = emptyList()
         get() = abilitiesInternal
 }

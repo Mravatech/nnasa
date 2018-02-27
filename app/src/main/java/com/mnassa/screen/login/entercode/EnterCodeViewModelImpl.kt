@@ -64,8 +64,16 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
         signInJob = launchCoroutineUI {
 
             try {
-                loginInteractor.signIn(verificationResponse, code)
-                openScreenChannel.send(EnterCodeViewModel.OpenScreenCommand.MainScreen())
+                val accounts = loginInteractor.signIn(verificationResponse, code)
+                val nextScreen = when {
+                    accounts.isEmpty() -> EnterCodeViewModel.OpenScreenCommand.RegistrationScreen()
+                    accounts.size == 1 -> {
+                        loginInteractor.selectAccount(accounts.first())
+                        EnterCodeViewModel.OpenScreenCommand.MainScreen()
+                    }
+                    else -> EnterCodeViewModel.OpenScreenCommand.SelectAccount(accounts)
+                }
+                openScreenChannel.send(nextScreen)
             } catch (e: JobCancellationException) {
                 Timber.d(e)
             } catch (e: LoginInteractor.InvalidVerificationCode) {

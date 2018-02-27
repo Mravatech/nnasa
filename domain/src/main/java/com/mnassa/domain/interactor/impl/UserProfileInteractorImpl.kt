@@ -12,6 +12,14 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
         return requireNotNull(userRepository.getCurrentUser())
     }
 
-    override suspend fun getToken(): String? = userRepository.getToken()
-    override suspend fun getAccountId(): String? = userRepository.getAccountId()
+    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String) {
+
+    }
+
+    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String) {
+
+    }
+
+    override suspend fun getToken(): String? = userRepository.getFirebaseToken()
+    override suspend fun getAccountId(): String? = userRepository.getFirebaseUserId()
 }

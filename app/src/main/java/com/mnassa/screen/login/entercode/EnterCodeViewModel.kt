@@ -1,5 +1,6 @@
 package com.mnassa.screen.login.entercode
 
+import com.mnassa.domain.model.AccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -17,5 +18,7 @@ interface EnterCodeViewModel : MnassaViewModel {
 
     sealed class OpenScreenCommand {
         class MainScreen : OpenScreenCommand()
+        class RegistrationScreen : OpenScreenCommand()
+        class SelectAccount(val accounts: List<AccountModel>) : OpenScreenCommand()
     }
 }

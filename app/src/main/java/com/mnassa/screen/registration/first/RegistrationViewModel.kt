@@ -1,4 +1,4 @@
-package com.mnassa.screen.registration
+package com.mnassa.screen.registration.first
 
 import com.mnassa.screen.base.MnassaViewModel
 
