@@ -10,7 +10,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EnterCodeViewModel : MnassaViewModel {
     val openScreenChannel: BroadcastChannel<OpenScreenCommand>
-    val errorMessageChannel: BroadcastChannel<String>
     var verificationResponse: PhoneVerificationModel
 
     fun resendCode()

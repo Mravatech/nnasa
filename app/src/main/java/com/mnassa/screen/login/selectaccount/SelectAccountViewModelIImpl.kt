@@ -1,6 +1,5 @@
 package com.mnassa.screen.login.selectaccount
 
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -14,8 +13,7 @@ class SelectAccountViewModelIImpl(private val userProfileInteractor: UserProfile
     override val openScreenChannel: ArrayBroadcastChannel<SelectAccountViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
 
     override fun selectAccount(account: ShortAccountModel) {
-
-        launchCoroutineUI {
+        handleException {
             userProfileInteractor.setCurrentUserAccount(account)
             openScreenChannel.send(SelectAccountViewModel.OpenScreenCommand.MainScreen())
         }

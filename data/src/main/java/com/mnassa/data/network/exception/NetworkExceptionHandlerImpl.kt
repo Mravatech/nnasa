@@ -1,15 +1,11 @@
 package com.mnassa.data.network.exception
 
-import android.text.TextUtils
 import com.google.gson.Gson
 import com.mnassa.data.network.bean.retrofit.MnassaErrorBody
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.DictionaryInteractor
 import okhttp3.Headers
-import okhttp3.ResponseBody
-import okio.Buffer
-import okio.BufferedSource
 import retrofit2.HttpException
 import timber.log.Timber
 import java.net.SocketTimeoutException
@@ -25,23 +21,20 @@ class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryIn
     override fun handle(throwable: Throwable): Throwable {
         Timber.d(throwable)
 
-        if (throwable is NetworkException) { //error is already handled
-            return throwable
+        return when {
+            throwable is NetworkException -> throwable
+            isNetworkDisabledException(throwable) -> NetworkDisableException(dictionaryInteractor.noInternetMessage, throwable)
+            else -> {
+                val errorBody = transformExceptionTo(throwable, MnassaErrorBody::class.java)
+                NetworkException(
+                        message = errorBody?.error ?: getMessage(throwable) ?: "",
+                        code = getCode(throwable),
+                        status = errorBody?.status,
+                        errorCode = errorBody?.errorCode,
+                        cause = throwable
+                )
+            }
         }
-
-        return if (isNetworkDisabledException(throwable)) {
-            NetworkDisableException(dictionaryInteractor.noInternetMessage, throwable)
-        } else {
-            val errorBody = transformExceptionTo(throwable, MnassaErrorBody::class.java)
-            NetworkException(
-                    message = errorBody?.error ?: getMessage(throwable) ?: "",
-                    code = getCode(throwable),
-                    status = errorBody?.status,
-                    errorCode = errorBody?.errorCode,
-                    cause = throwable
-            )
-        }
-
     }
 
     override fun getCode(throwable: Throwable): Int {
@@ -52,21 +45,13 @@ class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryIn
         return (throwable as? HttpException)?.response()?.headers()
     }
 
-    override fun getMessage(throwable: Throwable): String? {
-        if (throwable is HttpException) {
-            val restError = transformExceptionTo(throwable, MnassaErrorBody::class.java)
-            return restError?.error ?: dictionaryInteractor.somethingWentWrongMessage
-        } else {
-            //network error
-            if ("Canceled".equals(throwable.cause?.message, ignoreCase = true)) {
-                return ""
-            } else if (isNetworkDisabledException(throwable)) {
-                //no network exception
-                return dictionaryInteractor.noInternetMessage
-            }
-        }
-
-        return dictionaryInteractor.somethingWentWrongMessage
+    override fun getMessage(throwable: Throwable): String? = when {
+        throwable is HttpException ->
+            transformExceptionTo(throwable, MnassaErrorBody::class.java)
+                    ?.error ?: dictionaryInteractor.somethingWentWrongMessage
+        "Canceled".equals(throwable.cause?.message, ignoreCase = true) -> null
+        isNetworkDisabledException(throwable) -> dictionaryInteractor.noInternetMessage
+        else -> dictionaryInteractor.somethingWentWrongMessage
     }
 
     private fun isNetworkDisabledException(throwable: Throwable): Boolean {
@@ -82,37 +67,29 @@ class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryIn
      * @return result
     </T> */
     protected fun <T> transformExceptionTo(src: Throwable, clazz: Class<T>): T? {
-        if (src is HttpException) {
+        if (src !is HttpException) return null
 
-            var responseBody: ResponseBody? = null
-            var source: BufferedSource? = null
-            var buffer: Buffer? = null
-
-            try {
-                responseBody = src.response().errorBody()
-                source = responseBody!!.source()
-
-                if (source != null) {
+        try {
+            src.response().errorBody()?.use { responseBody ->
+                responseBody.source()?.use { source ->
                     source.request(java.lang.Long.MAX_VALUE) // Buffer the entire body.
-                    buffer = source.buffer()
+                    source.buffer().use { buffer ->
+                        var charset: Charset? = Charset.defaultCharset()
+                        responseBody.contentType()?.apply {
+                            charset = charset(charset)
+                        }
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        val errorString = buffer.clone().readString(charset)
 
-                    var charset: Charset? = Charset.defaultCharset()
-                    val contentType = responseBody.contentType()
-                    if (contentType != null) {
-                        charset = contentType.charset(charset)
-                    }
-                    val errorString = buffer.clone().readString(charset)
-                    if (!TextUtils.isEmpty(errorString)) {
-                        return gson.fromJson(errorString, clazz)
+                        if (errorString.isNotBlank()) {
+                            return gson.fromJson(errorString, clazz)
+                        }
                     }
                 }
-            } catch (e: Exception) {
-                Timber.d(e)
-            } finally {
-                responseBody?.close()
-                source?.close()
-                buffer?.close()
             }
+
+        } catch (e: Exception) {
+            Timber.d(e)
         }
         return null
     }

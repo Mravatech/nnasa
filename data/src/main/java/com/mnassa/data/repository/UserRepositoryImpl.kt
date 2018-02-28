@@ -13,6 +13,7 @@ import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
 import com.mnassa.data.network.exception.NetworkExceptionHandler
+import com.mnassa.data.network.exception.handleNetworkException
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 
@@ -68,35 +69,26 @@ class UserRepositoryImpl(
     }
 
     override suspend fun createPersonAccount(firstName: String, secondName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
-        try {
-            val result = firebaseAuthApi.registerPersonalAccount(RegisterPersonalAccountRequest(
-                    firstName = firstName,
-                    lastName = secondName,
-                    userName = userName,
-                    type = NetworkContract.AccountType.PERSONAL,
-                    offers = offers,
-                    interests = interests
-
-            )).await()
-            return converter.convert(result.account)
-        } catch (e: Throwable) {
-            throw networkExceptionHandler.handle(e)
-        }
+        val result = firebaseAuthApi.registerPersonalAccount(RegisterPersonalAccountRequest(
+                firstName = firstName,
+                lastName = secondName,
+                userName = userName,
+                type = NetworkContract.AccountType.PERSONAL,
+                offers = offers,
+                interests = interests
+        )).handleNetworkException(networkExceptionHandler)
+        return converter.convert(result.account)
     }
 
     override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
-        try {
-            val result = firebaseAuthApi.registerOrganizationAccount(RegisterOrganizationAccountRequest(
-                    userName = userName,
-                    type = NetworkContract.AccountType.PERSONAL,
-                    offers = offers,
-                    interests = interests,
-                    organizationName = companyName
-            )).await()
-            return converter.convert(result.account)
-        } catch (e: Throwable) {
-            throw networkExceptionHandler.handle(e)
-        }
+        val result = firebaseAuthApi.registerOrganizationAccount(RegisterOrganizationAccountRequest(
+                userName = userName,
+                type = NetworkContract.AccountType.PERSONAL,
+                offers = offers,
+                interests = interests,
+                organizationName = companyName
+        )).handleNetworkException(networkExceptionHandler)
+        return converter.convert(result.account)
     }
 
     override suspend fun getFirebaseToken(): String? {
