@@ -1,6 +1,6 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.models.TagModel
+import com.mnassa.domain.model.TagModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**

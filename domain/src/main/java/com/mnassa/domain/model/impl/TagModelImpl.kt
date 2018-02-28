@@ -1,6 +1,6 @@
-package com.mnassa.domain.models.impl
+package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.models.TagModel
+import com.mnassa.domain.model.TagModel
 
 /**
  * Created by Peter on 2/22/2018.

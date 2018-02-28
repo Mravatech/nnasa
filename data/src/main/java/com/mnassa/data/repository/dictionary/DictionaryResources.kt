@@ -1,8 +1,8 @@
 package com.mnassa.data.repository.dictionary
 
 import android.content.Context
-import com.mnassa.domain.models.TranslatedWord
-import com.mnassa.domain.models.impl.TranslatedWordImpl
+import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
 import timber.log.Timber
 
@@ -10,7 +10,7 @@ import timber.log.Timber
  * Created by Peter on 23.02.2018.
  */
 internal class DictionaryResources(private val context: Context, private val appInfoProvider: AppInfoProvider) {
-    fun getWord(id: String): TranslatedWord? {
+    fun getWord(id: String): TranslatedWordModel? {
         val infoId = context.resources.getIdentifier("${id}_INFO", "string", context.packageName)
         if (infoId == 0) return null
         val engId = context.resources.getIdentifier("${id}_ENG", "string", context.packageName)
@@ -26,10 +26,10 @@ internal class DictionaryResources(private val context: Context, private val app
         if (arVal.isNullOrBlank() || arVal == "null") {
             arVal = null
         }
-        return TranslatedWordImpl(id, infoVal, engVal, arVal)
+        return TranslatedWordModelImpl(id, infoVal, engVal, arVal)
     }
 
-    fun print(words: List<TranslatedWord>) {
+    fun print(words: List<TranslatedWordModel>) {
         if (appInfoProvider.isDebug) {
             words.forEach {
                 with(it) {

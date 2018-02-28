@@ -183,6 +183,6 @@ ext.deps = deps
 
 ext {
     endpointRrod = 'https://release.com'
-    endpointPreProd = 'https://mnassa4dev.firebaseio.com/'
-    endpointDev = 'https://fir-test-b7667.firebaseio.com/'
+    endpointPreProd = 'https://us-central1-mnassa4dev.cloudfunctions.net/'
+    endpointDev = 'https://us-central1-fir-test-b7667.cloudfunctions.net/'
 }

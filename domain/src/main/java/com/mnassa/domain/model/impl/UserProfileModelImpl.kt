@@ -1,6 +1,6 @@
-package com.mnassa.domain.models.impl
+package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.models.UserProfileModel
+import com.mnassa.domain.model.UserProfileModel
 
 /**
  * Created by Peter on 2/21/2018.

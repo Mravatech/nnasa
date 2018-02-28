@@ -1,6 +1,6 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.models.TranslatedWord
+import com.mnassa.domain.model.TranslatedWordModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -8,9 +8,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface DictionaryRepository {
     suspend fun getMobileUiVersion(): ReceiveChannel<Int>
-    suspend fun loadDictionary(): List<TranslatedWord>
+    suspend fun loadDictionary(): List<TranslatedWordModel>
 
     fun getLocalDictionaryVersion(): Int
-    fun saveLocalDictionary(version: Int, dictionary: List<TranslatedWord>)
-    fun getLocalWord(id: String): TranslatedWord
+    fun saveLocalDictionary(version: Int, dictionary: List<TranslatedWordModel>)
+    fun getLocalWord(id: String): TranslatedWordModel
 }
