@@ -4,6 +4,9 @@ import android.net.Uri
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.models.impl.storage.DownloadPhotoImpl
+import com.mnassa.domain.models.impl.storage.UploadPhotoImpl
+import com.mnassa.domain.models.storage.*
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -25,16 +28,25 @@ class ProfileViewModelImpl(private val storageInteractor: StorageInteractor) : M
 
     }
 
-    private var sendJob: Job? = null
-    override fun sendToStorage(uri: Uri) {
-        sendJob?.cancel()
-        // create interactor for sanding data to storage
-        sendJob = launchCoroutineUI {
-            storageInteractor.sendAvatar(uri).consumeEach {
+    private var getPhotoJob: Job? = null
+    override fun getPhotoFromStorage() {
+        getPhotoJob?.cancel()
+        getPhotoJob = launchCoroutineUI {
+            storageInteractor.getAvatar(DownloadPhotoImpl(MEDIUM_PHOTO_SIZE, FOLDER_AVATARS)).consumeEach {
                 imageUploadedChannel.send(it)
                 Timber.i(it)
             }
         }
     }
 
+    private var sendPhotoJob: Job? = null
+    override fun sendPhotoToStorage(uri: Uri) {
+        sendPhotoJob?.cancel()
+        sendPhotoJob = launchCoroutineUI {
+            storageInteractor.sendAvatar(UploadPhotoImpl(uri, FOLDER_AVATARS)).consumeEach {
+                imageUploadedChannel.send(it)
+                Timber.i(it)
+            }
+        }
+    }
 }

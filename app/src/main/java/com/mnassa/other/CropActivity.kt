@@ -18,7 +18,7 @@ import java.io.File
 
 class CropActivity : AppCompatActivity() {
 
-    private var mUri: Uri? = null
+    private var uri: Uri? = null
     private lateinit var cachedUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,6 @@ class CropActivity : AppCompatActivity() {
         getPhoto(intent.getIntExtra(PHOTO_INTENT_FLAG, 0))
 
     }
-
 
     private fun getPhoto(flag: Int) {
         when (flag) {
@@ -46,10 +45,10 @@ class CropActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_CAMERA) {
-            mUri = data?.data ?: mUri
+            uri = data?.data ?: uri
             cropImage()
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_GALLERY) {
-            mUri = data?.data
+            uri = data?.data
             cropImage()
         } else if (resultCode == RESULT_CANCELED) {
             setResult(GET_PHOTO_ERROR)
@@ -64,7 +63,7 @@ class CropActivity : AppCompatActivity() {
     }
 
     private fun cropImage() {
-        mUri?.let {
+        uri?.let {
             UCrop.of(it, cachedUri)
                     .start(this)
         }
@@ -77,9 +76,9 @@ class CropActivity : AppCompatActivity() {
             val values = ContentValues()
             values.put(MediaStore.Images.Media.TITLE, System.currentTimeMillis())
             values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-            mUri = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            uri = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mUri)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             startActivityForResult(intent, REQUEST_CODE_CAMERA)
         } else {
             setResult(GET_PHOTO_ERROR)

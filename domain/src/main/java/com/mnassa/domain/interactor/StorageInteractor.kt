@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor
 
-import android.net.Uri
+import com.mnassa.domain.models.storage.DownloadPhoto
+import com.mnassa.domain.models.storage.UploadPhoto
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -10,7 +11,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 
 interface StorageInteractor {
-
-    suspend fun sendAvatar(uri: Uri): ReceiveChannel<String>
+    suspend fun getAvatar(downloadPhoto: DownloadPhoto): ReceiveChannel<String>
+    suspend fun sendAvatar(uploadPhoto: UploadPhoto): ReceiveChannel<String>
     fun cancelUploading()
 }

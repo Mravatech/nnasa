@@ -45,7 +45,7 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
             if (it.resultCode == Activity.RESULT_OK && it.requestCode == REQUEST_CODE_CROP) {
                 val uri: Uri? = it.data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
                 uri?.let {
-                    viewModel.sendToStorage(it)
+                    viewModel.sendPhotoToStorage(it)
                 }
             } else if (it.resultCode == CropActivity.GET_PHOTO_ERROR) {
                 Timber.i("CropActivity.GET_PHOTO_ERROR")
@@ -57,6 +57,8 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
                 setImage(it)
             }
         }
+
+        viewModel.getPhotoFromStorage()
     }
 
     private fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {

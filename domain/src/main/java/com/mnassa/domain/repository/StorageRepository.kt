@@ -1,6 +1,7 @@
 package com.mnassa.domain.repository
 
-import android.net.Uri
+import com.mnassa.domain.models.storage.DownloadPhoto
+import com.mnassa.domain.models.storage.UploadPhoto
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -10,8 +11,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface StorageRepository {
 
-    suspend fun uploadAvatarToStorage(uri: Uri, folder: String, token: String): ReceiveChannel<String>
-
+    suspend fun uploadPhotoToStorage(uploadPhoto: UploadPhoto, token: String): ReceiveChannel<String>
+    suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadPhoto, token: String): ReceiveChannel<String>
     fun cancelUploading()
 
 }
