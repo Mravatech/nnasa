@@ -1,8 +1,9 @@
-package com.mnassa.domain.models.impl.storage
+package com.mnassa.domain.model.impl
 
 import android.net.Uri
-import com.mnassa.domain.models.storage.*
-import com.mnassa.domain.models.storage.UploadPhoto
+import com.mnassa.domain.model.AVATARS
+import com.mnassa.domain.model.FOLDER_AVATARS
+import com.mnassa.domain.model.UploadPhoto
 
 /**
  * Created by IntelliJ IDEA.

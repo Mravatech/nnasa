@@ -16,4 +16,9 @@
     <string name="reg_personal_last_name">_newAcc_cellLastName_title</string>
     <string name="reg_personal_user_name">_accEdit_cellUsername_placeholder</string>
     <string name="reg_personal_city">_accEdit_cellCity_title</string>
+
+    <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
+    <string name="reg_person_info_phone">_accEdit_cellPhone_title</string>
+    <string name="reg_person_info_at">_cellOccupation_placeTitle</string>
+    <string name="reg_person_info_title">_newAccDetails_navTitle</string>
 </resources>

@@ -4,9 +4,10 @@ import android.net.Uri
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.models.impl.storage.DownloadPhotoImpl
-import com.mnassa.domain.models.impl.storage.UploadPhotoImpl
-import com.mnassa.domain.models.storage.*
+import com.mnassa.domain.model.FOLDER_AVATARS
+import com.mnassa.domain.model.MEDIUM_PHOTO_SIZE
+import com.mnassa.domain.model.impl.DownloadPhotoImpl
+import com.mnassa.domain.model.impl.UploadPhotoImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel

@@ -1,4 +1,4 @@
-package com.mnassa.domain.models.storage
+package com.mnassa.domain.model
 
 import android.net.Uri
 
@@ -7,6 +7,6 @@ import android.net.Uri
  * User: okli
  * Date: 2/28/2018
  */
-interface UploadPhoto : StorageData{
+interface UploadPhoto : StorageData {
     val uri: Uri
 }

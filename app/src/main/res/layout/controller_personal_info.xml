@@ -1,6 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/tvPersonalHeader"
+            style="@style/MnassaHeader1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="16dp"
+            tools:text="Personal info" />
+
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
+            android:text="Next" />
+
+        <ImageView
+            android:contentDescription="@null"
+            android:id="@+id/ivUserPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@id/tvPersonalHeader" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddPhotoGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivUserPhoto"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddPhotoCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivUserPhoto"
+            android:layout_marginStart="16dp"
+            android:layout_toStartOf="@id/fabAddPhotoGallery"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fabAddPhotoCamera"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilDateOfBirth"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etDateOfBirth"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilICanHelpWith"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etICanHelpWith"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilAt"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etAt"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilPhoneNumber"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etPhoneNumber"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvAddAnotherPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilYourEmail"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etYourEmail"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@android:color/transparent"
+                tools:text="Skip This Step" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</ScrollView>

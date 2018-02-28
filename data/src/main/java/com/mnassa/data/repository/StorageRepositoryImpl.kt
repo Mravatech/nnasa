@@ -1,12 +1,9 @@
 package com.mnassa.data.repository
 
-import android.net.Uri
-import android.support.annotation.NonNull
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
-import com.mnassa.domain.models.storage.DownloadPhoto
-import com.mnassa.domain.models.storage.UploadPhoto
+import com.mnassa.domain.model.DownloadPhoto
+import com.mnassa.domain.model.UploadPhoto
 import com.mnassa.domain.repository.StorageRepository
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
@@ -20,16 +17,14 @@ import timber.log.Timber
  * Date: 2/27/2018
  */
 
-class StorageRepositoryImpl(
-        private val databaseReference: DatabaseReference
-) : StorageRepository {
+class StorageRepositoryImpl : StorageRepository {
 
     private var uploadTask: UploadTask? = null
     private val ref = FirebaseStorage.getInstance().reference
 
     override suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadPhoto, token: String): ReceiveChannel<String> {
         val sendChannel: Channel<String> = RendezvousChannel()
-        val downloadRef = ref.child("avatars/gjsn9oaxNzSWNHX2snjeMI5XLTM2/1519749202745.jpg")
+        val downloadRef = ref.child("avatars/$token/1519827308733.jpg")
         val task = downloadRef.downloadUrl
 
         task.addOnSuccessListener({
@@ -67,8 +62,6 @@ class StorageRepositoryImpl(
             saveAvatarToDataBase(token, path)
         }
 
-//      database path    accountLinks/token/avatar   check the path
-//      gs://fir-test-b7667.appspot.com/avatars/gjsn9oaxNzSWNHX2snjeMI5XLTM2/1519749202745.jpg
         return sendChannel
     }
 

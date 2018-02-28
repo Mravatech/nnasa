@@ -1,8 +1,7 @@
-package com.mnassa.domain.models.impl.storage
+package com.mnassa.domain.model.impl
 
 import android.support.annotation.IntRange
-import com.mnassa.domain.models.storage.DownloadPhoto
-import com.mnassa.domain.models.storage.*
+import com.mnassa.domain.model.*
 
 /**
  * Created by IntelliJ IDEA.

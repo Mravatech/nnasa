@@ -1,7 +1,7 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.models.storage.DownloadPhoto
-import com.mnassa.domain.models.storage.UploadPhoto
+import com.mnassa.domain.model.DownloadPhoto
+import com.mnassa.domain.model.UploadPhoto
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**

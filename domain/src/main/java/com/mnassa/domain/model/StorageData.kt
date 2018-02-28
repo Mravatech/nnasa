@@ -1,4 +1,4 @@
-package com.mnassa.domain.models.storage
+package com.mnassa.domain.model
 
 /**
  * Created by IntelliJ IDEA.

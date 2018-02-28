@@ -74,7 +74,7 @@ private val viewModelsModule = Kodein.Module {
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
-    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
+    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance()) }
 }
 
@@ -98,7 +98,7 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance()) }
+    bind<StorageRepository>() with singleton { StorageRepositoryImpl() }
 }
 
 private val serviceModule = Kodein.Module {
