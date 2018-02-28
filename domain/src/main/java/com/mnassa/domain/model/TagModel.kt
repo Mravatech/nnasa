@@ -1,4 +1,4 @@
-package com.mnassa.domain.models
+package com.mnassa.domain.model
 
 /**
  * Created by Peter on 2/22/2018.

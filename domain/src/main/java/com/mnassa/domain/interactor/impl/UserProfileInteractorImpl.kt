@@ -1,7 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.models.UserProfileModel
+import com.mnassa.domain.model.UserProfileModel
 import com.mnassa.domain.repository.UserRepository
 
 /**
@@ -11,4 +11,15 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
     override suspend fun getProfile(): UserProfileModel {
         return requireNotNull(userRepository.getCurrentUser())
     }
+
+    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String) {
+
+    }
+
+    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String) {
+
+    }
+
+    override suspend fun getToken(): String? = userRepository.getFirebaseToken()
+    override suspend fun getAccountId(): String? = userRepository.getFirebaseUserId()
 }

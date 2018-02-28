@@ -9,4 +9,11 @@
     <string name="login_enter_code_title">_pin_label_title</string>
     <string name="login_enter_code_resend_after">_pin_resendingTextMask</string>
     <string name="login_enter_code_resend_code">_pin_resendingText</string>
+
+    <string name="reg_title">_newAcc_navTitle</string>
+    <string name="reg_personal_info_title">_newAccDetails_navTitle</string>
+    <string name="reg_personal_first_name">_newAcc_cellFirstName_title</string>
+    <string name="reg_personal_last_name">_newAcc_cellLastName_title</string>
+    <string name="reg_personal_user_name">_accEdit_cellUsername_placeholder</string>
+    <string name="reg_personal_city">_accEdit_cellCity_title</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.DictionaryInteractor
-import com.mnassa.domain.models.TranslatedWord
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.repository.DictionaryRepository
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
@@ -21,7 +21,6 @@ class DictionaryInteractorImpl(private val repository: DictionaryRepository) : D
                 }
             }
         } catch (e: Exception) {
-            //TODO: ask Vlad about permissions
             //must never happen
             Timber.e(e)
             delay(5_000L)
@@ -29,5 +28,8 @@ class DictionaryInteractorImpl(private val repository: DictionaryRepository) : D
         }
     }
 
-    override fun getWord(key: String): TranslatedWord = repository.getLocalWord(key)
+    override fun getWord(key: String): TranslatedWordModel = repository.getLocalWord(key)
+
+    override val noInternetMessage: String = "NO INTERNET!"
+    override val somethingWentWrongMessage: String = "SOMETHING WENT WRONG!"
 }

@@ -1,7 +1,6 @@
 package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -12,11 +11,13 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.service.LoginService
+import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.other.SimpleTextWatcher
 import com.mnassa.other.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.registration.first.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -30,7 +31,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
     override val layoutId: Int = R.layout.controller_enter_code
     override val viewModel: EnterCodeViewModel by instance()
     private var resendCodeSecondCounter = RESEND_SMS_DELAY
-    private val verificationResponse by lazy { args.getParcelable<LoginService.VerificationCodeResponse>(EXTRA_VERIFICATION_CODE_RESPONSE)}
+    private val verificationResponse by lazy { args.getParcelable<PhoneVerificationModel>(EXTRA_VERIFICATION_CODE_RESPONSE)}
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -47,19 +48,20 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
             startResendCodeTimer(resendCodeSecondCounter)
 
             etValidationCode.addTextChangedListener(SimpleTextWatcher {
-                sendCode()
+                view.ilValidationCode.error = null
+                onCodeChanged()
             })
             etValidationCode.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    sendCode()
+                    onCodeChanged()
                     true
                 } else false
             }
         }
 
         launchCoroutineUI {
-            viewModel.showMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+            viewModel.errorMessageChannel.consumeEach {
+                view.ilValidationCode.error = it
             }
         }
 
@@ -69,6 +71,12 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
                     is EnterCodeViewModel.OpenScreenCommand.MainScreen -> {
                         router.popToRoot()
                         router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
+                    }
+                    is EnterCodeViewModel.OpenScreenCommand.RegistrationScreen -> {
+                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
+                    }
+                    is EnterCodeViewModel.OpenScreenCommand.SelectAccount -> {
+                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance(it.accounts)))
                     }
                 }
             }
@@ -85,7 +93,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         resendCodeSecondCounter = savedInstanceState.getInt(EXTRA_RESEND_CODE_DELAY)
     }
 
-    private fun sendCode() {
+    private fun onCodeChanged() {
         val code = view?.etValidationCode?.text?.toString() ?: return
         val validationCodeLength = resources!!.getInteger(R.integer.validation_code_length)
         if (code.length != validationCodeLength) return
@@ -128,7 +136,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         private const val EXTRA_RESEND_CODE_DELAY = "EXTRA_RESEND_CODE_DELAY"
         private const val RESEND_SMS_DELAY = 60
 
-        fun newInstance(param: LoginService.VerificationCodeResponse): EnterCodeController {
+        fun newInstance(param: PhoneVerificationModel): EnterCodeController {
             val bundle = Bundle()
             bundle.putParcelable(EXTRA_VERIFICATION_CODE_RESPONSE, param)
             return EnterCodeController(bundle)
