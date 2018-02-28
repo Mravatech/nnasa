@@ -65,8 +65,7 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
             else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)
         }
 
-        openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.Registration())
-//        openScreenChannel.send(nextScreen)
+        openScreenChannel.send(nextScreen)
     }
 
     override fun saveInstanceState(outBundle: Bundle) {

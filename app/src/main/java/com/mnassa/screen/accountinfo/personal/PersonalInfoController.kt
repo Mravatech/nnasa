@@ -1,10 +1,11 @@
-package com.mnassa.screen.registration.second
+package com.mnassa.screen.accountinfo.personal
 
 import android.os.Bundle
+import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.registration.FirstRegistrationStepData
+import kotlinx.android.synthetic.main.controller_personal_info.view.*
 
 /**
  * Created by Peter on 2/27/2018.
@@ -13,12 +14,20 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
     override val layoutId: Int = R.layout.controller_personal_info
     override val viewModel: PersonalInfoViewModel by instance()
 
-    companion object {
-        private const val EXTRA_FIRST_STEP_DATA = "EXTRA_FIRST_STEP_DATA"
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
-        fun newInstance(firstStepData: FirstRegistrationStepData): PersonalInfoController {
+        view.btnNext.setOnClickListener {
+
+
+
+        }
+    }
+
+    companion object {
+
+        fun newInstance(): PersonalInfoController {
             val params = Bundle()
-            params.putSerializable(EXTRA_FIRST_STEP_DATA, firstStepData)
             return PersonalInfoController(params)
         }
     }

@@ -1,6 +1,10 @@
 package com.mnassa.data.network.api
 
-import com.mnassa.data.network.bean.retrofit.*
+import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
+import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
+import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
+import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
+import com.mnassa.data.network.bean.retrofit.response.RegisterAccountResponse
 import kotlinx.coroutines.experimental.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -16,6 +20,8 @@ interface FirebaseAuthApi {
     fun registerPersonalAccount(@Body request: RegisterPersonalAccountRequest): Deferred<RegisterAccountResponse>
 
     @POST("/registerAccount")
-    fun registerOrganizationAccount(@Body request: RegisterOrganizationAccountRequets): Deferred<RegisterAccountResponse>
+    fun registerOrganizationAccount(@Body request: RegisterOrganizationAccountRequest): Deferred<RegisterAccountResponse>
+
+
 
 }

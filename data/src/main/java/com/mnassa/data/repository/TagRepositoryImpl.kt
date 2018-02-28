@@ -20,6 +20,5 @@ class TagRepositoryImpl(private val converter: ConvertersContext, private val da
     }
 
     companion object {
-        private const val TABLE_NAME = "tags"
     }
 }

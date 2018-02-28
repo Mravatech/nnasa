@@ -1,21 +1,23 @@
-package com.mnassa.screen.registration.first
+package com.mnassa.screen.registration
 
+import android.support.design.widget.Snackbar
 import android.support.v4.view.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.fromDictionary
+import com.mnassa.other.validators.*
+import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
+import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.registration.FirstRegistrationStepData
-import com.mnassa.screen.registration.second.PersonalInfoController
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.registration_organization.view.*
 import kotlinx.android.synthetic.main.registration_personal.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 2/26/2018.
@@ -31,39 +33,71 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = RegistrationAdapter()
             tlRegistration.setupWithViewPager(vpRegistration)
-            btnNext.setOnClickListener {
-                launchCoroutineUI { openNextStep() }
-                Toast.makeText(it.context, etPersonFirstName.text.toString(), Toast.LENGTH_SHORT).show()
+            btnNext.setOnClickListener { processRegisterClick() }
+        }
+
+        launchCoroutineUI {
+            viewModel.openScreenChannel.consumeEach {
+                when (it) {
+                    is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
+                        router.pushController(RouterTransaction.with(PersonalInfoController.newInstance()))
+                    }
+                    is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
+                        router.pushController(RouterTransaction.with(OrganizationInfoController.newInstance()))
+                    }
+                }
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.errorMessageChannel.consumeEach {
+                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun validatePersonInfo(): Boolean {
-        //TODO
-        return true
+        val v = view
+        return v != null && with(v) {
+            tilPersonFirstName.validateAsFirstName() &&
+                    tilPersonSecondName.validateAsLastName() &&
+                    tilPersonUserName.validateAsUserName() &&
+                    tilPersonCity.validateAsCity() &&
+                    tilPersonOffers.validateAsOffers() &&
+                    tilPersonInterests.validateAsInterests()
+        }
     }
 
     private fun validateOrganizationInfo(): Boolean {
-        return true
+        val v = view
+        return v != null && with(v) {
+            tilCompanyName.validateAsCompanyName() &&
+                    tilCompanyUserName.validateAsUserName() &&
+                    tilCompanyCity.validateAsCity() &&
+                    tilCompanyOffers.validateAsOffers() &&
+                    tilCompanyInterests.validateAsInterests()
+        }
     }
 
-    private fun openNextStep() {
+    private fun processRegisterClick() {
         with(requireNotNull(view)) {
-            val data = when (vpRegistration.currentItem) {
-                PAGE_PERSON_INFO -> FirstRegistrationStepData(
+            when (vpRegistration.currentItem) {
+                PAGE_PERSON_INFO -> if (validatePersonInfo()) viewModel.registerPerson(
                         firstName = etPersonFirstName.text.toString(),
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
-                        city = etPersonCity.text.toString())
-                PAGE_ORGANIZATION_INFO -> FirstRegistrationStepData(
+                        city = etPersonCity.text.toString(),
+                        offers = etPersonOffers.text.toString(),
+                        interests = etPersonInterests.text.toString())
+                PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
-                        city = etCompanyCity.text.toString()
+                        city = etCompanyCity.text.toString(),
+                        offers = etCompanyOffers.text.toString(),
+                        interests = etCompanyInterests.text.toString()
                 )
                 else -> throw IllegalArgumentException("Invalid page position $vpRegistration.currentItem")
             }
-
-            router.pushController(RouterTransaction.with(PersonalInfoController.newInstance(data)))
         }
     }
 
@@ -75,7 +109,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     class RegistrationAdapter : PagerAdapter() {
-        override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
+        override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val layoutId = when (position) {
@@ -116,6 +150,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
                 tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
                 tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
+                tilPersonOffers.hint = "Offers"
+                tilPersonInterests.hint = "Interests"
             }
         }
 
@@ -124,6 +160,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilCompanyName.hint = "Company name" //TODO: translation
                 tilCompanyUserName.hint = "User name"
                 tilCompanyCity.hint = "City"
+                tilCompanyOffers.hint = "Offers"
+                tilCompanyInterests.hint = "Interests"
             }
         }
     }

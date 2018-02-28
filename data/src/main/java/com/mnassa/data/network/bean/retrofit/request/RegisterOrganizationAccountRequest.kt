@@ -1,19 +1,17 @@
-package com.mnassa.data.network.bean.retrofit
+package com.mnassa.data.network.bean.retrofit.request
 
 import com.google.gson.annotations.SerializedName
 
 /**
  * Created by Peter on 2/27/2018.
  */
-data class RegisterPersonalAccountRequest(
-        @SerializedName("firstName")
-        val firstName: String?,
-        @SerializedName("lastName")
-        val lastName: String?,
+data class RegisterOrganizationAccountRequest(
         @SerializedName("userName")
         val userName: String,
         @SerializedName("type")
         val type: String,
+        @SerializedName("organizationName")
+        val organizationName: String,
         @SerializedName("offers")
         val offers: String?,
         @SerializedName("interests")

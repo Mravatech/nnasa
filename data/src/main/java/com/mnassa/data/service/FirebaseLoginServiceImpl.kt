@@ -6,7 +6,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
-import com.mnassa.data.network.bean.retrofit.CheckPhoneRequest
+import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
 import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.PhoneVerificationModel

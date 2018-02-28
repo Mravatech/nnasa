@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.converter.TranslatedWordConverter
-import com.mnassa.data.converter.UserProfileConverter
+import com.mnassa.data.converter.UserAccountConverter
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
@@ -32,16 +32,20 @@ import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.other.AppInfoProviderImpl
 import com.mnassa.other.LanguageProviderImpl
+import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
+import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.login.entercode.EnterCodeViewModel
 import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
-import com.mnassa.screen.registration.first.RegistrationViewModel
-import com.mnassa.screen.registration.first.RegistrationViewModelImpl
-import com.mnassa.screen.registration.second.PersonalInfoViewModel
-import com.mnassa.screen.registration.second.PersonalInfoViewModelImpl
+import com.mnassa.screen.registration.RegistrationViewModel
+import com.mnassa.screen.registration.RegistrationViewModelImpl
+import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
+import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -69,12 +73,14 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
+    bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
+    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
-        converter.registerConverter(UserProfileConverter::class.java)
+        converter.registerConverter(UserAccountConverter::class.java)
         converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter
@@ -88,7 +94,7 @@ private val repositoryModule = Kodein.Module {
         result
     }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance()) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), { instance()}, { instance() }) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
 }

@@ -7,7 +7,7 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -22,8 +22,12 @@ class MainViewModelImpl(
         super.onCreate(savedInstanceState)
 
         launchCoroutineUI {
-            val profile = userProfileInteractor.getProfile()
-            userName.send(profile.name)
+            try {
+                val profile = userProfileInteractor.getProfile()
+                userName.send(profile.userName)
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
     }
 

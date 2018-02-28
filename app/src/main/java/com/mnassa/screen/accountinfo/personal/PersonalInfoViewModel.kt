@@ -1,4 +1,4 @@
-package com.mnassa.screen.registration.second
+package com.mnassa.screen.accountinfo.personal
 
 import com.mnassa.screen.base.MnassaViewModel
 

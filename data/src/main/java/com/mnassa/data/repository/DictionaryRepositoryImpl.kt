@@ -5,7 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
-import com.mnassa.data.network.bean.firebase.TranslatedWordBean
+import com.mnassa.data.network.bean.firebase.TranslatedWordDbEntity
 import com.mnassa.data.repository.dictionary.DictionaryPreferences
 import com.mnassa.data.repository.dictionary.DictionaryResources
 import com.mnassa.domain.model.EmptyWord
@@ -29,13 +29,19 @@ class DictionaryRepositoryImpl(
     private val dictionaryResources = DictionaryResources(context, appInfoProvider)
 
     override suspend fun getMobileUiVersion(): ReceiveChannel<Int> {
-        return databaseReference.child("clientData").child("mobileUiVersion").toValueChannel<Int>().map { requireNotNull(it) }
+        return databaseReference
+                .child(DatabaseContract.TABLE_CLIENT_DATA)
+                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_UI_VERSION)
+                .toValueChannel<Int>()
+                .map { requireNotNull(it) }
     }
 
     override suspend fun loadDictionary(): List<TranslatedWordModel> {
         return async {
-            val dictionary = databaseReference.child("dictionary").child("mobileUi")
-                    .awaitList<TranslatedWordBean>()
+            val dictionary = databaseReference
+                    .child(DatabaseContract.TABLE_DICTIONARY)
+                    .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
+                    .awaitList<TranslatedWordDbEntity>()
                     .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
             converter.convertCollection(dictionary, TranslatedWordModel::class.java)
         }.await()
