@@ -7,7 +7,8 @@ import kotlinx.coroutines.experimental.Deferred
  */
 internal suspend fun <T> Deferred<T>.handleNetworkException(handler: NetworkExceptionHandler): T {
     try {
-        return await()
+        val result = await()
+        return result
     } catch (e: Throwable) {
         throw handler.handle(e)
     }

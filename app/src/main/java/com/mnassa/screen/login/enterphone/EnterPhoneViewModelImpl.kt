@@ -42,6 +42,7 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
                 }
             }
         }
+        requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
     }
 
     private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
