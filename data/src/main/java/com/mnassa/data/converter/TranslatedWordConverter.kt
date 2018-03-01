@@ -3,7 +3,7 @@ package com.mnassa.data.converter
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
-import com.mnassa.data.network.bean.firebase.TranslatedWordBean
+import com.mnassa.data.network.bean.firebase.TranslatedWordDbEntity
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 
 /**
@@ -14,7 +14,7 @@ class TranslatedWordConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convert)
     }
 
-    private fun convert(input: TranslatedWordBean): TranslatedWordModelImpl {
+    private fun convert(input: TranslatedWordDbEntity): TranslatedWordModelImpl {
         return TranslatedWordModelImpl(
                 id = input.id,
                 engTranslate = input.en,

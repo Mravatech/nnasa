@@ -1,6 +1,6 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.model.AccountModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
@@ -14,10 +14,10 @@ interface LoginInteractor {
             previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
 
     @Throws(InvalidVerificationCode::class)
-    suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<AccountModel>
+    suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<ShortAccountModel>
     suspend fun signOut()
 
-    suspend fun selectAccount(account: AccountModel)
+    suspend fun selectAccount(account: ShortAccountModel)
 
 
 

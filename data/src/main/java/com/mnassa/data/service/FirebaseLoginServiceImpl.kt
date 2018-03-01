@@ -1,16 +1,17 @@
 package com.mnassa.data.service
 
-import android.os.Parcel
-import android.os.Parcelable
+import android.annotation.SuppressLint
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
-import com.mnassa.data.network.bean.retrofit.CheckPhoneRequest
+import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
 import com.mnassa.data.network.exception.NetworkExceptionHandler
+import com.mnassa.data.network.exception.handleNetworkException
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -25,11 +26,7 @@ class FirebaseLoginServiceImpl(
         private val networkErrorHandler: NetworkExceptionHandler) : FirebaseLoginService {
 
     override suspend fun checkPhone(phoneNumber: String, promoCode: String?) {
-        try {
-            authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).await()
-        } catch (e: Throwable) {
-            throw networkErrorHandler.handle(e)
-        }
+        authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleNetworkException(networkErrorHandler)
     }
 
     override suspend fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
@@ -40,7 +37,7 @@ class FirebaseLoginServiceImpl(
                 async {
                     try {
                         signIn(credential)
-                        sendChannel.send(VerificationCodeResponseImpl.OnVerificationCompleted(phoneNumber, credential))
+                        sendChannel.send(OnVerificationCompleted(phoneNumber, credential))
                         sendChannel.close()
                     } catch (e: Exception) {
                         sendChannel.close(e)
@@ -53,7 +50,7 @@ class FirebaseLoginServiceImpl(
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
-                async { sendChannel.send(VerificationCodeResponseImpl.OnCodeSent(phoneNumber, verificationId, token)) }
+                async { sendChannel.send(OnCodeSent(phoneNumber, verificationId, token)) }
             }
 
             override fun onCodeAutoRetrievalTimeOut(p0: String?) {
@@ -64,11 +61,11 @@ class FirebaseLoginServiceImpl(
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,
-                60,
+                VERIFY_PHONE_NUMBER_TIMEOUT_SEC,
                 TimeUnit.SECONDS,
                 { async { it.run() } },
                 callback,
-                (previousResponse as? VerificationCodeResponseImpl.OnCodeSent)?.token
+                (previousResponse as? OnCodeSent)?.token
         )
 
         return sendChannel
@@ -76,9 +73,9 @@ class FirebaseLoginServiceImpl(
 
     override suspend fun signIn(verificationSMSCode: String?, response: PhoneVerificationModel) {
         when {
-            verificationSMSCode == null && response is VerificationCodeResponseImpl.OnVerificationCompleted ->
+            verificationSMSCode == null && response is OnVerificationCompleted ->
                 signIn(response.credential)
-            verificationSMSCode != null && response is VerificationCodeResponseImpl.OnCodeSent ->
+            verificationSMSCode != null && response is OnCodeSent ->
                 signIn(PhoneAuthProvider.getCredential(response.verificationId, verificationSMSCode))
         }
     }
@@ -95,51 +92,22 @@ class FirebaseLoginServiceImpl(
         FirebaseAuth.getInstance().signOut()
     }
 
-    private sealed class VerificationCodeResponseImpl(
-            override val isVerified: Boolean,
-            override val phoneNumber: String) : PhoneVerificationModel {
-
-        class OnVerificationCompleted(phoneNumber: String, val credential: PhoneAuthCredential) : VerificationCodeResponseImpl(isVerified = true, phoneNumber = phoneNumber) {
-
-            constructor(parcel: Parcel) : this(parcel.readString(), parcel.readParcelable<PhoneAuthCredential>(PhoneAuthCredential::class.java.classLoader))
-
-            override fun writeToParcel(dest: Parcel, flags: Int) {
-                dest.writeString(phoneNumber)
-                dest.writeParcelable(credential, 0)
-            }
-
-            override fun describeContents(): Int = 0
-
-            companion object CREATOR : Parcelable.Creator<OnVerificationCompleted> {
-                override fun createFromParcel(parcel: Parcel): OnVerificationCompleted = OnVerificationCompleted(parcel)
-                override fun newArray(size: Int): Array<OnVerificationCompleted?> = arrayOfNulls(size)
-            }
-        }
-
-        class OnCodeSent(
-                phoneNumber: String,
-                val verificationId: String,
-                val token: PhoneAuthProvider.ForceResendingToken?) : VerificationCodeResponseImpl(isVerified = false, phoneNumber = phoneNumber) {
-
-            constructor(parcel: Parcel) : this(
-                    parcel.readString(),
-                    parcel.readString(),
-                    parcel.readParcelable(PhoneAuthProvider.ForceResendingToken::class.java.classLoader))
-
-            override fun writeToParcel(dest: Parcel, flags: Int) {
-                dest.writeString(phoneNumber)
-                dest.writeString(verificationId)
-                dest.writeParcelable(token, 0)
-            }
-
-            override fun describeContents(): Int = 0
-
-            companion object CREATOR : Parcelable.Creator<OnCodeSent> {
-                override fun createFromParcel(parcel: Parcel): OnCodeSent = OnCodeSent(parcel)
-                override fun newArray(size: Int): Array<OnCodeSent?> = arrayOfNulls(size)
-
-            }
-        }
+    companion object {
+        private const val VERIFY_PHONE_NUMBER_TIMEOUT_SEC = 60L
     }
 
+    @SuppressLint("ParcelCreator")
+    @Parcelize
+    class OnVerificationCompleted(
+            override val phoneNumber: String,
+            val credential: PhoneAuthCredential,
+            override val isVerified: Boolean = true): PhoneVerificationModel
+
+    @SuppressLint("ParcelCreator")
+    @Parcelize
+    class OnCodeSent(
+            override val phoneNumber: String,
+            val verificationId: String,
+            val token: PhoneAuthProvider.ForceResendingToken?,
+            override val isVerified: Boolean = false): PhoneVerificationModel
 }

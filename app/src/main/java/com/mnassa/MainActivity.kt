@@ -15,7 +15,6 @@ import com.github.salomonbrys.kodein.KodeinInjector
 import com.github.salomonbrys.kodein.android.*
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.erased
-import com.mnassa.screen.registration.first.RegistrationController
 import com.mnassa.screen.splash.SplashController
 import kotlinx.android.synthetic.main.activity_main.*
 

@@ -1,4 +1,4 @@
-package com.mnassa.data.network.bean.retrofit
+package com.mnassa.data.network.bean.retrofit.response
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -10,26 +10,26 @@ data class RegisterAccountResponse(
         @SerializedName("state")
         val state: String,
         @SerializedName("account")
-        val account: Account
+        val account: AccountResponseBean
 )
 
-data class Account(
+data class AccountResponseBean(
         @SerializedName("id")
-        val id: String,
+        val id: String,                                 ///
         @SerializedName("userID")
-        val userId: String,
+        val userId: String,                             //!!!
         @SerializedName("userName")
-        val userName: String,
+        val userName: String,                           //
         @SerializedName("firstName")
         val firstName: String?,
-        @SerializedName("lastName")
+        @SerializedName("lastName")             //
         val lastName: String?,
         @SerializedName("contactPhone")
         val contactPhone: String,
         @SerializedName("language")
         val language: String,
-        @SerializedName("organizationName")
+        @SerializedName("organizationName")     //
         val organizationName: String?,
-        @SerializedName("type")
+        @SerializedName("type")                 //
         val type: String
 ): Serializable

@@ -1,6 +1,6 @@
 package com.mnassa.screen.login.enterphone
 
-import com.mnassa.domain.model.AccountModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -10,7 +10,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EnterPhoneViewModel : MnassaViewModel {
     val openScreenChannel: BroadcastChannel<OpenScreenCommand>
-    val errorMessageChannel: BroadcastChannel<String>
 
     fun requestVerificationCode(phoneNumber: String)
 
@@ -18,6 +17,6 @@ interface EnterPhoneViewModel : MnassaViewModel {
         class EnterVerificationCode(val param: PhoneVerificationModel): OpenScreenCommand()
         class MainScreen: OpenScreenCommand()
         class Registration: OpenScreenCommand()
-        class SelectAccount(val accounts: List<AccountModel>): OpenScreenCommand()
+        class SelectAccount(val accounts: List<ShortAccountModel>): OpenScreenCommand()
     }
 }

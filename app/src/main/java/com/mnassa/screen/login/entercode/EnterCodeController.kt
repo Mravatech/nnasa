@@ -17,7 +17,7 @@ import com.mnassa.other.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
-import com.mnassa.screen.registration.first.RegistrationController
+import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach

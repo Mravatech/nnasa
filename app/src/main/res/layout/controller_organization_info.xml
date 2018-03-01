@@ -5,23 +5,45 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
 
         <TextView
             android:id="@+id/tvTitle"
             style="@style/MnassaHeader1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Personal info" />
+            tools:text="Org info" />
 
         <ImageView
             android:id="@+id/ivUserAvatar"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_below="@id/tvTitle"
             tools:background="#aca" />
+
+        <TextView
+            android:id="@+id/tvDateOfBirth"
+            style="@style/MnassaHeader2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Date of birth" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Male" />
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Female" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/btnNext"

@@ -1,4 +1,4 @@
-package com.mnassa.screen.registration.second
+package com.mnassa.screen.accountinfo.personal
 
 import android.app.Activity
 import android.net.Uri
@@ -78,9 +78,8 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
 
         private const val EXTRA_FIRST_STEP_DATA = "EXTRA_FIRST_STEP_DATA"
 
-        fun newInstance(firstStepData: FirstRegistrationStepData): PersonalInfoController {
+        fun newInstance(): PersonalInfoController {
             val params = Bundle()
-            params.putSerializable(EXTRA_FIRST_STEP_DATA, firstStepData)
             return PersonalInfoController(params)
         }
     }

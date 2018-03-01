@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion build_versions.compile_sdk
@@ -19,7 +20,12 @@ android {
         encoding "UTF-8"
     }
     sourceSets { main.java.srcDirs += 'src/main/kotlin' }
-    kotlin { experimental { coroutines 'enable' } }
+    kotlin {
+        experimental { coroutines 'enable' }
+        androidExtensions {
+            experimental = true
+        }
+    }
 }
 
 dependencies {
