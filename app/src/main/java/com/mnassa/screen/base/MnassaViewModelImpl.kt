@@ -11,6 +11,7 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.github.salomonbrys.kodein.erased
+import com.google.firebase.FirebaseException
 import com.mnassa.App
 import com.mnassa.core.BaseViewModelImpl
 import com.mnassa.core.addons.asyncUI
@@ -75,6 +76,10 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
         } catch (e: NetworkException) {
             Timber.d(e)
             errorMessageChannel.send(e.message)
+        } catch (e: FirebaseException) {
+            Timber.e(e)
+            val message = e.localizedMessage ?: e.message
+            message?.let { errorMessageChannel.send(it) }
         } catch (e: Throwable) {
             Timber.e(e)
             throw e
