@@ -140,6 +140,8 @@ dependencies {
     implementation deps.firebase.auth
     implementation deps.firebase.auth_service
     implementation deps.firebase.database
+    implementation deps.firebase.storage
+    implementation deps.firebase.ui
 
     //coroutines
     implementation deps.coroutines.core

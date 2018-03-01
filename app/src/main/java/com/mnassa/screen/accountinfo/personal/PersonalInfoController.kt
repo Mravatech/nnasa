@@ -12,7 +12,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.CropActivity
 import com.mnassa.other.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.registration.FirstRegistrationStepData
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -27,17 +26,17 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
     override fun onViewCreated(view: View) {
 
         with(view) {
-            tilDateOfBirth.hint = fromDictionary(R.string.reg_person_info_birthday)
-            tilPhoneNumber.hint = fromDictionary(R.string.reg_person_info_phone)
-            tilAt.hint = fromDictionary(R.string.reg_person_info_at)
-            tvPersonalHeader.text = fromDictionary(R.string.reg_person_info_title)
-            fabAddPhotoCamera.setOnClickListener {
-                startCropActivity(CropActivity.REQUEST_CODE_CAMERA)
-            }
-
-            fabAddPhotoGallery.setOnClickListener {
-                startCropActivity(CropActivity.REQUEST_CODE_GALLERY)
-            }
+            //            tilDateOfBirth.hint = fromDictionary(R.string.reg_person_info_birthday)
+//            tilPhoneNumber.hint = fromDictionary(R.string.reg_person_info_phone)
+//            tilAt.hint = fromDictionary(R.string.reg_person_info_at)
+//            tvPersonalHeader.text = fromDictionary(R.string.reg_person_info_title)
+//            fabAddPhotoCamera.setOnClickListener {
+//                startCropActivity(CropActivity.REQUEST_CODE_CAMERA)
+//            }
+//
+//            fabAddPhotoGallery.setOnClickListener {
+//                startCropActivity(CropActivity.REQUEST_CODE_GALLERY)
+//            }
         }
 
         onActivityResult.subscribe {
@@ -67,16 +66,14 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         }
     }
 
-    private fun setImage(result: String?) {
-        result?.let {
-            Glide.with(view?.ivUserPhoto).load(it).into(view?.ivUserPhoto)
+    private fun setImage(result: String) {
+        view?.ivUserAvatar?.let {
+            Glide.with(it).load(result).into(it)
         }
     }
 
     companion object {
         private const val REQUEST_CODE_CROP = 101
-
-        private const val EXTRA_FIRST_STEP_DATA = "EXTRA_FIRST_STEP_DATA"
 
         fun newInstance(): PersonalInfoController {
             val params = Bundle()

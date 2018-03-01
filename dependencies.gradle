@@ -68,12 +68,14 @@ deps.playServices = playServices
 
 //========================================== FIREBASE ==============================================
 versions.firebase = '11.8.0'
+versions.ui = '0.6.0'
 def firebase = [:]
 firebase.core =            "com.google.firebase:firebase-core:$versions.firebase"
 firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
 firebase.auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
 firebase.database =        "com.google.firebase:firebase-database:$versions.firebase"
 firebase.storage =         "com.google.firebase:firebase-storage:$versions.firebase"
+firebase.ui  =             "com.firebaseui:firebase-ui-storage:$versions.ui"
 
 deps.firebase = firebase
 

@@ -5,6 +5,6 @@ package com.mnassa.domain.model
  * User: okli
  * Date: 2/28/2018
  */
-interface DownloadPhoto : StorageData {
+interface DownloadingPhotoData : StorageData {
     val size: Int
 }

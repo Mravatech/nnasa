@@ -1,6 +1,7 @@
 package com.mnassa.domain.model.impl
 
 import android.support.annotation.IntRange
+import com.mnassa.domain.model.DownloadingPhotoData
 import com.mnassa.domain.model.*
 
 /**
@@ -9,9 +10,9 @@ import com.mnassa.domain.model.*
  * Date: 2/28/2018
  */
 
-data class DownloadPhotoImpl(
+data class DownloadingPhotoDataImpl(
         @IntRange(from = 0, to = 2) override val size: Int,
-        override val folderType: Int) : DownloadPhoto {
+        override val folderType: Int) : DownloadingPhotoData {
 
     override fun getFolder(): String {
         return when (folderType) {

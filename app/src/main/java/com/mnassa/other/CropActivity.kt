@@ -2,6 +2,7 @@ package com.mnassa.other
 
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -115,8 +116,8 @@ class CropActivity : AppCompatActivity() {
         const val REQUEST_CODE_GALLERY = 1
         const val REQUEST_CODE_CAMERA = 2
 
-        fun start(flag: Int, activity: Activity): Intent {
-            val intent = Intent(activity, CropActivity::class.java)
+        fun start(flag: Int, context: Context): Intent {
+            val intent = Intent(context, CropActivity::class.java)
             intent.putExtra(PHOTO_INTENT_FLAG, flag)
             return intent
         }

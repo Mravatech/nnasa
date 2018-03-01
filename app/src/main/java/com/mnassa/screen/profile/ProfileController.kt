@@ -69,8 +69,10 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
     }
 
     private fun setImage(result: String?) {
-        result?.let {
-            Glide.with(view?.ivCropImage).load(it).into(view?.ivCropImage)
+        view?.ivCropImage?.let {
+            Glide.with(it)
+                    .load(result)
+                    .into(it)
         }
     }
 

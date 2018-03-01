@@ -6,6 +6,8 @@ import com.androidkotlincore.entityconverter.registerConverter
 import com.github.salomonbrys.kodein.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.converter.TranslatedWordConverter
@@ -78,7 +80,6 @@ private val viewModelsModule = Kodein.Module {
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
-    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance()) }
@@ -101,11 +102,13 @@ private val repositoryModule = Kodein.Module {
         result.setPersistenceEnabled(true)
         result
     }
+    bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
+    bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), { instance()}, { instance() }) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<StorageRepository>() with singleton { StorageRepositoryImpl() }
+    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance()) }
 }
 
 private val serviceModule = Kodein.Module {

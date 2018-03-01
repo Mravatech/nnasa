@@ -23,5 +23,9 @@ const val NORMAL = ""
 // folders
 // =====================================
 const val FOLDER_AVATARS = 0
+const val FOLDER_PERSONAL = 1
+const val FOLDER_POSTS = 2
 
 const val AVATARS = "avatars/"
+const val PERSONAL = "personal/"
+const val POSTS = "posts/"

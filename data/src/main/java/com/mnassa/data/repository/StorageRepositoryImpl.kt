@@ -1,15 +1,10 @@
 package com.mnassa.data.repository
 
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
-import com.mnassa.domain.model.DownloadPhoto
-import com.mnassa.domain.model.UploadPhoto
+import com.google.firebase.storage.StorageReference
+import com.mnassa.data.extensions.await
+import com.mnassa.domain.model.DownloadingPhotoData
+import com.mnassa.domain.model.UploadingPhotoData
 import com.mnassa.domain.repository.StorageRepository
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,63 +12,27 @@ import timber.log.Timber
  * Date: 2/27/2018
  */
 
-class StorageRepositoryImpl : StorageRepository {
+class StorageRepositoryImpl(private val ref: StorageReference) : StorageRepository {
 
-    private var uploadTask: UploadTask? = null
-    private val ref = FirebaseStorage.getInstance().reference
-
-    override suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadPhoto, token: String): ReceiveChannel<String> {
-        val sendChannel: Channel<String> = RendezvousChannel()
-        val downloadRef = ref.child("avatars/$token/1519827308733.jpg")
+    //todo return storage ref
+    override suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadingPhotoData, token: String): String {
+        val downloadRef = ref.child("${downloadPhoto.getFolder()}$token/1519827308733.jpg")
         val task = downloadRef.downloadUrl
 
-        task.addOnSuccessListener({
-            async {
-                sendChannel.send(it.toString())
-
-            }
-            Timber.i(it.toString())
-        }).addOnFailureListener({
-            Timber.i(it.localizedMessage)
-        })
-        return sendChannel
+        val downloadTask = task.await()
+        val path = downloadTask.toString()
+        return path
     }
 
-    override suspend fun uploadPhotoToStorage(uploadPhoto: UploadPhoto, token: String): ReceiveChannel<String> {
-
+    override suspend fun uploadPhotoToStorage(uploadPhoto: UploadingPhotoData, token: String): String {
         val uri = uploadPhoto.uri
-
-        val sendChannel: Channel<String> = RendezvousChannel()
         val location = "${uploadPhoto.getFolder()}$token/${uri.lastPathSegment}"
 
         val uploadRef = ref.child(location)
-
-        uploadTask = uploadRef.putFile(uri)
-        uploadTask?.addOnFailureListener {
-            //todo handle errors
-            Timber.i(it.localizedMessage)
-        }
-        uploadTask?.addOnSuccessListener {
-            async {
-                sendChannel.send(it.downloadUrl.toString())
-            }
-            val path = "gs://${it.metadata?.bucket}${it.metadata?.path}"
-            Timber.i("2 $path")
-            saveAvatarToDataBase(token, path)
-        }
-
-        return sendChannel
-    }
-
-    override fun cancelUploading() {
-        uploadTask?.cancel()
-    }
-
-    private fun saveAvatarToDataBase(token: String, path: String) {
-        // get user from acc
-//        databaseReference.child("accountLinks").child(token).child("avatar").setValue(path)
-//                .addOnFailureListener({ Timber.i(it.localizedMessage) })
-//                .addOnSuccessListener({ Timber.i("Success") })
+        val uploadTask = uploadRef.putFile(uri).await()
+//        val path = "gs://${uploadTask.metadata?.bucket}${uploadTask.metadata?.path}"
+        val path = uploadTask.metadata?.downloadUrl.toString()
+        return path
     }
 
 }

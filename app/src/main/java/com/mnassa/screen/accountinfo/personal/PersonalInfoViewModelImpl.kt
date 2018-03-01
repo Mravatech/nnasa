@@ -6,12 +6,11 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.MEDIUM_PHOTO_SIZE
-import com.mnassa.domain.model.impl.DownloadPhotoImpl
-import com.mnassa.domain.model.impl.UploadPhotoImpl
+import com.mnassa.domain.model.impl.DownloadingPhotoDataImpl
+import com.mnassa.domain.model.impl.UploadingPhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import timber.log.Timber
 
 /**
@@ -19,7 +18,7 @@ import timber.log.Timber
  */
 class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor) : MnassaViewModelImpl(), PersonalInfoViewModel {
 
-    override val imageUploadedChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
+    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +30,12 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     override fun getPhotoFromStorage() {
         getPhotoJob?.cancel()
         getPhotoJob = launchCoroutineUI {
-            storageInteractor.getAvatar(DownloadPhotoImpl(MEDIUM_PHOTO_SIZE, FOLDER_AVATARS)).consumeEach {
-                imageUploadedChannel.send(it)
-                Timber.i(it)
+            try {
+                val path = storageInteractor.getAvatar(DownloadingPhotoDataImpl(MEDIUM_PHOTO_SIZE, FOLDER_AVATARS))
+                imageUploadedChannel.send(path)
+                Timber.i(path)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }
@@ -42,10 +44,15 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     override fun sendPhotoToStorage(uri: Uri) {
         sendPhotoJob?.cancel()
         sendPhotoJob = launchCoroutineUI {
-            storageInteractor.sendAvatar(UploadPhotoImpl(uri, FOLDER_AVATARS)).consumeEach {
-                imageUploadedChannel.send(it)
-                Timber.i(it)
+            try {
+                val path = storageInteractor.sendAvatar(UploadingPhotoDataImpl(uri, FOLDER_AVATARS))
+                imageUploadedChannel.send(path)
+                Timber.i(path)
+            } catch (e: Exception) {
+                Timber.e(e)
+                //todo handle error
             }
+
         }
     }
 

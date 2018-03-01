@@ -1,8 +1,7 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.model.DownloadPhoto
-import com.mnassa.domain.model.UploadPhoto
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import com.mnassa.domain.model.DownloadingPhotoData
+import com.mnassa.domain.model.UploadingPhotoData
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,7 +10,6 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 
 interface StorageInteractor {
-    suspend fun getAvatar(downloadPhoto: DownloadPhoto): ReceiveChannel<String>
-    suspend fun sendAvatar(uploadPhoto: UploadPhoto): ReceiveChannel<String>
-    fun cancelUploading()
+    suspend fun getAvatar(downloadPhoto: DownloadingPhotoData): String
+    suspend fun sendAvatar(uploadPhoto: UploadingPhotoData): String
 }

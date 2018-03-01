@@ -1,8 +1,7 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.DownloadPhoto
-import com.mnassa.domain.model.UploadPhoto
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import com.mnassa.domain.model.DownloadingPhotoData
+import com.mnassa.domain.model.UploadingPhotoData
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,8 +10,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface StorageRepository {
 
-    suspend fun uploadPhotoToStorage(uploadPhoto: UploadPhoto, token: String): ReceiveChannel<String>
-    suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadPhoto, token: String): ReceiveChannel<String>
-    fun cancelUploading()
+    suspend fun uploadPhotoToStorage(uploadPhoto: UploadingPhotoData, token: String): String
+    suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadingPhotoData, token: String): String
 
 }
