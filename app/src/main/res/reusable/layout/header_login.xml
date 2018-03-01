@@ -13,6 +13,6 @@
         android:id="@+id/btnScreenHeaderAction"
         style="@style/ScreenHeaderButton"
         android:visibility="gone"
-        tools:text="Main action"
+        tools:text="Action"
         tools:visibility="visible" />
 </LinearLayout>

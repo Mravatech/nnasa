@@ -121,11 +121,11 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             }
         }
 
-        launchCoroutineUI {
-            viewModel.errorMessageChannel.consumeEach {
-                view.etPhoneNumberTail.error = it
-            }
-        }
+//        launchCoroutineUI {
+//            viewModel.errorMessageChannel.consumeEach {
+//                view.etPhoneNumberTail.error = it
+//            }
+//        }
     }
 
     private val phonePattern = Pattern.compile("\\d{12,13}")

@@ -1,76 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        app:cardCornerRadius="4dp"
-        app:contentPadding="16dp">
+        android:orientation="vertical"
+        android:padding="@dimen/padding_horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPersonFirstName"
+            style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPersonFirstName"
-                style="@style/Registration.TextInputLayout">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPersonFirstName"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPersonFirstName"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPersonSecondName"
+            style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPersonSecondName"
-                style="@style/Registration.TextInputLayout">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPersonSecondName"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPersonSecondName"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPersonUserName"
+            style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPersonUserName"
-                style="@style/Registration.TextInputLayout">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPersonUserName"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPersonUserName"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPersonCity"
+            style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPersonCity"
-                style="@style/Registration.TextInputLayout">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPersonCity"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPersonCity"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPersonOffers"
+            style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPersonOffers"
-                style="@style/Registration.TextInputLayout">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPersonOffers"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPersonOffers"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPersonInterests"
+            style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPersonInterests"
-                style="@style/Registration.TextInputLayout">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPersonInterests"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPersonInterests"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
 </ScrollView>

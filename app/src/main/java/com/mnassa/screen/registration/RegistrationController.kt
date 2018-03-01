@@ -16,6 +16,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
 import kotlinx.android.synthetic.main.controller_registration_personal.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -29,10 +30,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
-            tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
+            tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = RegistrationAdapter()
             tlRegistration.setupWithViewPager(vpRegistration)
-            btnNext.setOnClickListener { processRegisterClick() }
+            btnScreenHeaderAction.text = fromDictionary(R.string.reg_next)
+            btnScreenHeaderAction.visibility = View.VISIBLE
+            btnScreenHeaderAction.setOnClickListener { processRegisterClick() }
         }
 
         launchCoroutineUI {
@@ -50,11 +53,11 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             }
         }
 
-        launchCoroutineUI {
-            viewModel.errorMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
-            }
-        }
+//        launchCoroutineUI {
+//            viewModel.errorMessageChannel.consumeEach {
+//                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+//            }
+//        }
     }
 
     private fun validatePersonInfo(): Boolean {

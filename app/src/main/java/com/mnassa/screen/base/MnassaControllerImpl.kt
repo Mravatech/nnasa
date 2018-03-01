@@ -1,6 +1,7 @@
 package com.mnassa.screen.base
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.View
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
@@ -10,7 +11,6 @@ import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
-import com.mnassa.core.BaseViewModel
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.progress.MnassaProgressDialog
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -56,11 +56,25 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         subscribeToProgressEvents()
+        subscribeToErrorEvents()
     }
 
     override fun onViewDestroyed(view: View) {
         hideProgress() //prevent showing progress after screen change
         super.onViewDestroyed(view)
+    }
+
+    protected open fun subscribeToErrorEvents() {
+        launchCoroutineUI {
+            viewModel.errorMessageChannel.consumeEach {
+                val context = view?.context ?: return@consumeEach
+                AlertDialog.Builder(context)
+                        .setTitle(R.string.dialog_title_something_went_wrong)
+                        .setMessage(it)
+                        .setPositiveButton(context.getString(android.R.string.ok), { _, _ -> })
+                        .show()
+            }
+        }
     }
 
     protected open fun subscribeToProgressEvents() {
