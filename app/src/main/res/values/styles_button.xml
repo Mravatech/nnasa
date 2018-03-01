@@ -13,6 +13,7 @@
     </style>
 
     <style name="MnassaOutlineButton">
+        <item name="android:background">@drawable/button_outline_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -20,6 +21,7 @@
     <style name="MnassaTransparentButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@drawable/button_transparent_text_color</item>
         <item name="android:background">?selectableItemBackground</item>
     </style>
 
@@ -27,6 +29,6 @@
     <color name="control_highlight">#1f000000</color>
     <color name="btn_pressed">@color/cerulean</color>
     <color name="btn_active">@color/colorAccent</color>
-    <color name="btn_disabled">@color/turquoiseBlue</color>
+    <color name="btn_disabled">#830076ff</color>
 
 </resources>

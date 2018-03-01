@@ -10,7 +10,7 @@ interface FirebaseLoginService {
 
     suspend fun checkPhone(phoneNumber: String, promoCode: String? = null)
 
-    suspend fun requestVerificationCode(
+    fun requestVerificationCode(
             phoneNumber: String,
             previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
 

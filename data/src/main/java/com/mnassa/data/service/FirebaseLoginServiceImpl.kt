@@ -1,6 +1,5 @@
 package com.mnassa.data.service
 
-import android.annotation.SuppressLint
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
@@ -8,7 +7,6 @@ import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
 import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.data.network.exception.handleNetworkException
-import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.android.parcel.Parcelize
@@ -29,7 +27,7 @@ class FirebaseLoginServiceImpl(
         authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleNetworkException(networkErrorHandler)
     }
 
-    override suspend fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
+    override fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
         val sendChannel: Channel<PhoneVerificationModel> = RendezvousChannel()
 
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -97,14 +95,12 @@ class FirebaseLoginServiceImpl(
         private const val VERIFY_PHONE_NUMBER_TIMEOUT_SEC = 60L
     }
 
-    @SuppressLint("ParcelCreator")
     @Parcelize
     class OnVerificationCompleted(
             override val phoneNumber: String,
             val credential: PhoneAuthCredential,
             override val isVerified: Boolean = true): PhoneVerificationModel
 
-    @SuppressLint("ParcelCreator")
     @Parcelize
     class OnCodeSent(
             override val phoneNumber: String,

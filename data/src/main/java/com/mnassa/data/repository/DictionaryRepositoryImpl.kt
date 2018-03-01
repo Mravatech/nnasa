@@ -28,7 +28,7 @@ class DictionaryRepositoryImpl(
     private val dictionaryPreferences = DictionaryPreferences(context, appInfoProvider)
     private val dictionaryResources = DictionaryResources(context, appInfoProvider)
 
-    override suspend fun getMobileUiVersion(): ReceiveChannel<Int> {
+    override fun getMobileUiVersion(): ReceiveChannel<Int> {
         return databaseReference
                 .child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_UI_VERSION)

@@ -7,7 +7,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  * Created by Peter on 2/23/2018.
  */
 interface DictionaryRepository {
-    suspend fun getMobileUiVersion(): ReceiveChannel<Int>
+    fun getMobileUiVersion(): ReceiveChannel<Int>
     suspend fun loadDictionary(): List<TranslatedWordModel>
 
     fun getLocalDictionaryVersion(): Int
