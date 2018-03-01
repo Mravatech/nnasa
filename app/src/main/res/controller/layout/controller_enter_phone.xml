@@ -6,17 +6,18 @@
     android:orientation="vertical">
 
     <ProgressBar
+        android:id="@+id/registrationProgress"
         style="@style/ScreenHeaderProgress"
-        android:layout_marginTop="-8dp"
         android:progress="25" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingEnd="@dimen/padding_horizontal"
             android:paddingStart="@dimen/padding_horizontal">
 
@@ -38,10 +39,20 @@
                 android:layout_below="@id/tvEnterPhoneNumber"
                 android:layout_marginTop="@dimen/vertical_margin_login" />
 
+            <include
+                android:id="@+id/coneInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phoneInput"
+                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:visibility="gone"
+                tools:visibility="visible"
+                layout="@layout/code_input"/>
+
             <Button
                 android:id="@+id/btnVerifyMe"
                 style="@style/MnassaOutlineButton"
-                android:layout_below="@id/phoneInput"
+                android:layout_below="@id/coneInput"
                 android:layout_marginTop="@dimen/vertical_margin_login"
                 tools:text="Verify me" />
 
@@ -68,7 +79,7 @@
                 android:layout_marginTop="@dimen/vertical_margin_login"
                 tools:text="Enter promo code" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 

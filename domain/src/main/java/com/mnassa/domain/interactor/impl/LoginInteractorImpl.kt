@@ -16,8 +16,13 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
         return userRepository.getCurrentUser() != null
     }
 
-    override suspend fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
-        loginService.checkPhone(phoneNumber)
+    override suspend fun requestVerificationCode(
+            phoneNumber: String,
+            previousResponse: PhoneVerificationModel?,
+            promoCode: String?
+    ): ReceiveChannel<PhoneVerificationModel> {
+
+        loginService.checkPhone(phoneNumber, promoCode)
         return loginService.requestVerificationCode(phoneNumber, previousResponse)
     }
 

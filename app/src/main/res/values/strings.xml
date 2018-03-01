@@ -4,4 +4,5 @@
 
     <!-- TODO: to dictionary -->
     <string name="enter_phone_header_welcome">Welcome!</string>
+    <string name="enter_validation_code_header">Validation Code</string>
 </resources>

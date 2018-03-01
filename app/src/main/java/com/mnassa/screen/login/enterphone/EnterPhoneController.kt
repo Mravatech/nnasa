@@ -17,8 +17,10 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.other.SimpleTextWatcher
 import com.mnassa.other.fromDictionary
+import com.mnassa.other.validators.onImeActionDone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.entercode.EnterCodeController
+import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
@@ -32,10 +34,10 @@ import java.util.regex.Pattern
 /**
  * Created by Peter on 2/21/2018.
  */
-class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
+open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
-    private val phoneNumber: String
+    protected val phoneNumber: String
         get() {
             val v = view ?: return ""
             val countryCode = v.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
@@ -91,13 +93,12 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
                 viewModel.requestVerificationCode(phoneNumber)
             }
 
-            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onPhoneChanged() })
-            etPhoneNumberTail.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    btnVerifyMe.performClick()
-                    true
-                } else false
+            btnEnterPromo.setOnClickListener {
+                router.pushController(RouterTransaction.with(EnterPromoController.newInstance()))
             }
+
+            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onPhoneChanged() })
+            etPhoneNumberTail.onImeActionDone { btnVerifyMe.performClick() }
             btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
         }
 

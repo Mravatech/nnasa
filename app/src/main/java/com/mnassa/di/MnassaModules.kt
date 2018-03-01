@@ -46,6 +46,8 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
+import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
+import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -75,6 +77,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
+    bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {

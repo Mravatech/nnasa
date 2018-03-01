@@ -1,12 +1,12 @@
 package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
@@ -14,11 +14,14 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.other.SimpleTextWatcher
 import com.mnassa.other.fromDictionary
+import com.mnassa.other.validators.onImeActionDone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import kotlinx.android.synthetic.main.code_input.view.*
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
@@ -44,24 +47,19 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         super.onViewCreated(view)
 
         with(view) {
+            tvScreenHeader.setText(R.string.enter_validation_code_header)
             tvEnterValidationCode.text = fromDictionary(R.string.login_enter_code_title)
             startResendCodeTimer(resendCodeSecondCounter)
 
             etValidationCode.addTextChangedListener(SimpleTextWatcher {
-                view.ilValidationCode.error = null
                 onCodeChanged()
             })
-            etValidationCode.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    onCodeChanged()
-                    true
-                } else false
-            }
+            etValidationCode.onImeActionDone { onCodeChanged() }
         }
 
         launchCoroutineUI {
             viewModel.errorMessageChannel.consumeEach {
-                view.ilValidationCode.error = it
+                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
         }
 
