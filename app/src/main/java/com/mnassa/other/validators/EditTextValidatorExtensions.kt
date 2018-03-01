@@ -23,6 +23,8 @@ fun TextInputLayout.validateAsFirstName(): Boolean {
     }
     editText.addTextChangedListener {
         error = ""                              //TODO: validate again or validate after button click?
+                                                //TODO: fix index out of bounds here
+                                                //TODO: fix multiple text change listeners
         editText.removeTextChangedListener(this)
     }
     return false
@@ -135,12 +137,11 @@ private fun TextInputLayout.findEditText(viewGroup: ViewGroup? = null): EditText
 
 fun EditText.addTextChangedListener(listener: TextWatcher.(text: String) -> Unit): TextWatcher {
     val textWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable) {
-            listener.invoke(this, s.toString())
-        }
-
+        override fun afterTextChanged(s: Editable) = Unit
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            listener.invoke(this, s?.toString() ?: "")
+        }
     }
     addTextChangedListener(textWatcher)
     return textWatcher

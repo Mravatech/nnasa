@@ -38,14 +38,16 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
-                when (it) {
+                val controller = when (it) {
                     is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
-                        router.pushController(RouterTransaction.with(PersonalInfoController.newInstance()))
+                        PersonalInfoController.newInstance()
                     }
                     is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
-                        router.pushController(RouterTransaction.with(OrganizationInfoController.newInstance()))
+                        OrganizationInfoController.newInstance()
                     }
                 }
+                router.popToRoot()
+                router.replaceTopController(RouterTransaction.with(controller))
             }
         }
 
@@ -58,25 +60,25 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private fun validatePersonInfo(): Boolean {
         val v = view
-        return v != null && with(v) {
+        return v != null /*&& with(v) {
             tilPersonFirstName.validateAsFirstName() &&
                     tilPersonSecondName.validateAsLastName() &&
                     tilPersonUserName.validateAsUserName() &&
                     tilPersonCity.validateAsCity() &&
                     tilPersonOffers.validateAsOffers() &&
                     tilPersonInterests.validateAsInterests()
-        }
+        }*/
     }
 
     private fun validateOrganizationInfo(): Boolean {
         val v = view
-        return v != null && with(v) {
+        return v != null /*&& with(v) {
             tilCompanyName.validateAsCompanyName() &&
                     tilCompanyUserName.validateAsUserName() &&
                     tilCompanyCity.validateAsCity() &&
                     tilCompanyOffers.validateAsOffers() &&
                     tilCompanyInterests.validateAsInterests()
-        }
+        }*/
     }
 
     private fun processRegisterClick() {
