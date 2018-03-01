@@ -10,13 +10,12 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.fromDictionary
-import com.mnassa.other.validators.*
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_registration.view.*
-import kotlinx.android.synthetic.main.registration_organization.view.*
-import kotlinx.android.synthetic.main.registration_personal.view.*
+import kotlinx.android.synthetic.main.controller_registration_organization.view.*
+import kotlinx.android.synthetic.main.controller_registration_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -115,8 +114,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val layoutId = when (position) {
-                PAGE_PERSON_INFO -> R.layout.registration_personal
-                PAGE_ORGANIZATION_INFO -> R.layout.registration_organization
+                PAGE_PERSON_INFO -> R.layout.controller_registration_personal
+                PAGE_ORGANIZATION_INFO -> R.layout.controller_registration_organization
                 else -> throw IllegalArgumentException("Invalid page position $position")
             }
 

@@ -8,10 +8,13 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.other.SimpleTextWatcher
 import com.mnassa.other.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -21,7 +24,10 @@ import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.or_layout.view.*
+import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import java.util.regex.Pattern
 
 /**
  * Created by Peter on 2/21/2018.
@@ -29,6 +35,15 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
+    private val phoneNumber: String
+        get() {
+            val v = view ?: return ""
+            val countryCode = v.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
+
+            return countryCode.phonePrefix
+                    .replace("+", "") +
+                    v.etPhoneNumberTail.text.toString()
+        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -37,8 +52,10 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             tvScreenHeader.setText(R.string.enter_phone_header_welcome)
             tvEnterPhoneNumber.text = fromDictionary(R.string.login_enter_phone_title)
             btnVerifyMe.text = fromDictionary(R.string.login_verify_me)
-            ilPhoneNumber.hint = fromDictionary(R.string.login_your_phone)
+            etPhoneNumberTail.hint = fromDictionary(R.string.login_your_phone)
             tvTermsAndConditions.text = fromDictionary(R.string.login_terms_part_1)
+            tvOr.text = fromDictionary(R.string.login_or)
+            btnEnterPromo.text = fromDictionary(R.string.login_enter_promo)
 
             val termsAndCond = fromDictionary(R.string.login_terms_part_2)
             val termsAndCondSpan = Spannable.Factory.getInstance().newSpannable(termsAndCond)
@@ -53,22 +70,35 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
-            btnVerifyMe.setOnClickListener {
-                viewModel.requestVerificationCode(etPhoneNumber.text.toString())
+            val onPhoneChanged = {
+                btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
+                etPhoneNumberTail.error = null
             }
 
-            etPhoneNumber.addTextChangedListener(PhoneNumberFormattingTextWatcher())
-            etPhoneNumber.addTextChangedListener(SimpleTextWatcher {
-                btnVerifyMe.isEnabled = isPhoneValid(it)
-                ilPhoneNumber.error = null
-            })
-            etPhoneNumber.setOnEditorActionListener { _, actionId, _ ->
+            val countries = mutableListOf(
+                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("1", "Ukraine1", null, null), "+38"),
+                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("2", "Ukraine2", null, null), "+38"),
+                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("3", "Ukraine3", null, null), "+38"),
+                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("4", "Saudi Arabia", null, null), "+966")
+            )
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countries)
+            spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = onPhoneChanged()
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onPhoneChanged()
+            }
+
+            btnVerifyMe.setOnClickListener {
+                viewModel.requestVerificationCode(phoneNumber)
+            }
+
+            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onPhoneChanged() })
+            etPhoneNumberTail.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     btnVerifyMe.performClick()
                     true
                 } else false
             }
-            btnVerifyMe.isEnabled = isPhoneValid(etPhoneNumber.text.toString())
+            btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
         }
 
         launchCoroutineUI {
@@ -92,13 +122,14 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
 
         launchCoroutineUI {
             viewModel.errorMessageChannel.consumeEach {
-                view.ilPhoneNumber.error = it
+                view.etPhoneNumberTail.error = it
             }
         }
     }
 
+    private val phonePattern = Pattern.compile("\\d{12,13}")
     private fun isPhoneValid(phoneNumber: String): Boolean {
-        return android.util.Patterns.PHONE.matcher(phoneNumber).matches()
+        return phonePattern.matcher(phoneNumber).matches()
     }
 
     companion object {

@@ -9,6 +9,8 @@
     <string name="login_enter_code_title">_pin_label_title</string>
     <string name="login_enter_code_resend_after">_pin_resendingTextMask</string>
     <string name="login_enter_code_resend_code">_pin_resendingText</string>
+    <string name="login_or">_privacy_cons_or_title</string>
+    <string name="login_enter_promo">_login_label_promoCode</string>
 
     <string name="reg_title">_newAcc_navTitle</string>
     <string name="reg_personal_info_title">_newAccDetails_navTitle</string>

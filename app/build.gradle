@@ -117,6 +117,19 @@ android {
                 break
         }
     }
+
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res',
+                    'src/main/res/controller',
+                    'src/main/res/reusable',
+                    'src/main/res/item',
+                    'src/main/res/activity',
+            ]
+        }
+    }
+
 }
 
 dependencies {

@@ -15,8 +15,6 @@ class TranslatedWordModelImpl(
 ) : TranslatedWordModel {
 
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): String {
-        //TODO: handle language changes
-
         val isoLanguage = Locale.getDefault().isO3Language
 
         return when {

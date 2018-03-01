@@ -12,6 +12,16 @@
         <item name="android:background">@drawable/btn_main</item>
     </style>
 
+    <style name="MnassaOutlineButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MnassaTransparentButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <dimen name="btn_corner_radius">25dp</dimen>
     <color name="control_highlight">#1f000000</color>
     <color name="btn_pressed">@color/cerulean</color>
