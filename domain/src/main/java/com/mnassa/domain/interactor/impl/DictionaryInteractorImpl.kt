@@ -30,6 +30,7 @@ class DictionaryInteractorImpl(private val repository: DictionaryRepository) : D
 
     override fun getWord(key: String): TranslatedWordModel = repository.getLocalWord(key)
 
+    //TODO: add translations
     override val noInternetMessage: String = "NO INTERNET!"
     override val somethingWentWrongMessage: String = "SOMETHING WENT WRONG!"
 }
