@@ -20,6 +20,7 @@ import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -33,6 +34,7 @@ class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
+            tvScreenHeader.setText(R.string.enter_phone_header_welcome)
             tvEnterPhoneNumber.text = fromDictionary(R.string.login_enter_phone_title)
             btnVerifyMe.text = fromDictionary(R.string.login_verify_me)
             ilPhoneNumber.hint = fromDictionary(R.string.login_your_phone)

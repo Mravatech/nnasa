@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Mnassa</string>
+
+
+    <!-- TODO: to dictionary -->
+    <string name="enter_phone_header_welcome">Welcome!</string>
 </resources>
