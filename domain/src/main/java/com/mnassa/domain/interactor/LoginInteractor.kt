@@ -13,7 +13,6 @@ interface LoginInteractor {
             phoneNumber: String,
             previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
 
-    @Throws(InvalidVerificationCode::class)
     suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<ShortAccountModel>
     suspend fun signOut()
 
@@ -21,5 +20,5 @@ interface LoginInteractor {
 
 
 
-    class InvalidVerificationCode : IllegalArgumentException("Invalid code")
+//    class InvalidVerificationCode : IllegalArgumentException("Invalid code")
 }

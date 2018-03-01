@@ -34,9 +34,7 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
         requestVerificationCodeJob = handleException {
             loginInteractor.requestVerificationCode(phoneNumber).consumeEach {
                 verificationResponse = it
-
                 hideProgress()
-
                 when {
                     it.isVerified -> signIn(it)
                     else -> openScreenChannel.send(

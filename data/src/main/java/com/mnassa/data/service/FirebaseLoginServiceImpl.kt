@@ -81,11 +81,12 @@ class FirebaseLoginServiceImpl(
     }
 
     private suspend fun signIn(credential: PhoneAuthCredential): AuthResult {
-        return try {
-            FirebaseAuth.getInstance().signInWithCredential(credential).await()
-        } catch (e: FirebaseAuthInvalidCredentialsException) {
-            throw LoginInteractor.InvalidVerificationCode()
-        }
+        return FirebaseAuth.getInstance().signInWithCredential(credential).await()
+//        return try {
+//
+//        } catch (e: FirebaseAuthInvalidCredentialsException) {
+//            throw LoginInteractor.InvalidVerificationCode()
+//        }
     }
 
     override suspend fun signOut() {
