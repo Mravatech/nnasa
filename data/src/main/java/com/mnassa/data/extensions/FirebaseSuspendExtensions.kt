@@ -36,7 +36,9 @@ internal suspend inline fun <reified T : Any> Query.awaitList(): List<T> {
 internal suspend inline fun <reified T : Any> Query.await(): T? {
     return suspendCoroutine { continuation ->
         addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(error.toException())
+            override fun onCancelled(error: DatabaseError) {
+                continuation.resumeWithException(error.toException())
+            }
             override fun onDataChange(snapshot: DataSnapshot?) = continuation.resume(snapshot.mapSingle())
         })
     }

@@ -1,7 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.model.AccountModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
@@ -21,12 +21,17 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
         return loginService.requestVerificationCode(phoneNumber, previousResponse)
     }
 
-    override suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String?): List<AccountModel> {
+    override suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String?): List<ShortAccountModel> {
         loginService.signIn(verificationSMSCode, response)
         return userRepository.getAccounts()
     }
 
     override suspend fun signOut() {
         loginService.signOut()
+        userRepository.setCurrentUserAccount(null)
+    }
+
+    override suspend fun selectAccount(account: ShortAccountModel) {
+        userRepository.setCurrentUserAccount(account)
     }
 }

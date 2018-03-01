@@ -1,20 +1,25 @@
 package com.mnassa.screen.base
 
 import android.os.Bundle
+import android.view.View
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
 import com.github.salomonbrys.kodein.android.AndroidScope
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.bindings.ScopeRegistry
+import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.BaseViewModel
+import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.screen.progress.MnassaProgressDialog
+import kotlinx.coroutines.experimental.channels.consumeEach
 import java.util.*
 
 /**
  * Created by Peter on 2/20/2018.
  */
-abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, AndroidInjector<MnassaController<VM>, AndroidScope<MnassaController<VM>>> {
+abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, AndroidInjector<MnassaController<VM>, AndroidScope<MnassaController<VM>>> {
     final override val injector = KodeinInjector()
     final override val kodeinComponent = super.kodeinComponent
     final override val kodeinScope: AndroidScope<MnassaController<VM>> = object : AndroidScope<MnassaController<VM>> {
@@ -46,6 +51,42 @@ abstract class MnassaControllerImpl<VM : BaseViewModel> : BaseControllerImpl<VM>
     override fun onCreated(savedInstanceState: Bundle?) {
         initializeInjector()
         super.onCreated(savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        subscribeToProgressEvents()
+    }
+
+    override fun onViewDestroyed(view: View) {
+        hideProgress() //prevent showing progress after screen change
+        super.onViewDestroyed(view)
+    }
+
+    protected open fun subscribeToProgressEvents() {
+        launchCoroutineUI {
+            viewModel.isProgressEnabledChannel.consumeEach { isProgressEnabled ->
+                if (isProgressEnabled) showProgress() else hideProgress()
+            }
+        }
+    }
+
+    private var progressDialog: MnassaProgressDialog? = null
+    protected fun showProgress() {
+        if (progressDialog != null) return
+
+        progressDialog?.cancel()
+
+        val dialog = MnassaProgressDialog(requireNotNull(view).context, R.style.MnassaProgressTheme)
+        dialog.setCancelable(false)
+        dialog.show()
+
+        progressDialog = dialog
+    }
+
+    protected fun hideProgress() {
+        progressDialog?.cancel()
+        progressDialog = null
     }
 
     private companion object {
