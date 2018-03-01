@@ -9,8 +9,11 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_crop.view.*
 import android.net.Uri
 import android.support.annotation.IntRange
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.CropActivity
+import com.mnassa.other.GlideApp
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -68,9 +71,10 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
         }
     }
 
-    private fun setImage(result: String?) {
+    private fun setImage(result: StorageReference?) {
         view?.ivCropImage?.let {
-            Glide.with(it)
+            //todo
+            GlideApp.with(it)
                     .load(result)
                     .into(it)
         }

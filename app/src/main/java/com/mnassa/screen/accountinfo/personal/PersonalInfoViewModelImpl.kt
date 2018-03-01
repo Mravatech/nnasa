@@ -2,6 +2,8 @@ package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
 import android.os.Bundle
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
@@ -16,9 +18,10 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/27/2018.
  */
-class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor) : MnassaViewModelImpl(), PersonalInfoViewModel {
+class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
+                                , private val storage: FirebaseStorage) : MnassaViewModelImpl(), PersonalInfoViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
+    override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +35,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         getPhotoJob = launchCoroutineUI {
             try {
                 val path = storageInteractor.getAvatar(DownloadingPhotoDataImpl(MEDIUM_PHOTO_SIZE, FOLDER_AVATARS))
-                imageUploadedChannel.send(path)
+                imageUploadedChannel.send(storage.getReferenceFromUrl(path))
                 Timber.i(path)
             } catch (e: Exception) {
                 Timber.e(e)
@@ -46,7 +49,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         sendPhotoJob = launchCoroutineUI {
             try {
                 val path = storageInteractor.sendAvatar(UploadingPhotoDataImpl(uri, FOLDER_AVATARS))
-                imageUploadedChannel.send(path)
+                imageUploadedChannel.send(storage.getReferenceFromUrl(path))
                 Timber.i(path)
             } catch (e: Exception) {
                 Timber.e(e)

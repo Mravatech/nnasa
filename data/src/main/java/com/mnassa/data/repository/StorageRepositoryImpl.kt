@@ -30,8 +30,9 @@ class StorageRepositoryImpl(private val ref: StorageReference) : StorageReposito
 
         val uploadRef = ref.child(location)
         val uploadTask = uploadRef.putFile(uri).await()
-//        val path = "gs://${uploadTask.metadata?.bucket}${uploadTask.metadata?.path}"
-        val path = uploadTask.metadata?.downloadUrl.toString()
+        val path = "gs://${uploadTask.metadata?.bucket}/${uploadTask.metadata?.path}"
+//        val path = uploadTask.metadata?.downloadUrl.toString()
+// ${uploadTask.metadata?.bucket}
         return path
     }
 

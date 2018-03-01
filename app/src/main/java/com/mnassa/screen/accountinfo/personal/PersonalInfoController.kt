@@ -7,6 +7,7 @@ import android.support.annotation.IntRange
 import android.view.View
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kodein.instance
+import com.google.firebase.storage.StorageReference
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.CropActivity
@@ -34,9 +35,9 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
 //                startCropActivity(CropActivity.REQUEST_CODE_CAMERA)
 //            }
 //
-//            fabAddPhotoGallery.setOnClickListener {
-//                startCropActivity(CropActivity.REQUEST_CODE_GALLERY)
-//            }
+            fabPhotoFromGallery.setOnClickListener {
+                startCropActivity(CropActivity.REQUEST_CODE_GALLERY)
+            }
         }
 
         onActivityResult.subscribe {
@@ -66,7 +67,7 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         }
     }
 
-    private fun setImage(result: String) {
+    private fun setImage(result: StorageReference?) {
         view?.ivUserAvatar?.let {
             Glide.with(it).load(result).into(it)
         }

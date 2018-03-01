@@ -1,6 +1,8 @@
 package com.mnassa.screen.profile
 
 import android.net.Uri
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
@@ -17,17 +19,19 @@ import timber.log.Timber
  * User: okli
  * Date: 2/26/2018
  */
-class ProfileViewModelImpl(private val storageInteractor: StorageInteractor) : MnassaViewModelImpl(), ProfileViewModel {
+class ProfileViewModelImpl(private val storageInteractor: StorageInteractor
+                           , private val storage: FirebaseStorage) : MnassaViewModelImpl(), ProfileViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
+    override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
 
     private var getPhotoJob: Job? = null
     override fun getPhotoFromStorage() {
         getPhotoJob?.cancel()
         getPhotoJob = launchCoroutineUI {
             try {
+                //todo change return type from http to gs
                 val path = storageInteractor.getAvatar(DownloadingPhotoDataImpl(MEDIUM_PHOTO_SIZE, FOLDER_AVATARS))
-                imageUploadedChannel.send(path)
+                imageUploadedChannel.send(storage.getReferenceFromUrl(path))
                 Timber.i(path)
             } catch (e: Exception) {
                 Timber.e(e)
@@ -41,7 +45,7 @@ class ProfileViewModelImpl(private val storageInteractor: StorageInteractor) : M
         sendPhotoJob = launchCoroutineUI {
             try {
                 val path = storageInteractor.sendAvatar(UploadingPhotoDataImpl(uri, FOLDER_AVATARS))
-                imageUploadedChannel.send(path)
+                imageUploadedChannel.send(storage.getReferenceFromUrl(path))
                 Timber.i(path)
             } catch (e: Exception) {
                 Timber.e(e)
