@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/buttonWrapper">
+        android:layout_above="@+id/btnTakePhotoFromCamera">
 
         <ImageView
             android:id="@+id/ivCropImage"
@@ -18,33 +18,14 @@
             android:contentDescription="@null" />
     </RelativeLayout>
 
-
-    <LinearLayout
-        android:id="@+id/buttonWrapper"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnTakePhotoFromCamera"
+        style="@style/MnassaButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_margin="8dp"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnTakePhotoFromCamera"
-            style="@style/MnassaButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            tools:text="Take Photo" />
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnTakePhotoFromGallery"
-            style="@style/MnassaButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            tools:text="Take Photo From Camera" />
-    </LinearLayout>
+        tools:text="Take Photo" />
 
 </RelativeLayout>

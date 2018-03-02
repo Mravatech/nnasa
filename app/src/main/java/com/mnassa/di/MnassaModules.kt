@@ -83,7 +83,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
-    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
+    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {
