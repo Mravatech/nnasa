@@ -13,15 +13,15 @@ class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileIn
 
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: String, interests: String) {
         handleException {
-            userProfileInteractor.createPersonalAccount(
+            val acc = userProfileInteractor.createPersonalAccount(
                     firstName = firstName,
                     secondName = secondName,
                     userName = userName,
                     city = city,
-                    offers = offers,
-                    interests = interests
+                    offers = listOf(offers),
+                    interests = listOf(interests)
             )
-            openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen())
+            openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(acc))
         }
     }
 

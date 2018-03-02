@@ -9,9 +9,9 @@ import com.google.gson.annotations.SerializedName
  */
 data class RegisterAccountInfoResponse(
         @SerializedName("status")
-        val status: String,
-        @SerializedName("data")
-        val account: ProcessAccount
+        val status: String//,
+//        @SerializedName("data")
+//        val account: ProcessAccount
 )
 
 data class ProcessAccount(

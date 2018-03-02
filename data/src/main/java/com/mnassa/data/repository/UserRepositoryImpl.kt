@@ -12,6 +12,7 @@ import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
+import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.data.network.exception.handleNetworkException
 import com.mnassa.domain.model.ShortAccountModel
@@ -68,7 +69,7 @@ class UserRepositoryImpl(
         return converter.convertCollection(beans, ShortAccountModel::class.java)
     }
 
-    override suspend fun createPersonAccount(firstName: String, secondName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
+    override suspend fun createPersonAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
         val result = firebaseAuthApi.registerPersonalAccount(RegisterPersonalAccountRequest(
                 firstName = firstName,
                 lastName = secondName,
@@ -89,6 +90,29 @@ class UserRepositoryImpl(
                 organizationName = companyName
         )).handleNetworkException(networkExceptionHandler)
         return converter.convert(result.account)
+    }
+
+    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
+        //todo remove hardcode
+        firebaseAuthApi.registerSendAccountInfo(RegisterSendingAccountInfoRequest(
+                null,
+                null,
+                account.personalInfo!!.lastName,
+                account.userName,
+                true,
+                "en",
+                "personal",
+                611265600000.0,
+                account.contactPhone,
+                null,
+                null,
+                getAccountId()!!,
+                path,
+                account.personalInfo!!.firstName,
+                listOf("-L5o3gRz9DfDXkdTZ01B"),
+                listOf("-L59C0y19-aGFdDN8kNc"),
+                false
+        )).await()
     }
 
     override suspend fun getFirebaseToken(): String? {

@@ -13,7 +13,7 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
         return requireNotNull(userRepository.getCurrentUser())
     }
 
-    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
+    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
         val account = userRepository.createPersonAccount(
                 firstName = firstName,
                 secondName = secondName,
@@ -37,10 +37,15 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
         return account
     }
 
+    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
+//todo handle response
+        userRepository.processAccount(account, path)
+    }
+
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
         userRepository.setCurrentUserAccount(account)
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
-    override suspend fun getAccountId(): String? = userRepository.getFirebaseUserId()
+    override suspend fun getAccountId(): String? = userRepository.getAccountId()
 }

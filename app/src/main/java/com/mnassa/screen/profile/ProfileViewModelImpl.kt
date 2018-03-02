@@ -2,15 +2,20 @@ package com.mnassa.screen.profile
 
 import android.net.Uri
 import android.os.Bundle
+import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.bean.retrofit.request.Ability
+import com.mnassa.data.network.bean.retrofit.request.Location
+import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.MEDIUM_PHOTO_SIZE
 import com.mnassa.domain.model.impl.DownloadingPhotoDataImpl
 import com.mnassa.domain.model.impl.UploadingPhotoDataImpl
-import com.mnassa.domain.repository.UserRepository
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -22,8 +27,7 @@ import timber.log.Timber
  * Date: 2/26/2018
  */
 class ProfileViewModelImpl(private val storageInteractor: StorageInteractor
-                           , private val storage: FirebaseStorage
-                           , private val repository: UserRepository) : MnassaViewModelImpl(), ProfileViewModel {
+                           , private val storage: FirebaseStorage) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
 

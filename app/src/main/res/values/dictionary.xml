@@ -21,4 +21,8 @@
     <string name="reg_person_info_phone">_accEdit_cellPhone_title</string>
     <string name="reg_person_info_at">_cellOccupation_placeTitle</string>
     <string name="reg_person_info_title">_newAccDetails_navTitle</string>
+    <string name="reg_person_info_female_gender">_cellGender_Female</string>
+    <string name="reg_person_info_male_gender">_cellGender_male</string>
+    <string name="reg_person_info_gender">_cellGender_title</string>
+    <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
 </resources>

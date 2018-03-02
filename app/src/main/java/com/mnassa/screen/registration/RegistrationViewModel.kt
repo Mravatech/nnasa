@@ -1,5 +1,6 @@
 package com.mnassa.screen.registration
 
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -13,7 +14,7 @@ interface RegistrationViewModel : MnassaViewModel {
     fun registerOrganization(userName: String, city: String, companyName: String, offers: String, interests: String)
 
     sealed class OpenScreenCommand {
-        class PersonalInfoScreen : OpenScreenCommand()
+        class PersonalInfoScreen(val acc: ShortAccountModel) : OpenScreenCommand()
         class OrganizationInfoScreen : OpenScreenCommand()
     }
 }
