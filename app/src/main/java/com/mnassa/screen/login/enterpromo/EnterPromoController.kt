@@ -3,7 +3,7 @@ package com.mnassa.screen.login.enterpromo
 import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
-import com.mnassa.other.fromDictionary
+import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import kotlinx.android.synthetic.main.code_input.view.*
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*

@@ -19,7 +19,7 @@ import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
-import com.mnassa.other.fromDictionary
+import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel

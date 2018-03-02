@@ -1,4 +1,4 @@
-package com.mnassa.other
+package com.mnassa.extensions
 
 import android.text.Editable
 import android.text.TextWatcher

@@ -12,7 +12,7 @@ import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.other.fromDictionary
+import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.progress.MnassaProgressDialog
 import kotlinx.coroutines.experimental.channels.consumeEach
 import java.util.*

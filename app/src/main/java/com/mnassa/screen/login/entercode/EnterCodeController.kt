@@ -1,7 +1,6 @@
 package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -12,9 +11,9 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PhoneVerificationModel
-import com.mnassa.other.SimpleTextWatcher
-import com.mnassa.other.fromDictionary
-import com.mnassa.other.validators.onImeActionDone
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.translation.fromDictionary
+import com.mnassa.extensions.onImeActionDone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController

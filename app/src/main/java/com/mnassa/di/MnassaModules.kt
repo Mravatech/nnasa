@@ -33,8 +33,8 @@ import com.mnassa.domain.repository.DictionaryRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.other.AppInfoProviderImpl
-import com.mnassa.other.LanguageProviderImpl
+import com.mnassa.AppInfoProviderImpl
+import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.login.entercode.EnterCodeViewModel

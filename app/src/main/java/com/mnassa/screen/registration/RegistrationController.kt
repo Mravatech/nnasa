@@ -1,7 +1,7 @@
 package com.mnassa.screen.registration
 
-import android.support.design.widget.Snackbar
 import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +9,9 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.other.fromDictionary
+import com.mnassa.extensions.disable
+import com.mnassa.extensions.enable
+import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -32,10 +34,27 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         with(view) {
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = RegistrationAdapter()
-            tlRegistration.setupWithViewPager(vpRegistration)
+            vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
+                override fun onPageSelected(position: Int) = updateAccountTypeSwitch()
+            })
+            updateAccountTypeSwitch()
+
+            llAccountTypePersonal.setOnClickListener {
+                vpRegistration.currentItem = PAGE_PERSON_INFO
+            }
+            llAccountTypeOrganization.setOnClickListener {
+                vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
+            }
+
             btnScreenHeaderAction.text = fromDictionary(R.string.reg_next)
             btnScreenHeaderAction.visibility = View.VISIBLE
             btnScreenHeaderAction.setOnClickListener { processRegisterClick() }
+
+            tvOr.text = fromDictionary(R.string.login_or)
+            tvAccountTypePersonal.text = fromDictionary(R.string.reg_account_type_personal)
+            tvAccountTypeOrganization.text = fromDictionary(R.string.reg_account_type_organization)
+
+
         }
 
         launchCoroutineUI {
@@ -50,6 +69,20 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 }
                 router.popToRoot()
                 router.replaceTopController(RouterTransaction.with(controller))
+            }
+        }
+    }
+
+    private fun updateAccountTypeSwitch() {
+        val v = view ?: return
+        when (v.vpRegistration.currentItem) {
+            PAGE_PERSON_INFO -> {
+                v.ivAccountTypeOrganization.disable()
+                v.ivAccountTypePersonal.enable()
+            }
+            PAGE_ORGANIZATION_INFO -> {
+                v.ivAccountTypeOrganization.enable()
+                v.ivAccountTypePersonal.disable()
             }
         }
     }

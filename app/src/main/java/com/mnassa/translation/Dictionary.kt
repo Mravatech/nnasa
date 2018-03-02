@@ -1,4 +1,4 @@
-package com.mnassa.other
+package com.mnassa.translation
 
 import android.support.annotation.StringRes
 import com.github.salomonbrys.kodein.android.appKodein

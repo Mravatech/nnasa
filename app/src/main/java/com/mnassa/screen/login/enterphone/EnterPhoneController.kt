@@ -16,9 +16,9 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.other.SimpleTextWatcher
-import com.mnassa.other.fromDictionary
-import com.mnassa.other.validators.onImeActionDone
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.translation.fromDictionary
+import com.mnassa.extensions.onImeActionDone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.entercode.EnterCodeController
 import com.mnassa.screen.login.enterpromo.EnterPromoController

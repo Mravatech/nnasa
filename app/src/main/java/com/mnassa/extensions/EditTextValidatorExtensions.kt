@@ -1,4 +1,4 @@
-package com.mnassa.other.validators
+package com.mnassa.extensions
 
 import android.support.design.widget.TextInputLayout
 import android.text.Editable
