@@ -5,7 +5,9 @@ import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
+import com.mnassa.data.network.exception.FirebaseExceptionHandler
 import com.mnassa.data.network.exception.NetworkExceptionHandler
+import com.mnassa.data.network.exception.handle
 import com.mnassa.data.network.exception.handleNetworkException
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
@@ -21,7 +23,8 @@ import java.util.concurrent.TimeUnit
  */
 class FirebaseLoginServiceImpl(
         private val authApi: FirebaseAuthApi,
-        private val networkErrorHandler: NetworkExceptionHandler) : FirebaseLoginService {
+        private val networkErrorHandler: NetworkExceptionHandler,
+        private val firebaseExceptionHandler: FirebaseExceptionHandler) : FirebaseLoginService {
 
     override suspend fun checkPhone(phoneNumber: String, promoCode: String?) {
         authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleNetworkException(networkErrorHandler)
@@ -44,7 +47,7 @@ class FirebaseLoginServiceImpl(
             }
 
             override fun onVerificationFailed(exception: FirebaseException) {
-                sendChannel.close(exception)
+                sendChannel.close(exception.handle(firebaseExceptionHandler))
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
@@ -53,7 +56,7 @@ class FirebaseLoginServiceImpl(
 
             override fun onCodeAutoRetrievalTimeOut(p0: String?) {
                 super.onCodeAutoRetrievalTimeOut(p0)
-                sendChannel.close(IllegalStateException(p0))
+                sendChannel.close()
             }
         }
 
@@ -69,6 +72,11 @@ class FirebaseLoginServiceImpl(
         return sendChannel
     }
 
+    override suspend fun processLoginByEmail(email: String, password: String): PhoneVerificationModel {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).await()
+        return EmailAuth()
+    }
+
     override suspend fun signIn(verificationSMSCode: String?, response: PhoneVerificationModel) {
         when {
             verificationSMSCode == null && response is OnVerificationCompleted ->
@@ -78,13 +86,12 @@ class FirebaseLoginServiceImpl(
         }
     }
 
-    private suspend fun signIn(credential: PhoneAuthCredential): AuthResult {
-        return FirebaseAuth.getInstance().signInWithCredential(credential).await()
-//        return try {
-//
-//        } catch (e: FirebaseAuthInvalidCredentialsException) {
-//            throw LoginInteractor.InvalidVerificationCode()
-//        }
+    private suspend fun signIn(credential: AuthCredential): AuthResult {
+        return try {
+            FirebaseAuth.getInstance().signInWithCredential(credential).await()
+        } catch (e: FirebaseException) {
+            throw e.handle(firebaseExceptionHandler)
+        }
     }
 
     override suspend fun signOut() {
@@ -98,7 +105,7 @@ class FirebaseLoginServiceImpl(
     @Parcelize
     class OnVerificationCompleted(
             override val phoneNumber: String,
-            val credential: PhoneAuthCredential,
+            val credential: AuthCredential,
             override val isVerified: Boolean = true): PhoneVerificationModel
 
     @Parcelize
@@ -107,4 +114,10 @@ class FirebaseLoginServiceImpl(
             val verificationId: String,
             val token: PhoneAuthProvider.ForceResendingToken?,
             override val isVerified: Boolean = false): PhoneVerificationModel
+
+    @Parcelize
+    class EmailAuth(
+            override val phoneNumber: String = "",
+            override val isVerified: Boolean = true
+    ): PhoneVerificationModel
 }

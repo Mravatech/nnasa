@@ -13,11 +13,13 @@ import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.github.salomonbrys.kodein.erased
 import com.google.firebase.FirebaseException
 import com.mnassa.App
+import com.mnassa.R
 import com.mnassa.core.BaseViewModelImpl
 import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
+import com.mnassa.other.fromDictionary
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -72,7 +74,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
             Timber.d(e)
         } catch (e: NetworkDisableException) {
             Timber.d(e)
-            errorMessageChannel.send("No internet connection!") //TODO: add text
+            errorMessageChannel.send(fromDictionary(R.string.error_no_internet))
         } catch (e: NetworkException) {
             Timber.d(e)
             errorMessageChannel.send(e.message)

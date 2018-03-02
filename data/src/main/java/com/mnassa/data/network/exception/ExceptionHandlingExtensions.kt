@@ -1,5 +1,6 @@
 package com.mnassa.data.network.exception
 
+import com.google.firebase.FirebaseException
 import kotlinx.coroutines.experimental.Deferred
 
 /**
@@ -12,4 +13,8 @@ internal suspend fun <T> Deferred<T>.handleNetworkException(handler: NetworkExce
     } catch (e: Throwable) {
         throw handler.handle(e)
     }
+}
+
+internal fun FirebaseException.handle(handler: FirebaseExceptionHandler): Throwable {
+    return handler.handle(this)
 }

@@ -1,20 +1,21 @@
 package com.mnassa.screen.login.enterphone
 
 import android.support.design.widget.Snackbar
-import android.telephony.PhoneNumberFormattingTextWatcher
+import android.support.v7.app.AlertDialog
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.LinearLayout
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.other.SimpleTextWatcher
 import com.mnassa.other.fromDictionary
 import com.mnassa.other.validators.onImeActionDone
@@ -51,7 +52,7 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.setText(R.string.enter_phone_header_welcome)
+            tvScreenHeader.text = fromDictionary(R.string.login_header_welcome)
             tvEnterPhoneNumber.text = fromDictionary(R.string.login_enter_phone_title)
             btnVerifyMe.text = fromDictionary(R.string.login_verify_me)
             etPhoneNumberTail.hint = fromDictionary(R.string.login_your_phone)
@@ -121,12 +122,46 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             }
         }
 
-//        launchCoroutineUI {
-//            viewModel.errorMessageChannel.consumeEach {
-//                view.etPhoneNumberTail.error = it
-//            }
-//        }
+        if (instance<AppInfoProvider>().value.isDebug) addSignInViaEmailAbility()
     }
+
+    private fun addSignInViaEmailAbility() {
+        //!!!DEBUG ONLY!!!
+        val view = view!!
+        view.btnScreenHeaderAction.text = "EMAIL"
+        view.btnScreenHeaderAction.visibility = View.VISIBLE
+        view.btnScreenHeaderAction.setOnClickListener { requestEmailAndPassword() }
+    }
+
+    private fun requestEmailAndPassword() {
+        //!!!DEBUG ONLY!!!
+        val context = view!!.context
+        val container = LinearLayout(context)
+        container.orientation = LinearLayout.VERTICAL
+
+        val email = EditText(context)
+        email.hint = "Email"
+        val password = EditText(context)
+        password.hint = "Password"
+
+        container.addView(email)
+        container.addView(password)
+
+        val lp = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT)
+        container.layoutParams = lp
+
+        AlertDialog.Builder(context)
+                .setView(container)
+                .setPositiveButton("Login", { _, _ ->
+                    viewModel.signInByEmail(
+                            email.text.toString(),
+                            password.text.toString())
+                })
+                .show()
+    }
+
 
     private val phonePattern = Pattern.compile("\\d{12,13}")
     private fun isPhoneValid(phoneNumber: String): Boolean {

@@ -12,6 +12,7 @@ import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.other.fromDictionary
 import com.mnassa.screen.progress.MnassaProgressDialog
 import kotlinx.coroutines.experimental.channels.consumeEach
 import java.util.*
@@ -69,7 +70,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
             viewModel.errorMessageChannel.consumeEach {
                 val context = view?.context ?: return@consumeEach
                 AlertDialog.Builder(context)
-                        .setTitle(R.string.dialog_title_something_went_wrong)
+                        .setTitle(fromDictionary(R.string.error_dialog_title))
                         .setMessage(it)
                         .setPositiveButton(context.getString(android.R.string.ok), { _, _ -> })
                         .show()

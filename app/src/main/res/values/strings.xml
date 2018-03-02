@@ -1,9 +1,3 @@
 <resources>
     <string name="app_name">Mnassa</string>
-
-
-    <!-- TODO: to dictionary -->
-    <string name="enter_phone_header_welcome">Welcome!</string>
-    <string name="enter_validation_code_header">Validation Code</string>
-    <string name="dialog_title_something_went_wrong">Something went wrong</string>
 </resources>

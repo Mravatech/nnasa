@@ -12,6 +12,7 @@ interface EnterPhoneViewModel : MnassaViewModel {
     val openScreenChannel: BroadcastChannel<OpenScreenCommand>
 
     fun requestVerificationCode(phoneNumber: String, promoCode: String? = null)
+    fun signInByEmail(email: String, password: String)
 
     sealed class OpenScreenCommand {
         class EnterVerificationCode(val param: PhoneVerificationModel): OpenScreenCommand()

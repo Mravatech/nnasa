@@ -52,12 +52,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 router.replaceTopController(RouterTransaction.with(controller))
             }
         }
-
-//        launchCoroutineUI {
-//            viewModel.errorMessageChannel.consumeEach {
-//                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
-//            }
-//        }
     }
 
     private fun validatePersonInfo(): Boolean {

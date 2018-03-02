@@ -34,13 +34,21 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
         requestVerificationCodeJob = handleException {
             loginInteractor.requestVerificationCode(phoneNumber = phoneNumber, promoCode = promoCode).consumeEach {
                 verificationResponse = it
-                hideProgress()
                 when {
                     it.isVerified -> signIn(it)
                     else -> openScreenChannel.send(
                             EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
                 }
             }
+        }
+        requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
+    }
+
+    override fun signInByEmail(email: String, password: String) {
+        requestVerificationCodeJob?.cancel()
+
+        requestVerificationCodeJob = handleException {
+            signIn(loginInteractor.processLoginByEmail(email, password))
         }
         requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
     }

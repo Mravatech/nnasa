@@ -42,5 +42,5 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
-    override suspend fun getAccountId(): String? = userRepository.getFirebaseUserId()
+    override suspend fun getAccountId(): String? = userRepository.getAccountId()
 }

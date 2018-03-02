@@ -12,6 +12,9 @@ import com.mnassa.data.converter.TranslatedWordConverter
 import com.mnassa.data.converter.UserAccountConverter
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.api.FirebaseDictionaryApi
+import com.mnassa.data.network.exception.FirebaseExceptionHandler
+import com.mnassa.data.network.exception.FirebaseExceptionHandlerImpl
 import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
 import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.data.repository.DictionaryRepositoryImpl
@@ -97,13 +100,13 @@ private val repositoryModule = Kodein.Module {
         result
     }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), { instance()}, { instance() }) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
-    bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance()) }
+    bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance(), instance()) }
 }
 
 private val interactorModule = Kodein.Module {
@@ -114,7 +117,7 @@ private val interactorModule = Kodein.Module {
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig(instance(), instance(), instance(), instance()) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }
@@ -122,7 +125,12 @@ private val networkModule = Kodein.Module {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseAuthApi::class.java)
     }
+    bind<FirebaseDictionaryApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebaseDictionaryApi::class.java)
+    }
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
+    bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
 }
 
 private val otherModule = Kodein.Module {

@@ -47,20 +47,15 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.setText(R.string.enter_validation_code_header)
+            tvScreenHeader.text = fromDictionary(R.string.login_validation_code_header)
             tvEnterValidationCode.text = fromDictionary(R.string.login_enter_code_title)
+            etValidationCode.hint = fromDictionary(R.string.login_validation_code_hint)
             startResendCodeTimer(resendCodeSecondCounter)
 
             etValidationCode.addTextChangedListener(SimpleTextWatcher {
                 onCodeChanged()
             })
             etValidationCode.onImeActionDone { onCodeChanged() }
-        }
-
-        launchCoroutineUI {
-            viewModel.errorMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
-            }
         }
 
         launchCoroutineUI {
@@ -107,7 +102,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
             resendCodeTimerJob?.cancel()
             resendCodeTimerJob = launchCoroutineUI {
                 val v = view ?: return@launchCoroutineUI
-                val text = fromDictionary(R.string.login_enter_code_resend_after).replace("%i", "%d").format(secondsCounter)
+                val text = fromDictionary(R.string.login_enter_code_resend_after).format(secondsCounter)
                 v.tvResendCodeAfter.text = text
                 delay(1, TimeUnit.SECONDS)
                 startResendCodeTimer(secondsCounter - 1)
