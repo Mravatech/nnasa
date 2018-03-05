@@ -33,7 +33,6 @@ fun showPhotoDialog(context: Context, listener: PhotoListener) {
     dialog.show()
 }
 
-
 interface PhotoListener {
     fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int)
 }

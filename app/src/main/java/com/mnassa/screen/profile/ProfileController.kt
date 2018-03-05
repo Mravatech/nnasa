@@ -73,7 +73,6 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>(), PhotoListene
         GlideApp.with(imageView).load(result).into(imageView)
     }
 
-
     companion object {
         private const val REQUEST_CODE_CROP = 101
 
