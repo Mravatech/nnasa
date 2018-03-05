@@ -141,6 +141,10 @@ dependencies {
     implementation deps.firebase.auth_service
     implementation deps.firebase.database
 
+    //play
+    implementation deps.playServices.places
+    implementation deps.playServices.locations
+
     //coroutines
     implementation deps.coroutines.core
     implementation deps.coroutines.android

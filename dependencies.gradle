@@ -51,7 +51,7 @@ database.roomRxAdapter =            "android.arch.persistence.room:rxjava2:$vers
 deps.database = database
 
 //============================================= PLAY SERVICES ======================================
-versions.playServices = "11.6.0"
+versions.playServices = "11.8.0"
 versions.playServicesGradlePluginVersion = '3.2.0'
 
 def playServices = [:]
@@ -60,6 +60,10 @@ playServices.maps = ["com.google.android.gms:play-services-maps:$versions.playSe
     exclude module: 'support-v7'
 }]
 playServices.locations = ["com.google.android.gms:play-services-location:$versions.playServices", {
+    exclude module: 'support-v4'
+    exclude module: 'support-v7'
+}]
+playServices.places = ["com.google.android.gms:play-services-places:$versions.playServices", {
     exclude module: 'support-v4'
     exclude module: 'support-v7'
 }]
