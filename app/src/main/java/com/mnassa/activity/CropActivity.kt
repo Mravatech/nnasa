@@ -1,4 +1,4 @@
-package com.mnassa.other
+package com.mnassa.activity
 
 import android.app.Activity
 import android.content.ContentValues
@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
+import com.mnassa.R
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
@@ -24,49 +25,45 @@ class CropActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val filename = System.currentTimeMillis().toString() + ".jpg"
-        cachedUri = Uri.fromFile(File(cacheDir.toString() + "/" + filename))
-
-        getPhoto(intent.getIntExtra(PHOTO_INTENT_FLAG, 0))
-
-    }
-
-    private fun getPhoto(flag: Int) {
-        when (flag) {
-            REQUEST_CODE_GALLERY -> requestPhotoGallery()
-            REQUEST_CODE_CAMERA -> requestCamera()
-            else -> {
-                setResult(GET_PHOTO_ERROR)
-                finish()
-            }
-        }
+        val filename = "${System.currentTimeMillis()}${getString(R.string.jpg_dimension)}"
+        cachedUri = Uri.fromFile(File("$cacheDir${File.separator}$filename"))
+        requestPhoto(intent.getIntExtra(PHOTO_INTENT_FLAG, DEFAULT_VALUE))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_CAMERA) {
-            uri = data?.data ?: uri
-            cropImage()
-        } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_GALLERY) {
-            uri = data?.data
-            cropImage()
-        } else if (resultCode == RESULT_CANCELED) {
-            setResult(GET_PHOTO_ERROR)
-            finish()
-        } else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            setResult(RESULT_OK, intent.putExtra(URI_PHOTO_RESULT, cachedUri))
-            finish()
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            setResult(GET_PHOTO_ERROR)
-            finish()
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                when (requestCode) {
+                    REQUEST_CODE_CAMERA -> cropImage(data?.data ?: uri)
+                    REQUEST_CODE_GALLERY -> cropImage(data?.data)
+                    UCrop.REQUEST_CROP -> {
+                        setResult(RESULT_OK, intent.putExtra(URI_PHOTO_RESULT, cachedUri))
+                        finish()
+                    }
+                }
+            }
+            UCrop.RESULT_ERROR, RESULT_CANCELED -> {
+                resultWithError()
+            }
         }
     }
 
-    private fun cropImage() {
+    private fun requestPhoto(flag: Int) {
+        when (flag) {
+            REQUEST_CODE_GALLERY -> requestPhotoGallery()
+            REQUEST_CODE_CAMERA -> requestCamera()
+            else -> {
+                resultWithError()
+            }
+        }
+    }
+
+    private fun cropImage(uri: Uri?) {
         uri?.let {
-            UCrop.of(it, cachedUri)
-                    .start(this)
+            UCrop.of(it, cachedUri).start(this)
+        } ?: run {
+            resultWithError()
         }
     }
 
@@ -77,44 +74,37 @@ class CropActivity : AppCompatActivity() {
             val values = ContentValues()
             values.put(MediaStore.Images.Media.TITLE, System.currentTimeMillis())
             values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-            uri = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
+            uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             startActivityForResult(intent, REQUEST_CODE_CAMERA)
         } else {
-            setResult(GET_PHOTO_ERROR)
-            finish()
+            resultWithError()
         }
     }
 
     private fun requestPhotoGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, getIntent().getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, false))
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, REQUEST_CODE_GALLERY)
         } else {
-            setResult(GET_PHOTO_ERROR)
-            finish()
+            resultWithError()
         }
     }
-    // delete if above method works well
-//    private fun pickFromGallery() {
-//        val intent = Intent()
-//        intent.type = "image/*"
-//        intent.action = Intent.ACTION_GET_CONTENT
-//        intent.addCategory(Intent.CATEGORY_OPENABLE)
-//        // put to resources
-//        startActivityForResult(Intent.createChooser(intent, "Select photo"), REQUEST_CODE_PICTURE)
-//    }
 
+    private fun resultWithError(){
+        setResult(GET_PHOTO_ERROR)
+        finish()
+    }
 
     companion object {
-        private const val PHOTO_INTENT_FLAG = "PHOTO_INTENT_FLAG"
         const val URI_PHOTO_RESULT = "URI_PHOTO_RESULT"
         const val GET_PHOTO_ERROR = 102
         const val REQUEST_CODE_GALLERY = 1
         const val REQUEST_CODE_CAMERA = 2
+        private const val PHOTO_INTENT_FLAG = "PHOTO_INTENT_FLAG"
+        private const val DEFAULT_VALUE = 0
 
         fun start(flag: Int, context: Context): Intent {
             val intent = Intent(context, CropActivity::class.java)

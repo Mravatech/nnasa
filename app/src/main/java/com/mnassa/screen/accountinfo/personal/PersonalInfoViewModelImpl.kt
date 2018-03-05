@@ -8,10 +8,8 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
-import com.mnassa.domain.model.MEDIUM_PHOTO_SIZE
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.impl.DownloadingPhotoDataImpl
-import com.mnassa.domain.model.impl.UploadingPhotoDataImpl
+import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -27,7 +25,6 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
     override val openScreenChannel: ArrayBroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-
     private var path: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +32,6 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         savedInstanceState?.apply {
             path = getString(EXTRA_PHOTO_PATH)
         }
-
     }
 
     override fun saveInstanceState(outBundle: Bundle) {
@@ -44,10 +40,10 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     }
 
     private var sendPhotoJob: Job? = null
-    override fun sendPhotoToStorage(uri: Uri) {
+    override fun uploadPhotoToStorage(uri: Uri) {
         sendPhotoJob?.cancel()
         sendPhotoJob = handleException {
-            path = storageInteractor.sendAvatar(UploadingPhotoDataImpl(uri, FOLDER_AVATARS))
+            path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
             path?.let {
                 imageUploadedChannel.send(storage.getReferenceFromUrl(it))
             }

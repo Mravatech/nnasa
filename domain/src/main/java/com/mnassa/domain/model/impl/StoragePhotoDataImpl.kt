@@ -9,7 +9,7 @@ import com.mnassa.domain.model.*
  * Date: 2/28/2018
  */
 
-data class UploadingPhotoDataImpl(override val uri: Uri, override val folderType: Int) : UploadingPhotoData {
+data class StoragePhotoDataImpl(override val uri: Uri, override val folderType: Int) : StoragePhotoData {
 
     override fun getFolder(): String{
         return when(folderType){

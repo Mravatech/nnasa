@@ -30,7 +30,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
-            android:name=".other.CropActivity"
+            android:name=".activity.CropActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

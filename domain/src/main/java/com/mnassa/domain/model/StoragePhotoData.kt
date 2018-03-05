@@ -7,6 +7,6 @@ import android.net.Uri
  * User: okli
  * Date: 2/28/2018
  */
-interface UploadingPhotoData : StorageData {
+interface StoragePhotoData : StorageData {
     val uri: Uri
 }

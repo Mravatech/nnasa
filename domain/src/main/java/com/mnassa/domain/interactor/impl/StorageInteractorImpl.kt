@@ -1,8 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.model.DownloadingPhotoData
-import com.mnassa.domain.model.UploadingPhotoData
+import com.mnassa.domain.model.StoragePhotoData
 import com.mnassa.domain.repository.StorageRepository
 import com.mnassa.domain.repository.UserRepository
 
@@ -15,7 +14,7 @@ import com.mnassa.domain.repository.UserRepository
 class StorageInteractorImpl(private val storageRepository: StorageRepository,
                             private val userRepository: UserRepository) : StorageInteractor {
 
-    override suspend fun sendAvatar(uploadPhoto: UploadingPhotoData): String {
+    override suspend fun sendAvatar(uploadPhoto: StoragePhotoData): String {
         val token = userRepository.getCurrentUser()?.firebaseUserId!!
         return storageRepository.uploadPhotoToStorage(uploadPhoto, token)
     }

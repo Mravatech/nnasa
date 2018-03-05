@@ -1,6 +1,6 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.UploadingPhotoData
+import com.mnassa.domain.model.StoragePhotoData
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,7 +8,5 @@ import com.mnassa.domain.model.UploadingPhotoData
  * Date: 2/27/2018
  */
 interface StorageRepository {
-
-    suspend fun uploadPhotoToStorage(uploadPhoto: UploadingPhotoData, token: String): String
-
+    suspend fun uploadPhotoToStorage(uploadPhoto: StoragePhotoData, token: String): String
 }

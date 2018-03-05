@@ -1,4 +1,4 @@
-package com.mnassa.other
+package com.mnassa.module
 
 import android.content.Context
 import com.bumptech.glide.Registry
@@ -7,9 +7,6 @@ import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.StorageReference
 import java.io.InputStream
 import com.bumptech.glide.Glide
-
-
-
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,9 +17,9 @@ import com.bumptech.glide.Glide
 @com.bumptech.glide.annotation.GlideModule
 class MnassaGlideModule : AppGlideModule(){
 
-    override fun registerComponents(context: Context?, glide: Glide?, registry: Registry?) {
+    override fun registerComponents(context: Context?, glide: Glide?, registry: Registry) {
         // Register FirebaseImageLoader to handle StorageReference
-        registry!!.append(StorageReference::class.java, InputStream::class.java,
+        registry.append(StorageReference::class.java, InputStream::class.java,
                 FirebaseImageLoader.Factory())
     }
 

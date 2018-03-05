@@ -1,21 +1,12 @@
 package com.mnassa.screen.profile
 
 import android.net.Uri
-import android.os.Bundle
-import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.data.network.api.FirebaseAuthApi
-import com.mnassa.data.network.bean.retrofit.request.Ability
-import com.mnassa.data.network.bean.retrofit.request.Location
-import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
-import com.mnassa.domain.model.MEDIUM_PHOTO_SIZE
-import com.mnassa.domain.model.impl.DownloadingPhotoDataImpl
-import com.mnassa.domain.model.impl.UploadingPhotoDataImpl
+import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -31,24 +22,18 @@ class ProfileViewModelImpl(private val storageInteractor: StorageInteractor
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     private var sendPhotoJob: Job? = null
-    override fun sendPhotoToStorage(uri: Uri) {
+    override fun uploadPhotoToStorage(uri: Uri) {
         sendPhotoJob?.cancel()
         sendPhotoJob = launchCoroutineUI {
             try {
-                val path = storageInteractor.sendAvatar(UploadingPhotoDataImpl(uri, FOLDER_AVATARS))
+                val path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
                 imageUploadedChannel.send(storage.getReferenceFromUrl(path))
                 Timber.i(path)
             } catch (e: Exception) {
                 Timber.e(e)
                 //todo handle error
             }
-
         }
     }
 }

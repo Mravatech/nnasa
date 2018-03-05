@@ -13,7 +13,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface PersonalInfoViewModel : MnassaViewModel {
     val imageUploadedChannel: BroadcastChannel<StorageReference>
     val openScreenChannel: ArrayBroadcastChannel<OpenScreenCommand>
-    fun sendPhotoToStorage(uri: Uri)
+
+    fun uploadPhotoToStorage(uri: Uri)
     fun processAccount(accountModel: ShortAccountModel)
 
     sealed class OpenScreenCommand {

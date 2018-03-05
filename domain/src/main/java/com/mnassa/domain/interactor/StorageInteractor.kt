@@ -1,6 +1,6 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.model.UploadingPhotoData
+import com.mnassa.domain.model.StoragePhotoData
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,5 +9,5 @@ import com.mnassa.domain.model.UploadingPhotoData
  */
 
 interface StorageInteractor {
-    suspend fun sendAvatar(uploadPhoto: UploadingPhotoData): String
+    suspend fun sendAvatar(uploadPhoto: StoragePhotoData): String
 }
