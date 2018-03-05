@@ -2,6 +2,7 @@ package com.mnassa.screen.invite
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.ShortAccountModel
@@ -19,8 +20,8 @@ class InviteViewModelImpl(private val inviteInteractor: InviteInteractor) : Mnas
     private var sendPhoneContactsJob: Job? = null
     private var inviteUsersJob: Job? = null
 
-    override fun onCleared() {
-        super.onCleared()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         handleException {
             inviteInteractor.getPhoneConnections().consumeEach {
