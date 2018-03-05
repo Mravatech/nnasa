@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit
 class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewModel>(params) {
     override val layoutId: Int = R.layout.controller_enter_code
     override val viewModel: EnterCodeViewModel by instance()
+    private val RESEND_SMS_DELAY by lazy { resources!!.getInteger(R.integer.validation_code_resend_delay_seconds) }
     private var resendCodeSecondCounter = RESEND_SMS_DELAY
     private val verificationResponse by lazy { args.getParcelable<PhoneVerificationModel>(EXTRA_VERIFICATION_CODE_RESPONSE)}
 
@@ -126,7 +127,6 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
     companion object {
         private const val EXTRA_VERIFICATION_CODE_RESPONSE = "EXTRA_VERIFICATION_CODE_RESPONSE"
         private const val EXTRA_RESEND_CODE_DELAY = "EXTRA_RESEND_CODE_DELAY"
-        private const val RESEND_SMS_DELAY = 60
 
         fun newInstance(param: PhoneVerificationModel): EnterCodeController {
             val bundle = Bundle()

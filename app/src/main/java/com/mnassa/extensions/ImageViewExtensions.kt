@@ -3,6 +3,8 @@ package com.mnassa.extensions
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 
 /**
@@ -19,4 +21,13 @@ fun ImageView.disable() {
 fun ImageView.enable() {
     colorFilter = null
     imageAlpha = 255
+}
+
+fun ImageView.avatar(avatarUrl: String?) {
+    //todo: add placeholder, error
+
+    Glide.with(this)
+            .load(avatarUrl)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
 }

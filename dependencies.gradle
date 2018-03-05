@@ -137,7 +137,7 @@ deps.network = network
 //=============================================== GLIDE ============================================
 versions.glideVersion = '4.3.1'
 versions.glideAnnoVersion = '4.3.1'
-versions.glideTransformersVersion = '3.0.1'
+versions.glideTransformersVersion = '3.1.1'
 
 def glide = [:]
 glide.glide            = "com.github.bumptech.glide:glide:$versions.glideVersion"

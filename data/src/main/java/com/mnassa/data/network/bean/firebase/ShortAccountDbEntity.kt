@@ -2,6 +2,7 @@ package com.mnassa.data.network.bean.firebase
 
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.PropertyName
+import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.Model
 
 /**
@@ -25,7 +26,7 @@ internal data class ShortAccountDbEntity(
         var userName: String,
         @PropertyName("abilities")
         var abilitiesInternal: List<ShortAccountAbilityDbEntity>
-): Model {
+): HasId {
 
     constructor() : this("", null, "", "", null, "", "", emptyList())
 }

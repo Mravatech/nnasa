@@ -28,7 +28,32 @@ interface OrganizationAccountDiffModel : Serializable {
     var organizationName: String
 }
 
+interface AccountConnectionStatus {
+    var connectionStatus: ConnectionStatus
+}
+
 
 enum class AccountType {
     PERSONAL, ORGANIZATION
 }
+
+enum class ConnectionStatus {
+    CONNECTED, REQUESTED, SENT, DISCONNECTED, RECOMMENDED
+}
+
+enum class ConnectionAction {
+    CONNECT, ACCEPT, DECLINE, DISCONNECT, MUTE, UN_MUTE, REVOKE
+}
+
+val ShortAccountModel.formettedName: String
+    get () {
+        return when (accountType) {
+            AccountType.PERSONAL -> {
+                val info = requireNotNull(personalInfo)
+                info.firstName + " " + info.lastName
+            }
+            AccountType.ORGANIZATION -> {
+                requireNotNull(organizationInfo?.organizationName)
+            }
+        }
+    }

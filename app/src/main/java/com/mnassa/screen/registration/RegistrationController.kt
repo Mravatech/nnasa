@@ -12,9 +12,8 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
 import com.mnassa.translation.fromDictionary
-import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
-import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.invite.InviteController
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
 import kotlinx.android.synthetic.main.controller_registration_personal.view.*
@@ -60,12 +59,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
-                    is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
-                        PersonalInfoController.newInstance()
-                    }
-                    is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
-                        OrganizationInfoController.newInstance()
-                    }
+                    //TODO: uncomment when profile will be completed
+//                    is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
+//                        PersonalInfoController.newInstance()
+//                    }
+//                    is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
+//                        OrganizationInfoController.newInstance()
+//                    }
+                    else -> InviteController.newInstance()
                 }
                 router.popToRoot()
                 router.replaceTopController(RouterTransaction.with(controller))
@@ -118,14 +119,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = etPersonCity.text.toString(),
-                        offers = etPersonOffers.text.toString(),
-                        interests = etPersonInterests.text.toString())
+                        offers = listOf(etPersonOffers.text.toString()),
+                        interests = listOf(etPersonInterests.text.toString()))
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
                         city = etCompanyCity.text.toString(),
-                        offers = etCompanyOffers.text.toString(),
-                        interests = etCompanyInterests.text.toString()
+                        offers = listOf(etCompanyOffers.text.toString()),
+                        interests = listOf(etCompanyInterests.text.toString())
                 )
                 else -> throw IllegalArgumentException("Invalid page position $vpRegistration.currentItem")
             }
