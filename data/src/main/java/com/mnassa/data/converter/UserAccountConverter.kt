@@ -5,11 +5,14 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.bean.firebase.ShortAccountAbilityDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.AccountResponseBean
+import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.OrganizationAccountDiffModel
 import com.mnassa.domain.model.PersonalAccountDiffModel
+import com.mnassa.domain.model.impl.AccountAbilityImpl
 import com.mnassa.domain.model.impl.OrganizationAccountDiffModelImpl
 import com.mnassa.domain.model.impl.PersonalAccountDiffModelImpl
 import com.mnassa.domain.model.impl.ShortAccountModelImpl
@@ -21,9 +24,10 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertAccountFromDb)
         convertersContext.registerConverter(this::convertAccountFromRetrofit)
+        convertersContext.registerConverter(this::convertAccountAbility)
     }
 
-    private fun convertAccountFromDb(input: ShortAccountDbEntity): ShortAccountModelImpl {
+    private fun convertAccountFromDb(input: ShortAccountDbEntity, token: Any?, convertersContext: ConvertersContext): ShortAccountModelImpl {
 
         var personalInfo: PersonalAccountDiffModel? = null
         var organizationInfo: OrganizationAccountDiffModel? = null
@@ -54,11 +58,12 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 contactPhone = null,
                 language = null,
                 organizationInfo = organizationInfo,
-                personalInfo = personalInfo
+                personalInfo = personalInfo,
+                abilities = convertersContext.convertCollection(input.abilitiesInternal, AccountAbility::class.java)
         )
     }
 
-    private fun convertAccountFromRetrofit(input: AccountResponseBean): ShortAccountModelImpl {
+    private fun convertAccountFromRetrofit(input: AccountResponseBean, token: Any?, convertersContext: ConvertersContext): ShortAccountModelImpl {
         var personalInfo: PersonalAccountDiffModel? = null
         var organizationInfo: OrganizationAccountDiffModel? = null
         val accountType: AccountType
@@ -88,7 +93,16 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 contactPhone = input.contactPhone,
                 language = input.language,
                 organizationInfo = organizationInfo,
-                personalInfo = personalInfo
+                personalInfo = personalInfo,
+                abilities = emptyList()
+        )
+    }
+
+    private fun convertAccountAbility(input: ShortAccountAbilityDbEntity): AccountAbilityImpl {
+        return AccountAbilityImpl(
+                isMain = input.isMain,
+                name = input.name,
+                place = input.place
         )
     }
 }

@@ -16,9 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/registrationProgress"
-        android:layout_marginStart="16dp"
-        android:paddingEnd="0dp"
-        android:paddingStart="@dimen/padding_horizontal" />
+        android:layout_marginStart="@dimen/padding_horizontal"
+        android:layout_marginEnd="@dimen/padding_horizontal"/>
 
     <View
         android:id="@+id/accountTypeSelectorBackground"

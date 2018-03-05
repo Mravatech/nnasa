@@ -17,6 +17,8 @@ interface ShortAccountModel : Model {
     //
     var personalInfo: PersonalAccountDiffModel?
     var organizationInfo: OrganizationAccountDiffModel?
+    //
+    var abilities: List<AccountAbility>
 }
 
 interface PersonalAccountDiffModel : Serializable {
@@ -28,24 +30,11 @@ interface OrganizationAccountDiffModel : Serializable {
     var organizationName: String
 }
 
-interface AccountConnectionStatus {
-    var connectionStatus: ConnectionStatus
-}
-
-
 enum class AccountType {
     PERSONAL, ORGANIZATION
 }
 
-enum class ConnectionStatus {
-    CONNECTED, REQUESTED, SENT, DISCONNECTED, RECOMMENDED
-}
-
-enum class ConnectionAction {
-    CONNECT, ACCEPT, DECLINE, DISCONNECT, MUTE, UN_MUTE, REVOKE
-}
-
-val ShortAccountModel.formettedName: String
+val ShortAccountModel.formattedName: String
     get () {
         return when (accountType) {
             AccountType.PERSONAL -> {
@@ -57,3 +46,11 @@ val ShortAccountModel.formettedName: String
             }
         }
     }
+
+fun ShortAccountModel.mainAbility(atPlaceholder: String): String? {
+    val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return null
+    return when {
+        ability.name.isNullOrBlank() && ability.place.isNullOrBlank() ->  "${ability.name} $atPlaceholder ${ability.place}"
+        else -> ability.name ?: ability.place
+    }
+}

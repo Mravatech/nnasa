@@ -36,7 +36,7 @@ internal data class ShortAccountAbilityDbEntity(
         var id: String,
         var isMain: Boolean,
         var name: String?,
-        var place: String
+        var place: String?
 ) {
-    constructor() : this("", false, null, "")
+    constructor() : this("", false, null, null)
 }

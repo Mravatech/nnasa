@@ -13,9 +13,6 @@ import com.mnassa.data.converter.UserAccountConverter
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.api.FirebaseDictionaryApi
-import com.mnassa.data.repository.DictionaryRepositoryImpl
-import com.mnassa.data.repository.TagRepositoryImpl
-import com.mnassa.data.repository.UserRepositoryImpl
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.interactor.LoginInteractor
@@ -25,15 +22,14 @@ import com.mnassa.domain.interactor.impl.LoginInteractorImpl
 import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
-import com.mnassa.domain.repository.DictionaryRepository
-import com.mnassa.domain.repository.TagRepository
-import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
-import com.mnassa.data.repository.InviteRepositoryImpl
-import com.mnassa.domain.repository.InviteRepository
+import com.mnassa.data.repository.*
+import com.mnassa.domain.interactor.InviteInteractor
+import com.mnassa.domain.interactor.impl.InviteInteractorImpl
+import com.mnassa.domain.repository.*
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -83,7 +79,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
-    bind<InviteViewModel>() with provider { InviteViewModelImpl() }
+    bind<InviteViewModel>() with provider { InviteViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -106,7 +102,8 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance()) }
+    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -117,6 +114,7 @@ private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
+    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
 }
 
 private val networkModule = Kodein.Module {
@@ -142,7 +140,7 @@ private val networkModule = Kodein.Module {
 
 
     //exception handlers
-    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
+    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
     bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
 }

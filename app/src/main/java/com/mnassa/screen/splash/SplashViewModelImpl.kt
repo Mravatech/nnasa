@@ -28,7 +28,13 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : Mnassa
         }
     }
 
-    override suspend fun isLoggedIn(): Boolean = loginInteractor.isLoggedIn()
+    override suspend fun isLoggedIn(): Boolean {
+        var isLoggedIn = false
+        handleExceptionsSuspend {
+            isLoggedIn = loginInteractor.isLoggedIn()
+        }
+        return isLoggedIn
+    }
 
     override fun saveInstanceState(outBundle: Bundle) {
         super.saveInstanceState(outBundle)

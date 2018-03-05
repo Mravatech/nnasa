@@ -11,9 +11,10 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
+import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
+import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.invite.InviteController
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
 import kotlinx.android.synthetic.main.controller_registration_personal.view.*
@@ -59,14 +60,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
-                    //TODO: uncomment when profile will be completed
-//                    is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
-//                        PersonalInfoController.newInstance()
-//                    }
-//                    is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
-//                        OrganizationInfoController.newInstance()
-//                    }
-                    else -> InviteController.newInstance()
+                    is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
+                        PersonalInfoController.newInstance()
+                    }
+                    is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
+                        OrganizationInfoController.newInstance()
+                    }
                 }
                 router.popToRoot()
                 router.replaceTopController(RouterTransaction.with(controller))

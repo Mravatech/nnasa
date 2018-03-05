@@ -8,6 +8,6 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface InviteRepository {
     suspend fun sendContacts(phoneNumbers: List<String>)
-    fun getRecommendedUsers(): ReceiveChannel<List<ShortAccountModel>>
+    suspend fun getRecommendedByPhoneUsers(): ReceiveChannel<List<ShortAccountModel>>
     suspend fun connect(userAccountIds: List<String>)
 }
