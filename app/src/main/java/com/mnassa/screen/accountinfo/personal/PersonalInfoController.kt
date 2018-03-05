@@ -76,8 +76,6 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
                 router.replaceTopController(RouterTransaction.with(controller))
             }
         }
-
-        viewModel.getPhotoFromStorage()
     }
 
     override fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {

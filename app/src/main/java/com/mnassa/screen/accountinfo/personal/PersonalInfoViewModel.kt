@@ -14,7 +14,6 @@ interface PersonalInfoViewModel : MnassaViewModel {
     val imageUploadedChannel: BroadcastChannel<StorageReference>
     val openScreenChannel: ArrayBroadcastChannel<OpenScreenCommand>
     fun sendPhotoToStorage(uri: Uri)
-    fun getPhotoFromStorage()
     fun processAccount(accountModel: ShortAccountModel)
 
     sealed class OpenScreenCommand {

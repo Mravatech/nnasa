@@ -1,6 +1,5 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.DownloadingPhotoData
 import com.mnassa.domain.model.UploadingPhotoData
 
 /**
@@ -11,6 +10,5 @@ import com.mnassa.domain.model.UploadingPhotoData
 interface StorageRepository {
 
     suspend fun uploadPhotoToStorage(uploadPhoto: UploadingPhotoData, token: String): String
-    suspend fun downloadPhotoFromStorage(downloadPhoto: DownloadingPhotoData, token: String): String
 
 }

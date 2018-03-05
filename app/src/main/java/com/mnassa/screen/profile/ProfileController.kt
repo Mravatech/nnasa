@@ -57,8 +57,6 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>(), TakingPhotoL
                 setImage(it)
             }
         }
-
-        viewModel.getPhotoFromStorage()
     }
 
     override fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {

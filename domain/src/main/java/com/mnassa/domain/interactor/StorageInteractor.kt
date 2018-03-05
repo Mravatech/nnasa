@@ -1,6 +1,5 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.model.DownloadingPhotoData
 import com.mnassa.domain.model.UploadingPhotoData
 
 /**
@@ -10,6 +9,5 @@ import com.mnassa.domain.model.UploadingPhotoData
  */
 
 interface StorageInteractor {
-    suspend fun getAvatar(downloadPhoto: DownloadingPhotoData): String
     suspend fun sendAvatar(uploadPhoto: UploadingPhotoData): String
 }

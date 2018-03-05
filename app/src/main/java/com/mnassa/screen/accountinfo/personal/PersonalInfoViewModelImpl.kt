@@ -43,20 +43,6 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         outBundle.putString(EXTRA_PHOTO_PATH, path)
     }
 
-    private var getPhotoJob: Job? = null
-    override fun getPhotoFromStorage() {
-        getPhotoJob?.cancel()
-        getPhotoJob = launchCoroutineUI {
-            try {
-                val path = storageInteractor.getAvatar(DownloadingPhotoDataImpl(MEDIUM_PHOTO_SIZE, FOLDER_AVATARS))
-                imageUploadedChannel.send(storage.getReferenceFromUrl(path))
-                Timber.i(path)
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-        }
-    }
-
     private var sendPhotoJob: Job? = null
     override fun sendPhotoToStorage(uri: Uri) {
         sendPhotoJob?.cancel()

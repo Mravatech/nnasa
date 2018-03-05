@@ -13,6 +13,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface ProfileViewModel : MnassaViewModel {
     val imageUploadedChannel: BroadcastChannel<StorageReference>
     fun sendPhotoToStorage(uri: Uri)
-    fun getPhotoFromStorage()
 
 }
