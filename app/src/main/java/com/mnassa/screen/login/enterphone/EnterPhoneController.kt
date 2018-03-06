@@ -16,6 +16,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
@@ -30,7 +31,6 @@ import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import java.util.regex.Pattern
 
 /**
  * Created by Peter on 2/21/2018.
@@ -147,10 +147,10 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         container.addView(email)
         container.addView(password)
 
-        val lp = LinearLayout.LayoutParams(
+        val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT)
-        container.layoutParams = lp
+        container.layoutParams = layoutParams
 
         AlertDialog.Builder(context)
                 .setView(container)
@@ -163,9 +163,9 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
     }
 
 
-    private val phonePattern = Pattern.compile("\\d{12,13}")
+
     private fun isPhoneValid(phoneNumber: String): Boolean {
-        return phonePattern.matcher(phoneNumber).matches()
+        return PATTERN_PHONE_TAIL.matcher(phoneNumber).matches()
     }
 
     companion object {
