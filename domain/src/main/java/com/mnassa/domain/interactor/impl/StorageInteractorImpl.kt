@@ -15,7 +15,7 @@ class StorageInteractorImpl(private val storageRepository: StorageRepository,
                             private val userRepository: UserRepository) : StorageInteractor {
 
     override suspend fun sendAvatar(uploadPhoto: StoragePhotoData): String {
-        val token = userRepository.getCurrentUser()?.firebaseUserId!!
+        val token = requireNotNull(userRepository.getFirebaseUserId())
         return storageRepository.uploadPhotoToStorage(uploadPhoto, token)
     }
 

@@ -39,11 +39,10 @@ import com.mnassa.domain.repository.StorageRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.other.AppInfoProviderImpl
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
-import com.mnassa.other.LanguageProviderImpl
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -113,11 +112,9 @@ private val repositoryModule = Kodein.Module {
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), { instance()}, { instance() }) }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance()) }
 }
 
@@ -153,4 +150,5 @@ private val networkModule = Kodein.Module {
 private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
+    bind<DialogHelper>() with singleton { DialogHelper() }
 }

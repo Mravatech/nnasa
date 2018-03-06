@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
@@ -52,14 +51,9 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     }
 
     override fun processAccount(accountModel: ShortAccountModel) {
-        launchCoroutineUI {
-            //todo handle error
-            try {
-                userProfileInteractor.processAccount(accountModel, path)
-                openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.MainScreen())
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        handleException {
+            userProfileInteractor.processAccount(accountModel, path)
+            openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.MainScreen())
         }
     }
 

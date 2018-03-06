@@ -12,9 +12,9 @@ import android.widget.ImageView
 import com.google.firebase.storage.StorageReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.activity.CropActivity
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
 import com.mnassa.dialog.PhotoListener
-import com.mnassa.dialog.showPhotoDialog
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -29,11 +29,13 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>(), PhotoListene
     override val layoutId: Int = R.layout.controller_crop
     override val viewModel: ProfileViewModel by instance()
 
+    private val dialog: DialogHelper by instance()
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         with(view) {
             btnTakePhotoFromCamera.setOnClickListener {
-                showPhotoDialog(activity!!, this@ProfileController)
+                dialog.showPhotoDialog(activity!!, this@ProfileController)
             }
         }
         onActivityResult.subscribe {

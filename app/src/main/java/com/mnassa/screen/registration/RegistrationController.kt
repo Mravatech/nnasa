@@ -62,7 +62,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
-                        PersonalInfoController.newInstance(it.acc)
+                        PersonalInfoController.newInstance(it.shortAccountModel)
                     }
                     is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
                         OrganizationInfoController.newInstance()
@@ -110,7 +110,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                     tilCompanyInterests.validateAsInterests()
         }*/
     }
-    //todo remove hard code
+
     private fun processRegisterClick() {
         with(requireNotNull(view)) {
             when (vpRegistration.currentItem) {
@@ -119,8 +119,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = etPersonCity.text.toString(),
-                        offers = "-L5o3gRz9DfDXkdTZ01B",//etPersonOffers.text.toString(),
-                        interests = "-L59C0y19-aGFdDN8kNc")//etPersonInterests.text.toString())
+                        offers = "-L5o3gRz9DfDXkdTZ01B",//etPersonOffers.text.toString(),//todo remove hard code
+                        interests = "-L59C0y19-aGFdDN8kNc")//etPersonInterests.text.toString())//todo remove hard code
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),

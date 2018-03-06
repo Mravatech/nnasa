@@ -14,23 +14,27 @@ import kotlinx.android.synthetic.main.dialog_photo.*
  * Date: 3/5/2018
  */
 
-fun showPhotoDialog(context: Context, listener: PhotoListener) {
-    val dialog = Dialog(context, R.style.PhotoDialog)
-    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    dialog.setCancelable(false)
-    dialog.setContentView(R.layout.dialog_photo)
-    fun dialogButtonClicks(flag: Int) {
-        listener.startCropActivity(flag)
-        dialog.dismiss()
+class DialogHelper{
+
+    fun showPhotoDialog(context: Context, listener: PhotoListener) {
+        val dialog = Dialog(context, R.style.PhotoDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.dialog_photo)
+        fun dialogButtonClicks(flag: Int) {
+            listener.startCropActivity(flag)
+            dialog.dismiss()
+        }
+        dialog.btnCamera.setOnClickListener {
+            dialogButtonClicks(CropActivity.REQUEST_CODE_CAMERA)
+        }
+        dialog.btnGallery.setOnClickListener {
+            dialogButtonClicks(CropActivity.REQUEST_CODE_GALLERY)
+        }
+        dialog.btnClose.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
-    dialog.btnCamera.setOnClickListener {
-        dialogButtonClicks(CropActivity.REQUEST_CODE_CAMERA)
-    }
-    dialog.btnGallery.setOnClickListener {
-        dialogButtonClicks(CropActivity.REQUEST_CODE_GALLERY)
-    }
-    dialog.btnClose.setOnClickListener { dialog.dismiss() }
-    dialog.show()
+
 }
 
 interface PhotoListener {

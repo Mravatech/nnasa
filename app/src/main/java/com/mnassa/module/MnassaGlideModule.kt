@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
  * User: okli
  * Date: 3/1/2018
  */
-
+@SuppressWarnings("unused")
 @com.bumptech.glide.annotation.GlideModule
 class MnassaGlideModule : AppGlideModule(){
 

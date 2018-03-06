@@ -14,7 +14,7 @@ interface RegistrationViewModel : MnassaViewModel {
     fun registerOrganization(userName: String, city: String, companyName: String, offers: String, interests: String)
 
     sealed class OpenScreenCommand {
-        class PersonalInfoScreen(val acc: ShortAccountModel) : OpenScreenCommand()
+        class PersonalInfoScreen(val shortAccountModel: ShortAccountModel) : OpenScreenCommand()
         class OrganizationInfoScreen : OpenScreenCommand()
     }
 }

@@ -3,7 +3,6 @@ package com.mnassa.screen.profile
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -25,15 +24,10 @@ class ProfileViewModelImpl(private val storageInteractor: StorageInteractor
     private var sendPhotoJob: Job? = null
     override fun uploadPhotoToStorage(uri: Uri) {
         sendPhotoJob?.cancel()
-        sendPhotoJob = launchCoroutineUI {
-            try {
-                val path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
-                imageUploadedChannel.send(storage.getReferenceFromUrl(path))
-                Timber.i(path)
-            } catch (e: Exception) {
-                Timber.e(e)
-                //todo handle error
-            }
+        sendPhotoJob = handleException {
+            val path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
+            imageUploadedChannel.send(storage.getReferenceFromUrl(path))
+            Timber.i(path)
         }
     }
 }

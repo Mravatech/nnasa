@@ -13,12 +13,12 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.activity.CropActivity
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
 import com.mnassa.dialog.PhotoListener
-import com.mnassa.dialog.showPhotoDialog
-import com.mnassa.other.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.main.MainController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -31,6 +31,7 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
     override val viewModel: PersonalInfoViewModel by instance()
 
     private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel }
+    private val dialog: DialogHelper by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -41,7 +42,7 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
         view.fabInfoAddPhoto.setOnClickListener {
-            showPhotoDialog(activity!!, this@PersonalInfoController)
+            dialog.showPhotoDialog(activity!!, this@PersonalInfoController)
         }
         view.btnNext.setOnClickListener {
             viewModel.processAccount(accountModel)
