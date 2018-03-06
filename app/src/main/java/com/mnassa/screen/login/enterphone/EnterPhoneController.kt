@@ -78,6 +78,7 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             }
 
             val countries = mutableListOf(
+                    //TODO: use iOS app countries and add more icons
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("1", "Ukraine1", null, null), "+38"),
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("2", "Ukraine2", null, null), "+38"),
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("3", "Ukraine3", null, null), "+38"),
