@@ -25,7 +25,7 @@ interface UserRepository {
             offers: List<String>,
             interests: List<String>
     ): ShortAccountModel
-
+    suspend fun processAccount(account: ShortAccountModel, path: String?)
     suspend fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?

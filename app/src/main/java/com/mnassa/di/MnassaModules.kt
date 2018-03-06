@@ -126,7 +126,7 @@ private val repositoryModule = Kodein.Module {
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance()) }
-    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance()) }
+    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
