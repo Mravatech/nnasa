@@ -4,6 +4,8 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
 import com.github.salomonbrys.kodein.*
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.places.Places
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
@@ -97,6 +99,11 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), { instance()}, { instance() }) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<GoogleApiClient>() with provider {
+        val builder = GoogleApiClient.Builder(instance())
+                .addApi(Places.GEO_DATA_API)
+        builder.build()
+    }
 }
 
 private val serviceModule = Kodein.Module {

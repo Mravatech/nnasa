@@ -1,7 +1,6 @@
 package com.mnassa.screen.registration
 
 import android.content.Context
-import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.view.PagerAdapter
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import android.widget.AutoCompleteTextView
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.places.Places
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.other.fromDictionary
@@ -26,20 +24,16 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/26/2018.
  */
-class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), GoogleApiClient.ConnectionCallbacks {
+
+class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     override val layoutId: Int = R.layout.controller_registration
     override val viewModel: RegistrationViewModel by instance()
+    private val googleApiClient: GoogleApiClient by instance()
 
-    private lateinit var googleApiClient: GoogleApiClient
     private lateinit var registrationAdapter: RegistrationAdapter
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        val builder = GoogleApiClient.Builder(activity!!)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .addConnectionCallbacks(this)
-        googleApiClient = builder.build()
         googleApiClient.connect()
         registrationAdapter = RegistrationAdapter(view.context, googleApiClient)
         view.tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
@@ -84,10 +78,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
         return v != null
     }
 
-    override fun onConnected(p0: Bundle?) {}
-
-    override fun onConnectionSuspended(p0: Int) {}
-
     private fun processRegisterClick() {
         with(requireNotNull(view)) {
             when (vpRegistration.currentItem) {
@@ -95,13 +85,15 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
                         firstName = etPersonFirstName.text.toString(),
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
-                        city = registrationAdapter.personSelectedPlaceId ?: "",//actvPersonCity.text.toString(),
+                        city = registrationAdapter.personSelectedPlaceId
+                                ?: actvPersonCity.text.toString(),
                         offers = etPersonOffers.text.toString(),
                         interests = etPersonInterests.text.toString())
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
-                        city = registrationAdapter.companySelectedPlaceId ?: "",
+                        city = registrationAdapter.companySelectedPlaceId
+                                ?: actvCompanyCity.text.toString(),
                         offers = etCompanyOffers.text.toString(),
                         interests = etCompanyInterests.text.toString()
                 )
@@ -120,16 +112,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
     class RegistrationAdapter(
             private val context: Context,
             private val googleApiClient: GoogleApiClient)
-        : PagerAdapter(), GoogleApiClient.ConnectionCallbacks {
+        : PagerAdapter() {
 
         private var companySelectedPlaceName: String? = null
         private var personSelectedPlaceName: String? = null
         var companySelectedPlaceId: String? = null
         var personSelectedPlaceId: String? = null
-
-        override fun onConnected(p0: Bundle?) {}
-
-        override fun onConnectionSuspended(p0: Int) {}
 
         override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
@@ -187,16 +175,16 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
         }
 
         private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
-            val placeAutocompleteAdapter: PlaceAutocompleteAdapter = PlaceAutocompleteAdapter(context, googleApiClient, null, null)
+            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, googleApiClient, null, null)
             city.setAdapter(placeAutocompleteAdapter)
             city.setOnItemClickListener({ adapterView, view1, i, l ->
                 if (placeAutocompleteAdapter.getItem(i) == null) {
                     return@setOnItemClickListener
                 }
-                if (isPerson){
+                if (isPerson) {
                     personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
                     personSelectedPlaceName = city.text.toString()
-                }else{
+                } else {
                     companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
                     companySelectedPlaceName = city.text.toString()
                 }
