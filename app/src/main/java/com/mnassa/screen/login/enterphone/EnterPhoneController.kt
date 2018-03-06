@@ -16,10 +16,12 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.entercode.EnterCodeController
 import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
@@ -30,7 +32,6 @@ import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import java.util.regex.Pattern
 
 /**
  * Created by Peter on 2/21/2018.
@@ -42,7 +43,6 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         get() {
             val v = view ?: return ""
             val countryCode = v.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
-
             return countryCode.phonePrefix
                     .replace("+", "") +
                     v.etPhoneNumberTail.text.toString()
@@ -52,6 +52,8 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
+            pbRegistration.progress = RegistrationFlowProgress.ENTER_PHONE
+
             tvScreenHeader.text = fromDictionary(R.string.login_header_welcome)
             tvEnterPhoneNumber.text = fromDictionary(R.string.login_enter_phone_title)
             btnVerifyMe.text = fromDictionary(R.string.login_verify_me)
@@ -79,6 +81,7 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             }
 
             val countries = mutableListOf(
+                    //TODO: use iOS app countries and add more icons
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("1", "Ukraine1", null, null), "+38"),
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("2", "Ukraine2", null, null), "+38"),
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("3", "Ukraine3", null, null), "+38"),
@@ -147,10 +150,10 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         container.addView(email)
         container.addView(password)
 
-        val lp = LinearLayout.LayoutParams(
+        val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT)
-        container.layoutParams = lp
+        container.layoutParams = layoutParams
 
         AlertDialog.Builder(context)
                 .setView(container)
@@ -163,9 +166,9 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
     }
 
 
-    private val phonePattern = Pattern.compile("\\d{12,13}")
+
     private fun isPhoneValid(phoneNumber: String): Boolean {
-        return phonePattern.matcher(phoneNumber).matches()
+        return PATTERN_PHONE_TAIL.matcher(phoneNumber).matches()
     }
 
     companion object {
