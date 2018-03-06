@@ -21,7 +21,6 @@ class CountryCodeAdapter(context: Context, data: MutableList<CountryCode>) : Arr
             ivCountryFlagSelected.setImageResource(item.flagRes)
             tvCountryPhoneCodeSelected.text = item.phonePrefix
         }
-
         return view
     }
 
@@ -34,7 +33,6 @@ class CountryCodeAdapter(context: Context, data: MutableList<CountryCode>) : Arr
             val countryName by item.name
             tvCountryNameDropDown.text = countryName
         }
-
         return view
     }
 }

@@ -42,7 +42,6 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         get() {
             val v = view ?: return ""
             val countryCode = v.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
-
             return countryCode.phonePrefix
                     .replace("+", "") +
                     v.etPhoneNumberTail.text.toString()
