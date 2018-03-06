@@ -41,37 +41,27 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onViewCreated(view)
         googleApiClient.connect()
         registrationAdapter = RegistrationAdapter(view.context, googleApiClient)
-        view.tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
-        view.vpRegistration.adapter = registrationAdapter
-        view.tlRegistration.setupWithViewPager(view.vpRegistration)
-        view.btnNext.setOnClickListener { processRegisterClick() }
-
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
-
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
-            vpRegistration.adapter = RegistrationAdapter()
-            vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
+            vpRegistration.adapter = registrationAdapter
+            vpRegistration.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                 override fun onPageSelected(position: Int) = updateAccountTypeSwitch()
             })
             updateAccountTypeSwitch()
-
             llAccountTypePersonal.setOnClickListener {
                 vpRegistration.currentItem = PAGE_PERSON_INFO
             }
             llAccountTypeOrganization.setOnClickListener {
                 vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
             }
-
             btnScreenHeaderAction.text = fromDictionary(R.string.reg_next)
             btnScreenHeaderAction.visibility = View.VISIBLE
             btnScreenHeaderAction.setOnClickListener { processRegisterClick() }
-
             tvOr.text = fromDictionary(R.string.login_or)
             tvAccountTypePersonal.text = fromDictionary(R.string.reg_account_type_personal)
             tvAccountTypeOrganization.text = fromDictionary(R.string.reg_account_type_organization)
         }
-
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
@@ -89,6 +79,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         launchCoroutineUI {
             viewModel.errorMessageChannel.consumeEach {
                 Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun updateAccountTypeSwitch() {
@@ -129,15 +121,13 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         firstName = etPersonFirstName.text.toString(),
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
-                        city = registrationAdapter.personSelectedPlaceId
-                                ?: actvPersonCity.text.toString(),
+                        city = registrationAdapter.personSelectedPlaceId ?: "",
                         offers = etPersonOffers.text.toString(),
                         interests = etPersonInterests.text.toString())
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
-                        city = registrationAdapter.companySelectedPlaceId
-                                ?: actvCompanyCity.text.toString(),
+                        city = registrationAdapter.companySelectedPlaceId ?: "",
                         offers = etCompanyOffers.text.toString(),
                         interests = etCompanyInterests.text.toString()
                 )
