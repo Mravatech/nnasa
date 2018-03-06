@@ -15,7 +15,7 @@ data class RegisterPersonalAccountRequest(
         @SerializedName("type")
         val type: String,
         @SerializedName("offers")
-        val offers: String,
+        val offers: List<String>,
         @SerializedName("interests")
-        val interests: String
+        val interests: List<String>
 )

@@ -16,4 +16,22 @@ object NetworkContract {
         const val PERSONAL = "personal"
         const val ORGANIZATION = "organization"
     }
+
+    object ConnectionsStatus {
+        const val CONNECTED = "connected"
+        const val REQUESTED = "requested"
+        const val SENT = "sended" //server side error
+        const val DISCONNECTED = "disconnected"
+        const val RECOMMENDED = "recommended"
+    }
+
+    object ConnectionAction {
+        const val CONNECT = "connect"
+        const val ACCEPT = "accept"
+        const val DECLINE = "decline"
+        const val DISCONNECT = "disconnect"
+        const val MUTE = "mute"
+        const val UN_MUTE = "unmute"
+        const val REVOKE = "revoke"
+    }
 }

@@ -1,14 +1,12 @@
 package com.mnassa.data.service
 
+import android.content.Context
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
-import com.mnassa.data.network.exception.FirebaseExceptionHandler
-import com.mnassa.data.network.exception.NetworkExceptionHandler
-import com.mnassa.data.network.exception.handle
-import com.mnassa.data.network.exception.handleNetworkException
+import com.mnassa.data.network.exception.*
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.android.parcel.Parcelize
@@ -23,11 +21,13 @@ import java.util.concurrent.TimeUnit
  */
 class FirebaseLoginServiceImpl(
         private val authApi: FirebaseAuthApi,
-        private val networkErrorHandler: NetworkExceptionHandler,
-        private val firebaseExceptionHandler: FirebaseExceptionHandler) : FirebaseLoginService {
+        private val exceptionHandler: ExceptionHandler,
+        private val context: Context) : FirebaseLoginService {
+
+    private val VERIFY_PHONE_NUMBER_TIMEOUT_SEC by lazy { context.resources.getInteger(com.mnassa.data.R.integer.validation_code_resend_delay_seconds).toLong() }
 
     override suspend fun checkPhone(phoneNumber: String, promoCode: String?) {
-        authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleNetworkException(networkErrorHandler)
+        authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleException(exceptionHandler)
     }
 
     override fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
@@ -47,16 +47,15 @@ class FirebaseLoginServiceImpl(
             }
 
             override fun onVerificationFailed(exception: FirebaseException) {
-                sendChannel.close(exception.handle(firebaseExceptionHandler))
+                sendChannel.close(exceptionHandler.handle(exception))
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
-                async { sendChannel.send(OnCodeSent(phoneNumber, verificationId, token)) }
-            }
-
-            override fun onCodeAutoRetrievalTimeOut(p0: String?) {
-                super.onCodeAutoRetrievalTimeOut(p0)
-                sendChannel.close()
+                async { sendChannel.send(OnCodeSent(
+                        phoneNumber = phoneNumber,
+                        verificationId = verificationId,
+                        token = token
+                )) }
             }
         }
 
@@ -73,7 +72,7 @@ class FirebaseLoginServiceImpl(
     }
 
     override suspend fun processLoginByEmail(email: String, password: String): PhoneVerificationModel {
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).await()
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).await(exceptionHandler)
         return EmailAuth()
     }
 
@@ -87,19 +86,11 @@ class FirebaseLoginServiceImpl(
     }
 
     private suspend fun signIn(credential: AuthCredential): AuthResult {
-        return try {
-            FirebaseAuth.getInstance().signInWithCredential(credential).await()
-        } catch (e: FirebaseException) {
-            throw e.handle(firebaseExceptionHandler)
-        }
+        return FirebaseAuth.getInstance().signInWithCredential(credential).await(exceptionHandler)
     }
 
     override suspend fun signOut() {
         FirebaseAuth.getInstance().signOut()
-    }
-
-    companion object {
-        private const val VERIFY_PHONE_NUMBER_TIMEOUT_SEC = 60L
     }
 
     @Parcelize

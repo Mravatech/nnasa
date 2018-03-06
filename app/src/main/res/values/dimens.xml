@@ -3,4 +3,7 @@
     <dimen name="padding_horizontal">16dp</dimen>
 
     <dimen name="vertical_margin_login">8dp</dimen>
+    <dimen name="horizontal_margin_login">8dp</dimen>
+
+    <dimen name="avatar_list_item">56dp</dimen>
 </resources>

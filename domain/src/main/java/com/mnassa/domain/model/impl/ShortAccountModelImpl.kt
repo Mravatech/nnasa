@@ -1,9 +1,6 @@
 package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.model.AccountType
-import com.mnassa.domain.model.OrganizationAccountDiffModel
-import com.mnassa.domain.model.PersonalAccountDiffModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 
 /**
  * Created by Peter on 2/28/2018.
@@ -18,6 +15,7 @@ class ShortAccountModelImpl : ShortAccountModel {
     override var language: String?
     override var personalInfo: PersonalAccountDiffModel?
     override var organizationInfo: OrganizationAccountDiffModel?
+    override var abilities: List<AccountAbility>
 
     constructor(
             id: String,
@@ -28,7 +26,8 @@ class ShortAccountModelImpl : ShortAccountModel {
             contactPhone: String?,
             language: String?,
             personalInfo: PersonalAccountDiffModel?,
-            organizationInfo: OrganizationAccountDiffModel?
+            organizationInfo: OrganizationAccountDiffModel?,
+            abilities: List<AccountAbility>
     ) {
         this.id = id
         this.firebaseUserId = firebaseUserId
@@ -39,23 +38,10 @@ class ShortAccountModelImpl : ShortAccountModel {
         this.language = language
         this.personalInfo = personalInfo
         this.organizationInfo = organizationInfo
+        this.abilities = abilities
     }
 }
 
-class PersonalAccountDiffModelImpl : PersonalAccountDiffModel {
-    override var firstName: String
-    override var lastName: String
+class PersonalAccountDiffModelImpl(override var firstName: String, override var lastName: String) : PersonalAccountDiffModel
 
-    constructor(firstName: String, lastName: String) {
-        this.firstName = firstName
-        this.lastName = lastName
-    }
-}
-
-class OrganizationAccountDiffModelImpl : OrganizationAccountDiffModel {
-    override var organizationName: String
-
-    constructor(organizationName: String) {
-        this.organizationName = organizationName
-    }
-}
+class OrganizationAccountDiffModelImpl(override var organizationName: String) : OrganizationAccountDiffModel

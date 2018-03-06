@@ -8,6 +8,7 @@ import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseDictionaryApi
 import com.mnassa.data.network.bean.firebase.TranslatedWordDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RegisterUiKeyRequest
+import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.repository.dictionary.DictionaryPreferences
 import com.mnassa.data.repository.dictionary.DictionaryResources
 import com.mnassa.domain.model.EmptyWord
@@ -26,6 +27,7 @@ class DictionaryRepositoryImpl(
         private val databaseReference: DatabaseReference,
         private val converter: ConvertersContext,
         private val dictionaryApi: FirebaseDictionaryApi,
+        private val exceptionHandler: ExceptionHandler,
         context: Context,
         appInfoProvider: AppInfoProvider) : DictionaryRepository {
 
@@ -36,7 +38,7 @@ class DictionaryRepositoryImpl(
         return databaseReference
                 .child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_UI_VERSION)
-                .toValueChannel<Int>()
+                .toValueChannel<Int>(exceptionHandler)
                 .map { requireNotNull(it) }
     }
 
@@ -45,7 +47,7 @@ class DictionaryRepositoryImpl(
             val dictionary = databaseReference
                     .child(DatabaseContract.TABLE_DICTIONARY)
                     .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
-                    .awaitList<TranslatedWordDbEntity>()
+                    .awaitList<TranslatedWordDbEntity>(exceptionHandler)
                     .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
             converter.convertCollection(dictionary, TranslatedWordModel::class.java)
         }.await()

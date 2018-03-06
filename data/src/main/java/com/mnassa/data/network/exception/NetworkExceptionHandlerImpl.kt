@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.mnassa.data.network.bean.retrofit.MnassaErrorBody
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
-import com.mnassa.domain.interactor.DictionaryInteractor
 import okhttp3.Headers
 import retrofit2.HttpException
 import timber.log.Timber
@@ -15,15 +14,14 @@ import java.nio.charset.Charset
 /**
  * Created by Peter on 26.02.2018.
  */
-class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryInteractor,
-                                  private val gson: Gson) : NetworkExceptionHandler {
+class NetworkExceptionHandlerImpl(private val gson: Gson) : NetworkExceptionHandler {
 
     override fun handle(throwable: Throwable): Throwable {
         Timber.d(throwable)
 
         return when {
             throwable is NetworkException -> throwable
-            isNetworkDisabledException(throwable) -> NetworkDisableException(dictionaryInteractor.noInternetMessage, throwable)
+            isNetworkDisabledException(throwable) -> NetworkDisableException(MESSAGE_NETWORK_DISABLED, throwable)
             else -> {
                 val errorBody = transformExceptionTo(throwable, MnassaErrorBody::class.java)
                 NetworkException(
@@ -48,10 +46,10 @@ class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryIn
     override fun getMessage(throwable: Throwable): String? = when {
         throwable is HttpException ->
             transformExceptionTo(throwable, MnassaErrorBody::class.java)
-                    ?.error ?: dictionaryInteractor.somethingWentWrongMessage
+                    ?.error ?: MESSAGE_UNKNOWN_ERROR
         "Canceled".equals(throwable.cause?.message, ignoreCase = true) -> null
-        isNetworkDisabledException(throwable) -> dictionaryInteractor.noInternetMessage
-        else -> dictionaryInteractor.somethingWentWrongMessage
+        isNetworkDisabledException(throwable) -> MESSAGE_NETWORK_DISABLED
+        else -> MESSAGE_UNKNOWN_ERROR
     }
 
     private fun isNetworkDisabledException(throwable: Throwable): Boolean {
@@ -96,5 +94,10 @@ class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryIn
 
     protected fun getStatusCode(src: Throwable): Int {
         return (src as? HttpException)?.code() ?: NetworkExceptionHandler.UNDEF_STATUS_CODE
+    }
+
+    companion object {
+        private const val MESSAGE_NETWORK_DISABLED = "No internet connection!"
+        private const val MESSAGE_UNKNOWN_ERROR = "Something went wrong"
     }
 }

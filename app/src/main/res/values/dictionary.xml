@@ -26,6 +26,11 @@
     <string name="reg_account_type_personal">_android_account_type_personal</string>
     <string name="reg_account_type_organization">_android_account_type_organization</string>
 
+    <string name="invite_title">_newAccNetwork_navTitle</string>
+    <string name="invite_description">_newAccNetwork_labelHeader</string>
+    <string name="invite_at_placeholder">_cellOccupation_placeTitle</string>
+    <string name="invite_title_action">_newAccNetwork_navItem_Invite</string>
+    <string name="invite_skip_step">_android_invites_skip_step</string>
 
 
 
