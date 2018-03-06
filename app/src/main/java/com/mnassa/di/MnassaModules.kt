@@ -45,10 +45,22 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
+import com.mnassa.screen.chats.ChatListViewModel
+import com.mnassa.screen.chats.ChatListViewModelImpl
+import com.mnassa.screen.connections.ConnectionsViewModel
+import com.mnassa.screen.connections.ConnectionsViewModelImpl
+import com.mnassa.screen.events.EventsViewModel
+import com.mnassa.screen.events.EventsViewModelImpl
+import com.mnassa.screen.home.HomeViewModel
+import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.invite.InviteViewModel
 import com.mnassa.screen.invite.InviteViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
+import com.mnassa.screen.needs.NeedsViewModel
+import com.mnassa.screen.needs.NeedsViewModelImpl
+import com.mnassa.screen.notifications.NotificationsViewModel
+import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -80,6 +92,12 @@ private val viewModelsModule = Kodein.Module {
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance()) }
+    bind<HomeViewModel>() with provider { HomeViewModelImpl() }
+    bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
+    bind<EventsViewModel>() with provider { EventsViewModelImpl() }
+    bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl() }
+    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
+    bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

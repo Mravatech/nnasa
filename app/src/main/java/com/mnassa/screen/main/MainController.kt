@@ -9,7 +9,11 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.ChatListController
+import com.mnassa.screen.connections.ConnectionsController
+import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.login.enterphone.EnterPhoneController
+import com.mnassa.screen.notifications.NotificationsController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -24,10 +28,10 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    PAGE_HOME -> TODO()
-                    PAGE_CONNECTIONS -> TODO()
-                    PAGE_NOTIFICATIONS -> TODO()
-                    PAGE_CHAT -> TODO()
+                    PAGE_HOME -> HomeController.newInstance()
+                    PAGE_CONNECTIONS -> ConnectionsController.newInstance()
+                    PAGE_NOTIFICATIONS -> NotificationsController.newInstance()
+                    PAGE_CHAT -> ChatListController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
                 router.setRoot(RouterTransaction.with(page))
@@ -58,7 +62,7 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
     }
 
     override fun onViewDestroyed(view: View) {
-        if (!activity!!.isChangingConfigurations) {
+        if (!requireNotNull(activity).isChangingConfigurations) {
             view.vpMain.adapter = null
         }
         super.onViewDestroyed(view)

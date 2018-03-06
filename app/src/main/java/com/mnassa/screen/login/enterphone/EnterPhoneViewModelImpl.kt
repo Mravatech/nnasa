@@ -7,6 +7,7 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
