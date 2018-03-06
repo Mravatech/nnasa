@@ -11,7 +11,10 @@ interface LoginInteractor {
     suspend fun isLoggedIn(): Boolean
     suspend fun requestVerificationCode(
             phoneNumber: String,
-            previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
+            previousResponse: PhoneVerificationModel? = null,
+            promoCode: String? = null): ReceiveChannel<PhoneVerificationModel>
+
+    suspend fun processLoginByEmail(email: String, password: String): PhoneVerificationModel
 
     suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<ShortAccountModel>
     suspend fun signOut()

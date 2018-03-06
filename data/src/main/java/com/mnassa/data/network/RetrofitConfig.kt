@@ -17,10 +17,15 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by Peter on 2/26/2018.
  */
 class RetrofitConfig(
-        private val appInfoProvider: AppInfoProvider,
-        private val languageProvider: LanguageProvider,
-        private val userProfileInteractor: UserProfileInteractor,
-        private val gson: Gson) {
+        appInfoProviderLazy: () -> AppInfoProvider,
+        languageProviderLazy: () -> LanguageProvider,
+        userProfileInteractorLazy: () -> UserProfileInteractor,
+        gsonLazy: () -> Gson) {
+
+    private val appInfoProvider: AppInfoProvider by lazy(appInfoProviderLazy)
+    private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
+    private val userProfileInteractor: UserProfileInteractor by lazy(userProfileInteractorLazy)
+    private val gson: Gson by lazy(gsonLazy)
 
     fun makeRetrofit(): Retrofit {
         val baseUrl = appInfoProvider.endpoint
@@ -29,18 +34,25 @@ class RetrofitConfig(
 
         if (appInfoProvider.isDebug) {
             okHttpBuilder.addNetworkInterceptor(StethoInterceptor())
-            okHttpBuilder.addInterceptor(HttpLoggingInterceptor())
+
+            val loggingInterceptor = HttpLoggingInterceptor()
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            okHttpBuilder.addInterceptor(loggingInterceptor)
         }
 
         okHttpBuilder.addInterceptor { chain ->
             val request = chain.request()
             val newRequest: Request.Builder = request.newBuilder()
 
-            newRequest.addHeader("language", languageProvider.language)
+            newRequest.addHeader(NetworkContract.Base.LANGUAGE_HEADER, languageProvider.language)
 
             runBlocking {
-                userProfileInteractor.getToken()?.let { newRequest.addHeader("Authorization", "Bearer $it") }
-                userProfileInteractor.getAccountId()?.let { newRequest.addHeader("aid", it) }
+                userProfileInteractor.getToken()?.let {
+                    newRequest.addHeader(
+                            NetworkContract.Base.AUTHORIZATION_HEADER,
+                            NetworkContract.Base.AUTHORIZATION_HEADER_VALUE_MASK.format(it))
+                }
+                userProfileInteractor.getAccountId()?.let { newRequest.addHeader(NetworkContract.Base.ACCOUNT_ID_HEADER, it) }
             }
 
             chain.proceed(newRequest.build())

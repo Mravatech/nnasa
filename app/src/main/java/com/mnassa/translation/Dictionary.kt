@@ -1,4 +1,4 @@
-package com.mnassa.other
+package com.mnassa.translation
 
 import android.support.annotation.StringRes
 import com.github.salomonbrys.kodein.android.appKodein
@@ -14,5 +14,5 @@ fun fromDictionary(@StringRes stringId: Int): String {
     val dictionaryRepository: DictionaryInteractor = ctx.appKodein.invoke().instance()
     val key = ctx.getString(stringId)
     val result: String by dictionaryRepository.getWord(key)
-    return result
+    return result.replace("%i", "%d")
 }

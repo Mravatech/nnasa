@@ -11,7 +11,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/21/2018.
  */
-class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
+open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: PhoneVerificationModel
 
     override val openScreenChannel: ArrayBroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -27,20 +27,28 @@ class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : Mn
     }
 
     private var requestVerificationCodeJob: Job? = null
-    override fun requestVerificationCode(phoneNumber: String) {
+    override fun requestVerificationCode(phoneNumber: String, promoCode: String?) {
         showProgress()
 
         requestVerificationCodeJob?.cancel()
         requestVerificationCodeJob = handleException {
-            loginInteractor.requestVerificationCode(phoneNumber).consumeEach {
+            loginInteractor.requestVerificationCode(phoneNumber = phoneNumber, promoCode = promoCode).consumeEach {
                 verificationResponse = it
-                hideProgress()
                 when {
                     it.isVerified -> signIn(it)
                     else -> openScreenChannel.send(
                             EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
                 }
             }
+        }
+        requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
+    }
+
+    override fun signInByEmail(email: String, password: String) {
+        requestVerificationCodeJob?.cancel()
+
+        requestVerificationCodeJob = handleException {
+            signIn(loginInteractor.processLoginByEmail(email, password))
         }
         requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
     }

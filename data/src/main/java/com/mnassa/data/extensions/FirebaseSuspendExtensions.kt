@@ -2,7 +2,7 @@ package com.mnassa.data.extensions
 
 import com.google.firebase.database.*
 import com.mnassa.domain.model.HasId
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 
 /**
  * Created by Peter on 2/26/2018.
@@ -19,32 +19,29 @@ internal suspend inline fun <reified T : Any> get(databaseReference: DatabaseRef
 }
 
 internal suspend inline fun <reified T : Any> Query.awaitList(): List<T> {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(error.toException())
-            override fun onDataChange(snapshot: DataSnapshot?) {
-                if (snapshot == null) {
-                    continuation.resume(emptyList())
-                    return
-                }
-                continuation.resume(snapshot.mapList())
-            }
+            override fun onDataChange(snapshot: DataSnapshot?) = continuation.resume(snapshot.mapList())
         })
     }
 }
 
 internal suspend inline fun <reified T : Any> Query.await(): T? {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                continuation.resumeWithException(error.toException())
-            }
+            override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(error.toException())
             override fun onDataChange(snapshot: DataSnapshot?) = continuation.resume(snapshot.mapSingle())
         })
     }
 }
 
-internal suspend inline fun <reified T : HasId> loadPortion(databaseReference: DatabaseReference, path: String, offset: String? = null, limit: Int = DEFAULT_LIMIT): List<T> {
+internal suspend inline fun <reified T : HasId> loadPortion(
+        databaseReference: DatabaseReference,
+        path: String,
+        offset: String? = null,
+        limit: Int = DEFAULT_LIMIT): List<T> {
+
     val ref = databaseReference.child(path)
     val query = if (offset == null) {
         ref.orderByKey().limitToFirst(limit)
@@ -53,21 +50,13 @@ internal suspend inline fun <reified T : HasId> loadPortion(databaseReference: D
         ref.orderByKey().startAt(offset).limitToFirst(limit + 1)
     }
 
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         query.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                continuation.resumeWithException(error.toException())
-            }
+            override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(error.toException())
 
             override fun onDataChange(snapshot: DataSnapshot?) {
-                if (snapshot == null) {
-                    continuation.resume(emptyList())
-                    return
-                }
-
-                val result = mapListOfValues<T>(snapshot)
+                val result = snapshot.mapList<T>()
                         .filterIndexed { index, _ -> !(index == 0 && offset != null) }
-
                 continuation.resume(result)
             }
         })

@@ -1,10 +1,11 @@
-package com.mnassa.other.validators
+package com.mnassa.extensions
 
 import android.support.design.widget.TextInputLayout
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
 import android.widget.EditText
+import java.util.regex.Pattern
 
 /**
  * Created by Peter on 2/28/2018.
@@ -12,6 +13,7 @@ import android.widget.EditText
 
 //TODO: pass error text as function parameter (?)
 
+val PATTERN_PHONE_TAIL = Pattern.compile("\\d{12,13}")!!
 
 fun TextInputLayout.validateAsFirstName(): Boolean {
     val editText = findEditText()
