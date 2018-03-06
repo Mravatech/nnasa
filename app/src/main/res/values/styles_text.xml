@@ -2,10 +2,12 @@
 <resources>
 
     <style name="MnassaHeader1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
         <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:gravity">center_horizontal</item>
     </style>
 
     <style name="MnassaHeader2" parent="MnassaHeader1">
@@ -16,5 +18,11 @@
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="MnassaTextTiny" parent="MnassaText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/coolGray</item>
+    </style>
+
 
 </resources>

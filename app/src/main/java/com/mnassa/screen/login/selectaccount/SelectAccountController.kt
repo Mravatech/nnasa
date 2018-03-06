@@ -60,10 +60,8 @@ class SelectAccountController(params: Bundle) : MnassaControllerImpl<SelectAccou
             require(accounts.size > 1) {
                 "Accounts list must contain at least 2 models!"
             }
-
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNTS_LIST, ArrayList(accounts))
-
             return SelectAccountController(params)
         }
     }

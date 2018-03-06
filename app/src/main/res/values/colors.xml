@@ -9,7 +9,7 @@
     <color name="black">#000000</color>
     <color name="coolGray">#abafb3</color>
     <color name="coolGreen">#37d45c</color>
-    <color name="white">#e8e8e8</color>
+    <color name="white">@android:color/white</color>
     <color name="paleGray">#e4e8eb</color>
     <color name="cerulean">#0862cb</color>
     <color name="silver">#e3e6e8</color>
@@ -18,4 +18,6 @@
     <color name="turquoiseBlue">#00accd</color>
     <color name="charcoalGrey">#282e32</color>
     <color name="brightBlue">#0076ff</color>
+
+    <color name="backgroundMain">#f2f5f7</color>
 </resources>

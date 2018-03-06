@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilCompanyName"
+            style="@style/Registration.TextInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etCompanyName"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilCompanyUserName"
+            style="@style/Registration.TextInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etCompanyUserName"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilCompanyCity"
+            style="@style/Registration.TextInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etCompanyCity"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilCompanyOffers"
+            style="@style/Registration.TextInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etCompanyOffers"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilCompanyInterests"
+            style="@style/Registration.TextInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etCompanyInterests"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+</ScrollView>

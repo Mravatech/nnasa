@@ -14,6 +14,9 @@ import com.mnassa.data.converter.TranslatedWordConverter
 import com.mnassa.data.converter.UserAccountConverter
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.api.FirebaseDictionaryApi
+import com.mnassa.data.network.exception.FirebaseExceptionHandler
+import com.mnassa.data.network.exception.FirebaseExceptionHandlerImpl
 import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
 import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.data.repository.DictionaryRepositoryImpl
@@ -32,8 +35,8 @@ import com.mnassa.domain.repository.DictionaryRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.other.AppInfoProviderImpl
-import com.mnassa.other.LanguageProviderImpl
+import com.mnassa.AppInfoProviderImpl
+import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.login.entercode.EnterCodeViewModel
@@ -48,6 +51,8 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
+import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
+import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -77,6 +82,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
+    bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -96,8 +102,9 @@ private val repositoryModule = Kodein.Module {
         result
     }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), { instance()}, { instance() }) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<GoogleApiClient>() with provider {
         val builder = GoogleApiClient.Builder(instance())
@@ -107,7 +114,7 @@ private val repositoryModule = Kodein.Module {
 }
 
 private val serviceModule = Kodein.Module {
-    bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance()) }
+    bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance(), instance()) }
 }
 
 private val interactorModule = Kodein.Module {
@@ -118,7 +125,7 @@ private val interactorModule = Kodein.Module {
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig(instance(), instance(), instance(), instance()) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }
@@ -126,7 +133,12 @@ private val networkModule = Kodein.Module {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseAuthApi::class.java)
     }
+    bind<FirebaseDictionaryApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebaseDictionaryApi::class.java)
+    }
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
+    bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
 }
 
 private val otherModule = Kodein.Module {

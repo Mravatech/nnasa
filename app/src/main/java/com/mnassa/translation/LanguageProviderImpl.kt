@@ -1,4 +1,4 @@
-package com.mnassa.other
+package com.mnassa.translation
 
 import android.content.Context
 import com.mnassa.domain.other.LanguageProvider

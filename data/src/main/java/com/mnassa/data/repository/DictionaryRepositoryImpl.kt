@@ -5,7 +5,9 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
+import com.mnassa.data.network.api.FirebaseDictionaryApi
 import com.mnassa.data.network.bean.firebase.TranslatedWordDbEntity
+import com.mnassa.data.network.bean.retrofit.request.RegisterUiKeyRequest
 import com.mnassa.data.repository.dictionary.DictionaryPreferences
 import com.mnassa.data.repository.dictionary.DictionaryResources
 import com.mnassa.domain.model.EmptyWord
@@ -15,6 +17,7 @@ import com.mnassa.domain.repository.DictionaryRepository
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/23/2018.
@@ -22,13 +25,14 @@ import kotlinx.coroutines.experimental.channels.map
 class DictionaryRepositoryImpl(
         private val databaseReference: DatabaseReference,
         private val converter: ConvertersContext,
+        private val dictionaryApi: FirebaseDictionaryApi,
         context: Context,
         appInfoProvider: AppInfoProvider) : DictionaryRepository {
 
     private val dictionaryPreferences = DictionaryPreferences(context, appInfoProvider)
     private val dictionaryResources = DictionaryResources(context, appInfoProvider)
 
-    override suspend fun getMobileUiVersion(): ReceiveChannel<Int> {
+    override fun getMobileUiVersion(): ReceiveChannel<Int> {
         return databaseReference
                 .child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_UI_VERSION)
@@ -54,6 +58,28 @@ class DictionaryRepositoryImpl(
         dictionaryResources.print(dictionary)
     }
 
-    override fun getLocalWord(id: String): TranslatedWordModel =
-            dictionaryPreferences.getWord(id) ?: dictionaryResources.getWord(id) ?: EmptyWord
+    override fun getLocalWord(id: String): TranslatedWordModel {
+        //1.
+        val fromPrefs = dictionaryPreferences.getWord(id)
+        if (fromPrefs != null) {
+            return fromPrefs
+        }
+
+        //2.
+        val fromResources = dictionaryResources.getWord(id)
+        if (fromResources != null) {
+            registerWord(id, fromResources.info)
+            return fromResources
+        }
+
+        //3.
+        registerWord(id)
+        return EmptyWord
+    }
+
+    private fun registerWord(id: String, info: String? = null) {
+        Timber.i("REGISTER_WORD: id: $id; info: $info")
+        dictionaryApi.registerUiKey(RegisterUiKeyRequest(id, info ?: id))
+    }
+
 }
