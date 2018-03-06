@@ -1,6 +1,7 @@
 package com.mnassa.data.extensions
 
 import com.google.android.gms.tasks.Task
+import com.mnassa.data.network.exception.ExceptionHandler
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 
 /**
@@ -8,14 +9,13 @@ import kotlinx.coroutines.experimental.suspendCancellableCoroutine
  */
 const val DEFAULT_LIMIT = 100
 
-internal suspend inline fun <reified R> Task<R>.await(): R {
+internal suspend inline fun <reified R> Task<R>.await(exceptionHandler: ExceptionHandler): R {
     return suspendCancellableCoroutine { continuation ->
         addOnCompleteListener {
             if (it.isSuccessful) {
                 continuation.resume(it.result)
             } else {
-                continuation.resumeWithException(it.exception
-                        ?: IllegalStateException("Task not completed and Exception is null"))
+                continuation.resumeWithException(exceptionHandler.handle(it.exception!!))
             }
         }
     }

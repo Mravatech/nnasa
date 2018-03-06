@@ -11,4 +11,8 @@ object DatabaseContract {
 
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
+
+    const val TABLE_CONNECTIONS = "connections"
+    const val TABLE_CONNECTIONS_COL_RECOMMENDED = "recommended"
+
 }

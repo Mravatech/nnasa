@@ -14,15 +14,15 @@ interface UserRepository {
             secondName: String,
             userName: String,
             city: String,
-            offers: String,
-            interests: String
+            offers: List<String>,
+            interests: List<String>
     ): ShortAccountModel
     suspend fun createOrganizationAccount(
             companyName: String,
             userName: String,
             city: String,
-            offers: String,
-            interests: String
+            offers: List<String>,
+            interests: List<String>
     ): ShortAccountModel
 
     suspend fun getAccountId(): String?

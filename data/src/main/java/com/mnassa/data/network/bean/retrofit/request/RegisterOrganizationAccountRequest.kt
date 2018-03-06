@@ -13,7 +13,7 @@ data class RegisterOrganizationAccountRequest(
         @SerializedName("organizationName")
         val organizationName: String,
         @SerializedName("offers")
-        val offers: String?,
+        val offers: List<String>,
         @SerializedName("interests")
-        val interests: String?
+        val interests: List<String>
 )

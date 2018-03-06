@@ -33,7 +33,8 @@ import java.util.concurrent.TimeUnit
 class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewModel>(params) {
     override val layoutId: Int = R.layout.controller_enter_code
     override val viewModel: EnterCodeViewModel by instance()
-    private var resendCodeSecondCounter = RESEND_SMS_DELAY
+    private val resendSmsCodeDelay by lazy { resources!!.getInteger(R.integer.validation_code_resend_delay_seconds) }
+    private var resendCodeSecondCounter: Int = -1
     private val verificationResponse by lazy { args.getParcelable<PhoneVerificationModel>(EXTRA_VERIFICATION_CODE_RESPONSE)}
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -45,6 +46,10 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+        if (resendCodeSecondCounter == -1) {
+            resendCodeSecondCounter = resendSmsCodeDelay
+        }
 
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.ENTER_CODE
@@ -119,7 +124,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         span.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
                 viewModel.resendCode()
-                startResendCodeTimer(RESEND_SMS_DELAY)
+                startResendCodeTimer(resendSmsCodeDelay)
             }
         }, 0, span.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         v.tvResendCodeAfter.text = span
@@ -129,7 +134,6 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
     companion object {
         private const val EXTRA_VERIFICATION_CODE_RESPONSE = "EXTRA_VERIFICATION_CODE_RESPONSE"
         private const val EXTRA_RESEND_CODE_DELAY = "EXTRA_RESEND_CODE_DELAY"
-        private const val RESEND_SMS_DELAY = 60
 
         fun newInstance(param: PhoneVerificationModel): EnterCodeController {
             val bundle = Bundle()

@@ -165,6 +165,7 @@ dependencies {
     //glide
     implementation deps.glide.glide
     kapt deps.glide.glideCompiler
+    implementation deps.glide.glideTransformers
 
     //mapper
     implementation deps.mapper.core

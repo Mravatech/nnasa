@@ -11,7 +11,7 @@ class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileIn
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
 
-    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: String, interests: String) {
+    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<String>, interests: List<String>) {
         handleException {
             withProgressSuspend {
                 userProfileInteractor.createPersonalAccount(
@@ -27,7 +27,7 @@ class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileIn
         }
     }
 
-    override fun registerOrganization(userName: String, city: String, companyName: String, offers: String, interests: String) {
+    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<String>, interests: List<String>) {
         handleException {
             withProgressSuspend {
                 userProfileInteractor.createOrganizationAccount(
