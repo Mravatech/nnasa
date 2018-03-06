@@ -1,6 +1,10 @@
 package com.mnassa.screen.main
 
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
+import android.view.MenuItem
 import android.view.View
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
@@ -20,7 +24,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/21/2018.
  */
-class MainController : MnassaControllerImpl<MainViewModel>() {
+class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
 
@@ -44,20 +48,73 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        view.vpMain.adapter = adapter
+        with(view) {
+            vpMain.adapter = adapter
+            bnMain.addItems(
+                    mutableListOf(
+                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
+                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
+                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
+                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent)
+                    )
+            )
 
-        view.btnLogout.setOnClickListener {
-            viewModel.logout()
+            bnMain.isBehaviorTranslationEnabled = false
+            bnMain.setNotification("3", 1)
+            bnMain.setOnTabSelectedListener { position, _ ->
+                vpMain.setCurrentItem(position, false)
+                true
+            }
+
+
+            navigationView.setNavigationItemSelectedListener(this@MainController)
         }
+
 
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     MainViewModel.ScreenType.LOGIN -> EnterPhoneController.newInstance()
                 }
-
                 router.replaceTopController(RouterTransaction.with(controller))
             }
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+            R.id.nav_camera -> {
+                // Handle the camera action
+            }
+            R.id.nav_gallery -> {
+
+            }
+            R.id.nav_slideshow -> {
+
+            }
+            R.id.nav_manage -> {
+
+            }
+            R.id.nav_share -> {
+
+            }
+            R.id.nav_logout -> {
+                viewModel.logout()
+            }
+        }
+
+        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    override fun handleBack(): Boolean {
+        val view = requireNotNull(view)
+        return if (view.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            view.drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        } else {
+            super.handleBack()
         }
     }
 

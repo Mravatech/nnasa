@@ -164,6 +164,7 @@ def other = [:]
 other.billing = 'com.android.billingclient:billing:1.0'
 other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
 other.logger =  'com.jakewharton.timber:timber:4.6.1'
+other.bottomnavigation = 'com.aurelhubert:ahbottomnavigation:2.1.0'
 deps.other = other
 //=============================================== TESTS ============================================
 def tests = [:]

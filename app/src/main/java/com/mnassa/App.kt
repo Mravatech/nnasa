@@ -33,8 +33,6 @@ class App : Application(), KodeinAware {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        FirebaseAuth.getInstance().signOut()
-
         if (instance<AppInfoProvider>().isDebug) {
             if (LeakCanary.isInAnalyzerProcess(this)) return
             LeakCanary.install(this)
