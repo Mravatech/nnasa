@@ -15,6 +15,7 @@ import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.RegistrationFlowProgress
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
 import kotlinx.android.synthetic.main.controller_registration_personal.view.*
@@ -32,6 +33,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
+            pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
+
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = RegistrationAdapter()
             vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
@@ -53,8 +56,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             tvOr.text = fromDictionary(R.string.login_or)
             tvAccountTypePersonal.text = fromDictionary(R.string.reg_account_type_personal)
             tvAccountTypeOrganization.text = fromDictionary(R.string.reg_account_type_organization)
-
-
         }
 
         launchCoroutineUI {
@@ -74,15 +75,15 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     private fun updateAccountTypeSwitch() {
-        val v = view ?: return
-        when (v.vpRegistration.currentItem) {
+        val view = view ?: return
+        when (view.vpRegistration.currentItem) {
             PAGE_PERSON_INFO -> {
-                v.ivAccountTypeOrganization.disable()
-                v.ivAccountTypePersonal.enable()
+                view.ivAccountTypeOrganization.disable()
+                view.ivAccountTypePersonal.enable()
             }
             PAGE_ORGANIZATION_INFO -> {
-                v.ivAccountTypeOrganization.enable()
-                v.ivAccountTypePersonal.disable()
+                view.ivAccountTypeOrganization.enable()
+                view.ivAccountTypePersonal.disable()
             }
         }
     }

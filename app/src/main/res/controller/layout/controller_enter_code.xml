@@ -6,8 +6,8 @@
     android:orientation="vertical">
 
     <ProgressBar
-        style="@style/ScreenHeaderProgress"
-        android:progress="40" />
+        android:id="@+id/pbRegistration"
+        style="@style/ScreenHeaderProgress" />
 
     <ScrollView
         android:layout_width="match_parent"

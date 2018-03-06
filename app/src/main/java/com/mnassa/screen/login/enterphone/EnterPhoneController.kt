@@ -21,6 +21,7 @@ import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.entercode.EnterCodeController
 import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
@@ -51,6 +52,8 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
+            pbRegistration.progress = RegistrationFlowProgress.ENTER_PHONE
+
             tvScreenHeader.text = fromDictionary(R.string.login_header_welcome)
             tvEnterPhoneNumber.text = fromDictionary(R.string.login_enter_phone_title)
             btnVerifyMe.text = fromDictionary(R.string.login_verify_me)
