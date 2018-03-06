@@ -24,11 +24,8 @@ class UserRepositoryImpl(
         private val converter: ConvertersContext,
         private val context: Context,
         private val networkExceptionHandler: NetworkExceptionHandler,
-        lazyDb: () -> DatabaseReference,
-        lazyFirebaseAuthApi: () -> FirebaseAuthApi) : UserRepository {
-
-    private val db by lazy(lazyDb)
-    private val firebaseAuthApi by lazy(lazyFirebaseAuthApi)
+        private val db: DatabaseReference,
+        private val firebaseAuthApi: FirebaseAuthApi) : UserRepository {
 
     private val sharedPrefs by lazy { context.getSharedPreferences(EXTRA_PREFS_NAME, Context.MODE_PRIVATE) }
     private var accountId: String?
@@ -83,7 +80,7 @@ class UserRepositoryImpl(
     override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
         val result = firebaseAuthApi.registerOrganizationAccount(RegisterOrganizationAccountRequest(
                 userName = userName,
-                type = NetworkContract.AccountType.PERSONAL,
+                type = NetworkContract.AccountType.ORGANIZATION,
                 offers = offers,
                 interests = interests,
                 organizationName = companyName

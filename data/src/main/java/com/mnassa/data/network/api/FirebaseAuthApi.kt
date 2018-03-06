@@ -22,6 +22,4 @@ interface FirebaseAuthApi {
     @POST("/registerAccount")
     fun registerOrganizationAccount(@Body request: RegisterOrganizationAccountRequest): Deferred<RegisterAccountResponse>
 
-
-
 }

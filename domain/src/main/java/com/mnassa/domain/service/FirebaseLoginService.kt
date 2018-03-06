@@ -10,9 +10,11 @@ interface FirebaseLoginService {
 
     suspend fun checkPhone(phoneNumber: String, promoCode: String? = null)
 
-    suspend fun requestVerificationCode(
+    fun requestVerificationCode(
             phoneNumber: String,
             previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
+
+    suspend fun processLoginByEmail(email: String, password: String): PhoneVerificationModel
 
     suspend fun signIn(verificationSMSCode: String?, response: PhoneVerificationModel)
     suspend fun signOut()

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
     <string name="login_enter_phone_title">_login_label_title</string>
     <string name="login_verify_me">_login_button_verify</string>
     <string name="login_terms_part_1">_login_label_termsInfo</string>
@@ -9,6 +10,11 @@
     <string name="login_enter_code_title">_pin_label_title</string>
     <string name="login_enter_code_resend_after">_pin_resendingTextMask</string>
     <string name="login_enter_code_resend_code">_pin_resendingText</string>
+    <string name="login_or">_privacy_cons_or_title</string>
+    <string name="login_enter_promo">_login_label_promoCode</string>
+    <string name="login_your_code">_login_promo_placeholder</string>
+    <string name="login_validation_code_header">_android_enter_validation_code_header</string>
+    <string name="login_validation_code_hint">_android_enter_validation_code_hint</string>
 
     <string name="reg_title">_newAcc_navTitle</string>
     <string name="reg_personal_info_title">_newAccDetails_navTitle</string>
@@ -16,4 +22,13 @@
     <string name="reg_personal_last_name">_newAcc_cellLastName_title</string>
     <string name="reg_personal_user_name">_accEdit_cellUsername_placeholder</string>
     <string name="reg_personal_city">_accEdit_cellCity_title</string>
+    <string name="reg_next">_newAccDetails_navItem_Next</string>
+    <string name="reg_account_type_personal">_android_account_type_personal</string>
+    <string name="reg_account_type_organization">_android_account_type_organization</string>
+
+
+
+
+    <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
+    <string name="error_no_internet">_android_no_internet_connection</string>
 </resources>

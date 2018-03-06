@@ -1,10 +1,9 @@
-package com.mnassa.other
+package com.mnassa
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import com.mnassa.BuildConfig
 import com.mnassa.domain.other.AppInfoProvider
 
 /**
@@ -15,7 +14,7 @@ class AppInfoProviderImpl(private val context: Context) : AppInfoProvider {
     private val androidIdVal = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     private val manufacturer = Build.MANUFACTURER
     private val model = Build.MODEL
-    private val deviceNameVal = if (model.startsWith(manufacturer)) model else manufacturer + " " + model
+    private val deviceNameVal = if (model.startsWith(manufacturer)) model else "$manufacturer $model"
 
     override val androidId: String = androidIdVal
     override val deviceName: String = deviceNameVal

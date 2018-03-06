@@ -55,7 +55,7 @@ class NetworkExceptionHandlerImpl(private val dictionaryInteractor: DictionaryIn
     }
 
     private fun isNetworkDisabledException(throwable: Throwable): Boolean {
-        return throwable is SocketTimeoutException || throwable is UnknownHostException
+        return throwable is SocketTimeoutException || throwable is UnknownHostException || throwable is NetworkDisableException
     }
 
     /**

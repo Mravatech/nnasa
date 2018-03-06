@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ScreenHeaderContainer"
+    tools:background="#e9e8e8">
+
+    <TextView
+        android:id="@+id/tvScreenHeader"
+        style="@style/ScreenHeaderTitle"
+        tools:text="Header" />
+
+    <Button
+        android:id="@+id/btnScreenHeaderAction"
+        style="@style/ScreenHeaderButton"
+        android:visibility="gone"
+        tools:text="Action"
+        tools:visibility="visible" />
+</LinearLayout>

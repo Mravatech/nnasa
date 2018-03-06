@@ -1,7 +1,7 @@
 package com.mnassa.screen.registration
 
-import android.support.design.widget.Snackbar
 import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +9,17 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.other.fromDictionary
-import com.mnassa.other.validators.*
+import com.mnassa.extensions.disable
+import com.mnassa.extensions.enable
+import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.RegistrationFlowProgress
 import kotlinx.android.synthetic.main.controller_registration.view.*
-import kotlinx.android.synthetic.main.registration_organization.view.*
-import kotlinx.android.synthetic.main.registration_personal.view.*
+import kotlinx.android.synthetic.main.controller_registration_organization.view.*
+import kotlinx.android.synthetic.main.controller_registration_personal.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -30,10 +33,29 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
-            tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
+            pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
+
+            tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = RegistrationAdapter()
-            tlRegistration.setupWithViewPager(vpRegistration)
-            btnNext.setOnClickListener { processRegisterClick() }
+            vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
+                override fun onPageSelected(position: Int) = updateAccountTypeSwitch()
+            })
+            updateAccountTypeSwitch()
+
+            llAccountTypePersonal.setOnClickListener {
+                vpRegistration.currentItem = PAGE_PERSON_INFO
+            }
+            llAccountTypeOrganization.setOnClickListener {
+                vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
+            }
+
+            btnScreenHeaderAction.text = fromDictionary(R.string.reg_next)
+            btnScreenHeaderAction.visibility = View.VISIBLE
+            btnScreenHeaderAction.setOnClickListener { processRegisterClick() }
+
+            tvOr.text = fromDictionary(R.string.login_or)
+            tvAccountTypePersonal.text = fromDictionary(R.string.reg_account_type_personal)
+            tvAccountTypeOrganization.text = fromDictionary(R.string.reg_account_type_organization)
         }
 
         launchCoroutineUI {
@@ -50,10 +72,18 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 router.replaceTopController(RouterTransaction.with(controller))
             }
         }
+    }
 
-        launchCoroutineUI {
-            viewModel.errorMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+    private fun updateAccountTypeSwitch() {
+        val view = view ?: return
+        when (view.vpRegistration.currentItem) {
+            PAGE_PERSON_INFO -> {
+                view.ivAccountTypeOrganization.disable()
+                view.ivAccountTypePersonal.enable()
+            }
+            PAGE_ORGANIZATION_INFO -> {
+                view.ivAccountTypeOrganization.enable()
+                view.ivAccountTypePersonal.disable()
             }
         }
     }
@@ -115,8 +145,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val layoutId = when (position) {
-                PAGE_PERSON_INFO -> R.layout.registration_personal
-                PAGE_ORGANIZATION_INFO -> R.layout.registration_organization
+                PAGE_PERSON_INFO -> R.layout.controller_registration_personal
+                PAGE_ORGANIZATION_INFO -> R.layout.controller_registration_organization
                 else -> throw IllegalArgumentException("Invalid page position $position")
             }
 

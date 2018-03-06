@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<string name="_pushSetting_casdfv_ENG">null</string>-->
+    <!--<string name="_pushSetting_casdfv_AR">null</string>-->
+    <!--<string name="_pushSetting_casdfv_INFO">casdfv</string>-->
+
+    <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
+    <string name="_android_enter_validation_code_header_INFO">Validation Code</string>
+    <string name="_android_error_dialog_title_something_went_wrong_INFO">Something went wrong</string>
+    <string name="_android_enter_validation_code_hint_INFO">Validation code</string>
+    <string name="_android_no_internet_connection_INFO">No internet connection!</string>
+    <string name="_android_account_type_personal_INFO">Personal</string>
+    <string name="_android_account_type_organization_INFO">Organization</string>
+
+</resources>
