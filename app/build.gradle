@@ -172,6 +172,7 @@ dependencies {
     //conductor
     implementation deps.conductor.core
     implementation deps.conductor.lifecycle
+    implementation deps.conductor.support
 
     //dependency injection
     implementation deps.di.core

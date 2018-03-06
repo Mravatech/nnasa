@@ -1,7 +1,10 @@
 package com.mnassa.screen.main
 
 import android.view.View
+import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -17,8 +20,27 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
 
+    private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
+        override fun configureRouter(router: Router, position: Int) {
+            if (!router.hasRootController()) {
+                val page: Controller = when (position) {
+                    PAGE_HOME -> TODO()
+                    PAGE_CONNECTIONS -> TODO()
+                    PAGE_NOTIFICATIONS -> TODO()
+                    PAGE_CHAT -> TODO()
+                    else -> throw IllegalArgumentException("Invalid page position $position")
+                }
+                router.setRoot(RouterTransaction.with(page))
+            }
+        }
+
+        override fun getCount(): Int = PAGES_COUNT
+    }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+        view.vpMain.adapter = adapter
 
         view.btnLogout.setOnClickListener {
             viewModel.logout()
@@ -33,15 +55,23 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
                 router.replaceTopController(RouterTransaction.with(controller))
             }
         }
-
-        launchCoroutineUI {
-            viewModel.userName.consumeEach {
-                view.tvUserName.text = "Hi, $it"
-            }
-        }
     }
 
+    override fun onViewDestroyed(view: View) {
+        if (!activity!!.isChangingConfigurations) {
+            view.vpMain.adapter = null
+        }
+        super.onViewDestroyed(view)
+    }
+
+
     companion object {
+        private const val PAGES_COUNT = 4
+        private const val PAGE_HOME = 0
+        private const val PAGE_CONNECTIONS = 1
+        private const val PAGE_NOTIFICATIONS = 2
+        private const val PAGE_CHAT = 3
+
         fun newInstance() = MainController()
     }
 }

@@ -94,10 +94,12 @@ deps.coroutines = coroutines
 
 //============================================= CONDUCTOR ==========================================
 
+versions.conductor = '2.1.4'
 def conductor = [:]
 
-conductor.core = 'com.bluelinelabs:conductor:2.1.4'
-conductor.lifecycle = 'com.bluelinelabs:conductor-archlifecycle:0.1.1'
+conductor.core =        "com.bluelinelabs:conductor:$versions.conductor"
+conductor.lifecycle =   'com.bluelinelabs:conductor-archlifecycle:0.1.1'
+conductor.support =     "com.bluelinelabs:conductor-support:$versions.conductor"
 
 deps.conductor = conductor
 

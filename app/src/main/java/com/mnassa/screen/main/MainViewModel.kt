@@ -9,7 +9,6 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface MainViewModel : MnassaViewModel {
     val openScreenChannel: BroadcastChannel<ScreenType>
-    val userName: BroadcastChannel<String>
 
     fun logout()
 
