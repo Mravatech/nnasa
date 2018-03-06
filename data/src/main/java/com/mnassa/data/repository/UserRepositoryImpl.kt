@@ -12,9 +12,10 @@ import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
+import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handleException
 import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.data.network.exception.NetworkExceptionHandler
-import com.mnassa.data.network.exception.handleNetworkException
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 
@@ -24,7 +25,7 @@ import com.mnassa.domain.repository.UserRepository
 class UserRepositoryImpl(
         private val converter: ConvertersContext,
         private val context: Context,
-        private val networkExceptionHandler: NetworkExceptionHandler,
+        private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference,
         private val firebaseAuthApi: FirebaseAuthApi) : UserRepository {
 
@@ -56,13 +57,13 @@ class UserRepositoryImpl(
 
         val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)
-                .await<ShortAccountDbEntity>() ?: return null
+                .await<ShortAccountDbEntity>(exceptionHandler) ?: return null
         return converter.convert(bean)
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {
         val user = FirebaseAuth.getInstance().currentUser ?: return emptyList()
-        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(user.uid).awaitList<ShortAccountDbEntity>()
+        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(user.uid).awaitList<ShortAccountDbEntity>(exceptionHandler)
         return converter.convertCollection(beans, ShortAccountModel::class.java)
     }
 
@@ -74,18 +75,18 @@ class UserRepositoryImpl(
                 type = NetworkContract.AccountType.PERSONAL,
                 offers = offers,
                 interests = interests
-        )).handleNetworkException(networkExceptionHandler)
+        )).handleException(exceptionHandler)
         return converter.convert(result.account)
     }
 
-    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
+    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
         val result = firebaseAuthApi.registerOrganizationAccount(RegisterOrganizationAccountRequest(
                 userName = userName,
                 type = NetworkContract.AccountType.ORGANIZATION,
                 offers = offers,
                 interests = interests,
                 organizationName = companyName
-        )).handleNetworkException(networkExceptionHandler)
+        )).handleException(exceptionHandler)
         return converter.convert(result.account)
     }
 
@@ -114,7 +115,7 @@ class UserRepositoryImpl(
 
     override suspend fun getFirebaseToken(): String? {
         val user = FirebaseAuth.getInstance().currentUser ?: return null
-        return user.getIdToken(false).await().token
+        return user.getIdToken(false).await(exceptionHandler).token
     }
 
     override suspend fun getFirebaseUserId(): String? {

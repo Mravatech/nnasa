@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pbRegistration"
         android:layout_marginStart="@dimen/padding_horizontal"
-        android:layout_marginEnd="@dimen/padding_horizontal" />
+        android:layout_marginEnd="@dimen/padding_horizontal"/>
 
     <View
         android:id="@+id/accountTypeSelectorBackground"
@@ -71,7 +71,10 @@
         android:layout_alignStart="@id/accountTypeSelectorBackground"
         android:layout_toStartOf="@id/accountTypeDivider"
         android:background="?selectableItemBackground"
-        android:padding="@dimen/vertical_margin_login"
+        android:paddingStart="@dimen/horizontal_margin_login"
+        android:paddingEnd="@dimen/horizontal_margin_login"
+        android:paddingTop="@dimen/vertical_margin_login"
+        android:paddingBottom="@dimen/vertical_margin_login"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">
@@ -92,7 +95,6 @@
             tools:text="Personal" />
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/llAccountTypeOrganization"
         android:layout_width="match_parent"
@@ -102,7 +104,10 @@
         android:layout_alignEnd="@id/accountTypeSelectorBackground"
         android:layout_toEndOf="@id/accountTypeDivider"
         android:background="?selectableItemBackground"
-        android:padding="@dimen/vertical_margin_login"
+        android:paddingStart="@dimen/horizontal_margin_login"
+        android:paddingEnd="@dimen/horizontal_margin_login"
+        android:paddingTop="@dimen/vertical_margin_login"
+        android:paddingBottom="@dimen/vertical_margin_login"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">

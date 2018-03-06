@@ -42,6 +42,12 @@ import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.data.network.api.FirebaseInviteApi
+import com.mnassa.data.network.exception.*
+import com.mnassa.data.repository.*
+import com.mnassa.domain.interactor.InviteInteractor
+import com.mnassa.domain.interactor.impl.InviteInteractorImpl
+import com.mnassa.domain.repository.*
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
@@ -58,6 +64,8 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
+import com.mnassa.screen.invite.InviteViewModel
+import com.mnassa.screen.invite.InviteViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
@@ -91,6 +99,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
+    bind<InviteViewModel>() with provider { InviteViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -114,7 +123,9 @@ private val repositoryModule = Kodein.Module {
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance()) }
 }
 
@@ -126,6 +137,7 @@ private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
+    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
 }
 
@@ -135,6 +147,8 @@ private val networkModule = Kodein.Module {
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }
+
+    //firebase functions API
     bind<FirebaseAuthApi>() with singleton {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseAuthApi::class.java)
@@ -143,8 +157,16 @@ private val networkModule = Kodein.Module {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseDictionaryApi::class.java)
     }
-    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
+    bind<FirebaseInviteApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebaseInviteApi::class.java)
+    }
+
+
+    //exception handlers
+    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
+    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
 }
 
 private val otherModule = Kodein.Module {

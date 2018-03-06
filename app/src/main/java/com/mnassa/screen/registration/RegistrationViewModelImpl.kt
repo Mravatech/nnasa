@@ -10,7 +10,7 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: String, interests: String) {
+    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<String>, interests: List<String>) {
         handleException {
             withProgressSuspend {
                 val shortAccountModel = userProfileInteractor.createPersonalAccount(
@@ -18,15 +18,15 @@ class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileIn
                         secondName = secondName,
                         userName = userName,
                         city = city,
-                        offers = listOf(offers),
-                        interests = listOf(interests)
+                        offers = offers,
+                        interests = interests
                 )
                 openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(shortAccountModel))
             }
         }
     }
 
-    override fun registerOrganization(userName: String, city: String, companyName: String, offers: String, interests: String) {
+    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<String>, interests: List<String>) {
         handleException {
             withProgressSuspend {
                 userProfileInteractor.createOrganizationAccount(

@@ -25,7 +25,7 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
         return account
     }
 
-    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: String, interests: String): ShortAccountModel {
+    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
         val account = userRepository.createOrganizationAccount(
                 companyName = companyName,
                 userName = userName,

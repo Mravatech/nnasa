@@ -22,9 +22,9 @@ interface UserRepository {
             companyName: String,
             userName: String,
             city: String,
-            offers: String,
-            interests: String): ShortAccountModel
-    suspend fun processAccount(account: ShortAccountModel, path: String?)
+            offers: List<String>,
+            interests: List<String>
+    ): ShortAccountModel
 
     suspend fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?

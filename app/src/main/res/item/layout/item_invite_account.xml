@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    tools:background="#e9e9e9">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:paddingBottom="@dimen/vertical_margin_login"
+        android:paddingEnd="@dimen/horizontal_margin_login"
+        android:paddingStart="@dimen/horizontal_margin_login"
+        android:paddingTop="@dimen/vertical_margin_login">
+
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/avatar_list_item"
+            android:layout_height="@dimen/avatar_list_item"
+            tools:src="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivAvatar"
+            android:layout_alignTop="@id/ivAvatar"
+            android:layout_toEndOf="@+id/ivAvatar"
+            android:layout_toStartOf="@id/cbInvite"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/horizontal_margin_login"
+            android:paddingStart="@dimen/horizontal_margin_login">
+
+            <TextView
+                android:id="@+id/tvUserName"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="User name 11111" />
+
+            <TextView
+                android:id="@+id/tvUserPosition"
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Programmer in ISDDesign" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/cbInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            tools:text="" />
+
+    </RelativeLayout>
+
+
+</FrameLayout>
