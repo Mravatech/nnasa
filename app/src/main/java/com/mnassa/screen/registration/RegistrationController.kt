@@ -122,14 +122,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = registrationAdapter.personSelectedPlaceId ?: "",
-                        offers = etPersonOffers.text.toString(),
-                        interests = etPersonInterests.text.toString())
+                        offers = listOf(etPersonOffers.text.toString()),
+                        interests = listOf(etPersonInterests.text.toString()))
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
                         city = registrationAdapter.companySelectedPlaceId ?: "",
-                        offers = etCompanyOffers.text.toString(),
-                        interests = etCompanyInterests.text.toString()
+                        offers = listOf(etCompanyOffers.text.toString()),
+                        interests = listOf(etCompanyInterests.text.toString())
                 )
                 else -> throw IllegalArgumentException("Invalid page position $vpRegistration.currentItem")
             }
