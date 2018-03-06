@@ -31,6 +31,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
     override val viewModel: RegistrationViewModel by instance()
 
     private lateinit var googleApiClient: GoogleApiClient
+    private lateinit var registrationAdapter: RegistrationAdapter
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -40,12 +41,11 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
                 .addConnectionCallbacks(this)
         googleApiClient = builder.build()
         googleApiClient.connect()
-        with(view) {
-            tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
-            vpRegistration.adapter = RegistrationAdapter(view.context, googleApiClient)
-            tlRegistration.setupWithViewPager(vpRegistration)
-            btnNext.setOnClickListener { processRegisterClick() }
-        }
+        registrationAdapter = RegistrationAdapter(view.context, googleApiClient)
+        view.tvRegistrationHeader.text = fromDictionary(R.string.reg_title)
+        view.vpRegistration.adapter = registrationAdapter
+        view.tlRegistration.setupWithViewPager(view.vpRegistration)
+        view.btnNext.setOnClickListener { processRegisterClick() }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
@@ -95,13 +95,13 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
                         firstName = etPersonFirstName.text.toString(),
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
-                        city = actvPersonCity.text.toString(),
+                        city = registrationAdapter.personSelectedPlaceId ?: "",//actvPersonCity.text.toString(),
                         offers = etPersonOffers.text.toString(),
                         interests = etPersonInterests.text.toString())
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
-                        city = actvCompanyCity.text.toString(),
+                        city = registrationAdapter.companySelectedPlaceId ?: "",
                         offers = etCompanyOffers.text.toString(),
                         interests = etCompanyInterests.text.toString()
                 )
@@ -122,9 +122,10 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
             private val googleApiClient: GoogleApiClient)
         : PagerAdapter(), GoogleApiClient.ConnectionCallbacks {
 
-        private lateinit var placeAutocompleteAdapter: PlaceAutocompleteAdapter
-        private var selectedPlaceId: String? = null
-        private var selectedPlaceName: String? = null
+        private var companySelectedPlaceName: String? = null
+        private var personSelectedPlaceName: String? = null
+        var companySelectedPlaceId: String? = null
+        var personSelectedPlaceId: String? = null
 
         override fun onConnected(p0: Bundle?) {}
 
@@ -171,7 +172,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
                 tilPersonOffers.hint = "Offers"
                 tilPersonInterests.hint = "Interests"
             }
-            setAdapter(view.actvPersonCity)
+            setAdapter(view.actvPersonCity, true)
         }
 
         private fun onOrganizationPageCreated(view: View) {
@@ -182,18 +183,23 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>(), Go
                 tilCompanyOffers.hint = "Offers"
                 tilCompanyInterests.hint = "Interests"
             }
-            setAdapter(view.actvCompanyCity)
+            setAdapter(view.actvCompanyCity, false)
         }
 
-        private fun setAdapter(city: AutoCompleteTextView) {
-            placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, googleApiClient, null, null)
+        private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
+            val placeAutocompleteAdapter: PlaceAutocompleteAdapter = PlaceAutocompleteAdapter(context, googleApiClient, null, null)
             city.setAdapter(placeAutocompleteAdapter)
             city.setOnItemClickListener({ adapterView, view1, i, l ->
                 if (placeAutocompleteAdapter.getItem(i) == null) {
                     return@setOnItemClickListener
                 }
-                selectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                selectedPlaceName = city.text.toString()
+                if (isPerson){
+                    personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
+                    personSelectedPlaceName = city.text.toString()
+                }else{
+                    companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
+                    companySelectedPlaceName = city.text.toString()
+                }
             })
         }
 

@@ -89,32 +89,24 @@ class PlaceAutocompleteAdapter(context: Context,
     }
 
     private fun getAutocomplete(constraint: CharSequence): ArrayList<AutocompletePrediction>? {
-        when (mGoogleApiClient.isConnected) {
-            true -> {
-                Timber.i("Starting autocomplete query for: $constraint")
-                val results = Places.GeoDataApi.getAutocompletePredictions(
-                        mGoogleApiClient, constraint.toString(), mBounds, mPlaceFilter)
-                val autocompletePredictions = results.await(60, TimeUnit.SECONDS)
-                val status = autocompletePredictions.status
-                return when (status.isSuccess) {
-                    false -> {
-                        Toast.makeText(context, "${context.getString(R.string.could_not_connect_google_api)} $status",
-                                Toast.LENGTH_SHORT).show()
-                        Timber.e("Error getting autocomplete prediction API call: $status")
-                        autocompletePredictions.release()
-                        null
-                    }
-                    else -> {
-                        Timber.i("Query completed. Received ${autocompletePredictions.count} predictions.")
-                        DataBufferUtils.freezeAndClose(autocompletePredictions)
-                    }
-                }
-            }
-            else -> {
-                Timber.e("Google API client is not connected for autocomplete query.")
+        if (mGoogleApiClient.isConnected) {
+            Timber.i("Starting autocomplete query for: $constraint")
+            val results = Places.GeoDataApi.getAutocompletePredictions(
+                    mGoogleApiClient, constraint.toString(), mBounds, mPlaceFilter)
+            val autocompletePredictions = results.await(60, TimeUnit.SECONDS)
+            val status = autocompletePredictions.status
+            if (!status.isSuccess) {
+                Toast.makeText(context, "${context.getString(R.string.could_not_connect_google_api)} $status",
+                        Toast.LENGTH_SHORT).show()
+                Timber.e("Error getting autocomplete prediction API call: $status")
+                autocompletePredictions.release()
                 return null
             }
+            Timber.i("Query completed. Received ${autocompletePredictions.count} predictions.")
+            return DataBufferUtils.freezeAndClose(autocompletePredictions)
         }
+        Timber.e("Google API client is not connected for autocomplete query.")
+        return null
     }
 
     companion object {
