@@ -3,6 +3,7 @@ package com.mnassa.screen.login.enterpromo
 import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
+import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import kotlinx.android.synthetic.main.code_input.view.*
@@ -18,6 +19,8 @@ class EnterPromoController : EnterPhoneController() {
         super.onViewCreated(view)
 
         with(view) {
+            pbRegistration.progress = RegistrationFlowProgress.ENTER_PROMO_CODE
+
             orLayout.visibility = View.GONE
             btnEnterPromo.visibility = View.GONE
             coneInput.visibility = View.VISIBLE
@@ -27,8 +30,6 @@ class EnterPromoController : EnterPhoneController() {
             btnVerifyMe.setOnClickListener {
                 viewModel.requestVerificationCode(phoneNumber, etValidationCode.text.toString())
             }
-
-            registrationProgress.progress = 45
         }
     }
 
