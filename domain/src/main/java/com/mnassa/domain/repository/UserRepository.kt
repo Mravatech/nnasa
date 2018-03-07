@@ -9,6 +9,7 @@ interface UserRepository {
     suspend fun setCurrentUserAccount(account: ShortAccountModel?)
     suspend fun getCurrentUser(): ShortAccountModel?
     suspend fun getAccounts(): List<ShortAccountModel>
+
     suspend fun createPersonAccount(
             firstName: String,
             secondName: String,
@@ -24,7 +25,7 @@ interface UserRepository {
             offers: List<String>,
             interests: List<String>
     ): ShortAccountModel
-
+    suspend fun processAccount(account: ShortAccountModel, path: String?)
     suspend fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?

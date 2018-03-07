@@ -62,7 +62,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     is RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen -> {
-                        PersonalInfoController.newInstance()
+                        PersonalInfoController.newInstance(it.shortAccountModel)
                     }
                     is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
                         OrganizationInfoController.newInstance()

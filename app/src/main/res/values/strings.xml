@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mnassa</string>
+    <string name="jpg_dimension">.jpg</string>
 </resources>

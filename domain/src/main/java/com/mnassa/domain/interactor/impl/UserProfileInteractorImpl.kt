@@ -37,6 +37,11 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
         return account
     }
 
+    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
+//todo handle response
+        userRepository.processAccount(account, path)
+    }
+
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
         userRepository.setCurrentUserAccount(account)
     }

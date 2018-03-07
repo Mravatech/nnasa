@@ -40,7 +40,7 @@ dependencies {
     //firebase
     implementation deps.firebase.auth
     implementation deps.firebase.database
-
+    implementation deps.firebase.storage
     //network
     implementation deps.network.retrofit
     implementation deps.network.coroutineAdapter

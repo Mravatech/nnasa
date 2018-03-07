@@ -7,6 +7,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneController
+import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -22,6 +23,9 @@ class MainController : MnassaControllerImpl<MainViewModel>() {
 
         view.btnLogout.setOnClickListener {
             viewModel.logout()
+        }
+        view.btnCrop.setOnClickListener {
+            router.replaceTopController(RouterTransaction.with(ProfileController.newInstance()))
         }
 
         launchCoroutineUI {
