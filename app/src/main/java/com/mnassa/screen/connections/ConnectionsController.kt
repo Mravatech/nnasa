@@ -10,7 +10,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections.view.*
-import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.screen_header.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**

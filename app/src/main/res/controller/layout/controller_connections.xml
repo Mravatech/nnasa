@@ -8,11 +8,11 @@
 
     <include
         android:id="@+id/header"
-        layout="@layout/header_login"
+        layout="@layout/screen_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/horizontal_margin_login"
-        android:layout_marginStart="@dimen/horizontal_margin_login" />
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -27,16 +27,16 @@
                 android:id="@+id/tvRequestedConnections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/horizontal_margin_login"
-                android:layout_marginStart="@dimen/horizontal_margin_login"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 tools:text="Requested connections" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvRequestedConnections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/horizontal_margin_login"
-                android:layout_marginStart="@dimen/horizontal_margin_login"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 tools:layout_height="150dp"
                 tools:listitem="@layout/item_connections_requested" />
 
@@ -44,8 +44,8 @@
                 android:id="@+id/tvRecommendedConnections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/horizontal_margin_login"
-                android:layout_marginStart="@dimen/horizontal_margin_login"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 tools:text="Recommended connections" />
 
             <android.support.v7.widget.RecyclerView
@@ -61,16 +61,16 @@
                 android:id="@+id/tvAllConnections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/horizontal_margin_login"
-                android:layout_marginStart="@dimen/horizontal_margin_login"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 tools:text="All connections" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvAllConnections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/horizontal_margin_login"
-                android:layout_marginStart="@dimen/horizontal_margin_login"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 tools:layout_height="150dp"
                 tools:listitem="@layout/item_connections_all" />
 

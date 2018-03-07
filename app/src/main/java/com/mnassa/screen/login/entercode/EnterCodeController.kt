@@ -14,6 +14,7 @@ import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
+import com.mnassa.extensions.showKeyboard
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
@@ -21,7 +22,7 @@ import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.code_input.view.*
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
-import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.screen_header.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
@@ -53,6 +54,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
 
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.ENTER_CODE
+            pbRegistration.visibility = View.VISIBLE
 
             tvScreenHeader.text = fromDictionary(R.string.login_validation_code_header)
             tvEnterValidationCode.text = fromDictionary(R.string.login_enter_code_title)
@@ -63,6 +65,8 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
                 onCodeChanged()
             })
             etValidationCode.onImeActionDone { onCodeChanged() }
+
+            showKeyboard(etValidationCode)
         }
 
         launchCoroutineUI {

@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/pbRegistration"
-        style="@style/ScreenHeaderProgress" />
+    <include
+        android:id="@+id/header"
+        layout="@layout/screen_header" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,10 +19,6 @@
             android:orientation="vertical"
             android:paddingEnd="@dimen/padding_horizontal"
             android:paddingStart="@dimen/padding_horizontal">
-
-            <include
-                android:id="@+id/header"
-                layout="@layout/header_login" />
 
             <TextView
                 android:id="@+id/tvEnterPhoneNumber"
@@ -36,14 +32,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvEnterPhoneNumber"
-                android:layout_marginTop="@dimen/vertical_margin_login" />
+                android:layout_marginTop="@dimen/spacing_vertical" />
 
             <include
                 android:id="@+id/coneInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phoneInput"
-                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:layout_marginTop="@dimen/spacing_vertical"
                 android:visibility="gone"
                 tools:visibility="visible"
                 layout="@layout/code_input"/>
@@ -52,14 +48,14 @@
                 android:id="@+id/btnVerifyMe"
                 style="@style/MnassaOutlineButton"
                 android:layout_below="@id/coneInput"
-                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:layout_marginTop="@dimen/spacing_vertical"
                 tools:text="Verify me" />
 
             <TextView
                 android:id="@+id/tvTermsAndConditions"
                 style="@style/MnassaTextTiny"
                 android:layout_below="@id/btnVerifyMe"
-                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:layout_marginTop="@dimen/spacing_vertical"
                 android:gravity="center"
                 tools:text="Tapping Verify you agree with Terms &amp; Conditions" />
 
@@ -69,13 +65,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvTermsAndConditions"
-                android:layout_marginTop="@dimen/vertical_margin_login" />
+                android:layout_marginTop="@dimen/spacing_vertical" />
 
             <Button
                 android:id="@+id/btnEnterPromo"
                 style="@style/MnassaTransparentButton"
                 android:layout_below="@id/orLayout"
-                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:layout_marginTop="@dimen/spacing_vertical"
                 tools:text="Enter promo code" />
 
         </LinearLayout>

@@ -8,6 +8,7 @@ import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import kotlinx.android.synthetic.main.code_input.view.*
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
+import kotlinx.android.synthetic.main.screen_header.view.*
 
 /**
  * Created by Peter on 3/1/2018.
@@ -20,6 +21,7 @@ class EnterPromoController : EnterPhoneController() {
 
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.ENTER_PROMO_CODE
+            pbRegistration.visibility = View.VISIBLE
 
             orLayout.visibility = View.GONE
             btnEnterPromo.visibility = View.GONE

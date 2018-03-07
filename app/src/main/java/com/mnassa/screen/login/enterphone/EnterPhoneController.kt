@@ -20,6 +20,7 @@ import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
+import com.mnassa.extensions.showKeyboard
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.entercode.EnterCodeController
@@ -28,7 +29,7 @@ import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
-import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.screen_header.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -53,6 +54,7 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
 
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.ENTER_PHONE
+            pbRegistration.visibility = View.VISIBLE
 
             tvScreenHeader.text = fromDictionary(R.string.login_header_welcome)
             tvEnterPhoneNumber.text = fromDictionary(R.string.login_enter_phone_title)
@@ -104,11 +106,14 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onPhoneChanged() })
             etPhoneNumberTail.onImeActionDone { btnVerifyMe.performClick() }
             btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
+
+            showKeyboard(etPhoneNumberTail)
         }
 
         //open next screen even if current controller in the back stack
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
+                hideProgress()
                 when (it) {
                     is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> {
                         router.replaceTopController(RouterTransaction.with(MainController.newInstance()))

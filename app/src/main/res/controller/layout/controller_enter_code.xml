@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/pbRegistration"
-        style="@style/ScreenHeaderProgress" />
+    <include
+        android:id="@+id/header"
+        layout="@layout/screen_header" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,14 +19,9 @@
             android:paddingEnd="@dimen/padding_horizontal"
             android:paddingStart="@dimen/padding_horizontal">
 
-            <include
-                android:id="@+id/header"
-                layout="@layout/header_login" />
-
             <TextView
                 android:id="@+id/tvEnterValidationCode"
                 style="@style/MnassaHeader2"
-                android:layout_below="@id/header"
                 tools:text="Enter a validation code below" />
 
             <include
@@ -35,13 +30,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvEnterValidationCode"
-                android:layout_marginTop="@dimen/vertical_margin_login" />
+                android:layout_marginTop="@dimen/spacing_vertical" />
 
             <Button
                 android:id="@+id/tvResendCodeAfter"
                 style="@style/MnassaTransparentButton"
                 android:layout_below="@id/codeInput"
-                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:layout_marginTop="@dimen/spacing_vertical"
                 tools:text="Resend Code after 24…" />
 
         </RelativeLayout>
