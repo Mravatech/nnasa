@@ -211,10 +211,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, googleApiClient, null, null)
             city.setAdapter(placeAutocompleteAdapter)
-            city.setOnItemClickListener({ adapterView, view1, i, l ->
-                if (placeAutocompleteAdapter.getItem(i) == null) {
-                    return@setOnItemClickListener
-                }
+            city.setOnItemClickListener({ _, _, i, _ ->
+                placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 if (isPerson) {
                     personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
                     personSelectedPlaceName = city.text.toString()

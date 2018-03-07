@@ -132,7 +132,6 @@ private val repositoryModule = Kodein.Module {
         builder.build()
     }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
 }
