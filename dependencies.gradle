@@ -68,11 +68,14 @@ deps.playServices = playServices
 
 //========================================== FIREBASE ==============================================
 versions.firebase = '11.8.0'
+versions.ui = '3.2.1'
 def firebase = [:]
 firebase.core =            "com.google.firebase:firebase-core:$versions.firebase"
 firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
 firebase.auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
 firebase.database =        "com.google.firebase:firebase-database:$versions.firebase"
+firebase.storage =         "com.google.firebase:firebase-storage:$versions.firebase"
+firebase.ui  =             "com.firebaseui:firebase-ui-storage:$versions.ui"
 
 deps.firebase = firebase
 
@@ -149,6 +152,13 @@ glide.glideTransformers= "jp.wasabeef:glide-transformations:$versions.glideTrans
 glide.glideCompiler    = "com.github.bumptech.glide:compiler:$versions.glideVersion"
 deps.glide = glide
 
+//============================================= U-CROP ===========================================
+versions.ucrop = '2.2.1'
+
+def ucrop = [:]
+ucrop.general =          "com.github.yalantis:ucrop:$versions.ucrop"
+deps.ucrop = ucrop
+
 //============================================= DEEPLINK ===========================================
 def deeplink = [:]
 deeplink.runtime = "com.airbnb:deeplinkdispatch:3.1.0"
@@ -184,6 +194,7 @@ static def addRepos(RepositoryHandler handler) {
         url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
         url 'https://jitpack.io'
     }
+    handler.maven { url "https://jitpack.io" }
 }
 ext.addRepos = this.&addRepos
 

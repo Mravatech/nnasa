@@ -13,6 +13,8 @@ interface UserProfileInteractor {
 
     suspend fun setCurrentUserAccount(account: ShortAccountModel)
 
+    suspend fun processAccount(account: ShortAccountModel, path: String?)
+
     suspend fun getToken(): String?
     suspend fun getAccountId(): String?
 }

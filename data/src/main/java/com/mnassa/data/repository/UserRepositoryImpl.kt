@@ -14,6 +14,8 @@ import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccount
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
+import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
+import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 
@@ -86,6 +88,29 @@ class UserRepositoryImpl(
                 organizationName = companyName
         )).handleException(exceptionHandler)
         return converter.convert(result.account)
+    }
+
+    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
+        //todo remove hardcode
+        firebaseAuthApi.registerSendAccountInfo(RegisterSendingAccountInfoRequest(
+                null,
+                null,
+                account.personalInfo!!.lastName,
+                account.userName,
+                true,
+                "en",
+                "personal",
+                611265600000.0,
+                account.contactPhone,
+                null,
+                null,
+                getAccountId()!!,
+                path,
+                account.personalInfo!!.firstName,
+                listOf("-L5o3gRz9DfDXkdTZ01B"),
+                listOf("-L59C0y19-aGFdDN8kNc"),
+                false
+        )).await()
     }
 
     override suspend fun getFirebaseToken(): String? {
