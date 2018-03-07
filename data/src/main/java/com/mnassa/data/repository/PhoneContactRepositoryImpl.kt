@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.provider.ContactsContract
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.model.PhoneContact
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.ContactsRepository
 import kotlinx.coroutines.experimental.async
 
@@ -12,7 +13,8 @@ import kotlinx.coroutines.experimental.async
 /**
  * Created by Peter on 3/5/2018.
  */
-class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver) : ContactsRepository {
+class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
+                                 private val appInfoProvider: AppInfoProvider) : ContactsRepository {
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override suspend fun getPhoneContacts(): List<PhoneContact> {
@@ -42,33 +44,40 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver) :
                 }
             }
 
-            //TODO: remove
-            result.clear()
-            result += PhoneContactImpl("380969478743")
-            result += PhoneContactImpl("380969478743")
-            result += PhoneContactImpl("380667520265")
-            result += PhoneContactImpl("380667277832")
-            result += PhoneContactImpl("380969478743")
-            result += PhoneContactImpl("380951299232")
-            result += PhoneContactImpl("380969478743")
-            result += PhoneContactImpl("380677129504")
-            result += PhoneContactImpl("380971760140")
-            result += PhoneContactImpl("380971760140")
-            result += PhoneContactImpl("380660482777")
-            result += PhoneContactImpl("380937541581")
-            result += PhoneContactImpl("380509445155")
-            result += PhoneContactImpl("380675658651")
-            result += PhoneContactImpl("380951299232")
-            result += PhoneContactImpl("380951299232")
-            result += PhoneContactImpl("380675658651")
-            result += PhoneContactImpl("380935061405")
-            result += PhoneContactImpl("380971760140")
+            if (appInfoProvider.isDebug) {
+                result.clear()
+                result.addAll(getDebugPhoneList())
+            }
 
             result
         }.await()
     }
 
     private data class PhoneContactImpl(override val phoneNumber: String) : PhoneContact
+
+    private fun getDebugPhoneList(): List<PhoneContactImpl> {
+        val result = ArrayList<PhoneContactImpl>()
+        result += PhoneContactImpl("380969478743")
+        result += PhoneContactImpl("380969478743")
+        result += PhoneContactImpl("380667520265")
+        result += PhoneContactImpl("380667277832")
+        result += PhoneContactImpl("380969478743")
+        result += PhoneContactImpl("380951299232")
+        result += PhoneContactImpl("380969478743")
+        result += PhoneContactImpl("380677129504")
+        result += PhoneContactImpl("380971760140")
+        result += PhoneContactImpl("380971760140")
+        result += PhoneContactImpl("380660482777")
+        result += PhoneContactImpl("380937541581")
+        result += PhoneContactImpl("380509445155")
+        result += PhoneContactImpl("380675658651")
+        result += PhoneContactImpl("380951299232")
+        result += PhoneContactImpl("380951299232")
+        result += PhoneContactImpl("380675658651")
+        result += PhoneContactImpl("380935061405")
+        result += PhoneContactImpl("380971760140")
+        return result
+    }
 
 }
 
