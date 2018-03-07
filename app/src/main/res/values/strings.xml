@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mnassa</string>
     <string name="could_not_connect_google_api">Could not connect to Google API Client: Error </string>
+    <string name="jpg_dimension">.jpg</string>
 </resources>

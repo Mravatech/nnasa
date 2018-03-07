@@ -153,6 +153,8 @@ dependencies {
     implementation deps.firebase.auth
     implementation deps.firebase.auth_service
     implementation deps.firebase.database
+    implementation deps.firebase.storage
+    implementation deps.firebase.ui
 
     //play
     implementation deps.playServices.places
@@ -166,6 +168,9 @@ dependencies {
     implementation deps.glide.glide
     kapt deps.glide.glideCompiler
     implementation deps.glide.glideTransformers
+
+    //ucrop
+    implementation deps.ucrop.general
 
     //mapper
     implementation deps.mapper.core

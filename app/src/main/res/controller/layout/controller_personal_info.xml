@@ -4,19 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
 
         <TextView
             android:id="@+id/tvTitle"
             style="@style/MnassaHeader1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="56dp"
             tools:text="Personal info" />
 
         <ImageView
+            android:contentDescription="@null"
             android:id="@+id/ivUserAvatar"
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -27,10 +29,98 @@
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             tools:text="NEXT" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabInfoAddPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ivUserAvatar"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivUserAvatar"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilDateOfBirthday"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etDateOfBirthday"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvInfoGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rInfoBtnMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/rInfoBtnFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
 
 
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilSelectSocialStatus"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etSelectSocialStatus"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilICanHelpWith"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etICanHelpWith"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilPhoneNumber"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etPhoneNumber"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilYourEmail"
+                style="@style/Registration.TextInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etYourEmail"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:text="Skip This Step" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 </ScrollView>

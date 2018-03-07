@@ -8,6 +8,8 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.places.Places
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.converter.TranslatedWordConverter
@@ -15,16 +17,32 @@ import com.mnassa.data.converter.UserAccountConverter
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.api.FirebaseDictionaryApi
+import com.mnassa.data.network.exception.FirebaseExceptionHandler
+import com.mnassa.data.network.exception.FirebaseExceptionHandlerImpl
+import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
+import com.mnassa.data.network.exception.NetworkExceptionHandler
+import com.mnassa.data.repository.DictionaryRepositoryImpl
+import com.mnassa.data.repository.StorageRepositoryImpl
+import com.mnassa.data.repository.TagRepositoryImpl
+import com.mnassa.data.repository.UserRepositoryImpl
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.interactor.impl.DictionaryInteractorImpl
 import com.mnassa.domain.interactor.impl.LoginInteractorImpl
+import com.mnassa.domain.interactor.impl.StorageInteractorImpl
 import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.domain.repository.DictionaryRepository
+import com.mnassa.domain.repository.StorageRepository
+import com.mnassa.domain.repository.TagRepository
+import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
+import com.mnassa.screen.profile.ProfileViewModel
+import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
@@ -32,6 +50,7 @@ import com.mnassa.data.repository.*
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.interactor.impl.InviteInteractorImpl
 import com.mnassa.domain.repository.*
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -77,10 +96,11 @@ private val viewModelsModule = Kodein.Module {
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
-    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl() }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
+    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
+    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance()) }
 }
 
@@ -100,7 +120,9 @@ private val repositoryModule = Kodein.Module {
         result.setPersistenceEnabled(true)
         result
     }
+    bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
+    bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
@@ -111,6 +133,8 @@ private val repositoryModule = Kodein.Module {
     }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance()) }
+    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
+    bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -122,6 +146,7 @@ private val interactorModule = Kodein.Module {
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
+    bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
 }
 
 private val networkModule = Kodein.Module {
@@ -147,7 +172,7 @@ private val networkModule = Kodein.Module {
 
 
     //exception handlers
-    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance()) }
+    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
     bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
 }
@@ -155,4 +180,5 @@ private val networkModule = Kodein.Module {
 private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
+    bind<DialogHelper>() with singleton { DialogHelper() }
 }
