@@ -127,6 +127,7 @@ private val repositoryModule = Kodein.Module {
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
+    bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -164,7 +165,7 @@ private val networkModule = Kodein.Module {
 
 
     //exception handlers
-    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance()) }
+    bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
     bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
 }

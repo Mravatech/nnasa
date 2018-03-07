@@ -81,8 +81,8 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View
     }
 
     override fun onClick(v: View) {
-        val vh = v.tag as? InviteViewHolder ?: return
-        val position = vh.adapterPosition
+        val viewHolder = v.tag as? InviteViewHolder ?: return
+        val position = viewHolder.adapterPosition
 
         if (position >= 0) {
             val item = data[position]
@@ -90,7 +90,7 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View
             if (selectedAccounts.contains(item.id)) {
                 selectedAccountsInternal.remove(item.id)
             } else selectedAccountsInternal.add(item.id)
-            vh.bind(item)
+            viewHolder.bind(item)
 
             onSelectedAccountsChangedListener(selectedAccountsInternal)
         }
