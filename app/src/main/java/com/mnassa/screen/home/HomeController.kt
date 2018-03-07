@@ -37,8 +37,8 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
         override fun getCount(): Int = PAGES_COUNT
 
         override fun getPageTitle(position: Int): CharSequence = when (position) {
-            PAGE_NEEDS -> fromDictionary(R.string.home_needs_title)
-            PAGE_EVENTS -> fromDictionary(R.string.home_events_title)
+            PAGE_NEEDS -> fromDictionary(R.string.tab_home_needs_title)
+            PAGE_EVENTS -> fromDictionary(R.string.tab_home_events_title)
             else -> throw IllegalArgumentException("Invalid page position $position")
         }
     }

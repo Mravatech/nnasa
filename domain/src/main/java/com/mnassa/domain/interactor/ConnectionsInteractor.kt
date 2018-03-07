@@ -8,9 +8,11 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 /**
  * Created by Peter on 3/5/2018.
  */
-interface InviteInteractor {
+interface ConnectionsInteractor {
 
-    suspend fun getPhoneConnections(): ReceiveChannel<List<ShortAccountModel>>
+    suspend fun getRecommendedConnections(): ReceiveChannel<List<ShortAccountModel>>
+    suspend fun getRequestedConnections(): ReceiveChannel<List<ShortAccountModel>>
+    suspend fun getConnectedConnections(): ReceiveChannel<List<ShortAccountModel>>
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     suspend fun sendPhoneContacts()

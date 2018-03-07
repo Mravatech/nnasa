@@ -115,7 +115,7 @@ private val viewModelsModule = Kodein.Module {
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
     bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
-    bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl() }
+    bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
 }
@@ -142,7 +142,7 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
@@ -156,7 +156,7 @@ private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
-    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
+    bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
 }

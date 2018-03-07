@@ -1,22 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/header"
+        layout="@layout/header_login"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Connection"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_marginEnd="@dimen/horizontal_margin_login"
+        android:layout_marginStart="@dimen/horizontal_margin_login" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvRequestedConnections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/horizontal_margin_login"
+                android:layout_marginStart="@dimen/horizontal_margin_login"
+                tools:text="Requested connections" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvRequestedConnections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/horizontal_margin_login"
+                android:layout_marginStart="@dimen/horizontal_margin_login"
+                tools:layout_height="150dp"
+                tools:listitem="@layout/item_connections_requested" />
+
+            <TextView
+                android:id="@+id/tvRecommendedConnections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/horizontal_margin_login"
+                android:layout_marginStart="@dimen/horizontal_margin_login"
+                tools:text="Recommended connections" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvRecommendedConnections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:orientation="horizontal"
+                tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:layout_height="180dp"
+                tools:listitem="@layout/item_connections_recommended" />
+
+            <TextView
+                android:id="@+id/tvAllConnections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/horizontal_margin_login"
+                android:layout_marginStart="@dimen/horizontal_margin_login"
+                tools:text="All connections" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvAllConnections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/horizontal_margin_login"
+                android:layout_marginStart="@dimen/horizontal_margin_login"
+                tools:layout_height="150dp"
+                tools:listitem="@layout/item_connections_all" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>

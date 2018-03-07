@@ -11,7 +11,7 @@ import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.repository.InviteRepository
+import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
@@ -19,27 +19,39 @@ import kotlinx.coroutines.experimental.channels.map
 /**
  * Created by Peter on 3/5/2018.
  */
-class InviteRepositoryImpl(
+class ConnectionsRepositoryImpl(
         private val api: FirebaseInviteApi,
         private val exceptionHandler: ExceptionHandler,
         private val databaseReference: DatabaseReference,
         private val userRepository: UserRepository,
-        private val converter: ConvertersContext) : InviteRepository {
+        private val converter: ConvertersContext) : ConnectionsRepository {
 
     override suspend fun sendContacts(phoneNumbers: List<String>) {
         api.sendContacts(SendContactsRequest(phoneNumbers)).handleException(exceptionHandler)
     }
 
-    override suspend fun getRecommendedByPhoneUsers(): ReceiveChannel<List<ShortAccountModel>> {
-        return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
-                .child(requireNotNull(userRepository.getAccountId()))
-                .child(DatabaseContract.TABLE_CONNECTIONS_COL_RECOMMENDED)
-                .toListChannel<ShortAccountDbEntity>(exceptionHandler)
-                .map { converter.convertCollection(it, ShortAccountModel::class.java) }
+    override suspend fun getRecommendedConnections(): ReceiveChannel<List<ShortAccountModel>> {
+        return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_RECOMMENDED)
+    }
+
+    override suspend fun getRequestedConnections(): ReceiveChannel<List<ShortAccountModel>> {
+        return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_REQUESTED)
+    }
+
+    override suspend fun getConnectedConnections(): ReceiveChannel<List<ShortAccountModel>> {
+        return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_CONNECTED)
     }
 
     override suspend fun connect(userAccountIds: List<String>) {
         api.executeConnectionAction(ConnectionActionRequest(NetworkContract.ConnectionAction.CONNECT, userAccountIds))
                 .handleException(exceptionHandler)
+    }
+
+    private fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
+        return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
+                .child(requireNotNull(userRepository.getAccountId()))
+                .child(columnName)
+                .toListChannel<ShortAccountDbEntity>(exceptionHandler)
+                .map { converter.convertCollection(it, ShortAccountModel::class.java) }
     }
 }
