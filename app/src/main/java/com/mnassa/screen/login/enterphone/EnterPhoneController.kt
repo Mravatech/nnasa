@@ -1,5 +1,6 @@
 package com.mnassa.screen.login.enterphone
 
+import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.text.Spannable
@@ -37,7 +38,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/21/2018.
  */
-open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
+open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<EnterPhoneViewModel>(args) {
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
     protected val phoneNumber: String
@@ -48,6 +49,31 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
                     .replace("+", "") +
                     v.etPhoneNumberTail.text.toString()
         }
+
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+
+        //open next screen even if current controller in the back stack
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.openScreenChannel.consumeEach {
+                hideProgress()
+                when (it) {
+                    is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> {
+                        router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
+                    }
+                    is EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode -> {
+                        router.pushController(RouterTransaction.with(EnterCodeController.newInstance(it.param)))
+                    }
+                    is EnterPhoneViewModel.OpenScreenCommand.Registration -> {
+                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
+                    }
+                    is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> {
+                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance(it.accounts)))
+                    }
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -77,11 +103,6 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
-            val onPhoneChanged = {
-                btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
-                etPhoneNumberTail.error = null
-            }
-
             val countries = mutableListOf(
                     //TODO: use iOS app countries and add more icons
                     CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("1", "Ukraine1", null, null), "+38"),
@@ -91,8 +112,8 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             )
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) = onPhoneChanged()
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onPhoneChanged()
+                override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
             }
 
             btnVerifyMe.setOnClickListener {
@@ -100,35 +121,17 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             }
 
             btnEnterPromo.setOnClickListener {
-                router.pushController(RouterTransaction.with(EnterPromoController.newInstance()))
+                router.pushController(RouterTransaction.with(EnterPromoController.newInstance(
+                        spinnerPhoneCode.selectedItemPosition,
+                        etPhoneNumberTail.text.toString()
+                )))
             }
 
-            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onPhoneChanged() })
+            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
             etPhoneNumberTail.onImeActionDone { btnVerifyMe.performClick() }
-            btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
+            btnVerifyMe.isEnabled = validateInput()
 
             showKeyboard(etPhoneNumberTail)
-        }
-
-        //open next screen even if current controller in the back stack
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.openScreenChannel.consumeEach {
-                hideProgress()
-                when (it) {
-                    is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> {
-                        router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode -> {
-                        router.pushController(RouterTransaction.with(EnterCodeController.newInstance(it.param)))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.Registration -> {
-                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> {
-                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance(it.accounts)))
-                    }
-                }
-            }
         }
 
         if (instance<AppInfoProvider>().value.isDebug) addSignInViaEmailAbility()
@@ -171,9 +174,13 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
                 .show()
     }
 
+    protected fun onInputChanged() {
+        val view = view ?: return
+        view.btnVerifyMe.isEnabled = validateInput()
+        view.etPhoneNumberTail.error = null
+    }
 
-
-    private fun isPhoneValid(phoneNumber: String): Boolean {
+    protected open fun validateInput(): Boolean {
         return PATTERN_PHONE_TAIL.matcher(phoneNumber).matches()
     }
 

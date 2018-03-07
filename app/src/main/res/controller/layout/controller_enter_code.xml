@@ -21,12 +21,12 @@
 
             <TextView
                 android:id="@+id/tvEnterValidationCode"
-                style="@style/MnassaHeader2"
+                style="@style/MnassaText"
                 tools:text="Enter a validation code below" />
 
             <include
                 android:id="@+id/codeInput"
-                layout="@layout/code_input"
+                layout="@layout/sms_code_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvEnterValidationCode"
@@ -37,6 +37,7 @@
                 style="@style/MnassaTransparentButton"
                 android:layout_below="@id/codeInput"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:enabled="false"
                 tools:text="Resend Code after 24…" />
 
         </RelativeLayout>

@@ -5,40 +5,42 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/registrationProgress"
-        style="@style/ScreenHeaderProgress"
-        android:progress="85" />
+    <include
+        android:id="@+id/header"
+        layout="@layout/screen_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingEnd="@dimen/padding_horizontal"
-        android:paddingStart="@dimen/padding_horizontal">
-
-        <include
-            android:id="@+id/header"
-            layout="@layout/screen_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingBottom="@dimen/spacing_vertical">
 
         <TextView
             android:id="@+id/tvInviteUsersToBuildNetwork"
-            style="@style/MnassaHeader2"
-            android:layout_below="@id/header"
-            android:layout_marginTop="@dimen/spacing_vertical"
+            style="@style/MnassaText"
             tools:text="Invite users to build your Network (0)" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvInvite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@id/btnSkipStep"
             android:layout_below="@id/tvInviteUsersToBuildNetwork"
             android:layout_marginTop="@dimen/spacing_vertical"
             tools:listitem="@layout/item_invite_account" />
 
+        <Button
+            android:id="@+id/btnSkipStep"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:textColor="@color/coolGray"
+            tools:text="Skip this step" />
 
     </RelativeLayout>
-
-
 </LinearLayout>

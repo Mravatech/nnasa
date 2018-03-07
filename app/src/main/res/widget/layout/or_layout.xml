@@ -9,28 +9,29 @@
 
     <View
         android:layout_width="wrap_content"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/divider_width"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@id/tvOr"
-        android:background="@color/coolGray" />
+        android:background="@color/divider" />
 
     <TextView
         android:id="@+id/tvOr"
+        style="@style/MnassaTextTiny"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
         android:textAllCaps="true"
         tools:text="OR" />
 
     <View
         android:layout_width="wrap_content"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/divider_width"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/tvOr"
-        android:background="@color/coolGray" />
+        android:background="@color/divider" />
 
 </RelativeLayout>

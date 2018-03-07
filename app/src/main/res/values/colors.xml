@@ -2,12 +2,13 @@
 <resources>
     <color name="colorPrimary">@color/powderBlue</color>
     <color name="colorPrimaryDark">@color/coolGray</color>
-    <color name="colorAccent">@color/brightBlue</color>
+    <color name="colorAccent">@color/turquoiseBlue</color>
 
 
     <color name="powderBlue">#bfddff</color>
     <color name="black">#000000</color>
     <color name="coolGray">#abafb3</color>
+    <color name="coolGrayAlpha">#82abafb3</color>
     <color name="coolGreen">#37d45c</color>
     <color name="white">@android:color/white</color>
     <color name="paleGray">#e4e8eb</color>
@@ -20,4 +21,6 @@
     <color name="brightBlue">#0076ff</color>
 
     <color name="backgroundMain">#f2f5f7</color>
+    <color name="backgroundHighlight">@color/white</color>
+    <color name="divider">#e8e8e8</color>
 </resources>

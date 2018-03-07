@@ -1,5 +1,6 @@
 package com.mnassa.screen.registration
 
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
+import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
@@ -39,7 +41,10 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = RegistrationAdapter()
             vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
-                override fun onPageSelected(position: Int) = updateAccountTypeSwitch()
+                override fun onPageSelected(position: Int) {
+                    updateAccountTypeSwitch()
+                    hideKeyboard()
+                }
             })
             updateAccountTypeSwitch()
 
@@ -77,14 +82,22 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private fun updateAccountTypeSwitch() {
         val view = view ?: return
+
+        val grayColor = ContextCompat.getColor(view.context, R.color.coolGray)
+        val blackColor = ContextCompat.getColor(view.context, R.color.black)
+
         when (view.vpRegistration.currentItem) {
             PAGE_PERSON_INFO -> {
                 view.ivAccountTypeOrganization.disable()
                 view.ivAccountTypePersonal.enable()
+                view.tvAccountTypePersonal.setTextColor(blackColor)
+                view.tvAccountTypeOrganization.setTextColor(grayColor)
             }
             PAGE_ORGANIZATION_INFO -> {
                 view.ivAccountTypeOrganization.enable()
                 view.ivAccountTypePersonal.disable()
+                view.tvAccountTypePersonal.setTextColor(grayColor)
+                view.tvAccountTypeOrganization.setTextColor(blackColor)
             }
         }
     }

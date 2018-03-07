@@ -14,7 +14,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -94,19 +93,19 @@ class FirebaseLoginServiceImpl(
     }
 
     @Parcelize
-    class OnVerificationCompleted(
+    private class OnVerificationCompleted(
             override val phoneNumber: String,
             override val isVerified: Boolean = true): PhoneVerificationModel
 
     @Parcelize
-    class OnCodeSent(
+    private class OnCodeSent(
             override val phoneNumber: String,
             val verificationId: String,
             val token: PhoneAuthProvider.ForceResendingToken?,
             override val isVerified: Boolean = false): PhoneVerificationModel
 
     @Parcelize
-    class EmailAuth(
+    private class EmailAuth(
             override val phoneNumber: String = "",
             override val isVerified: Boolean = true
     ): PhoneVerificationModel

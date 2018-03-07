@@ -1,13 +1,11 @@
 package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
-import android.text.Spannable
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.view.View
+import android.widget.EditText
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PhoneVerificationModel
@@ -20,9 +18,9 @@ import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
-import kotlinx.android.synthetic.main.code_input.view.*
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.android.synthetic.main.screen_header.view.*
+import kotlinx.android.synthetic.main.sms_code_input.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
@@ -56,17 +54,14 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
             pbRegistration.progress = RegistrationFlowProgress.ENTER_CODE
             pbRegistration.visibility = View.VISIBLE
 
+            pinView.pinEnteringProgressListener = { progress ->
+                pbPin.progress = (pbPin.max * progress).toInt()
+            }
+            pinView.onPinEnteredListener = { viewModel.verifyCode(it) }
+
             tvScreenHeader.text = fromDictionary(R.string.login_validation_code_header)
             tvEnterValidationCode.text = fromDictionary(R.string.login_enter_code_title)
-            etValidationCode.hint = fromDictionary(R.string.login_validation_code_hint)
             startResendCodeTimer(resendCodeSecondCounter)
-
-            etValidationCode.addTextChangedListener(SimpleTextWatcher {
-                onCodeChanged()
-            })
-            etValidationCode.onImeActionDone { onCodeChanged() }
-
-            showKeyboard(etValidationCode)
         }
 
         launchCoroutineUI {
@@ -97,13 +92,6 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         resendCodeSecondCounter = savedInstanceState.getInt(EXTRA_RESEND_CODE_DELAY)
     }
 
-    private fun onCodeChanged() {
-        val code = view?.etValidationCode?.text?.toString() ?: return
-        val validationCodeLength = resources!!.getInteger(R.integer.validation_code_length)
-        if (code.length != validationCodeLength) return
-        viewModel.verifyCode(code)
-    }
-
     private var resendCodeTimerJob: Job? = null
     private fun startResendCodeTimer(secondsCounter: Int) {
         resendCodeSecondCounter = secondsCounter
@@ -123,16 +111,14 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
 
     private fun enableResendCodeButton() {
         val v = view ?: return
-
-        val span = Spannable.Factory.getInstance().newSpannable(fromDictionary(R.string.login_enter_code_resend_code))
-        span.setSpan(object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                viewModel.resendCode()
-                startResendCodeTimer(resendSmsCodeDelay)
-            }
-        }, 0, span.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        v.tvResendCodeAfter.text = span
-        v.tvResendCodeAfter.movementMethod = LinkMovementMethod.getInstance()
+        v.tvResendCodeAfter.isEnabled = true
+        v.tvResendCodeAfter.text = fromDictionary(R.string.login_enter_code_resend_code)
+        v.tvResendCodeAfter.setOnClickListener {
+            viewModel.resendCode()
+            startResendCodeTimer(resendSmsCodeDelay)
+            v.tvResendCodeAfter.isEnabled = false
+            v.tvResendCodeAfter.setOnClickListener(null)
+        }
     }
 
     companion object {

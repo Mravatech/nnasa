@@ -18,7 +18,7 @@ fun Controller.hideKeyboard(viewParam: View? = null) {
     }
 }
 
-fun Controller.showKeyboard(viewParam: View) {
+fun showKeyboard(viewParam: View) {
     viewParam.requestFocus()
 
     viewParam.postDelayed({
