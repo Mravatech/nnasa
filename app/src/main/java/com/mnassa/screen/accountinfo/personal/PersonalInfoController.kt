@@ -17,7 +17,7 @@ import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
 import com.mnassa.dialog.PhotoListener
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.main.MainController
+import com.mnassa.screen.invite.InviteController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -74,8 +74,8 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
-                    is PersonalInfoViewModel.OpenScreenCommand.MainScreen -> {
-                        MainController.newInstance()
+                    is PersonalInfoViewModel.OpenScreenCommand.InviteScreen -> {
+                        InviteController.newInstance()
                     }
                 }
                 router.popToRoot()

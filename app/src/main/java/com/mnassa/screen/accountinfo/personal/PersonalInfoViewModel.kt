@@ -18,6 +18,6 @@ interface PersonalInfoViewModel : MnassaViewModel {
     fun processAccount(accountModel: ShortAccountModel)
 
     sealed class OpenScreenCommand {
-        class MainScreen : OpenScreenCommand()
+        class InviteScreen : OpenScreenCommand()
     }
 }
