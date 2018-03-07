@@ -25,7 +25,7 @@ interface UserRepository {
             interests: List<String>
     ): ShortAccountModel
 
-    suspend fun getAccountId(): String?
+    fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?
 }

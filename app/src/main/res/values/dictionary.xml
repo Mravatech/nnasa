@@ -32,6 +32,9 @@
     <string name="invite_title_action">_newAccNetwork_navItem_Invite</string>
     <string name="invite_skip_step">_android_invites_skip_step</string>
 
+    <string name="home_needs_title">_nav_title_needs</string>
+    <string name="home_events_title">_events_nav_title</string>
+
 
 
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>

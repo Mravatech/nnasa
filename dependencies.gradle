@@ -159,12 +159,18 @@ def stetho = [:]
 stetho.runtime = "com.facebook.stetho:stetho:1.5.0"
 stetho.http = "com.facebook.stetho:stetho-okhttp3:1.5.0"
 deps.stetho = stetho
+//================================================ UI ==============================================
+def ui = [:]
+ui.bottomnavigation = 'com.aurelhubert:ahbottomnavigation:2.1.0'
+ui.tablayout = 'com.github.rahimlis:badgedtablayout:v1.2'
+
+deps.ui = ui
 //============================================== OTHER ============================================
 def other = [:]
 other.billing = 'com.android.billingclient:billing:1.0'
 other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
 other.logger =  'com.jakewharton.timber:timber:4.6.1'
-other.bottomnavigation = 'com.aurelhubert:ahbottomnavigation:2.1.0'
+
 deps.other = other
 //=============================================== TESTS ============================================
 def tests = [:]
@@ -176,6 +182,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.jcenter()
     handler.maven {
         url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
+        url 'https://jitpack.io'
     }
 }
 ext.addRepos = this.&addRepos

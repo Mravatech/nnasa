@@ -20,6 +20,9 @@ import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.notifications.NotificationsController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import com.aurelhubert.ahbottomnavigation.notification.AHNotification
+
+
 
 /**
  * Created by Peter on 2/21/2018.
@@ -50,7 +53,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
         with(view) {
             vpMain.adapter = adapter
+
             bnMain.addItems(
+
+                    //TODO: design needed
                     mutableListOf(
                             AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
                             AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
@@ -60,16 +66,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             )
 
             bnMain.isBehaviorTranslationEnabled = false
-            bnMain.setNotification("3", 1)
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
                 true
             }
 
-
             navigationView.setNavigationItemSelectedListener(this@MainController)
         }
-
 
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -79,6 +82,31 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                 router.replaceTopController(RouterTransaction.with(controller))
             }
         }
+
+        launchCoroutineUI {
+            viewModel.unreadChatsCountChannel.consumeEach { setCounter(PAGE_CHAT, it)}
+        }
+        launchCoroutineUI {
+            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(PAGE_NOTIFICATIONS, it) }
+        }
+        launchCoroutineUI {
+            viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(PAGE_CONNECTIONS, it) }
+        }
+        launchCoroutineUI {
+            viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(PAGE_HOME, it) }
+        }
+
+    }
+
+    private fun setCounter(pageIndex: Int, counterValue: Int) {
+        val view = view ?: return
+        val notification = if (counterValue != 0) AHNotification.Builder()
+                .setText(counterValue.toString())
+//                .setBackgroundColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_back))
+//                .setTextColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_text))
+                .build()  else null
+        view.bnMain.setNotification(notification, pageIndex)
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

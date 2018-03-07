@@ -189,7 +189,9 @@ dependencies {
     implementation deps.network.gsonconverter
     implementation deps.network.logging
 
-    implementation deps.other.bottomnavigation
+    //ui
+    implementation deps.ui.bottomnavigation
+    implementation deps.ui.tablayout
 
     //kotlin
     implementation deps.kotlin.stdlib
