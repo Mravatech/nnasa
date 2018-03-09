@@ -11,7 +11,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.promo_code_input.view.*
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
-import kotlinx.android.synthetic.main.screen_header.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 
 /**
  * Created by Peter on 3/1/2018.

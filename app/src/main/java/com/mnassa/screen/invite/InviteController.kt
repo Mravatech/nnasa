@@ -15,7 +15,7 @@ import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.main.MainController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite.view.*
-import kotlinx.android.synthetic.main.screen_header.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**

@@ -7,7 +7,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
-import com.mnassa.extensions.avatar
+import com.mnassa.extensions.avatarRound
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_invite_account.view.*
@@ -65,7 +65,7 @@ class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClick
     private class InviteViewHolder(private val selectedAccount: Set<String>, itemView: View) : BaseVH<ShortAccountModel>(itemView) {
         override fun bind(item: ShortAccountModel) {
             with(itemView) {
-                ivAvatar.avatar(item.avatar)
+                ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
                 tvUserPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
                 tvUserPosition.visibility = if (tvUserPosition.text.isNullOrBlank()) View.GONE else View.VISIBLE

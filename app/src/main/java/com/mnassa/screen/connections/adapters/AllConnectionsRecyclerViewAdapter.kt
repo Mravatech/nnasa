@@ -1,4 +1,4 @@
-package com.mnassa.screen.connections
+package com.mnassa.screen.connections.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
-import com.mnassa.extensions.avatar
+import com.mnassa.extensions.avatarRound
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connections_all.view.*
@@ -38,7 +38,7 @@ class AllConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountMo
 
         override fun bind(item: ShortAccountModel) {
             with(itemView) {
-                ivAvatar.avatar(item.avatar)
+                ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
                 tvPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
                 btnConnectionStatus.setOnClickListener(clickListener)

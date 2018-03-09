@@ -41,9 +41,13 @@
 
     <!-- ===================================== TAB CONNECTIONS ================================== -->
     <string name="tab_connections_title">_connectionsList_navTitle_connections</string>
-    <string name="tab_connections_requested">_connections_group_header_requested</string>
+    <string name="tab_connections_new_requests">_connections_header_new_requests</string>
     <string name="tab_connections_recommended">_connections_header_recommended_conns</string>
     <string name="tab_connections_all">_connectionsList_groupHeader_connected</string>
+    <string name="tab_connections_recommended_connect">connection_button_connect</string>
+    <string name="tab_connections_recommended_show_all">_android_connections_recommended_show_all</string>
+    <string name="tab_connections_rejected">_connectionsList_groupHeader_rejected</string>
+    <string name="tab_connections_new_requests_more">_android_connections_new_requests_more</string>
 
 
 

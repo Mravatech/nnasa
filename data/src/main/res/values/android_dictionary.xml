@@ -12,6 +12,8 @@
     <string name="_android_account_type_personal_INFO">Personal</string>
     <string name="_android_account_type_organization_INFO">Organization</string>
     <string name="_android_invites_skip_step_INFO">Skip this step</string>
-    <string name="_android_loading">Loading …</string>
+    <string name="_android_loading_INFO">Loading …</string>
+    <string name="_android_connections_recommended_show_all_INFO">Show all</string>
+    <string name="_android_connections_new_requests_more_INFO">%d peoples more</string>
 
 </resources>

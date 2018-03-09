@@ -53,6 +53,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
         with(view) {
             vpMain.adapter = adapter
+            vpMain.offscreenPageLimit = PAGES_COUNT
 
             bnMain.addItems(
 

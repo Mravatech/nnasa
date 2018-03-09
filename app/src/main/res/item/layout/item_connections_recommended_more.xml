@@ -20,52 +20,47 @@
             android:layout_height="190dp"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tvUserName"
-                android:layout_alignParentTop="true"
-                android:scaleType="centerCrop"
-                tools:src="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/tvUserName"
-                style="@style/Connections.Recommended.UserName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tvPosition"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                tools:text="User name" />
-
-            <TextView
-                android:id="@+id/tvPosition"
-                style="@style/Connections.Recommended.UserPosition"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/vSeparator"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="4dp"
-                tools:text="user position" />
+                android:layout_alignParentTop="true"
+                android:padding="@dimen/spacing_vertical">
+
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:background="@drawable/circle_gray" />
+
+                <TextView
+                    android:id="@+id/tvMoreCount"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    tools:text="+20" />
+
+            </FrameLayout>
 
             <View
                 android:id="@+id/vSeparator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
-                android:layout_above="@id/btnConnect"
+                android:layout_above="@id/btnShowMore"
                 android:layout_marginTop="4dp"
                 android:background="@color/backgroundMain" />
 
             <Button
-                android:id="@+id/btnConnect"
+                android:id="@+id/btnShowMore"
                 style="@style/MnassaTransparentButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                tools:text="Connect" />
+                tools:text="Show all" />
 
         </RelativeLayout>
 

@@ -38,9 +38,9 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
 
     /////////////////////////////////// BASIC DATASET OPERATIONS ///////////////////////////////////
-    fun clear() = run { dataStorage.clear() }
-    fun set(list: List<ITEM>) = dataStorage.set(list)
-    fun add(list: List<ITEM>) = run { dataStorage.addAll(list); Unit }
+    open fun clear() = run { dataStorage.clear() }
+    open fun set(list: List<ITEM>) = dataStorage.set(list)
+    open fun add(list: List<ITEM>) = run { dataStorage.addAll(list); Unit }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun onAttachedToRecyclerView(rv: RecyclerView?) = run { recyclerView.value = rv }
@@ -49,7 +49,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         recyclerView.clear()
     }
 
-    override final fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ITEM> {
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ITEM> {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_LOADING_ENABLED -> {
@@ -80,7 +80,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     //////////////////////////////////////// VIEW TYPES ////////////////////////////////////////////
 
     open fun getViewType(position: Int): Int = TYPE_UNDEF
-    override final fun getItemViewType(position: Int): Int = when (position) {
+    final override fun getItemViewType(position: Int) = when (position) {
         0 -> TYPE_HEADER
         itemCount - 1 -> if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
         else -> getViewType(position - emptyHeaderItemsCount)

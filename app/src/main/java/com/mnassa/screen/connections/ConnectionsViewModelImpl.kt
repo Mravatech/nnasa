@@ -37,4 +37,16 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
             }
         }
     }
+
+    override fun connect(account: ShortAccountModel) {
+
+    }
+
+    override fun apply(account: ShortAccountModel) {
+
+    }
+
+    override fun decline(account: ShortAccountModel) {
+
+    }
 }

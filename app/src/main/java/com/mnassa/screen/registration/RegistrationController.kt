@@ -21,7 +21,7 @@ import com.mnassa.screen.login.RegistrationFlowProgress
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
 import kotlinx.android.synthetic.main.controller_registration_personal.view.*
-import kotlinx.android.synthetic.main.screen_header.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**

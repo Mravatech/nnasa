@@ -30,7 +30,7 @@ import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
-import kotlinx.android.synthetic.main.screen_header.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach

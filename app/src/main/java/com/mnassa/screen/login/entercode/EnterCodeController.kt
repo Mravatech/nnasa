@@ -19,7 +19,7 @@ import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
-import kotlinx.android.synthetic.main.screen_header.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sms_code_input.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
