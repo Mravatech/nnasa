@@ -153,8 +153,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
         val email = EditText(context)
         email.hint = "Email"
+        email.setText("u@ser.com")
         val password = EditText(context)
         password.hint = "Password"
+        password.setText("qwerty")
 
         container.addView(email)
         container.addView(password)

@@ -36,7 +36,9 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
-            android:layout_toStartOf="@id/ivMore" />
+            android:layout_toStartOf="@id/ivMore"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/ivMore"
@@ -46,14 +48,17 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"
-            app:srcCompat="@drawable/ic_more_vert_black_24dp" />
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:tint="@color/black"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_more_vert_black_24dp"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_below="@id/rlHeader"
-        android:background="@drawable/shadow" />
+        style="@style/MnassaShadow"
+        android:layout_below="@id/rlHeader" />
 
 </RelativeLayout>

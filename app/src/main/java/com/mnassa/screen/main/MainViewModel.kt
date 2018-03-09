@@ -1,5 +1,6 @@
 package com.mnassa.screen.main
 
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -13,6 +14,8 @@ interface MainViewModel : MnassaViewModel {
     val unreadNotificationsCountChannel: BroadcastChannel<Int>
     val unreadConnectionsCountChannel: BroadcastChannel<Int>
     val unreadEventsAndNeedsCountChannel: BroadcastChannel<Int>
+
+    val currentAccountChannel: BroadcastChannel<ShortAccountModel>
 
     fun logout()
 

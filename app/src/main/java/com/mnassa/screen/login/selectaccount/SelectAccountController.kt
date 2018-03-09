@@ -11,7 +11,9 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.main.MainController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_select_account.view.*
+import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -20,6 +22,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class SelectAccountController(params: Bundle) : MnassaControllerImpl<SelectAccountViewModel>(params) {
     override val layoutId: Int = R.layout.controller_select_account
     override val viewModel: SelectAccountViewModel by instance()
+    private val adapter = AccountsRecyclerViewAdapter()
 
     @Suppress("UNCHECKED_CAST")
     private val accounts by lazy { args.getSerializable(EXTRA_ACCOUNTS_LIST) as List<ShortAccountModel> }
@@ -28,8 +31,10 @@ class SelectAccountController(params: Bundle) : MnassaControllerImpl<SelectAccou
         super.onViewCreated(view)
 
         with(view) {
+            tvScreenHeader.text = fromDictionary(R.string.choose_profile_title)
             rvAccounts.layoutManager = LinearLayoutManager(view.context)
-            val adapter = AccountsRecyclerViewAdapter(accounts.toMutableList())
+            val adapter = adapter
+            adapter.set(accounts)
             rvAccounts.adapter = adapter
 
             adapter.onItemClickListener = { viewModel.selectAccount(it) }

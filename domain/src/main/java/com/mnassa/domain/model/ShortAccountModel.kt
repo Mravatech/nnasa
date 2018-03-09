@@ -1,6 +1,7 @@
 package com.mnassa.domain.model
 
 import java.io.Serializable
+import java.util.*
 
 /**
  * Created by Peter on 2/26/2018.
@@ -19,6 +20,10 @@ interface ShortAccountModel : Model {
     var organizationInfo: OrganizationAccountDiffModel?
     //
     var abilities: List<AccountAbility>
+}
+
+interface DeclinedShortAccountModel : ShortAccountModel {
+    var declinedAt: Date
 }
 
 interface PersonalAccountDiffModel : Serializable {

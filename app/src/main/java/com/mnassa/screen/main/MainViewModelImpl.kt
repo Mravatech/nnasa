@@ -5,8 +5,10 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.CountersInteractor
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -26,28 +28,30 @@ class MainViewModelImpl(
     private val unreadNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
     override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
 
+    override val currentAccountChannel: ConflatedBroadcastChannel<ShortAccountModel> = ConflatedBroadcastChannel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        launchCoroutineUI {
+        handleException {
             countersInteractor.numberOfUnreadChats.consumeEach {
                 unreadChatsCountChannel.send(it)
             }
         }
 
-        launchCoroutineUI {
+        handleException {
             countersInteractor.numberOfUnreadNotifications.consumeEach {
                 unreadNotificationsCountChannel.send(it)
             }
         }
 
-        launchCoroutineUI {
+        handleException {
             countersInteractor.numberOfRequested.consumeEach {
                 unreadConnectionsCountChannel.send(it)
             }
         }
 
-        launchCoroutineUI {
+        handleException {
             countersInteractor.numberOfUnreadEvents.consumeEach {
                 unreadEventsCountChannel.send(it)
 
@@ -56,13 +60,18 @@ class MainViewModelImpl(
             }
         }
 
-        launchCoroutineUI {
+        handleException {
             countersInteractor.numberOfUnreadNeeds.consumeEach {
                 unreadNeedsCountChannel.send(it)
 
                 unreadEventsAndNeedsCountChannel.send((unreadEventsCountChannel.valueOrNull
                         ?: 0) + it)
             }
+        }
+
+        handleException {
+            val profile = userProfileInteractor.getProfile()
+            currentAccountChannel.send(profile)
         }
 
     }

@@ -20,6 +20,8 @@
     <color name="charcoalGrey">#282e32</color>
     <color name="brightBlue">#0076ff</color>
 
+    <color name="red">#e10000</color>
+
     <color name="backgroundMain">#f2f5f7</color>
     <color name="backgroundHighlight">@color/white</color>
     <color name="divider">#e8e8e8</color>

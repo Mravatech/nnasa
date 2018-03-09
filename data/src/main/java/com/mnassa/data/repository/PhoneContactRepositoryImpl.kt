@@ -76,6 +76,8 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
         result += PhoneContactImpl("380675658651")
         result += PhoneContactImpl("380935061405")
         result += PhoneContactImpl("380971760140")
+        result += PhoneContactImpl("380933371444")
+        result += PhoneContactImpl("380987820531")
         return result
     }
 

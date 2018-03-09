@@ -18,7 +18,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     protected var recyclerView = StateExecutor<RecyclerView?, RecyclerView>(null) { it != null }
     protected inline fun execUpdate(crossinline update: (() -> Unit)) {
         recyclerView.invoke {
-            it.post { update.invoke() }
+            it.post { update() }
         }
     }
     var itemsTheSameComparator: ((item1: ITEM, item2: ITEM) -> Boolean) = { item1, item2 -> item1 == item2 }
@@ -49,7 +49,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         recyclerView.clear()
     }
 
-    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ITEM> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ITEM> {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_LOADING_ENABLED -> {
@@ -58,7 +58,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
                 LoadingViewHolder(view)
             }
             TYPE_LOADING_DISABLED, TYPE_HEADER -> LoadingViewHolder(View(parent.context))
-            else -> createView(parent, viewType, inflater)
+            else -> onCreateViewHolder(parent, viewType, inflater)
         }
     }
 
@@ -67,7 +67,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     /**
      * Create view here instead of onCreateViewHolder
      */
-    protected abstract fun createView(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ITEM>
+    protected abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ITEM>
 
     override fun onBindViewHolder(holder: BaseVH<ITEM>, position: Int) {
         when (getItemViewType(position)) {
@@ -110,16 +110,6 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     private class LoadingViewHolder<in ITEM>(itemView: View) : BaseVH<ITEM>(itemView) {
         override fun bind(item: ITEM) {}
     }
-
-    /**
-     * Base holder for binding holder
-     */
-    protected abstract class BindingVH<in ITEM>(itemView: View) : BaseVH<ITEM>(itemView)
-
-    /**
-     * Base holder for non-binding holder
-     */
-    protected abstract class KotlinVH<in ITEM>(itemView: View) : BaseVH<ITEM>(itemView)
 
     ////////////////////////////////////// ABSTRACT DATA STORAGE ///////////////////////////////////
 

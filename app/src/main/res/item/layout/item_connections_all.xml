@@ -1,38 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/backgroundHighlight">
 
-    <ImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="@dimen/avatar_list_item"
-        android:layout_height="@dimen/avatar_list_item"
-        tools:src="@mipmap/ic_launcher" />
-
-    <TextView
-        android:id="@+id/tvUserName"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/ivAvatar"
-        android:layout_toStartOf="@id/btnApply"
-        tools:text="User name" />
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
 
-    <TextView
-        android:id="@+id/tvPosition"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvUserName"
-        android:layout_toEndOf="@id/ivAvatar"
-        android:layout_toStartOf="@id/btnApply"
-        tools:text="at some company" />
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/avatar_list_item"
+            android:layout_height="@dimen/avatar_list_item"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            tools:src="@mipmap/ic_launcher" />
 
-    <Button
-        android:id="@+id/btnConnectionStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        tools:text="CONNECTED" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivAvatar"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ivAvatar"
+            android:layout_toStartOf="@id/btnAccept"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/tvUserName"
+                style="@style/Connections.UserName"
+                tools:text="User name" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/tvPosition"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
+
+            <TextView
+                android:id="@+id/tvEventName"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnMoreOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:tint="@color/coolGray"
+            app:srcCompat="@drawable/ic_more_vert_black_24dp" />
+
+    </RelativeLayout>
+</FrameLayout>

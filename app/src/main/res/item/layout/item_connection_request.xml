@@ -31,38 +31,35 @@
             android:layout_alignBottom="@id/ivAvatar"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/ivAvatar"
-            android:layout_toStartOf="@id/btnApply"
+            android:layout_toStartOf="@id/btnAccept"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Connections.UserName"
                 tools:text="User name" />
 
             <TextView
                 android:id="@+id/tvPosition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                style="@style/Connections.UserPosition"
                 tools:text="at some company" />
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/btnApply"
+            android:id="@+id/btnDecline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
-            android:layout_toStartOf="@id/btnDecline"
+            android:layout_toStartOf="@id/btnAccept"
             android:clickable="true"
             android:focusable="true"
             android:tint="@color/coolGray"
             app:srcCompat="@drawable/ic_close_white_24dp" />
 
         <ImageView
-            android:id="@+id/btnDecline"
+            android:id="@+id/btnAccept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

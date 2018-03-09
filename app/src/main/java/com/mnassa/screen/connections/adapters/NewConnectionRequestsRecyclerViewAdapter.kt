@@ -9,6 +9,7 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connection_request.view.*
@@ -19,20 +20,22 @@ import kotlinx.android.synthetic.main.item_connection_request_more.view.*
  */
 class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
     private var moreItemsCount: Int = 0
-    var onApplyClickListener = { account: ShortAccountModel -> }
+    var onAcceptClickListener = { account: ShortAccountModel -> }
     var onDeclineClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = { }
 
-    override fun set(list: List<ShortAccountModel>) {
-        moreItemsCount = maxOf(list.size - MAX_ITEMS_COUNT, 0)
-        if (list.size > MAX_ITEMS_COUNT) {
-            super.set(list.subList(0, MAX_ITEMS_COUNT))
+    fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
+        val maxItemsCount = maxItemsCount + 1
+
+        moreItemsCount = maxOf(list.size - maxItemsCount, 0)
+        if (list.size > maxItemsCount) {
+            super.set(list.subList(0, maxItemsCount))
         } else {
             super.set(list)
         }
     }
 
-    override fun createView(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return when (viewType) {
             TYPE_ITEM -> UserViewHolder.newInstance(parent, this)
             TYPE_MORE -> MoreViewHolder.newInstance(parent, this)
@@ -48,10 +51,10 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.btnApply -> {
+            R.id.btnAccept -> {
                 val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
-                    onApplyClickListener(getDataItemByAdapterPosition(position))
+                    onAcceptClickListener(getDataItemByAdapterPosition(position))
                 }
             }
             R.id.btnDecline -> {
@@ -77,10 +80,10 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
                 tvPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
-                tvPosition.visibility = if (tvPosition.text.isNullOrBlank()) View.GONE else View.VISIBLE
+                tvPosition.goneIfEmpty()
 
-                btnApply.setOnClickListener(clickListener)
-                btnApply.tag = this@UserViewHolder
+                btnAccept.setOnClickListener(clickListener)
+                btnAccept.tag = this@UserViewHolder
                 btnDecline.setOnClickListener(clickListener)
                 btnDecline.tag = this@UserViewHolder
             }
@@ -112,7 +115,6 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     }
 
     private companion object {
-        private const val MAX_ITEMS_COUNT = 3
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
     }

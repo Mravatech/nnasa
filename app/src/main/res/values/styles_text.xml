@@ -15,33 +15,30 @@
     </style>
 
     <style name="MnassaText" parent="MnassaHeader2">
-        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MnassaTextTiny" parent="MnassaText">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/coolGray</item>
+        <item name="android:fontFamily">@font/roboto</item>
     </style>
 
-    <style name="Connections"/>
-    <style name="Connections.Recommended"/>
+    <style name="Connections" />
 
-    <style name="Connections.Recommended.UserName" parent="MnassaText">
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">@font/roboto_thin</item>
-        <item name="android:textColor">@color/black</item>
+    <style name="Connections.Recommended" />
+
+    <style name="Connections.UserName" parent="MnassaText">
         <item name="android:maxLines">1</item>
-        <item name="android:gravity">center</item>
-        <item name="autoSizeMaxTextSize">16sp</item>
+        <item name="autoSizeMaxTextSize">14sp</item>
         <item name="autoSizeMinTextSize">2sp</item>
         <item name="autoSizeStepGranularity">1sp</item>
         <item name="autoSizeTextType">uniform</item>
     </style>
-    <style name="Connections.Recommended.UserPosition" parent="MnassaTextTiny">
+
+    <style name="Connections.UserPosition" parent="MnassaTextTiny">
         <item name="android:maxLines">1</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
         <item name="autoSizeMaxTextSize">14sp</item>
         <item name="autoSizeMinTextSize">2sp</item>
         <item name="autoSizeStepGranularity">1sp</item>

@@ -22,16 +22,19 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     var onConnectClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = {}
 
-    override fun set(list: List<ShortAccountModel>) {
-        moreItemsCount = maxOf(list.size - MAX_ITEMS_COUNT, 0)
-        if (list.size > MAX_ITEMS_COUNT) {
-            super.set(list.subList(0, MAX_ITEMS_COUNT))
+    fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
+        val maxItemsCount = maxItemsCount + 1
+
+        moreItemsCount = maxOf(list.size - maxItemsCount, 0)
+        if (list.size > maxItemsCount) {
+            super.set(list.subList(0, maxItemsCount))
         } else {
             super.set(list)
         }
     }
 
-    override fun createView(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return when (viewType) {
             TYPE_ITEM -> UserViewHolder.newInstance(parent, this)
             TYPE_MORE -> MoreViewHolder.newInstance(parent, this)
@@ -108,7 +111,6 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     }
 
     private companion object {
-        private const val MAX_ITEMS_COUNT = 5 //TODO: replace to 10
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
     }

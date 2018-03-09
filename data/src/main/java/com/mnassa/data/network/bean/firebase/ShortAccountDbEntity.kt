@@ -9,26 +9,50 @@ import com.mnassa.domain.model.HasId
  */
 
 @IgnoreExtraProperties
-internal data class ShortAccountDbEntity(
-        override var id: String,
-        @PropertyName("avatar")
-        var avatar: String?,
-        @PropertyName("firstName")
-        var firstName: String?,
-        @PropertyName("lastName")
-        var lastName: String?,
-        @PropertyName("organizationName")
-        var organizationName: String?,
-        @PropertyName("type")
-        var type: String,
-        @PropertyName("userName")
-        var userName: String,
-        @PropertyName("abilities")
-        var abilitiesInternal: List<ShortAccountAbilityDbEntity>
-): HasId {
+internal open class ShortAccountDbEntity : HasId {
+    override var id: String
+    @PropertyName("avatar")
+    var avatar: String?
+    @PropertyName("firstName")
+    var firstName: String?
+    @PropertyName("lastName")
+    var lastName: String?
+    @PropertyName("organizationName")
+    var organizationName: String?
+    @PropertyName("type")
+    var type: String
+    @PropertyName("userName")
+    var userName: String
+    @PropertyName("abilities")
+    var abilitiesInternal: List<ShortAccountAbilityDbEntity>
 
     constructor() : this("", null, "", "", null, "", "", emptyList())
+    constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>) {
+        this.id = id
+        this.avatar = avatar
+        this.firstName = firstName
+        this.lastName = lastName
+        this.organizationName = organizationName
+        this.type = type
+        this.userName = userName
+        this.abilitiesInternal = abilitiesInternal
+    }
 }
+
+@IgnoreExtraProperties
+internal open class DeclinedShortAccountDbEntity : ShortAccountDbEntity {
+    @PropertyName("declinedAt")
+    var declinedAt: Long
+
+    constructor() : super() {
+        this.declinedAt = 0L
+    }
+
+    constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>, declinedAt: Long) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
+        this.declinedAt = declinedAt
+    }
+}
+
 
 @IgnoreExtraProperties
 internal data class ShortAccountAbilityDbEntity(

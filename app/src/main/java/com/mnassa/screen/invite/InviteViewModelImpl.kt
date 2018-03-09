@@ -44,7 +44,7 @@ class InviteViewModelImpl(private val connectionsInteractor: ConnectionsInteract
     override fun inviteUsers(accountIds: List<String>) {
         inviteUsersJob = handleException {
             withProgressSuspend {
-                connectionsInteractor.inviteUsers(accountIds)
+                connectionsInteractor.actionConnect(accountIds)
             }
             openScreenChannel.send(InviteViewModel.OpenScreenCommand.MainScreen())
         }

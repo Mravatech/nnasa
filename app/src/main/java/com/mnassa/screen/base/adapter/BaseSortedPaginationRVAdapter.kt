@@ -64,9 +64,9 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
 
     private class SortedDataStorageCallback<ITEM>(private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : SortedList.Callback<ITEM>() {
         private val defCallback = object : SortedListAdapterCallback<ITEM>(adapter) {
-            override fun areItemsTheSame(item1: ITEM, item2: ITEM): Boolean = adapter.itemsTheSameComparator.invoke(item1, item2)
-            override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean = adapter.contentTheSameComparator.invoke(oldItem, newItem)
-            override fun compare(o1: ITEM, o2: ITEM): Int = adapter.itemsComparator.invoke(o1, o2)
+            override fun areItemsTheSame(item1: ITEM, item2: ITEM): Boolean = adapter.itemsTheSameComparator(item1, item2)
+            override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean = adapter.contentTheSameComparator(oldItem, newItem)
+            override fun compare(o1: ITEM, o2: ITEM): Int = adapter.itemsComparator(o1, o2)
         }
 
         override fun onMoved(fromPosition: Int, toPosition: Int) = defCallback.onMoved(convert(fromPosition), convert(toPosition))

@@ -42,6 +42,7 @@ import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.data.converter.ConnectionsConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
@@ -68,6 +69,14 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
 import com.mnassa.screen.connections.ConnectionsViewModelImpl
+import com.mnassa.screen.connections.archived.ArchivedConnectionViewModel
+import com.mnassa.screen.connections.archived.ArchivedConnectionViewModelImpl
+import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
+import com.mnassa.screen.connections.newrequests.NewRequestsViewModelImpl
+import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModel
+import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModelImpl
+import com.mnassa.screen.connections.sent.SentConnectionsViewModel
+import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
@@ -118,6 +127,10 @@ private val viewModelsModule = Kodein.Module {
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
+    bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
+    bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
+    bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
+    bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -126,6 +139,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(UserAccountConverter::class.java)
         converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
+        converter.registerConverter(ConnectionsConverter::class.java)
         converter
     }
 }

@@ -8,6 +8,7 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_invite_account.view.*
@@ -34,7 +35,7 @@ class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClick
             notifyDataSetChanged()
         }
 
-    override fun createView(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         val view = inflater.inflate(R.layout.item_invite_account, parent, false)
 
         val viewHolder = InviteViewHolder(selectedAccountsInternal, view)
@@ -68,7 +69,7 @@ class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClick
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
                 tvUserPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
-                tvUserPosition.visibility = if (tvUserPosition.text.isNullOrBlank()) View.GONE else View.VISIBLE
+                tvUserPosition.goneIfEmpty()
                 cbInvite.isChecked = selectedAccount.contains(item.id)
             }
         }
