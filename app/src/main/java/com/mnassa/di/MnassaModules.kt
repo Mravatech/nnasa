@@ -4,8 +4,6 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
 import com.github.salomonbrys.kodein.*
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.places.Places
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -51,6 +49,7 @@ import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.interactor.impl.InviteInteractorImpl
 import com.mnassa.domain.repository.*
 import com.mnassa.dialog.DialogHelper
+import com.mnassa.google.PlayServiceHelper
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -126,11 +125,6 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<GoogleApiClient>() with provider {
-        val builder = GoogleApiClient.Builder(instance())
-                .addApi(Places.GEO_DATA_API)
-        builder.build()
-    }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
@@ -180,4 +174,5 @@ private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
     bind<DialogHelper>() with singleton { DialogHelper() }
+    bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }

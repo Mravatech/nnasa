@@ -15,6 +15,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
+import com.mnassa.google.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
@@ -33,14 +34,14 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     override val layoutId: Int = R.layout.controller_registration
     override val viewModel: RegistrationViewModel by instance()
-    private val googleApiClient: GoogleApiClient by instance()
+    private val playServiceHelper: PlayServiceHelper by instance()
 
     private lateinit var registrationAdapter: RegistrationAdapter
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        googleApiClient.connect()
-        registrationAdapter = RegistrationAdapter(view.context, googleApiClient)
+        playServiceHelper.googleApiClient.connect()
+        registrationAdapter = RegistrationAdapter(view.context, playServiceHelper.googleApiClient)
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
@@ -98,8 +99,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     override fun onDestroy() {
-        if (googleApiClient.isConnected) {
-            googleApiClient.disconnect()
+        if (playServiceHelper.googleApiClient.isConnected) {
+            playServiceHelper.googleApiClient.disconnect()
         }
         super.onDestroy()
     }
