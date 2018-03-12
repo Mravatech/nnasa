@@ -12,7 +12,6 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.Toast
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.App.Companion.context
 import com.mnassa.R
@@ -161,21 +160,10 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
     ///////////////////////////////////////// CONNECTION TYPE SCREENS ///////////////////////////////
 
-    private fun openRecommendedConnectionsScreen() {
-        router.pushController(RouterTransaction.with(RecommendedConnectionsController.newInstance()))
-    }
-
-    private fun openSentRequestsScreen() {
-        router.pushController(RouterTransaction.with(SentConnectionsController.newInstance()))
-    }
-
-    private fun openArchivedConnectionsScreen() {
-        router.pushController(RouterTransaction.with(ArchivedConnectionController.newInstance()))
-    }
-
-    private fun openNewRequestsScreen() {
-        router.pushController(RouterTransaction.with(NewRequestsController.newInstance()))
-    }
+    private fun openRecommendedConnectionsScreen() = open(RecommendedConnectionsController.newInstance())
+    private fun openSentRequestsScreen() = open(SentConnectionsController.newInstance())
+    private fun openArchivedConnectionsScreen() = open(ArchivedConnectionController.newInstance())
+    private fun openNewRequestsScreen() = open(NewRequestsController.newInstance())
 
     private fun openChat(accountModel: ShortAccountModel) {
         Toast.makeText(context, "Opening chat with user ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()

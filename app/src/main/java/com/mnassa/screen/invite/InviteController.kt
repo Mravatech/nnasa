@@ -51,8 +51,7 @@ class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(arg
 
             btnSkipStep.text = fromDictionary(R.string.invite_skip_step)
             btnSkipStep.setOnClickListener {
-                router.popToRoot()
-                router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
+                open(MainController.newInstance())
             }
 
             btnScreenHeaderAction.setOnClickListener {

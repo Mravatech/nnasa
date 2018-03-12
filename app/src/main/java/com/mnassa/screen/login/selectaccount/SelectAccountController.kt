@@ -44,8 +44,7 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
             viewModel.openScreenChannel.consumeEach {
                 when (it) {
                     is SelectAccountViewModel.OpenScreenCommand.MainScreen -> {
-                        router.popToRoot()
-                        router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
+                        open(MainController.newInstance())
                     }
                 }
             }

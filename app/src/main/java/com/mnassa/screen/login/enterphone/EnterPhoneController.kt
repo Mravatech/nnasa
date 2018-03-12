@@ -9,6 +9,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import com.bluelinelabs.conductor.RouterTransaction
@@ -58,18 +59,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             viewModel.openScreenChannel.consumeEach {
                 hideProgress()
                 when (it) {
-                    is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> {
-                        router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode -> {
-                        router.pushController(RouterTransaction.with(EnterCodeController.newInstance(it.param)))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.Registration -> {
-                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> {
-                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance()))
-                    }
+                    is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> open(MainController.newInstance())
+                    is EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode -> open(EnterCodeController.newInstance(it.param))
+                    is EnterPhoneViewModel.OpenScreenCommand.Registration -> open(RegistrationController.newInstance())
+                    is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> open(SelectAccountController.newInstance())
                 }
             }
         }
@@ -121,10 +114,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             }
 
             btnEnterPromo.setOnClickListener {
-                router.pushController(RouterTransaction.with(EnterPromoController.newInstance(
+                open(EnterPromoController.newInstance(
                         spinnerPhoneCode.selectedItemPosition,
                         etPhoneNumberTail.text.toString()
-                )))
+                ))
             }
 
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
@@ -153,20 +146,44 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
         val email = EditText(context)
         email.hint = "Email"
-        email.setText("u@ser.com")
+        container.addView(email)
+
         val password = EditText(context)
         password.hint = "Password"
-        password.setText("qwerty")
-
-        container.addView(email)
         container.addView(password)
+
+        lateinit var dialog: AlertDialog
+
+        var btnHardcodedEmailAndPassword = Button(context)
+        btnHardcodedEmailAndPassword.text = "p3@nxt.ru"
+        btnHardcodedEmailAndPassword.setOnClickListener {
+            viewModel.signInByEmail("p3@nxt.ru", "123123")
+            dialog.dismiss()
+        }
+        container.addView(btnHardcodedEmailAndPassword)
+        //
+        btnHardcodedEmailAndPassword = Button(context)
+        btnHardcodedEmailAndPassword.text = "chas@ukr.net"
+        btnHardcodedEmailAndPassword.setOnClickListener {
+            viewModel.signInByEmail("chas@ukr.net", "123123")
+            dialog.dismiss()
+        }
+        container.addView(btnHardcodedEmailAndPassword)
+        //
+        btnHardcodedEmailAndPassword = Button(context)
+        btnHardcodedEmailAndPassword.text = "serg@u.net"
+        btnHardcodedEmailAndPassword.setOnClickListener {
+            viewModel.signInByEmail("serg@u.net", "123123")
+            dialog.dismiss()
+        }
+        container.addView(btnHardcodedEmailAndPassword)
 
         val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT)
         container.layoutParams = layoutParams
 
-        AlertDialog.Builder(context)
+        dialog = AlertDialog.Builder(context)
                 .setView(container)
                 .setPositiveButton("Login", { _, _ ->
                     viewModel.signInByEmail(

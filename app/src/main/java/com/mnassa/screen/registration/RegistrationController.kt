@@ -6,7 +6,6 @@ import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -74,8 +73,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         OrganizationInfoController.newInstance()
                     }
                 }
-                router.popToRoot()
-                router.replaceTopController(RouterTransaction.with(controller))
+                open(controller)
             }
         }
     }

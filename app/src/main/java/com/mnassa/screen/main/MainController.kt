@@ -25,6 +25,7 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.translation.fromDictionary
@@ -34,7 +35,7 @@ import kotlinx.android.synthetic.main.nav_header.view.*
 /**
  * Created by Peter on 2/21/2018.
  */
-class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
+class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener, MnassaRouter {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
 
@@ -48,7 +49,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                     PAGE_CHAT -> ChatListController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
-                router.setRoot(RouterTransaction.with(page).tag("page_$position"))
+                router.setRoot(RouterTransaction.with(page).tag(formatTabControllerTag(position)))
             }
         }
 
@@ -75,7 +76,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             bnMain.isBehaviorTranslationEnabled = false
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
-                val page = adapter.getRouter(position)?.getControllerWithTag("page_$position")
+                val page = adapter.getRouter(position)?.getControllerWithTag(formatTabControllerTag(position))
                 if (page is OnPageSelected) {
                     page.onPageSelected()
                 }
@@ -84,15 +85,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             }
 
             navigationView.setNavigationItemSelectedListener(this@MainController)
-        }
-
-        launchCoroutineUI {
-            viewModel.openScreenChannel.consumeEach {
-                val controller = when (it) {
-                    MainViewModel.ScreenType.LOGIN -> EnterPhoneController.newInstance()
-                }
-                router.replaceTopController(RouterTransaction.with(controller))
-            }
         }
 
         launchCoroutineUI {
@@ -181,6 +173,12 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         super.onViewDestroyed(view)
     }
 
+    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
+    override fun close(self: Controller) = mnassaRouter.close(self)
+
+    private fun formatTabControllerTag(position: Int): String {
+        return "tab_controller_$position"
+    }
 
     companion object {
         private const val PAGES_COUNT = 4
