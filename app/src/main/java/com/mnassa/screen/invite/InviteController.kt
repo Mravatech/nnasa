@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.main.MainController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
@@ -45,6 +47,11 @@ class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(arg
                 btnScreenHeaderAction.isEnabled = selectedAccounts.isNotEmpty()
             }
 
+            adapter.onSkipClickListener = {
+                router.popToRoot()
+                router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
+            }
+
             btnScreenHeaderAction.setOnClickListener {
                 viewModel.inviteUsers(adapter.selectedAccounts.toList())
             }
@@ -59,6 +66,16 @@ class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(arg
         launchCoroutineUI {
             viewModel.usersToInviteChannel.consumeEach {
                 adapter.setAccounts(it)
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.openScreenChannel.consumeEach {
+                when (it) {
+                    is InviteViewModel.OpenScreenCommand.MainScreen -> {
+                        adapter.onSkipClickListener()
+                    }
+                }
             }
         }
     }

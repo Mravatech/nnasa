@@ -106,7 +106,8 @@ open class EnterPhoneController : MnassaControllerImpl<EnterPhoneViewModel>() {
             btnVerifyMe.isEnabled = isPhoneValid(phoneNumber)
         }
 
-        launchCoroutineUI {
+        //open next screen even if current controller in the back stack
+        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 when (it) {
                     is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> {

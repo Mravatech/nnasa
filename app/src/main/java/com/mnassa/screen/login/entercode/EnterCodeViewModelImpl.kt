@@ -51,20 +51,23 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
         signInJob?.cancel()
 
         signInJob = handleException {
-            val accounts = loginInteractor.signIn(verificationResponse, code)
-            val nextScreen = when {
-                accounts.isEmpty() -> EnterCodeViewModel.OpenScreenCommand.RegistrationScreen()
-                accounts.size == 1 -> {
-                    loginInteractor.selectAccount(accounts.first())
-                    EnterCodeViewModel.OpenScreenCommand.MainScreen()
+            withProgressSuspend {
+                val accounts = loginInteractor.signIn(verificationResponse, code)
+                val nextScreen = when {
+                    accounts.isEmpty() -> EnterCodeViewModel.OpenScreenCommand.RegistrationScreen()
+                    accounts.size == SINGLE_ACCOUNT_COUNT -> {
+                        loginInteractor.selectAccount(accounts.first())
+                        EnterCodeViewModel.OpenScreenCommand.MainScreen()
+                    }
+                    else -> EnterCodeViewModel.OpenScreenCommand.SelectAccount(accounts)
                 }
-                else -> EnterCodeViewModel.OpenScreenCommand.SelectAccount(accounts)
+                openScreenChannel.send(nextScreen)
             }
-            openScreenChannel.send(nextScreen)
         }
     }
 
     private companion object {
+        private const val SINGLE_ACCOUNT_COUNT = 1
         private const val EXTRA_VERIFICATION_RESPONSE = "EXTRA_VERIFICATION_RESPONSE"
     }
 }

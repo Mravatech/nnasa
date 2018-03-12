@@ -181,6 +181,7 @@ dependencies {
     //conductor
     implementation deps.conductor.core
     implementation deps.conductor.lifecycle
+    implementation deps.conductor.support
 
     //dependency injection
     implementation deps.di.core
@@ -196,6 +197,10 @@ dependencies {
     implementation deps.network.coroutineAdapter
     implementation deps.network.gsonconverter
     implementation deps.network.logging
+
+    //ui
+    implementation deps.ui.bottomnavigation
+    implementation deps.ui.tablayout
 
     //kotlin
     implementation deps.kotlin.stdlib

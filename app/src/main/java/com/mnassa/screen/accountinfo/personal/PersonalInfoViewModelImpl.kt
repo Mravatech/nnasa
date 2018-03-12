@@ -53,7 +53,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     override fun processAccount(accountModel: ShortAccountModel) {
         handleException {
             userProfileInteractor.processAccount(accountModel, path)
-            openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.MainScreen())
+            openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
 

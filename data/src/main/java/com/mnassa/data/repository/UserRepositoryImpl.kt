@@ -30,7 +30,7 @@ class UserRepositoryImpl(
         private val firebaseAuthApi: FirebaseAuthApi) : UserRepository {
 
     private val sharedPrefs by lazy { context.getSharedPreferences(EXTRA_PREFS_NAME, Context.MODE_PRIVATE) }
-    private var accountId: String?
+    private var accountIdInternal: String?
         get() {
             return if (FirebaseAuth.getInstance().currentUser?.uid != null) {
                 sharedPrefs.getString(EXTRA_ACCOUNT_ID, null)
@@ -45,15 +45,15 @@ class UserRepositoryImpl(
     override suspend fun setCurrentUserAccount(account: ShortAccountModel?) {
         if (account == null) {
             //clear account
-            accountId = null
+            accountIdInternal = null
         } else {
             require(!account.id.isBlank())
-            this.accountId = account.id
+            this.accountIdInternal = account.id
         }
     }
 
     override suspend fun getCurrentUser(): ShortAccountModel? {
-        val accountId = accountId ?: return null
+        val accountId = accountIdInternal ?: return null
 
         val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)
@@ -123,7 +123,7 @@ class UserRepositoryImpl(
         return user.uid
     }
 
-    override suspend fun getAccountId(): String? = accountId
+    override fun getAccountId(): String? = accountIdInternal
 
     companion object {
         private const val EXTRA_PREFS_NAME = "USER_REPOSITORY_PREFS"

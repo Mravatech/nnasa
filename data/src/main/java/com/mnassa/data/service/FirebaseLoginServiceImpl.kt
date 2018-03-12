@@ -14,6 +14,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -38,7 +39,7 @@ class FirebaseLoginServiceImpl(
                 async {
                     try {
                         signIn(credential)
-                        sendChannel.send(OnVerificationCompleted(phoneNumber, credential))
+                        sendChannel.send(OnVerificationCompleted(phoneNumber))
                         sendChannel.close()
                     } catch (e: Exception) {
                         sendChannel.close(e)
@@ -63,7 +64,7 @@ class FirebaseLoginServiceImpl(
                 phoneNumber,
                 VERIFY_PHONE_NUMBER_TIMEOUT_SEC,
                 TimeUnit.SECONDS,
-                { async { it.run() } },
+                { it.run()},
                 callback,
                 (previousResponse as? OnCodeSent)?.token
         )
@@ -78,8 +79,7 @@ class FirebaseLoginServiceImpl(
 
     override suspend fun signIn(verificationSMSCode: String?, response: PhoneVerificationModel) {
         when {
-            verificationSMSCode == null && response is OnVerificationCompleted ->
-                signIn(response.credential)
+            verificationSMSCode == null && response is OnVerificationCompleted -> { /* do nothing */}
             verificationSMSCode != null && response is OnCodeSent ->
                 signIn(PhoneAuthProvider.getCredential(response.verificationId, verificationSMSCode))
         }
@@ -96,7 +96,6 @@ class FirebaseLoginServiceImpl(
     @Parcelize
     class OnVerificationCompleted(
             override val phoneNumber: String,
-            val credential: AuthCredential,
             override val isVerified: Boolean = true): PhoneVerificationModel
 
     @Parcelize

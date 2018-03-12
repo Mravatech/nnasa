@@ -101,10 +101,12 @@ deps.coroutines = coroutines
 
 //============================================= CONDUCTOR ==========================================
 
+versions.conductor = '2.1.4'
 def conductor = [:]
 
-conductor.core = 'com.bluelinelabs:conductor:2.1.4'
-conductor.lifecycle = 'com.bluelinelabs:conductor-archlifecycle:0.1.1'
+conductor.core =        "com.bluelinelabs:conductor:$versions.conductor"
+conductor.lifecycle =   'com.bluelinelabs:conductor-archlifecycle:0.1.1'
+conductor.support =     "com.bluelinelabs:conductor-support:$versions.conductor"
 
 deps.conductor = conductor
 
@@ -171,11 +173,18 @@ def stetho = [:]
 stetho.runtime = "com.facebook.stetho:stetho:1.5.0"
 stetho.http = "com.facebook.stetho:stetho-okhttp3:1.5.0"
 deps.stetho = stetho
+//================================================ UI ==============================================
+def ui = [:]
+ui.bottomnavigation = 'com.aurelhubert:ahbottomnavigation:2.1.0'
+ui.tablayout = 'com.github.rahimlis:badgedtablayout:v1.2'
+
+deps.ui = ui
 //============================================== OTHER ============================================
 def other = [:]
 other.billing = 'com.android.billingclient:billing:1.0'
 other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
 other.logger =  'com.jakewharton.timber:timber:4.6.1'
+
 deps.other = other
 //=============================================== TESTS ============================================
 def tests = [:]
@@ -187,6 +196,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.jcenter()
     handler.maven {
         url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
+        url 'https://jitpack.io'
     }
     handler.maven { url "https://jitpack.io" }
 }
