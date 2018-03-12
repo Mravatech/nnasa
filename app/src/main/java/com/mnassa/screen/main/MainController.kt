@@ -21,7 +21,14 @@ import com.mnassa.screen.notifications.NotificationsController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification
-
+import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.mainAbility
+import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.screen.login.selectaccount.SelectAccountController
+import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.nav_header.view.*
 
 
 /**
@@ -41,7 +48,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                     PAGE_CHAT -> ChatListController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
-                router.setRoot(RouterTransaction.with(page))
+                router.setRoot(RouterTransaction.with(page).tag("page_$position"))
             }
         }
 
@@ -53,9 +60,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
         with(view) {
             vpMain.adapter = adapter
+            vpMain.offscreenPageLimit = PAGES_COUNT
 
             bnMain.addItems(
-
                     //TODO: design needed
                     mutableListOf(
                             AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
@@ -68,6 +75,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             bnMain.isBehaviorTranslationEnabled = false
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
+                val page = adapter.getRouter(position)?.getControllerWithTag("page_$position")
+                if (page is OnPageSelected) {
+                    page.onPageSelected()
+                }
+
                 true
             }
 
@@ -95,6 +107,16 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         launchCoroutineUI {
             viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(PAGE_HOME, it) }
         }
+        launchCoroutineUI {
+            viewModel.currentAccountChannel.consumeEach {
+                view.ivUserAvatar?.avatarRound(it.avatar)
+                view.tvUserName?.text = it.formattedName
+                view.tvUserPosition?.text = it.id
+//                    view.tvUserPosition.text = it.mainAbility(fromDictionary(R.string.invite_at_placeholder))
+//                    view.tvUserPosition.goneIfEmpty()
+
+            }
+        }
 
     }
 
@@ -111,6 +133,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
+
+        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
+
         when (item.itemId) {
             R.id.nav_camera -> {
                 // Handle the camera action
@@ -124,15 +149,18 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_manage -> {
 
             }
-            R.id.nav_share -> {
-
+            R.id.nav_change_account -> {
+                router.replaceTopController(RouterTransaction.with(SelectAccountController.newInstance()))
+            }
+            R.id.nav_create_account -> {
+                router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
             }
             R.id.nav_logout -> {
                 viewModel.logout()
             }
         }
 
-        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
+
         return true
     }
 

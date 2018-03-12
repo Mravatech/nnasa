@@ -14,5 +14,5 @@ class LanguageProviderImpl(private val context: Context) : LanguageProvider {
             Locale.setDefault(value)
         }
     override val language: String
-        get() = locale.isO3Language
+        get() = locale.language
 }

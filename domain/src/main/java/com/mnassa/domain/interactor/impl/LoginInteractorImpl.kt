@@ -1,8 +1,8 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -38,6 +38,10 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
     override suspend fun signOut() {
         loginService.signOut()
         userRepository.setCurrentUserAccount(null)
+    }
+
+    override suspend fun getAccounts(): List<ShortAccountModel> {
+        return userRepository.getAccounts()
     }
 
     override suspend fun selectAccount(account: ShortAccountModel) {

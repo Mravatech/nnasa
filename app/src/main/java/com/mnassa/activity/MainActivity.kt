@@ -1,4 +1,4 @@
-package com.mnassa
+package com.mnassa.activity
 
 import android.app.Activity
 import android.app.FragmentManager
@@ -15,7 +15,7 @@ import com.github.salomonbrys.kodein.KodeinInjector
 import com.github.salomonbrys.kodein.android.*
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.erased
-import com.mnassa.screen.invite.InviteController
+import com.mnassa.R
 import com.mnassa.screen.splash.SplashController
 import kotlinx.android.synthetic.main.activity_main.*
 

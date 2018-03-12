@@ -201,6 +201,7 @@ dependencies {
     //ui
     implementation deps.ui.bottomnavigation
     implementation deps.ui.tablayout
+    implementation 'com.bartoszlipinski:recyclerviewheader2:2.0.1'
 
     //kotlin
     implementation deps.kotlin.stdlib
