@@ -1,13 +1,19 @@
 package com.mnassa.screen.registration
 
+import android.os.Bundle
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 /**
  * Created by Peter on 2/26/2018.
  */
-class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), RegistrationViewModel {
+class RegistrationViewModelImpl(
+        private val userProfileInteractor: UserProfileInteractor,
+        private val tagInteractor: TagInteractor
+) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<String>, interests: List<String>) {
@@ -40,4 +46,19 @@ class RegistrationViewModelImpl(private val userProfileInteractor: UserProfileIn
             openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen())
         }
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        handleException {
+
+//            val l:List<TagModel> = tagInteractor.search("")
+//            Timber.i(l.toString())
+        }
+
+    }
+
+    override suspend fun search(search: String): List<TagModel> {
+        return tagInteractor.search(search)
+    }
+
 }

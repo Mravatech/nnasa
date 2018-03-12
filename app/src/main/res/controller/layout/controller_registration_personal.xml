@@ -45,14 +45,10 @@
                 style="@style/Registration.EditText" />
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilPersonOffers"
-            style="@style/Registration.TextInputLayout">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/etPersonOffers"
-                style="@style/Registration.EditText" />
-        </android.support.design.widget.TextInputLayout>
+        <com.mnassa.widget.ChipLayout
+            android:id="@+id/chipOffers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/tilPersonInterests"

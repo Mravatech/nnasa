@@ -9,6 +9,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_splash.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -34,7 +35,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
 
     private suspend fun openNextScreen() {
         val nextScreen = when {
-            viewModel.isLoggedIn() -> InviteController.newInstance()
+            viewModel.isLoggedIn() -> RegistrationController.newInstance()
             else -> EnterPhoneController.newInstance()
         }
 

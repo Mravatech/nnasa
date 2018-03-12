@@ -15,4 +15,6 @@ object DatabaseContract {
     const val TABLE_CONNECTIONS = "connections"
     const val TABLE_CONNECTIONS_COL_RECOMMENDED = "recommended"
 
+    const val TABLE_TAGS = "tags"
+
 }
