@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
-import com.google.android.gms.common.api.GoogleApiClient
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
@@ -43,7 +42,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
-        registrationAdapter = RegistrationAdapter(view.context, playServiceHelper.googleApiClient)
+        registrationAdapter = RegistrationAdapter(view.context)
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
             pbRegistration.visibility = View.VISIBLE
@@ -159,9 +158,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         fun newInstance() = RegistrationController()
     }
 
-    class RegistrationAdapter(
-            private val context: Context,
-            private val googleApiClient: GoogleApiClient)
+    inner class RegistrationAdapter(
+            private val context: Context)
         : PagerAdapter() {
 
         private var companySelectedPlaceName: String? = null
@@ -225,16 +223,18 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         }
 
         private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
-            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, googleApiClient, null, null)
+            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             city.setAdapter(placeAutocompleteAdapter)
             city.setOnItemClickListener({ _, _, i, _ ->
                 placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 if (isPerson) {
                     personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                    personSelectedPlaceName = city.text.toString()
+                    personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                    city.setText(personSelectedPlaceName ?: "")
                 } else {
                     companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                    companySelectedPlaceName = city.text.toString()
+                    companySelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                    city.setText(companySelectedPlaceName ?: "")
                 }
             })
         }
