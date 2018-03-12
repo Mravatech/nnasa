@@ -17,7 +17,6 @@ import com.google.android.gms.common.data.DataBufferUtils
 import android.widget.Toast
 import java.util.concurrent.TimeUnit
 import com.google.android.gms.location.places.Places
-import com.mnassa.R
 import timber.log.Timber
 
 /**
@@ -27,20 +26,18 @@ import timber.log.Timber
  */
 
 class PlaceAutocompleteAdapter(context: Context,
-                               googleApiClient: GoogleApiClient,
-                               bounds: LatLngBounds?,
+                               private var googleApiClient: GoogleApiClient,
+                               private var bounds: LatLngBounds?,
                                filter: AutocompleteFilter?)
     : ArrayAdapter<AutocompletePrediction>(context,
         android.R.layout.simple_expandable_list_item_2,
         android.R.id.text1), Filterable {
 
-    private var mResultList: ArrayList<AutocompletePrediction>? = null
-    private var mGoogleApiClient: GoogleApiClient = googleApiClient
-    private var mBounds: LatLngBounds? = bounds
-    private var mPlaceFilter: AutocompleteFilter? = filter
+    private var resultList: ArrayList<AutocompletePrediction>? = null
+    private var placeFilter: AutocompleteFilter? = filter
 
     override fun getCount(): Int {
-        return mResultList?.size ?: 0
+        return resultList?.size ?: 0
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -56,7 +53,7 @@ class PlaceAutocompleteAdapter(context: Context,
     }
 
     override fun getItem(position: Int): AutocompletePrediction? {
-        return mResultList?.getOrNull(position)
+        return resultList?.getOrNull(position)
     }
 
     override fun getFilter(): Filter {
@@ -72,7 +69,7 @@ class PlaceAutocompleteAdapter(context: Context,
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 results?.takeIf { it.count > 0 }?.apply {
-                    mResultList = results.values as ArrayList<AutocompletePrediction>?
+                    resultList = results.values as ArrayList<AutocompletePrediction>?
                     notifyDataSetChanged()
                 } ?: run {
                     notifyDataSetInvalidated()
@@ -89,14 +86,15 @@ class PlaceAutocompleteAdapter(context: Context,
     }
 
     private fun getAutocomplete(constraint: CharSequence): ArrayList<AutocompletePrediction>? {
-        if (mGoogleApiClient.isConnected) {
+        if (googleApiClient.isConnected) {
             Timber.i("Starting autocomplete query for: $constraint")
             val results = Places.GeoDataApi.getAutocompletePredictions(
-                    mGoogleApiClient, constraint.toString(), mBounds, mPlaceFilter)
+                    googleApiClient, constraint.toString(), bounds, placeFilter)
             val autocompletePredictions = results.await(60, TimeUnit.SECONDS)
             val status = autocompletePredictions.status
             if (!status.isSuccess) {
-                Toast.makeText(context, "${context.getString(R.string.could_not_connect_google_api)} $status",
+                //todo handle exception
+                Toast.makeText(context, "$status",
                         Toast.LENGTH_SHORT).show()
                 Timber.e("Error getting autocomplete prediction API call: $status")
                 autocompletePredictions.release()
