@@ -26,19 +26,19 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    PAGE_NEEDS -> NeedsController.newInstance()
-                    PAGE_EVENTS -> EventsController.newInstance()
+                    HomePage.NEEDS.ordinal -> NeedsController.newInstance()
+                    HomePage.EVENTS.ordinal -> EventsController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
                 router.setRoot(RouterTransaction.with(page))
             }
         }
 
-        override fun getCount(): Int = PAGES_COUNT
+        override fun getCount(): Int = HomePage.values().size
 
         override fun getPageTitle(position: Int): CharSequence = when (position) {
-            PAGE_NEEDS -> fromDictionary(R.string.home_needs_title)
-            PAGE_EVENTS -> fromDictionary(R.string.home_events_title)
+            HomePage.NEEDS.ordinal -> fromDictionary(R.string.home_needs_title)
+            HomePage.EVENTS.ordinal -> fromDictionary(R.string.home_events_title)
             else -> throw IllegalArgumentException("Invalid page position $position")
         }
     }
@@ -52,23 +52,23 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
 
             launchCoroutineUI {
                 viewModel.unreadEventsCountChannel.consumeEach {
-                    tlHome.setBadgeText(PAGE_EVENTS, if (it == 0) null else it.toString())
+                    tlHome.setBadgeText(HomePage.EVENTS.ordinal, if (it == 0) null else it.toString())
                 }
             }
             launchCoroutineUI {
                 viewModel.unreadNeedsCountChannel.consumeEach {
-                    tlHome.setBadgeText(PAGE_NEEDS, if (it == 0) null else it.toString())
+                    tlHome.setBadgeText(HomePage.NEEDS.ordinal, if (it == 0) null else it.toString())
                 }
             }
         }
     }
 
 
-    companion object {
-        private const val PAGES_COUNT = 2
-        private const val PAGE_NEEDS = 0
-        private const val PAGE_EVENTS = 1
+    enum class HomePage {
+        NEEDS, EVENTS
+    }
 
+    companion object {
         fun newInstance() = HomeController()
     }
 }
