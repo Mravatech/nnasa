@@ -55,7 +55,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
                 val accounts = loginInteractor.signIn(verificationResponse, code)
                 val nextScreen = when {
                     accounts.isEmpty() -> EnterCodeViewModel.OpenScreenCommand.RegistrationScreen()
-                    accounts.size == 1 -> {
+                    accounts.size == SINGLE_ACCOUNT_COUNT -> {
                         loginInteractor.selectAccount(accounts.first())
                         EnterCodeViewModel.OpenScreenCommand.MainScreen()
                     }
@@ -67,6 +67,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
     }
 
     private companion object {
+        private const val SINGLE_ACCOUNT_COUNT = 1
         private const val EXTRA_VERIFICATION_RESPONSE = "EXTRA_VERIFICATION_RESPONSE"
     }
 }
