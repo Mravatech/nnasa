@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroundHighlight"
+    android:paddingBottom="@dimen/padding_vertical"
+    android:paddingEnd="@dimen/padding_horizontal"
+    android:paddingStart="@dimen/padding_horizontal"
+    android:paddingTop="@dimen/padding_vertical"
+    tools:background="#e7e7e7">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivSuccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="46dp"
+        android:layout_marginTop="46dp"
+        app:srcCompat="@drawable/ic_success_blue_58dp" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/MnassaHeader1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivSuccess"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:text="Welcome!" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        style="@style/MnassaText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:text="You are a member of MNASSA!" />
+
+</RelativeLayout>

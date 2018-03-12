@@ -88,4 +88,7 @@
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>
     <string name="loading">_android_loading</string>
+
+    <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
+    <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
 </resources>
