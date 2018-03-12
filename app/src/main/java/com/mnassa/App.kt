@@ -7,6 +7,8 @@ import com.facebook.stetho.Stetho
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.autoAndroidModule
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.mnassa.di.*
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.other.AppInfoProvider
