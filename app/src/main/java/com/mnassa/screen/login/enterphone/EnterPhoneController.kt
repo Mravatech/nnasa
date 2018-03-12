@@ -12,7 +12,6 @@ import android.widget.AdapterView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -42,6 +41,24 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<EnterPhoneViewModel>(args) {
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
+    private val countryCodes = mutableListOf(
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_saudi_arabia,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_saudi_arabia)),
+                    phonePrefix = "+966"),
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_ukraine,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_ukraine)),
+                    phonePrefix = "+380"),
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_the_united_states,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_united_states)),
+                    phonePrefix = "+1"),
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_canada,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_canada)),
+                    phonePrefix = "+1")
+    )
     protected val phoneNumber: String
         get() {
             val v = view ?: return ""
@@ -96,14 +113,8 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
-            val countries = mutableListOf(
-                    //TODO: use iOS app countries and add more icons
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("1", "Ukraine1", null, null), "+38"),
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("2", "Ukraine2", null, null), "+38"),
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("3", "Ukraine3", null, null), "+38"),
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("4", "Saudi Arabia", null, null), "+966")
-            )
-            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countries)
+
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryCodes)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()

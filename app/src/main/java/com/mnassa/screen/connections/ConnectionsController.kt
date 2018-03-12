@@ -51,6 +51,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         super.onViewCreated(view)
 
         with(view) {
+            ivBack.visibility = View.GONE
             tvScreenHeader.text = fromDictionary(R.string.tab_connections_title)
 
             recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
@@ -123,7 +124,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
 
         launchCoroutineUI {
-            //            viewModel.allConnectionsChannel.consumeEach {
             viewModel.allConnectionsChannel.consumeEach {
                 allConnectionsAdapter.set(it)
                 header.tvAllConnections.text = formatTextWithCounter(R.string.tab_connections_all, it.size)

@@ -45,7 +45,7 @@
                 tools:text="at some company" />
         </LinearLayout>
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,6 +55,7 @@
             android:clickable="true"
             android:focusable="true"
             android:tint="@color/coolGray"
+            android:background="?selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_close_white_24dp" />
 
     </RelativeLayout>

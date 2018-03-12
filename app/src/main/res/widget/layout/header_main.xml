@@ -5,25 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rlHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/backgroundHighlight"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingBottom="@dimen/padding_vertical"
         android:paddingEnd="@dimen/padding_horizontal"
         android:paddingStart="@dimen/padding_horizontal"
         android:paddingTop="@dimen/padding_vertical"
         tools:background="#eaeaea">
 
+        <com.mnassa.widget.GoBackArrow
+            android:id="@+id/ivBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal" />
+
         <TextView
             android:id="@+id/tvScreenHeader"
             style="@style/MnassaHeader1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_toStartOf="@id/badge"
+            android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             tools:text="Main header" />
@@ -33,19 +39,16 @@
             layout="@layout/red_badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
-            android:layout_toStartOf="@id/ivMore"
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/ivMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
             android:paddingEnd="4dp"
@@ -55,7 +58,7 @@
             app:srcCompat="@drawable/ic_more_vert_black_24dp"
             tools:visibility="visible" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         style="@style/MnassaShadow"
