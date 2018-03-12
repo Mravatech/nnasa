@@ -20,6 +20,8 @@ interface ConnectionsInteractor {
     suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>>
     suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>>
 
+    suspend fun getDisconnectTimeoutDays(): Int
+
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     suspend fun sendPhoneContacts()
 

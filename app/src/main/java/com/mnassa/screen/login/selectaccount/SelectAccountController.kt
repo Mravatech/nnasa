@@ -1,14 +1,11 @@
 package com.mnassa.screen.login.selectaccount
 
-import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.main.MainController
 import com.mnassa.translation.fromDictionary
@@ -19,13 +16,10 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/27/2018.
  */
-class SelectAccountController(params: Bundle) : MnassaControllerImpl<SelectAccountViewModel>(params) {
+class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
     override val layoutId: Int = R.layout.controller_select_account
     override val viewModel: SelectAccountViewModel by instance()
     private val adapter = AccountsRecyclerViewAdapter()
-
-    @Suppress("UNCHECKED_CAST")
-    private val accounts by lazy { args.getSerializable(EXTRA_ACCOUNTS_LIST) as List<ShortAccountModel> }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -33,16 +27,16 @@ class SelectAccountController(params: Bundle) : MnassaControllerImpl<SelectAccou
         with(view) {
             tvScreenHeader.text = fromDictionary(R.string.choose_profile_title)
             rvAccounts.layoutManager = LinearLayoutManager(view.context)
-            val adapter = adapter
-            adapter.set(accounts)
             rvAccounts.adapter = adapter
 
             adapter.onItemClickListener = { viewModel.selectAccount(it) }
         }
 
+        adapter.isLoadingEnabled = true
         launchCoroutineUI {
-            viewModel.showMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+            viewModel.accountsListChannel.consumeEach {
+                adapter.isLoadingEnabled = false
+                adapter.set(it)
             }
         }
 
@@ -59,15 +53,6 @@ class SelectAccountController(params: Bundle) : MnassaControllerImpl<SelectAccou
     }
 
     companion object {
-        private const val EXTRA_ACCOUNTS_LIST = "EXTRA_ACCOUNTS_LIST"
-
-        fun newInstance(accounts: List<ShortAccountModel>): SelectAccountController {
-            require(accounts.size > 1) {
-                "Accounts list must contain at least 2 models!"
-            }
-            val params = Bundle()
-            params.putSerializable(EXTRA_ACCOUNTS_LIST, ArrayList(accounts))
-            return SelectAccountController(params)
-        }
+        fun newInstance() = SelectAccountController()
     }
 }

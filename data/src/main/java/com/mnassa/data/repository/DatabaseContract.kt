@@ -21,6 +21,7 @@ internal object DatabaseContract {
     //
     const val TABLE_CLIENT_DATA = "clientData"
     const val TABLE_CLIENT_DATA_COL_UI_VERSION = "mobileUiVersion"
+    const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"

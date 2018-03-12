@@ -68,7 +68,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
                         router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
                     }
                     is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> {
-                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance(it.accounts)))
+                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance()))
                     }
                 }
             }

@@ -8,11 +8,21 @@
     android:paddingStart="@dimen/spacing_horizontal"
     android:paddingTop="@dimen/spacing_vertical">
 
+    <ImageView
+        android:id="@+id/ivDescriptionIcon"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:src="@mipmap/ic_launcher" />
+
     <TextView
         android:id="@+id/tvDescription"
-        style="@style/MnassaText"
-        android:layout_width="match_parent"
+        style="@style/MnassaTextTiny"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/ivDescriptionIcon"
         tools:text="New requests can be sent ...." />
 
 </RelativeLayout>

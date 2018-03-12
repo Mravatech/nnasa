@@ -4,10 +4,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_archived.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 9.03.2018.
@@ -18,16 +20,28 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
     private val adapter = ArchivedConnectionsRVAdapter()
 
     override fun onViewCreated(view: View) {
-        super.onViewCreated(view
+        super.onViewCreated(view)
 
         with(view) {
             tvScreenHeader.text = fromDictionary(R.string.archived_connections_title)
 
+            adapter.onConnectClickListener = { viewModel.connect(it) }
+
             rvArchivedConnection.layoutManager = LinearLayoutManager(context)
             rvArchivedConnection.adapter = adapter
-
-
         }
+
+        adapter.isLoadingEnabled = true
+        launchCoroutineUI {
+            adapter.disconnectTimeoutDays = viewModel.getDisconnectTimeoutDays()
+
+            viewModel.declinedConnectionsChannel.consumeEach {
+                adapter.isLoadingEnabled = false
+                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+                adapter.set(it)
+            }
+        }
+
     }
 
     companion object {

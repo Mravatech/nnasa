@@ -145,7 +145,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
 
         launchCoroutineUI {
-            //            viewModel.newConnectionRequestsChannel.consumeEach {
             viewModel.newConnectionRequestsChannel.consumeEach {
                 newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTED_ITEMS_COUNT)
                 header.tvNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE

@@ -25,6 +25,7 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.nav_header.view.*
@@ -108,13 +109,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         }
         launchCoroutineUI {
             viewModel.currentAccountChannel.consumeEach {
-//                view.navigationView.getHeaderView(0)?.apply {
-//                    view.ivUserAvatar.avatarRound(it.avatar)
-//                    view.tvUserName.text = it.formattedName
+                view.ivUserAvatar?.avatarRound(it.avatar)
+                view.tvUserName?.text = it.formattedName
+                view.tvUserPosition?.text = it.id
 //                    view.tvUserPosition.text = it.mainAbility(fromDictionary(R.string.invite_at_placeholder))
 //                    view.tvUserPosition.goneIfEmpty()
-//                }
-
 
             }
         }
@@ -149,6 +148,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             }
             R.id.nav_manage -> {
 
+            }
+            R.id.nav_change_account -> {
+                router.replaceTopController(RouterTransaction.with(SelectAccountController.newInstance()))
             }
             R.id.nav_create_account -> {
                 router.pushController(RouterTransaction.with(RegistrationController.newInstance()))

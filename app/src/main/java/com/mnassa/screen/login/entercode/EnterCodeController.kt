@@ -75,7 +75,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
                         router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
                     }
                     is EnterCodeViewModel.OpenScreenCommand.SelectAccount -> {
-                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance(it.accounts)))
+                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance()))
                     }
                 }
             }

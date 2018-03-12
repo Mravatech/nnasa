@@ -3,6 +3,7 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
@@ -73,6 +74,12 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>> {
         return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_MUTED)
+    }
+
+    override suspend fun getDisconnectTimeoutDays(): Int {
+        return databaseReference.child(DatabaseContract.TABLE_CLIENT_DATA)
+                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT)
+                .await(exceptionHandler)!!
     }
 
     override suspend fun actionConnect(userAccountIds: List<String>) {

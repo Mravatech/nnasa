@@ -18,6 +18,8 @@ interface ConnectionsRepository {
     suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>>
     suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>>
 
+    suspend fun getDisconnectTimeoutDays(): Int
+
 
     suspend fun actionConnect(userAccountIds: List<String>)
     suspend fun actionAccept(userAccountIds: List<String>)
@@ -26,6 +28,4 @@ interface ConnectionsRepository {
     suspend fun actionMute(userAccountIds: List<String>)
     suspend fun actionUnMute(userAccountIds: List<String>)
     suspend fun actionRevoke(userAccountIds: List<String>)
-
-
 }

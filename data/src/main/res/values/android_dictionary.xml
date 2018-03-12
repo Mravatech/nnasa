@@ -18,6 +18,8 @@
     <string name="_android_connections_send_message_INFO">Send message</string>
     <string name="_android_connections_view_profile_INFO">View profile</string>
     <string name="_android_connections_disconnect_INFO">Disconnect</string>
+    <string name="_android_connections_rejected_description_INFO">New Requests can be sent again in %d days after they were rejected</string>
+    <string name="_android_connections_rejected_days_left_INFO">%d Days left</string>
 
 
 </resources>

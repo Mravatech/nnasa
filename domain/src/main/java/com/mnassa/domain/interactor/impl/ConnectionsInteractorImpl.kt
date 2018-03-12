@@ -38,6 +38,8 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
     override suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>> =
             connectionsRepository.getMutedConnections()
 
+    override suspend fun getDisconnectTimeoutDays(): Int = connectionsRepository.getDisconnectTimeoutDays()
+
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override suspend fun sendPhoneContacts() {
         val deviceContacts = phoneContactsRepository.getPhoneContacts()

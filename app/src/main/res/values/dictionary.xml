@@ -70,6 +70,9 @@
 
     <!-- rejected -->
     <string name="archived_connections_title">_connections_header_rejected</string>
+    <string name="archived_connections_connect_btn">connection_button_connect</string>
+    <string name="archived_connections_description">_android_connections_rejected_description</string>
+    <string name="archived_connections_days_left">_android_connections_rejected_days_left</string>
 
     <!-- ====================================== REG PERSON =================================== -->
     <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
