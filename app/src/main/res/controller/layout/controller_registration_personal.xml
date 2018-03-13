@@ -44,8 +44,8 @@
             android:id="@+id/tilPersonCity"
             style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/etPersonCity"
+            <AutoCompleteTextView
+                android:id="@+id/actvPersonCity"
                 style="@style/Registration.EditText" />
         </android.support.design.widget.TextInputLayout>
 

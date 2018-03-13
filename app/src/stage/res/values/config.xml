@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--pre prod key-->
+    <string name="play_services_key" formatted="false" translatable="false">AIzaSyBNKhG4LEZSe_Qa9DRR0b63fk11tZnZ5mw</string>
+</resources>
