@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="country_saudi_arabia">_android_country_saudi_arabia</string>
+    <string name="country_ukraine">_android_country_ukraine</string>
+    <string name="country_united_states">_android_country_united_states</string>
+    <string name="country_canada">_android_country_canada</string>
+
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
     <string name="login_enter_phone_title">_login_label_title</string>

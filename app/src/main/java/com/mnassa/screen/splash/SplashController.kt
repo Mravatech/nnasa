@@ -40,8 +40,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
             viewModel.isLoggedIn() -> MainController.newInstance()
             else -> EnterPhoneController.newInstance()
         }
-
-        router.replaceTopController(RouterTransaction.with(nextScreen))
+        open(nextScreen)
     }
 
     companion object {

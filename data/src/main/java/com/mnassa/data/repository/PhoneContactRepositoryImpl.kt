@@ -49,7 +49,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                 result.addAll(getDebugPhoneList())
             }
 
-            result
+            result.distinctBy { it.phoneNumber }
         }.await()
     }
 

@@ -78,8 +78,7 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
                         InviteController.newInstance()
                     }
                 }
-                router.popToRoot()
-                router.replaceTopController(RouterTransaction.with(controller))
+                open(controller)
             }
         }
     }

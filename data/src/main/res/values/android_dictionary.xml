@@ -3,6 +3,11 @@
     <!--<string name="_pushSetting_casdfv_ENG">null</string>-->
     <!--<string name="_pushSetting_casdfv_AR">null</string>-->
     <!--<string name="_pushSetting_casdfv_INFO">casdfv</string>-->
+    
+    <string name="_android_country_saudi_arabia_INFO">Saudi Arabia</string>
+    <string name="_android_country_ukraine_INFO">Ukraine</string>
+    <string name="_android_country_united_states_INFO">United States</string>
+    <string name="_android_country_canada_INFO">Canada</string>
 
     <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
     <string name="_android_enter_validation_code_header_INFO">Validation Code</string>

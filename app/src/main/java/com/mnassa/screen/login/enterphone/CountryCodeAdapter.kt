@@ -32,6 +32,7 @@ class CountryCodeAdapter(context: Context, data: MutableList<CountryCode>) : Arr
             ivCountryFlagDropDown.setImageResource(item.flagRes)
             val countryName by item.name
             tvCountryNameDropDown.text = countryName
+            tvCountryCodeDropDown.text = "(${item.phonePrefix})"
         }
         return view
     }

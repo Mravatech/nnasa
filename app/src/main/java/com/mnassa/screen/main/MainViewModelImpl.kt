@@ -79,7 +79,6 @@ class MainViewModelImpl(
     override fun logout() {
         handleException {
             loginInteractor.signOut()
-            openScreenChannel.send(MainViewModel.ScreenType.LOGIN)
         }
     }
 }

@@ -8,7 +8,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_sent.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -23,7 +22,7 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.text = fromDictionary(R.string.sent_connection_requests_title)
+            toolbar.title = fromDictionary(R.string.sent_connection_requests_title)
             rvSentConnections.layoutManager = LinearLayoutManager(context)
             rvSentConnections.adapter = adapter
 
