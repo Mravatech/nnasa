@@ -7,4 +7,5 @@ import com.mnassa.domain.model.TagModelTemp
  */
 interface TagRepository {
     suspend fun search(search: String): List<TagModelTemp>
+    suspend fun createCustomTagIds(tags: List<String>): List<String>
 }

@@ -138,14 +138,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = registrationAdapter.personSelectedPlaceId ?: "",
-                        offers = listOf(chipPersonOffers.etChipInput.text.toString()),
-                        interests = listOf(chipPersonInterests.etChipInput.text.toString()))
+                        offers = chipPersonOffers.getTags(),
+                        interests = chipPersonInterests.getTags())
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
                         city = registrationAdapter.companySelectedPlaceId ?: "",
-                        offers = listOf(etCompanyOffers.text.toString()),
-                        interests = listOf(etCompanyInterests.text.toString())
+                        offers = chipCompanyOffers.getTags(),
+                        interests = chipCompanyInterests.getTags()
                 )
                 else -> throw IllegalArgumentException("Invalid page position $vpRegistration.currentItem")
             }
@@ -221,8 +221,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilCompanyName.hint = "Company name" //TODO: translation
                 tilCompanyUserName.hint = "User name"
                 tilCompanyCity.hint = "City"
-                tilCompanyOffers.hint = "Offers"
-                tilCompanyInterests.hint = "Interests"
+                chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+                chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+                chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+                chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+                chipCompanyOffers.chipSearch = viewModel
+                chipCompanyInterests.chipSearch = viewModel
             }
             setAdapter(view.actvCompanyCity, false)
         }

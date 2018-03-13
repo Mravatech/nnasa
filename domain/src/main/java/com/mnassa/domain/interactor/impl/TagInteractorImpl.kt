@@ -11,10 +11,10 @@ import com.mnassa.domain.repository.TagRepository
  */
 
 class TagInteractorImpl(
-        private val userRepository: TagRepository
+        private val tagRepository: TagRepository
         ) : TagInteractor {
 
     override suspend fun search(search: String): List<TagModelTemp> {
-        return userRepository.search(search)
+        return tagRepository.search(search)
     }
 }

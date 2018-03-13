@@ -34,6 +34,7 @@ import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
 import com.mnassa.data.converter.TempTagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
+import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
 import com.mnassa.domain.interactor.*
@@ -41,8 +42,6 @@ import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.repository.*
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.google.PlayServiceHelper
-import com.mnassa.domain.interactor.*
-import com.mnassa.domain.interactor.impl.*
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -149,7 +148,7 @@ private val repositoryModule = Kodein.Module {
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance()) }
+    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
@@ -165,7 +164,7 @@ private val serviceModule = Kodein.Module {
 }
 
 private val interactorModule = Kodein.Module {
-    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
+    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance(), instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
@@ -194,6 +193,10 @@ private val networkModule = Kodein.Module {
     bind<FirebaseInviteApi>() with singleton {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseInviteApi::class.java)
+    }
+    bind<FirebaseTagsApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebaseTagsApi::class.java)
     }
 
 

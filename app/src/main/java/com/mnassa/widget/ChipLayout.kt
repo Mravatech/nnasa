@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
+import androidx.util.isEmpty
 import com.mnassa.R
 import com.mnassa.domain.model.TagModelTemp
 import com.mnassa.domain.model.impl.TagModelTempImpl
@@ -72,15 +73,23 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.dismiss()
     }
 
+    fun getTags(): List<TagModelTemp> {
+        if (chips.isEmpty()) return mutableListOf()
+        val tags = ArrayList<TagModelTemp>(chips.size())
+        for (i in 0 until chips.size())
+            tags.add(chips.valueAt(i))
+        return tags
+    }
+
     private fun addChip(value: TagModelTemp?) {
         val tagModelTemp = if (value != null) {
             value
         } else {
-            if (etChipInput.text.toString().isBlank()){
+            if (etChipInput.text.toString().isBlank()) {
                 etChipInput.setText("")
                 return
             }
-            TagModelTempImpl(null,  etChipInput.text.toString(), null)
+            TagModelTempImpl(null, etChipInput.text.toString(), null)
         }
         val key = System.currentTimeMillis()
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE

@@ -1,10 +1,8 @@
 package com.mnassa.screen.registration
 
-import android.os.Bundle
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TagModelTemp
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -20,7 +18,7 @@ class RegistrationViewModelImpl(
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<String>, interests: List<String>) {
+    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>) {
         handleException {
             withProgressSuspend {
                 val shortAccountModel = userProfileInteractor.createPersonalAccount(
@@ -36,7 +34,7 @@ class RegistrationViewModelImpl(
         }
     }
 
-    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<String>, interests: List<String>) {
+    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>) {
         handleException {
             withProgressSuspend {
                 userProfileInteractor.createOrganizationAccount(

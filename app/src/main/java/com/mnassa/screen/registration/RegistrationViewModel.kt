@@ -1,6 +1,7 @@
 package com.mnassa.screen.registration
 
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TagModelTemp
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.widget.ChipsAdapter
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -11,8 +12,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface RegistrationViewModel : MnassaViewModel, ChipsAdapter.ChipSearch ,PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: BroadcastChannel<RegistrationViewModel.OpenScreenCommand>
 
-    fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<String>, interests: List<String>)
-    fun registerOrganization(userName: String, city: String, companyName: String, offers: List<String>, interests: List<String>)
+    fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>)
+    fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>)
 
     sealed class OpenScreenCommand {
         class PersonalInfoScreen(val shortAccountModel: ShortAccountModel) : OpenScreenCommand()
