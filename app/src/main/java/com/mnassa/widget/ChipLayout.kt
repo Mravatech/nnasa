@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.LongSparseArray
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
@@ -11,7 +12,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import com.mnassa.R
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.impl.TagModelTempImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
@@ -57,8 +59,8 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         }
     }
 
-    override fun onChipClick(tagModel: TagModel) {
-        addChip(TagModelTemp(tagModel.status, tagModel.nameAr, tagModel.nameEn, tagModel.id))
+    override fun onChipClick(tagModel: TagModelTemp) {
+        addChip(tagModel)
     }
 
     override fun onViewRemoved(key: Long) {
@@ -79,7 +81,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
                 etChipInput.setText("")
                 return
             }
-            TagModelTemp(null, null, etChipInput.text.toString(), null)
+            TagModelTempImpl(null,  etChipInput.text.toString(), null)
         }
         val key = System.currentTimeMillis()
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
@@ -115,7 +117,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.setAdapter(adapter)
             listPopupWindow.anchorView = etChipInput
             listPopupWindow.height = ListPopupWindow.WRAP_CONTENT
-            listPopupWindow.width = this.width
+            listPopupWindow.width = this.width - context.resources.getDimension(R.dimen.padding_horizontal).toInt()
             listPopupWindow.isModal = false
             listPopupWindow.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
             listPopupWindow.promptPosition = ListPopupWindow.POSITION_PROMPT_BELOW

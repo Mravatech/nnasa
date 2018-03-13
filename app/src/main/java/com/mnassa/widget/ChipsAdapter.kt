@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.TagModelTemp
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
@@ -15,11 +16,11 @@ class ChipsAdapter(
         context: Context,
         private val chipListener: ChipListener,
         private val chipSearch: ChipSearch)
-    : ArrayAdapter<TagModel>(context,
+    : ArrayAdapter<TagModelTemp>(context,
         android.R.layout.simple_expandable_list_item_1,
         android.R.id.text1) {
 
-    private var resultList: List<TagModel> = mutableListOf()
+    private var resultList: List<TagModelTemp> = mutableListOf()
 
     override fun getCount() = resultList.size
 
@@ -27,7 +28,7 @@ class ChipsAdapter(
         val row = super.getView(position, convertView, parent)
         val item = getItem(position)
         val textView1 = row.findViewById<TextView>(android.R.id.text1)
-        textView1.text = item.nameEn
+        textView1.text = item.name
         row.setOnClickListener { chipListener.onChipClick(item) }
         return row
     }
@@ -48,11 +49,11 @@ class ChipsAdapter(
     }
 
     interface ChipListener {
-        fun onChipClick(tagModel: TagModel)
+        fun onChipClick(tagModel: TagModelTemp)
         fun onEmptySearchResult()
     }
 
     interface ChipSearch {
-        suspend fun search(search: String): List<TagModel>
+        suspend fun search(search: String): List<TagModelTemp>
     }
 }

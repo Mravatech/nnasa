@@ -1,7 +1,6 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.model.TagModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import com.mnassa.domain.model.TagModelTemp
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,5 +9,5 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 
 interface TagInteractor{
-    suspend fun search(search: String): List<TagModel>
+    suspend fun search(search: String): List<TagModelTemp>
 }

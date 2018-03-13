@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
 import com.mnassa.R
+import com.mnassa.domain.model.TagModelTemp
 import kotlinx.android.synthetic.main.view_chip.view.*
 
 /**
@@ -23,7 +24,7 @@ class ChipView(
 
     init {
         View.inflate(context, R.layout.view_chip, this)
-        tvChipText.text = tagModel.nameEn
+        tvChipText.text = tagModel.name
         ibRemove.setOnClickListener {
             removeViewFromParent()
         }

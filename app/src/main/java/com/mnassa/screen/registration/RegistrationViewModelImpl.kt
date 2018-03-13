@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.TagModelTemp
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
@@ -57,7 +58,7 @@ class RegistrationViewModelImpl(
 
     }
 
-    override suspend fun search(search: String): List<TagModel> {
+    override suspend fun search(search: String): List<TagModelTemp> {
         return tagInteractor.search(search)
     }
 

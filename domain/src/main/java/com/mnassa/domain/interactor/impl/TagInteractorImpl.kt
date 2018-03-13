@@ -1,8 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.TagInteractor
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.domain.model.TagModelTemp
 import com.mnassa.domain.repository.TagRepository
 
 /**
@@ -15,7 +14,7 @@ class TagInteractorImpl(
         private val userRepository: TagRepository
         ) : TagInteractor {
 
-    override suspend fun search(search: String): List<TagModel> {
+    override suspend fun search(search: String): List<TagModelTemp> {
         return userRepository.search(search)
     }
 }

@@ -6,6 +6,8 @@ import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.network.bean.firebase.TagDbEntity
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.impl.TagModelTempImpl
 import com.mnassa.domain.repository.TagRepository
 
 /**
@@ -18,13 +20,14 @@ class TagRepositoryImpl(
         private val exceptionHandler: ExceptionHandler
 ) : TagRepository {
 
-    override suspend fun search(search: String): List<TagModel> {
-        val t = databaseReference.child(DatabaseContract.TABLE_TAGS)
+    override suspend fun search(search: String): List<TagModelTemp> {
+        val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
                 .apply { keepSynced(true) }
                 .awaitList<TagDbEntity>(exceptionHandler)
-        return converter.convertCollection(t, TagModel::class.java).filter { it.nameEn.toLowerCase().startsWith(search.toLowerCase()) ||
-                it.nameAr.toLowerCase().startsWith(search.toLowerCase())
-        }
+        return converter.convertCollection(tags, TagModelTemp::class.java)
+                .filter {
+                    it.name.toLowerCase().startsWith(search.toLowerCase())
+                }
     }
 
 }

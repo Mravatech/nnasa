@@ -34,6 +34,7 @@ import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.data.converter.TempTagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
@@ -100,6 +101,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(UserAccountConverter::class.java)
         converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
+        converter.registerConverter(TempTagConverter({ instance() }))
         converter
     }
 }
