@@ -26,6 +26,7 @@
     <string name="reg_account_type_personal">_android_account_type_personal</string>
     <string name="reg_account_type_organization">_android_account_type_organization</string>
     <string name="reg_account_can_help_with">_accEdit_cellOffers_placeholder</string>
+    <string name="reg_account_interested_in">_accEdit_cellInterests_placeholder</string>
 
     <string name="invite_title">_newAccNetwork_navTitle</string>
     <string name="invite_description">_newAccNetwork_labelHeader</string>

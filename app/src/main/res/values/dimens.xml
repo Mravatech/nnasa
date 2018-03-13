@@ -6,4 +6,7 @@
     <dimen name="horizontal_margin_login">8dp</dimen>
 
     <dimen name="avatar_list_item">56dp</dimen>
+
+    <dimen name="chip_et_margin_vertical">8dp</dimen>
+    <dimen name="chip_layout_margin_horizontal">5dp</dimen>
 </resources>

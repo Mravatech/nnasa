@@ -2,11 +2,9 @@ package com.mnassa.screen.registration
 
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
@@ -109,8 +107,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = etPersonCity.text.toString(),
-                        offers = listOf(chipOffers.etChipInput.text.toString()),
-                        interests = listOf(etPersonInterests.text.toString()))
+                        offers = listOf(chipPersonOffers.etChipInput.text.toString()),
+                        interests = listOf(chipPersonInterests.etChipInput.text.toString()))
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
@@ -130,7 +128,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         fun newInstance() = RegistrationController()
     }
 
-   inner class RegistrationAdapter : PagerAdapter() {
+    inner class RegistrationAdapter : PagerAdapter() {
         override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -172,10 +170,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
                 tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
                 tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
-                chipOffers.etChipInput.hint = "Type here..."
-                chipOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
-                tilPersonInterests.hint = "Interests"
-                chipOffers.chipSearch = viewModel
+                chipPersonOffers.etChipInput.hint = "Type here..."
+                chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+                chipPersonInterests.etChipInput.hint = "Type here..."
+                chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+                chipPersonOffers.chipSearch = viewModel
+                chipPersonInterests.chipSearch = viewModel
             }
         }
 

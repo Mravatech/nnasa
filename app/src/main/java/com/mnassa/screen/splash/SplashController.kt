@@ -35,7 +35,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
 
     private suspend fun openNextScreen() {
         val nextScreen = when {
-            viewModel.isLoggedIn() -> RegistrationController.newInstance()
+            viewModel.isLoggedIn() -> MainController.newInstance()
             else -> EnterPhoneController.newInstance()
         }
 

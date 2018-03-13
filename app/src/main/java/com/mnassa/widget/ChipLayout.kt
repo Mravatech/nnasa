@@ -72,9 +72,15 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     private fun addChip(value: TagModelTemp?) {
-        val tagModelTemp: TagModelTemp = value
-                ?: TagModelTemp(null, null, etChipInput.text.toString(), null)
-        etChipInput.setText("")
+        val tagModelTemp = if (value != null) {
+            value
+        } else {
+            if (etChipInput.text.toString().isBlank()){
+                etChipInput.setText("")
+                return
+            }
+            TagModelTemp(null, null, etChipInput.text.toString(), null)
+        }
         val key = System.currentTimeMillis()
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
         val c = createChipView(tagModelTemp, key)

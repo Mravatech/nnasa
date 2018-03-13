@@ -20,4 +20,5 @@
     <color name="brightBlue">#0076ff</color>
 
     <color name="backgroundMain">#f2f5f7</color>
+    <color name="backgroundTransparent">#00000000</color>
 </resources>

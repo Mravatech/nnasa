@@ -46,18 +46,14 @@
         </android.support.design.widget.TextInputLayout>
 
         <com.mnassa.widget.ChipLayout
-            android:id="@+id/chipOffers"
+            android:id="@+id/chipPersonOffers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilPersonInterests"
-            style="@style/Registration.TextInputLayout">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/etPersonInterests"
-                style="@style/Registration.EditText" />
-        </android.support.design.widget.TextInputLayout>
+        <com.mnassa.widget.ChipLayout
+            android:id="@+id/chipPersonInterests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

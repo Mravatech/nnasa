@@ -5,7 +5,7 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.screen.base.MnassaControllerImpl
-import kotlinx.android.synthetic.main.controller_crop.view.*
+import kotlinx.android.synthetic.main.controller_profile.view.*
 import android.net.Uri
 import android.support.annotation.IntRange
 import android.widget.ImageView
@@ -26,7 +26,7 @@ import timber.log.Timber
 
 class ProfileController : MnassaControllerImpl<ProfileViewModel>(), PhotoListener {
 
-    override val layoutId: Int = R.layout.controller_crop
+    override val layoutId: Int = R.layout.controller_profile
     override val viewModel: ProfileViewModel by instance()
 
     private val dialog: DialogHelper by instance()
