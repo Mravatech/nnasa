@@ -34,4 +34,8 @@ object NetworkContract {
         const val UN_MUTE = "unmute"
         const val REVOKE = "revoke"
     }
+
+    object ResponseCode {
+        const val UNAUTHORIZED = 403
+    }
 }

@@ -24,7 +24,7 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.text = fromDictionary(R.string.recommended_connections_title)
+            toolbar.title = fromDictionary(R.string.recommended_connections_title)
 
             rvRecommendedConnections.layoutManager = LinearLayoutManager(context)
             rvRecommendedConnections.adapter = adapter

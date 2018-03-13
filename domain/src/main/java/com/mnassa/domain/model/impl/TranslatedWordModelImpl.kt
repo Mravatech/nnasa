@@ -14,6 +14,9 @@ class TranslatedWordModelImpl(
         override val arabicTranslate: String?
 ) : TranslatedWordModel {
 
+    constructor(id: String, info: String): this(id, info, null, null)
+    constructor(info: String): this(info, info)
+
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): String {
         val isoLanguage = Locale.getDefault().isO3Language
 

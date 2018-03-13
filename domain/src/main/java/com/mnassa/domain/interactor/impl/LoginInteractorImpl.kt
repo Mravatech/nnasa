@@ -1,16 +1,20 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
  */
 class LoginInteractorImpl(private val userRepository: UserRepository, private val loginService: FirebaseLoginService) : LoginInteractor {
+    override val onLogoutListener: SimpleCompositeEventListener<Unit> = SimpleCompositeEventListener()
 
     override suspend fun isLoggedIn(): Boolean {
         return userRepository.getCurrentUser() != null
@@ -38,6 +42,8 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
     override suspend fun signOut() {
         loginService.signOut()
         userRepository.setCurrentUserAccount(null)
+
+        async(UI) { onLogoutListener.emit(Unit) }
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {

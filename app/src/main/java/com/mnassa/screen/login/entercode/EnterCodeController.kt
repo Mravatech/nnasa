@@ -67,16 +67,9 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 when (it) {
-                    is EnterCodeViewModel.OpenScreenCommand.MainScreen -> {
-                        router.popToRoot()
-                        router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
-                    }
-                    is EnterCodeViewModel.OpenScreenCommand.RegistrationScreen -> {
-                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
-                    }
-                    is EnterCodeViewModel.OpenScreenCommand.SelectAccount -> {
-                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance()))
-                    }
+                    is EnterCodeViewModel.OpenScreenCommand.MainScreen -> open(MainController.newInstance())
+                    is EnterCodeViewModel.OpenScreenCommand.RegistrationScreen -> open(RegistrationController.newInstance())
+                    is EnterCodeViewModel.OpenScreenCommand.SelectAccount -> open(SelectAccountController.newInstance())
                 }
             }
         }

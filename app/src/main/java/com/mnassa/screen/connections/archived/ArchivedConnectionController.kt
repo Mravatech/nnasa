@@ -8,7 +8,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_archived.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -23,7 +22,7 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.text = fromDictionary(R.string.archived_connections_title)
+            toolbar.title = fromDictionary(R.string.archived_connections_title)
 
             adapter.onConnectClickListener = { viewModel.connect(it) }
 

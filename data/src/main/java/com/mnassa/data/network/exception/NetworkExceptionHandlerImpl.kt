@@ -6,6 +6,7 @@ import com.mnassa.data.R
 import com.mnassa.data.network.bean.retrofit.MnassaErrorBody
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
+import kotlinx.coroutines.experimental.JobCancellationException
 import okhttp3.Headers
 import retrofit2.HttpException
 import timber.log.Timber
@@ -27,6 +28,7 @@ class NetworkExceptionHandlerImpl(private val gson: Gson, private val context: C
 
         return when {
             throwable is NetworkException -> throwable
+            throwable is JobCancellationException -> throwable
             isNetworkDisabledException(throwable) -> NetworkDisableException(networkDisabledMessage, throwable)
             else -> {
                 val errorBody = transformExceptionTo(throwable, MnassaErrorBody::class.java)

@@ -20,6 +20,5 @@ interface MainViewModel : MnassaViewModel {
     fun logout()
 
     enum class ScreenType {
-        LOGIN
     }
 }
