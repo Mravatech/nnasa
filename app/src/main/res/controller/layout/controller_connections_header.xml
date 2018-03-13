@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvNewConnectionRequests"
+        style="@style/MnassaHeader2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:text="Requested connections" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvNewConnectionRequests"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:layout_height="150dp"
+        tools:listitem="@layout/item_connection_request" />
+
+    <View
+        android:id="@+id/vNewConnectionRequests"
+        style="@style/MnassaShadow" />
+
+    <TextView
+        android:id="@+id/tvRecommendedConnections"
+        style="@style/MnassaHeader2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:text="Recommended connections" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvRecommendedConnections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:layout_height="180dp"
+        tools:listitem="@layout/item_connections_recommended"
+        tools:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/tvAllConnections"
+        style="@style/MnassaHeader2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:text="All connections" />
+
+    <View
+        android:id="@+id/vAllConnections"
+        style="@style/MnassaShadow"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:rotation="180" />
+
+</LinearLayout>

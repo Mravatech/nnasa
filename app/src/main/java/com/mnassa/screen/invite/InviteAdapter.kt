@@ -1,7 +1,5 @@
 package com.mnassa.screen.invite
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,20 +7,19 @@ import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.mainAbility
-import com.mnassa.extensions.avatar
+import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_invite_account.view.*
-import kotlinx.android.synthetic.main.item_invite_skip.view.*
 
 /**
  * Created by Peter on 3/5/2018.
  */
-class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View.OnClickListener {
+class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
 
-    private val data: MutableList<ShortAccountModel> = ArrayList()
     private val selectedAccountsInternal: MutableSet<String> = HashSet()
     var onSelectedAccountsChangedListener = { selectedAccountIds: Set<String> -> }
-    var onSkipClickListener = {}
     var selectedAccounts: Set<String>
         get() = selectedAccountsInternal
         set(value) {
@@ -30,7 +27,7 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View
             selectedAccountsInternal.addAll(value)
 
             val selectedAccountsCopy = selectedAccountsInternal.toList()
-            val allAccountsIds = data.map { it.id }
+            val allAccountsIds = dataStorage.map { it.id }
             selectedAccountsInternal.clear()
             selectedAccountsInternal.addAll(selectedAccountsCopy.filter { allAccountsIds.contains(it) })
             onSelectedAccountsChangedListener(selectedAccountsInternal)
@@ -38,46 +35,16 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View
             notifyDataSetChanged()
         }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
+        val view = inflater.inflate(R.layout.item_invite_account, parent, false)
 
-    fun setAccounts(newData: List<ShortAccountModel>) {
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = data[oldItemPosition].id == newData[newItemPosition].id
-            override fun getOldListSize(): Int = data.size
-            override fun getNewListSize(): Int = newData.size
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = data[oldItemPosition] == newData[newItemPosition]
-        }, true)
-        data.clear()
-        data.addAll(newData)
-        diffResult.dispatchUpdatesTo(this)
-    }
+        val viewHolder = InviteViewHolder(selectedAccountsInternal, view)
+        view.tag = viewHolder
+        view.cbInvite.tag = viewHolder
 
-    override fun getItemViewType(position: Int): Int = if (position < data.size) TYPE_ITEM else TYPE_FOOTER
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            TYPE_ITEM -> {
-                val view = inflater.inflate(R.layout.item_invite_account, parent, false)
-
-                val viewHolder = InviteViewHolder(selectedAccountsInternal, view)
-                view.tag = viewHolder
-                view.cbInvite.tag = viewHolder
-
-                view.setOnClickListener(this)
-                view.cbInvite.setOnClickListener(this)
-                viewHolder
-            }
-            TYPE_FOOTER -> {
-                val view = inflater.inflate(R.layout.item_invite_skip, parent, false)
-                view.btnSkipStep.text = fromDictionary(R.string.invite_skip_step)
-                view.btnSkipStep.setOnClickListener {
-                    onSkipClickListener()
-                }
-
-                FooterViewHolder(view)
-            }
-            else -> throw IllegalArgumentException("viewType $viewType not allowed")
-        }
+        view.setOnClickListener(this)
+        view.cbInvite.setOnClickListener(this)
+        return viewHolder
     }
 
     override fun onClick(v: View) {
@@ -85,7 +52,7 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View
         val position = viewHolder.adapterPosition
 
         if (position >= 0) {
-            val item = data[position]
+            val item = getDataItemByAdapterPosition(position)
 
             if (selectedAccounts.contains(item.id)) {
                 selectedAccountsInternal.remove(item.id)
@@ -96,30 +63,15 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.BaseViewHolder>(), View
         }
     }
 
-    override fun getItemCount(): Int = data.size + 1
-
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        (holder as? InviteViewHolder)?.bind(data[position])
-    }
-
-    abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    private class InviteViewHolder(private val selectedAccount: Set<String>, itemView: View) : BaseViewHolder(itemView) {
-        fun bind(data: ShortAccountModel) {
+    private class InviteViewHolder(private val selectedAccount: Set<String>, itemView: View) : BaseVH<ShortAccountModel>(itemView) {
+        override fun bind(item: ShortAccountModel) {
             with(itemView) {
-                ivAvatar.avatar(data.avatar)
-                tvUserName.text = data.formattedName
-                tvUserPosition.text = data.mainAbility(fromDictionary(R.string.invite_at_placeholder))
-                tvUserPosition.visibility = if (tvUserPosition.text.isNullOrBlank()) View.GONE else View.VISIBLE
-                cbInvite.isChecked = selectedAccount.contains(data.id)
+                ivAvatar.avatarRound(item.avatar)
+                tvUserName.text = item.formattedName
+                tvUserPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
+                tvUserPosition.goneIfEmpty()
+                cbInvite.isChecked = selectedAccount.contains(item.id)
             }
         }
-    }
-
-    private class FooterViewHolder(itemView: View) : BaseViewHolder(itemView)
-
-    companion object {
-        private const val TYPE_ITEM = 1
-        private const val TYPE_FOOTER = 2
     }
 }

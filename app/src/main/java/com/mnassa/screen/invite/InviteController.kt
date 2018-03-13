@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.login.RegistrationFlowProgress
+import com.mnassa.screen.main.MainController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
@@ -23,12 +26,13 @@ class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(arg
     override val viewModel: InviteViewModel by instance()
     private val adapter = InviteAdapter()
 
-
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         with(view) {
+            pbRegistration.progress = RegistrationFlowProgress.BUILD_NETWORK
+
             tvScreenHeader.text = fromDictionary(R.string.invite_title)
             btnScreenHeaderAction.text = fromDictionary(R.string.invite_title_action)
             btnScreenHeaderAction.visibility = View.VISIBLE
@@ -38,11 +42,17 @@ class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(arg
 
             rvInvite.layoutManager = LinearLayoutManager(view.context)
             rvInvite.adapter = adapter
-            rvInvite.addItemDecoration(DividerItemDecoration(view.context, DividerItemDecoration.VERTICAL))
+//            rvInvite.addItemDecoration(DividerItemDecoration(view.context, DividerItemDecoration.VERTICAL))
 
             adapter.onSelectedAccountsChangedListener = { selectedAccounts ->
                 tvInviteUsersToBuildNetwork.text = formatSubTitle()
                 btnScreenHeaderAction.isEnabled = selectedAccounts.isNotEmpty()
+            }
+
+            btnSkipStep.text = fromDictionary(R.string.invite_skip_step)
+            btnSkipStep.setOnClickListener {
+                router.popToRoot()
+                router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
             }
 
             btnScreenHeaderAction.setOnClickListener {
@@ -58,7 +68,17 @@ class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(arg
 
         launchCoroutineUI {
             viewModel.usersToInviteChannel.consumeEach {
-                adapter.setAccounts(it)
+                adapter.set(it)
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.openScreenChannel.consumeEach {
+                when (it) {
+                    is InviteViewModel.OpenScreenCommand.MainScreen -> {
+                        view.btnSkipStep.performClick()
+                    }
+                }
             }
         }
     }

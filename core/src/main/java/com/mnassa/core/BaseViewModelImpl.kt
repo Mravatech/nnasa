@@ -20,7 +20,7 @@ abstract class BaseViewModelImpl : ViewModel(), BaseViewModel, SubscriptionConta
     }
 
     @CallSuper
-    override fun onCleared() {
+    final override fun onCleared() {
         super.onCleared()
         cancelAllSubscriptions()
     }

@@ -1,142 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/pbRegistration"
-        style="@style/ScreenHeaderProgress" />
-
     <include
         android:id="@+id/header"
         layout="@layout/header_login"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/pbRegistration"
-        android:layout_marginStart="@dimen/padding_horizontal"
-        android:layout_marginEnd="@dimen/padding_horizontal"/>
+        android:layout_height="wrap_content" />
 
-    <View
-        android:id="@+id/accountTypeSelectorBackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:background="#b3ecb3"
-        android:background="@color/white"
-        android:layout_alignBottom="@id/accountTypeDivider"
-        android:layout_alignTop="@id/accountTypeDivider"
-        android:layout_marginEnd="@dimen/padding_horizontal"
-        android:layout_marginStart="@dimen/padding_horizontal" />
-
-    <LinearLayout
-        android:id="@+id/accountTypeDivider"
-        android:layout_width="wrap_content"
-        android:layout_height="92dp"
-        android:layout_below="@id/header"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/vertical_margin_login"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:background="@color/coolGray" />
-
-        <TextView
-            android:id="@+id/tvOr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textAllCaps="true"
-            tools:text='or' />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:background="@color/coolGray" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/llAccountTypePersonal"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/accountTypeDivider"
-        android:layout_alignTop="@id/accountTypeDivider"
-        android:layout_alignStart="@id/accountTypeSelectorBackground"
-        android:layout_toStartOf="@id/accountTypeDivider"
-        android:background="?selectableItemBackground"
-        android:paddingStart="@dimen/horizontal_margin_login"
-        android:paddingEnd="@dimen/horizontal_margin_login"
-        android:paddingTop="@dimen/vertical_margin_login"
-        android:paddingBottom="@dimen/vertical_margin_login"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <ImageView
-            android:id="@+id/ivAccountTypePersonal"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tvAccountTypePersonal"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/vertical_margin_login"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="Personal" />
-    </LinearLayout>
+            <View
+                android:id="@+id/accountTypeSelectorBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/accountTypeDivider"
+                android:layout_alignTop="@id/accountTypeDivider"
+                android:layout_marginEnd="@dimen/padding_horizontal"
+                android:layout_marginStart="@dimen/padding_horizontal"
+                android:background="@color/backgroundHighlight"
+                tools:background="#b3ecb3" />
 
-    <LinearLayout
-        android:id="@+id/llAccountTypeOrganization"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/accountTypeDivider"
-        android:layout_alignTop="@id/accountTypeDivider"
-        android:layout_alignEnd="@id/accountTypeSelectorBackground"
-        android:layout_toEndOf="@id/accountTypeDivider"
-        android:background="?selectableItemBackground"
-        android:paddingStart="@dimen/horizontal_margin_login"
-        android:paddingEnd="@dimen/horizontal_margin_login"
-        android:paddingTop="@dimen/vertical_margin_login"
-        android:paddingBottom="@dimen/vertical_margin_login"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/accountTypeDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/ivAccountTypeOrganization"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@mipmap/ic_launcher" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="@color/divider" />
 
-        <TextView
-            android:id="@+id/tvAccountTypeOrganization"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vertical_margin_login"
-            android:gravity="center"
-            tools:text="Organization" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvOr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAllCaps="true"
+                    android:textColor="@color/coolGray"
+                    tools:text='or' />
 
-    <!--</FrameLayout>-->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="@color/divider" />
+            </LinearLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vpRegistration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/llAccountTypePersonal"
-        android:layout_marginTop="@dimen/vertical_margin_login"
-        tools:background="#9c9cce" />
 
-</RelativeLayout>
+            <LinearLayout
+                android:id="@+id/llAccountTypePersonal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@id/accountTypeDivider"
+                android:layout_alignStart="@id/accountTypeSelectorBackground"
+                android:layout_alignTop="@id/accountTypeDivider"
+                android:layout_toStartOf="@id/accountTypeDivider"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/spacing_vertical"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal"
+                android:paddingTop="@dimen/spacing_vertical">
+
+                <ImageView
+                    android:id="@+id/ivAccountTypePersonal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_personal" />
+
+                <TextView
+                    android:id="@+id/tvAccountTypePersonal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    tools:text="Personal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llAccountTypeOrganization"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@id/accountTypeDivider"
+                android:layout_alignEnd="@id/accountTypeSelectorBackground"
+                android:layout_alignTop="@id/accountTypeDivider"
+                android:layout_toEndOf="@id/accountTypeDivider"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/spacing_vertical"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal"
+                android:paddingTop="@dimen/spacing_vertical">
+
+                <ImageView
+                    android:id="@+id/ivAccountTypeOrganization"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_organization" />
+
+                <TextView
+                    android:id="@+id/tvAccountTypeOrganization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    tools:text="Organization" />
+            </LinearLayout>
+
+            <!--</FrameLayout>-->
+
+            <com.mnassa.widget.WrapHeightViewPager
+                android:id="@+id/vpRegistration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@id/llAccountTypePersonal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:background="#9c9cce" />
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

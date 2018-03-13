@@ -11,6 +11,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleRegistryOwner
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.EmitableCompositeEventListener
 import com.mnassa.core.events.OnActivityResultEvent
@@ -24,13 +25,16 @@ import com.mnassa.core.permissions.PermissionsManagerDelegate
  */
 
 @Suppress("LeakingThis", "DEPRECATION")
-abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
+abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
+                                                      private val viewSubscriptionContainer: SubscriptionContainer,
+                                                      protected val controllerSubscriptionContainer: SubscriptionContainer)
     : Controller(args),
         BaseController<VM>,
         LifecycleRegistryOwner,
-        SubscriptionContainer by SubscriptionsContainerDelegate() {
+        SubscriptionContainer by viewSubscriptionContainer {
 
     constructor() : this(Bundle())
+    constructor(args: Bundle) : this(args, SubscriptionsContainerDelegate(), SubscriptionsContainerDelegate())
 
     /**
      * Provides xml layout id
@@ -73,12 +77,13 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle)
             }
 
             override fun preDestroyView(controller: Controller, view: View) {
-                cancelAllSubscriptions() //clear View subscriptions
+                viewSubscriptionContainer.cancelAllSubscriptions() //clear View subscriptions
                 onViewDestroyed(view)
             }
 
             override fun preDestroy(controller: Controller) {
                 viewModel.onCleared()
+                controllerSubscriptionContainer.cancelAllSubscriptions()
             }
 
             override fun onSaveInstanceState(controller: Controller, outState: Bundle) {

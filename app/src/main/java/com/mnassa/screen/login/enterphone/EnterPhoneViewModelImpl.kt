@@ -36,8 +36,11 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
                 verificationResponse = it
                 when {
                     it.isVerified -> signIn(it)
-                    else -> openScreenChannel.send(
-                            EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
+                    else -> {
+                        hideProgress()
+                        openScreenChannel.send(
+                                EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
+                    }
                 }
             }
         }

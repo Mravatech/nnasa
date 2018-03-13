@@ -2,9 +2,11 @@ package com.mnassa.screen.registration
 
 import android.os.Bundle
 import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
@@ -13,7 +15,8 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  */
 class RegistrationViewModelImpl(
         private val userProfileInteractor: UserProfileInteractor,
-        private val tagInteractor: TagInteractor
+        private val tagInteractor: TagInteractor,
+        private val placeFinderInteractor: PlaceFinderInteractor
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -48,14 +51,8 @@ class RegistrationViewModelImpl(
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        handleException {
-
-//            val l:List<TagModel> = tagInteractor.search("")
-//            Timber.i(l.toString())
-        }
-
+    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel>? {
+        return placeFinderInteractor.getReqieredPlaces(constraint)
     }
 
     override suspend fun search(search: String): List<TagModelTemp> {

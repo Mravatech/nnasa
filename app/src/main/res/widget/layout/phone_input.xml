@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:background="@color/white"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    tools:background="#fac6c6">
+    android:layout_height="wrap_content">
 
-    <Spinner
-        android:id="@+id/spinnerPhoneCode"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:spinnerMode="dialog" />
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="16dp"
-        android:background="@color/coolGray" />
-
-    <android.support.design.widget.TextInputEditText
-        android:id="@+id/etPhoneNumberTail"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:inputType="phone"
-        android:maxLength="10"
-        android:textSize="24sp"
-        tools:hint="Your number" />
+        android:layout_height="68dp"
+        android:background="@color/backgroundHighlight"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingTop="4dp"
+        tools:background="#fac6c6">
 
-</LinearLayout>
+        <Spinner
+            android:id="@+id/spinnerPhoneCode"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
+            tools:listitem="@layout/item_country_code_drop_down"
+            android:spinnerMode="dialog" />
+
+        <View
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:background="@color/divider" />
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etPhoneNumberTail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:textSize="22sp"
+            tools:hint="Your number" />
+
+    </LinearLayout>
+</FrameLayout>

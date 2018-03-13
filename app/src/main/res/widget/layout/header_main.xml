@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rlHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/backgroundHighlight"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/padding_vertical"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        tools:background="#eaeaea">
+
+        <TextView
+            android:id="@+id/tvScreenHeader"
+            style="@style/MnassaHeader1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/badge"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Main header" />
+
+        <include
+            android:id="@+id/badge"
+            layout="@layout/red_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_toStartOf="@id/ivMore"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ivMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:tint="@color/black"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_more_vert_black_24dp"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+    <View
+        style="@style/MnassaShadow"
+        android:layout_below="@id/rlHeader" />
+
+</RelativeLayout>

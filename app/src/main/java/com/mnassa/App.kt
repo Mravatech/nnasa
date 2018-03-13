@@ -1,8 +1,8 @@
 package com.mnassa
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
+import android.support.multidex.MultiDexApplication
 import com.facebook.stetho.Stetho
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.autoAndroidModule
@@ -19,7 +19,7 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/20/2018.
  */
-class App : Application(), KodeinAware {
+class App : MultiDexApplication(), KodeinAware {
     override val kodein: Kodein by Kodein.lazy {
         import(autoAndroidModule(this@App))
         registerAppModules(this)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
     <string name="login_enter_phone_title">_login_label_title</string>
     <string name="login_verify_me">_login_button_verify</string>
@@ -16,6 +17,9 @@
     <string name="login_validation_code_header">_android_enter_validation_code_header</string>
     <string name="login_validation_code_hint">_android_enter_validation_code_hint</string>
 
+    <string name="choose_profile_title">profileChoosing_labelTitle</string>
+
+    <!-- ===================================== REGISTRATION ==================================== -->
     <string name="reg_title">_newAcc_navTitle</string>
     <string name="reg_personal_info_title">_newAccDetails_navTitle</string>
     <string name="reg_personal_first_name">_newAcc_cellFirstName_title</string>
@@ -28,17 +32,51 @@
     <string name="reg_account_can_help_with">_accEdit_cellOffers_placeholder</string>
     <string name="reg_account_interested_in">_accEdit_cellInterests_placeholder</string>
 
+    <!-- ==================================== BUILD NETWORK (INVITE) =========================== -->
     <string name="invite_title">_newAccNetwork_navTitle</string>
     <string name="invite_description">_newAccNetwork_labelHeader</string>
     <string name="invite_at_placeholder">_cellOccupation_placeTitle</string>
     <string name="invite_title_action">_newAccNetwork_navItem_Invite</string>
     <string name="invite_skip_step">_android_invites_skip_step</string>
 
+    <!-- ===================================== TAB HOME ======================================== -->
+    <string name="tab_home_needs_title">_nav_title_needs</string>
+    <string name="tab_home_events_title">_events_nav_title</string>
+
+    <!-- ===================================== TAB CONNECTIONS ================================== -->
+    <string name="tab_connections_title">_connectionsList_navTitle_connections</string>
+    <string name="tab_connections_new_requests">_connections_group_header_sent</string>
+    <string name="tab_connections_recommended">_connections_header_recommended_conns</string>
+    <string name="tab_connections_all">_connectionsList_groupHeader_connected</string>
+    <string name="tab_connections_recommended_connect">connection_button_connect</string>
+    <string name="tab_connections_recommended_show_all">_android_connections_recommended_show_all</string>
+    <string name="tab_connections_rejected">_connectionsList_groupHeader_rejected</string>
+    <string name="tab_connections_new_requests_more">_android_connections_new_requests_more</string>
+    <!-- connections - all -->
+    <string name="tab_connections_all_item_send_message">_android_connections_send_message</string>
+    <string name="tab_connections_all_item_view_profile">_android_connections_view_profile</string>
+    <string name="tab_connections_all_item_disconnect">_android_connections_disconnect</string>
 
 
-    <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
-    <string name="error_no_internet">_android_no_internet_connection</string>
+    <!-- new requests -->
+    <string name="new_requests_title">_connections_header_new_requests</string>
 
+    <!-- recommended -->
+    <string name="recommended_connections_title">_connections_header_recommended_conns</string>
+    <string name="recommended_connections_by_phone">recommendedByPhone</string>
+    <string name="recommended_connections_by_event">recommendedByEvent</string>
+    <string name="recommended_connections_by_refer">recommendedByRefer</string>
+
+    <!-- sent -->
+    <string name="sent_connection_requests_title">_connections_group_header_sent</string>
+
+    <!-- rejected -->
+    <string name="archived_connections_title">_connections_header_rejected</string>
+    <string name="archived_connections_connect_btn">connection_button_connect</string>
+    <string name="archived_connections_description">_android_connections_rejected_description</string>
+    <string name="archived_connections_days_left">_android_connections_rejected_days_left</string>
+
+    <!-- ====================================== REG PERSON =================================== -->
     <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
     <string name="reg_person_info_phone">_accEdit_cellPhone_title</string>
     <string name="reg_person_info_at">_cellOccupation_placeTitle</string>
@@ -47,4 +85,9 @@
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
+
+    <!-- ========================================= OTHER ====================================== -->
+    <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
+    <string name="error_no_internet">_android_no_internet_connection</string>
+    <string name="loading">_android_loading</string>
 </resources>

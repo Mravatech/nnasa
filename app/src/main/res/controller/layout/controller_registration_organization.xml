@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/spacing_vertical"
+    android:paddingStart="@dimen/padding_horizontal"
+    android:paddingBottom="@dimen/padding_vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/backgroundHighlight"
         android:orientation="vertical"
         android:padding="@dimen/padding_horizontal">
 
@@ -31,8 +35,8 @@
             android:id="@+id/tilCompanyCity"
             style="@style/Registration.TextInputLayout">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/etCompanyCity"
+            <AutoCompleteTextView
+                android:id="@+id/actvCompanyCity"
                 style="@style/Registration.EditText" />
         </android.support.design.widget.TextInputLayout>
 
@@ -55,5 +59,4 @@
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
-
-</ScrollView>
+</FrameLayout>

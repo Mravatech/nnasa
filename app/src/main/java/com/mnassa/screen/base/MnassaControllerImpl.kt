@@ -12,6 +12,7 @@ import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.hideKeyboard
 import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.progress.MnassaProgressDialog
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -62,6 +63,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
 
     override fun onViewDestroyed(view: View) {
         hideProgress() //prevent showing progress after screen change
+        hideKeyboard()
         super.onViewDestroyed(view)
     }
 
@@ -81,13 +83,19 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     protected open fun subscribeToProgressEvents() {
         launchCoroutineUI {
             viewModel.isProgressEnabledChannel.consumeEach { isProgressEnabled ->
-                if (isProgressEnabled) showProgress() else hideProgress()
+                if (isProgressEnabled) {
+                    showProgress()
+                } else {
+                    hideProgress()
+                }
             }
         }
     }
 
     private var progressDialog: MnassaProgressDialog? = null
     protected fun showProgress() {
+        hideKeyboard()
+
         if (progressDialog != null) return
 
         progressDialog?.cancel()
@@ -100,7 +108,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     }
 
     protected fun hideProgress() {
-        progressDialog?.cancel()
+        progressDialog?.dismiss()
         progressDialog = null
     }
 
