@@ -3,13 +3,13 @@ package com.mnassa.screen.invite
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.main.MainController
@@ -24,6 +24,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class InviteController(args: Bundle) : MnassaControllerImpl<InviteViewModel>(args) {
     override val layoutId: Int = R.layout.controller_invite
     override val viewModel: InviteViewModel by instance()
+    private val dialogHelper: DialogHelper by instance()
     private val adapter = InviteAdapter()
 
     @SuppressLint("MissingPermission")
