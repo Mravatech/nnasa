@@ -39,7 +39,8 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         View.inflate(context, R.layout.chip_layout, this)
         etChipInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addChip(null)
+                if (etChipInput.text.toString().length >= MIN_SYMBOLS_TO_ADD_TAGS)
+                    addChip(null)
             }
             true
         }
@@ -148,6 +149,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     companion object {
         private const val EDIT_TEXT_RESERVE = 1
+        private const val MIN_SYMBOLS_TO_ADD_TAGS = 3
     }
 
 }
