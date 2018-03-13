@@ -85,6 +85,7 @@
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
+    <string name="reg_person_type_here">_android_registration_type_here</string>
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>

@@ -206,9 +206,9 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
                 tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
                 tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
-                chipPersonOffers.etChipInput.hint = "Type here..."
+                chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
-                chipPersonInterests.etChipInput.hint = "Type here..."
+                chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
                 chipPersonOffers.chipSearch = viewModel
                 chipPersonInterests.chipSearch = viewModel
