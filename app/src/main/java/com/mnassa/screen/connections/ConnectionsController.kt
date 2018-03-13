@@ -30,8 +30,6 @@ import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
-import kotlinx.android.synthetic.main.red_badge.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -51,8 +49,8 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         super.onViewCreated(view)
 
         with(view) {
-            ivBack.visibility = View.GONE
-            tvScreenHeader.text = fromDictionary(R.string.tab_connections_title)
+            toolbar.backButtonEnabled = false
+            toolbar.title = fromDictionary(R.string.tab_connections_title)
 
             recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
             recommendedConnectionsAdapter.onConnectClickListener = { viewModel.connect(it) }
@@ -67,8 +65,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             rvAllConnections.layoutManager = LinearLayoutManager(context)
             rvAllConnections.adapter = allConnectionsAdapter
 
-            ivMore.visibility = View.VISIBLE
-            ivMore.setOnClickListener {
+            toolbar.onMoreClickListener = {
                 //Creating the instance of PopupMenu
                 val popup = PopupMenu(it.context, it)
                 //Inflating the Popup using xml file
@@ -150,8 +147,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                 header.rvNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
                 header.vNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
 
-                root.badge.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-                root.tvBadgeCount.text = it.size.toString()
+                root.toolbar.counter = it.size
                 header.tvNewConnectionRequests.text = formatTextWithCounter(R.string.tab_connections_new_requests, it.size)
             }
         }

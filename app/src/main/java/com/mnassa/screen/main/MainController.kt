@@ -79,6 +79,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
                 true
             }
+            bnMain.isBehaviorTranslationEnabled = true
 
             navigationView.setNavigationItemSelectedListener(this@MainController)
         }
@@ -125,24 +126,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
             R.id.nav_logout -> viewModel.logout()
-
         }
-
 
         return true
     }
@@ -153,6 +140,8 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             view.drawerLayout.closeDrawer(GravityCompat.START)
             true
         } else {
+            view.bnMain?.visibility = View.VISIBLE
+//            view.bnMain?.restoreBottomNavigation()
             super.handleBack()
         }
     }
@@ -164,7 +153,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         super.onViewDestroyed(view)
     }
 
-    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
+    override fun open(self: Controller, controller: Controller) {
+//        view?.bnMain?.hideBottomNavigation()
+        view?.bnMain?.visibility = View.INVISIBLE
+
+        mnassaRouter.open(self, controller)
+
+    }
     override fun close(self: Controller) = mnassaRouter.close(self)
 
     private fun formatTabControllerTag(position: Int): String {

@@ -12,30 +12,32 @@
         android:background="@color/backgroundHighlight"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/padding_vertical"
-        android:paddingEnd="@dimen/padding_horizontal"
-        android:paddingStart="@dimen/padding_horizontal"
-        android:paddingTop="@dimen/padding_vertical"
         tools:background="#eaeaea">
 
         <com.mnassa.widget.GoBackArrow
-            android:id="@+id/ivBack"
+            android:id="@+id/ivToolbarBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/spacing_horizontal" />
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            android:visibility="visible" />
 
         <TextView
-            android:id="@+id/tvScreenHeader"
+            android:id="@+id/tvToolbarScreenHeader"
             style="@style/MnassaHeader1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_vertical"
+            android:layout_marginTop="@dimen/padding_vertical"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             tools:text="Main header" />
 
         <include
-            android:id="@+id/badge"
+            android:id="@+id/toolbarBadge"
             layout="@layout/red_badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,14 +47,17 @@
             tools:visibility="visible" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/ivMore"
+            android:id="@+id/ivToolbarMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:paddingEnd="4dp"
-            android:paddingStart="4dp"
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
             android:tint="@color/black"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_more_vert_black_24dp"
