@@ -8,6 +8,8 @@ import com.mnassa.domain.model.HasId
  */
 //////////////////////////////////////////// MAPPING ///////////////////////////////////////////////
 internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?): T? {
+    if (dataSnapshot is T) return dataSnapshot
+
     return dataSnapshot?.run {
         val res = getValue(T::class.java)
         if (res is HasId) {
@@ -28,4 +30,8 @@ internal inline fun <reified T : Any> mapListOfValues(dataSnapshot: DataSnapshot
 
 internal inline fun <reified T : Any> DataSnapshot?.mapList(): List<T> {
     return mapListOfValues(this)
+}
+
+internal inline fun <reified T : Any> Iterable<DataSnapshot>.mapList(): List<T> {
+    return mapNotNull { mapSingleValue<T>(it) }
 }

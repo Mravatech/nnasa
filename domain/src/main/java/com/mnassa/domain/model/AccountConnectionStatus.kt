@@ -8,7 +8,7 @@ interface AccountConnectionStatus {
 }
 
 enum class ConnectionStatus {
-    CONNECTED, REQUESTED, SENT, DISCONNECTED, RECOMMENDED
+    CONNECTED, REQUESTED, SENT, DISCONNECTED, RECOMMENDED, VALUE_CENTER
 }
 
 enum class ConnectionAction {

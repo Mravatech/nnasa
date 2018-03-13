@@ -5,10 +5,13 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.login.entercode.EnterCodeController
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_splash.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -37,8 +40,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
             viewModel.isLoggedIn() -> MainController.newInstance()
             else -> EnterPhoneController.newInstance()
         }
-
-        router.replaceTopController(RouterTransaction.with(nextScreen))
+        open(nextScreen)
     }
 
     companion object {

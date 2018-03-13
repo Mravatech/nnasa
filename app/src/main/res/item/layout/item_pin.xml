@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PinItemContainer"
+    tools:layout_width="wrap_content">
+
+    <View
+        android:id="@+id/vPinBackground"
+        style="@style/PinItemBackground" />
+
+    <EditText
+        android:id="@+id/etPinItem"
+        style="@style/PinItem"
+        tools:text="*"/>
+</FrameLayout>

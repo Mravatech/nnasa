@@ -3,7 +3,7 @@ package com.mnassa.data.repository
 /**
  * Created by Peter on 2/28/2018.
  */
-object DatabaseContract {
+internal object DatabaseContract {
     const val TABLE_ACCOUNTS = "accounts"
     const val TABLE_ACCOUNTS_COL_NUM_COMMUNITIES = "numberOfCommunities"
     const val TABLE_ACCOUNTS_COL_NUM_CONNECTIONS = "numberOfConnections"
@@ -21,11 +21,24 @@ object DatabaseContract {
     //
     const val TABLE_CLIENT_DATA = "clientData"
     const val TABLE_CLIENT_DATA_COL_UI_VERSION = "mobileUiVersion"
+    const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
     //
     const val TABLE_CONNECTIONS = "connections"
+
     const val TABLE_CONNECTIONS_COL_RECOMMENDED = "recommended"
+    const val TABLE_CONNECTIONS_COL_REQUESTED = "requested"
+    const val TABLE_CONNECTIONS_COL_CONNECTED = "connected"
+    const val TABLE_CONNECTIONS_COL_SENT = "sent"
+    const val TABLE_CONNECTIONS_COL_DISCONNECTED = "disconnected"
+    const val TABLE_CONNECTIONS_COL_MUTED = "muted"
+    const val TABLE_CONNECTIONS_COL_STATUSES = "statuses"
+    //
+    const val TABLE_CONNECTIONS_RECOMMENDED = "recommendedConnections"
+    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_PHONE = "byPhone"
+    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_GROUPS = "byGroups"
+    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"
 
 }

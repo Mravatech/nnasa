@@ -1,51 +1,45 @@
 package com.mnassa.screen.login.selectaccount
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.mainAbility
+import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_select_account.view.*
 
 /**
  * Created by Peter on 2/28/2018.
  */
-//TODO: write and use base RV adapter
-class AccountsRecyclerViewAdapter(private val data: MutableList<ShortAccountModel>) : RecyclerView.Adapter<AccountsRecyclerViewAdapter.AccountViewHolder>() {
+class AccountsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountModel>() {
     var onItemClickListener: (ShortAccountModel) -> Unit = {}
 
-    fun setData(data: List<ShortAccountModel>) {
-        this.data.clear()
-        this.data.addAll(data)
-        notifyDataSetChanged()
-        //TODO: Diff utils???
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_select_account, parent, false)
         val holder = AccountViewHolder(view)
-        view.tag = holder
+        view.rlRoot.tag = holder
 
-        view.setOnClickListener {
+        view.rlRoot.setOnClickListener {
             val adapterPosition = (it.tag as AccountViewHolder).adapterPosition
             if (adapterPosition >= 0) {
-                onItemClickListener(data[adapterPosition])
+                onItemClickListener(getDataItemByAdapterPosition(adapterPosition))
             }
         }
         return holder
     }
 
-    override fun getItemCount(): Int = data.size
-
-    override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
-        holder.bind(data[position])
-    }
-
-    class AccountViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(data: ShortAccountModel) {
+    class AccountViewHolder(itemView: View) : BaseVH<ShortAccountModel>(itemView) {
+        override fun bind(item: ShortAccountModel) {
             with(itemView) {
-                tvName.text = data.userName
+                ivAvatar.avatarRound(item.avatar)
+                tvUserName.text = item.formattedName
+                tvPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
+                tvPosition.goneIfEmpty()
             }
         }
     }

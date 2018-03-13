@@ -7,7 +7,6 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -37,8 +36,11 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
                 verificationResponse = it
                 when {
                     it.isVerified -> signIn(it)
-                    else -> openScreenChannel.send(
-                            EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
+                    else -> {
+                        hideProgress()
+                        openScreenChannel.send(
+                                EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
+                    }
                 }
             }
         }

@@ -8,8 +8,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 2/27/2018.
  */
 interface SelectAccountViewModel : MnassaViewModel {
-    val showMessageChannel: BroadcastChannel<String>
     val openScreenChannel: BroadcastChannel<OpenScreenCommand>
+    val accountsListChannel: BroadcastChannel<List<ShortAccountModel>>
 
     fun selectAccount(account: ShortAccountModel)
     sealed class OpenScreenCommand {

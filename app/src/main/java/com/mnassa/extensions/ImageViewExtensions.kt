@@ -3,9 +3,9 @@ package com.mnassa.extensions
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.widget.ImageView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mnassa.R
+import com.mnassa.module.GlideApp
 
 
 /**
@@ -28,12 +28,24 @@ fun ImageView.enable() {
     imageAlpha = FULL_IMAGE_ALPHA
 }
 
-fun ImageView.avatar(avatarUrl: String?) {
+fun ImageView.avatarRound(avatarUrl: String?) {
     //todo: add placeholder, error
 
-    val requestOptions = RequestOptions().placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher)
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main).apply(RequestOptions.circleCropTransform())
 
-    Glide.with(this)
+    GlideApp.with(this)
+            .load(avatarUrl)
+            .apply(requestOptions)
+            .apply(RequestOptions.circleCropTransform())
+            .into(this)
+}
+
+fun ImageView.avatarSquare(avatarUrl: String?) {
+    //todo: add placeholder, error
+
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+
+    GlideApp.with(this)
             .load(avatarUrl)
             .apply(requestOptions)
             .apply(RequestOptions.centerCropTransform())

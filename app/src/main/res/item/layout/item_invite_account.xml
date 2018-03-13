@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/backgroundHighlight"
+    android:layout_marginBottom="1dp"
     android:clickable="true"
     android:focusable="true"
     tools:background="#e9e9e9">
@@ -12,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
-        android:paddingBottom="@dimen/vertical_margin_login"
-        android:paddingEnd="@dimen/horizontal_margin_login"
-        android:paddingStart="@dimen/horizontal_margin_login"
-        android:paddingTop="@dimen/vertical_margin_login">
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
 
         <ImageView
             android:id="@+id/ivAvatar"
@@ -32,8 +33,8 @@
             android:layout_toStartOf="@id/cbInvite"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingEnd="@dimen/horizontal_margin_login"
-            android:paddingStart="@dimen/horizontal_margin_login">
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
 
             <TextView
                 android:id="@+id/tvUserName"
@@ -49,7 +50,7 @@
                 style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_login"
+                android:layout_marginTop="@dimen/spacing_vertical"
                 android:ellipsize="end"
                 android:maxLines="1"
                 tools:text="Programmer in ISDDesign" />

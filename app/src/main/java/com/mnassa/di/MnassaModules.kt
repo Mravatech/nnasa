@@ -42,6 +42,7 @@ import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.data.converter.ConnectionsConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
@@ -68,6 +69,14 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
 import com.mnassa.screen.connections.ConnectionsViewModelImpl
+import com.mnassa.screen.connections.archived.ArchivedConnectionViewModel
+import com.mnassa.screen.connections.archived.ArchivedConnectionViewModelImpl
+import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
+import com.mnassa.screen.connections.newrequests.NewRequestsViewModelImpl
+import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModel
+import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModelImpl
+import com.mnassa.screen.connections.sent.SentConnectionsViewModel
+import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
@@ -106,7 +115,7 @@ private val viewModelsModule = Kodein.Module {
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
-    bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
+    bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance(), instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
@@ -115,9 +124,13 @@ private val viewModelsModule = Kodein.Module {
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
     bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
-    bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl() }
+    bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
+    bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
+    bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
+    bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
+    bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -126,6 +139,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(UserAccountConverter::class.java)
         converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
+        converter.registerConverter(ConnectionsConverter::class.java)
         converter
     }
 }
@@ -142,7 +156,7 @@ private val repositoryModule = Kodein.Module {
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
@@ -156,14 +170,14 @@ private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
-    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
+    bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
 }
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }

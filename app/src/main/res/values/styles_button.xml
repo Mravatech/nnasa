@@ -4,11 +4,9 @@
     <style name="MnassaButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@drawable/button_text_color</item>
         <item name="android:background">@drawable/btn_main</item>
     </style>
 
@@ -25,10 +23,10 @@
         <item name="android:background">?selectableItemBackground</item>
     </style>
 
-    <dimen name="btn_corner_radius">25dp</dimen>
+    <dimen name="btn_corner_radius">2dp</dimen>
     <color name="control_highlight">#1f000000</color>
     <color name="btn_pressed">@color/cerulean</color>
     <color name="btn_active">@color/colorAccent</color>
-    <color name="btn_disabled">#830076ff</color>
+    <color name="btn_disabled">@color/coolGrayAlpha</color>
 
 </resources>

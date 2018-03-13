@@ -3,6 +3,11 @@
     <!--<string name="_pushSetting_casdfv_ENG">null</string>-->
     <!--<string name="_pushSetting_casdfv_AR">null</string>-->
     <!--<string name="_pushSetting_casdfv_INFO">casdfv</string>-->
+    
+    <string name="_android_country_saudi_arabia_INFO">Saudi Arabia</string>
+    <string name="_android_country_ukraine_INFO">Ukraine</string>
+    <string name="_android_country_united_states_INFO">United States</string>
+    <string name="_android_country_canada_INFO">Canada</string>
 
     <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
     <string name="_android_enter_validation_code_header_INFO">Validation Code</string>
@@ -12,5 +17,14 @@
     <string name="_android_account_type_personal_INFO">Personal</string>
     <string name="_android_account_type_organization_INFO">Organization</string>
     <string name="_android_invites_skip_step_INFO">Skip this step</string>
+    <string name="_android_loading_INFO">Loading …</string>
+    <string name="_android_connections_recommended_show_all_INFO">Show all</string>
+    <string name="_android_connections_new_requests_more_INFO">%d peoples more</string>
+    <string name="_android_connections_send_message_INFO">Send message</string>
+    <string name="_android_connections_view_profile_INFO">View profile</string>
+    <string name="_android_connections_disconnect_INFO">Disconnect</string>
+    <string name="_android_connections_rejected_description_INFO">New Requests can be sent again in %d days after they were rejected</string>
+    <string name="_android_connections_rejected_days_left_INFO">%d Days left</string>
+
 
 </resources>

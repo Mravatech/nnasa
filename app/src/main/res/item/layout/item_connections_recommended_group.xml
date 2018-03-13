@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/spacing_vertical"
+    android:paddingEnd="@dimen/spacing_horizontal"
+    android:paddingStart="@dimen/spacing_horizontal"
+    android:paddingTop="@dimen/spacing_vertical">
+
+    <TextView
+        android:id="@+id/tvGroupName"
+        style="@style/MnassaText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Connections group" />
+
+</RelativeLayout>
