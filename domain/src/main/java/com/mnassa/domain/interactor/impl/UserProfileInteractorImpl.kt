@@ -2,7 +2,7 @@ package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 
@@ -22,8 +22,8 @@ class UserProfileInteractorImpl(
                                                secondName: String,
                                                userName: String,
                                                city: String,
-                                               offers: List<TagModelTemp>,
-                                               interests: List<TagModelTemp>
+                                               offers: List<TagModel>,
+                                               interests: List<TagModel>
     ): ShortAccountModel {
         val offersWithIds = getFilteredTags(offers)
         val interestsWithIds = getFilteredTags(interests)
@@ -38,7 +38,7 @@ class UserProfileInteractorImpl(
         return account
     }
 
-    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>): ShortAccountModel {
+    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<TagModel>, interests: List<TagModel>): ShortAccountModel {
         val offersWithIds = getFilteredTags(offers)
         val interestsWithIds = getFilteredTags(interests)
         val account = userRepository.createOrganizationAccount(
@@ -64,12 +64,12 @@ class UserProfileInteractorImpl(
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
     override suspend fun getAccountId(): String? = userRepository.getAccountId()
 
-    private suspend fun getFilteredTags(tagsWithCustom: List<TagModelTemp>): List<String> {
+    private suspend fun getFilteredTags(tagsWithCustom: List<TagModel>): List<String> {
         val customTags = tagsWithCustom.filter { it.id == null }.map { it.name }
-        val existsTags = tagsWithCustom.filter { it.id != null }.map { it.id!! }
+        val existsTags = tagsWithCustom.mapNotNull { it.id }
         val tags = arrayListOf<String>()
         if (!customTags.isEmpty()) {
-            val newTags = tagRepository.createCustomTagIds(customTags)//todo handle error
+            val newTags = tagRepository.createCustomTagIds(customTags)
             tags.addAll(newTags)
         }
         tags.addAll(existsTags)
