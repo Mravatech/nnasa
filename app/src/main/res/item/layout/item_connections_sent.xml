@@ -21,14 +21,13 @@
             android:id="@+id/ivAvatar"
             android:layout_width="@dimen/avatar_list_item"
             android:layout_height="@dimen/avatar_list_item"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             tools:src="@mipmap/ic_launcher" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/ivAvatar"
-            android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/ivAvatar"
             android:layout_toStartOf="@id/btnAccept"
             android:gravity="center_vertical"
@@ -43,6 +42,11 @@
                 android:id="@+id/tvPosition"
                 style="@style/Connections.UserPosition"
                 tools:text="at some company" />
+
+            <TextView
+                android:id="@+id/tvEventName"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
         </LinearLayout>
 
         <android.support.v7.widget.AppCompatImageView
@@ -52,10 +56,10 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
             android:tint="@color/coolGray"
-            android:background="?selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_close_white_24dp" />
 
     </RelativeLayout>

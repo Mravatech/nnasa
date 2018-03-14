@@ -24,6 +24,8 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
 
         with(view) {
             toolbar.title = fromDictionary(R.string.new_requests_title)
+            tvEmptyTitle.text = fromDictionary(R.string.new_requests_empty_title)
+            tvEmptyDescription.text = fromDictionary(R.string.new_requests_empty_description)
 
             rvNewConnectionRequests.layoutManager = LinearLayoutManager(context)
             rvNewConnectionRequests.adapter = adapter
@@ -32,8 +34,10 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
             adapter.onDeclineClickListener = { viewModel.decline(it) }
         }
 
+        adapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.newConnectionRequestsChannel.consumeEach {
+                adapter.isLoadingEnabled = false
                 adapter.set(it)
                 view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
                 view.rvNewConnectionRequests.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE

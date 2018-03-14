@@ -42,7 +42,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPageSelected {
     override val layoutId: Int = R.layout.controller_connections
     override val viewModel: ConnectionsViewModel by instance()
-    private val allConnectionsAdapter = AllConnectionsRecyclerViewAdapter()
+    private val allConnectionsAdapter = AllConnectionsRecyclerViewAdapter(true)
     private val recommendedConnectionsAdapter = RecommendedConnectionsRecyclerViewAdapter()
     private val newConnectionRequestsAdapter = NewConnectionRequestsRecyclerViewAdapter()
     private var isHeaderBounded = false
@@ -134,8 +134,10 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             rvNewConnectionRequests.layoutManager = BlockedScrollingLayoutManager(context, RecyclerView.VERTICAL, false)
         }
 
+        allConnectionsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.allConnectionsChannel.consumeEach {
+                allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
                 header.tvAllConnections.text = formatTextWithCounter(R.string.tab_connections_all, it.size)
 

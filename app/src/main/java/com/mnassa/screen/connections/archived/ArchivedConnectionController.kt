@@ -23,6 +23,8 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
 
         with(view) {
             toolbar.title = fromDictionary(R.string.archived_connections_title)
+            tvEmptyTitle.text = fromDictionary(R.string.archived_connections_empty_title)
+            tvEmptyDescription.text = fromDictionary(R.string.archived_connections_empty_description)
 
             adapter.onConnectClickListener = { viewModel.connect(it) }
 
@@ -36,8 +38,9 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
 
             viewModel.declinedConnectionsChannel.consumeEach {
                 adapter.isLoadingEnabled = false
-                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
                 adapter.set(it)
+                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+                view.rvArchivedConnection.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
             }
         }
 

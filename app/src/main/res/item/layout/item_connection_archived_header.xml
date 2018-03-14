@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/spacing_vertical"
-    android:paddingEnd="@dimen/spacing_horizontal"
-    android:paddingStart="@dimen/spacing_horizontal"
-    android:paddingTop="@dimen/spacing_vertical">
+    android:background="@color/backgroundHighlight">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/ivDescriptionIcon"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginBottom="@dimen/spacing_vertical"
         android:layout_marginEnd="@dimen/spacing_horizontal"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        app:srcCompat="@drawable/ic_rejected_connections" />
 
     <TextView
         android:id="@+id/tvDescription"
@@ -22,7 +23,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
         android:layout_toEndOf="@id/ivDescriptionIcon"
         tools:text="New requests can be sent ...." />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:layout_alignParentBottom="true"
+        android:background="@color/divider" />
 
 </RelativeLayout>

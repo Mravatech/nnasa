@@ -20,6 +20,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
+import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.notifications.NotificationsController
@@ -130,6 +131,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
+            R.id.nav_all_connections -> open(AllConnectionsController.newInstance())
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())

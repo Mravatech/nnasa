@@ -27,6 +27,10 @@
     <item android:title="Communicate">
         <menu>
             <item
+                android:id="@+id/nav_all_connections"
+                android:icon="@drawable/ic_menu_share"
+                android:title="ALL CONNECTIONS" />
+            <item
                 android:id="@+id/nav_build_network"
                 android:icon="@drawable/ic_menu_share"
                 android:title="BUILD NETWORK" />

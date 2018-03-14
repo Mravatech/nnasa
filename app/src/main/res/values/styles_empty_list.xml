@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="EmptyList" />
+
+    <style name="EmptyList.Icon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <!--<item name="android:tint">@color/coolGray</item>-->
+    </style>
+
+    <style name="EmptyList.Title" parent="@style/MnassaHeader2">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">@dimen/spacing_vertical</item>
+    </style>
+
+    <style name="EmptyList.Description" parent="EmptyList.Title">
+        <item name="android:textSize">12.8sp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">@dimen/spacing_vertical</item>
+    </style>
+</resources>

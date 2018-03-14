@@ -71,12 +71,15 @@
 
     <!-- new requests -->
     <string name="new_requests_title">_connections_header_new_requests</string>
+    <string name="new_requests_empty_title">_connectionsList_empty_newRequests</string>
+    <string name="new_requests_empty_description">_android_connections_new_requests_empty_description</string>
 
     <!-- recommended -->
     <string name="recommended_connections_title">_connections_header_recommended_conns</string>
     <string name="recommended_connections_by_phone">recommendedByPhone</string>
     <string name="recommended_connections_by_event">recommendedByEvent</string>
     <string name="recommended_connections_by_refer">recommendedByRefer</string>
+    <string name="recommended_connections_btn_connect">connection_button_connect</string>
 
     <!-- sent -->
     <string name="sent_connection_requests_title">_connections_group_header_sent</string>
@@ -86,6 +89,8 @@
     <string name="archived_connections_connect_btn">connection_button_connect</string>
     <string name="archived_connections_description">_android_connections_rejected_description</string>
     <string name="archived_connections_days_left">_android_connections_rejected_days_left</string>
+    <string name="archived_connections_empty_title">_connectionsList_empty_rejects</string>
+    <string name="archived_connections_empty_description">_android_connections_archived_empty_description</string>
 
     <!-- ====================================== REG PERSON =================================== -->
     <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
