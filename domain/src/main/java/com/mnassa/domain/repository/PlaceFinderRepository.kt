@@ -9,5 +9,5 @@ import com.mnassa.domain.model.GeoPlaceModel
  */
 
 interface PlaceFinderRepository {
-    fun getReqieredPlaces(constraint: CharSequence): List<GeoPlaceModel>?
+    fun getReqieredPlaces(constraint: CharSequence): List<GeoPlaceModel>
 }

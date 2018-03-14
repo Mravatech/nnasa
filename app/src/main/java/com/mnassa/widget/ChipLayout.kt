@@ -1,7 +1,6 @@
 package com.mnassa.widget
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.LongSparseArray
 import android.view.KeyEvent
@@ -12,8 +11,8 @@ import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import androidx.util.isEmpty
 import com.mnassa.R
-import com.mnassa.domain.model.TagModelTemp
-import com.mnassa.domain.model.impl.TagModelTempImpl
+import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
@@ -32,7 +31,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private lateinit var listPopupWindow: ListPopupWindow
     private lateinit var adapter: ChipsAdapter
-    private val chips = LongSparseArray<TagModelTemp>()
+    private val chips = LongSparseArray<TagModel>()
     lateinit var chipSearch: ChipsAdapter.ChipSearch
 
     init {
@@ -60,7 +59,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         }
     }
 
-    override fun onChipClick(tagModel: TagModelTemp) {
+    override fun onChipClick(tagModel: TagModel) {
         addChip(tagModel)
     }
 
@@ -74,49 +73,49 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.dismiss()
     }
 
-    fun getTags(): List<TagModelTemp> {
+
+    fun getTags(): List<TagModel> {
         if (chips.isEmpty()) return mutableListOf()
-        val tags = ArrayList<TagModelTemp>(chips.size())
+        val tags = ArrayList<TagModel>(chips.size())
         for (i in 0 until chips.size())
             tags.add(chips.valueAt(i))
         return tags
     }
 
-    private fun addChip(value: TagModelTemp?) {
+    private fun addChip(value: TagModel?) {
         val tagModelTemp = if (value != null) {
             value
         } else {
             if (etChipInput.text.toString().isBlank()) {
-                etChipInput.setText("")
+                etChipInput.setText(CLEAN_EDIT_TEXT)
                 return
             }
-            TagModelTempImpl(null, etChipInput.text.toString(), null)
+            TagModelImpl(null, etChipInput.text.toString(), null)
         }
         val key = System.currentTimeMillis()
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
         val c = createChipView(tagModelTemp, key)
         flChipContainer.addView(c, position)
         chips.append(key, tagModelTemp)
-        etChipInput.setText("")
+        etChipInput.setText(CLEAN_EDIT_TEXT)
     }
 
-    private fun createChipView(tagModelTemp: TagModelTemp, position: Long): ChipView {
-        val chipView = ChipView(context, tagModelTemp, position, this)
+    private fun createChipView(tagModel: TagModel, position: Long): ChipView {
+        val chipView = ChipView(context, tagModel, position, this)
         val params = FlowLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        params.rightMargin = 10
         chipView.layoutParams = params
         return chipView
     }
 
     private fun removeLastChip() {
-        if (etChipInput.text.toString().isEmpty() and
+        if (etChipInput.text.toString().isEmpty() &&
                 (flChipContainer.childCount > EDIT_TEXT_RESERVE)) {
             getLastChipView().removeViewFromParent()
         }
     }
 
     private fun getLastChipView(): ChipView {
-        return flChipContainer.getChildAt(flChipContainer.childCount - 2) as ChipView
+        return flChipContainer.getChildAt(flChipContainer.childCount - PRE_LAST_VIEW_IN_FLOW_LAYOUT) as ChipView
     }
 
     private fun showPopup() {
@@ -131,17 +130,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
             listPopupWindow.promptPosition = ListPopupWindow.POSITION_PROMPT_BELOW
             etChipInput.addTextChangedListener(SimpleTextWatcher {
-                if (this::listPopupWindow.isInitialized) {
-                    if (!TextUtils.isEmpty(it)) {
-                        listPopupWindow.let {
-                            if (!it.isShowing) {
-                                listPopupWindow.show()
-                            }
-                        }
-                        adapter.search(it)
-                    } else {
-                        listPopupWindow.dismiss()
+                if (it.isNotEmpty() && it.length >= MIN_SYMBOLS_TO_START_SEARCH) {
+                    if (!listPopupWindow.isShowing) {
+                        listPopupWindow.show()
                     }
+                    adapter.search(it)
+                } else {
+                    listPopupWindow.dismiss()
                 }
             })
         }
@@ -149,6 +144,9 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     companion object {
         private const val EDIT_TEXT_RESERVE = 1
+        private const val PRE_LAST_VIEW_IN_FLOW_LAYOUT = 2
+        private const val MIN_SYMBOLS_TO_START_SEARCH = 3
+        private const val CLEAN_EDIT_TEXT = ""
         private const val MIN_SYMBOLS_TO_ADD_TAGS = 3
     }
 

@@ -3,7 +3,7 @@ package com.mnassa.screen.registration
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -18,7 +18,7 @@ class RegistrationViewModelImpl(
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>) {
+    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
         handleException {
             withProgressSuspend {
                 val shortAccountModel = userProfileInteractor.createPersonalAccount(
@@ -34,7 +34,7 @@ class RegistrationViewModelImpl(
         }
     }
 
-    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModelTemp>, interests: List<TagModelTemp>) {
+    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModel>, interests: List<TagModel>) {
         handleException {
             withProgressSuspend {
                 userProfileInteractor.createOrganizationAccount(
@@ -49,11 +49,11 @@ class RegistrationViewModelImpl(
         }
     }
 
-    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel>? {
+    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
         return placeFinderInteractor.getReqieredPlaces(constraint)
     }
 
-    override suspend fun search(search: String): List<TagModelTemp> {
+    override suspend fun search(search: String): List<TagModel> {
         return tagInteractor.search(search)
     }
 

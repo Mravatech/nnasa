@@ -10,7 +10,7 @@ import com.mnassa.domain.repository.PlaceFinderRepository
  * Date: 3/12/2018
  */
 class PlaceFinderInteractorImpl(private val placeFinderRepository: PlaceFinderRepository) : PlaceFinderInteractor {
-    override fun getReqieredPlaces(constraint: CharSequence): List<GeoPlaceModel>? {
+    override fun getReqieredPlaces(constraint: CharSequence): List<GeoPlaceModel> {
         return placeFinderRepository.getReqieredPlaces(constraint)
     }
 }
