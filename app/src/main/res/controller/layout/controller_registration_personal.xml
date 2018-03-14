@@ -51,13 +51,11 @@
 
         <com.mnassa.widget.ChipLayout
             android:id="@+id/chipPersonOffers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            style="@style/Registration.ChipLayout"/>
 
         <com.mnassa.widget.ChipLayout
+            android:layout_marginTop="@dimen/chip_layout_interests_margin_top"
             android:id="@+id/chipPersonInterests"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
+            style="@style/Registration.ChipLayout"/>
     </LinearLayout>
 </FrameLayout>

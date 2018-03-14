@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/ChipItemView">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/chip_layout_margin"
+    android:background="@color/backgroundTransparent"
+    card_view:cardCornerRadius="@dimen/chip_layout_radius"
+    card_view:cardElevation="@dimen/chip_layout_elevation">
+    <LinearLayout
+        style="@style/ChipItemView"
+        android:background="@color/white">
 
-    <TextView
-        android:id="@+id/tvChipText"
-        style="@style/ChipTextView" />
+        <TextView
+            android:id="@+id/tvChipText"
+            style="@style/ChipTextView" />
 
-    <ImageButton
-        android:id="@+id/ibRemove"
-        style="@style/ChipRemoveImageButton"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/ic_delete_tag" />
-</LinearLayout>
+        <ImageButton
+            android:id="@+id/ibRemove"
+            style="@style/ChipRemoveImageButton"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_delete_tag" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

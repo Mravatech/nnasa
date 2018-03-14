@@ -68,7 +68,7 @@ class UserProfileInteractorImpl(
         val customTags = tagsWithCustom.filter { it.id == null }.map { it.name }
         val existsTags = tagsWithCustom.mapNotNull { it.id }
         val tags = arrayListOf<String>()
-        if (!customTags.isEmpty()) {
+        if (customTags.isNotEmpty()) {
             val newTags = tagRepository.createCustomTagIds(customTags)
             tags.addAll(newTags)
         }

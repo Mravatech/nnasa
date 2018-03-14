@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/chip_layout_margin_horizontal"
     android:layout_marginStart="@dimen/chip_layout_margin_horizontal"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvChipHeader"
-        style="@style/ChipTextHeader" />
+        style="@style/ChipTextHeader"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="@dimen/tv_header_text_size"
+        android:textStyle="normal" />
 
     <com.mnassa.widget.FlowLayout
         android:id="@+id/flChipContainer"
-        style="@style/ChipTextHeader">
+        style="@style/ChipFlowLayout">
+
         <EditText
             android:id="@+id/etChipInput"
             style="@style/ChipEditText"
@@ -21,6 +25,6 @@
             android:hint="" />
     </com.mnassa.widget.FlowLayout>
 
-    <View style="@style/ChipDivider" />
-
+    <View style="@style/ChipDivider"
+        android:id="@+id/vChipBottomDivider"/>
 </LinearLayout>

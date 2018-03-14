@@ -25,10 +25,10 @@ class TagConverter(languageProviderLazy: () -> LanguageProvider) : ConvertersCon
     }
 
     private fun convertTagEn(input: TagDbEntity): TagModelImpl {
-        return TagModelImpl(input.id, input.en, input.status)
+        return TagModelImpl(input.status, input.en, input.id)
     }
 
     private fun convertTagAr(input: TagDbEntity): TagModelImpl {
-        return TagModelImpl(input.id, input.ar, input.status)
+        return TagModelImpl(input.status, input.ar, input.id)
     }
 }

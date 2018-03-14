@@ -14,9 +14,12 @@
     </style>
 
     <style name="ChipTextHeader" parent="ChipCommon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="ChipFlowLayout" parent="ChipCommon">
+        <item name="android:layout_width">match_parent</item>
     </style>
 
     <style name="ChipDivider">
@@ -26,7 +29,6 @@
     </style>
 
     <style name="ChipItemView" parent="ChipCommon">
-        <item name="android:background">@android:drawable/dialog_holo_light_frame</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -45,5 +47,8 @@
     <dimen name="divider_height">1dp</dimen>
     <dimen name="et_chip_min_width">100dp</dimen>
     <dimen name="et_chip_inner_item_padding">8dp</dimen>
+    <dimen name="chip_inner_item_padding">3dp</dimen>
+    <dimen name="chip_inner_item_padding_vertical">1dp</dimen>
+    <dimen name="tv_header_text_size">16sp</dimen>
 
 </resources>

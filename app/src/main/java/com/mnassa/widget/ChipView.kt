@@ -2,8 +2,8 @@ package com.mnassa.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.support.v7.widget.CardView
 import android.view.View
-import android.widget.LinearLayout
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import kotlinx.android.synthetic.main.view_chip.view.*
@@ -16,11 +16,11 @@ import kotlinx.android.synthetic.main.view_chip.view.*
 
 @SuppressLint("ViewConstructor")
 class ChipView(
-        context: Context?,
+        context: Context,
         tagModel: TagModel,
         private val key: Long,
         private val onChipListener: OnChipListener
-) : LinearLayout(context) {
+) : CardView(context) {
 
     init {
         View.inflate(context, R.layout.view_chip, this)

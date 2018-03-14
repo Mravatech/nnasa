@@ -10,12 +10,19 @@ import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import androidx.util.isEmpty
+import androidx.util.size
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
+import android.support.annotation.ColorRes
+import android.support.annotation.FloatRange
+import android.support.v4.content.ContextCompat
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,10 +60,25 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         etChipInput.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 showPopup()
+                focusOnView()
             } else {
                 listPopupWindow.dismiss()
+                focusLeftView()
             }
         }
+        flChipContainer.setOnClickListener {
+            etChipInput.requestFocus()
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(etChipInput, InputMethodManager.SHOW_IMPLICIT)
+        }
+        val observer = tvChipHeader.viewTreeObserver
+        observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                tvChipHeader.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
+                animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, INIT_DURATION, INIT_DURATION, ANIMATION_TEXT_VIEW_SCALE_BIG)
+            }
+        })
     }
 
     override fun onChipClick(tagModel: TagModel) {
@@ -66,6 +88,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     override fun onViewRemoved(key: Long) {
         chips.remove(key)
         Timber.i(chips.toString())
+        focusLeftView()
     }
 
     override fun onEmptySearchResult() {
@@ -80,6 +103,20 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         for (i in 0 until chips.size())
             tags.add(chips.valueAt(i))
         return tags
+    }
+
+    private fun focusLeftView(){
+        if (etChipInput.text.toString().isEmpty() && chips.size == EDIT_TEXT_EMPTY_SIZE) {
+            val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
+            animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
+        }
+        colorViews(tvChipHeader, vChipBottomDivider, R.color.chip_default_edit_text_hint_color)
+    }
+
+    private fun focusOnView(){
+        val transition = -etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical) * MARGIN_COUNT
+        animateViews(ANIMATION_EDIT_TEXT_SCALE_SHOW, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_DURATION, ANIMATION_TEXT_VIEW_SCALE_SMALL)
+        colorViews(tvChipHeader, vChipBottomDivider, R.color.colorAccent)
     }
 
     private fun addChip(value: TagModel?) {
@@ -98,6 +135,26 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         flChipContainer.addView(c, position)
         chips.append(key, tagModelTemp)
         etChipInput.setText(CLEAN_EDIT_TEXT)
+    }
+
+
+    private fun animateViews(@FloatRange(from = 0.0, to = 1.0) scale: Float,
+                             transition: Float,
+                             timeTV: Long,
+                             timeET: Long,
+                             @FloatRange(from = 0.0, to = 1.0) scaleTV: Float) {
+        etChipInput.animate().setDuration(timeET).scaleX(scale)
+        etChipInput.animate().setDuration(timeET).scaleY(scale)
+        val transit = tvChipHeader.width / 2 * scaleTV - tvChipHeader.width / 2
+        tvChipHeader.animate().setDuration(TV_HEADER_TRANSITION_X_DURATION).translationX(transit)
+        tvChipHeader.animate().setDuration(timeTV).translationY(transition)
+        tvChipHeader.animate().setDuration(timeTV).scaleX(scaleTV)
+        tvChipHeader.animate().setDuration(timeTV).scaleY(scaleTV)
+    }
+
+    private fun colorViews(tvText: TextView, vBottomDivider: View, @ColorRes color: Int) {
+        tvText.setTextColor(ContextCompat.getColor(context, color))
+        vBottomDivider.setBackgroundColor(ContextCompat.getColor(context, color))
     }
 
     private fun createChipView(tagModel: TagModel, position: Long): ChipView {
@@ -144,10 +201,21 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     companion object {
         private const val EDIT_TEXT_RESERVE = 1
+        private const val EDIT_TEXT_EMPTY_SIZE = 0
         private const val PRE_LAST_VIEW_IN_FLOW_LAYOUT = 2
         private const val MIN_SYMBOLS_TO_START_SEARCH = 3
         private const val CLEAN_EDIT_TEXT = ""
         private const val MIN_SYMBOLS_TO_ADD_TAGS = 3
+        private const val MARGIN_COUNT = 3
+        private const val ANIMATION_DURATION = 200L
+        private const val ANIMATION_EDIT_TEXT_SCALE_SHOW = 1f
+        private const val ANIMATION_EDIT_TEXT_SCALE_HIDE = 0f
+        private const val ANIMATION_TEXT_VIEW_SCALE_BIG = 1f
+        private const val ANIMATION_TEXT_VIEW_SCALE_SMALL = 0.75f
+        private const val EDIT_TEXT_SHOW_DURATION = 300L
+        private const val EDIT_TEXT_SHOW_HIDE = 100L
+        private const val TV_HEADER_TRANSITION_X_DURATION = 50L
+        private const val INIT_DURATION = 0L
     }
 
 }
