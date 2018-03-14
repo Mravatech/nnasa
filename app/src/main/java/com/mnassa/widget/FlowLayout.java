@@ -26,7 +26,7 @@ import java.util.List;
 
 public class FlowLayout extends ViewGroup {
 
-    private int mGravity = (isIcs() ? Gravity.START : Gravity.LEFT) | Gravity.TOP;
+    private int gravity = (isIcs() ? Gravity.START : Gravity.LEFT) | Gravity.TOP;
 
     private final List<List<View>> mLines = new ArrayList<List<View>>();
     private final List<Integer> mLineHeights = new ArrayList<Integer>();
@@ -173,7 +173,7 @@ public class FlowLayout extends ViewGroup {
         List<View> lineViews = new ArrayList<View>();
 
         float horizontalGravityFactor;
-        switch ((mGravity & Gravity.HORIZONTAL_GRAVITY_MASK)) {
+        switch ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK)) {
             case Gravity.LEFT:
             default:
                 horizontalGravityFactor = 0;
@@ -223,7 +223,7 @@ public class FlowLayout extends ViewGroup {
         linesSum += lineHeight;
 
         int verticalGravityMargin = 0;
-        switch ((mGravity & Gravity.VERTICAL_GRAVITY_MASK)	) {
+        switch ((gravity & Gravity.VERTICAL_GRAVITY_MASK)	) {
             case Gravity.TOP:
             default:
                 break;
@@ -337,7 +337,7 @@ public class FlowLayout extends ViewGroup {
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setGravity(int gravity) {
-        if(mGravity != gravity) {
+        if(this.gravity != gravity) {
             if((gravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK) == 0) {
                 gravity |= isIcs() ? Gravity.START : Gravity.LEFT;
             }
@@ -346,13 +346,13 @@ public class FlowLayout extends ViewGroup {
                 gravity |= Gravity.TOP;
             }
 
-            mGravity = gravity;
+            this.gravity = gravity;
             requestLayout();
         }
     }
 
     public int getGravity() {
-        return mGravity;
+        return gravity;
     }
 
     /**

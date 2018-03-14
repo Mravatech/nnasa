@@ -32,7 +32,7 @@ import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
-import com.mnassa.data.converter.TempTagConverter
+import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
@@ -41,8 +41,6 @@ import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.repository.*
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.google.PlayServiceHelper
-import com.mnassa.domain.interactor.*
-import com.mnassa.domain.interactor.impl.*
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -130,11 +128,10 @@ private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
         converter.registerConverter(UserAccountConverter::class.java)
-        converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
-        converter.registerConverter(TempTagConverter({ instance() }))
+        converter.registerConverter(TagConverter({ instance() }))
         converter
     }
 }

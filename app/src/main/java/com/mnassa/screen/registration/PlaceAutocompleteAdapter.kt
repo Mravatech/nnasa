@@ -22,10 +22,10 @@ class PlaceAutocompleteAdapter(context: Context,
         android.R.layout.simple_expandable_list_item_2,
         android.R.id.text1), Filterable {
 
-    private var resultList: ArrayList<GeoPlaceModel>? = null
+    private var resultList = ArrayList<GeoPlaceModel>()
 
     override fun getCount(): Int {
-        return resultList?.size ?: 0
+        return resultList.size
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -41,7 +41,7 @@ class PlaceAutocompleteAdapter(context: Context,
     }
 
     override fun getItem(position: Int): GeoPlaceModel? {
-        return resultList?.getOrNull(position)
+        return resultList[position]
     }
 
     override fun getFilter(): Filter {
@@ -49,7 +49,7 @@ class PlaceAutocompleteAdapter(context: Context,
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val results = FilterResults()
                 val c = constraint ?: return results
-                val autocompletePredictions = placeAutoCompleteListener.getAutocomplete(c) ?: return results
+                val autocompletePredictions = placeAutoCompleteListener.getAutocomplete(c)
                 results.values = autocompletePredictions
                 results.count = autocompletePredictions.size
                 return results
@@ -57,7 +57,7 @@ class PlaceAutocompleteAdapter(context: Context,
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 results?.takeIf { it.count > 0 }?.apply {
-                    resultList = results.values as ArrayList<GeoPlaceModel>?
+                    resultList = results.values as ArrayList<GeoPlaceModel>
                     notifyDataSetChanged()
                 } ?: run {
                     notifyDataSetInvalidated()
@@ -74,7 +74,7 @@ class PlaceAutocompleteAdapter(context: Context,
     }
 
     interface PlaceAutoCompleteListener {
-        fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel>?
+        fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel>
     }
 
 }

@@ -5,7 +5,7 @@ import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
 import com.mnassa.R
-import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.TagModel
 import kotlinx.android.synthetic.main.view_chip.view.*
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.view_chip.view.*
 @SuppressLint("ViewConstructor")
 class ChipView(
         context: Context?,
-        tagModel: TagModelTemp,
+        tagModel: TagModel,
         private val key: Long,
         private val onChipListener: OnChipListener
 ) : LinearLayout(context) {
@@ -31,8 +31,8 @@ class ChipView(
     }
 
     fun removeViewFromParent() {
-        val v: FlowLayout = this@ChipView.parent as FlowLayout
-        v.removeView(this@ChipView)
+        val parentViewGroup: FlowLayout = this@ChipView.parent as FlowLayout
+        parentViewGroup.removeView(this@ChipView)
         onChipListener.onViewRemoved(key)
     }
 

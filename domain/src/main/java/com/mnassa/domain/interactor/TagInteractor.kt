@@ -1,6 +1,6 @@
 package com.mnassa.domain.interactor
 
-import com.mnassa.domain.model.TagModelTemp
+import com.mnassa.domain.model.TagModel
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,5 +9,5 @@ import com.mnassa.domain.model.TagModelTemp
  */
 
 interface TagInteractor{
-    suspend fun search(search: String): List<TagModelTemp>
+    suspend fun search(search: String): List<TagModel>
 }
