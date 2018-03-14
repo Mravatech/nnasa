@@ -33,6 +33,9 @@ dependencies {
 
     implementation deps.domain
 
+    //play
+    implementation deps.playServices.places
+
     //support
     implementation deps.support.appcompat
     implementation deps.support.annotations

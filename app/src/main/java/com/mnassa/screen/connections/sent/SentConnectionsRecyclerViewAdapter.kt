@@ -21,10 +21,10 @@ class SentConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountM
 
     var onCancelClickListener = { account: ShortAccountModel -> }
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.btnCancel -> {
-                val vh = v.tag as RecyclerView.ViewHolder
+                val vh = view.tag as RecyclerView.ViewHolder
                 val position = vh.adapterPosition
                 if (position >= 0) {
                     onCancelClickListener(getDataItemByAdapterPosition(position))

@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <include
-        android:id="@+id/header"
-        layout="@layout/header_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingEnd="@dimen/padding_horizontal"
-        android:paddingStart="@dimen/padding_horizontal"
         android:paddingBottom="@dimen/spacing_vertical">
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/header_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvInviteUsersToBuildNetwork"
             style="@style/MnassaText"
+            android:layout_below="@id/header"
+            android:layout_marginEnd="@dimen/padding_horizontal"
+            android:layout_marginStart="@dimen/padding_horizontal"
             tools:text="Invite users to build your Network (0)" />
 
         <android.support.v7.widget.RecyclerView
@@ -30,7 +30,7 @@
             android:layout_above="@id/btnSkipStep"
             android:layout_below="@id/tvInviteUsersToBuildNetwork"
             android:layout_marginTop="@dimen/spacing_vertical"
-            tools:listitem="@layout/item_invite_account" />
+            tools:listitem="@layout/item_build_network" />
 
         <Button
             android:id="@+id/btnSkipStep"
@@ -43,4 +43,4 @@
             tools:text="Skip this step" />
 
     </RelativeLayout>
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

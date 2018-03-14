@@ -9,9 +9,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import com.mnassa.data.converter.TagConverter
-import com.mnassa.data.converter.TranslatedWordConverter
-import com.mnassa.data.converter.UserAccountConverter
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.api.FirebaseDictionaryApi
@@ -42,7 +39,7 @@ import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
-import com.mnassa.data.converter.ConnectionsConverter
+import com.mnassa.data.converter.*
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
@@ -50,6 +47,7 @@ import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.repository.*
 import com.mnassa.dialog.DialogHelper
+import com.mnassa.google.PlayServiceHelper
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -81,8 +79,8 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
-import com.mnassa.screen.invite.InviteViewModel
-import com.mnassa.screen.invite.InviteViewModelImpl
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.needs.NeedsViewModel
@@ -114,13 +112,13 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
-    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance()) }
+    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance(), instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
-    bind<InviteViewModel>() with provider { InviteViewModelImpl(instance()) }
+    bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
     bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
@@ -140,6 +138,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
+        converter.registerConverter(GeoPlaceConverter::class.java)
         converter
     }
 }
@@ -160,6 +159,9 @@ private val repositoryModule = Kodein.Module {
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
+    bind<PlaceFinderRepository>() with singleton {
+        PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance())
+    }
 }
 
 private val serviceModule = Kodein.Module {
@@ -173,6 +175,7 @@ private val interactorModule = Kodein.Module {
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
+    bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
 }
 
 private val networkModule = Kodein.Module {
@@ -207,4 +210,5 @@ private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
     bind<DialogHelper>() with singleton { DialogHelper() }
+    bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }

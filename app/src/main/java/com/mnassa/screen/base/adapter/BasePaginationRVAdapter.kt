@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_loading.view.*
 
 abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = StateExecutor<RecyclerView?, RecyclerView>(null) { it != null }
-    protected inline fun execUpdate(crossinline update: (() -> Unit)) {
+    protected inline fun postUpdate(crossinline update: (() -> Unit)) {
         recyclerView.invoke {
             it.post { update() }
         }
@@ -26,14 +26,14 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     var dataStorage: DataStorage<ITEM> = SimpleDataProviderImpl()
         set(value) {
             field = value
-            execUpdate { notifyDataSetChanged() }
+            postUpdate { notifyDataSetChanged() }
         }
 
     var isLoadingEnabled: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
-                execUpdate { notifyItemChanged(itemCount - 1) }
+                postUpdate { notifyItemChanged(itemCount - 1) }
             }
         }
 
@@ -79,7 +79,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
 
     //////////////////////////////////////// VIEW TYPES ////////////////////////////////////////////
 
-    open fun getViewType(position: Int): Int = TYPE_UNDEF
+    open fun getViewType(position: Int): Int = TYPE_UNDEFINED
     final override fun getItemViewType(position: Int) = when (position) {
         0 -> TYPE_HEADER
         itemCount - 1 -> if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
@@ -95,10 +95,12 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     fun getDataItemByAdapterPosition(position: Int): ITEM = dataStorage.get(position - emptyHeaderItemsCount)
     fun convertDataIndexToAdapterPosition(index: Int): Int = index + emptyHeaderItemsCount
     fun convertAdapterPositionToDataIndex(index: Int): Int {
-        if (index < 0) return index
-        if (index == 0) return -1
-        if (index == (itemCount - 1)) return -1
-        return index - emptyHeaderItemsCount
+        return when {
+            index < 0 -> index
+            index == 0 -> -1
+            index == (itemCount - 1) -> -1
+            else -> index - emptyHeaderItemsCount
+        }
     }
 
     /////////////////////////////////// ABSTRACT VIEW HOLDERS //////////////////////////////////////
@@ -126,7 +128,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
 
     private inner class SimpleDataProviderImpl : ArrayList<ITEM>(), DataStorage<ITEM> {
         override fun clear() {
-            execUpdate {
+            postUpdate {
                 val previousSize = size
                 super.clear()
                 if (previousSize != 0) notifyItemRangeRemoved(emptyHeaderItemsCount, previousSize)
@@ -134,7 +136,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
 
         override fun add(element: ITEM): Boolean {
-            execUpdate {
+            postUpdate {
                 super.add(element)
                 notifyItemInserted(itemCount - emptyBottomItemsCount - 1)
             }
@@ -142,7 +144,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
 
         override fun addAll(elements: Collection<ITEM>): Boolean {
-            execUpdate {
+            postUpdate {
                 val newDataList = ArrayList(this)
                 newDataList.addAll(elements)
 
@@ -155,7 +157,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
 
         override fun set(elements: List<ITEM>) {
-            execUpdate {
+            postUpdate {
                 val diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(this, ReadOnlyDataStorageWrapper(elements)), true)
                 super.clear()
                 super.addAll(elements)
@@ -171,15 +173,15 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             val oldItemType: Int = when (oldItemPosition) {
                 0 -> TYPE_HEADER
                 oldListSize - 1 -> TYPE_LOADING_ENABLED
-                else -> TYPE_UNDEF
+                else -> TYPE_UNDEFINED
             }
             val newItemType: Int = when (newItemPosition) {
                 0 -> TYPE_HEADER
                 newListSize - 1 -> TYPE_LOADING_ENABLED
-                else -> TYPE_UNDEF
+                else -> TYPE_UNDEFINED
             }
 
-            return if (oldItemType == TYPE_UNDEF && newItemType == TYPE_UNDEF) {
+            return if (oldItemType == TYPE_UNDEFINED && newItemType == TYPE_UNDEFINED) {
                 val oldClientPos = oldItemPosition - emptyHeaderItemsCount
                 val newClientPos = newItemPosition - emptyHeaderItemsCount
                 val oldClientItem = oldData.get(oldClientPos)
@@ -197,15 +199,15 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             val oldItemType: Int = when (oldItemPosition) {
                 0 -> TYPE_HEADER
                 oldListSize - 1 -> TYPE_LOADING_ENABLED
-                else -> TYPE_UNDEF
+                else -> TYPE_UNDEFINED
             }
             val newItemType: Int = when (newItemPosition) {
                 0 -> TYPE_HEADER
                 newListSize - 1 -> TYPE_LOADING_ENABLED
-                else -> TYPE_UNDEF
+                else -> TYPE_UNDEFINED
             }
 
-            return if (oldItemType == TYPE_UNDEF && newItemType == TYPE_UNDEF) {
+            return if (oldItemType == TYPE_UNDEFINED && newItemType == TYPE_UNDEFINED) {
 
                 val oldClientPos = oldItemPosition - emptyHeaderItemsCount
                 val newClientPos = newItemPosition - emptyHeaderItemsCount
@@ -258,7 +260,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     companion object {
-        const val TYPE_UNDEF = -1
+        const val TYPE_UNDEFINED = -1
         const val TYPE_HEADER = 7778881
         const val TYPE_LOADING_ENABLED = 777888
         const val TYPE_LOADING_DISABLED = -888777

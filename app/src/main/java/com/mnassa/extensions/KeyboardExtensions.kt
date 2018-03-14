@@ -8,13 +8,13 @@ import com.bluelinelabs.conductor.Controller
 /**
  * Created by Peter on 3/7/2018.
  */
-fun Controller.hideKeyboard(viewParam: View? = null) {
+fun Controller.hideKeyboard(view: View? = null) {
     // Check if no view has focus:
     val activity = activity ?: return
-    val view = viewParam ?: activity.currentFocus
-    if (view != null) {
+    val viewInner = view ?: activity.currentFocus
+    viewInner?.let {
         val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        imm.hideSoftInputFromWindow(it.windowToken, 0)
     }
 }
 

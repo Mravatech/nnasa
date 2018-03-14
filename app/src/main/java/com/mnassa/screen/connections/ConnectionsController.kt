@@ -3,6 +3,7 @@ package com.mnassa.screen.connections
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
@@ -18,6 +19,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
@@ -98,8 +100,20 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     override fun onPageSelected() {
         onPageSelectedJob?.cancel()
         onPageSelectedJob = launchCoroutineUI {
-            if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
+            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+
+            if (permissionsResult.isAllGranted) {
                 viewModel.onContactPermissionsGranted()
+            } else {
+                val view = view ?: return@launchCoroutineUI
+                Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
+                            if (permissionsResult.isShouldShowRequestPermissionRationale) {
+                                onPageSelected()
+                            } else {
+                                view.context.openApplicationSettings()
+                            }
+                        }.show()
             }
         }
     }
@@ -198,7 +212,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun formatTextWithCounter(dictionaryResId: Int, counterValue: Int): CharSequence {
-        val head = fromDictionary(dictionaryResId) + "  "
+        val head = "${fromDictionary(dictionaryResId)}  "
         val spannable = SpannableString(head + counterValue.toString())
         val color = ContextCompat.getColor(requireNotNull(applicationContext), R.color.coolGray)
         spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
