@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/backgroundHighlight">
 
-    <RelativeLayout
-        android:id="@+id/rlRoot"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -17,7 +18,7 @@
         android:paddingStart="@dimen/spacing_horizontal"
         android:paddingTop="@dimen/spacing_vertical">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/ivAvatar"
             android:layout_width="@dimen/avatar_list_item"
             android:layout_height="@dimen/avatar_list_item"
@@ -28,9 +29,9 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/ivAvatar"
+            android:layout_toStartOf="@id/btnConnect"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -43,7 +44,21 @@
                 android:id="@+id/tvPosition"
                 style="@style/Connections.UserPosition"
                 tools:text="at some company" />
+
+            <TextView
+                android:id="@+id/tvEventName"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/MnassaTransparentButton"
+            tools:text="Connect"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
 
     </RelativeLayout>
 </FrameLayout>

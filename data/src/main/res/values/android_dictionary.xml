@@ -27,6 +27,8 @@
     <string name="_android_connections_rejected_days_left_INFO">%d Days left</string>
     <string name="_android_connections_permissions_declined_INFO">Please, allow access to your phone book to manage recommended connections</string>
     <string name="_android_connections_permissions_declined_button_INFO">Allow</string>
+    <string name="_android_connections_new_requests_empty_description_INFO">You have no new requests yet (description)</string>
+    <string name="_android_connections_archived_empty_description_INFO">You have no rejected users yet (description)</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
