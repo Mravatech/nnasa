@@ -103,14 +103,14 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
     }
 
     private fun enableResendCodeButton() {
-        val v = view ?: return
-        v.tvResendCodeAfter.isEnabled = true
-        v.tvResendCodeAfter.text = fromDictionary(R.string.login_enter_code_resend_code)
-        v.tvResendCodeAfter.setOnClickListener {
+        val viewLocal = view ?: return
+        viewLocal.tvResendCodeAfter.isEnabled = true
+        viewLocal.tvResendCodeAfter.text = fromDictionary(R.string.login_enter_code_resend_code)
+        viewLocal.tvResendCodeAfter.setOnClickListener {
             viewModel.resendCode()
             startResendCodeTimer(resendSmsCodeDelay)
-            v.tvResendCodeAfter.isEnabled = false
-            v.tvResendCodeAfter.setOnClickListener(null)
+            viewLocal.tvResendCodeAfter.isEnabled = false
+            viewLocal.tvResendCodeAfter.setOnClickListener(null)
         }
     }
 

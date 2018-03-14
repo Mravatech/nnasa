@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Titles sets programmatically -->
     <item
         android:id="@+id/action_connections_send_message"
-        android:title="Send message" />
+        android:title="" />
 
     <item
         android:id="@+id/action_connections_view_profile"
-        android:title="View profile" />
+        android:title="" />
 
     <item
         android:id="@+id/action_connections_disconnect"
-        android:title="Disconnect" />
+        android:title="" />
 
 </menu>

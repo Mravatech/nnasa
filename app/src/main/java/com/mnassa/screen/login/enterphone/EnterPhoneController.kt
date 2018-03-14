@@ -2,24 +2,20 @@ package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
 import com.github.salomonbrys.kodein.instance
+import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
-import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
 import com.mnassa.extensions.showKeyboard
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -29,6 +25,7 @@ import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
@@ -41,31 +38,35 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<EnterPhoneViewModel>(args) {
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
+    private val dialogHelper: DialogHelper by instance()
     private val countryCodes = mutableListOf(
             CountryCode(
                     flagRes = R.drawable.ic_flag_of_saudi_arabia,
                     name = TranslatedWordModelImpl(fromDictionary(R.string.country_saudi_arabia)),
-                    phonePrefix = "+966"),
+                    phonePrefix = PhonePrefix.SaudiArabia),
             CountryCode(
                     flagRes = R.drawable.ic_flag_of_ukraine,
                     name = TranslatedWordModelImpl(fromDictionary(R.string.country_ukraine)),
-                    phonePrefix = "+380"),
+                    phonePrefix = PhonePrefix.Ukraine),
             CountryCode(
                     flagRes = R.drawable.ic_flag_of_the_united_states,
                     name = TranslatedWordModelImpl(fromDictionary(R.string.country_united_states)),
-                    phonePrefix = "+1"),
+                    phonePrefix = PhonePrefix.UnitedState),
             CountryCode(
                     flagRes = R.drawable.ic_flag_of_canada,
                     name = TranslatedWordModelImpl(fromDictionary(R.string.country_canada)),
-                    phonePrefix = "+1")
+                    phonePrefix = PhonePrefix.Canada)
     )
+
+
+
     protected val phoneNumber: String
         get() {
-            val v = view ?: return ""
-            val countryCode = v.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
-            return countryCode.phonePrefix
+            val view = view ?: return ""
+            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
+            return countryCode.phonePrefix.code
                     .replace("+", "") +
-                    v.etPhoneNumberTail.text.toString()
+                    view.etPhoneNumberTail.text.toString()
         }
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -138,70 +139,21 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             showKeyboard(etPhoneNumberTail)
         }
 
-        if (instance<AppInfoProvider>().value.isDebug) addSignInViaEmailAbility()
+
+        addSignInViaEmailAbility()
     }
 
     private fun addSignInViaEmailAbility() {
-        //!!!DEBUG ONLY!!!
+        if (!BuildConfig.DEBUG) return
+
         val view = view!!
         view.btnScreenHeaderAction.text = "EMAIL"
         view.btnScreenHeaderAction.visibility = View.VISIBLE
-        view.btnScreenHeaderAction.setOnClickListener { requestEmailAndPassword() }
-    }
-
-    private fun requestEmailAndPassword() {
-        //!!!DEBUG ONLY!!!
-        val context = view!!.context
-        val container = LinearLayout(context)
-        container.orientation = LinearLayout.VERTICAL
-
-        val email = EditText(context)
-        email.hint = "Email"
-        container.addView(email)
-
-        val password = EditText(context)
-        password.hint = "Password"
-        container.addView(password)
-
-        lateinit var dialog: AlertDialog
-
-        var btnHardcodedEmailAndPassword = Button(context)
-        btnHardcodedEmailAndPassword.text = "p3@nxt.ru"
-        btnHardcodedEmailAndPassword.setOnClickListener {
-            viewModel.signInByEmail("p3@nxt.ru", "123123")
-            dialog.dismiss()
+        view.btnScreenHeaderAction.setOnClickListener {
+            dialogHelper.showLoginByEmailDialog(it.context) { email, password ->
+                viewModel.signInByEmail(email, password)
+            }
         }
-        container.addView(btnHardcodedEmailAndPassword)
-        //
-        btnHardcodedEmailAndPassword = Button(context)
-        btnHardcodedEmailAndPassword.text = "chas@ukr.net"
-        btnHardcodedEmailAndPassword.setOnClickListener {
-            viewModel.signInByEmail("chas@ukr.net", "123123")
-            dialog.dismiss()
-        }
-        container.addView(btnHardcodedEmailAndPassword)
-        //
-        btnHardcodedEmailAndPassword = Button(context)
-        btnHardcodedEmailAndPassword.text = "serg@u.net"
-        btnHardcodedEmailAndPassword.setOnClickListener {
-            viewModel.signInByEmail("serg@u.net", "123123")
-            dialog.dismiss()
-        }
-        container.addView(btnHardcodedEmailAndPassword)
-
-        val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT)
-        container.layoutParams = layoutParams
-
-        dialog = AlertDialog.Builder(context)
-                .setView(container)
-                .setPositiveButton("Login", { _, _ ->
-                    viewModel.signInByEmail(
-                            email.text.toString(),
-                            password.text.toString())
-                })
-                .show()
     }
 
     protected fun onInputChanged() {

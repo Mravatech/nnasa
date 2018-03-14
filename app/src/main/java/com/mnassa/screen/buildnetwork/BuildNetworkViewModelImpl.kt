@@ -1,4 +1,4 @@
-package com.mnassa.screen.invite
+package com.mnassa.screen.buildnetwork
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -15,9 +15,9 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 3/5/2018.
  */
-class InviteViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), InviteViewModel {
+class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), BuildNetworkViewModel {
     override val usersToInviteChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val openScreenChannel: ArrayBroadcastChannel<InviteViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: ArrayBroadcastChannel<BuildNetworkViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
 
     private var sendPhoneContactsJob: Job? = null
     private var inviteUsersJob: Job? = null
@@ -46,7 +46,7 @@ class InviteViewModelImpl(private val connectionsInteractor: ConnectionsInteract
             withProgressSuspend {
                 connectionsInteractor.actionConnect(accountIds)
             }
-            openScreenChannel.send(InviteViewModel.OpenScreenCommand.MainScreen())
+            openScreenChannel.send(BuildNetworkViewModel.OpenScreenCommand.MainScreen())
         }
     }
 }

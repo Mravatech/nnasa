@@ -1,20 +1,18 @@
 package com.mnassa.screen.profile
 
 import android.app.Activity
-import android.view.View
-import com.github.salomonbrys.kodein.instance
-import com.mnassa.R
-import com.mnassa.screen.base.MnassaControllerImpl
-import kotlinx.android.synthetic.main.controller_crop.view.*
 import android.net.Uri
-import android.support.annotation.IntRange
+import android.view.View
 import android.widget.ImageView
+import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
-import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
-import com.mnassa.dialog.PhotoListener
+import com.mnassa.screen.base.MnassaControllerImpl
+import kotlinx.android.synthetic.main.controller_crop.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -24,7 +22,7 @@ import timber.log.Timber
  * Date: 2/26/2018
  */
 
-class ProfileController : MnassaControllerImpl<ProfileViewModel>(), PhotoListener {
+class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
 
     override val layoutId: Int = R.layout.controller_crop
     override val viewModel: ProfileViewModel by instance()
@@ -35,7 +33,12 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>(), PhotoListene
         super.onViewCreated(view)
         with(view) {
             btnTakePhotoFromCamera.setOnClickListener {
-                dialog.showPhotoDialog(activity!!, this@ProfileController)
+                dialog.showSelectImageSourceDialog(it.context) { imageSource ->
+                    activity?.let {
+                        val intent = CropActivity.start(imageSource, it)
+                        startActivityForResult(intent, REQUEST_CODE_CROP)
+                    }
+                }
             }
         }
         onActivityResult.subscribe {
@@ -61,13 +64,6 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>(), PhotoListene
             viewModel.imageUploadedChannel.consumeEach {
                 setImage(view.ivCropImage, it)
             }
-        }
-    }
-
-    override fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {
-        activity?.let {
-            val intent = CropActivity.start(flag, it)
-            startActivityForResult(intent, REQUEST_CODE_CROP)
         }
     }
 

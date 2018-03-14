@@ -14,7 +14,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
         private val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 
         override fun clear() {
-            adapter.execUpdate {
+            adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.clear()
                 wrappedList.endBatchedUpdates()
@@ -22,7 +22,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
         }
 
         override fun add(element: ITEM): Boolean {
-            adapter.execUpdate {
+            adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.add(element)
                 wrappedList.endBatchedUpdates()
@@ -32,7 +32,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
         }
 
         override fun addAll(elements: Collection<ITEM>): Boolean {
-            adapter.execUpdate {
+            adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.addAll(elements)
                 wrappedList.endBatchedUpdates()
@@ -41,7 +41,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
         }
 
         override fun set(elements: List<ITEM>) {
-            adapter.execUpdate {
+            adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.clear()
                 wrappedList.addAll(elements)
