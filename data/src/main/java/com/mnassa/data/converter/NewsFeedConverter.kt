@@ -6,31 +6,28 @@ import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.NewsFeedItemCountersDbEntity
 import com.mnassa.data.network.bean.firebase.NewsFeedItemDbEntity
+import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PRIVATE
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_ACCOUNT
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_GENERAL
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
-import com.mnassa.domain.model.LocationPlaceModel
-import com.mnassa.domain.model.NewsFeedItemModel
-import com.mnassa.domain.model.NewsFeedItemPrivacyType
-import com.mnassa.domain.model.NewsFeedItemType
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.NewsFeedItemCountersImpl
 import com.mnassa.domain.model.impl.NewsFeedItemModelImpl
-import com.mnassa.domain.repository.UserRepository
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
-class NewsFeedConverter(private val userRepository: Lazy<UserRepository>) : ConvertersContextRegistrationCallback {
+class NewsFeedConverter : ConvertersContextRegistrationCallback {
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertNewsFeedItem)
         convertersContext.registerConverter(this::convertNewsFeedItemCounters)
     }
 
-    private fun convertNewsFeedItem(input: NewsFeedItemDbEntity, token: Any?, converter: ConvertersContext): NewsFeedItemModel {
+    private fun convertNewsFeedItem(input: NewsFeedItemDbEntity, token: Any?, converter: ConvertersContext): NewsFeedItemModelImpl {
 
         return NewsFeedItemModelImpl(
                 id = input.id,
@@ -47,9 +44,16 @@ class NewsFeedConverter(private val userRepository: Lazy<UserRepository>) : Conv
                 text = input.text,
                 updatedAt = Date(input.updatedAt),
                 counters = converter.convert(input.counters),
-                author = converter.convert(input.author),
+                author = convertAuthor(input.author, converter),
                 copyOwnerId = input.copyOwner
         )
+    }
+
+    private fun convertAuthor(input: Map<String, ShortAccountDbEntity>, converter: ConvertersContext): ShortAccountModel {
+        val entity = input.values.first()
+        entity.id = input.keys.first()
+
+        return converter.convert(entity, ShortAccountModel::class.java)
     }
 
     private fun convertNewsFeedItemType(input: String): NewsFeedItemType {

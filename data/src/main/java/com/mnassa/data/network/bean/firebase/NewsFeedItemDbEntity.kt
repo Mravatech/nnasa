@@ -1,5 +1,6 @@
 package com.mnassa.data.network.bean.firebase
 
+import com.google.firebase.database.DataSnapshot
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
@@ -9,7 +10,6 @@ import com.mnassa.domain.model.HasId
 internal data class NewsFeedItemDbEntity(
         override var id: String,
         @SerializedName("allConnections") var allConnections: Boolean,
-        @SerializedName("author") var author: ShortAccountDbEntity,
         @SerializedName("copyOwner") var copyOwner: String,
         @SerializedName("counters") var counters: NewsFeedItemCountersDbEntity,
         @SerializedName("createdAt") var createdAt: Long,
@@ -24,7 +24,8 @@ internal data class NewsFeedItemDbEntity(
         @SerializedName("updatedAt") var updatedAt: Long,
         @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
-        @SerializedName("original") var original: String?
+        @SerializedName("original") var original: String?,
+        @SerializedName("author") var author: Map<String, ShortAccountDbEntity>
 ) : HasId
 
 internal data class NewsFeedItemCountersDbEntity(

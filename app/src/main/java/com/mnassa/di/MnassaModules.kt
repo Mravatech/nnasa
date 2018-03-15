@@ -143,7 +143,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
         converter.registerConverter(LocationConverter::class.java)
-        converter.registerConverter(NewsFeedConverter(lazy { instance<UserRepository>() }))
+        converter.registerConverter(NewsFeedConverter::class.java)
         converter
     }
 }
