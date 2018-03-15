@@ -10,4 +10,5 @@ import com.mnassa.domain.model.TagModel
 
 interface TagInteractor{
     suspend fun search(search: String): List<TagModel>
+    suspend fun createCustomTagIds(tags: List<String>): List<String>
 }

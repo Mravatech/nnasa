@@ -132,7 +132,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
-        converter.registerConverter(TagConverter({ instance() }))
+        converter.registerConverter(TagConverter( instance() ))
         converter
     }
 }
@@ -163,7 +163,7 @@ private val serviceModule = Kodein.Module {
 }
 
 private val interactorModule = Kodein.Module {
-    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance(), instance()) }
+    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }

@@ -8,10 +8,7 @@
 
     <TextView
         android:id="@+id/tvChipHeader"
-        style="@style/ChipTextHeader"
-        android:fontFamily="sans-serif"
-        android:lineSpacingExtra="@dimen/tv_header_text_size"
-        android:textStyle="normal" />
+        style="@style/ChipTextHeader" />
 
     <com.mnassa.widget.FlowLayout
         android:id="@+id/flChipContainer"
@@ -21,10 +18,9 @@
             android:id="@+id/etChipInput"
             style="@style/ChipEditText"
             android:layout_marginBottom="@dimen/chip_et_margin_vertical"
-            android:layout_marginTop="@dimen/chip_et_margin_vertical"
-            android:hint="" />
+            android:layout_marginTop="@dimen/chip_et_margin_vertical" />
     </com.mnassa.widget.FlowLayout>
 
-    <View style="@style/ChipDivider"
-        android:id="@+id/vChipBottomDivider"/>
+    <View style="@style/ChipBottomLine"
+        android:id="@+id/vChipBottomLine"/>
 </LinearLayout>

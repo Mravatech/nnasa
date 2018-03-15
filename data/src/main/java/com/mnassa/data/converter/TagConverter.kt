@@ -12,9 +12,9 @@ import com.mnassa.domain.other.LanguageProvider
  * User: okli
  * Date: 3/13/2018
  */
-class TagConverter(languageProviderLazy: () -> LanguageProvider) : ConvertersContextRegistrationCallback {
+class TagConverter(languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
 
-    private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
+//    private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
     private val isArabian = languageProvider.isArabian
     override fun register(convertersContext: ConvertersContext) {
         if (isArabian) {

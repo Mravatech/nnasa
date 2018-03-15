@@ -9,8 +9,8 @@ import com.mnassa.domain.model.TagModel
 interface UserProfileInteractor {
 
     suspend fun getProfile(): ShortAccountModel
-    suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<TagModel>, interests: List<TagModel>): ShortAccountModel
-    suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<TagModel>, interests: List<TagModel>): ShortAccountModel
+    suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel
+    suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel
 
     suspend fun setCurrentUserAccount(account: ShortAccountModel)
 

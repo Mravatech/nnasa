@@ -21,13 +21,15 @@ class RegistrationViewModelImpl(
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
         handleException {
             withProgressSuspend {
+                val offersWithIds = getFilteredTags(offers)
+                val interestsWithIds = getFilteredTags(interests)
                 val shortAccountModel = userProfileInteractor.createPersonalAccount(
                         firstName = firstName,
                         secondName = secondName,
                         userName = userName,
                         city = city,
-                        offers = offers,
-                        interests = interests
+                        offers = offersWithIds,
+                        interests = interestsWithIds
                 )
                 openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(shortAccountModel))
             }
@@ -37,12 +39,14 @@ class RegistrationViewModelImpl(
     override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModel>, interests: List<TagModel>) {
         handleException {
             withProgressSuspend {
+                val offersWithIds = getFilteredTags(offers)
+                val interestsWithIds = getFilteredTags(interests)
                 userProfileInteractor.createOrganizationAccount(
                         companyName = companyName,
                         userName = userName,
                         city = city,
-                        offers = offers,
-                        interests = interests
+                        offers = offersWithIds,
+                        interests = interestsWithIds
                 )
             }
             openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen())
@@ -55,6 +59,18 @@ class RegistrationViewModelImpl(
 
     override suspend fun search(search: String): List<TagModel> {
         return tagInteractor.search(search)
+    }
+
+    private suspend fun getFilteredTags(tagsWithCustomWords: List<TagModel>): List<String> {
+        val customTags = tagsWithCustomWords.filter { it.id == null }.map { it.name }
+        val existsTags = tagsWithCustomWords.mapNotNull { it.id }
+        val tags = arrayListOf<String>()
+        if (customTags.isNotEmpty()) {
+            val newTags = tagInteractor.createCustomTagIds(customTags)
+            tags.addAll(newTags)
+        }
+        tags.addAll(existsTags)
+        return tags
     }
 
 }

@@ -31,8 +31,8 @@ class ChipView(
     }
 
     fun removeViewFromParent() {
-        val parentViewGroup: FlowLayout = this@ChipView.parent as FlowLayout
-        parentViewGroup.removeView(this@ChipView)
+        val parentViewGroup: FlowLayout = parent as FlowLayout
+        parentViewGroup.removeView(this)
         onChipListener.onViewRemoved(key)
     }
 
