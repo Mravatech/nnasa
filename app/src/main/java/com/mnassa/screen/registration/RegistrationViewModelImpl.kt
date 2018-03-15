@@ -61,9 +61,9 @@ class RegistrationViewModelImpl(
         return tagInteractor.search(search)
     }
 
-    private suspend fun getFilteredTags(tagsWithCustomWords: List<TagModel>): List<String> {
-        val customTags = tagsWithCustomWords.filter { it.id == null }.map { it.name }
-        val existsTags = tagsWithCustomWords.mapNotNull { it.id }
+    private suspend fun getFilteredTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
+        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
+        val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
         val tags = arrayListOf<String>()
         if (customTags.isNotEmpty()) {
             val newTags = tagInteractor.createCustomTagIds(customTags)

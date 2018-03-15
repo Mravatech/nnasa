@@ -22,11 +22,11 @@ class TagRepositoryImpl(
         private val firebaseTagsApi: FirebaseTagsApi
 ) : TagRepository {
 
-    override suspend fun search(search: String): List<TagModel> {
+    override suspend fun search(searchKeyword: String): List<TagModel> {
         val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
                 .apply { keepSynced(true) }
                 .awaitList<TagDbEntity>(exceptionHandler)
-        return filter(search, converter.convertCollection(tags, TagModel::class.java)).await()
+        return filter(searchKeyword, converter.convertCollection(tags, TagModel::class.java)).await()
     }
 
     private fun filter(search: String, list: List<TagModel>) = async {

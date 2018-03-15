@@ -164,6 +164,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         val chipView = ChipView(context, tagModel, position, this)
         val params = FlowLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         chipView.layoutParams = params
+        chipView.maxTextWidth(this.width)
         return chipView
     }
 

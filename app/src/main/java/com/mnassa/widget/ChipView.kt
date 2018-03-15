@@ -3,7 +3,6 @@ package com.mnassa.widget
 import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v7.widget.CardView
-import android.view.View
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import kotlinx.android.synthetic.main.view_chip.view.*
@@ -23,11 +22,15 @@ class ChipView(
 ) : CardView(context) {
 
     init {
-        View.inflate(context, R.layout.view_chip, this)
+        inflate(context, R.layout.view_chip, this)
         tvChipText.text = tagModel.name
         ibRemove.setOnClickListener {
             removeViewFromParent()
         }
+    }
+
+    fun maxTextWidth(size: Int){
+        tvChipText.maxWidth = size - ibRemove.width
     }
 
     fun removeViewFromParent() {

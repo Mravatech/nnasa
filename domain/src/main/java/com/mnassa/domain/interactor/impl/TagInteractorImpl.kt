@@ -17,7 +17,7 @@ class TagInteractorImpl(
         return tagRepository.createCustomTagIds(tags)
     }
 
-    override suspend fun search(search: String): List<TagModel> {
-        return tagRepository.search(search)
+    override suspend fun search(searchKeyword: String): List<TagModel> {
+        return tagRepository.search(searchKeyword)
     }
 }

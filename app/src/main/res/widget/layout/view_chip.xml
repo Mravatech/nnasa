@@ -5,16 +5,17 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/chip_layout_margin"
-    android:background="@color/backgroundTransparent"
     card_view:cardCornerRadius="@dimen/chip_layout_radius"
     card_view:cardElevation="@dimen/chip_layout_elevation">
+
     <LinearLayout
         style="@style/ChipItemView"
         android:background="@color/white">
 
         <TextView
             android:id="@+id/tvChipText"
-            style="@style/ChipTextView" />
+            style="@style/ChipTextView"
+            android:layout_weight="1" />
 
         <ImageButton
             android:id="@+id/ibRemove"

@@ -37,6 +37,7 @@
 
     <style name="ChipTextView" parent="ChipCommon">
         <item name="android:textColor">@color/black</item>
+        <item name="android:maxLines">1</item>
         <item name="android:padding">@dimen/et_chip_inner_item_padding</item>
     </style>
 
