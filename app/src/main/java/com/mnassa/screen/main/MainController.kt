@@ -71,7 +71,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                     )
             )
 
-            bnMain.isBehaviorTranslationEnabled = false
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
                 val page = adapter.getRouter(position)?.getControllerWithTag(formatTabControllerTag(position))
@@ -81,8 +80,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
                 true
             }
-            bnMain.isBehaviorTranslationEnabled = true
-
             navigationView.setNavigationItemSelectedListener(this@MainController)
         }
 
@@ -148,8 +145,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             true
         } else {
             view.bnMain?.visibility = View.VISIBLE
-            view.bnMain?.isEnabled = true
-//            view.bnMain?.restoreBottomNavigation()
             super.handleBack()
         }
     }
@@ -162,9 +157,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
     }
 
     override fun open(self: Controller, controller: Controller) {
-//        view?.bnMain?.hideBottomNavigation()
-        view?.bnMain?.visibility = View.INVISIBLE
-        view?.bnMain?.isEnabled = false
+        view?.bnMain?.visibility = View.GONE
         mnassaRouter.open(self, controller)
 
     }
