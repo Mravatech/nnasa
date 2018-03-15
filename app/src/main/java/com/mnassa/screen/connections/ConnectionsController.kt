@@ -105,7 +105,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             if (permissionsResult.isAllGranted) {
                 viewModel.onContactPermissionsGranted()
             } else {
-                val view = view ?: return@launchCoroutineUI
+                val view = view?.clSnackbarParent ?: return@launchCoroutineUI
                 Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
                         .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
                             if (permissionsResult.isShouldShowRequestPermissionRationale) {
