@@ -122,7 +122,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
-    bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
+    bind<NeedsViewModel>() with provider { NeedsViewModelImpl(instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
@@ -142,6 +142,8 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
+        converter.registerConverter(LocationConverter::class.java)
+        converter.registerConverter(NewsFeedConverter(lazy { instance<UserRepository>() }))
         converter
     }
 }
@@ -162,9 +164,8 @@ private val repositoryModule = Kodein.Module {
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
-    bind<PlaceFinderRepository>() with singleton {
-        PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance())
-    }
+    bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance()) }
+    bind<NewsFeedRepository>() with singleton { NewsFeedRepositoryImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {

@@ -6,24 +6,24 @@ import java.util.*
 /**
  * Created by Peter on 3/13/2018.
  */
-interface NewsFeedItem : Model {
+interface NewsFeedItemModel : Model {
     val allConnections: Boolean
-    val adminPost: Boolean
+//    val adminPost: Boolean
     val type: NewsFeedItemType
     val createdAt: Date
     val images: List<String>
-    val locationId: String
-    val needPush: Boolean
+    val locationPlace: LocationPlaceModel?
+//    val needPush: Boolean
     val originalCreatedAt: Date
     val originalId: String
     val privacyConnections: List<String>
     val privacyType: NewsFeedItemPrivacyType
     val tags: List<String>
-    val text: String
+    val text: String?
     val updatedAt: Date
-
-    suspend fun getAuthor(): ShortAccountModel
-    suspend fun getCopyOwner(): ShortAccountModel
+    val counters: NewsFeedItemCounters
+    val author: ShortAccountModel
+    val copyOwnerId: String
 }
 
 interface NewsFeedItemCounters : Serializable {
@@ -40,5 +40,5 @@ enum class NewsFeedItemType {
 }
 
 enum class NewsFeedItemPrivacyType {
-    PUBLIC
+    PUBLIC, PRIVATE
 }

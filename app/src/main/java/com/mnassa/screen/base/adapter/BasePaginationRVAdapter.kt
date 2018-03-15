@@ -120,7 +120,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         fun add(element: T): Boolean
         fun addAll(elements: Collection<T>): Boolean
         fun set(elements: List<T>)
-        fun get(index: Int): T
+        operator fun get(index: Int): T
         val size: Int
     }
 

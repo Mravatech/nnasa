@@ -77,15 +77,20 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 
 //////////////////////////// LOAD DATA WITHOUT CHANGES HANDLING USING PAGINATION/////////////////////
 // Simple pagination without handling content changes
-internal inline fun <reified T : HasId> load(databaseReference: DatabaseReference, path: String, limit: Int = DEFAULT_LIMIT, exceptionHandler: ExceptionHandler): Channel<T> {
-    val channel = ArrayChannel<T>(limit)
+internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChannelWithPagination(
+        databaseReference: DatabaseReference,
+        exceptionHandler: ExceptionHandler,
+        crossinline mapper: (input: DbType) -> OutType = { it as OutType },
+        limit: Int = DEFAULT_LIMIT
+): Channel<OutType> {
+    val channel = ArrayChannel<OutType>(limit)
     async {
         try {
             var latestId: String? = null
             while (true) {
-                val portion = loadPortion<T>(databaseReference, path, latestId, limit, exceptionHandler)
+                val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
                 latestId = portion.lastOrNull()?.id
-                portion.forEach { channel.send(it) }
+                portion.forEach { channel.send(mapper(it)) }
                 if (portion.size < limit) {
                     channel.close()
                     break
@@ -98,4 +103,11 @@ internal inline fun <reified T : HasId> load(databaseReference: DatabaseReferenc
         }
     }
     return channel
+}
+
+internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithPagination(
+        exceptionHandler: ExceptionHandler,
+        crossinline mapper: (input: DbType) -> OutType = { it as OutType },
+        limit: Int = DEFAULT_LIMIT): Channel<OutType> {
+    return getValueChannelWithPagination(this, exceptionHandler, mapper, limit)
 }

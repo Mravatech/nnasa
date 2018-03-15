@@ -39,17 +39,15 @@ internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: Exce
 
 internal suspend inline fun <reified T : HasId> loadPortion(
         databaseReference: DatabaseReference,
-        path: String,
         offset: String? = null,
         limit: Int = DEFAULT_LIMIT,
         exceptionHandler: ExceptionHandler): List<T> {
 
-    val ref = databaseReference.child(path)
     val query = if (offset == null) {
-        ref.orderByKey().limitToFirst(limit)
+        databaseReference.orderByKey().limitToFirst(limit)
     } else {
         //ignore first element (to avoid duplicates)
-        ref.orderByKey().startAt(offset).limitToFirst(limit + 1)
+        databaseReference.orderByKey().startAt(offset).limitToFirst(limit + 1)
     }
 
     return suspendCancellableCoroutine { continuation ->

@@ -1,21 +1,23 @@
 package com.mnassa.screen.needs.viewholder
 
+import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewParent
-import com.mnassa.domain.model.NewsFeedItem
+import android.view.ViewGroup
+import com.mnassa.R
+import com.mnassa.domain.model.NewsFeedItemModel
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 
 /**
  * Created by Peter on 3/14/2018.
  */
-class NeedViewHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<NewsFeedItem>(itemView) {
-    override fun bind(item: NewsFeedItem) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<NewsFeedItemModel>(itemView) {
+    override fun bind(item: NewsFeedItemModel) {
     }
 
     companion object {
-        fun newInstance(parent: ViewParent, onClickListener: View.OnClickListener): NeedViewHolder {
-TODO()
+        fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): NeedViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_need, parent, false)
+            return NeedViewHolder(view, onClickListener)
         }
     }
 }
