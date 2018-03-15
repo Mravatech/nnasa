@@ -1,33 +1,30 @@
 package com.mnassa.data.network.bean.firebase
 
-import com.google.firebase.database.IgnoreExtraProperties
-import com.google.firebase.database.PropertyName
+import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
 /**
  * Created by Peter on 2/22/2018.
  */
 
-@IgnoreExtraProperties
 internal open class ShortAccountDbEntity : HasId {
-    override var id: String
-    @PropertyName("avatar")
+    override var id: String = ""
+    @SerializedName("avatar")
     var avatar: String?
-    @PropertyName("firstName")
+    @SerializedName("firstName")
     var firstName: String?
-    @PropertyName("lastName")
+    @SerializedName("lastName")
     var lastName: String?
-    @PropertyName("organizationName")
+    @SerializedName("organizationName")
     var organizationName: String?
-    @PropertyName("type")
+    @SerializedName("type")
     var type: String
-    @PropertyName("userName")
+    @SerializedName("userName")
     var userName: String
-    @PropertyName("abilities")
-    var abilitiesInternal: List<ShortAccountAbilityDbEntity>
+    @SerializedName("abilities")
+    var abilitiesInternal: List<ShortAccountAbilityDbEntity>?
 
-    constructor() : this("", null, "", "", null, "", "", emptyList())
-    constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>) {
+    constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>?) {
         this.id = id
         this.avatar = avatar
         this.firstName = firstName
@@ -37,29 +34,31 @@ internal open class ShortAccountDbEntity : HasId {
         this.userName = userName
         this.abilitiesInternal = abilitiesInternal
     }
+
+    override fun toString(): String {
+        return "ShortAccountDbEntity(id='$id', avatar=$avatar, firstName=$firstName, lastName=$lastName, organizationName=$organizationName, type='$type', userName='$userName', abilitiesInternal=$abilitiesInternal)"
+    }
 }
 
-@IgnoreExtraProperties
 internal open class DeclinedShortAccountDbEntity : ShortAccountDbEntity {
-    @PropertyName("declinedAt")
+    @SerializedName("declinedAt")
     var declinedAt: Long
-
-    constructor() : super() {
-        this.declinedAt = 0L
-    }
 
     constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>, declinedAt: Long) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
         this.declinedAt = declinedAt
     }
+
+    override fun toString(): String {
+        return "DeclinedShortAccountDbEntity(declinedAt=$declinedAt); " + super.toString()
+    }
 }
 
-
-@IgnoreExtraProperties
 internal data class ShortAccountAbilityDbEntity(
-        var id: String,
+        @SerializedName("isMain")
         var isMain: Boolean,
+        @SerializedName("name")
         var name: String?,
+        @SerializedName("place")
         var place: String?
 ) {
-    constructor() : this("", false, null, null)
 }
