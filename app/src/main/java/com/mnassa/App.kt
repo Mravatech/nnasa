@@ -14,7 +14,8 @@ import com.mnassa.logging.CrashReportingTree
 import com.squareup.leakcanary.LeakCanary
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
-
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
 
 /**
  * Created by Peter on 2/20/2018.
@@ -39,6 +40,7 @@ class App : MultiDexApplication(), KodeinAware {
             Stetho.initializeWithDefaults(this)
         } else {
             Timber.plant(CrashReportingTree())
+            Fabric.with(this, Crashlytics())
         }
 
         launch {

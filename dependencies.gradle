@@ -56,6 +56,13 @@ playServices.places = ["com.google.android.gms:play-services-places:$versions.pl
 playServices.playServicesGradlePlugin = "com.google.gms:google-services:$versions.playServicesGradlePluginVersion"
 deps.playServices = playServices
 
+//========================================== Crashlytics ===========================================
+versions.fabricVersion = "1.+"
+
+def fabric = [:]
+fabric.fabricPlugin = "io.fabric.tools:gradle:${versions.fabricVersion}"
+deps.fabric = fabric
+
 //========================================== FIREBASE ==============================================
 versions.firebase = '11.8.0'
 versions.ui = '3.2.1'
@@ -174,9 +181,13 @@ ui.tablayout = 'com.github.rahimlis:badgedtablayout:v1.2'
 deps.ui = ui
 //============================================== OTHER ============================================
 def other = [:]
+
+versions.crashlyticsVersion = '2.9.1'
+
 other.billing = 'com.android.billingclient:billing:1.0'
 other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
 other.logger =  'com.jakewharton.timber:timber:4.6.1'
+other.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlyticsVersion@aar"
 
 deps.other = other
 //=============================================== TESTS ============================================
@@ -190,6 +201,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.maven {
         url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
         url 'https://jitpack.io'
+        url 'https://maven.fabric.io/public'
     }
     handler.maven { url "https://jitpack.io" }
 }
