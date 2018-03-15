@@ -1,126 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/PersonalInfo.ScrollContainer"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/MnassaHeader1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="56dp"
-            tools:text="Personal info" />
-
-        <ImageView
-            android:contentDescription="@null"
-            android:id="@+id/ivUserAvatar"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_below="@id/tvTitle"
-            tools:background="#aca" />
-
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            tools:text="NEXT" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabInfoAddPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ivUserAvatar"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="16dp" />
+    <LinearLayout
+        style="@style/PersonalInfo.LinearContainer"
+        android:layout_marginEnd="@dimen/personal_info_horizontal_main_margin"
+        android:layout_marginStart="@dimen/personal_info_horizontal_main_margin"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ivUserAvatar"
+            android:layout_height="90dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvHeader"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/black"
+                android:textStyle="normal"
+                style="@style/PersonalInfo.HeaderTitle" />
+
+            <Button
+                android:id="@+id/btnHeaderNext"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#00accd"
+                android:background="@android:color/transparent"
+                style="@style/PersonalInfo.HeaderNext" />
+        </LinearLayout>
+
+        <RelativeLayout style="@style/PersonalInfo.ImageContainer">
+
+            <ImageView
+                android:id="@+id/ivUserAvatar"
+                style="@style/PersonalInfo.Image"
+                android:layout_below="@id/tvTitle"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@null"
+                android:scaleType="fitEnd"
+                app:srcCompat="@drawable/ic_account_empty" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabInfoAddPhoto"
+                style="@style/PersonalInfo.FabAddPhoto"
+                android:layout_alignBottom="@+id/bottomView"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/ic_camera" />
+
+            <View
+                android:id="@+id/bottomView"
+                style="@style/PersonalInfo.BottomImagePlace"
+                android:layout_alignParentBottom="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llContainer"
+            style="@style/PersonalInfo.InputContainer"
+            android:layout_marginTop="@dimen/personal_info_inputs_linear_layout_margin_top"
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilDateOfBirthday"
-                style="@style/Registration.TextInputLayout">
+                style="@style/PersonalInfo.TextInputLayout"
+                android:layout_marginStart="@dimen/personal_info_horizontal_main_margin"
+                android:layout_marginTop="@dimen/personal_info_vertical_main_margin">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etDateOfBirthday"
-                    style="@style/Registration.EditText" />
+                    style="@style/PersonalInfo.EditText" />
             </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:id="@+id/tvInfoGender"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                style="@style/PersonalInfo.GenderTextView"
+                android:layout_marginStart="@dimen/personal_info_horizontal_main_margin" />
 
             <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/PersonalInfo.RadioButtons"
+                android:layout_marginStart="@dimen/personal_info_horizontal_main_margin"
+                android:layout_marginTop="@dimen/personal_info_vertical_main_margin"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/rInfoBtnMale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    style="@style/PersonalInfo.RadioButtons"
+                    android:checked="true" />
 
                 <RadioButton
                     android:id="@+id/rInfoBtnFemale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
+                    style="@style/PersonalInfo.RadioButtons"
+                    android:layout_marginStart="@dimen/personal_info_radio_button_margin_start" />
             </RadioGroup>
-
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilSelectSocialStatus"
-                style="@style/Registration.TextInputLayout">
+                style="@style/PersonalInfo.TextInputLayout"
+                android:layout_marginStart="16dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etSelectSocialStatus"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
+                    style="@style/PersonalInfo.EditText" />
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilICanHelpWith"
-                style="@style/Registration.TextInputLayout">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etICanHelpWith"
-                    style="@style/Registration.EditText" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilPhoneNumber"
-                style="@style/Registration.TextInputLayout">
+                style="@style/PersonalInfo.TextInputLayout"
+                android:layout_marginStart="16dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etPhoneNumber"
-                    style="@style/Registration.EditText" />
+                    style="@style/PersonalInfo.EditText" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilYourEmail"
-                style="@style/Registration.TextInputLayout">
+                style="@style/PersonalInfo.TextInputLayout"
+                android:layout_marginStart="16dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/etYourEmail"
-                    style="@style/Registration.EditText" />
+                    style="@style/PersonalInfo.EditText" />
             </android.support.design.widget.TextInputLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="60dp"
-                android:text="Skip This Step" />
-
         </LinearLayout>
 
-    </RelativeLayout>
-</ScrollView>
+        <TextView
+            android:id="@+id/tvSkipThisStep"
+            style="@style/PersonalInfo.TextViewSkipThisStep" />
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

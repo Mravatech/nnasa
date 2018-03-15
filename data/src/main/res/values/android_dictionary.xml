@@ -29,4 +29,7 @@
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
 
+    <string name="_android_registration_skip_INFO">Skip This Step</string>
+
+
 </resources>

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.annotation.IntRange
 import android.view.View
 import android.widget.ImageView
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
 import com.mnassa.R
@@ -26,7 +25,8 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/27/2018.
  */
-class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoViewModel>(data), PhotoListener {
+class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalInfoViewModel>(/*data*/), PhotoListener {
+
     override val layoutId: Int = R.layout.controller_personal_info
     override val viewModel: PersonalInfoViewModel by instance()
 
@@ -41,10 +41,13 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
+        view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
         view.fabInfoAddPhoto.setOnClickListener {
             dialog.showPhotoDialog(activity!!, this@PersonalInfoController)
         }
-        view.btnNext.setOnClickListener {
+        view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
+        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+        view.btnHeaderNext.setOnClickListener {
             viewModel.processAccount(accountModel)
         }
         onActivityResult.subscribe {
@@ -101,7 +104,11 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         fun newInstance(ac: ShortAccountModel): PersonalInfoController {
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, ac)
-            return PersonalInfoController(params)
+            return PersonalInfoController()
+        }
+
+        fun newInstance(): PersonalInfoController {
+            return PersonalInfoController()
         }
     }
 }
