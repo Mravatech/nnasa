@@ -3,14 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
+//def getGitHash = { ->
+//    def stdout = new ByteArrayOutputStream()
+//    exec {
+//        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+//        standardOutput = stdout
+//    }
+//    return stdout.toString().trim()
+//}
 
 def globalConfiguration = rootProject.extensions.getByName("ext")
 
@@ -34,7 +34,7 @@ android {
 
         multiDexEnabled true
 
-        buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
+//        buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
     }
 
     compileOptions {
