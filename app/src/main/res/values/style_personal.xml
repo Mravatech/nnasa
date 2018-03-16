@@ -98,6 +98,7 @@
     </style>
 
     <dimen name="personal_info_inputs_linear_layout_margin_top">12dp</dimen>
+    <dimen name="personal_info_drawable_padding">8dp</dimen>
     <dimen name="personal_info_text_view_skip_this_step_height">70dp</dimen>
     <dimen name="personal_info_text_view_skip_this_step_text_size">14sp</dimen>
     <dimen name="personal_info_horizontal_main_margin">16dp</dimen>

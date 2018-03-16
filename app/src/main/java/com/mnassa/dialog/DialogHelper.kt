@@ -9,6 +9,7 @@ import android.view.Window
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_photo.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
@@ -51,6 +52,28 @@ class DialogHelper {
                 }.setOnCancelListener {
                     onOkClick()
                 }.show()
+    }
+
+    fun showChooseOccupationDialog(context: Context, onSelectClick: (position: Int) -> Unit) {
+        val dialog = Dialog(context, R.style.OccupationDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_occupation)
+        fun closeDialogAfterClick(position: Int) {
+            onSelectClick(position)
+//            dialog.dismiss() //todo remove if its will be unnecessary
+        }
+        dialog.tvOccupationHeader.text = fromDictionary(R.string.reg_dialog_header)
+        dialog.rStudent.text = fromDictionary(R.string.reg_dialog_student)
+        dialog.rHouseWife.text = fromDictionary(R.string.reg_dialog_housewife)
+        dialog.rEmployee.text = fromDictionary(R.string.reg_dialog_employee)
+        dialog.rBusinessOwner.text = fromDictionary(R.string.reg_dialog_business_owner)
+        dialog.rOther.text = fromDictionary(R.string.reg_dialog_other)
+        dialog.rStudent.setOnClickListener { closeDialogAfterClick(0) }
+        dialog.rHouseWife.setOnClickListener { closeDialogAfterClick(1) }
+        dialog.rEmployee.setOnClickListener { closeDialogAfterClick(2) }
+        dialog.rBusinessOwner.setOnClickListener { closeDialogAfterClick(3) }
+        dialog.rOther.setOnClickListener { closeDialogAfterClick(4) }
+        dialog.show()
     }
 
 }

@@ -30,6 +30,9 @@
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
 
     <string name="_android_registration_skip_INFO">Skip This Step</string>
+    <string name="_android_registration_occupation_header_INFO">Choose occupation</string>
+    <string name="_android_registration_occupation_housewife_INFO">Housewife</string>
+
 
 
 </resources>

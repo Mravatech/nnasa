@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.annotation.IntRange
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
 import com.mnassa.R
@@ -42,13 +43,18 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
-        view.fabInfoAddPhoto.setOnClickListener {
-            dialog.showPhotoDialog(activity!!, this@PersonalInfoController)
-        }
-        view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
-        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
-        view.btnHeaderNext.setOnClickListener {
-            viewModel.processAccount(accountModel)
+//        view.fabInfoAddPhoto.setOnClickListener {
+//            dialog.showPhotoDialog(view.context, this@PersonalInfoController)
+//        }
+//        view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
+//        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+//        view.btnHeaderNext.setOnClickListener {
+//            viewModel.processAccount(accountModel)
+//        }
+        view.occupation.setOnClickListener {
+            dialog.showChooseOccupationDialog(view.context, {
+                Toast.makeText(view.context, "$it", Toast.LENGTH_SHORT).show()
+            })
         }
         onActivityResult.subscribe {
             when (it.requestCode) {
@@ -71,7 +77,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         }
         launchCoroutineUI {
             viewModel.imageUploadedChannel.consumeEach {
-                setImage(view.ivUserAvatar, it)
+//                setImage(view.ivUserAvatar, it)
             }
         }
         launchCoroutineUI {
