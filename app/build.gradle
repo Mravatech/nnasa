@@ -74,16 +74,16 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file("../keystore/key.jks") //TODO: add release keystore
-            storePassword 'android'
-            keyAlias 'android'
-            keyPassword 'android'
+            storeFile "$System.env.STORE_FILE_LOCATION" as File
+            storePassword "$System.env.STORE_PASSWORD"
+            keyAlias "$System.env.KEY_ALIAS"
+            keyPassword "$System.env.KEY_PASSWORD"
         }
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+//            minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
