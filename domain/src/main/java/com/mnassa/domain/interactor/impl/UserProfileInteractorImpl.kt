@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 
@@ -37,7 +38,7 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
         return account
     }
 
-    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
+    override suspend fun processAccount(account: PersonalInfoModel, path: String?) {
 //todo handle response
         userRepository.processAccount(account, path)
     }

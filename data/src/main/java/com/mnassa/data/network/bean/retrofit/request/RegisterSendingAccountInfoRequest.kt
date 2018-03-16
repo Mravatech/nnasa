@@ -23,13 +23,13 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("type")
         val type: String,
         @SerializedName("birthday")
-        val birthday: Double? = 0.0,
+        val birthday: Long? = 0,
         @SerializedName("contactPhone")
         val contactPhone: String? = null,
         @SerializedName("abilities")
         val abilities: List<Ability>? = null,
-        @SerializedName("location")
-        val location: Location? = null,
+//        @SerializedName("location")
+//        val location: Location? = null,
         @SerializedName("id")
         val id: String,
         @SerializedName("avatar")

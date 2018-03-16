@@ -13,6 +13,9 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_photo.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
+import android.app.DatePickerDialog
+import java.util.Calendar
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -74,6 +77,12 @@ class DialogHelper {
             radioButton.isChecked = position == index
         }
         dialog.show()
+    }
+
+    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(context, listener, calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
 }

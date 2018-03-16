@@ -32,6 +32,26 @@ data class DeclinedShortAccountModelImpl(
         override var declinedAt: Date
 ) : DeclinedShortAccountModel
 
+data class PersonalInfoModelImpl(
+        override var id: String,
+        override var firebaseUserId: String,
+        override var userName: String,
+        override var accountType: AccountType,
+        override var avatar: String?,
+        override var contactPhone: String?,
+        override var language: String?,
+        override var personalInfo: PersonalAccountDiffModel?,
+        override var organizationInfo: OrganizationAccountDiffModel?,
+        override var abilities: List<AccountAbility>,
+        override val birthdayDate: String?,
+        override val locationId: String?,
+        override val showContactEmail: Boolean?,
+        override val birthday: Long?,
+        override val offers: List<String>,
+        override val interests: List<String>,
+        override val showContactPhone: Boolean?
+) : PersonalInfoModel
+
 data class PersonalAccountDiffModelImpl(override var firstName: String, override var lastName: String) : PersonalAccountDiffModel
 
 data class OrganizationAccountDiffModelImpl(override var organizationName: String) : OrganizationAccountDiffModel

@@ -6,8 +6,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.FOLDER_AVATARS
+import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.impl.PersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
@@ -50,9 +53,39 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         }
     }
 
-    override fun processAccount(accountModel: ShortAccountModel) {
+    override fun processAccount(accountModel: ShortAccountModel,
+                                contactPhone: String?,
+                                abilities: List<AccountAbility>,
+                                birthdayDate: String?,
+                                locationId: String?,
+                                showContactEmail: Boolean?,
+                                birthday: Long?,
+                                offers: List<String>,
+                                interests: List<String>,
+                                showContactPhone: Boolean?
+    ) {
         handleException {
-            userProfileInteractor.processAccount(accountModel, path)
+            val personalInfo = PersonalInfoModelImpl(
+                    accountModel.id,
+                    accountModel.firebaseUserId,
+                    accountModel.userName,
+                    accountModel.accountType,
+                    path,
+                    contactPhone,
+                    accountModel.language,
+                    accountModel.personalInfo,
+                    accountModel.organizationInfo,
+                    abilities,
+                    birthdayDate,
+                    locationId,
+                    showContactEmail,
+                    birthday,
+                    offers,
+                    interests,
+                    showContactPhone
+            )
+
+            userProfileInteractor.processAccount(personalInfo, path)
             openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }

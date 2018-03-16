@@ -1,6 +1,9 @@
 package com.mnassa.screen.accountinfo.personal
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.IntRange
@@ -12,6 +15,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.activity.CropActivity
+import com.mnassa.activity.CropActivity.Companion.REQUEST_CODE_CAMERA
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
 import com.mnassa.dialog.PhotoListener
@@ -20,8 +24,10 @@ import com.mnassa.screen.invite.InviteController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.android.synthetic.main.selectable_fake_edit_text.view.*
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
+import java.text.DateFormatSymbols
 
 /**
  * Created by Peter on 2/27/2018.
@@ -36,6 +42,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
     private val dialog: DialogHelper by instance()
     private var occupationPositionInList = -1
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
@@ -45,14 +52,20 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
+        view.etDateOfBirthday.isLongClickable = false
+        view.etDateOfBirthday.isFocusableInTouchMode = false
+        view.etDateOfBirthday.setOnClickListener {
+            dialog.calendarDialog(view.context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                view.etDateOfBirthday.setText("${DateFormatSymbols().months[month]} $dayOfMonth, $year")
+            })
+        }
         view.fabInfoAddPhoto.setOnClickListener {
             dialog.showPhotoDialog(view.context, this@PersonalInfoController)
         }
-
         view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
         view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
         view.btnHeaderNext.setOnClickListener {
-            viewModel.processAccount(accountModel)
+//            viewModel.processAccount(accountModel)
         }
         val occupations = listOf(fromDictionary(R.string.reg_dialog_student),
                 fromDictionary(R.string.reg_dialog_housewife),
@@ -62,19 +75,14 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         )
         view.tilWorkAt.hint = fromDictionary(R.string.invite_at_placeholder)
         view.selectOccupation.tvSelectView.text = fromDictionary(R.string.reg_occupation_edit_text_place_holder)
+        view.tilCustomOccupation.hint = fromDictionary(R.string.reg_dialog_custom_occupation)
         view.selectOccupation.tvSelectView.setOnClickListener {
             dialog.showChooseOccupationDialog(view.context, occupations, occupationPositionInList, {
                 view.selectOccupation.tvSelectLabel.visibility = View.VISIBLE
                 view.selectOccupation.tvSelectView.text = occupations[it]
                 view.tilWorkAt.visibility = View.VISIBLE
                 occupationPositionInList = it
-                if (it == OTHER) {
-                    view.tilCustomOccupation.hint = fromDictionary(R.string.reg_dialog_custom_occupation)
-                    view.tilCustomOccupation.visibility = View.VISIBLE
-                } else {
-                    view.tilCustomOccupation.hint = fromDictionary(R.string.reg_dialog_custom_occupation)
-                    view.tilCustomOccupation.visibility = View.GONE
-                }
+                view.tilCustomOccupation.visibility = if (it == OTHER) View.VISIBLE else View.GONE
             })
         }
         onActivityResult.subscribe {
@@ -98,7 +106,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         }
         launchCoroutineUI {
             viewModel.imageUploadedChannel.consumeEach {
-                                setImage(view.ivUserAvatar, it)
+                setImage(view.ivUserAvatar, it)
             }
         }
         launchCoroutineUI {
@@ -113,10 +121,20 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         }
     }
 
+    private var cameraRequestJob: Job? = null
     override fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {
         activity?.let {
-            val intent = CropActivity.start(flag, it)
-            startActivityForResult(intent, REQUEST_CODE_CROP)
+            cameraRequestJob?.cancel()
+            cameraRequestJob = launchCoroutineUI {
+                if (flag == REQUEST_CODE_CAMERA) {
+                    val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    if (!permissionsResult.isAllGranted) {
+                        return@launchCoroutineUI
+                    }
+                }
+                val intent = CropActivity.start(flag, it)
+                startActivityForResult(intent, REQUEST_CODE_CROP)
+            }
         }
     }
 

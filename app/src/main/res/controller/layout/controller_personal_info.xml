@@ -41,7 +41,7 @@
                 android:layout_below="@id/tvTitle"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@null"
-                android:scaleType="fitEnd"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_account_empty" />
 
             <android.support.design.widget.FloatingActionButton
