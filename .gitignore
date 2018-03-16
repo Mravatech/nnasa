@@ -147,5 +147,4 @@ freeline_project_description.json
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 /gradle.properties
 /.idea/vcs.xml
-/gradlew
 /gradlew.bat
