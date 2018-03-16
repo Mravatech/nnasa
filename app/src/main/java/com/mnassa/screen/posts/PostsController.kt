@@ -23,12 +23,12 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         with(view) {
             rvNewsFeed.layoutManager = LinearLayoutManager(context)
             rvNewsFeed.adapter = adapter
+            adapter.onItemViewedListsner = { viewModel.onPostViewed(it) }
         }
 
         adapter.isLoadingEnabled = true
 
         launchCoroutineUI {
-
             viewModel.getNewsFeedChannel().consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
@@ -42,7 +42,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
             }
         }
     }
-
 
     companion object {
         fun newInstance() = PostsController()

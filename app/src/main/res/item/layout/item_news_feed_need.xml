@@ -1,19 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ff7979">
+    android:layout_marginBottom="@dimen/spacing_vertical"
+    android:background="@color/backgroundHighlight"
+    tools:background="#d7d7d7">
 
-    <TextView
-        android:id="@+id/tvNeedDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:text="Need" />
-
-    <View
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_alignParentBottom="true"
-        android:background="#fff" />
+        android:layout_height="wrap_content"
 
-</RelativeLayout>
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/avatar_list_item"
+            android:layout_height="@dimen/avatar_list_item"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            style="@style/MnassaHeader2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivAvatar"
+            android:layout_alignTop="@id/ivAvatar"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_toEndOf="@id/ivAvatar"
+            android:layout_toStartOf="@id/tvTime"
+            android:gravity="center_vertical"
+            tools:text="User name" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            style="@style/MnassaTextTiny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivAvatar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/ivAvatar"
+            android:gravity="center_vertical"
+            tools:text="9 min" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            style="@style/MnassaText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ivAvatar"
+            android:ellipsize="end"
+            android:maxLines="3"
+            tools:text="I need something new and 122112-1122112--12-12222223334--556667788--99900-12233333333-4-5-5-5-33333 @@@339 39399 393 34423 233" />
+
+
+    </RelativeLayout>
+</FrameLayout>

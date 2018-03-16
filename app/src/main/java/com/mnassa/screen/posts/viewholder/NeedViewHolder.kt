@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.avatarRound
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.android.synthetic.main.item_news_feed_need.view.*
 
@@ -14,7 +16,10 @@ import kotlinx.android.synthetic.main.item_news_feed_need.view.*
 class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<Post>(itemView) {
     override fun bind(item: Post) {
         with(itemView) {
-            tvNeedDescription.text = item.text
+            ivAvatar.avatarRound(item.author.avatar)
+            tvUserName.text = item.author.formattedName
+//            tvTime.text = item.createdAt
+            tvDescription.text = item.text
         }
     }
 
