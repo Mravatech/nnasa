@@ -11,6 +11,7 @@
 
     <RadioGroup
         style="@style/DialogOccupation.RadioGroup"
+        android:id="@+id/rOccupationContainer"
         android:orientation="vertical">
 
         <RadioButton

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.annotation.IntRange
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
 import com.mnassa.R
@@ -20,12 +19,14 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
+import kotlinx.android.synthetic.main.selectable_fake_edit_text.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
 /**
  * Created by Peter on 2/27/2018.
  */
+
 class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalInfoViewModel>(/*data*/), PhotoListener {
 
     override val layoutId: Int = R.layout.controller_personal_info
@@ -33,6 +34,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
 
     private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel }
     private val dialog: DialogHelper by instance()
+    private var occupationPositionInList = -1
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -43,17 +45,36 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
-//        view.fabInfoAddPhoto.setOnClickListener {
-//            dialog.showPhotoDialog(view.context, this@PersonalInfoController)
-//        }
-//        view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
-//        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
-//        view.btnHeaderNext.setOnClickListener {
-//            viewModel.processAccount(accountModel)
-//        }
-        view.occupation.setOnClickListener {
-            dialog.showChooseOccupationDialog(view.context, {
-                Toast.makeText(view.context, "$it", Toast.LENGTH_SHORT).show()
+        view.fabInfoAddPhoto.setOnClickListener {
+            dialog.showPhotoDialog(view.context, this@PersonalInfoController)
+        }
+
+        view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
+        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+        view.btnHeaderNext.setOnClickListener {
+            viewModel.processAccount(accountModel)
+        }
+        val occupations = listOf(fromDictionary(R.string.reg_dialog_student),
+                fromDictionary(R.string.reg_dialog_housewife),
+                fromDictionary(R.string.reg_dialog_employee),
+                fromDictionary(R.string.reg_dialog_business_owner),
+                fromDictionary(R.string.reg_dialog_other)
+        )
+        view.tilWorkAt.hint = fromDictionary(R.string.invite_at_placeholder)
+        view.selectOccupation.tvSelectView.text = fromDictionary(R.string.reg_occupation_edit_text_place_holder)
+        view.selectOccupation.tvSelectView.setOnClickListener {
+            dialog.showChooseOccupationDialog(view.context, occupations, occupationPositionInList, {
+                view.selectOccupation.tvSelectLabel.visibility = View.VISIBLE
+                view.selectOccupation.tvSelectView.text = occupations[it]
+                view.tilWorkAt.visibility = View.VISIBLE
+                occupationPositionInList = it
+                if (it == OTHER) {
+                    view.tilCustomOccupation.hint = fromDictionary(R.string.reg_dialog_custom_occupation)
+                    view.tilCustomOccupation.visibility = View.VISIBLE
+                } else {
+                    view.tilCustomOccupation.hint = fromDictionary(R.string.reg_dialog_custom_occupation)
+                    view.tilCustomOccupation.visibility = View.GONE
+                }
             })
         }
         onActivityResult.subscribe {
@@ -77,7 +98,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         }
         launchCoroutineUI {
             viewModel.imageUploadedChannel.consumeEach {
-//                setImage(view.ivUserAvatar, it)
+                                setImage(view.ivUserAvatar, it)
             }
         }
         launchCoroutineUI {
@@ -106,6 +127,13 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
     companion object {
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
+
+        const val STUDENT = 0
+        const val HOUSEWIFE = 1
+        const val EMPLOYEE = 2
+        const val BUSINESS_OWNER = 3
+        const val OTHER = 4
+        const val NOT_SELECTED_POSITION = -1
 
         fun newInstance(ac: ShortAccountModel): PersonalInfoController {
             val params = Bundle()

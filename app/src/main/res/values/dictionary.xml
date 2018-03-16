@@ -96,6 +96,8 @@
     <string name="reg_dialog_housewife">_android_registration_occupation_housewife</string>
     <string name="reg_dialog_employee">_occupation_Employee</string>
     <string name="reg_dialog_header">_android_registration_occupation_header</string>
+    <string name="reg_dialog_custom_occupation">_android_registration_custom_occupation</string>
+    <string name="reg_occupation_edit_text_place_holder">_cellOccupation_occupationPlaceholder</string>
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>

@@ -70,6 +70,7 @@
         <item name="android:imeOptions">actionNext</item>
         <item name="android:singleLine">true</item>
         <item name="android:inputType">text</item>
+        <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
     </style>
 
     <style name="PersonalInfo.TextViewSkipThisStep">
@@ -98,6 +99,7 @@
     </style>
 
     <dimen name="personal_info_inputs_linear_layout_margin_top">12dp</dimen>
+    <dimen name="personal_info_edit_text_text_size">16sp</dimen>
     <dimen name="personal_info_drawable_padding">8dp</dimen>
     <dimen name="personal_info_text_view_skip_this_step_height">70dp</dimen>
     <dimen name="personal_info_text_view_skip_this_step_text_size">14sp</dimen>

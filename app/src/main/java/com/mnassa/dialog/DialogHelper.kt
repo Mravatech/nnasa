@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.support.annotation.IntRange
+import android.support.v7.widget.AppCompatRadioButton
 import android.view.LayoutInflater
 import android.view.Window
 import com.mnassa.R
@@ -54,25 +55,24 @@ class DialogHelper {
                 }.show()
     }
 
-    fun showChooseOccupationDialog(context: Context, onSelectClick: (position: Int) -> Unit) {
+    fun showChooseOccupationDialog(context: Context,
+                                   occupations: List<String>,
+                                   position: Int,
+                                   onSelectClick: (position: Int) -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_occupation)
         fun closeDialogAfterClick(position: Int) {
             onSelectClick(position)
-//            dialog.dismiss() //todo remove if its will be unnecessary
+            dialog.dismiss()
         }
         dialog.tvOccupationHeader.text = fromDictionary(R.string.reg_dialog_header)
-        dialog.rStudent.text = fromDictionary(R.string.reg_dialog_student)
-        dialog.rHouseWife.text = fromDictionary(R.string.reg_dialog_housewife)
-        dialog.rEmployee.text = fromDictionary(R.string.reg_dialog_employee)
-        dialog.rBusinessOwner.text = fromDictionary(R.string.reg_dialog_business_owner)
-        dialog.rOther.text = fromDictionary(R.string.reg_dialog_other)
-        dialog.rStudent.setOnClickListener { closeDialogAfterClick(0) }
-        dialog.rHouseWife.setOnClickListener { closeDialogAfterClick(1) }
-        dialog.rEmployee.setOnClickListener { closeDialogAfterClick(2) }
-        dialog.rBusinessOwner.setOnClickListener { closeDialogAfterClick(3) }
-        dialog.rOther.setOnClickListener { closeDialogAfterClick(4) }
+        for ((index, value) in occupations.withIndex()) {
+            val radioButton = dialog.rOccupationContainer.getChildAt(index) as AppCompatRadioButton
+            radioButton.text = value
+            radioButton.setOnClickListener { closeDialogAfterClick(index) }
+            radioButton.isChecked = position == index
+        }
         dialog.show()
     }
 
