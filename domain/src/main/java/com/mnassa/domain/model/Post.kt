@@ -6,27 +6,26 @@ import java.util.*
 /**
  * Created by Peter on 3/13/2018.
  */
-interface NewsFeedItemModel : Model {
+interface Post : Model {
     val allConnections: Boolean
-//    val adminPost: Boolean
-    val type: NewsFeedItemType
+    val type: PostType
     val createdAt: Date
     val images: List<String>
     val locationPlace: LocationPlaceModel?
-//    val needPush: Boolean
     val originalCreatedAt: Date
     val originalId: String
     val privacyConnections: List<String>
-    val privacyType: NewsFeedItemPrivacyType
+    val privacyType: PostPrivacyType
     val tags: List<String>
     val text: String?
     val updatedAt: Date
-    val counters: NewsFeedItemCounters
+    val counters: PostCounters
     val author: ShortAccountModel
-    val copyOwnerId: String
+    val copyOwnerId: String?
+    val price: Double
 }
 
-interface NewsFeedItemCounters : Serializable {
+interface PostCounters : Serializable {
     val comments: Int
     val likes: Int
     val recommend: Int
@@ -35,10 +34,19 @@ interface NewsFeedItemCounters : Serializable {
     val views: Int
 }
 
-enum class NewsFeedItemType {
-    NEED, OFFER, GENERAL, PROFILE
+sealed class PostType(val ordinal: Int) {
+    object NEED: PostType(1)
+    object OFFER: PostType(2)
+    object GENERAL: PostType(3)
+    object PROFILE: PostType(4)
 }
 
-enum class NewsFeedItemPrivacyType {
-    PUBLIC, PRIVATE
+sealed class PostPrivacyType {
+    object PUBLIC: PostPrivacyType()
+    object PRIVATE: PostPrivacyType()
+}
+
+sealed class ItemType {
+    object EVENT: ItemType()
+    object POST: ItemType()
 }

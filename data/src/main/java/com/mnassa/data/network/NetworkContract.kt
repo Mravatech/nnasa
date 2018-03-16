@@ -1,5 +1,7 @@
 package com.mnassa.data.network
 
+import com.mnassa.domain.model.PostPrivacyType
+
 /**
  * Created by Peter on 2/28/2018.
  */
@@ -15,6 +17,20 @@ object NetworkContract {
     object AccountType {
         const val PERSONAL = "personal"
         const val ORGANIZATION = "organization"
+    }
+
+    object ItemType {
+        const val POST = "post"
+        const val EVENT = "event"
+    }
+
+    object PostType {
+        const val NEED = "need"
+    }
+
+    object PostPrivacyType {
+        const val PUBLIC = "public"
+        const val PRIVATE = "private"
     }
 
     object ConnectionsStatus {
@@ -38,4 +54,9 @@ object NetworkContract {
     object ResponseCode {
         const val UNAUTHORIZED = 403
     }
+}
+
+val PostPrivacyType.stringValue: String get() = when (this) {
+    is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
+    is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
 }

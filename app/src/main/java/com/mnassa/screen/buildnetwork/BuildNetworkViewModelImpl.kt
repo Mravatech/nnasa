@@ -21,6 +21,7 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
 
     private var sendPhoneContactsJob: Job? = null
     private var inviteUsersJob: Job? = null
+    private var isPhonesWereSent: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +29,10 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
         handleException {
             connectionsInteractor.getRecommendedConnections().consumeEach {
                 usersToInviteChannel.send(it)
+
+                if (it.isEmpty() && isPhonesWereSent) {
+                    openScreenChannel.send(BuildNetworkViewModel.OpenScreenCommand.MainScreen())
+                }
             }
         }
     }
@@ -38,6 +43,7 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
         sendPhoneContactsJob?.cancel()
         sendPhoneContactsJob = handleException {
             connectionsInteractor.sendPhoneContacts()
+            isPhonesWereSent = true
         }
     }
 

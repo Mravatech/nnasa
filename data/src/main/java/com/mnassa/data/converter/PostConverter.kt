@@ -4,9 +4,11 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
-import com.mnassa.data.network.bean.firebase.NewsFeedItemCountersDbEntity
-import com.mnassa.data.network.bean.firebase.NewsFeedItemDbEntity
+import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
+import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
+import com.mnassa.data.network.bean.retrofit.response.PostData
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PRIVATE
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_ACCOUNT
@@ -14,38 +16,53 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_GENERAL
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.model.*
-import com.mnassa.domain.model.impl.NewsFeedItemCountersImpl
-import com.mnassa.domain.model.impl.NewsFeedItemModelImpl
+import com.mnassa.domain.model.impl.PostCountersImpl
+import com.mnassa.domain.model.impl.PostImpl
+import timber.log.Timber
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
-class NewsFeedConverter : ConvertersContextRegistrationCallback {
+class PostConverter : ConvertersContextRegistrationCallback {
     override fun register(convertersContext: ConvertersContext) {
-        convertersContext.registerConverter(this::convertNewsFeedItem)
+        convertersContext.registerConverter(this::convertPost)
         convertersContext.registerConverter(this::convertNewsFeedItemCounters)
+        convertersContext.registerConverter(this::convertPostType)
+        convertersContext.registerConverter(this::convertPostPrivacyType)
+        convertersContext.registerConverter(this::convertItemType)
+        convertersContext.registerConverter(this::convertPostData)
     }
 
-    private fun convertNewsFeedItem(input: NewsFeedItemDbEntity, token: Any?, converter: ConvertersContext): NewsFeedItemModelImpl {
+    private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostImpl {
+        val post = input.post
+        val id = input.id
+        post.id = id
+        return converter.convert(post)
+    }
 
-        return NewsFeedItemModelImpl(
+    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostImpl {
+        Timber.i("convertPost")
+        Timber.i("$input")
+
+        return PostImpl(
                 id = input.id,
                 allConnections = input.allConnections,
-                type = convertNewsFeedItemType(input.type),
+                type = converter.convert(input.type),
                 createdAt = Date(input.createdAt),
                 images = input.images ?: emptyList(),
                 locationPlace = input.location?.let { converter.convert<LocationPlaceModel>(it) },
                 originalCreatedAt = Date(input.originalCreatedAt),
                 originalId = input.originalId,
                 privacyConnections = input.privacyConnections ?: emptyList(),
-                privacyType = convertNewsFeedItemPrivacyType(input.privacyType),
+                privacyType = converter.convert(input.privacyType),
                 tags = input.tags ?: emptyList(),
                 text = input.text,
                 updatedAt = Date(input.updatedAt),
                 counters = converter.convert(input.counters),
                 author = convertAuthor(input.author, converter),
-                copyOwnerId = input.copyOwner
+                copyOwnerId = input.copyOwner,
+                price = input.price ?: 0.0
         )
     }
 
@@ -56,28 +73,37 @@ class NewsFeedConverter : ConvertersContextRegistrationCallback {
         return converter.convert(entity, ShortAccountModel::class.java)
     }
 
-    private fun convertNewsFeedItemType(input: String): NewsFeedItemType {
+    private fun convertPostType(input: String): PostType {
         return when (input) {
-            NEWS_FEED_TYPE_NEED -> NewsFeedItemType.NEED
-            NEWS_FEED_TYPE_ACCOUNT -> NewsFeedItemType.PROFILE
-            NEWS_FEED_TYPE_OFFER -> NewsFeedItemType.OFFER
-            NEWS_FEED_TYPE_GENERAL -> NewsFeedItemType.GENERAL
+            NEWS_FEED_TYPE_NEED -> PostType.NEED
+            NEWS_FEED_TYPE_ACCOUNT -> PostType.PROFILE
+            NEWS_FEED_TYPE_OFFER -> PostType.OFFER
+            NEWS_FEED_TYPE_GENERAL -> PostType.GENERAL
 
-            else -> throw IllegalArgumentException("Wrong news feed item type $input")
+            else -> throw IllegalArgumentException("Wrong post item type $input")
         }
     }
 
-    private fun convertNewsFeedItemPrivacyType(input: String): NewsFeedItemPrivacyType {
+    private fun convertPostPrivacyType(input: String): PostPrivacyType {
         return when (input) {
-            NEWS_FEED_PRIVACY_TYPE_PUBLIC -> NewsFeedItemPrivacyType.PUBLIC
-            NEWS_FEED_PRIVACY_TYPE_PRIVATE -> NewsFeedItemPrivacyType.PRIVATE
+            NEWS_FEED_PRIVACY_TYPE_PUBLIC -> PostPrivacyType.PUBLIC
+            NEWS_FEED_PRIVACY_TYPE_PRIVATE -> PostPrivacyType.PRIVATE
 
-            else -> throw IllegalArgumentException("Wrong news feed item privacy type $input")
+            else -> throw IllegalArgumentException("Wrong post privacy type $input")
         }
     }
 
-    private fun convertNewsFeedItemCounters(input: NewsFeedItemCountersDbEntity): NewsFeedItemCountersImpl {
-        return NewsFeedItemCountersImpl(
+    private fun convertItemType(input: String): ItemType {
+        return when (input) {
+            NetworkContract.ItemType.POST -> ItemType.POST
+            NetworkContract.ItemType.EVENT -> ItemType.EVENT
+
+            else -> throw IllegalArgumentException("Wrong post item type $input")
+        }
+    }
+
+    private fun convertNewsFeedItemCounters(input: PostCountersDbEntity): PostCountersImpl {
+        return PostCountersImpl(
                 comments = input.comments,
                 likes = input.likes,
                 recommend = input.recommend,

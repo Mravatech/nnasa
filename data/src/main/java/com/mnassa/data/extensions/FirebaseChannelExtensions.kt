@@ -3,6 +3,7 @@ package com.mnassa.data.extensions
 import com.google.firebase.database.*
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
 import timber.log.Timber
@@ -100,6 +101,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
             //skip this exception
         } catch (e: Exception) {
             Timber.e(e)
+            channel.close(e)
         }
     }
     return channel
@@ -110,4 +112,64 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
         crossinline mapper: (input: DbType) -> OutType = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<OutType> {
     return getValueChannelWithPagination(this, exceptionHandler, mapper, limit)
+}
+
+////////////////////////////////////// LOAD DATA WITH CHANGES HANDLING //////////////////////////////
+//sealed class ListItemEvent<T: Any>(item: T) {
+//    class Added<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
+//    class Moved<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
+//    class Changed<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
+//    class Removed<T: Any>(item: T) : ListItemEvent<T>(item)
+//}
+internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithChangesHandling(
+        exceptionHandler: ExceptionHandler,
+        crossinline mapper: (DbType) -> OutType = { it as OutType },
+        limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
+    val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
+
+    lateinit var listener: ChildEventListener
+
+    val emitter = { input: ListItemEvent<OutType> ->
+        async {
+            try {
+                channel.send(input)
+            } catch (e: ClosedSendChannelException) {
+                removeEventListener(listener)
+            } catch (e: Exception) {
+                Timber.e(e)
+                removeEventListener(listener)
+                channel.close(exceptionHandler.handle(e))
+            }
+        }
+    }
+
+    listener = object : ChildEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            channel.close(exceptionHandler.handle(databaseError.toException()))
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
+            emitter.invoke(ListItemEvent.Moved(mapper(mapped), previousChildName))
+        }
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
+            emitter.invoke(ListItemEvent.Changed(mapper(mapped), previousChildName))
+        }
+
+        override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
+            emitter.invoke(ListItemEvent.Added(mapper(mapped), previousChildName))
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
+            emitter.invoke(ListItemEvent.Removed(mapper(mapped)))
+        }
+    }
+
+    addChildEventListener(listener)
+
+    return channel
 }

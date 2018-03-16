@@ -1,17 +1,19 @@
 package com.mnassa.data.network.bean.firebase
 
-import com.google.firebase.database.DataSnapshot
+import android.support.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
 /**
  * Created by Peter on 3/15/2018.
  */
-internal data class NewsFeedItemDbEntity(
+internal data class PostDbEntity(
+        @SerializedName("id")
+        @Nullable
         override var id: String,
         @SerializedName("allConnections") var allConnections: Boolean,
-        @SerializedName("copyOwner") var copyOwner: String,
-        @SerializedName("counters") var counters: NewsFeedItemCountersDbEntity,
+        @SerializedName("copyOwner") var copyOwner: String?,
+        @SerializedName("counters") var counters: PostCountersDbEntity,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("images") var images: List<String>?,
         @SerializedName("itemType") var itemType: String,
@@ -25,10 +27,11 @@ internal data class NewsFeedItemDbEntity(
         @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
-        @SerializedName("author") var author: Map<String, ShortAccountDbEntity>
+        @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
+        @SerializedName("price") var price: Double?
 ) : HasId
 
-internal data class NewsFeedItemCountersDbEntity(
+internal data class PostCountersDbEntity(
         @SerializedName("comments") var comments: Int,
         @SerializedName("likes") var likes: Int,
         @SerializedName("recommend") var recommend: Int,

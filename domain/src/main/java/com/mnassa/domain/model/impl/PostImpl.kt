@@ -6,30 +6,32 @@ import java.util.*
 /**
  * Created by Peter on 3/15/2018.
  */
-data class NewsFeedItemModelImpl(
+data class PostImpl(
         override var id: String,
         override val allConnections: Boolean,
-        override val type: NewsFeedItemType,
+        override val type: PostType,
         override val createdAt: Date,
         override val images: List<String>,
         override val locationPlace: LocationPlaceModel?,
         override val originalCreatedAt: Date,
         override val originalId: String,
         override val privacyConnections: List<String>,
-        override val privacyType: NewsFeedItemPrivacyType,
+        override val privacyType: PostPrivacyType,
         override val tags: List<String>,
         override val text: String?,
         override val updatedAt: Date,
-        override val counters: NewsFeedItemCounters,
+        override val counters: PostCounters,
         override val author: ShortAccountModel,
-        override val copyOwnerId: String
-) : NewsFeedItemModel
+        override val copyOwnerId: String?,
+        override val price: Double
+) : Post {
+}
 
-data class NewsFeedItemCountersImpl(
+data class PostCountersImpl(
         override val comments: Int,
         override val likes: Int,
         override val recommend: Int,
         override val reposts: Int,
         override val unreadResponse: Int,
         override val views: Int
-) : NewsFeedItemCounters
+) : PostCounters

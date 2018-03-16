@@ -10,7 +10,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
-import com.mnassa.screen.needs.NeedsController
+import com.mnassa.screen.posts.PostsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -26,7 +26,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    HomePage.NEEDS.ordinal -> NeedsController.newInstance()
+                    HomePage.NEEDS.ordinal -> PostsController.newInstance()
                     HomePage.EVENTS.ordinal -> EventsController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }

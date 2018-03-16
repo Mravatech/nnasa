@@ -1,17 +1,21 @@
-package com.mnassa.screen.needs.viewholder
+package com.mnassa.screen.posts.viewholder
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.domain.model.NewsFeedItemModel
+import com.mnassa.domain.model.Post
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import kotlinx.android.synthetic.main.item_news_feed_need.view.*
 
 /**
  * Created by Peter on 3/14/2018.
  */
-class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<NewsFeedItemModel>(itemView) {
-    override fun bind(item: NewsFeedItemModel) {
+class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<Post>(itemView) {
+    override fun bind(item: Post) {
+        with(itemView) {
+            tvNeedDescription.text = item.text
+        }
     }
 
     companion object {
