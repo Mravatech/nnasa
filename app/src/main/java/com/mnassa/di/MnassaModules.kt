@@ -70,6 +70,8 @@ import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
+import com.mnassa.screen.hail.InviteToMnassaViewModel
+import com.mnassa.screen.hail.InviteToMnassaViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.invite.InviteViewModel
@@ -122,6 +124,7 @@ private val viewModelsModule = Kodein.Module {
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
+    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {
@@ -153,7 +156,7 @@ private val repositoryModule = Kodein.Module {
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton {
-        PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance())
+        PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
     }
 }
 
@@ -174,7 +177,7 @@ private val interactorModule = Kodein.Module {
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }
@@ -197,7 +200,7 @@ private val networkModule = Kodein.Module {
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
-    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
+    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl({ instance() }, { instance() }) }
 }
 
 private val otherModule = Kodein.Module {

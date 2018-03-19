@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Invite" />
+
+    <style name="Invite.MainContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/backgroundMain</item>
+    </style>
+
+    <style name="Invite.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/backgroundHighlight</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Invite.BackIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/backgroundHighlight</item>
+        <item name="android:paddingEnd">@dimen/spacing_horizontal</item>
+        <item name="android:paddingStart">@dimen/spacing_horizontal</item>
+        <item name="android:paddingBottom">@dimen/spacing_vertical</item>
+        <item name="android:paddingTop">@dimen/spacing_vertical</item>
+    </style>
+
+    <style name="Invite.History">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/invite_padding</item>
+    </style>
+
+    <style name="Invite.ToolbarText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/invite_toolbar_text_size</item>
+    </style>
+
+    <style name="Invite.TextSuggest">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textSize">@dimen/invite_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.InviteWithNumberContainer">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Invite.InviteWithNumberOperator">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:drawablePadding">@dimen/invite_main_screen_margin</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">@dimen/invite_toolbar_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.InviteWithNumberDivider">
+        <item name="android:layout_width">@dimen/divider_width</item>
+        <item name="android:layout_height">@dimen/invite_divider_height</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+
+    <style name="Invite.InviteWithNumberEditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/backgroundTransparent</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/invite_toolbar_text_size</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/coolGray</item>
+    </style>
+
+    <style name="Invite.InviteButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_invite_to_mnassa_background</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/paleBlue</item>
+        <item name="android:textSize">@dimen/invite_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.SearchContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Invite.SearchEditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/backgroundTransparent</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/blackAlpha</item>
+        <item name="android:textSize">@dimen/invite_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.RecyclerViewInvite">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Invite.ItemViewContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Invite.ItemViewImage">
+        <item name="android:layout_width">@dimen/invite_item_view_image_size</item>
+        <item name="android:layout_height">@dimen/invite_item_view_image_size</item>
+    </style>
+
+    <style name="Invite.ItemViewContactName">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/invite_item_contact_name_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.ItemViewContactNumber" parent="Invite.ItemViewContactName">
+        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textSize">@dimen/invite_item_phone_number_text_size</item>
+    </style>
+
+    <dimen name="invite_item_view_main_margin">12dp</dimen>
+    <dimen name="invite_item_phone_number_text_size">12sp</dimen>
+    <dimen name="invite_item_contact_name_text_size">16sp</dimen>
+    <dimen name="invite_item_view_image_size">50dp</dimen>
+
+    <color name="blackAlpha">#61000000</color>
+    <dimen name="invite_main_screen_margin">8dp</dimen>
+    <dimen name="invite_main_margin_between_views">16dp</dimen>
+    <dimen name="invite_region_number_margin">24dp</dimen>
+    <dimen name="invite_divider_height">56dp</dimen>
+    <dimen name="invite_toolbar_text_size">24sp</dimen>
+    <dimen name="invite_text_size">14sp</dimen>
+    <dimen name="invite_padding">16dp</dimen>
+</resources>

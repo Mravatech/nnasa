@@ -98,4 +98,11 @@
 
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
+
+    <!-- ========================================= INVITE ====================================== -->
+    <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
+    <string name="invite_search_hint">_android_invite_search_hint</string>
+    <string name="invite_phone_number_hint">_accEdit_cellPhone_title</string>
+    <string name="invite_invite_button_text">_newAccNetwork_navItem_Invite</string>
+    <string name="invite_invite_header">_settings_row_inviteFriends</string>
 </resources>

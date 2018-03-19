@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Invite.MainContainer"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/rlHeader"
+        style="@style/Invite.Toolbar"
+        android:orientation="horizontal">
+
+        <com.mnassa.widget.GoBackArrow
+            android:id="@+id/ivToolbarBack"
+            style="@style/Invite.BackIcon" />
+
+        <TextView
+            android:id="@+id/tvToolbarScreenHeader"
+            style="@style/Invite.ToolbarText"
+            android:layout_marginBottom="@dimen/invite_main_screen_margin"
+            android:layout_marginStart="@dimen/invite_main_screen_margin"
+            android:layout_marginTop="@dimen/invite_main_screen_margin"
+            android:layout_weight="1"
+            tools:text="Invite Friends (3 left)" />
+
+        <ImageView
+            android:id="@+id/toolbarBadge"
+            style="@style/Invite.History"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_archive" />
+    </LinearLayout>
+
+    <View style="@style/MnassaShadow" />
+
+    <TextView
+        android:id="@+id/tvEnterTextSuggest"
+        style="@style/Invite.TextSuggest"
+        android:layout_margin="@dimen/invite_main_margin_between_views"
+        tools:text="Enter the number of the friend you want to invite
+or choose from them your Phone Book" />
+
+    <LinearLayout
+        style="@style/Invite.InviteWithNumberContainer"
+        android:layout_marginEnd="@dimen/invite_main_screen_margin"
+        android:layout_marginStart="@dimen/invite_main_screen_margin">
+
+        <TextView
+            style="@style/Invite.InviteWithNumberOperator"
+            android:layout_marginStart="@dimen/invite_region_number_margin"
+            android:drawableStart="@drawable/ic_saudi_arabia_flag"
+            tools:text="+966" />
+
+        <View
+            style="@style/Invite.InviteWithNumberDivider"
+            android:layout_marginBottom="@dimen/invite_main_screen_margin"
+            android:layout_marginStart="@dimen/invite_main_margin_between_views"
+            android:layout_marginTop="@dimen/invite_main_screen_margin" />
+
+        <EditText
+            android:id="@+id/etInvitePhoneNumber"
+            style="@style/Invite.InviteWithNumberEditText"
+            android:layout_marginStart="@dimen/invite_main_margin_between_views"
+            tools:hint="Phone Number" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnInvite"
+        style="@style/Invite.InviteButton"
+        android:layout_margin="@dimen/invite_main_screen_margin"
+        tools:text="INVITE" />
+
+    <LinearLayout
+        style="@style/Invite.SearchContainer"
+        android:layout_marginEnd="@dimen/invite_main_screen_margin"
+        android:layout_marginStart="@dimen/invite_main_screen_margin"
+        android:layout_marginTop="@dimen/invite_main_margin_between_views">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/invite_main_margin_between_views"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_search" />
+
+        <EditText
+            android:id="@+id/etInviteSearch"
+            style="@style/Invite.SearchEditText"
+            android:layout_margin="@dimen/invite_main_margin_between_views"
+            tools:hint="Search people in Phone Book" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvInviteToMnassa"
+        style="@style/Invite.RecyclerViewInvite"
+        android:layout_marginTop="@dimen/invite_main_screen_margin"
+        tools:listitem="@layout/item_invite" />
+</LinearLayout>

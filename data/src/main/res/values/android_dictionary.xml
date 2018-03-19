@@ -29,4 +29,7 @@
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
 
+    <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>
+    <string name="_android_invite_search_hint_INFO">Search people in Phone Book</string>
+
 </resources>
