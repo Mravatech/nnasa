@@ -28,7 +28,7 @@ class AbilitiesContainerSelectableEditText : LinearLayout, AbilitySelectableEdit
         tvAddAnotherOccupation.text = fromDictionary(R.string.reg_add_another_occupation)
         tvAddAnotherOccupation.setOnClickListener {
             tvAddAnotherOccupation.visibility = View.GONE
-            containerSelectable.addView(AbilitySelectableEditText(context, false, this), containerSelectable.childCount - 1)
+            containerSelectable.addView(AbilitySelectableEditText(context, false, this), containerSelectable.childCount - PRE_LAST_POSITION)
         }
     }
 
@@ -45,6 +45,10 @@ class AbilitiesContainerSelectableEditText : LinearLayout, AbilitySelectableEdit
             }
         }
         return abilities
+    }
+
+    companion object {
+        const val PRE_LAST_POSITION = 1
     }
 
 }
