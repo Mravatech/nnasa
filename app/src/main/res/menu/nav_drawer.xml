@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <!-- TODO: redesign needed -->
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
@@ -24,6 +26,10 @@
 
     <item android:title="Communicate">
         <menu>
+            <item
+                android:id="@+id/nav_build_network"
+                android:icon="@drawable/ic_menu_share"
+                android:title="BUILD NETWORK" />
             <item
                 android:id="@+id/nav_create_account"
                 android:icon="@drawable/ic_menu_share"

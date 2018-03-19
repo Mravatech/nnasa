@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import com.mnassa.R
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.showKeyboard
-import kotlinx.android.synthetic.main.controller_invite.view.*
+import kotlinx.android.synthetic.main.controller_build_network.view.*
 import kotlinx.android.synthetic.main.item_pin.view.*
 
 /**

@@ -55,17 +55,17 @@ class GroupedRecommendedConnectionsRVAdapter : BasePaginationRVAdapter<GroupedCo
         set(result)
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.btnAccept -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     val item = getDataItemByAdapterPosition(position) as GroupedConnection.Connection
                     onConnectClickListener(item.account)
                 }
             }
             R.id.btnDecline -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     val item = getDataItemByAdapterPosition(position) as GroupedConnection.Connection
                     onDeclineClickListener(item.account)
