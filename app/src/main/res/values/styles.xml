@@ -10,7 +10,7 @@
 
     <style name="PhotoDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowAnimationStyle">@style/InfoDialogAnimation</item>
-        <item name="android:windowBackground">@drawable/photo_dialog_background</item>
+        <item name="android:windowBackground">@drawable/dialog_background</item>
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
     </style>

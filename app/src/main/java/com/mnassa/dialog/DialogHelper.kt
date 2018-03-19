@@ -9,6 +9,8 @@ import android.view.Window
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_coutry.*
+import kotlinx.android.synthetic.main.dialog_coutry.view.*
 import kotlinx.android.synthetic.main.dialog_photo.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
@@ -51,6 +53,29 @@ class DialogHelper {
                 }.setOnCancelListener {
                     onOkClick()
                 }.show()
+    }
+
+    fun chooseCountryInvite(context: Context, onCountryClick: (countryCode: String) -> Unit) {
+        val dialog = Dialog(context, R.style.DialogCountry)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_coutry)
+        dialog.llSaudiArabia.tvSaudiArabiaCode.text = fromDictionary(R.string.invite_invite_country_sa_code)
+        dialog.llSaudiArabia.tvSaudiArabiaCountry.text = fromDictionary(R.string.invite_invite_country_sa_country)
+        dialog.llUkraine.tvUkraineCode.text = fromDictionary(R.string.invite_invite_country_ua_code)
+        dialog.llUkraine.tvUkraineCountry.text = fromDictionary(R.string.invite_invite_country_ua_country)
+        dialog.llUnitedStates.tvUnitedStatesCode.text = fromDictionary(R.string.invite_invite_country_us_code)
+        dialog.llUnitedStates.tvUnitedStatesCountry.text = fromDictionary(R.string.invite_invite_country_us_country)
+        dialog.llCanada.tvCanadaCode.text = fromDictionary(R.string.invite_invite_country_ca_code)
+        dialog.llCanada.tvCanadaCountry.text = fromDictionary(R.string.invite_invite_country_ca_country)
+        fun setCode(code: String) {
+            onCountryClick(code)
+            dialog.dismiss()
+        }
+        dialog.llSaudiArabia.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_sa_code)) }
+        dialog.llUkraine.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_ua_code)) }
+        dialog.llUnitedStates.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_us_code)) }
+        dialog.llCanada.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_ca_code)) }
+        dialog.show()
     }
 
 }

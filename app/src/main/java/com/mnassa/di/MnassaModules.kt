@@ -124,7 +124,7 @@ private val viewModelsModule = Kodein.Module {
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
-    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl() }
+    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {

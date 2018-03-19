@@ -105,4 +105,12 @@
     <string name="invite_phone_number_hint">_accEdit_cellPhone_title</string>
     <string name="invite_invite_button_text">_newAccNetwork_navItem_Invite</string>
     <string name="invite_invite_header">_settings_row_inviteFriends</string>
+    <string name="invite_invite_country_ca_code">_android_invite_code_canada</string>
+    <string name="invite_invite_country_us_code">_android_invite_code_united_states</string>
+    <string name="invite_invite_country_ua_code">_android_invite_code_ukraine</string>
+    <string name="invite_invite_country_sa_code">_android_invite_code_saudi_arabia</string>
+    <string name="invite_invite_country_ca_country">_android_invite_country_canada</string>
+    <string name="invite_invite_country_us_country">_android_invite_country_united_states</string>
+    <string name="invite_invite_country_ua_country">_android_invite_country_ukraine</string>
+    <string name="invite_invite_country_sa_country">_android_invite_country_saudi_arabia</string>
 </resources>

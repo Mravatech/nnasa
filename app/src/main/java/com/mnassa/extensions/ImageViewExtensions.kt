@@ -40,6 +40,18 @@ fun ImageView.avatarRound(avatarUrl: String?) {
             .into(this)
 }
 
+fun ImageView.avatarRoundString(avatarUrl: String?) {
+    //todo: add placeholder, error
+
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main).apply(RequestOptions.circleCropTransform())
+
+    GlideApp.with(this)
+            .load(avatarUrl)
+            .apply(requestOptions)
+            .apply(RequestOptions.circleCropTransform())
+            .into(this)
+}
+
 fun ImageView.avatarSquare(avatarUrl: String?) {
     //todo: add placeholder, error
 

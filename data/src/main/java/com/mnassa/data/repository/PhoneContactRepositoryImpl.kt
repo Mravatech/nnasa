@@ -29,6 +29,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                             ContactsContract.CommonDataKinds.Phone.NUMBER,
                             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                             ContactsContract.CommonDataKinds.Phone._ID,
+                            ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
                             ContactsContract.Contacts._ID),
                     selection,
                     null,
@@ -36,49 +37,63 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
             ).use { cursor ->
                 if (cursor.moveToFirst()) {
                     val numberColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    val nameColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    val avatarColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
 
                     while (!cursor.isAfterLast) {
-                        result += PhoneContactImpl(phoneNumber = cursor.getString(numberColumnIndex))
+                        if (cursor.getString(numberColumnIndex).length > NUMBER_WITHOUT_CODE) {
+                            val phone = cursor.getString(numberColumnIndex)
+                            result += PhoneContactImpl(
+                                    phoneNumber = phone.substring(phone.length - NUMBER_WITHOUT_CODE),
+                                    fullName = cursor.getString(nameColumnIndex),
+                                    avatar = cursor.getString(avatarColumnIndex))
+                        }
                         cursor.moveToNext()
                     }
                 }
             }
-
-            if (appInfoProvider.isDebug) {
-                result.clear()
-                result.addAll(getDebugPhoneList())
-            }
+//            if (appInfoProvider.isDebug) {
+//                result.clear()
+//                result.addAll(getDebugPhoneList())
+//            }
 
             result.distinctBy { it.phoneNumber }
         }.await()
     }
 
-    private data class PhoneContactImpl(override val phoneNumber: String) : PhoneContact
+    private data class PhoneContactImpl(
+            override val phoneNumber: String,
+            override val fullName: String,
+            override val avatar: String?) : PhoneContact
 
     private fun getDebugPhoneList(): List<PhoneContactImpl> {
         val result = ArrayList<PhoneContactImpl>()
-        result += PhoneContactImpl("380969478743")
-        result += PhoneContactImpl("380969478743")
-        result += PhoneContactImpl("380667520265")
-        result += PhoneContactImpl("380667277832")
-        result += PhoneContactImpl("380969478743")
-        result += PhoneContactImpl("380951299232")
-        result += PhoneContactImpl("380969478743")
-        result += PhoneContactImpl("380677129504")
-        result += PhoneContactImpl("380971760140")
-        result += PhoneContactImpl("380971760140")
-        result += PhoneContactImpl("380660482777")
-        result += PhoneContactImpl("380937541581")
-        result += PhoneContactImpl("380509445155")
-        result += PhoneContactImpl("380675658651")
-        result += PhoneContactImpl("380951299232")
-        result += PhoneContactImpl("380951299232")
-        result += PhoneContactImpl("380675658651")
-        result += PhoneContactImpl("380935061405")
-        result += PhoneContactImpl("380971760140")
-        result += PhoneContactImpl("380933371444")
-        result += PhoneContactImpl("380987820531")
+        result += PhoneContactImpl("380969478743", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380969478743", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380667520265", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380667277832", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380969478743", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380951299232", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380969478743", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380677129504", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380971760140", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380971760140", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380660482777", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380937541581", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380509445155", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380675658651", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380951299232", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380951299232", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380675658651", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380935061405", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380971760140", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380933371444", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
+        result += PhoneContactImpl("380987820531", "Vasya", "http://www.youloveit.ru/uploads/posts/2017-05/1496158153_youloveit_ru_igra_test_kto_ty_iz_poni.jpg")
         return result
+    }
+
+    companion object {
+        const val NUMBER_WITHOUT_CODE = 9
     }
 
 }

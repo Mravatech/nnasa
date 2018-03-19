@@ -7,6 +7,7 @@
 
     <ImageView
         style="@style/Invite.ItemViewImage"
+        android:id="@+id/ivPhoneContactAvatar"
         android:contentDescription="@null"
         tools:background="@mipmap/ic_launcher" />
 

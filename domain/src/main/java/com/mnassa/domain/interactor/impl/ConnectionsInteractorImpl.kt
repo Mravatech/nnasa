@@ -4,6 +4,7 @@ import android.Manifest
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.DeclinedShortAccountModel
+import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.ConnectionsRepository
@@ -47,6 +48,11 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
         if (deviceContacts.isNotEmpty()) {
             connectionsRepository.sendContacts(deviceContacts.map { it.phoneNumber })
         }
+    }
+
+    @RequiresPermission(Manifest.permission.READ_CONTACTS)
+    override suspend fun retrivePhoneContacts():List<PhoneContact> {
+        return phoneContactsRepository.getPhoneContacts()
     }
 
     override suspend fun actionConnect(userAccountIds: List<String>) = connectionsRepository.actionConnect(userAccountIds)

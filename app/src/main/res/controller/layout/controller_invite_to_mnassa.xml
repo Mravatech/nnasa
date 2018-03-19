@@ -45,6 +45,7 @@ or choose from them your Phone Book" />
         android:layout_marginStart="@dimen/invite_main_screen_margin">
 
         <TextView
+            android:id="@+id/tvCodeOperator"
             style="@style/Invite.InviteWithNumberOperator"
             android:layout_marginStart="@dimen/invite_region_number_margin"
             android:drawableStart="@drawable/ic_saudi_arabia_flag"
