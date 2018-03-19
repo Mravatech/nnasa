@@ -6,6 +6,7 @@ import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
 /**
@@ -28,7 +29,7 @@ internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: Exce
 
         override fun onDataChange(dataSnapshot: DataSnapshot?) {
             val listener = this
-            async {
+            launch {
                 try {
                     channel.send(dataSnapshot.mapList())
                 } catch (e: ClosedSendChannelException) {
@@ -60,7 +61,7 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 
         override fun onDataChange(dataSnapshot: DataSnapshot?) {
             val listener = this
-            async {
+            launch {
                 try {
                     channel.send(dataSnapshot.mapSingle())
                 } catch (e: ClosedSendChannelException) {
@@ -85,7 +86,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
         limit: Int = DEFAULT_LIMIT
 ): Channel<OutType> {
     val channel = ArrayChannel<OutType>(limit)
-    async {
+    launch {
         try {
             var latestId: String? = null
             while (true) {
@@ -130,7 +131,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
     lateinit var listener: ChildEventListener
 
     val emitter = { input: ListItemEvent<OutType> ->
-        async {
+        launch {
             try {
                 channel.send(input)
             } catch (e: ClosedSendChannelException) {

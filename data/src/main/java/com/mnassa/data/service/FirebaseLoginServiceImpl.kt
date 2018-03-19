@@ -14,6 +14,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import kotlinx.coroutines.experimental.launch
 import java.util.concurrent.TimeUnit
 
 /**
@@ -35,7 +36,7 @@ class FirebaseLoginServiceImpl(
 
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                async {
+                launch {
                     try {
                         signIn(credential)
                         sendChannel.send(OnVerificationCompleted(phoneNumber))
@@ -51,7 +52,7 @@ class FirebaseLoginServiceImpl(
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
-                async { sendChannel.send(OnCodeSent(
+                launch { sendChannel.send(OnCodeSent(
                         phoneNumber = phoneNumber,
                         verificationId = verificationId,
                         token = token

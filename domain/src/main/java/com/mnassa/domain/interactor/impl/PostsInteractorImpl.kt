@@ -9,6 +9,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import java.io.File
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.atomic.AtomicLong
@@ -27,10 +28,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsI
     private var sendViewedItemsJob: Job? = null
 
     override fun onItemViewed(item: Post) {
-        async {
+        launch {
             val id = item.id
             if (sentViewedItemIds.contains(id)) {
-                return@async
+                return@launch
             }
 
             //bufferize items to send
@@ -39,7 +40,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsI
             if (System.currentTimeMillis() - lastItemsSentTime.get() < SEND_VIEWED_ITEMS_BUFFER_DELAY) {
                 sendViewedItemsJob?.cancel()
             }
-            sendViewedItemsJob = async {
+            sendViewedItemsJob = launch {
                 delay(SEND_VIEWED_ITEMS_BUFFER_DELAY)
 
                 val itemsToSend = viewedItemIdsBuffer.toList()
