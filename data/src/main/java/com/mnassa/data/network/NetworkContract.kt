@@ -31,6 +31,7 @@ object NetworkContract {
     object PostPrivacyType {
         const val PUBLIC = "public"
         const val PRIVATE = "private"
+        const val WORLD = "world"
     }
 
     object ConnectionsStatus {
@@ -59,4 +60,5 @@ object NetworkContract {
 val PostPrivacyType.stringValue: String get() = when (this) {
     is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
     is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
+    is PostPrivacyType.WORLD -> NetworkContract.PostPrivacyType.WORLD
 }

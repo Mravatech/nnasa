@@ -44,6 +44,7 @@ sealed class PostType(val ordinal: Int) {
 sealed class PostPrivacyType {
     object PUBLIC: PostPrivacyType()
     object PRIVATE: PostPrivacyType()
+    object WORLD: PostPrivacyType()
 }
 
 sealed class ItemType {

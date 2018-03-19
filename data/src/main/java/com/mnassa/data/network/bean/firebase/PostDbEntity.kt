@@ -24,7 +24,7 @@ internal data class PostDbEntity(
         @SerializedName("privacyType") var privacyType: String,
         @SerializedName("text") var text: String?,
         @SerializedName("updatedAt") var updatedAt: Long,
-        @SerializedName("location") var location: LocationDbEntity?,
+//        @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
         @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,

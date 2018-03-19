@@ -1,24 +1,33 @@
 package com.mnassa.widget
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.Gravity
 import com.mnassa.R
 
-
 /**
- * Created by Peter on 12.03.2018.
+ * Created by Peter on 3/19/2018.
  */
-class GoBackArrow : AppCompatImageView {
+class DrawerMenu : AppCompatImageView {
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
+    private val drawer: DrawerLayout
+        get() {
+            var parent = this.parent
+            while (parent != null && parent !is DrawerLayout) {
+                parent = parent.parent
+            }
+            return requireNotNull(parent) as DrawerLayout
+        }
+
     init {
-        setImageResource(R.drawable.ic_arrow_back_white_24dp)
+        setImageResource(R.drawable.ic_menu_white_24dp)
 
         val outValue = TypedValue()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -29,8 +38,7 @@ class GoBackArrow : AppCompatImageView {
         isClickable = true
 
         setOnClickListener {
-            val activity = it.context as? Activity
-            activity?.onBackPressed()
+            drawer.openDrawer(Gravity.START)
         }
     }
 }

@@ -8,14 +8,28 @@ import android.widget.FrameLayout
 import com.mnassa.R
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.red_badge.view.*
+import android.content.res.TypedArray
+import android.os.Build
+import android.support.annotation.RequiresApi
+import com.mnassa.translation.fromDictionary
+
 
 /**
  * Created by Peter on 3/13/2018.
  */
 class MnassaToolbar : FrameLayout {
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        processAttrs(attrs, 0, 0)
+    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+       processAttrs(attrs, defStyleAttr, 0)
+    }
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    constructor(context: Context?, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+        processAttrs(attrs, defStyleAttr, defStyleRes)
+    }
+
 
     private val horizontalSpacing by lazy { resources.getDimensionPixelSize(R.dimen.spacing_horizontal) }
     private val verticalSpacing by lazy { resources.getDimensionPixelSize(R.dimen.spacing_vertical) }
@@ -27,12 +41,26 @@ class MnassaToolbar : FrameLayout {
         ivToolbarMore.setOnClickListener { onMoreClickListener?.invoke(it) }
     }
 
+    private fun processAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) {
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.MnassaToolbar, 0, 0)
+
+        attributes.getResourceId(R.styleable.MnassaToolbar_toolbar_title, -1).takeIf { it != -1 }?.let {
+            title = fromDictionary(it)
+        }
+        shadowEnabled = attributes.getBoolean(R.styleable.MnassaToolbar_shadow_enabled, true)
+        backButtonEnabled = attributes.getBoolean(R.styleable.MnassaToolbar_back_button_enabled, true)
+        drawerButtonEnabled = attributes.getBoolean(R.styleable.MnassaToolbar_drawer_button_enabled, false)
+
+        attributes.recycle()
+    }
+
     var backButtonEnabled: Boolean
         get() = ivToolbarBack.visibility == View.VISIBLE
         set(value) {
+            if (value) drawerButtonEnabled = false
             ivToolbarBack.visibility = if (value) View.VISIBLE else View.GONE
-            val titleMargin = if (value) 0 else horizontalSpacing
 
+            val titleMargin = if (value) 0 else horizontalSpacing
             val layoutParams = tvToolbarScreenHeader.layoutParams as MarginLayoutParams
             layoutParams.marginStart = titleMargin
             tvToolbarScreenHeader.layoutParams = layoutParams
@@ -59,6 +87,24 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             field = value
             ivToolbarMore.visibility = if (value != null) View.VISIBLE else View.GONE
+        }
+
+    var shadowEnabled: Boolean
+        get() = vShadow.visibility == View.VISIBLE
+        set(value) {
+            vShadow.visibility = if (value) View.VISIBLE else View.INVISIBLE
+        }
+
+    var drawerButtonEnabled: Boolean
+        get() = ivToolbarDrawer.visibility == View.VISIBLE
+        set(value) {
+            if (value) backButtonEnabled = false
+            ivToolbarDrawer.visibility = if (value) View.VISIBLE else View.GONE
+
+            val titleMargin = if (value) 0 else horizontalSpacing
+            val layoutParams = tvToolbarScreenHeader.layoutParams as MarginLayoutParams
+            layoutParams.marginStart = titleMargin
+            tvToolbarScreenHeader.layoutParams = layoutParams
         }
 
 }

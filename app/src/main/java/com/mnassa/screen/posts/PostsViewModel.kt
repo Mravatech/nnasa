@@ -10,5 +10,5 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface PostsViewModel : MnassaViewModel {
     suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<Post>>
-    fun onPostViewed(post: Post)
+    fun onAttachedToWindow(post: Post)
 }

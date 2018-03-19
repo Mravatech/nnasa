@@ -23,7 +23,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         with(view) {
             rvNewsFeed.layoutManager = LinearLayoutManager(context)
             rvNewsFeed.adapter = adapter
-            adapter.onItemViewedListsner = { viewModel.onPostViewed(it) }
+            adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         }
 
         adapter.isLoadingEnabled = true

@@ -11,6 +11,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
 import com.mnassa.screen.posts.PostsController
+import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -60,6 +61,11 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
                     tlHome.setBadgeText(HomePage.NEEDS.ordinal, if (it == 0) null else it.toString())
                 }
             }
+
+            fabCreateNeed.labelText = fromDictionary(R.string.tab_home_button_create_need)
+            fabCreateNeed.setOnClickListener { open(CreateNeedController.newInstance()) }
+
+            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
         }
     }
 

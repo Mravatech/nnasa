@@ -15,7 +15,8 @@ import com.mnassa.screen.posts.viewholder.ProfileViewHolder
  * Created by Peter on 3/14/2018.
  */
 class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListener {
-    var onItemViewedListsner: (item: Post) -> Unit = { }
+    var onAttachedToWindow: (item: Post) -> Unit = { }
+    var onDetachedFromWindow: (item: Post) -> Unit = { }
 
     override val itemsComparator: (item1: Post, item2: Post) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * -1
@@ -43,7 +44,16 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
 
         val position = convertAdapterPositionToDataIndex(holder.adapterPosition)
         if (position >= 0) {
-            onItemViewedListsner(dataStorage[position])
+            onAttachedToWindow(dataStorage[position])
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: BaseVH<Post>) {
+        super.onViewDetachedFromWindow(holder)
+
+        val position = convertAdapterPositionToDataIndex(holder.adapterPosition)
+        if (position >= 0) {
+            onDetachedFromWindow(dataStorage[position])
         }
     }
 

@@ -31,7 +31,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val converter: ConvertersContext,
                           private val postApi: FirebasePostApi) : PostsRepository {
 
-    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>> {
+    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<Post>> {
         val userId = requireNotNull(userRepository.getAccountId())
 
         return db.child(TABLE_NEWS_FEED)

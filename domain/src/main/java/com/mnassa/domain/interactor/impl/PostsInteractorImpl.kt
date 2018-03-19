@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsInteractor {
 
-    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>> = postsRepository.loadAll()
+    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadById(id: String): Post? = postsRepository.loadById(id)
 
     private val viewedItemIdsBuffer = ConcurrentSkipListSet<String>()
@@ -27,27 +27,29 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsI
     private var sendViewedItemsJob: Job? = null
 
     override fun onItemViewed(item: Post) {
-        val id = item.id
-        if (sentViewedItemIds.contains(id)) {
-            return
+        async {
+            val id = item.id
+            if (sentViewedItemIds.contains(id)) {
+                return@async
+            }
+
+            //bufferize items to send
+            viewedItemIdsBuffer.add(id)
+
+            if (System.currentTimeMillis() - lastItemsSentTime.get() < SEND_VIEWED_ITEMS_BUFFER_DELAY) {
+                sendViewedItemsJob?.cancel()
+            }
+            sendViewedItemsJob = async {
+                delay(SEND_VIEWED_ITEMS_BUFFER_DELAY)
+
+                val itemsToSend = viewedItemIdsBuffer.toList()
+                postsRepository.sendViewed(itemsToSend)
+                viewedItemIdsBuffer.removeAll(itemsToSend)
+                sentViewedItemIds.addAll(itemsToSend)
+                lastItemsSentTime.set(System.currentTimeMillis())
+            }
         }
 
-        //bufferize items to send
-
-        viewedItemIdsBuffer.add(id)
-
-        if (System.currentTimeMillis() - lastItemsSentTime.get() < SEND_VIEWED_ITEMS_BUFFER_DELAY) {
-            sendViewedItemsJob?.cancel()
-        }
-        sendViewedItemsJob = async {
-            delay(SEND_VIEWED_ITEMS_BUFFER_DELAY)
-
-            val itemsToSend = viewedItemIdsBuffer.toList()
-            postsRepository.sendViewed(itemsToSend)
-            viewedItemIdsBuffer.removeAll(itemsToSend)
-            sentViewedItemIds.addAll(itemsToSend)
-            lastItemsSentTime.set(System.currentTimeMillis())
-        }
     }
 
     override suspend fun createNeed(text: String, images: List<File>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post {

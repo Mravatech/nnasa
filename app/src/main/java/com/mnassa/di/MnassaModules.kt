@@ -90,6 +90,10 @@ import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
+import com.mnassa.screen.posts.need.create.CreateNeedViewModel
+import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -133,6 +137,8 @@ private val viewModelsModule = Kodein.Module {
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
+    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl() }
+    bind<NeedDetailsViewModel>() with provider { NeedDetailsViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

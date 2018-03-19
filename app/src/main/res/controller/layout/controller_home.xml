@@ -1,17 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/vShadow"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorAccent" />
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:shadow_enabled="false"
+        app:drawer_button_enabled="true"
+        app:toolbar_title="@string/tab_home_title" />
 
     <com.rahimlis.badgedtablayout.BadgedTabLayout
         android:id="@+id/tlHome"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        app:badgeBackgroundColor="@color/red"
+        app:badgeTextColor="@color/white"
+        app:tabIndicatorColor="@color/white"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/coolGray" />
+
+    <View
+        android:id="@+id/vShadow"
+        style="@style/MnassaShadow"
+        android:layout_below="@id/tlHome" />
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vpHome"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/vShadow"
+        tools:background="#0aa" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/famHome"
+        style="@style/Fab.Menu"
+        android:layout_alignParentEnd="true"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabCreateGeneralPost"
+            style="@style/Fab.Item" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabCreateEvent"
+            style="@style/Fab.Item" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabCreateOffer"
+            style="@style/Fab.Item" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabCreateNeed"
+            style="@style/Fab.Item" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+</RelativeLayout>

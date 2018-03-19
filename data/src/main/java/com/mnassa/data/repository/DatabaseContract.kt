@@ -49,6 +49,7 @@ internal object DatabaseContract {
 
     const val NEWS_FEED_PRIVACY_TYPE_PUBLIC = "public"
     const val NEWS_FEED_PRIVACY_TYPE_PRIVATE = "private"
+    const val NEWS_FEED_PRIVACY_TYPE_WORLD = "world"
     //
     const val TABLE_PUBLIC_ACCOUNTS = "publicAccounts"
 

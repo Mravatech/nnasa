@@ -11,6 +11,7 @@ import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.PostData
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PRIVATE
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
+import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_WORLD
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_ACCOUNT
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_GENERAL
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
@@ -42,8 +43,8 @@ class PostConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostImpl {
-        Timber.i("convertPost")
-        Timber.i("$input")
+//        Timber.i("convertPost")
+//        Timber.i("$input")
 
         return PostImpl(
                 id = input.id,
@@ -51,7 +52,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 type = converter.convert(input.type),
                 createdAt = Date(input.createdAt),
                 images = input.images ?: emptyList(),
-                locationPlace = input.location?.let { converter.convert<LocationPlaceModel>(it) },
+                locationPlace = /*input.location?*/null?.let { converter.convert<LocationPlaceModel>(it) },
                 originalCreatedAt = Date(input.originalCreatedAt),
                 originalId = input.originalId,
                 privacyConnections = input.privacyConnections ?: emptyList(),
@@ -88,6 +89,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
         return when (input) {
             NEWS_FEED_PRIVACY_TYPE_PUBLIC -> PostPrivacyType.PUBLIC
             NEWS_FEED_PRIVACY_TYPE_PRIVATE -> PostPrivacyType.PRIVATE
+            NEWS_FEED_PRIVACY_TYPE_WORLD -> PostPrivacyType.WORLD
 
             else -> throw IllegalArgumentException("Wrong post privacy type $input")
         }

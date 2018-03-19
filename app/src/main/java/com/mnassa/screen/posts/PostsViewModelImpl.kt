@@ -13,7 +13,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 class PostsViewModelImpl(private val postsInteractor: PostsInteractor) : MnassaViewModelImpl(), PostsViewModel {
 
     override suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<Post>> = postsInteractor.loadAll()
-    override fun onPostViewed(post: Post) {
+    override fun onAttachedToWindow(post: Post) {
         handleException { postsInteractor.onItemViewed(post) }
     }
 
