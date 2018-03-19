@@ -147,7 +147,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
                              @FloatRange(from = 0.0, to = 1.0) scaleTV: Float) {
         etChipInput.animate().setDuration(timeET).scaleX(scale)
         etChipInput.animate().setDuration(timeET).scaleY(scale)
-        val transit = tvChipHeader.width / 2 * scaleTV - tvChipHeader.width / 2
+        val transit = tvChipHeader.width / HALF_VIEW_WIDTH * scaleTV - tvChipHeader.width / HALF_VIEW_WIDTH
         tvChipHeader.animate().setDuration(TV_HEADER_TRANSITION_X_DURATION).translationX(transit)
         tvChipHeader.animate().setDuration(timeTV).translationY(transition)
         tvChipHeader.animate().setDuration(timeTV).scaleX(scaleTV)
@@ -164,7 +164,6 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         val chipView = ChipView(context, tagModel, position, this)
         val params = FlowLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         chipView.layoutParams = params
-        chipView.maxTextWidth(this.width)
         return chipView
     }
 
@@ -205,6 +204,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     companion object {
         private const val EDIT_TEXT_RESERVE = 1
+        private const val HALF_VIEW_WIDTH = 2
         private const val PRE_LAST_VIEW_IN_FLOW_LAYOUT = 2
         private const val MIN_SYMBOLS_TO_START_SEARCH = 3
         private const val MIN_SYMBOLS_TO_ADD_TAGS = 3
