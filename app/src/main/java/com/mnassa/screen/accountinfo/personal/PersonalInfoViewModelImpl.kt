@@ -57,11 +57,8 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                                 contactPhone: String?,
                                 abilities: List<AccountAbility>,
                                 birthdayDate: String?,
-                                locationId: String?,
                                 showContactEmail: Boolean?,
                                 birthday: Long?,
-                                offers: List<String>,
-                                interests: List<String>,
                                 showContactPhone: Boolean?
     ) {
         handleException {
@@ -77,15 +74,11 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                     accountModel.organizationInfo,
                     abilities,
                     birthdayDate,
-                    locationId,
                     showContactEmail,
                     birthday,
-                    offers,
-                    interests,
                     showContactPhone
             )
-
-            userProfileInteractor.processAccount(personalInfo, path)
+            userProfileInteractor.processAccount(personalInfo)
             openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }

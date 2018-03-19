@@ -20,11 +20,8 @@ interface PersonalInfoViewModel : MnassaViewModel {
                        contactPhone: String?,
                        abilities: List<AccountAbility>,
                        birthdayDate: String?,
-                       locationId: String?,
                        showContactEmail: Boolean?,
                        birthday: Long?,
-                       offers: List<String>,
-                       interests: List<String>,
                        showContactPhone: Boolean?
     )
 

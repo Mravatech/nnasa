@@ -17,20 +17,11 @@
 
             <TextView
                 android:id="@+id/tvHeader"
-                style="@style/PersonalInfo.HeaderTitle"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="normal" />
+                style="@style/PersonalInfo.HeaderTitle"/>
 
             <Button
                 android:id="@+id/btnHeaderNext"
-                style="@style/PersonalInfo.HeaderNext"
-                android:background="@android:color/transparent"
-                android:fontFamily="sans-serif"
-                android:textColor="#00accd"
-                android:textSize="16sp"
-                android:textStyle="normal" />
+                style="@style/PersonalInfo.HeaderNext" />
         </LinearLayout>
 
         <RelativeLayout style="@style/PersonalInfo.ImageContainer">
@@ -39,24 +30,20 @@
                 android:id="@+id/ivUserAvatar"
                 style="@style/PersonalInfo.Image"
                 android:layout_below="@id/tvTitle"
-                android:layout_centerHorizontal="true"
                 android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_account_empty" />
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                app:srcCompat="@drawable/ic_empty_ava" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabInfoAddPhoto"
                 style="@style/PersonalInfo.FabAddPhoto"
-                android:layout_alignBottom="@+id/bottomView"
+                android:layout_alignBottom="@+id/ivUserAvatar"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="@dimen/personal_info_fab_margin_end"
+                android:layout_marginBottom="@dimen/personal_info_fab_margin_bottom"
                 app:fabSize="normal"
                 app:srcCompat="@drawable/ic_camera" />
-
-            <View
-                android:id="@+id/bottomView"
-                style="@style/PersonalInfo.BottomImagePlace"
-                android:layout_alignParentBottom="true" />
         </RelativeLayout>
 
         <LinearLayout
@@ -64,8 +51,8 @@
             style="@style/PersonalInfo.InputContainer"
             android:layout_marginTop="@dimen/personal_info_inputs_linear_layout_margin_top"
             android:orientation="vertical"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp">
+            android:paddingEnd="@dimen/personal_info_container_padding_horizontal"
+            android:paddingStart="@dimen/personal_info_container_padding_horizontal">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilDateOfBirthday"
@@ -79,7 +66,8 @@
 
             <TextView
                 android:id="@+id/tvInfoGender"
-                style="@style/PersonalInfo.GenderTextView" />
+                style="@style/PersonalInfo.GenderTextView"
+                android:layout_marginStart="@dimen/personal_info_inner_margin_start" />
 
             <RadioGroup
                 style="@style/PersonalInfo.RadioButtons"
@@ -97,32 +85,12 @@
                     android:layout_marginStart="@dimen/personal_info_radio_button_margin_start" />
             </RadioGroup>
 
-            <com.mnassa.widget.input.SelectableFakeEditText
-                android:id="@+id/selectOccupation"
+            <com.mnassa.widget.input.AbilitiesContainerSelectableEditText
+                android:id="@+id/containerSelectOccupation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilCustomOccupation"
-                style="@style/PersonalInfo.TextInputLayout"
-                android:visibility="gone">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etCustomOccupation"
-                    style="@style/PersonalInfo.EditText" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilWorkAt"
-                style="@style/PersonalInfo.TextInputLayout"
-                android:visibility="gone">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etWorkAt"
-                    style="@style/PersonalInfo.EditText" />
-
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/personal_info_abilities_container_margin_vertical"
+                android:layout_marginTop="@dimen/personal_info_abilities_container_margin_vertical" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilPhoneNumber"
@@ -151,6 +119,5 @@
         <TextView
             android:id="@+id/tvSkipThisStep"
             style="@style/PersonalInfo.TextViewSkipThisStep" />
-
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

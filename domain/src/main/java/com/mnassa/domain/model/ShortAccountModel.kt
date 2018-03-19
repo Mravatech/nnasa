@@ -28,11 +28,8 @@ interface DeclinedShortAccountModel : ShortAccountModel {
 
 interface PersonalInfoModel : ShortAccountModel {
     val birthdayDate: String?
-    val locationId: String?
     val showContactEmail: Boolean?
     val birthday: Long?
-    val offers: List<String>
-    val interests: List<String>
     val showContactPhone: Boolean?
 }
 

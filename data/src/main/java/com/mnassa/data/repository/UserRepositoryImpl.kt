@@ -92,12 +92,9 @@ class UserRepositoryImpl(
         return converter.convert(result.account)
     }
 
-    override suspend fun processAccount(account: PersonalInfoModel, path: String?) {
-        //todo remove hardcode
-//        val ability = Ability(account.abilities., account.locationId)
+    override suspend fun processAccount(account: PersonalInfoModel) {
         firebaseAuthApi.registerSendAccountInfo(RegisterSendingAccountInfoRequest(
                 account.birthdayDate,
-                account.locationId,
                 account.personalInfo?.lastName?:"",//todo
                 account.userName,
                 account.showContactEmail,
@@ -105,13 +102,10 @@ class UserRepositoryImpl(
                 "personal",
                 account.birthday,
                 account.contactPhone,
-                null,//todo
-//                null,
+                converter.convertCollection(account.abilities, Ability::class.java),//todo
                 requireNotNull(getAccountId()),//todo
                 account.avatar,
                 account.personalInfo?.firstName?:"",//todo
-                account.offers,
-                account.interests,
                 account.showContactPhone
         )).await()
     }

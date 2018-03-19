@@ -139,6 +139,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
+        converter.registerConverter(AbilityConverter::class.java)
         converter
     }
 }

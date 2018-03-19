@@ -44,11 +44,8 @@ data class PersonalInfoModelImpl(
         override var organizationInfo: OrganizationAccountDiffModel?,
         override var abilities: List<AccountAbility>,
         override val birthdayDate: String?,
-        override val locationId: String?,
         override val showContactEmail: Boolean?,
         override val birthday: Long?,
-        override val offers: List<String>,
-        override val interests: List<String>,
         override val showContactPhone: Boolean?
 ) : PersonalInfoModel
 

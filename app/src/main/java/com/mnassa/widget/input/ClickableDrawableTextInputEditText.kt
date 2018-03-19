@@ -25,7 +25,7 @@ class ClickableDrawableTextInputEditText : TextInputEditText {
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private var isChosen = false
+    var isChosen = false
 
     init {
         setOnTouchListener { _, event ->

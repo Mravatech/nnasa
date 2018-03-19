@@ -23,11 +23,12 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
-import kotlinx.android.synthetic.main.selectable_fake_edit_text.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 import java.text.DateFormatSymbols
+import java.util.*
+
 
 /**
  * Created by Peter on 2/27/2018.
@@ -40,7 +41,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
 
     private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel }
     private val dialog: DialogHelper by instance()
-    private var occupationPositionInList = -1
+    private var timeMillis: Long? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View) {
@@ -57,6 +58,11 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.etDateOfBirthday.setOnClickListener {
             dialog.calendarDialog(view.context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 view.etDateOfBirthday.setText("${DateFormatSymbols().months[month]} $dayOfMonth, $year")
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                cal.set(Calendar.MONTH, month)
+                cal.set(Calendar.YEAR, year)
+                timeMillis = cal.timeInMillis
             })
         }
         view.fabInfoAddPhoto.setOnClickListener {
@@ -65,25 +71,14 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
         view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
         view.btnHeaderNext.setOnClickListener {
-//            viewModel.processAccount(accountModel)
-        }
-        val occupations = listOf(fromDictionary(R.string.reg_dialog_student),
-                fromDictionary(R.string.reg_dialog_housewife),
-                fromDictionary(R.string.reg_dialog_employee),
-                fromDictionary(R.string.reg_dialog_business_owner),
-                fromDictionary(R.string.reg_dialog_other)
-        )
-        view.tilWorkAt.hint = fromDictionary(R.string.invite_at_placeholder)
-        view.selectOccupation.tvSelectView.text = fromDictionary(R.string.reg_occupation_edit_text_place_holder)
-        view.tilCustomOccupation.hint = fromDictionary(R.string.reg_dialog_custom_occupation)
-        view.selectOccupation.tvSelectView.setOnClickListener {
-            dialog.showChooseOccupationDialog(view.context, occupations, occupationPositionInList, {
-                view.selectOccupation.tvSelectLabel.visibility = View.VISIBLE
-                view.selectOccupation.tvSelectView.text = occupations[it]
-                view.tilWorkAt.visibility = View.VISIBLE
-                occupationPositionInList = it
-                view.tilCustomOccupation.visibility = if (it == OTHER) View.VISIBLE else View.GONE
-            })
+            viewModel.processAccount(accountModel,
+                    view.etPhoneNumber.text.toString(),
+                    view.containerSelectOccupation.getAllAbilities(),
+                    view.etDateOfBirthday.text.toString(),
+                    view.etYourEmail.isChosen,
+                    timeMillis,
+                    view.etPhoneNumber.isChosen
+            )
         }
         onActivityResult.subscribe {
             when (it.requestCode) {
