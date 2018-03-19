@@ -1,10 +1,12 @@
 package com.mnassa.domain.model
 
 /**
- * Created by Peter on 2/22/2018.
+ * Created by IntelliJ IDEA.
+ * User: okli
+ * Date: 3/13/2018
  */
-interface TagModel : Model {
-    val status: String
-    val nameAr: String
-    val nameEn: String
+interface TagModel {
+    var status: String?
+    var name: String
+    var id: String?
 }

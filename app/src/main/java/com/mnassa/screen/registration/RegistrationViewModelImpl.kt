@@ -1,7 +1,9 @@
 package com.mnassa.screen.registration
 
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -11,6 +13,7 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  */
 class RegistrationViewModelImpl(
         private val userProfileInteractor: UserProfileInteractor,
+        private val tagInteractor: TagInteractor,
         private val placeFinderInteractor: PlaceFinderInteractor
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
@@ -46,7 +49,12 @@ class RegistrationViewModelImpl(
         }
     }
 
-    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel>? {
+    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
         return placeFinderInteractor.getReqieredPlaces(constraint)
     }
+
+    override suspend fun search(search: String): List<TagModel> {
+        return tagInteractor.search(search)
+    }
+
 }

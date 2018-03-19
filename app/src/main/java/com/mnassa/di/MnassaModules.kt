@@ -21,14 +21,6 @@ import com.mnassa.data.repository.StorageRepositoryImpl
 import com.mnassa.data.repository.TagRepositoryImpl
 import com.mnassa.data.repository.UserRepositoryImpl
 import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.domain.interactor.DictionaryInteractor
-import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.interactor.impl.DictionaryInteractorImpl
-import com.mnassa.domain.interactor.impl.LoginInteractorImpl
-import com.mnassa.domain.interactor.impl.StorageInteractorImpl
-import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
@@ -40,6 +32,7 @@ import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
+import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
@@ -112,7 +105,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
-    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance()) }
+    bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance(), instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
@@ -135,10 +128,10 @@ private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
         converter.registerConverter(UserAccountConverter::class.java)
-        converter.registerConverter(TagConverter::class.java)
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
+        converter.registerConverter(TagConverter({ instance() }))
         converter
     }
 }
@@ -153,11 +146,11 @@ private val repositoryModule = Kodein.Module {
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance()) }
+    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
-    bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton {
         PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance())
@@ -174,6 +167,7 @@ private val interactorModule = Kodein.Module {
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
+    bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
 }
