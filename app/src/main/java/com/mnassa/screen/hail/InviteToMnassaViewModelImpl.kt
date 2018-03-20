@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.support.annotation.RequiresPermission
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ConnectionsInteractor
+import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
@@ -15,9 +16,14 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * User: okli
  * Date: 3/19/2018
  */
-class InviteToMnassaViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), InviteToMnassaViewModel {
+class InviteToMnassaViewModelImpl(
+        private val connectionsInteractor: ConnectionsInteractor,
+        private val inviteInteractor: InviteInteractor
+) : MnassaViewModelImpl(), InviteToMnassaViewModel {
+
     override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = BroadcastChannel(10)
     override val phoneSelectedChannel: BroadcastChannel<PhoneContact> = BroadcastChannel(10)
+    override val checkPhoneContactChannel: BroadcastChannel<Boolean> = BroadcastChannel(10)
 
     private var retrievePhoneJob: Job? = null
     @SuppressLint("MissingPermission")
@@ -31,10 +37,19 @@ class InviteToMnassaViewModelImpl(private val connectionsInteractor: Connections
     }
 
     private var selectPhoneJob: Job? = null
-    override fun selectPhoneContact(contact: PhoneContact){
+    override fun selectPhoneContact(contact: PhoneContact) {
         selectPhoneJob?.cancel()
         selectPhoneJob = launchCoroutineUI {
             phoneSelectedChannel.send(contact)
+        }
+    }
+
+    private var checkPhoneContactJob: Job? = null
+    override fun checkPhoneContact(contact: PhoneContact) {
+        checkPhoneContactJob?.cancel()
+        checkPhoneContactJob = handleException {
+            inviteInteractor.inviteContact(contact)
+            checkPhoneContactChannel.send(true)
         }
     }
 

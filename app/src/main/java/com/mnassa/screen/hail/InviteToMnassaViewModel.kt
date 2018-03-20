@@ -12,6 +12,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface InviteToMnassaViewModel : MnassaViewModel {
     val phoneContactChannel: BroadcastChannel<List<PhoneContact>>
     val phoneSelectedChannel: BroadcastChannel<PhoneContact>
+    val checkPhoneContactChannel: BroadcastChannel<Boolean>
     fun retrievePhoneContacts()
     fun selectPhoneContact(contact: PhoneContact)
+    fun checkPhoneContact(contact: PhoneContact)
 }

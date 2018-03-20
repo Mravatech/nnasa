@@ -124,7 +124,7 @@ private val viewModelsModule = Kodein.Module {
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
-    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl(instance()) }
+    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl(instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -158,6 +158,7 @@ private val repositoryModule = Kodein.Module {
     bind<PlaceFinderRepository>() with singleton {
         PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
     }
+    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -173,6 +174,7 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
+    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance()) }
 }
 
 private val networkModule = Kodein.Module {

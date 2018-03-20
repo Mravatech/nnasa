@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.provider.ContactsContract
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.model.PhoneContact
+import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.ContactsRepository
 import kotlinx.coroutines.experimental.async
@@ -61,10 +62,6 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
         }.await()
     }
 
-    private data class PhoneContactImpl(
-            override val phoneNumber: String,
-            override val fullName: String,
-            override val avatar: String?) : PhoneContact
 
     private fun getDebugPhoneList(): List<PhoneContactImpl> {
         val result = ArrayList<PhoneContactImpl>()

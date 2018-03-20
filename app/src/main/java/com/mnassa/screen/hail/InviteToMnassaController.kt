@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import android.content.Intent
 import android.net.Uri
+import com.mnassa.domain.model.PhoneContact
+import com.mnassa.domain.model.impl.PhoneContactImpl
 import java.net.URLEncoder
 
 /**
@@ -47,11 +49,9 @@ class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>()
             adapter?.searchByNumber(it)
         })
         view.btnInvite.setOnClickListener {
-            val packageManager = activity?.packageManager
-            val i = getWhatsAppIntent("")
-            val name = adapter?.getNameByNumber(view.etInvitePhoneNumber.text.toString())
-            dialog.chooseSendInviteWith(view.context, name, i.resolveActivity(packageManager) != null,
-                    { handleInviteWith(it, view.tvCodeOperator.text.toString() + view.etInvitePhoneNumber.text.toString()) })
+            viewModel.checkPhoneContact(PhoneContactImpl(
+                    view.tvCodeOperator.text.toString() + view.etInvitePhoneNumber.text.toString(),
+                    adapter?.getNameByNumber(view.etInvitePhoneNumber.text.toString()) ?: "", null))
         }
         launchCoroutineUI {
             if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
@@ -69,6 +69,20 @@ class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>()
             viewModel.phoneSelectedChannel.consumeEach {
                 view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
                 view.etInvitePhoneNumber.setText(it.phoneNumber)
+            }
+        }
+        launchCoroutineUI {
+            viewModel.checkPhoneContactChannel.consumeEach {
+                if (it) {
+                    val packageManager = activity?.packageManager
+                    val i = getWhatsAppIntent("")
+                    val name = adapter?.getNameByNumber(view.etInvitePhoneNumber.text.toString())
+                    dialog.chooseSendInviteWith(view.context, name, i.resolveActivity(packageManager) != null,
+                            { inviteWith ->
+                                handleInviteWith(inviteWith,
+                                        view.tvCodeOperator.text.toString() + view.etInvitePhoneNumber.text.toString())
+                            })
+                }
             }
         }
         view.etInviteSearch.addTextChangedListener(
