@@ -55,11 +55,15 @@
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
     <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
 
-    <!-- ========================================= NEED ======================================== -->
+    <!-- ========================================= POSTS ======================================== -->
     <string name="need_prefix">_post_type_need_Info</string>
 
     <!-- create need -->
     <string name="need_create_title">_posts_header_iNeed</string>
+
+    <string name="need_item_btn_you_and_connections_can_help">_postCell_youAndFriendsCanHelp</string>
+    <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
+    <string name="need_item_btn_you_can_help">_postCell_youCanHelp</string>
 
     <!-- need details -->
     <string name="need_details_title">_android_need_details_title</string>

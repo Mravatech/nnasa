@@ -34,10 +34,14 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<Post> {
         return when (viewType) {
-            PostType.GENERAL.ordinal -> GeneralViewHolder.newInstance(parent, this)
-            PostType.NEED.ordinal -> NeedViewHolder.newInstance(parent, this)
-            PostType.OFFER.ordinal -> OfferViewHolder.newInstance(parent, this)
-            PostType.PROFILE.ordinal -> ProfileViewHolder.newInstance(parent, this)
+            TYPE_GENERAL -> GeneralViewHolder.newInstance(parent, this)
+            TYPE_NEED -> NeedViewHolder.newInstance(parent, this)
+            TYPE_NEED_WITH_IMAGE_1 -> NeedViewHolder.newInstanceWithOneImage(parent, this)
+            TYPE_NEED_WITH_IMAGE_2 -> NeedViewHolder.newInstanceWithTwoImages(parent, this)
+            TYPE_NEED_WITH_IMAGE_3 -> NeedViewHolder.newInstanceWithThreeImages(parent, this)
+            TYPE_NEED_WITH_IMAGE_MORE -> NeedViewHolder.newInstanceWithMoreImages(parent, this)
+            TYPE_OFFER -> OfferViewHolder.newInstance(parent, this)
+            TYPE_PROFILE -> ProfileViewHolder.newInstance(parent, this)
             else -> throw IllegalStateException("Illegal view type $viewType")
         }
     }
@@ -60,7 +64,20 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
         }
     }
 
-    override fun getViewType(position: Int): Int = dataStorage[position].type.ordinal
+    override fun getViewType(position: Int): Int {
+        val item = dataStorage[position]
+        return when (item.type) {
+            PostType.NEED -> if (item.images.isEmpty()) TYPE_NEED else when (item.images.size) {
+                1 -> TYPE_NEED_WITH_IMAGE_1
+                2 -> TYPE_NEED_WITH_IMAGE_2
+                3 -> TYPE_NEED_WITH_IMAGE_3
+                else -> TYPE_NEED_WITH_IMAGE_MORE
+            }
+            PostType.OFFER -> TYPE_OFFER
+            PostType.GENERAL -> TYPE_GENERAL
+            PostType.PROFILE -> TYPE_PROFILE
+        }
+    }
 
     override fun onClick(view: View) {
         val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
@@ -70,5 +87,16 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
                 onItemClickListener(getDataItemByAdapterPosition(position))
             }
         }
+    }
+
+    private companion object {
+        private const val TYPE_GENERAL = 1
+        private const val TYPE_NEED = 2
+        private const val TYPE_NEED_WITH_IMAGE_1 = 3
+        private const val TYPE_NEED_WITH_IMAGE_2 = 4
+        private const val TYPE_NEED_WITH_IMAGE_3 = 5
+        private const val TYPE_NEED_WITH_IMAGE_MORE = 6
+        private const val TYPE_OFFER = 7
+        private const val TYPE_PROFILE = 8
     }
 }
