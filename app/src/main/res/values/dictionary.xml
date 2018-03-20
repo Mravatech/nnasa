@@ -38,6 +38,8 @@
     <string name="reg_next">_newAccDetails_navItem_Next</string>
     <string name="reg_account_type_personal">_android_account_type_personal</string>
     <string name="reg_account_type_organization">_android_account_type_organization</string>
+    <string name="reg_account_can_help_with">_accEdit_cellOffers_placeholder</string>
+    <string name="reg_account_interested_in">_accEdit_cellInterests_placeholder</string>
 
     <!-- ==================================== BUILD NETWORK (INVITE) =========================== -->
     <string name="invite_title">_newAccNetwork_navTitle</string>
@@ -111,6 +113,7 @@
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
+    <string name="reg_person_type_here">_android_registration_type_here</string>
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>

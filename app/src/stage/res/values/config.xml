@@ -2,4 +2,5 @@
 <resources>
     <!--pre prod key-->
     <string name="play_services_key" formatted="false" translatable="false">AIzaSyBNKhG4LEZSe_Qa9DRR0b63fk11tZnZ5mw</string>
+    <string name="crashlytics_key" formatted="false" translatable="false">785d8aa9210f776f16818b3ed813bb58d811f687</string>
 </resources>

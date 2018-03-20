@@ -53,4 +53,6 @@ internal object DatabaseContract {
     //
     const val TABLE_PUBLIC_ACCOUNTS = "publicAccounts"
 
+    const val TABLE_TAGS = "tags"
+
 }

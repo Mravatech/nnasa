@@ -213,7 +213,7 @@ dependencies {
 
     //crashlytics
     implementation (deps.other.crashlytics) {
-        transitive = true
+        transitive = true;
     }
 }
 
