@@ -15,6 +15,8 @@ android {
         debug { }
     }
     compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
         encoding "UTF-8"
     }
     sourceSets { main.java.srcDirs += 'src/main/kotlin' }
@@ -23,6 +25,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //modules
+    implementation deps.core
 
     //support
     implementation deps.support.appcompat
@@ -33,5 +38,8 @@ dependencies {
 
     //kotlin
     implementation deps.kotlin.stdlib
+
+    //coroutines
     implementation deps.coroutines.core
+    implementation deps.coroutines.android
 }

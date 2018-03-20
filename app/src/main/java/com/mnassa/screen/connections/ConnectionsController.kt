@@ -3,6 +3,7 @@ package com.mnassa.screen.connections
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
@@ -12,13 +13,13 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.Toast
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
@@ -31,8 +32,6 @@ import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
-import kotlinx.android.synthetic.main.red_badge.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -52,7 +51,8 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.text = fromDictionary(R.string.tab_connections_title)
+            toolbar.backButtonEnabled = false
+            toolbar.title = fromDictionary(R.string.tab_connections_title)
 
             recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
             recommendedConnectionsAdapter.onConnectClickListener = { viewModel.connect(it) }
@@ -67,8 +67,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             rvAllConnections.layoutManager = LinearLayoutManager(context)
             rvAllConnections.adapter = allConnectionsAdapter
 
-            ivMore.visibility = View.VISIBLE
-            ivMore.setOnClickListener {
+            toolbar.onMoreClickListener = {
                 //Creating the instance of PopupMenu
                 val popup = PopupMenu(it.context, it)
                 //Inflating the Popup using xml file
@@ -101,8 +100,20 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     override fun onPageSelected() {
         onPageSelectedJob?.cancel()
         onPageSelectedJob = launchCoroutineUI {
-            if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
+            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+
+            if (permissionsResult.isAllGranted) {
                 viewModel.onContactPermissionsGranted()
+            } else {
+                val view = view ?: return@launchCoroutineUI
+                Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
+                            if (permissionsResult.isShouldShowRequestPermissionRationale) {
+                                onPageSelected()
+                            } else {
+                                view.context.openApplicationSettings()
+                            }
+                        }.show()
             }
         }
     }
@@ -124,7 +135,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
 
         launchCoroutineUI {
-            //            viewModel.allConnectionsChannel.consumeEach {
             viewModel.allConnectionsChannel.consumeEach {
                 allConnectionsAdapter.set(it)
                 header.tvAllConnections.text = formatTextWithCounter(R.string.tab_connections_all, it.size)
@@ -151,8 +161,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                 header.rvNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
                 header.vNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
 
-                root.badge.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-                root.tvBadgeCount.text = it.size.toString()
+                root.toolbar.counter = it.size
                 header.tvNewConnectionRequests.text = formatTextWithCounter(R.string.tab_connections_new_requests, it.size)
             }
         }
@@ -161,21 +170,10 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
     ///////////////////////////////////////// CONNECTION TYPE SCREENS ///////////////////////////////
 
-    private fun openRecommendedConnectionsScreen() {
-        router.pushController(RouterTransaction.with(RecommendedConnectionsController.newInstance()))
-    }
-
-    private fun openSentRequestsScreen() {
-        router.pushController(RouterTransaction.with(SentConnectionsController.newInstance()))
-    }
-
-    private fun openArchivedConnectionsScreen() {
-        router.pushController(RouterTransaction.with(ArchivedConnectionController.newInstance()))
-    }
-
-    private fun openNewRequestsScreen() {
-        router.pushController(RouterTransaction.with(NewRequestsController.newInstance()))
-    }
+    private fun openRecommendedConnectionsScreen() = open(RecommendedConnectionsController.newInstance())
+    private fun openSentRequestsScreen() = open(SentConnectionsController.newInstance())
+    private fun openArchivedConnectionsScreen() = open(ArchivedConnectionController.newInstance())
+    private fun openNewRequestsScreen() = open(NewRequestsController.newInstance())
 
     private fun openChat(accountModel: ShortAccountModel) {
         Toast.makeText(context, "Opening chat with user ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
@@ -214,7 +212,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun formatTextWithCounter(dictionaryResId: Int, counterValue: Int): CharSequence {
-        val head = fromDictionary(dictionaryResId) + "  "
+        val head = "${fromDictionary(dictionaryResId)}  "
         val spannable = SpannableString(head + counterValue.toString())
         val color = ContextCompat.getColor(requireNotNull(applicationContext), R.color.coolGray)
         spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

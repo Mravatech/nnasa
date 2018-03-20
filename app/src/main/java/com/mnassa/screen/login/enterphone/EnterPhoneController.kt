@@ -2,24 +2,20 @@ package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.LinearLayout
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
+import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
-import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.translation.fromDictionary
 import com.mnassa.extensions.onImeActionDone
 import com.mnassa.extensions.showKeyboard
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -29,6 +25,7 @@ import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
@@ -41,13 +38,35 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<EnterPhoneViewModel>(args) {
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
+    private val dialogHelper: DialogHelper by instance()
+    private val countryCodes = mutableListOf(
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_saudi_arabia,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_saudi_arabia)),
+                    phonePrefix = PhonePrefix.SaudiArabia),
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_ukraine,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_ukraine)),
+                    phonePrefix = PhonePrefix.Ukraine),
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_the_united_states,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_united_states)),
+                    phonePrefix = PhonePrefix.UnitedState),
+            CountryCode(
+                    flagRes = R.drawable.ic_flag_of_canada,
+                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_canada)),
+                    phonePrefix = PhonePrefix.Canada)
+    )
+
+
+
     protected val phoneNumber: String
         get() {
-            val v = view ?: return ""
-            val countryCode = v.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
-            return countryCode.phonePrefix
+            val view = view ?: return ""
+            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
+            return countryCode.phonePrefix.code
                     .replace("+", "") +
-                    v.etPhoneNumberTail.text.toString()
+                    view.etPhoneNumberTail.text.toString()
         }
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -58,18 +77,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             viewModel.openScreenChannel.consumeEach {
                 hideProgress()
                 when (it) {
-                    is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> {
-                        router.replaceTopController(RouterTransaction.with(MainController.newInstance()))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode -> {
-                        router.pushController(RouterTransaction.with(EnterCodeController.newInstance(it.param)))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.Registration -> {
-                        router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
-                    }
-                    is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> {
-                        router.pushController(RouterTransaction.with(SelectAccountController.newInstance()))
-                    }
+                    is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> open(MainController.newInstance())
+                    is EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode -> open(EnterCodeController.newInstance(it.param))
+                    is EnterPhoneViewModel.OpenScreenCommand.Registration -> open(RegistrationController.newInstance())
+                    is EnterPhoneViewModel.OpenScreenCommand.SelectAccount -> open(SelectAccountController.newInstance())
                 }
             }
         }
@@ -103,14 +114,8 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
-            val countries = mutableListOf(
-                    //TODO: use iOS app countries and add more icons
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("1", "Ukraine1", null, null), "+38"),
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("2", "Ukraine2", null, null), "+38"),
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("3", "Ukraine3", null, null), "+38"),
-                    CountryCode(R.mipmap.ic_launcher, TranslatedWordModelImpl("4", "Saudi Arabia", null, null), "+966")
-            )
-            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countries)
+
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryCodes)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
@@ -121,10 +126,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             }
 
             btnEnterPromo.setOnClickListener {
-                router.pushController(RouterTransaction.with(EnterPromoController.newInstance(
+                open(EnterPromoController.newInstance(
                         spinnerPhoneCode.selectedItemPosition,
                         etPhoneNumberTail.text.toString()
-                )))
+                ))
             }
 
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
@@ -134,46 +139,21 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             showKeyboard(etPhoneNumberTail)
         }
 
-        if (instance<AppInfoProvider>().value.isDebug) addSignInViaEmailAbility()
+
+        addSignInViaEmailAbility()
     }
 
     private fun addSignInViaEmailAbility() {
-        //!!!DEBUG ONLY!!!
+        if (!BuildConfig.DEBUG) return
+
         val view = view!!
         view.btnScreenHeaderAction.text = "EMAIL"
         view.btnScreenHeaderAction.visibility = View.VISIBLE
-        view.btnScreenHeaderAction.setOnClickListener { requestEmailAndPassword() }
-    }
-
-    private fun requestEmailAndPassword() {
-        //!!!DEBUG ONLY!!!
-        val context = view!!.context
-        val container = LinearLayout(context)
-        container.orientation = LinearLayout.VERTICAL
-
-        val email = EditText(context)
-        email.hint = "Email"
-        email.setText("u@ser.com")
-        val password = EditText(context)
-        password.hint = "Password"
-        password.setText("qwerty")
-
-        container.addView(email)
-        container.addView(password)
-
-        val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT)
-        container.layoutParams = layoutParams
-
-        AlertDialog.Builder(context)
-                .setView(container)
-                .setPositiveButton("Login", { _, _ ->
-                    viewModel.signInByEmail(
-                            email.text.toString(),
-                            password.text.toString())
-                })
-                .show()
+        view.btnScreenHeaderAction.setOnClickListener {
+            dialogHelper.showLoginByEmailDialog(it.context) { email, password ->
+                viewModel.signInByEmail(email, password)
+            }
+        }
     }
 
     protected fun onInputChanged() {

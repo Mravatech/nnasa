@@ -1,4 +1,4 @@
-package com.mnassa.screen.invite
+package com.mnassa.screen.buildnetwork
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +11,12 @@ import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.item_invite_account.view.*
+import kotlinx.android.synthetic.main.item_build_network.view.*
 
 /**
  * Created by Peter on 3/5/2018.
  */
-class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
+class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
 
     private val selectedAccountsInternal: MutableSet<String> = HashSet()
     var onSelectedAccountsChangedListener = { selectedAccountIds: Set<String> -> }
@@ -36,15 +36,7 @@ class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClick
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
-        val view = inflater.inflate(R.layout.item_invite_account, parent, false)
-
-        val viewHolder = InviteViewHolder(selectedAccountsInternal, view)
-        view.tag = viewHolder
-        view.cbInvite.tag = viewHolder
-
-        view.setOnClickListener(this)
-        view.cbInvite.setOnClickListener(this)
-        return viewHolder
+        return InviteViewHolder.newInstance(parent, this, selectedAccountsInternal)
     }
 
     override fun onClick(v: View) {
@@ -71,6 +63,21 @@ class InviteAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClick
                 tvUserPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
                 tvUserPosition.goneIfEmpty()
                 cbInvite.isChecked = selectedAccount.contains(item.id)
+            }
+        }
+
+        companion object {
+            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, selectedAccount: Set<String>): InviteViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_build_network, parent, false)
+
+                val viewHolder = InviteViewHolder(selectedAccount, view)
+                view.tag = viewHolder
+                view.cbInvite.tag = viewHolder
+
+                view.setOnClickListener(onClickListener)
+                view.cbInvite.setOnClickListener(onClickListener)
+
+                return viewHolder
             }
         }
     }

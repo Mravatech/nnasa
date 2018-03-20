@@ -60,9 +60,9 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"
-            android:paddingEnd="4dp"
-            android:paddingStart="4dp"
+            android:padding="@dimen/spacing_vertical"
             android:tint="@color/coolGray"
+            android:background="?selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_more_vert_black_24dp" />
 
     </RelativeLayout>

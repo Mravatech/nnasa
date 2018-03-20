@@ -1,8 +1,10 @@
 package com.mnassa.screen.base
 
+import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
+import com.bluelinelabs.conductor.Controller
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
 import com.github.salomonbrys.kodein.android.AndroidScope
@@ -12,9 +14,10 @@ import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.extensions.hideKeyboard
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary
-import com.mnassa.screen.progress.MnassaProgressDialog
 import kotlinx.coroutines.experimental.channels.consumeEach
 import java.util.*
 
@@ -29,8 +32,8 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         override fun removeFromScope(context: MnassaController<VM>): ScopeRegistry? = CONTEXT_SCOPES.remove(context)
     }
 
-    constructor(params: Bundle): super(params)
-    constructor(): super()
+    constructor(params: Bundle) : super(params)
+    constructor() : super()
 
     override fun initializeInjector() {
         val activityModule = Kodein.Module {
@@ -92,25 +95,33 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         }
     }
 
-    private var progressDialog: MnassaProgressDialog? = null
+    private var progressDialog: Dialog? = null
     protected fun showProgress() {
         hideKeyboard()
-
         if (progressDialog != null) return
-
-        progressDialog?.cancel()
-
-        val dialog = MnassaProgressDialog(requireNotNull(view).context, R.style.MnassaProgressTheme)
-        dialog.setCancelable(false)
-        dialog.show()
-
-        progressDialog = dialog
+        progressDialog?.dismiss()
+        progressDialog = instance<DialogHelper>().value.showProgressDialog(requireNotNull(view).context)
     }
 
     protected fun hideProgress() {
         progressDialog?.dismiss()
         progressDialog = null
     }
+
+    protected fun open(controller: Controller) = mnassaRouter.open(this, controller)
+    protected fun close() = mnassaRouter.close(this)
+
+    protected val mnassaRouter: MnassaRouter
+        get() {
+            val parentController = parentController
+            val activity = activity
+
+            return when {
+                parentController is MnassaRouter -> parentController
+                activity is MnassaRouter -> activity
+                else -> throw IllegalStateException("Mnassa router not found for $this")
+            }
+        }
 
     private companion object {
         private val CONTEXT_SCOPES = WeakHashMap<MnassaController<*>, ScopeRegistry>()

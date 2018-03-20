@@ -11,7 +11,7 @@
     </style>
 
     <style name="MnassaHeader2" parent="MnassaHeader1">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MnassaText" parent="MnassaHeader2">

@@ -5,6 +5,7 @@ import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
+import com.aurelhubert.ahbottomnavigation.notification.AHNotification
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
@@ -12,29 +13,26 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.avatarRound
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
 import com.mnassa.screen.home.HomeController
-import com.mnassa.screen.login.enterphone.EnterPhoneController
-import com.mnassa.screen.notifications.NotificationsController
-import kotlinx.android.synthetic.main.controller_main.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
-import com.aurelhubert.ahbottomnavigation.notification.AHNotification
-import com.mnassa.domain.model.formattedName
-import com.mnassa.domain.model.mainAbility
-import com.mnassa.extensions.avatarRound
-import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.login.selectaccount.SelectAccountController
+import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.registration.RegistrationController
-import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.nav_header.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 
 /**
  * Created by Peter on 2/21/2018.
  */
-class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
+class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener, MnassaRouter {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
 
@@ -42,17 +40,17 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    PAGE_HOME -> HomeController.newInstance()
-                    PAGE_CONNECTIONS -> ConnectionsController.newInstance()
-                    PAGE_NOTIFICATIONS -> NotificationsController.newInstance()
-                    PAGE_CHAT -> ChatListController.newInstance()
+                    Pages.HOME.ordinal -> HomeController.newInstance()
+                    Pages.CONNECTIONS.ordinal -> ConnectionsController.newInstance()
+                    Pages.NOTIFICATIONS.ordinal -> NotificationsController.newInstance()
+                    Pages.CHAT.ordinal -> ChatListController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
-                router.setRoot(RouterTransaction.with(page).tag("page_$position"))
+                router.setRoot(RouterTransaction.with(page).tag(formatTabControllerTag(position)))
             }
         }
 
-        override fun getCount(): Int = PAGES_COUNT
+        override fun getCount(): Int = Pages.values().size
     }
 
     override fun onViewCreated(view: View) {
@@ -60,7 +58,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
         with(view) {
             vpMain.adapter = adapter
-            vpMain.offscreenPageLimit = PAGES_COUNT
+            vpMain.offscreenPageLimit = adapter.count
 
             bnMain.addItems(
                     //TODO: design needed
@@ -75,40 +73,33 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             bnMain.isBehaviorTranslationEnabled = false
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
-                val page = adapter.getRouter(position)?.getControllerWithTag("page_$position")
+                val page = adapter.getRouter(position)?.getControllerWithTag(formatTabControllerTag(position))
                 if (page is OnPageSelected) {
                     page.onPageSelected()
                 }
 
                 true
             }
+            bnMain.isBehaviorTranslationEnabled = true
 
             navigationView.setNavigationItemSelectedListener(this@MainController)
         }
 
         launchCoroutineUI {
-            viewModel.openScreenChannel.consumeEach {
-                val controller = when (it) {
-                    MainViewModel.ScreenType.LOGIN -> EnterPhoneController.newInstance()
-                }
-                router.replaceTopController(RouterTransaction.with(controller))
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.unreadChatsCountChannel.consumeEach { setCounter(PAGE_CHAT, it)}
+            viewModel.unreadChatsCountChannel.consumeEach { setCounter(Pages.CHAT.ordinal, it) }
         }
         launchCoroutineUI {
-            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(PAGE_NOTIFICATIONS, it) }
+            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS.ordinal, it) }
         }
         launchCoroutineUI {
-            viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(PAGE_CONNECTIONS, it) }
+            viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(Pages.CONNECTIONS.ordinal, it) }
         }
         launchCoroutineUI {
-            viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(PAGE_HOME, it) }
+            viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(Pages.HOME.ordinal, it) }
         }
         launchCoroutineUI {
             viewModel.currentAccountChannel.consumeEach {
+                //TODO: design for side menu
                 view.ivUserAvatar?.avatarRound(it.avatar)
                 view.tvUserName?.text = it.formattedName
                 view.tvUserPosition?.text = it.id
@@ -122,11 +113,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
     private fun setCounter(pageIndex: Int, counterValue: Int) {
         val view = view ?: return
+
+        //TODO: design for notification badges
         val notification = if (counterValue != 0) AHNotification.Builder()
                 .setText(counterValue.toString())
 //                .setBackgroundColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_back))
 //                .setTextColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_text))
-                .build()  else null
+                .build() else null
         view.bnMain.setNotification(notification, pageIndex)
 
     }
@@ -137,29 +130,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_change_account -> {
-                router.replaceTopController(RouterTransaction.with(SelectAccountController.newInstance()))
-            }
-            R.id.nav_create_account -> {
-                router.pushController(RouterTransaction.with(RegistrationController.newInstance()))
-            }
-            R.id.nav_logout -> {
-                viewModel.logout()
-            }
+            R.id.nav_build_network -> open(BuildNetworkController.newInstance())
+            R.id.nav_change_account -> open(SelectAccountController.newInstance())
+            R.id.nav_create_account -> open(RegistrationController.newInstance())
+            R.id.nav_logout -> viewModel.logout()
         }
-
 
         return true
     }
@@ -170,6 +145,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             view.drawerLayout.closeDrawer(GravityCompat.START)
             true
         } else {
+            view.bnMain?.visibility = View.VISIBLE
+            view.bnMain?.isEnabled = true
+//            view.bnMain?.restoreBottomNavigation()
             super.handleBack()
         }
     }
@@ -181,14 +159,24 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         super.onViewDestroyed(view)
     }
 
+    override fun open(self: Controller, controller: Controller) {
+//        view?.bnMain?.hideBottomNavigation()
+        view?.bnMain?.visibility = View.INVISIBLE
+        view?.bnMain?.isEnabled = false
+        mnassaRouter.open(self, controller)
+
+    }
+    override fun close(self: Controller) = mnassaRouter.close(self)
+
+    private fun formatTabControllerTag(position: Int): String {
+        return "tab_controller_$position"
+    }
+
+    private enum class Pages {
+        HOME, CONNECTIONS, NOTIFICATIONS, CHAT
+    }
 
     companion object {
-        private const val PAGES_COUNT = 4
-        private const val PAGE_HOME = 0
-        private const val PAGE_CONNECTIONS = 1
-        private const val PAGE_NOTIFICATIONS = 2
-        private const val PAGE_CHAT = 3
-
         fun newInstance() = MainController()
     }
 }

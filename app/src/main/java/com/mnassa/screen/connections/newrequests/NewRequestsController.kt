@@ -9,7 +9,6 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_new_requests.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -24,9 +23,7 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
         super.onViewCreated(view)
 
         with(view) {
-            tvScreenHeader.text = fromDictionary(R.string.new_requests_title)
-            badge.visibility = View.GONE
-            ivMore.visibility = View.GONE
+            toolbar.title = fromDictionary(R.string.new_requests_title)
 
             rvNewConnectionRequests.layoutManager = LinearLayoutManager(context)
             rvNewConnectionRequests.adapter = adapter

@@ -3,8 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingBottom="@dimen/padding_vertical"
+    android:paddingEnd="@dimen/padding_horizontal"
+    android:paddingStart="@dimen/padding_horizontal"
+    android:paddingTop="@dimen/padding_vertical">
 
     <ImageView
         android:id="@+id/ivCountryFlagDropDown"
@@ -14,11 +18,23 @@
 
     <TextView
         android:id="@+id/tvCountryNameDropDown"
-        android:layout_width="match_parent"
+        style="@style/MnassaTextTiny"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:textSize="22sp"
         tools:text="Ukraine" />
+
+    <TextView
+        android:id="@+id/tvCountryCodeDropDown"
+        style="@style/MnassaTextTiny"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:gravity="center_vertical"
+        android:textSize="22sp"
+        tools:text="(+380)" />
 
 </LinearLayout>
