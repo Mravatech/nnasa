@@ -24,11 +24,12 @@ internal data class PostDbEntity(
         @SerializedName("privacyType") var privacyType: String,
         @SerializedName("text") var text: String?,
         @SerializedName("updatedAt") var updatedAt: Long,
-//        @SerializedName("location") var location: LocationDbEntity?,
+        @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
         @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
-        @SerializedName("price") var price: Double?
+        @SerializedName("price") var price: Double?,
+        @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?
 ) : HasId
 
 internal data class PostCountersDbEntity(
@@ -39,4 +40,10 @@ internal data class PostCountersDbEntity(
         @SerializedName("unreadResponse") var unreadResponse: Int,
         @SerializedName("views") var views: Int
 )
+
+internal data class PostAutoSuggest(
+        @SerializedName("total") override var total: Int,
+        @SerializedName("youCanHelp") override var youCanHelp: Boolean,
+        @SerializedName("aids") override var aids: List<String>
+): com.mnassa.domain.model.PostAutoSuggest
 

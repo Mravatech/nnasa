@@ -140,7 +140,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl() }
-    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance()) }
+    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {

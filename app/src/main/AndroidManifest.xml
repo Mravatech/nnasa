@@ -42,7 +42,7 @@
             android:value="@string/play_services_key"/>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="@string/crashlytics_key" />
+            android:value="785d8aa9210f776f16818b3ed813bb58d811f687" />
     </application>
 
 </manifest>

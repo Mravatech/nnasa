@@ -86,6 +86,14 @@ class DialogHelper {
             dialog.dismiss()
         }
         container.addView(btnHardcodedEmailAndPassword)
+        //
+        btnHardcodedEmailAndPassword = Button(context)
+        btnHardcodedEmailAndPassword.text = "anton@u.net"
+        btnHardcodedEmailAndPassword.setOnClickListener {
+            listener("anton@u.net", "123123")
+            dialog.dismiss()
+        }
+        container.addView(btnHardcodedEmailAndPassword)
 
         val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,

@@ -4,20 +4,23 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.github.salomonbrys.kodein.*
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_need_details.view.*
+import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -28,12 +31,21 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
     override val layoutId: Int = R.layout.controller_need_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: NeedDetailsViewModel by injector.with(postId).instance()
+    private val tagsAdapter = TagRVAdapter()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         with(view) {
-
+            rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
+                    //set vertical gravity for all items in a row. Default = Gravity.CENTER_VERTICAL
+//                    .setChildGravity(Gravity.TOP)
+                    //whether RecyclerView can scroll. TRUE by default
+                    .setScrollingEnabled(false)
+                    .setRowStrategy(ChipsLayoutManager.STRATEGY_FILL_SPACE)
+                    .setOrientation(ChipsLayoutManager.HORIZONTAL)
+                    .build()
+            rvTags.adapter = tagsAdapter
         }
 
         launchCoroutineUI {
@@ -41,6 +53,14 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
                 setPost(it)
             }
         }
+
+        launchCoroutineUI {
+            viewModel.postTagsChannel.consumeEach {
+                setTags(it)
+            }
+        }
+
+        (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply { setPost(this) }
     }
 
     private fun setPost(post: Post) {
@@ -56,9 +76,12 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
             tvPosition.goneIfEmpty()
             tvEventName.text = post.author.formattedFromEvent
             tvEventName.goneIfEmpty()
+            ivChat.setOnClickListener {
+                Toast.makeText(context, "Opening chat with ${post.author.formattedName}", Toast.LENGTH_SHORT).show()
+            }
 
             //
-            tvNeedDescription.text = post.text
+            tvNeedDescription.text = post.formattedText
             tvNeedDescription.goneIfEmpty()
             //images
             flImages.visibility = if (post.images.isNotEmpty()) View.VISIBLE else View.GONE
@@ -82,15 +105,43 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
             //location
             tvLocation.text = post.locationPlace.formatted()
+            tvLocation.invisibleIfEmpty()
             //time
             tvCreationTime.text = post.createdAt.toTimeAgo()
 
+            //views count
+            tvViewsCount.text = fromDictionary(R.string.need_views_count).format(post.counters.views)
+            ivRepost.setOnClickListener {
+                Toast.makeText(context, "REPOST!", Toast.LENGTH_SHORT).show()
+            }
+            tvRepostsCount.text = post.counters.reposts.toString()
 
+            btnComment.text = fromDictionary(R.string.need_comment_button)
+            btnComment.setOnClickListener {
+                Toast.makeText(context, "COMMENT!", Toast.LENGTH_SHORT).show()
+            }
+
+            val recommendWithCount = StringBuilder(fromDictionary(R.string.need_recommend_button))
+            if (post.autoSuggest.total > 0) {
+                recommendWithCount.append(" (")
+                recommendWithCount.append(post.autoSuggest.total.toString())
+                recommendWithCount.append(") ")
+            }
+
+            btnRecommend.text = recommendWithCount
+
+            btnRecommend.setOnClickListener {
+                Toast.makeText(context, "RECOMMEND!", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
 
-
-
-
+    private fun setTags(tags: List<TagModel>) {
+        with(view ?: return) {
+            vTagsSeparator.visibility = if (tags.isEmpty()) View.GONE else View.VISIBLE
+            rvTags.visibility = if (tags.isEmpty()) View.GONE else View.VISIBLE
+            tagsAdapter.set(tags)
+        }
     }
 
     inner class RegistrationAdapter(private val context: Context, private val images: List<String>, private val onClickListener: (String) -> Unit)

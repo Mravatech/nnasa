@@ -23,7 +23,8 @@ data class PostImpl(
         override val counters: PostCounters,
         override val author: ShortAccountModel,
         override val copyOwnerId: String?,
-        override val price: Double
+        override val price: Double,
+        override val autoSuggest: PostAutoSuggest
 ) : Post {
 }
 

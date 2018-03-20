@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
+import com.google.gson.Gson
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
@@ -19,13 +20,14 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.PostCountersImpl
 import com.mnassa.domain.model.impl.PostImpl
-import timber.log.Timber
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
 class PostConverter : ConvertersContextRegistrationCallback {
+    private val gson = Gson()
+
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertPost)
         convertersContext.registerConverter(this::convertNewsFeedItemCounters)
@@ -52,7 +54,9 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 type = converter.convert(input.type),
                 createdAt = Date(input.createdAt),
                 images = input.images ?: emptyList(),
-                locationPlace = /*input.location?*/null?.let { converter.convert<LocationPlaceModel>(it) },
+                locationPlace = input.location?.let {
+                    converter.convert<LocationPlaceModel>(it)
+                },
                 originalCreatedAt = Date(input.originalCreatedAt),
                 originalId = input.originalId,
                 privacyConnections = input.privacyConnections ?: emptyList(),
@@ -63,7 +67,8 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 counters = converter.convert(input.counters),
                 author = convertAuthor(input.author, converter),
                 copyOwnerId = input.copyOwner,
-                price = input.price ?: 0.0
+                price = input.price ?: 0.0,
+                autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY
         )
     }
 

@@ -23,6 +23,7 @@ interface Post : Model {
     val author: ShortAccountModel
     val copyOwnerId: String?
     val price: Double
+    val autoSuggest: PostAutoSuggest
 }
 
 interface PostCounters : Serializable {
@@ -34,20 +35,34 @@ interface PostCounters : Serializable {
     val views: Int
 }
 
-sealed class PostType(val ordinal: Int) {
+interface PostAutoSuggest: Serializable {
+    val total: Int
+    val youCanHelp: Boolean
+    val aids: List<String>
+
+    companion object {
+        val EMPTY = object: PostAutoSuggest {
+            override val total: Int = 0
+            override val youCanHelp: Boolean = false
+            override val aids: List<String> = emptyList()
+        }
+    }
+}
+
+sealed class PostType(val ordinal: Int)  /*: Serializable */{
     object NEED: PostType(1)
     object OFFER: PostType(2)
     object GENERAL: PostType(3)
     object PROFILE: PostType(4)
 }
 
-sealed class PostPrivacyType {
+sealed class PostPrivacyType /*: Serializable */{
     object PUBLIC: PostPrivacyType()
     object PRIVATE: PostPrivacyType()
     object WORLD: PostPrivacyType()
 }
 
-sealed class ItemType {
+sealed class ItemType /*: Serializable */{
     object EVENT: ItemType()
     object POST: ItemType()
 }
