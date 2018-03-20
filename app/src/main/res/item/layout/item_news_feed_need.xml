@@ -77,7 +77,7 @@
         <FrameLayout
             android:id="@+id/flImagesRoot"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="150dp"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/spacing_vertical"

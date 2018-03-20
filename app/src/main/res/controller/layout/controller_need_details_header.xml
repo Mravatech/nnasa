@@ -190,6 +190,9 @@
             android:layout_gravity="center_vertical"
             android:drawablePadding="8dp"
             android:drawableStart="@drawable/ic_eye_18dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             tools:text="Views " />
 
         <Space

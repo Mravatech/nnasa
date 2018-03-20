@@ -49,20 +49,20 @@ interface PostAutoSuggest: Serializable {
     }
 }
 
-sealed class PostType(val ordinal: Int)  /*: Serializable */{
+sealed class PostType(val ordinal: Int)  : Serializable {
     object NEED: PostType(1)
     object OFFER: PostType(2)
     object GENERAL: PostType(3)
     object PROFILE: PostType(4)
 }
 
-sealed class PostPrivacyType /*: Serializable */{
+sealed class PostPrivacyType : Serializable {
     object PUBLIC: PostPrivacyType()
     object PRIVATE: PostPrivacyType()
     object WORLD: PostPrivacyType()
 }
 
-sealed class ItemType /*: Serializable */{
+sealed class ItemType : Serializable {
     object EVENT: ItemType()
     object POST: ItemType()
 }

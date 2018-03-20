@@ -66,7 +66,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
         super.onCreate(savedInstanceState)
     }
 
-    protected suspend fun <T> handleExceptionsSuspend(function: suspend () -> T) {
+    protected open suspend fun <T> handleExceptionsSuspend(function: suspend () -> T) {
         try {
             function()
         } catch (e: JobCancellationException) {
@@ -88,13 +88,13 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
         }
     }
 
-    protected fun <T> handleException(function: suspend () -> T): Job {
+    protected open fun <T> handleException(function: suspend () -> T): Job {
         return launchCoroutineUI { handleExceptionsSuspend(function) }
     }
 
-    protected fun showProgress() = asyncUI { isProgressEnabledChannel.send(true) }
-    protected fun hideProgress() = asyncUI { isProgressEnabledChannel.send(false) }
-    protected suspend fun <T> withProgressSuspend(function: suspend () -> T) {
+    protected open fun showProgress() = asyncUI { isProgressEnabledChannel.send(true) }
+    protected open fun hideProgress() = asyncUI { isProgressEnabledChannel.send(false) }
+    protected open suspend fun <T> withProgressSuspend(function: suspend () -> T) {
         showProgress()
         try {
             function()
@@ -102,7 +102,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
             hideProgress()
         }
     }
-    protected fun <T> withProgress(function: () -> T) {
+    protected open fun <T> withProgress(function: () -> T) {
         showProgress()
         try {
             function()
@@ -110,8 +110,6 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
             hideProgress()
         }
     }
-
-
 
     private companion object {
         private val CONTEXT_SCOPES = WeakHashMap<MnassaViewModel, ScopeRegistry>()

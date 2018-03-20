@@ -5,6 +5,7 @@ import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
+import com.mnassa.core.addons.bind
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.MnassaRouter
@@ -33,7 +34,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
 
         adapter.isLoadingEnabled = true
 
-        launchCoroutineUI {
+        viewModel.handleException {
             viewModel.getNewsFeedChannel().consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
@@ -45,7 +46,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
                     is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
                 }
             }
-        }
+        }.bind(this)
     }
 
     companion object {

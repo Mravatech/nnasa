@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.formattedText
 import com.mnassa.extensions.image
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
@@ -25,7 +26,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             ivAvatar.avatarRound(item.author.avatar)
             tvUserName.text = item.author.formattedName
             tvTime.text = item.createdAt.toTimeAgo()
-            tvDescription.text = item.text
+            tvDescription.text = item.formattedText
 
             tvViewsCount.text = item.counters.views.toString()
             tvCommentsCount.text = item.counters.comments.toString()
