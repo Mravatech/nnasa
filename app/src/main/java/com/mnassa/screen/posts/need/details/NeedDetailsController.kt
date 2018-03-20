@@ -1,17 +1,17 @@
 package com.mnassa.screen.posts.need.details
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
-import com.github.salomonbrys.kodein.*
+import com.github.salomonbrys.kodein.instance
+import com.github.salomonbrys.kodein.with
 import com.mnassa.R
+import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.TagModel
@@ -89,8 +89,8 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
                 pivImages.count = post.images.size
                 pivImages.selection = 0
 
-                vpImages.adapter = RegistrationAdapter(context, post.images) {
-                    Toast.makeText(context, "Open image $it", Toast.LENGTH_SHORT).show()
+                vpImages.adapter = RegistrationAdapter(post.images) {
+                    PhotoPagerActivity.start(context, post.images, post.images.indexOf(it))
                 }
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
@@ -144,10 +144,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         }
     }
 
-    inner class RegistrationAdapter(private val context: Context, private val images: List<String>, private val onClickListener: (String) -> Unit)
-        : PagerAdapter() {
-
-
+    class RegistrationAdapter(private val images: List<String>, private val onClickListener: (String) -> Unit) : PagerAdapter() {
         override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
