@@ -172,6 +172,7 @@ ui.bottomnavigation = 'com.aurelhubert:ahbottomnavigation:2.1.0'
 ui.tablayout = 'com.github.rahimlis:badgedtablayout:v1.2'
 ui.dialogs = 'com.afollestad.material-dialogs:core:0.9.6.0'
 ui.fab = 'com.github.clans:fab:1.6.4'
+ui.pagerIndicator = 'com.romandanylyk:pageindicatorview:1.0.0@aar'
 
 deps.ui = ui
 //============================================== OTHER ============================================

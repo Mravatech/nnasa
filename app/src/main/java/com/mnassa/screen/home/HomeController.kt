@@ -8,6 +8,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
 import com.mnassa.screen.posts.PostsController
@@ -19,7 +20,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 3/6/2018.
  */
-class HomeController : MnassaControllerImpl<HomeViewModel>() {
+class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
     override val layoutId: Int = R.layout.controller_home
     override val viewModel: HomeViewModel by instance()
 
@@ -68,6 +69,9 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
             fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
         }
     }
+
+    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
+    override fun close(self: Controller) = mnassaRouter.close(self)
 
 
     enum class HomePage {

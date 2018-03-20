@@ -15,6 +15,11 @@ class CreateNeedController : MnassaControllerImpl<CreateNeedViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        with (view) {
+
+
+
+        }
 
     }
 

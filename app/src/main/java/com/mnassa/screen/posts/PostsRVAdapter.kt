@@ -1,8 +1,10 @@
 package com.mnassa.screen.posts
 
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.mnassa.R
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.PostType
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
@@ -17,6 +19,7 @@ import com.mnassa.screen.posts.viewholder.ProfileViewHolder
 class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListener {
     var onAttachedToWindow: (item: Post) -> Unit = { }
     var onDetachedFromWindow: (item: Post) -> Unit = { }
+    var onItemClickListener = { item: Post -> }
 
     override val itemsComparator: (item1: Post, item2: Post) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * -1
@@ -59,7 +62,13 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
 
     override fun getViewType(position: Int): Int = dataStorage[position].type.ordinal
 
-    override fun onClick(v: View?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onClick(view: View) {
+        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        if (position < 0) return
+        when (view.id) {
+            R.id.rlClickableRoot -> {
+                onItemClickListener(getDataItemByAdapterPosition(position))
+            }
+        }
     }
 }

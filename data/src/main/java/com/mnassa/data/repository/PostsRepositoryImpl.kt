@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
+import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.extensions.toValueChannelWithPagination
 import com.mnassa.data.network.NetworkContract
@@ -21,6 +22,7 @@ import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
 
 /**
  * Created by Peter on 3/15/2018.
@@ -53,15 +55,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                         mapper = converter.convertFunc(Post::class.java))
     }
 
-    override suspend fun loadById(id: String): Post? {
+    override suspend fun loadById(id: String): ReceiveChannel<Post> {
         val userId = requireNotNull(userRepository.getAccountId())
 
-        val dbEntity = db
+        return db
                 .child(TABLE_NEWS_FEED)
                 .child(userId)
                 .child(id)
-                .await<PostDbEntity>(exceptionHandler)
-        return dbEntity?.run { converter.convert(this) }
+                .toValueChannel<PostDbEntity>(exceptionHandler)
+                .map { converter.convert<Post>(it!!) }
     }
 
     override suspend fun sendViewed(ids: List<String>) {

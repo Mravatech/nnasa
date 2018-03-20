@@ -20,6 +20,9 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             tvUserName.text = item.author.formattedName
 //            tvTime.text = item.createdAt
             tvDescription.text = item.text
+
+            rlClickableRoot.setOnClickListener(onClickListener)
+            rlClickableRoot.tag = this@NeedViewHolder
         }
     }
 

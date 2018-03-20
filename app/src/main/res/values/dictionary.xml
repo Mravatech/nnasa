@@ -53,6 +53,13 @@
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
     <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
 
+    <!-- ========================================= NEED ======================================== -->
+    <!-- create need -->
+    <string name="need_create_title">_posts_header_iNeed</string>
+
+    <!-- need details -->
+    <string name="need_details_title">_android_need_details_title</string>
+
     <!-- ===================================== TAB CONNECTIONS ================================== -->
     <string name="tab_connections_title">_connectionsList_navTitle_connections</string>
     <string name="tab_connections_new_requests">_connections_group_header_sent</string>

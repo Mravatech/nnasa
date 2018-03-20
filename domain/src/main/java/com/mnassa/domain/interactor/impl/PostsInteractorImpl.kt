@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong
 class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsInteractor {
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>> = postsRepository.loadAllWithChangesHandling()
-    override suspend fun loadById(id: String): Post? = postsRepository.loadById(id)
+    override suspend fun loadById(id: String): ReceiveChannel<Post> = postsRepository.loadById(id)
 
     private val viewedItemIdsBuffer = ConcurrentSkipListSet<String>()
     private val sentViewedItemIds = ConcurrentSkipListSet<String>()

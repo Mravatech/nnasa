@@ -2,11 +2,15 @@ package com.mnassa.screen.posts
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.bluelinelabs.conductor.Controller
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -24,6 +28,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
             rvNewsFeed.layoutManager = LinearLayoutManager(context)
             rvNewsFeed.adapter = adapter
             adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
+            adapter.onItemClickListener = { open(NeedDetailsController.newInstance(it)) }
         }
 
         adapter.isLoadingEnabled = true
