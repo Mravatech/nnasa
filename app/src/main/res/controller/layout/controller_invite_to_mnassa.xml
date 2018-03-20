@@ -60,6 +60,8 @@ or choose from them your Phone Book" />
         <EditText
             android:id="@+id/etInvitePhoneNumber"
             style="@style/Invite.InviteWithNumberEditText"
+            android:inputType="number"
+            android:maxLength="10"
             android:layout_marginStart="@dimen/invite_main_margin_between_views"
             tools:hint="Phone Number" />
     </LinearLayout>
@@ -67,6 +69,7 @@ or choose from them your Phone Book" />
     <Button
         android:id="@+id/btnInvite"
         style="@style/Invite.InviteButton"
+        android:enabled="false"
         android:layout_margin="@dimen/invite_main_screen_margin"
         tools:text="INVITE" />
 

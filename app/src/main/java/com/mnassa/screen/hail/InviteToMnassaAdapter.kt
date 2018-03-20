@@ -28,9 +28,18 @@ class InviteToMnassaAdapter(
         holder.setup(filtered[position], viewModel)
     }
 
-    fun search(text: String) {
+    fun searchByName(text: String) {
         filtered = data.filter { it.fullName.toLowerCase().startsWith(text.toLowerCase()) }
         notifyDataSetChanged()
+    }
+
+    fun searchByNumber(text: String) {
+        filtered = data.filter { it.phoneNumber.startsWith(text) }
+        notifyDataSetChanged()
+    }
+
+    fun getNameByNumber(text: String):String? {
+        return data.firstOrNull { it.phoneNumber.endsWith(text) }?.fullName
     }
 
 }

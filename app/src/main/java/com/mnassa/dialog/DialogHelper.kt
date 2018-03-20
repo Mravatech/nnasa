@@ -8,9 +8,12 @@ import android.view.LayoutInflater
 import android.view.Window
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.screen.hail.InviteToMnassaController.Companion.INVITE_WITH_SHARE
+import com.mnassa.screen.hail.InviteToMnassaController.Companion.INVITE_WITH_SMS
+import com.mnassa.screen.hail.InviteToMnassaController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_coutry.*
-import kotlinx.android.synthetic.main.dialog_coutry.view.*
+import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_photo.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
@@ -56,17 +59,17 @@ class DialogHelper {
     }
 
     fun chooseCountryInvite(context: Context, onCountryClick: (countryCode: String) -> Unit) {
-        val dialog = Dialog(context, R.style.DialogCountry)
+        val dialog = Dialog(context, R.style.DialogInvite)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_coutry)
-        dialog.llSaudiArabia.tvSaudiArabiaCode.text = fromDictionary(R.string.invite_invite_country_sa_code)
-        dialog.llSaudiArabia.tvSaudiArabiaCountry.text = fromDictionary(R.string.invite_invite_country_sa_country)
-        dialog.llUkraine.tvUkraineCode.text = fromDictionary(R.string.invite_invite_country_ua_code)
-        dialog.llUkraine.tvUkraineCountry.text = fromDictionary(R.string.invite_invite_country_ua_country)
-        dialog.llUnitedStates.tvUnitedStatesCode.text = fromDictionary(R.string.invite_invite_country_us_code)
-        dialog.llUnitedStates.tvUnitedStatesCountry.text = fromDictionary(R.string.invite_invite_country_us_country)
-        dialog.llCanada.tvCanadaCode.text = fromDictionary(R.string.invite_invite_country_ca_code)
-        dialog.llCanada.tvCanadaCountry.text = fromDictionary(R.string.invite_invite_country_ca_country)
+        dialog.tvSaudiArabiaCode.text = fromDictionary(R.string.invite_invite_country_sa_code)
+        dialog.tvSaudiArabiaCountry.text = fromDictionary(R.string.invite_invite_country_sa_country)
+        dialog.tvUkraineCode.text = fromDictionary(R.string.invite_invite_country_ua_code)
+        dialog.tvUkraineCountry.text = fromDictionary(R.string.invite_invite_country_ua_country)
+        dialog.tvUnitedStatesCode.text = fromDictionary(R.string.invite_invite_country_us_code)
+        dialog.tvUnitedStatesCountry.text = fromDictionary(R.string.invite_invite_country_us_country)
+        dialog.tvCanadaCode.text = fromDictionary(R.string.invite_invite_country_ca_code)
+        dialog.tvCanadaCountry.text = fromDictionary(R.string.invite_invite_country_ca_country)
         fun setCode(code: String) {
             onCountryClick(code)
             dialog.dismiss()
@@ -75,6 +78,28 @@ class DialogHelper {
         dialog.llUkraine.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_ua_code)) }
         dialog.llUnitedStates.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_us_code)) }
         dialog.llCanada.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_ca_code)) }
+        dialog.show()
+    }
+
+    fun chooseSendInviteWith(context: Context, name: String?, isWhatsAppInstalled: Boolean, onInviteWithClick: (inviteWith: Int) -> Unit) {
+        val dialog = Dialog(context, R.style.DialogInvite)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_invite_with)
+        dialog.tvSMS.text = fromDictionary(R.string.invite_invite_send_with_sms)
+        dialog.tvMore.text = fromDictionary(R.string.invite_invite_send_with_more)
+        dialog.tvWhatsApp.text = fromDictionary(R.string.invite_invite_send_with_whats_app)
+        dialog.tvInviteDialogSubTitle.text = fromDictionary(R.string.invite_invite_select_way_to_send)
+        dialog.tvInviteDialogTitle.text = name?.let { fromDictionary(R.string.invite_invite_you_invite).format(it) }
+                ?: run { fromDictionary(R.string.invite_invite_you_invite_unknown_name) }
+        fun sendInvite(inviteWith: Int) {
+            onInviteWithClick(inviteWith)
+            dialog.dismiss()
+        }
+        if (isWhatsAppInstalled) {
+            dialog.llWhatsApp.setOnClickListener { sendInvite(INVITE_WITH_WHATS_APP) }
+        }
+        dialog.llSMS.setOnClickListener { sendInvite(INVITE_WITH_SMS) }
+        dialog.llMore.setOnClickListener { sendInvite(INVITE_WITH_SHARE) }
         dialog.show()
     }
 

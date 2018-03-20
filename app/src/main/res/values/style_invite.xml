@@ -90,7 +90,7 @@
     <style name="Invite.InviteButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/button_invite_to_mnassa_background</item>
+        <item name="android:background">@drawable/button_invite_to_mnassa_selector_background</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/paleBlue</item>
@@ -165,12 +165,59 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="DialogCountry" parent="@android:style/Theme.Dialog">
+    <style name="DialogInvite" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@drawable/dialog_background</item>
         <item name="android:windowMinWidthMajor">80%</item>
         <item name="android:windowMinWidthMinor">80%</item>
     </style>
 
+    <style name="Invite.DialogInviteWithTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textSize">@dimen/invite_dialog_invite_with_title_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.DialogInviteWithSubTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.DialogInviteWithLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">@dimen/invite_dialog_invite_with_padding_between_send_buttons</item>
+        <item name="android:paddingBottom">@dimen/invite_dialog_invite_with_padding_between_send_buttons</item>
+        <item name="android:paddingEnd">@dimen/invite_dialog_invite_with_horizontal_indent</item>
+        <item name="android:paddingStart">@dimen/invite_dialog_invite_with_horizontal_indent</item>
+    </style>
+
+    <style name="Invite.DialogInviteImageView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Invite.DialogInviteTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <dimen name="invite_dialog_invite_with_horizontal_indent">24dp</dimen>
+    <dimen name="invite_dialog_invite_with_items_indent">16dp</dimen>
+    <dimen name="invite_dialog_invite_with_padding_between_send_buttons">8dp</dimen>
+    <dimen name="invite_dialog_invite_with_title_text_size">20sp</dimen>
+    <dimen name="invite_dialog_invite_with_sub_title_text_size">16sp</dimen>
 
     <dimen name="invite_dialog_country_padding">16dp</dimen>
 
@@ -180,6 +227,7 @@
     <dimen name="invite_item_view_image_size">50dp</dimen>
 
     <color name="blackAlpha">#61000000</color>
+    <color name="blackDarkAlpha">#de000000</color>
     <dimen name="invite_main_screen_margin">8dp</dimen>
     <dimen name="invite_main_margin_between_views">16dp</dimen>
     <dimen name="invite_region_number_margin">24dp</dimen>
