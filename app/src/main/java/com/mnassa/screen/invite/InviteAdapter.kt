@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail
+package com.mnassa.screen.invite
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -12,19 +12,19 @@ import com.mnassa.domain.model.PhoneContact
  * Date: 3/19/2018
  */
 
-class InviteToMnassaAdapter(
+class InviteAdapter(
         private val data: List<PhoneContact>,
-        private val viewModel: InviteToMnassaViewModel) : RecyclerView.Adapter<InviteToMnassaViewHolder>() {
+        private val viewModel: InviteViewModel) : RecyclerView.Adapter<InviteHolder>() {
 
     private var filtered: List<PhoneContact> = data
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            InviteToMnassaViewHolder(LayoutInflater.from(parent.context)
+            InviteHolder(LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_invite, parent, false))
 
     override fun getItemCount() = filtered.size
 
-    override fun onBindViewHolder(holder: InviteToMnassaViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: InviteHolder, position: Int) {
         holder.setup(filtered[position], viewModel)
     }
 

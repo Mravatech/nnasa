@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail.history
+package com.mnassa.screen.invite.history
 
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContactInvited

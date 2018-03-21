@@ -20,7 +20,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
-import com.mnassa.screen.hail.InviteToMnassaController
+import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.notifications.NotificationsController
@@ -134,7 +134,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
-            R.id.nav_invite_to_mnassa -> open(InviteToMnassaController.newInstance())
+            R.id.nav_invite_to_mnassa -> open(InviteController.newInstance())
             R.id.nav_logout -> viewModel.logout()
         }
 

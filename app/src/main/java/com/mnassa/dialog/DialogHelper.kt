@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -12,14 +13,13 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
-import com.mnassa.screen.hail.InviteToMnassaController.Companion.INVITE_WITH_SHARE
-import com.mnassa.screen.hail.InviteToMnassaController.Companion.INVITE_WITH_SMS
-import com.mnassa.screen.hail.InviteToMnassaController.Companion.INVITE_WITH_WHATS_APP
+import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
+import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
+import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_coutry.*
 import kotlinx.android.synthetic.main.dialog_invite_with.*
-import kotlinx.android.synthetic.main.dialog_photo.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
 
@@ -97,7 +97,6 @@ class DialogHelper {
         dialog.show()
     }
 
-}
     @SuppressLint("SetTextI18n")
     fun showLoginByEmailDialog(context: Context, listener: (email: String, password: String) -> Unit) {
         if (!BuildConfig.DEBUG) return

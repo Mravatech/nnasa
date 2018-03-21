@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail
+package com.mnassa.screen.invite
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -12,9 +12,9 @@ import kotlinx.android.synthetic.main.item_invite.view.*
  * Date: 3/19/2018
  */
 
-class InviteToMnassaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class InviteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun setup(contact: PhoneContact, viewModel: InviteToMnassaViewModel) {
+    fun setup(contact: PhoneContact, viewModel: InviteViewModel) {
         itemView.ivPhoneContactAvatar.avatarRoundWithStringPath(contact.avatar)
         itemView.tvInviteContactName.text = contact.fullName
         itemView.tvInviteContactNumber.text = contact.phoneNumber

@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail
+package com.mnassa.screen.invite
 
 import android.Manifest
 import android.support.v4.content.ContextCompat
@@ -16,7 +16,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import android.content.Intent
 import android.net.Uri
 import com.mnassa.domain.model.impl.PhoneContactImpl
-import com.mnassa.screen.hail.history.HistoryController
+import com.mnassa.screen.invite.history.HistoryController
 import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import java.net.URLEncoder
 
@@ -26,10 +26,10 @@ import java.net.URLEncoder
  * Date: 3/19/2018
  */
 
-class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>() {
+class InviteController : MnassaControllerImpl<InviteViewModel>() {
     override val layoutId = R.layout.controller_invite_to_mnassa
-    override val viewModel: InviteToMnassaViewModel by instance()
-    private var adapter: InviteToMnassaAdapter? = null
+    override val viewModel: InviteViewModel by instance()
+    private var adapter: InviteAdapter? = null
     private val dialog: DialogHelper by instance()
 
     override fun onViewCreated(view: View) {
@@ -58,7 +58,7 @@ class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>()
             if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
                 viewModel.retrievePhoneContacts()
                 viewModel.phoneContactChannel.consumeEach {
-                    adapter = InviteToMnassaAdapter(it, viewModel)
+                    adapter = InviteAdapter(it, viewModel)
                     view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
                     view.rvInviteToMnassa.adapter = adapter
                 }
@@ -155,6 +155,6 @@ class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>()
         const val INVITE_WITH_WHATS_APP = 1
         const val INVITE_WITH_SMS = 2
         const val INVITE_WITH_SHARE = 3
-        fun newInstance() = InviteToMnassaController()
+        fun newInstance() = InviteController()
     }
 }

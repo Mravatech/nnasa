@@ -71,10 +71,10 @@ import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
-import com.mnassa.screen.hail.InviteToMnassaViewModel
-import com.mnassa.screen.hail.InviteToMnassaViewModelImpl
-import com.mnassa.screen.hail.history.HistoryViewModel
-import com.mnassa.screen.hail.history.HistoryViewModelImpl
+import com.mnassa.screen.invite.InviteViewModel
+import com.mnassa.screen.invite.InviteViewModelImpl
+import com.mnassa.screen.invite.history.HistoryViewModel
+import com.mnassa.screen.invite.history.HistoryViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
@@ -127,7 +127,7 @@ private val viewModelsModule = Kodein.Module {
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
-    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl(instance(), instance(), instance()) }
+    bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
 }
 

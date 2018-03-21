@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail.history
+package com.mnassa.screen.invite.history
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -25,6 +25,8 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
         super.onViewCreated(view)
         view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
         view.ivInvitesHistory.visibility = View.GONE
+        view.ivInvitesSearch.visibility = View.VISIBLE
+
         launchCoroutineUI {
             viewModel.phoneContactChannel.consumeEach {
                 view.rvInviteHistory.layoutManager = LinearLayoutManager(view.context)

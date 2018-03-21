@@ -23,5 +23,14 @@
         android:id="@+id/ivInvitesHistory"
         style="@style/Invite.History"
         android:contentDescription="@null"
+        android:visibility="visible"
         app:srcCompat="@drawable/ic_archive" />
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/ivInvitesSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 </LinearLayout>

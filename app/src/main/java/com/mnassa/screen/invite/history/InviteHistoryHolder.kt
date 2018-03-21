@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail.history
+package com.mnassa.screen.invite.history
 
 import android.support.v7.widget.RecyclerView
 import android.view.View

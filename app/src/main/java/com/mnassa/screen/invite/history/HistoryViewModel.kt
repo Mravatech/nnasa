@@ -1,6 +1,5 @@
-package com.mnassa.screen.hail.history
+package com.mnassa.screen.invite.history
 
-import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel

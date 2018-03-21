@@ -1,4 +1,4 @@
-package com.mnassa.screen.hail
+package com.mnassa.screen.invite
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -18,11 +18,11 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * User: okli
  * Date: 3/19/2018
  */
-class InviteToMnassaViewModelImpl(
+class InviteViewModelImpl(
         private val connectionsInteractor: ConnectionsInteractor,
         private val inviteInteractor: InviteInteractor,
         private val userProfileInteractor: UserProfileInteractor
-) : MnassaViewModelImpl(), InviteToMnassaViewModel {
+) : MnassaViewModelImpl(), InviteViewModel {
 
     override val subscribeToInvitesChannel: BroadcastChannel<Int> = BroadcastChannel(10)
     override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = BroadcastChannel(10)
