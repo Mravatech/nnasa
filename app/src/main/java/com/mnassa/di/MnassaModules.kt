@@ -141,7 +141,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
-    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl() }
+    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
 }

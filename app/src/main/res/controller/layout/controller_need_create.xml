@@ -1,21 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.mnassa.widget.MnassaToolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:toolbar_title="@string/need_create_title" />
+        android:background="@color/backgroundHighlight"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnShareOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Share to"/>
+        <com.mnassa.widget.MnassaToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:toolbar_title="@string/need_create_title" />
+
+        <TextView
+            android:id="@+id/tvShareOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@drawable/btn_share_to"
+            android:drawableEnd="@drawable/ic_post_share_to_arrow_white"
+            android:drawablePadding="@dimen/drawable_padding"
+            android:fontFamily="@font/roboto"
+            android:padding="8dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="Share to" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilNeed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            app:counterEnabled="true"
+            app:counterMaxLength="@integer/max_need_length">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etNeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.design.widget.TextInputLayout>
 
 
-</LinearLayout>
+        <com.mnassa.widget.ChipLayout
+            android:id="@+id/chipTags"
+            style="@style/Registration.ChipLayout"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal" />
+
+        <TextView
+            android:id="@+id/tvExtraDetails"
+            style="@style/MnassaHeader2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            tools:text="Extra details" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPlace"
+            style="@style/Registration.TextInputLayout"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            app:errorEnabled="false"
+            tools:hint="City">
+
+            <AutoCompleteTextView
+                android:id="@+id/actvPlace"
+                style="@style/Registration.EditText" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/etPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                tools:text="Price" />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+    </LinearLayout>
+</ScrollView>

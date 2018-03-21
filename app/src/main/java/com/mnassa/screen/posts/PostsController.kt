@@ -12,6 +12,7 @@ import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 

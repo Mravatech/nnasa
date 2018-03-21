@@ -6,6 +6,7 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
@@ -81,8 +82,10 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             args.remove(EXTRA_PREDEFINED_OPTIONS)
         }
 
+        adapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.allConnections.consumeEach {
+                adapter.isLoadingEnabled = false
                 adapter.set(it)
             }
         }
@@ -93,7 +96,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             return ShareToOptions(
                     isPromoted = rbPromotePost.isChecked,
                     isMyNewsFeedSelected = rbMyNewsFeed.isChecked,
-                    selectedConnections = adapter.selectedAccounts.toList()
+                    selectedConnections = adapter.selectedAccounts.toList(),
+                    selectedConnectionAccounts = adapter.selectedAccounts.map { id -> adapter.dataStorage.first { it.id == id } }
             )
         }
     }
@@ -123,7 +127,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     class ShareToOptions(
             val isPromoted: Boolean,
             val isMyNewsFeedSelected: Boolean,
-            val selectedConnections: List<String>
+            val selectedConnections: List<String>,
+            val selectedConnectionAccounts: List<ShortAccountModel>? = null
     ) : Serializable {
 
         companion object {

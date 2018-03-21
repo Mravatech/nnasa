@@ -111,5 +111,15 @@ class MnassaToolbar : FrameLayout {
         btnAction.text = actionText
         btnAction.setOnClickListener { listener(it) }
     }
+    var actionButtonEnabled: Boolean
+        get() = btnAction.visibility == View.VISIBLE
+        set(value) {
+            btnAction.visibility = if (value) View.VISIBLE else View.GONE
+        }
+    var actionButtonClickable: Boolean
+        get() = btnAction.isEnabled
+        set(value) {
+            btnAction.isEnabled = value
+        }
 
 }

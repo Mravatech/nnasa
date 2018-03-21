@@ -138,7 +138,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawablePadding="8dp"
+            android:drawablePadding="@dimen/drawable_padding"
             android:drawableStart="@drawable/ic_location"
             android:textSize="16sp"
             tools:text="LOCATION" />
@@ -188,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:drawablePadding="8dp"
+            android:drawablePadding="@dimen/drawable_padding"
             android:drawableStart="@drawable/ic_eye_18dp"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
