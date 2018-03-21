@@ -21,6 +21,7 @@ import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
+import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
 import kotlinx.android.synthetic.main.controller_registration_personal.view.*
@@ -135,14 +136,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = registrationAdapter.personSelectedPlaceId ?: "",
-                        offers = listOf(etPersonOffers.text.toString()),
-                        interests = listOf(etPersonInterests.text.toString()))
+                        offers = chipPersonOffers.getTags(),
+                        interests = chipPersonInterests.getTags())
                 PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
                         city = registrationAdapter.companySelectedPlaceId ?: "",
-                        offers = listOf(etCompanyOffers.text.toString()),
-                        interests = listOf(etCompanyInterests.text.toString())
+                        offers = chipCompanyOffers.getTags(),
+                        interests = chipCompanyInterests.getTags()
                 )
                 else -> throw IllegalArgumentException("Invalid page position $vpRegistration.currentItem")
             }
@@ -203,8 +204,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
                 tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
                 tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
-                tilPersonOffers.hint = "Offers"
-                tilPersonInterests.hint = "Interests"
+                chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+                chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+                chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+                chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+                chipPersonOffers.chipSearch = viewModel
+                chipPersonInterests.chipSearch = viewModel
             }
             setAdapter(view.actvPersonCity, true)
         }
@@ -214,8 +219,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilCompanyName.hint = "Company name" //TODO: translation
                 tilCompanyUserName.hint = "User name"
                 tilCompanyCity.hint = "City"
-                tilCompanyOffers.hint = "Offers"
-                tilCompanyInterests.hint = "Interests"
+                chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+                chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+                chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+                chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+                chipCompanyOffers.chipSearch = viewModel
+                chipCompanyInterests.chipSearch = viewModel
             }
             setAdapter(view.actvCompanyCity, false)
         }

@@ -49,23 +49,13 @@
                 style="@style/Registration.EditText" />
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilPersonOffers"
-            style="@style/Registration.TextInputLayout">
+        <com.mnassa.widget.ChipLayout
+            android:id="@+id/chipPersonOffers"
+            style="@style/Registration.ChipLayout"/>
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/etPersonOffers"
-                style="@style/Registration.EditText" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilPersonInterests"
-            style="@style/Registration.TextInputLayout">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/etPersonInterests"
-                style="@style/Registration.EditText" />
-        </android.support.design.widget.TextInputLayout>
-
+        <com.mnassa.widget.ChipLayout
+            android:layout_marginTop="@dimen/chip_layout_interests_margin_top"
+            android:id="@+id/chipPersonInterests"
+            style="@style/Registration.ChipLayout"/>
     </LinearLayout>
 </FrameLayout>

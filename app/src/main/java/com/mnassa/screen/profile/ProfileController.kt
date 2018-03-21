@@ -1,18 +1,18 @@
 package com.mnassa.screen.profile
 
 import android.app.Activity
-import android.net.Uri
 import android.view.View
-import android.widget.ImageView
 import com.github.salomonbrys.kodein.instance
-import com.google.firebase.storage.StorageReference
 import com.mnassa.R
+import com.mnassa.screen.base.MnassaControllerImpl
+import kotlinx.android.synthetic.main.controller_profile.view.*
+import android.net.Uri
+import android.widget.ImageView
+import com.google.firebase.storage.StorageReference
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
-import com.mnassa.screen.base.MnassaControllerImpl
-import kotlinx.android.synthetic.main.controller_crop.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -24,7 +24,7 @@ import timber.log.Timber
 
 class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
 
-    override val layoutId: Int = R.layout.controller_crop
+    override val layoutId: Int = R.layout.controller_profile
     override val viewModel: ProfileViewModel by instance()
 
     private val dialog: DialogHelper by instance()

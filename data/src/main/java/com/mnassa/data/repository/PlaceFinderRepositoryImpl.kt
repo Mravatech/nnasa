@@ -19,7 +19,7 @@ class PlaceFinderRepositoryImpl(
         private val googleApiClient: GoogleApiClient,
         private val geoPlaceConverter: ConvertersContext) : PlaceFinderRepository {
 
-    override fun getReqieredPlaces(constraint: CharSequence): List<GeoPlaceModel>? {
+    override fun getReqieredPlaces(constraint: CharSequence): List<GeoPlaceModel> {
         if (googleApiClient.isConnected) {
             Timber.i("Starting autocomplete query for: $constraint")
             val results = Places.GeoDataApi.getAutocompletePredictions(
@@ -29,16 +29,14 @@ class PlaceFinderRepositoryImpl(
             if (!status.isSuccess) {
                 Timber.e("Error getting autocomplete prediction API call: $status")
                 autocompletePredictions.release()
-                return null
+                return emptyList()
             }
             Timber.i("Query completed. Received ${autocompletePredictions.count} predictions.")
-
-            val v = DataBufferUtils.freezeAndClose(autocompletePredictions)
-//            val vv: List<GeoPlaceModel> = geoPlaceConverter.convertCollection(v, GeoPlaceModel::class.java)
-            return geoPlaceConverter.convertCollection(v, GeoPlaceModel::class.java)
+            val places = DataBufferUtils.freezeAndClose(autocompletePredictions)
+            return geoPlaceConverter.convertCollection(places, GeoPlaceModel::class.java)
         }
         Timber.e("Google API client is not connected for autocomplete query.")
-        return null
+        return emptyList()
     }
 
 }
