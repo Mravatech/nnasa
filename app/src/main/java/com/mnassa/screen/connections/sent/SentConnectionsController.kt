@@ -33,6 +33,7 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
         launchCoroutineUI {
             viewModel.sentConnectionsChannel.consumeEach {
                 view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+                view.rvSentConnections.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
 
                 adapter.isLoadingEnabled = false
                 adapter.set(it)

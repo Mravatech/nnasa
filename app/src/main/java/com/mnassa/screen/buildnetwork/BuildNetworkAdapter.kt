@@ -6,11 +6,10 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_build_network.view.*
 
 /**
@@ -60,8 +59,8 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
             with(itemView) {
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
-                tvUserPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
-                tvUserPosition.goneIfEmpty()
+                tvPosition.text = item.formattedPosition
+                tvPosition.goneIfEmpty()
                 cbInvite.isChecked = selectedAccount.contains(item.id)
             }
         }

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight"
     android:layout_marginBottom="1dp"
+    android:background="@color/backgroundHighlight"
     android:clickable="true"
     android:focusable="true"
     tools:background="#e9e9e9">
@@ -22,13 +22,13 @@
             android:id="@+id/ivAvatar"
             android:layout_width="@dimen/avatar_list_item"
             android:layout_height="@dimen/avatar_list_item"
+            android:layout_centerVertical="true"
             tools:src="@mipmap/ic_launcher" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/ivAvatar"
-            android:layout_alignTop="@id/ivAvatar"
+            android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/ivAvatar"
             android:layout_toStartOf="@id/cbInvite"
             android:gravity="center_vertical"
@@ -38,22 +38,18 @@
 
             <TextView
                 android:id="@+id/tvUserName"
-                style="@style/MnassaText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                tools:text="User name 11111" />
+                style="@style/Connections.UserName"
+                tools:text="User name" />
 
             <TextView
-                android:id="@+id/tvUserPosition"
-                style="@style/MnassaTextTiny"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                android:ellipsize="end"
-                android:maxLines="1"
-                tools:text="Programmer in ISDDesign" />
+                android:id="@+id/tvPosition"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
+
+            <TextView
+                android:id="@+id/tvEventName"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
         </LinearLayout>
 
         <CheckBox

@@ -42,7 +42,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPageSelected {
     override val layoutId: Int = R.layout.controller_connections
     override val viewModel: ConnectionsViewModel by instance()
-    private val allConnectionsAdapter = AllConnectionsRecyclerViewAdapter()
+    private val allConnectionsAdapter = AllConnectionsRecyclerViewAdapter(true)
     private val recommendedConnectionsAdapter = RecommendedConnectionsRecyclerViewAdapter()
     private val newConnectionRequestsAdapter = NewConnectionRequestsRecyclerViewAdapter()
     private var isHeaderBounded = false
@@ -105,7 +105,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             if (permissionsResult.isAllGranted) {
                 viewModel.onContactPermissionsGranted()
             } else {
-                val view = view ?: return@launchCoroutineUI
+                val view = view?.clSnackbarParent ?: return@launchCoroutineUI
                 Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
                         .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
                             if (permissionsResult.isShouldShowRequestPermissionRationale) {
@@ -134,8 +134,10 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             rvNewConnectionRequests.layoutManager = BlockedScrollingLayoutManager(context, RecyclerView.VERTICAL, false)
         }
 
+        allConnectionsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.allConnectionsChannel.consumeEach {
+                allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
                 header.tvAllConnections.text = formatTextWithCounter(R.string.tab_connections_all, it.size)
 

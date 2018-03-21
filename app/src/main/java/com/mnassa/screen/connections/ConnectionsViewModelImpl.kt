@@ -43,8 +43,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
 
         handleException {
             connectionsInteractor.getConnectedConnections().consumeEach {
-                val random = Random(randomSeed)
-                allConnectionsChannel.send(it.shuffled(random))
+                allConnectionsChannel.send(it)
             }
         }
     }
