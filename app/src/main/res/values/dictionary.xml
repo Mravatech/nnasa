@@ -131,5 +131,8 @@
     <string name="invite_invite_massage_whats_app">_inviteSharing_whatsappDefMessage</string>
     <string name="invite_invite_massage_email">_inviteSharing_emailDefMessage</string>
     <string name="invite_invite_invites_left">_android_invite_invites_left</string>
+    <string name="invite_invite_history_pending">_android_invite_history_pending</string>
+    <string name="invite_invite_history_registered">_android_invite_history_registered</string>
+    <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
 
 </resources>

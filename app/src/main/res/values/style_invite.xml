@@ -170,6 +170,7 @@
         <item name="android:windowMinWidthMajor">80%</item>
         <item name="android:windowMinWidthMinor">80%</item>
     </style>
+
     <style name="DialogInviteHistory" parent="@android:style/Theme.NoTitleBar">
         <item name="android:windowBackground">@drawable/dialog_background</item>
     </style>
@@ -196,8 +197,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingTop">@dimen/invite_dialog_invite_with_padding_between_send_buttons</item>
-        <item name="android:paddingBottom">@dimen/invite_dialog_invite_with_padding_between_send_buttons</item>
+        <item name="android:paddingTop">
+            @dimen/invite_dialog_invite_with_padding_between_send_buttons
+        </item>
+        <item name="android:paddingBottom">
+            @dimen/invite_dialog_invite_with_padding_between_send_buttons
+        </item>
         <item name="android:paddingEnd">@dimen/invite_dialog_invite_with_horizontal_indent</item>
         <item name="android:paddingStart">@dimen/invite_dialog_invite_with_horizontal_indent</item>
     </style>
@@ -213,6 +218,14 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/blackDarkAlpha</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Invite.ItemInviteHistoryRegistration">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
     </style>
 

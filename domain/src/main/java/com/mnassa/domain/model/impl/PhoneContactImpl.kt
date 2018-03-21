@@ -20,6 +20,8 @@ data class PhoneContactInvitedImpl(
         override val createdAtDate: String,
         override val description: String?,
         override val used: Boolean
-): PhoneContactInvited{
+) :  PhoneContactInvited {
+//    override fun compareTo(other: PhoneContactInvited) =
+//            compareValuesBy(this, other, PhoneContactInvited::createdAt, PhoneContactInvited::createdAt)
     override val fullName: String = ""
 }

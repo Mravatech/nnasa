@@ -23,9 +23,11 @@ class HistoryViewModelImpl(
     override fun retrievePhoneContacts() {
         retrievePhoneJob?.cancel()
         retrievePhoneJob = handleException {
-            val contacts = inviteInteractor.getInvitedContacts()
-            Timber.i(contacts.toString())
-            phoneContactChannel.send(contacts)
+            withProgressSuspend{
+                val contacts = inviteInteractor.getInvitedContacts()
+                Timber.i(contacts.toString())
+                phoneContactChannel.send(contacts)
+            }
         }
     }
 

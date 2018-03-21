@@ -47,4 +47,7 @@
     <string name="_android_invite_select_send_way_INFO">Select a way to send invite</string>
     <string name="_android_invite_title_invite_INFO">You invite %s</string>
     <string name="_android_invite_invites_left_INFO">Invite Friends (%s left)</string>
+    <string name="_android_invite_history_registered_INFO">REGISTERED</string>
+    <string name="_android_invite_history_pending_INFO">PENDING</string>
+    <string name="_android_invite_history_invited_in_INFO">Invited in %s</string>
 </resources>

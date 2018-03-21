@@ -12,6 +12,7 @@ import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
+import com.mnassa.domain.model.impl.PhoneContactInvitedImpl
 import com.mnassa.domain.repository.InviteRepository
 import kotlinx.coroutines.experimental.async
 import timber.log.Timber
@@ -37,13 +38,13 @@ class InviteRepositoryImpl(
     }
 
     override suspend fun getInvitedContacts(userId: String): List<PhoneContactInvited> {
-        return async {
+        val data = async {
             val invited = databaseReference
                     .child(DatabaseContract.TABLE_INVITETION)
                     .child(userId)
                     .awaitList<InvitationDbEntity>(exceptionHandler)
             converter.convertCollection(invited, PhoneContactInvited::class.java)
-        }.await()
-
+        }.await().toMutableList()
+        return data.sortedWith(compareBy(PhoneContactInvited::createdAt))
     }
 }
