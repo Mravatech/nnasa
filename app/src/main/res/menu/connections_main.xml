@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Titles sets programmatically -->
     <item
         android:id="@+id/action_recommended_connections"
-        android:title="Recommended" />
+        android:title="" />
 
     <item
         android:id="@+id/action_sent_requests"
-        android:title="Sent requests" />
+        android:title="" />
 
     <item
         android:id="@+id/action_archived"
-        android:title="Archived" />
+        android:title="" />
 
 </menu>

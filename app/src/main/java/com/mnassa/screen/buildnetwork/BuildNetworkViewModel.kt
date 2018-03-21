@@ -1,17 +1,15 @@
-package com.mnassa.screen.invite
+package com.mnassa.screen.buildnetwork
 
 import android.Manifest
 import android.support.annotation.RequiresPermission
-import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
  * Created by Peter on 3/5/2018.
  */
-interface InviteViewModel : MnassaViewModel {
+interface BuildNetworkViewModel : MnassaViewModel {
     val usersToInviteChannel: BroadcastChannel<List<ShortAccountModel>>
     val openScreenChannel: BroadcastChannel<OpenScreenCommand>
 

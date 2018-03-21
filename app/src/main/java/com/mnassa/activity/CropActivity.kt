@@ -35,8 +35,8 @@ class CropActivity : AppCompatActivity() {
         when (resultCode) {
             Activity.RESULT_OK -> {
                 when (requestCode) {
-                    REQUEST_CODE_CAMERA -> cropImage(data?.data ?: uri)
-                    REQUEST_CODE_GALLERY -> cropImage(data?.data)
+                    ImageSource.CAMERA.ordinal -> cropImage(data?.data ?: uri)
+                    ImageSource.GALLERY.ordinal -> cropImage(data?.data)
                     UCrop.REQUEST_CROP -> {
                         setResult(RESULT_OK, intent.putExtra(URI_PHOTO_RESULT, cachedUri))
                         finish()
@@ -51,8 +51,8 @@ class CropActivity : AppCompatActivity() {
 
     private fun requestPhoto(flag: Int) {
         when (flag) {
-            REQUEST_CODE_GALLERY -> requestPhotoGallery()
-            REQUEST_CODE_CAMERA -> requestCamera()
+            ImageSource.GALLERY.ordinal -> requestPhotoGallery()
+            ImageSource.CAMERA.ordinal -> requestCamera()
             else -> {
                 resultWithError()
             }
@@ -76,7 +76,7 @@ class CropActivity : AppCompatActivity() {
             values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
             uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            startActivityForResult(intent, REQUEST_CODE_CAMERA)
+            startActivityForResult(intent, ImageSource.CAMERA.ordinal)
         } else {
             resultWithError()
         }
@@ -87,7 +87,7 @@ class CropActivity : AppCompatActivity() {
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         if (intent.resolveActivity(packageManager) != null) {
-            startActivityForResult(intent, REQUEST_CODE_GALLERY)
+            startActivityForResult(intent, ImageSource.GALLERY.ordinal)
         } else {
             resultWithError()
         }
@@ -101,16 +101,18 @@ class CropActivity : AppCompatActivity() {
     companion object {
         const val URI_PHOTO_RESULT = "URI_PHOTO_RESULT"
         const val GET_PHOTO_ERROR = 102
-        const val REQUEST_CODE_GALLERY = 1
-        const val REQUEST_CODE_CAMERA = 2
         private const val PHOTO_INTENT_FLAG = "PHOTO_INTENT_FLAG"
         private const val DEFAULT_VALUE = 0
 
-        fun start(flag: Int, context: Context): Intent {
+        fun start(source: ImageSource, context: Context): Intent {
             val intent = Intent(context, CropActivity::class.java)
-            intent.putExtra(PHOTO_INTENT_FLAG, flag)
+            intent.putExtra(PHOTO_INTENT_FLAG, source.ordinal)
             return intent
         }
+    }
+
+    enum class ImageSource {
+        GALLERY, CAMERA
     }
 
 }

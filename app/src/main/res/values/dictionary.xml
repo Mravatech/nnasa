@@ -6,6 +6,10 @@
     <string name="country_united_states">_android_country_united_states</string>
     <string name="country_canada">_android_country_canada</string>
 
+    <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
+    <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
+
+
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
     <string name="login_enter_phone_title">_login_label_title</string>
@@ -34,11 +38,13 @@
     <string name="reg_next">_newAccDetails_navItem_Next</string>
     <string name="reg_account_type_personal">_android_account_type_personal</string>
     <string name="reg_account_type_organization">_android_account_type_organization</string>
+    <string name="reg_account_can_help_with">_accEdit_cellOffers_placeholder</string>
+    <string name="reg_account_interested_in">_accEdit_cellInterests_placeholder</string>
 
     <!-- ==================================== BUILD NETWORK (INVITE) =========================== -->
     <string name="invite_title">_newAccNetwork_navTitle</string>
     <string name="invite_description">_newAccNetwork_labelHeader</string>
-    <string name="invite_at_placeholder">_cellOccupation_placeTitle</string>
+    <string name="invite_at_placeholder">_occupation_separator</string>
     <string name="invite_title_action">_newAccNetwork_navItem_Invite</string>
     <string name="invite_skip_step">_android_invites_skip_step</string>
 
@@ -55,6 +61,10 @@
     <string name="tab_connections_recommended_show_all">_android_connections_recommended_show_all</string>
     <string name="tab_connections_rejected">_connectionsList_groupHeader_rejected</string>
     <string name="tab_connections_new_requests_more">_android_connections_new_requests_more</string>
+
+    <string name="tab_connections_contact_permissions_description">_android_connections_permissions_declined</string>
+    <string name="tab_connections_contact_permissions_button">_android_connections_permissions_declined_button</string>
+
     <!-- connections - all -->
     <string name="tab_connections_all_item_send_message">_android_connections_send_message</string>
     <string name="tab_connections_all_item_view_profile">_android_connections_view_profile</string>
@@ -63,12 +73,15 @@
 
     <!-- new requests -->
     <string name="new_requests_title">_connections_header_new_requests</string>
+    <string name="new_requests_empty_title">_connectionsList_empty_newRequests</string>
+    <string name="new_requests_empty_description">_android_connections_new_requests_empty_description</string>
 
     <!-- recommended -->
     <string name="recommended_connections_title">_connections_header_recommended_conns</string>
     <string name="recommended_connections_by_phone">recommendedByPhone</string>
     <string name="recommended_connections_by_event">recommendedByEvent</string>
     <string name="recommended_connections_by_refer">recommendedByRefer</string>
+    <string name="recommended_connections_btn_connect">connection_button_connect</string>
 
     <!-- sent -->
     <string name="sent_connection_requests_title">_connections_group_header_sent</string>
@@ -78,6 +91,8 @@
     <string name="archived_connections_connect_btn">connection_button_connect</string>
     <string name="archived_connections_description">_android_connections_rejected_description</string>
     <string name="archived_connections_days_left">_android_connections_rejected_days_left</string>
+    <string name="archived_connections_empty_title">_connectionsList_empty_rejects</string>
+    <string name="archived_connections_empty_description">_android_connections_archived_empty_description</string>
 
     <!-- ====================================== REG PERSON =================================== -->
     <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
@@ -99,6 +114,7 @@
     <string name="reg_dialog_custom_occupation">_android_registration_custom_occupation</string>
     <string name="reg_occupation_edit_text_place_holder">_cellOccupation_occupationPlaceholder</string>
     <string name="reg_add_another_occupation">_android_registration_add_another_occupation</string>
+    <string name="reg_person_type_here">_android_registration_type_here</string>
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>

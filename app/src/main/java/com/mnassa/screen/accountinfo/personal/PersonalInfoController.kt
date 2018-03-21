@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
-import android.support.annotation.IntRange
 import android.view.View
 import android.widget.ImageView
 import com.github.salomonbrys.kodein.instance
@@ -18,9 +17,8 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.activity.CropActivity.Companion.REQUEST_CODE_CAMERA
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
-import com.mnassa.dialog.PhotoListener
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.coroutines.experimental.Job
@@ -34,7 +32,7 @@ import java.util.*
  * Created by Peter on 2/27/2018.
  */
 
-class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalInfoViewModel>(/*data*/), PhotoListener {
+class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalInfoViewModel>(/*data*/) {
 
     override val layoutId: Int = R.layout.controller_personal_info
     override val viewModel: PersonalInfoViewModel by instance()
@@ -66,7 +64,12 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
             })
         }
         view.fabInfoAddPhoto.setOnClickListener {
-            dialog.showPhotoDialog(view.context, this@PersonalInfoController)
+            dialog.showSelectImageSourceDialog(it.context) { imageSource ->
+                activity?.let {
+                    val intent = CropActivity.start(imageSource, it)
+                    startActivityForResult(intent, REQUEST_CODE_CROP)
+                }
+            }
         }
         view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
         view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
@@ -108,7 +111,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     is PersonalInfoViewModel.OpenScreenCommand.InviteScreen -> {
-                        InviteController.newInstance()
+                        BuildNetworkController.newInstance()
                     }
                 }
                 open(controller)

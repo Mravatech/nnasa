@@ -1,20 +1,18 @@
 package com.mnassa.data.network.bean.firebase
 
-import com.google.firebase.database.IgnoreExtraProperties
-import com.google.firebase.database.PropertyName
+import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
 /**
  * Created by Peter on 2/22/2018.
  */
-@IgnoreExtraProperties
 internal data class TagDbEntity(
         override var id: String,
-        @PropertyName("ar")
+        @SerializedName("ar")
         val ar: String,
-        @PropertyName("en")
+        @SerializedName("en")
         val en: String,
-        @PropertyName("status")
+        @SerializedName("status")
         val status: String) : HasId {
     constructor() : this("", "", "", "")
 }

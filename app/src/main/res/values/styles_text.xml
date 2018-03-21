@@ -19,6 +19,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="MnassaTextLight" parent="MnassaText">
+        <item name="android:fontFamily">@font/roboto_light</item>
+    </style>
+
     <style name="MnassaTextTiny" parent="MnassaText">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/coolGray</item>
@@ -31,7 +35,7 @@
 
     <style name="Connections.UserName" parent="MnassaText">
         <item name="android:maxLines">1</item>
-        <item name="autoSizeMaxTextSize">14sp</item>
+        <item name="autoSizeMaxTextSize">16sp</item>
         <item name="autoSizeMinTextSize">2sp</item>
         <item name="autoSizeStepGranularity">1sp</item>
         <item name="autoSizeTextType">uniform</item>
@@ -39,7 +43,7 @@
 
     <style name="Connections.UserPosition" parent="MnassaTextTiny">
         <item name="android:maxLines">1</item>
-        <item name="autoSizeMaxTextSize">14sp</item>
+        <item name="autoSizeMaxTextSize">12sp</item>
         <item name="autoSizeMinTextSize">2sp</item>
         <item name="autoSizeStepGranularity">1sp</item>
         <item name="autoSizeTextType">uniform</item>

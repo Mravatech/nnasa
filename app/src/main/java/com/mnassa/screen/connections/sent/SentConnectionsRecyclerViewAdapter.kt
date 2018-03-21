@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.formattedFromEvent
+import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connections_sent.view.*
 
 /**
@@ -21,10 +21,10 @@ class SentConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountM
 
     var onCancelClickListener = { account: ShortAccountModel -> }
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.btnCancel -> {
-                val vh = v.tag as RecyclerView.ViewHolder
+                val vh = view.tag as RecyclerView.ViewHolder
                 val position = vh.adapterPosition
                 if (position >= 0) {
                     onCancelClickListener(getDataItemByAdapterPosition(position))
@@ -43,8 +43,11 @@ class SentConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountM
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
 
-                tvPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
+                tvPosition.text = item.formattedPosition
                 tvPosition.goneIfEmpty()
+
+                tvEventName.text = item.formattedFromEvent
+                tvEventName.goneIfEmpty()
 
                 btnCancel.setOnClickListener(onClickListener)
                 btnCancel.tag = this@SentConnectionViewHolder

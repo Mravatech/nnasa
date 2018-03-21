@@ -20,6 +20,7 @@
             android:id="@+id/ivAvatar"
             android:layout_width="@dimen/avatar_list_item"
             android:layout_height="@dimen/avatar_list_item"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             tools:src="@mipmap/ic_launcher" />
 
@@ -27,8 +28,7 @@
             android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/ivAvatar"
-            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
             android:layout_toEndOf="@id/ivAvatar"
             android:layout_toStartOf="@id/rlControls"
             android:gravity="center_vertical"
@@ -43,6 +43,11 @@
                 android:id="@+id/tvPosition"
                 style="@style/Connections.UserPosition"
                 tools:text="at some company" />
+
+            <TextView
+                android:id="@+id/tvEventName"
+                style="@style/Connections.UserPosition"
+                tools:text="at some event" />
         </LinearLayout>
 
         <RelativeLayout
@@ -63,7 +68,7 @@
 
             <TextView
                 android:id="@+id/tvDaysLeft"
-                style="@style/MnassaText"
+                style="@style/MnassaTextLight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
