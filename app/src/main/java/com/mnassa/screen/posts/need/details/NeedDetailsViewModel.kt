@@ -11,5 +11,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface NeedDetailsViewModel : MnassaViewModel {
     val postChannel: ReceiveChannel<Post>
     val postTagsChannel: ReceiveChannel<List<TagModel>>
+    val finishScreenChannel: ReceiveChannel<Unit>
+    fun delete()
 
 }

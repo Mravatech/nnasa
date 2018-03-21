@@ -7,9 +7,11 @@ import com.google.gson.annotations.SerializedName
  */
 internal data class LocationDbEntity(
         @SerializedName("ar")
-        val ar: LocationTranslateDbEntity,
+        val ar: LocationTranslateDbEntity?,
         @SerializedName("en")
-        val en: LocationTranslateDbEntity
+        val en: LocationTranslateDbEntity?,
+        @SerializedName("placeId")
+        var placeId: String
 )
 
 internal data class LocationTranslateDbEntity(

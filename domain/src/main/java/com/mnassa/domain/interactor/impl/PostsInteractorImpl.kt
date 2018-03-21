@@ -59,6 +59,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsI
         return postsRepository.createNeed(text, emptyList(), privacyType, privacyConnections)
     }
 
+    override suspend fun removePost(postId: String) {
+        postsRepository.removePost(postId)
+    }
+
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
     }

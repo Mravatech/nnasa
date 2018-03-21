@@ -4,7 +4,11 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
+import com.mnassa.App
 import com.mnassa.R
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.PostType
@@ -42,3 +46,7 @@ val Post.formattedText: CharSequence?
         } else text
 
     }
+
+suspend fun Post.isMyPost(): Boolean {
+    return author.id == App.context.appKodein().instance<UserProfileInteractor>().getAccountId()
+}

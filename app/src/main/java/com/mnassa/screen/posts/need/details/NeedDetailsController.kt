@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.need.details
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.PopupMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
@@ -60,7 +62,51 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
             }
         }
 
+        launchCoroutineUI {
+            viewModel.finishScreenChannel.consumeEach {
+                activity?.onBackPressed()
+            }
+        }
+
         (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply { setPost(this) }
+    }
+
+    private fun showMyPostMenu(view: View, post: Post) {
+        //Creating the instance of PopupMenu
+        val popup = PopupMenu(view.context, view)
+        //Inflating the Popup using xml file
+        popup.menuInflater.inflate(R.menu.post_edit, popup.menu)
+        popup.menu.findItem(R.id.action_post_edit).title = fromDictionary(R.string.need_action_edit)
+        popup.menu.findItem(R.id.action_post_delete).title = fromDictionary(R.string.need_action_delete)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_post_edit -> open(CreateNeedController.newInstanceEditMode(post))
+                R.id.action_post_delete -> viewModel.delete()
+            }
+            true
+        }
+
+        popup.show()
+    }
+
+    private fun showPostMenu(view: View) {
+        //Creating the instance of PopupMenu
+        val popup = PopupMenu(view.context, view)
+        //Inflating the Popup using xml file
+        popup.menuInflater.inflate(R.menu.post_view, popup.menu)
+        popup.menu.findItem(R.id.action_post_repost).title = fromDictionary(R.string.need_action_repost)
+        popup.menu.findItem(R.id.action_post_report).title = fromDictionary(R.string.need_action_report)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_post_repost -> Toast.makeText(view.context, "Repost post", Toast.LENGTH_SHORT).show()
+                R.id.action_post_report -> Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show()
+            }
+            true
+        }
+
+        popup.show()
     }
 
     private fun setPost(post: Post) {
@@ -133,6 +179,13 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
             btnRecommend.setOnClickListener {
                 Toast.makeText(context, "RECOMMEND!", Toast.LENGTH_SHORT).show()
             }
+
+            launchCoroutineUI {
+                if (post.isMyPost()) {
+                    toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
+                } else toolbar.onMoreClickListener = { showPostMenu(it) }
+            }
+
         }
     }
 

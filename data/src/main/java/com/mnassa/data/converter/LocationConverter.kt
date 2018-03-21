@@ -18,15 +18,15 @@ class LocationConverter : ConvertersContextRegistrationCallback {
 
     private fun convertLocationPlace(input: LocationDbEntity): LocationPlaceModelImpl {
         val city: TranslatedWordModel? =
-                if (!input.en.city.isNullOrBlank() || !input.ar.city.isNullOrBlank()) {
-                    TranslatedWordModelImpl("", "", input.en.city, input.ar.city)
+                if (!input.en?.city.isNullOrBlank() || !input.ar?.city.isNullOrBlank()) {
+                    TranslatedWordModelImpl("", "", input.en?.city, input.ar?.city)
                 } else null
 
         val placeName: TranslatedWordModel? =
-                if (!input.en.placeName.isNullOrBlank() || !input.ar.placeName.isNullOrBlank()) {
-                    TranslatedWordModelImpl("", "", input.en.placeName, input.ar.placeName)
+                if (!input.en?.placeName.isNullOrBlank() || !input.ar?.placeName.isNullOrBlank()) {
+                    TranslatedWordModelImpl("", "", input.en?.placeName, input.ar?.placeName)
                 } else null
 
-        return LocationPlaceModelImpl(city = city, lat = input.en.lat, lng = input.en.lng, placeId = input.en.placeId, placeName = placeName)
+        return LocationPlaceModelImpl(city = city, lat = input.en?.lat ?: 0.0, lng = input.en?.lng ?: 0.0, placeId = input.placeId, placeName = placeName)
     }
 }

@@ -33,12 +33,14 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?
 private fun hack(dataSnapshot: DataSnapshot, clazz: Class<*>): JsonElement {
     when (clazz) {
         PostDbEntity::class.java -> {
-            val map = dataSnapshot.value as MutableMap<String, *>
-            val location = map["location"]
-            if (location is String) {
-                map.remove("location")
+            if (dataSnapshot.value != null) {
+                val map = dataSnapshot.value as MutableMap<String, *>
+                val location = map["location"]
+                if (location is String) {
+                    map.remove("location")
+                }
+                return gson.toJsonTree(map)
             }
-            return gson.toJsonTree(map)
         }
     }
     return gson.toJsonTree(dataSnapshot.value)

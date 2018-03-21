@@ -11,6 +11,7 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
+import com.mnassa.data.network.bean.retrofit.request.RemovePostRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
@@ -79,5 +80,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 privacyConnections = if (privacyConnections.isNotEmpty()) privacyConnections else null
         )).handleException(exceptionHandler)
         return result.data.run { converter.convert(this) }
+    }
+
+    override suspend fun removePost(postId: String) {
+        postApi.deletePost(RemovePostRequest(postId)).handleException(exceptionHandler)
     }
 }

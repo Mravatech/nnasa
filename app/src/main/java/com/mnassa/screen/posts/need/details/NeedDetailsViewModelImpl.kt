@@ -5,12 +5,10 @@ import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.Post
-import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ConflatedChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -21,6 +19,7 @@ class NeedDetailsViewModelImpl(private val postId: String,
                                private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), NeedDetailsViewModel {
     override val postChannel: ConflatedChannel<Post> = ConflatedChannel()
     override val postTagsChannel: ConflatedChannel<List<TagModel>> = ConflatedChannel()
+    override val finishScreenChannel: RendezvousChannel<Unit> = RendezvousChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +28,15 @@ class NeedDetailsViewModelImpl(private val postId: String,
             postsInteractor.loadById(postId).consumeEach {
                 postChannel.send(it)
                 postTagsChannel.send(loadTags(it.tags))
+            }
+        }
+    }
+
+    override fun delete() {
+        handleException {
+            withProgressSuspend {
+                postsInteractor.removePost(postId)
+                finishScreenChannel.send(Unit)
             }
         }
     }

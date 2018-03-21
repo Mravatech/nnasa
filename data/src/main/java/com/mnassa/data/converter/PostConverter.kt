@@ -45,8 +45,6 @@ class PostConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostImpl {
-//        Timber.i("convertPost")
-//        Timber.i("$input")
 
         return PostImpl(
                 id = input.id,
@@ -54,7 +52,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 type = converter.convert(input.type),
                 createdAt = Date(input.createdAt),
                 images = input.images ?: emptyList(),
-                locationPlace = input.location?.let {
+                locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                     converter.convert<LocationPlaceModel>(it)
                 },
                 originalCreatedAt = Date(input.originalCreatedAt),

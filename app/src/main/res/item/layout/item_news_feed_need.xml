@@ -117,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <Button
+            <TextView
                 android:id="@+id/btnAction"
                 style="@style/MnassaTransparentButton"
                 android:layout_width="wrap_content"

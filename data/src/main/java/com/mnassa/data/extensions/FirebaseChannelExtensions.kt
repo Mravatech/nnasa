@@ -1,10 +1,10 @@
 package com.mnassa.data.extensions
 
+import android.util.Log
 import com.google.firebase.database.*
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
@@ -130,10 +130,26 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
 
     lateinit var listener: ChildEventListener
 
-    val emitter = { input: ListItemEvent<OutType> ->
+    val MOVED = 1
+    val CHANGED = 2
+    val ADDED = 3
+    val REMOVED = 4
+
+
+    val emitter = { input: DataSnapshot, previousChildName: String?, eventType: Int ->
         launch {
             try {
-                channel.send(input)
+                val dbEntity = input.mapSingle<DbType>() ?: return@launch
+                val outModel = mapper(dbEntity)
+                val result: ListItemEvent<OutType> = when(eventType) {
+                    MOVED -> ListItemEvent.Moved(outModel, previousChildName)
+                    CHANGED -> ListItemEvent.Changed(outModel, previousChildName)
+                    ADDED -> ListItemEvent.Added(outModel, previousChildName)
+                    REMOVED -> ListItemEvent.Removed(outModel)
+                    else -> throw IllegalArgumentException("Illegal event type $eventType")
+                }
+
+                channel.send(result)
             } catch (e: ClosedSendChannelException) {
                 removeEventListener(listener)
             } catch (e: Exception) {
@@ -150,23 +166,19 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
         }
 
         override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
-            emitter.invoke(ListItemEvent.Moved(mapper(mapped), previousChildName))
+            emitter(dataSnapshot, previousChildName, MOVED)
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
-            emitter.invoke(ListItemEvent.Changed(mapper(mapped), previousChildName))
+            emitter(dataSnapshot, previousChildName, CHANGED)
         }
 
         override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
-            emitter.invoke(ListItemEvent.Added(mapper(mapped), previousChildName))
+            emitter(dataSnapshot, previousChildName, ADDED)
         }
 
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-            val mapped = dataSnapshot.mapSingle<DbType>() ?: return
-            emitter.invoke(ListItemEvent.Removed(mapper(mapped)))
+            emitter(dataSnapshot, null, REMOVED)
         }
     }
 

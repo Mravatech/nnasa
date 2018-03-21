@@ -20,4 +20,6 @@ interface PostsInteractor {
             privacyType: PostPrivacyType,
             privacyConnections: List<String>): Post
 
+    suspend fun removePost(postId: String)
+
 }
