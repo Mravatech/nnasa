@@ -15,16 +15,11 @@ import java.util.*
  * Date: 3/20/2018
  */
 
-class InviteHistoryAdapter(private val data: MutableList<PhoneContactInvited>) : RecyclerView.Adapter<InviteHistoryHolder>() {
-
-    private var filtered: List<PhoneContactInvited>
+class InviteHistoryAdapter : RecyclerView.Adapter<InviteHistoryHolder>() {
+    private var data = emptyList<PhoneContactInvited>()
+    private var filtered = emptyList<PhoneContactInvited>()
     private var dates = EMPTY_STRING
     private var positions = SparseArray<String>()
-
-    init {
-        filtered = data.sortedWith(compareBy(PhoneContactInvited::createdAt))
-        handleSections()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             InviteHistoryHolder(LayoutInflater.from(parent.context)
@@ -37,8 +32,17 @@ class InviteHistoryAdapter(private val data: MutableList<PhoneContactInvited>) :
         holder.setup(filtered[position], date)
     }
 
+    fun setData(data: List<PhoneContactInvited>) {
+        this.data = data
+        filtered = data
+        handleSections()
+        notifyDataSetChanged()
+    }
+
     fun search(newText: String) {
-        filtered = data.filter { it.description?.toLowerCase()?.startsWith(newText.toLowerCase())?: newText.isEmpty() }
+        filtered = data.filter {
+            it.description?.toLowerCase()?.startsWith(newText.toLowerCase()) ?: newText.isEmpty()
+        }
         handleSections()
         notifyDataSetChanged()
     }

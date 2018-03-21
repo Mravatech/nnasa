@@ -3,7 +3,7 @@ package com.mnassa.screen.invite
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.mnassa.domain.model.PhoneContact
-import com.mnassa.extensions.avatarRoundWithStringPath
+import com.mnassa.extensions.avatarRound
 import kotlinx.android.synthetic.main.item_invite.view.*
 
 /**
@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_invite.view.*
 class InviteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun setup(contact: PhoneContact, viewModel: InviteViewModel) {
-        itemView.ivPhoneContactAvatar.avatarRoundWithStringPath(contact.avatar)
+        itemView.ivPhoneContactAvatar.avatarRound(contact.avatar)
         itemView.tvInviteContactName.text = contact.fullName
         itemView.tvInviteContactNumber.text = contact.phoneNumber
         itemView.setOnClickListener { viewModel.selectPhoneContact(contact) }

@@ -2,6 +2,7 @@ package com.mnassa.screen.invite
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.support.annotation.RequiresPermission
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ConnectionsInteractor
@@ -24,10 +25,15 @@ class InviteViewModelImpl(
         private val userProfileInteractor: UserProfileInteractor
 ) : MnassaViewModelImpl(), InviteViewModel {
 
-    override val subscribeToInvitesChannel: BroadcastChannel<Int> = BroadcastChannel(10)
+    override val invitesCountChannel: BroadcastChannel<Int> = BroadcastChannel(10)
     override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = BroadcastChannel(10)
     override val phoneSelectedChannel: BroadcastChannel<PhoneContact> = BroadcastChannel(10)
     override val checkPhoneContactChannel: BroadcastChannel<Boolean> = BroadcastChannel(10)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        subscribeToInvites()
+    }
 
     private var retrievePhoneJob: Job? = null
     @SuppressLint("MissingPermission")
@@ -52,7 +58,7 @@ class InviteViewModelImpl(
     override fun checkPhoneContact(contact: PhoneContact) {
         checkPhoneContactJob?.cancel()
         checkPhoneContactJob = handleException {
-            withProgressSuspend{
+            withProgressSuspend {
                 inviteInteractor.inviteContact(contact)
                 checkPhoneContactChannel.send(true)
             }
@@ -60,11 +66,11 @@ class InviteViewModelImpl(
     }
 
     private var subscribeToInvitesJob: Job? = null
-    override fun subscribeToInvites() {
+    private fun subscribeToInvites() {
         subscribeToInvitesJob?.cancel()
         subscribeToInvitesJob = handleException {
             userProfileInteractor.getCurrentUserWithChannel().consumeEach {
-                subscribeToInvitesChannel.send(it.invites)
+                invitesCountChannel.send(it.invites)
             }
         }
     }

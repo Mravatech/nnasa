@@ -12,10 +12,9 @@ import com.mnassa.domain.model.PhoneContact
  * Date: 3/19/2018
  */
 
-class InviteAdapter(
-        private val data: List<PhoneContact>,
-        private val viewModel: InviteViewModel) : RecyclerView.Adapter<InviteHolder>() {
-
+class InviteAdapter : RecyclerView.Adapter<InviteHolder>() {
+    private var data: List<PhoneContact> = emptyList()
+    private lateinit var viewModel: InviteViewModel
     private var filtered: List<PhoneContact> = data
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -28,6 +27,13 @@ class InviteAdapter(
         holder.setup(filtered[position], viewModel)
     }
 
+    fun setData(data: List<PhoneContact>, viewModel: InviteViewModel) {
+        this.viewModel = viewModel
+        this.data = data
+        filtered = data
+        notifyDataSetChanged()
+    }
+
     fun searchByName(text: String) {
         filtered = data.filter { it.fullName.toLowerCase().startsWith(text.toLowerCase()) }
         notifyDataSetChanged()
@@ -38,7 +44,7 @@ class InviteAdapter(
         notifyDataSetChanged()
     }
 
-    fun getNameByNumber(text: String):String? {
+    fun getNameByNumber(text: String): String? {
         return data.firstOrNull { it.phoneNumber.endsWith(text) }?.fullName
     }
 

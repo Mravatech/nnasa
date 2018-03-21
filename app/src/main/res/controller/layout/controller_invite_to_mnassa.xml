@@ -18,32 +18,12 @@
         tools:text="Enter the number of the friend you want to invite
 or choose from them your Phone Book" />
 
-    <LinearLayout
-        style="@style/Invite.InviteWithNumberContainer"
-        android:layout_marginEnd="@dimen/invite_main_screen_margin"
-        android:layout_marginStart="@dimen/invite_main_screen_margin">
-
-        <TextView
-            android:id="@+id/tvCodeOperator"
-            style="@style/Invite.InviteWithNumberOperator"
-            android:layout_marginStart="@dimen/invite_region_number_margin"
-            android:drawableStart="@drawable/ic_saudi_arabia_flag"
-            tools:text="+966" />
-
-        <View
-            style="@style/Invite.InviteWithNumberDivider"
-            android:layout_marginBottom="@dimen/invite_main_screen_margin"
-            android:layout_marginStart="@dimen/invite_main_margin_between_views"
-            android:layout_marginTop="@dimen/invite_main_screen_margin" />
-
-        <EditText
-            android:id="@+id/etInvitePhoneNumber"
-            style="@style/Invite.InviteWithNumberEditText"
-            android:inputType="number"
-            android:maxLength="10"
-            android:layout_marginStart="@dimen/invite_main_margin_between_views"
-            tools:hint="Phone Number" />
-    </LinearLayout>
+    <include
+        android:id="@+id/phoneInput"
+        layout="@layout/phone_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical" />
 
     <Button
         android:id="@+id/btnInvite"

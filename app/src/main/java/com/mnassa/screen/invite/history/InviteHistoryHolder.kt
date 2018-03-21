@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.domain.model.PhoneContactInvited
-import com.mnassa.extensions.avatarRoundWithStringPath
+import com.mnassa.extensions.avatarRound
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_invite_history.view.*
 
@@ -26,8 +26,13 @@ class InviteHistoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             itemView.tvInviteHistoryHeader.visibility = View.GONE
             itemView.vShadow.visibility = View.GONE
         }
-        itemView.ivPhoneContactAvatar.avatarRoundWithStringPath(contact.avatar)
-        itemView.tvInviteContactName.text = contact.description
+        itemView.ivPhoneContactAvatar.avatarRound(contact.avatar)
+        contact.description?.let {
+            itemView.tvInviteContactName.visibility = View.VISIBLE
+            itemView.tvInviteContactName.text = it
+        } ?: kotlin.run {
+            itemView.tvInviteContactName.visibility = View.GONE
+        }
         itemView.tvInviteContactNumber.text = contact.phoneNumber
         if (contact.used) {
             itemView.tvRegistration.text = fromDictionary(R.string.invite_invite_history_registered)

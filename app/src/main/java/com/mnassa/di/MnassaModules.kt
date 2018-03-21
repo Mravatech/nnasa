@@ -42,6 +42,7 @@ import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.repository.*
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.google.PlayServiceHelper
+import com.mnassa.intent.IntentHelper
 import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
@@ -218,5 +219,6 @@ private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
     bind<DialogHelper>() with singleton { DialogHelper() }
+    bind<IntentHelper>() with singleton { IntentHelper() }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }

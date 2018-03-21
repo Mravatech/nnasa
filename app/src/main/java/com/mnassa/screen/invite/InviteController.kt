@@ -13,12 +13,16 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import android.content.Intent
-import android.net.Uri
+import android.widget.AdapterView
+import com.mnassa.delegate.CountryDelegate
 import com.mnassa.domain.model.impl.PhoneContactImpl
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.intent.IntentHelper
 import com.mnassa.screen.invite.history.HistoryController
+import com.mnassa.screen.login.enterphone.CountryCode
+import com.mnassa.screen.login.enterphone.CountryCodeAdapter
+import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.android.synthetic.main.toolbar_invite.view.*
-import java.net.URLEncoder
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,72 +33,83 @@ import java.net.URLEncoder
 class InviteController : MnassaControllerImpl<InviteViewModel>() {
     override val layoutId = R.layout.controller_invite_to_mnassa
     override val viewModel: InviteViewModel by instance()
-    private var adapter: InviteAdapter? = null
+    private var adapter: InviteAdapter = InviteAdapter()
     private val dialog: DialogHelper by instance()
+    private val intentHelper: IntentHelper by instance()
+
+    private val phoneNumber: String
+        get() {
+            val view = view ?: return EMPTY_STRING
+            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode
+                    ?: return EMPTY_STRING
+            return countryCode.phonePrefix.code
+                    .replace("+", EMPTY_STRING) +
+                    view.etPhoneNumberTail.text.toString()
+        }
+
+    private val countryCodes by CountryDelegate()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
         view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
         view.etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
-        view.etInvitePhoneNumber.hint = fromDictionary(R.string.invite_phone_number_hint)
+        view.etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
         view.btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
-        view.tvCodeOperator.text = fromDictionary(R.string.invite_invite_country_ua_code)
-        view.tvCodeOperator.setOnClickListener {
-            dialog.chooseCountryInvite(view.context, {
-                view.tvCodeOperator.text = it
-            })
+        view.spinnerPhoneCode.adapter = CountryCodeAdapter(view.spinnerPhoneCode.context, countryCodes)
+        view.spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
         }
-        view.etInvitePhoneNumber.addTextChangedListener(SimpleTextWatcher {
+        view.etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
             view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
-            adapter?.searchByNumber(it)
+            adapter.searchByNumber(it)
         })
         view.btnInvite.setOnClickListener {
             viewModel.checkPhoneContact(PhoneContactImpl(
-                    view.tvCodeOperator.text.toString() + view.etInvitePhoneNumber.text.toString(),
-                    adapter?.getNameByNumber(view.etInvitePhoneNumber.text.toString()) ?: "", null))
+                    phoneNumber + view.etPhoneNumberTail.text.toString(),
+                    adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
+                            ?: EMPTY_STRING, null))
         }
         launchCoroutineUI {
             if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
                 viewModel.retrievePhoneContacts()
                 viewModel.phoneContactChannel.consumeEach {
-                    adapter = InviteAdapter(it, viewModel)
                     view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
+                    adapter.setData(it, viewModel)
                     view.rvInviteToMnassa.adapter = adapter
                 }
+            } else {
+                //todo set after merge
             }
         }
         launchCoroutineUI {
             viewModel.phoneSelectedChannel.consumeEach {
                 view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
-                view.etInvitePhoneNumber.setText(it.phoneNumber)
+                view.etPhoneNumberTail.setText(it.phoneNumber)
             }
         }
         launchCoroutineUI {
             viewModel.checkPhoneContactChannel.consumeEach {
                 if (it) {
                     val packageManager = activity?.packageManager
-                    val i = getWhatsAppIntent("")
-                    val name = adapter?.getNameByNumber(view.etInvitePhoneNumber.text.toString())
-                    dialog.chooseSendInviteWith(view.context, name, i.resolveActivity(packageManager) != null,
-                            { inviteWith ->
-                                handleInviteWith(inviteWith,
-                                        view.tvCodeOperator.text.toString() + view.etInvitePhoneNumber.text.toString())
-                            })
+                    val intent = intentHelper.getWhatsAppIntent(EMPTY_STRING, EMPTY_STRING)
+                    val name = adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
+                    dialog.chooseSendInviteWith(view.context, name, intent.resolveActivity(packageManager) != null,
+                            { inviteWith -> handleInviteWith(inviteWith, phoneNumber) })
                 }
             }
         }
         launchCoroutineUI {
-            viewModel.subscribeToInvitesChannel.consumeEach {
+            viewModel.invitesCountChannel.consumeEach {
                 view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
         }
         view.etInviteSearch.addTextChangedListener(
                 SimpleTextWatcher { searchWord ->
-                    adapter?.searchByName(searchWord)
+                    adapter.searchByName(searchWord)
                 }
         )
-        viewModel.subscribeToInvites()
         view.ivInvitesHistory.setOnClickListener {
             launchCoroutineUI {
                 if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
@@ -102,9 +117,21 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                     viewModel.phoneContactChannel.consumeEach {
                         open(HistoryController.newInstance())
                     }
+                } else {
+                    //todo set after merge
                 }
             }
         }
+    }
+
+    private fun validateInput(): Boolean {
+        return PATTERN_PHONE_TAIL.matcher(phoneNumber).matches()
+    }
+
+    private fun onInputChanged() {
+        val view = view ?: return
+        view.btnInvite.isEnabled = validateInput()
+        view.etPhoneNumberTail.error = null
     }
 
     private fun handleInviteWith(inviteWith: Int, number: String) {
@@ -117,41 +144,25 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
 
     private fun sendWithWhatsApp(number: String) {
         val packageManager = activity?.packageManager
-        val intent = getWhatsAppIntent(number)
+        val intent = intentHelper.getWhatsAppIntent(fromDictionary(R.string.invite_invite_massage_whats_app), number)
         if (intent.resolveActivity(packageManager) != null) {
             activity?.startActivity(intent)
         }
     }
 
     private fun sendWithSMS(number: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
-        intent.putExtra(SMS_BODY, fromDictionary(R.string.invite_invite_massage_email))
+        val intent = intentHelper.getSMSIntent(fromDictionary(R.string.invite_invite_massage_email), number)
         startActivity(intent)
     }
 
     private fun shareInvite() {
-        val sendIntent = Intent()
-        sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_TEXT, fromDictionary(R.string.invite_invite_massage_email))
-        sendIntent.type = "text/plain"
-        startActivity(sendIntent)
-    }
-
-    private fun getWhatsAppIntent(number: String): Intent {
-        val intent = Intent(Intent.ACTION_VIEW)
-        val url = WHATS_APP_START_URI + number + WHATS_APP_MIDDLE_URI +
-                URLEncoder.encode(fromDictionary(R.string.invite_invite_massage_whats_app), "UTF-8")
-        intent.`package` = WHATS_APP_PACKAGE
-        intent.data = Uri.parse(url)
-        return intent
+        val intent = intentHelper.getShareIntent(fromDictionary(R.string.invite_invite_massage_email))
+        startActivity(intent)
     }
 
     companion object {
         const val PHONE_NUMBER_WITHOUT_CODE = 9
-        const val WHATS_APP_PACKAGE = "com.whatsapp"
-        const val WHATS_APP_START_URI = "https://api.whatsapp.com/send?phone="
-        const val WHATS_APP_MIDDLE_URI = "&text="
-        const val SMS_BODY = "sms_body"
+        const val EMPTY_STRING = ""
         const val INVITE_WITH_WHATS_APP = 1
         const val INVITE_WITH_SMS = 2
         const val INVITE_WITH_SHARE = 3

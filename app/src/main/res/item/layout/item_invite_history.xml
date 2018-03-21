@@ -36,6 +36,7 @@
             style="@style/Invite.ItemViewContainer"
             android:layout_width="0dp"
             android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
             android:layout_marginStart="@dimen/invite_item_view_main_margin"
             android:layout_weight="1"
             android:orientation="vertical">

@@ -18,7 +18,6 @@ import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.dialog_coutry.*
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
@@ -50,29 +49,6 @@ class DialogHelper {
                 .onPositive { _, _ -> onOkClick() }
                 .cancelListener { onOkClick() }
                 .show()
-    }
-
-    fun chooseCountryInvite(context: Context, onCountryClick: (countryCode: String) -> Unit) {
-        val dialog = Dialog(context, R.style.DialogInvite)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_coutry)
-        dialog.tvSaudiArabiaCode.text = fromDictionary(R.string.invite_invite_country_sa_code)
-        dialog.tvSaudiArabiaCountry.text = fromDictionary(R.string.invite_invite_country_sa_country)
-        dialog.tvUkraineCode.text = fromDictionary(R.string.invite_invite_country_ua_code)
-        dialog.tvUkraineCountry.text = fromDictionary(R.string.invite_invite_country_ua_country)
-        dialog.tvUnitedStatesCode.text = fromDictionary(R.string.invite_invite_country_us_code)
-        dialog.tvUnitedStatesCountry.text = fromDictionary(R.string.invite_invite_country_us_country)
-        dialog.tvCanadaCode.text = fromDictionary(R.string.invite_invite_country_ca_code)
-        dialog.tvCanadaCountry.text = fromDictionary(R.string.invite_invite_country_ca_country)
-        fun setCode(code: String) {
-            onCountryClick(code)
-            dialog.dismiss()
-        }
-        dialog.llSaudiArabia.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_sa_code)) }
-        dialog.llUkraine.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_ua_code)) }
-        dialog.llUnitedStates.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_us_code)) }
-        dialog.llCanada.setOnClickListener { setCode(fromDictionary(R.string.invite_invite_country_ca_code)) }
-        dialog.show()
     }
 
     fun chooseSendInviteWith(context: Context, name: String?, isWhatsAppInstalled: Boolean, onInviteWithClick: (inviteWith: Int) -> Unit) {
