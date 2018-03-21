@@ -107,6 +107,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         return tags
     }
 
+    fun setTags(tags: List<TagModel>) {
+        chips.clear()
+        flChipContainer.removeAllViews()
+        tags.forEach { addChip(it) }
+        etChipInput.requestFocus()
+    }
+
     private fun focusLeftView() {
         if (etChipInput.text.toString().isEmpty() && chips.isEmpty()) {
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)

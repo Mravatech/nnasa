@@ -35,7 +35,7 @@
     <string name="_android_create_post_promote_title_INFO">Promote post (200 points)</string>
     <string name="_android_create_post_promote_description_INFO">Will be shown to all MNASSA community</string>
     <string name="_android_create_post_promote_short_INFO">all MNASSA community</string>
-    <string name="_android_create_post_share_to_INFO">to %s</string>
+    <string name="_android_create_post_share_to_prefix_INFO">to %s</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

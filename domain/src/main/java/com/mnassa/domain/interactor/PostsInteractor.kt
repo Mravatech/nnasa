@@ -12,7 +12,7 @@ import java.io.File
 interface PostsInteractor {
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>>
     suspend fun loadById(id: String): ReceiveChannel<Post>
-    fun onItemViewed(item: Post)
+    suspend fun onItemViewed(item: Post)
 
     suspend fun createNeed(
             text: String,

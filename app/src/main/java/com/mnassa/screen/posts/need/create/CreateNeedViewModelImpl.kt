@@ -21,6 +21,8 @@ class CreateNeedViewModelImpl(
 
     }
 
+    override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
+
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
         return placeFinderInteractor.getReqieredPlaces(constraint)
     }

@@ -6,10 +6,10 @@ import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.repository.PostsRepository
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.atomic.AtomicLong
@@ -27,30 +27,33 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsI
     private val lastItemsSentTime = AtomicLong()
     private var sendViewedItemsJob: Job? = null
 
-    override fun onItemViewed(item: Post) {
-        launch {
-            val id = item.id
-            if (sentViewedItemIds.contains(id)) {
-                return@launch
-            }
-
-            //bufferize items to send
-            viewedItemIdsBuffer.add(id)
-
-            if (System.currentTimeMillis() - lastItemsSentTime.get() < SEND_VIEWED_ITEMS_BUFFER_DELAY) {
-                sendViewedItemsJob?.cancel()
-            }
-            sendViewedItemsJob = launch {
-                delay(SEND_VIEWED_ITEMS_BUFFER_DELAY)
-
-                val itemsToSend = viewedItemIdsBuffer.toList()
-                postsRepository.sendViewed(itemsToSend)
-                viewedItemIdsBuffer.removeAll(itemsToSend)
-                sentViewedItemIds.addAll(itemsToSend)
-                lastItemsSentTime.set(System.currentTimeMillis())
-            }
+    override suspend fun onItemViewed(item: Post) {
+        val id = item.id
+        if (sentViewedItemIds.contains(id)) {
+            return
         }
 
+        //bufferize items to send
+        viewedItemIdsBuffer.add(id)
+
+        if (System.currentTimeMillis() - lastItemsSentTime.get() < SEND_VIEWED_ITEMS_BUFFER_DELAY) {
+            sendViewedItemsJob?.cancel()
+        }
+        sendViewedItemsJob = launch {
+            delay(SEND_VIEWED_ITEMS_BUFFER_DELAY)
+
+            val itemsToSend = viewedItemIdsBuffer.toList()
+            viewedItemIdsBuffer.removeAll(itemsToSend)
+            try {
+                postsRepository.sendViewed(itemsToSend)
+                sentViewedItemIds.addAll(itemsToSend)
+                lastItemsSentTime.set(System.currentTimeMillis())
+            } catch (e: Exception) {
+                //ignore all exceptions here
+                Timber.d(e)
+                viewedItemIdsBuffer.addAll(itemsToSend)
+            }
+        }
     }
 
     override suspend fun createNeed(text: String, images: List<File>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post {

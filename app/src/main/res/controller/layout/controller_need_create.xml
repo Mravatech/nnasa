@@ -60,17 +60,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginTop="@dimen/spacing_vertical"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal" />
 
         <TextView
             android:id="@+id/tvExtraDetails"
-            style="@style/MnassaHeader2"
+            style="@style/MnassaTextTiny"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/spacing_vertical"
+            android:textSize="14sp"
             tools:text="Extra details" />
 
         <android.support.design.widget.TextInputLayout

@@ -61,7 +61,7 @@
     <!-- create need -->
     <string name="need_create_title">_posts_header_iNeed</string>
     <string name="need_create_action_button">_new_post_navbar_title_newPost</string>
-    <string name="need_create_share_to_prefix">_android_create_post_share_to</string>
+    <string name="need_create_share_to_prefix">_android_create_post_share_to_prefix</string>
     <string name="need_create_to_all_mnassa">_android_create_post_promote_short</string>
     <string name="need_create_to_newsfeed">_share_to_in_newsfeed</string>
     <string name="need_create_to_connections_other">_share_to_and_more_than</string>
