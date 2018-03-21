@@ -96,6 +96,8 @@ import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
+import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
+import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import retrofit2.Retrofit
@@ -141,6 +143,7 @@ private val viewModelsModule = Kodein.Module {
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl() }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
+    bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {

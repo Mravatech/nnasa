@@ -75,6 +75,14 @@
     <string name="need_action_edit">_post_details_alert_edit_post</string>
     <string name="need_action_delete">_post_details_alert_delete_post</string>
 
+    <!-- sharing options -->
+    <string name="sharing_options_title">_privacy_connections_nav_title</string>
+    <string name="sharing_options_button">_accountSelector_rigthButton_Apply</string>
+    <string name="sharing_options_promote_title">_android_create_post_promote_title</string>
+    <string name="sharing_options_promote_description">_android_create_post_promote_description</string>
+    <string name="sharing_options_newsfeed_title">_share_to_in_newsfeed</string>
+    <string name="sharing_options_connections_title">_connectionsList_navTitle_connections</string>
+
     <!-- ========================================== OFFER ======================================= -->
     <string name="offer_prefix">_post_type_offer_Info</string>
 

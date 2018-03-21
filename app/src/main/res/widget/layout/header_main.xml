@@ -86,12 +86,22 @@
             app:srcCompat="@drawable/ic_more_vert_black_24dp"
             tools:visibility="visible" />
 
+        <Button
+            android:id="@+id/btnAction"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            tools:text="Action"
+            tools:visibility="visible" />
+
     </LinearLayout>
 
     <View
         android:id="@+id/vShadow"
-        android:layout_width="match_parent"
         style="@style/MnassaShadow"
+        android:layout_width="match_parent"
         android:layout_below="@id/rlHeader" />
 
 </RelativeLayout>

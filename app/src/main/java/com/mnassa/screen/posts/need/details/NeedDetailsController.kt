@@ -64,7 +64,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
         launchCoroutineUI {
             viewModel.finishScreenChannel.consumeEach {
-                activity?.onBackPressed()
+                close()
             }
         }
 

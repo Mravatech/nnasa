@@ -6,22 +6,28 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.domain.model.Post
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import kotlinx.android.synthetic.main.controller_need_create.view.*
 
 /**
  * Created by Peter on 3/19/2018.
  */
-class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewModel>(args) {
+class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewModel>(args), SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_need_create
     override val viewModel: CreateNeedViewModel by instance()
+    override var sharingOptions = SharingOptionsController.ShareToOptions.EMPTY
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         with(view) {
 
-
+            btnShareOptions.setOnClickListener {
+                val screen = SharingOptionsController.newInstance(sharingOptions)
+                screen.targetController = this@CreateNeedController
+                open(screen)
+            }
         }
-
     }
 
     companion object {

@@ -11,11 +11,11 @@
         android:layout_height="wrap_content"
         app:toolbar_title="@string/need_create_title" />
 
-    <EditText
-        android:id="@+id/etNeed"
+    <Button
+        android:id="@+id/btnShareOptions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="I need ..." />
+        android:text="Share to"/>
 
 
 </LinearLayout>

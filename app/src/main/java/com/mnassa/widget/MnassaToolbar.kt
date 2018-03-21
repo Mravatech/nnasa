@@ -30,7 +30,6 @@ class MnassaToolbar : FrameLayout {
         processAttrs(attrs, defStyleAttr, defStyleRes)
     }
 
-
     private val horizontalSpacing by lazy { resources.getDimensionPixelSize(R.dimen.spacing_horizontal) }
     private val verticalSpacing by lazy { resources.getDimensionPixelSize(R.dimen.spacing_vertical) }
 
@@ -106,5 +105,11 @@ class MnassaToolbar : FrameLayout {
             layoutParams.marginStart = titleMargin
             tvToolbarScreenHeader.layoutParams = layoutParams
         }
+
+    fun withActionButton(actionText: String, listener: (View) -> Unit) {
+        btnAction.visibility = View.VISIBLE
+        btnAction.text = actionText
+        btnAction.setOnClickListener { listener(it) }
+    }
 
 }
