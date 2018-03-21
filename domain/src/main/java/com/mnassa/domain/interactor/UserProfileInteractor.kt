@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor
 import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import com.mnassa.domain.model.TagModel
 
 /**
  * Created by Peter on 2/21/2018.

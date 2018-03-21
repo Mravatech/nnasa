@@ -29,14 +29,14 @@ class PlaceFinderRepositoryImpl(
             if (!status.isSuccess) {
                 Timber.e("Error getting autocomplete prediction API call: $status")
                 autocompletePredictions.release()
-                return mutableListOf()
+                return emptyList()
             }
             Timber.i("Query completed. Received ${autocompletePredictions.count} predictions.")
-            val v = DataBufferUtils.freezeAndClose(autocompletePredictions)
-            return geoPlaceConverter.convertCollection(v, GeoPlaceModel::class.java)
+            val places = DataBufferUtils.freezeAndClose(autocompletePredictions)
+            return geoPlaceConverter.convertCollection(places, GeoPlaceModel::class.java)
         }
         Timber.e("Google API client is not connected for autocomplete query.")
-        return mutableListOf()
+        return emptyList()
     }
 
 }

@@ -34,6 +34,7 @@ import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
 import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
+import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
 import com.mnassa.domain.interactor.*
@@ -76,8 +77,8 @@ import com.mnassa.screen.hail.history.HistoryViewModel
 import com.mnassa.screen.hail.history.HistoryViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
-import com.mnassa.screen.invite.InviteViewModel
-import com.mnassa.screen.invite.InviteViewModelImpl
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.needs.NeedsViewModel
@@ -115,7 +116,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
-    bind<InviteViewModel>() with provider { InviteViewModelImpl(instance()) }
+    bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
     bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
@@ -137,8 +138,8 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
+        converter.registerConverter(TagConverter( instance() ))
         converter.registerConverter(InvitationConverter::class.java)
-        converter.registerConverter(TagConverter({ instance() }))
         converter
     }
 }
@@ -153,7 +154,7 @@ private val repositoryModule = Kodein.Module {
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance()) }
+    bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
@@ -183,7 +184,7 @@ private val interactorModule = Kodein.Module {
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }
@@ -200,6 +201,10 @@ private val networkModule = Kodein.Module {
     bind<FirebaseInviteApi>() with singleton {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseInviteApi::class.java)
+    }
+    bind<FirebaseTagsApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebaseTagsApi::class.java)
     }
 
 

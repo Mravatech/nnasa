@@ -3,10 +3,8 @@ package com.mnassa.screen.accountinfo.personal
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.support.annotation.IntRange
 import android.view.View
 import android.widget.ImageView
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
 import com.mnassa.R
@@ -15,9 +13,8 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.activity.CropActivity
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.module.GlideApp
-import com.mnassa.dialog.PhotoListener
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -26,7 +23,7 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/27/2018.
  */
-class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoViewModel>(data), PhotoListener {
+class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoViewModel>(data) {
     override val layoutId: Int = R.layout.controller_personal_info
     override val viewModel: PersonalInfoViewModel by instance()
 
@@ -42,7 +39,12 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
         view.fabInfoAddPhoto.setOnClickListener {
-            dialog.showPhotoDialog(activity!!, this@PersonalInfoController)
+            dialog.showSelectImageSourceDialog(it.context) { imageSource ->
+                activity?.let {
+                    val intent = CropActivity.start(imageSource, it)
+                    startActivityForResult(intent, REQUEST_CODE_CROP)
+                }
+            }
         }
         view.btnNext.setOnClickListener {
             viewModel.processAccount(accountModel)
@@ -75,18 +77,11 @@ class PersonalInfoController(data: Bundle) : MnassaControllerImpl<PersonalInfoVi
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     is PersonalInfoViewModel.OpenScreenCommand.InviteScreen -> {
-                        InviteController.newInstance()
+                        BuildNetworkController.newInstance()
                     }
                 }
                 open(controller)
             }
-        }
-    }
-
-    override fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {
-        activity?.let {
-            val intent = CropActivity.start(flag, it)
-            startActivityForResult(intent, REQUEST_CODE_CROP)
         }
     }
 

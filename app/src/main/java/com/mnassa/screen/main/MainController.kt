@@ -17,6 +17,7 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
 import com.mnassa.screen.hail.InviteToMnassaController
@@ -99,6 +100,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         }
         launchCoroutineUI {
             viewModel.currentAccountChannel.consumeEach {
+                //TODO: design for side menu
                 view.ivUserAvatar?.avatarRound(it.avatar)
                 view.tvUserName?.text = it.formattedName
                 view.tvUserPosition?.text = it.id
@@ -112,6 +114,8 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
     private fun setCounter(pageIndex: Int, counterValue: Int) {
         val view = view ?: return
+
+        //TODO: design for notification badges
         val notification = if (counterValue != 0) AHNotification.Builder()
                 .setText(counterValue.toString())
 //                .setBackgroundColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_back))
@@ -127,6 +131,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
+            R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
             R.id.nav_invite_to_mnassa -> open(InviteToMnassaController.newInstance())
@@ -143,6 +148,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             true
         } else {
             view.bnMain?.visibility = View.VISIBLE
+            view.bnMain?.isEnabled = true
 //            view.bnMain?.restoreBottomNavigation()
             super.handleBack()
         }
@@ -158,7 +164,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
     override fun open(self: Controller, controller: Controller) {
 //        view?.bnMain?.hideBottomNavigation()
         view?.bnMain?.visibility = View.INVISIBLE
-
+        view?.bnMain?.isEnabled = false
         mnassaRouter.open(self, controller)
 
     }

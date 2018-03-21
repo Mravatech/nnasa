@@ -1,24 +1,22 @@
 package com.mnassa.screen.base
 
+import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.KodeinInjected
-import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.AndroidInjector
 import com.github.salomonbrys.kodein.android.AndroidScope
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.github.salomonbrys.kodein.bindings.ScopeRegistry
-import com.github.salomonbrys.kodein.erased
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
-import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.channels.consumeEach
 import java.util.*
@@ -97,19 +95,12 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         }
     }
 
-    private var progressDialog: MnassaProgressDialog? = null
+    private var progressDialog: Dialog? = null
     protected fun showProgress() {
         hideKeyboard()
-
         if (progressDialog != null) return
-
-        progressDialog?.cancel()
-
-        val dialog = MnassaProgressDialog(requireNotNull(view).context, R.style.MnassaProgressTheme)
-        dialog.setCancelable(false)
-        dialog.show()
-
-        progressDialog = dialog
+        progressDialog?.dismiss()
+        progressDialog = instance<DialogHelper>().value.showProgressDialog(requireNotNull(view).context)
     }
 
     protected fun hideProgress() {

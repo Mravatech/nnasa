@@ -6,6 +6,10 @@
     <string name="country_united_states">_android_country_united_states</string>
     <string name="country_canada">_android_country_canada</string>
 
+    <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
+    <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
+
+
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
     <string name="login_enter_phone_title">_login_label_title</string>
@@ -57,6 +61,10 @@
     <string name="tab_connections_recommended_show_all">_android_connections_recommended_show_all</string>
     <string name="tab_connections_rejected">_connectionsList_groupHeader_rejected</string>
     <string name="tab_connections_new_requests_more">_android_connections_new_requests_more</string>
+
+    <string name="tab_connections_contact_permissions_description">_android_connections_permissions_declined</string>
+    <string name="tab_connections_contact_permissions_button">_android_connections_permissions_declined_button</string>
+
     <!-- connections - all -->
     <string name="tab_connections_all_item_send_message">_android_connections_send_message</string>
     <string name="tab_connections_all_item_view_profile">_android_connections_view_profile</string>
@@ -90,6 +98,7 @@
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
+    <string name="reg_person_type_here">_android_registration_type_here</string>
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>

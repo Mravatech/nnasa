@@ -12,7 +12,7 @@ import com.google.android.gms.location.places.Places
 class PlayServiceHelper(private val context: Context) {
 
     val googleApiClient: GoogleApiClient by lazy {
-        val builder = GoogleApiClient.Builder(context)
+        val builder = GoogleApiClient.Builder(context.applicationContext)
                 .addApi(Places.GEO_DATA_API)
         builder.build()
     }

@@ -2,11 +2,12 @@ package com.mnassa.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.View
-import android.widget.LinearLayout
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import kotlinx.android.synthetic.main.view_chip.view.*
+import android.view.MotionEvent
+import android.widget.FrameLayout
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,28 +17,37 @@ import kotlinx.android.synthetic.main.view_chip.view.*
 
 @SuppressLint("ViewConstructor")
 class ChipView(
-        context: Context?,
+        context: Context,
         tagModel: TagModel,
         private val key: Long,
         private val onChipListener: OnChipListener
-) : LinearLayout(context) {
+) : FrameLayout(context) {
 
     init {
-        View.inflate(context, R.layout.view_chip, this)
+        inflate(context, R.layout.view_chip, this)
         tvChipText.text = tagModel.name
-        ibRemove.setOnClickListener {
-            removeViewFromParent()
+        tvChipText.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (right - tvChipText.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
+                    removeViewFromParent()
+                }
+            }
+            true
         }
     }
 
     fun removeViewFromParent() {
-        val parentViewGroup: FlowLayout = this@ChipView.parent as FlowLayout
-        parentViewGroup.removeView(this@ChipView)
+        val parentViewGroup: FlowLayout = parent as FlowLayout
+        parentViewGroup.removeView(this)
         onChipListener.onViewRemoved(key)
     }
 
     interface OnChipListener {
         fun onViewRemoved(key: Long)
+    }
+
+    companion object {
+        const val DRAWABLE_RIGHT = 2
     }
 
 }

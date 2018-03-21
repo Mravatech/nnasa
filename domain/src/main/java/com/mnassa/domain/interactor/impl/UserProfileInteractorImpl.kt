@@ -9,7 +9,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 /**
  * Created by Peter on 2/21/2018.
  */
-class UserProfileInteractorImpl(private val userRepository: UserRepository) : UserProfileInteractor {
+class UserProfileInteractorImpl(
+        private val userRepository: UserRepository
+) : UserProfileInteractor {
 
     override suspend fun getProfile(): ShortAccountModel {
         return requireNotNull(userRepository.getCurrentUser())
@@ -17,7 +19,15 @@ class UserProfileInteractorImpl(private val userRepository: UserRepository) : Us
     override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>{
         return userRepository.getCurrentUserWithChannel()
     }
-    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
+//    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
+
+    override suspend fun createPersonalAccount(firstName: String,
+                                               secondName: String,
+                                               userName: String,
+                                               city: String,
+                                               offers: List<String>,
+                                               interests: List<String>
+    ): ShortAccountModel {
         val account = userRepository.createPersonAccount(
                 firstName = firstName,
                 secondName = secondName,
