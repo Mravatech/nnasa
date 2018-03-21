@@ -39,6 +39,19 @@ internal open class ShortAccountDbEntity : HasId {
     }
 }
 
+internal open class InviteShortAccountDbEntity : ShortAccountDbEntity{
+    @PropertyName("invites")
+    var invites: Int
+
+    constructor() : super() {
+        this.invites = 0
+    }
+
+    constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>, invites: Int) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
+        this.invites = invites
+    }
+}
+
 @IgnoreExtraProperties
 internal open class DeclinedShortAccountDbEntity : ShortAccountDbEntity {
     @PropertyName("declinedAt")

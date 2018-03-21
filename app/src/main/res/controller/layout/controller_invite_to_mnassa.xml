@@ -5,30 +5,9 @@
     style="@style/Invite.MainContainer"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/rlHeader"
-        style="@style/Invite.Toolbar"
-        android:orientation="horizontal">
-
-        <com.mnassa.widget.GoBackArrow
-            android:id="@+id/ivToolbarBack"
-            style="@style/Invite.BackIcon" />
-
-        <TextView
-            android:id="@+id/tvToolbarScreenHeader"
-            style="@style/Invite.ToolbarText"
-            android:layout_marginBottom="@dimen/invite_main_screen_margin"
-            android:layout_marginStart="@dimen/invite_main_screen_margin"
-            android:layout_marginTop="@dimen/invite_main_screen_margin"
-            android:layout_weight="1"
-            tools:text="Invite Friends (3 left)" />
-
-        <ImageView
-            android:id="@+id/toolbarBadge"
-            style="@style/Invite.History"
-            android:contentDescription="@null"
-            app:srcCompat="@drawable/ic_archive" />
-    </LinearLayout>
+    <include
+        layout="@layout/toolbar_invite"
+        android:id="@+id/invite_toolbar"/>
 
     <View style="@style/MnassaShadow" />
 

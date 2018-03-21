@@ -170,6 +170,9 @@
         <item name="android:windowMinWidthMajor">80%</item>
         <item name="android:windowMinWidthMinor">80%</item>
     </style>
+    <style name="DialogInviteHistory" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
 
     <style name="Invite.DialogInviteWithTitle">
         <item name="android:layout_width">wrap_content</item>

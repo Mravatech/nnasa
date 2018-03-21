@@ -15,8 +15,9 @@ import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import android.content.Intent
 import android.net.Uri
-import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.impl.PhoneContactImpl
+import com.mnassa.screen.hail.history.HistoryController
+import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import java.net.URLEncoder
 
 /**
@@ -56,13 +57,11 @@ class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>()
         launchCoroutineUI {
             if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
                 viewModel.retrievePhoneContacts()
-            }
-        }
-        launchCoroutineUI {
-            viewModel.phoneContactChannel.consumeEach {
-                adapter = InviteToMnassaAdapter(it, viewModel)
-                view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
-                view.rvInviteToMnassa.adapter = adapter
+                viewModel.phoneContactChannel.consumeEach {
+                    adapter = InviteToMnassaAdapter(it, viewModel)
+                    view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
+                    view.rvInviteToMnassa.adapter = adapter
+                }
             }
         }
         launchCoroutineUI {
@@ -85,11 +84,27 @@ class InviteToMnassaController : MnassaControllerImpl<InviteToMnassaViewModel>()
                 }
             }
         }
+        launchCoroutineUI {
+            viewModel.subscribeToInvitesChannel.consumeEach {
+                view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_invites_left).format(it)
+            }
+        }
         view.etInviteSearch.addTextChangedListener(
                 SimpleTextWatcher { searchWord ->
                     adapter?.searchByName(searchWord)
                 }
         )
+        viewModel.subscribeToInvites()
+        view.ivInvitesHistory.setOnClickListener {
+            launchCoroutineUI {
+                if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
+                    viewModel.retrievePhoneContacts()
+                    viewModel.phoneContactChannel.consumeEach {
+                        open(HistoryController.newInstance())
+                    }
+                }
+            }
+        }
     }
 
     private fun handleInviteWith(inviteWith: Int, number: String) {

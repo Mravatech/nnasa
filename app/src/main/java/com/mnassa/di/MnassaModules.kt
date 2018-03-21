@@ -72,6 +72,8 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.hail.InviteToMnassaViewModel
 import com.mnassa.screen.hail.InviteToMnassaViewModelImpl
+import com.mnassa.screen.hail.history.HistoryViewModel
+import com.mnassa.screen.hail.history.HistoryViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.invite.InviteViewModel
@@ -124,7 +126,8 @@ private val viewModelsModule = Kodein.Module {
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
-    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl(instance(), instance()) }
+    bind<InviteToMnassaViewModel>() with provider { InviteToMnassaViewModelImpl(instance(), instance(), instance()) }
+    bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -134,6 +137,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
+        converter.registerConverter(InvitationConverter::class.java)
         converter.registerConverter(TagConverter({ instance() }))
         converter
     }
@@ -158,7 +162,7 @@ private val repositoryModule = Kodein.Module {
     bind<PlaceFinderRepository>() with singleton {
         PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
     }
-    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance()) }
+    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -174,7 +178,7 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance()) }
+    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
 }
 
 private val networkModule = Kodein.Module {

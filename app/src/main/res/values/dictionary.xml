@@ -121,5 +121,6 @@
     <string name="invite_invite_you_invite_unknown_name">_inviteSharing_title_unknownName</string>
     <string name="invite_invite_massage_whats_app">_inviteSharing_whatsappDefMessage</string>
     <string name="invite_invite_massage_email">_inviteSharing_emailDefMessage</string>
+    <string name="invite_invite_invites_left">_android_invite_invites_left</string>
 
 </resources>

@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
+import com.mnassa.data.network.bean.firebase.InviteShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountAbilityDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.AccountResponseBean
@@ -25,6 +26,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertAccountFromRetrofit)
         convertersContext.registerConverter(this::convertAccountAbility)
         convertersContext.registerConverter(this::convertDeclined)
+        convertersContext.registerConverter(this::convertInvites)
     }
 
     private fun convertAccountFromDb(input: ShortAccountDbEntity, token: Any?, convertersContext: ConvertersContext): ShortAccountModelImpl {
@@ -139,6 +141,42 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 personalInfo = personalInfo,
                 abilities = convertersContext.convertCollection(input.abilitiesInternal, AccountAbility::class.java),
                 declinedAt = Date(input.declinedAt)
+        )
+    }
+
+    private fun convertInvites(input: InviteShortAccountDbEntity, token: Any?, convertersContext: ConvertersContext): InvitedShortAccountModelImpl {
+        var personalInfo: PersonalAccountDiffModel? = null
+        var organizationInfo: OrganizationAccountDiffModel? = null
+        val accountType: AccountType
+        when (input.type) {
+            NetworkContract.AccountType.ORGANIZATION -> {
+                accountType = AccountType.ORGANIZATION
+                organizationInfo = OrganizationAccountDiffModelImpl(
+                        organizationName = requireNotNull(input.organizationName)
+                )
+            }
+            NetworkContract.AccountType.PERSONAL -> {
+                accountType = AccountType.PERSONAL
+                personalInfo = PersonalAccountDiffModelImpl(
+                        firstName = requireNotNull(input.firstName),
+                        lastName = requireNotNull(input.lastName)
+                )
+            }
+            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+        }
+
+        return InvitedShortAccountModelImpl(
+                id = input.id,
+                firebaseUserId = requireNotNull(FirebaseAuth.getInstance().uid),
+                userName = input.userName,
+                accountType = accountType,
+                avatar = input.avatar,
+                contactPhone = null,
+                language = null,
+                organizationInfo = organizationInfo,
+                personalInfo = personalInfo,
+                abilities = convertersContext.convertCollection(input.abilitiesInternal, AccountAbility::class.java),
+                invites = input.invites
         )
     }
 }

@@ -40,9 +40,7 @@ fun ImageView.avatarRound(avatarUrl: String?) {
             .into(this)
 }
 
-fun ImageView.avatarRoundString(avatarUrl: String?) {
-    //todo: add placeholder, error
-
+fun ImageView.avatarRoundWithStringPath(avatarUrl: String?) {
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)

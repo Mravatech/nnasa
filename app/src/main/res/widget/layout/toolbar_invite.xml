@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlHeader"
+    style="@style/Invite.Toolbar"
+    android:orientation="horizontal">
+
+    <com.mnassa.widget.GoBackArrow
+        android:id="@+id/ivToolbarBack"
+        style="@style/Invite.BackIcon" />
+
+    <TextView
+        android:id="@+id/tvToolbarScreenHeader"
+        style="@style/Invite.ToolbarText"
+        android:layout_marginBottom="@dimen/invite_main_screen_margin"
+        android:layout_marginStart="@dimen/invite_main_screen_margin"
+        android:layout_marginTop="@dimen/invite_main_screen_margin"
+        android:layout_weight="1"
+        tools:text="Invite Friends (3 left)" />
+
+    <ImageView
+        android:id="@+id/ivInvitesHistory"
+        style="@style/Invite.History"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/ic_archive" />
+</LinearLayout>

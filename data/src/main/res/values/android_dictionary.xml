@@ -3,7 +3,7 @@
     <!--<string name="_pushSetting_casdfv_ENG">null</string>-->
     <!--<string name="_pushSetting_casdfv_AR">null</string>-->
     <!--<string name="_pushSetting_casdfv_INFO">casdfv</string>-->
-    
+
     <string name="_android_country_saudi_arabia_INFO">Saudi Arabia</string>
     <string name="_android_country_ukraine_INFO">Ukraine</string>
     <string name="_android_country_united_states_INFO">United States</string>
@@ -44,4 +44,5 @@
     <string name="_android_invite_send_with_whats_app_INFO">Whats App</string>
     <string name="_android_invite_select_send_way_INFO">Select a way to send invite</string>
     <string name="_android_invite_title_invite_INFO">You invite %s</string>
+    <string name="_android_invite_invites_left_INFO">Invite Friends (%s left)</string>
 </resources>

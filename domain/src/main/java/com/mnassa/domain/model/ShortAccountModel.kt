@@ -26,6 +26,10 @@ interface DeclinedShortAccountModel : ShortAccountModel {
     var declinedAt: Date
 }
 
+interface InvitedShortAccountModel : ShortAccountModel {
+    var invites: Int
+}
+
 interface PersonalAccountDiffModel : Serializable {
     var firstName: String
     var lastName: String

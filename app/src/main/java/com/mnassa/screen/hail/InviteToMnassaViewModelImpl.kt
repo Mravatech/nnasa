@@ -6,10 +6,12 @@ import android.support.annotation.RequiresPermission
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.InviteInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,9 +20,11 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 class InviteToMnassaViewModelImpl(
         private val connectionsInteractor: ConnectionsInteractor,
-        private val inviteInteractor: InviteInteractor
+        private val inviteInteractor: InviteInteractor,
+        private val userProfileInteractor: UserProfileInteractor
 ) : MnassaViewModelImpl(), InviteToMnassaViewModel {
 
+    override val subscribeToInvitesChannel: BroadcastChannel<Int> = BroadcastChannel(10)
     override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = BroadcastChannel(10)
     override val phoneSelectedChannel: BroadcastChannel<PhoneContact> = BroadcastChannel(10)
     override val checkPhoneContactChannel: BroadcastChannel<Boolean> = BroadcastChannel(10)
@@ -48,8 +52,20 @@ class InviteToMnassaViewModelImpl(
     override fun checkPhoneContact(contact: PhoneContact) {
         checkPhoneContactJob?.cancel()
         checkPhoneContactJob = handleException {
-            inviteInteractor.inviteContact(contact)
-            checkPhoneContactChannel.send(true)
+            withProgressSuspend{
+                inviteInteractor.inviteContact(contact)
+                checkPhoneContactChannel.send(true)
+            }
+        }
+    }
+
+    private var subscribeToInvitesJob: Job? = null
+    override fun subscribeToInvites() {
+        subscribeToInvitesJob?.cancel()
+        subscribeToInvitesJob = handleException {
+            userProfileInteractor.getCurrentUserWithChannel().consumeEach {
+                subscribeToInvitesChannel.send(it.invites)
+            }
         }
     }
 
