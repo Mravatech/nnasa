@@ -17,12 +17,13 @@ interface PersonalInfoViewModel : MnassaViewModel {
 
     fun uploadPhotoToStorage(uri: Uri)
     fun processAccount(accountModel: ShortAccountModel,
-                       contactPhone: String?,
+                       contactPhone: String,
                        abilities: List<AccountAbility>,
-                       birthdayDate: String?,
+                       birthdayDate: String,
                        showContactEmail: Boolean?,
                        birthday: Long?,
-                       showContactPhone: Boolean?
+                       showContactPhone: Boolean?,
+                       contactEmail: String
     )
 
     sealed class OpenScreenCommand {

@@ -11,7 +11,7 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("birthdayDate")
         val birthdayDate: String? = null,
         @SerializedName("lastName")
-        val lastName: String,
+        val lastName: String?,
         @SerializedName("userName")
         val userName: String,
         @SerializedName("showContactEmail")
@@ -31,9 +31,11 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("avatar")
         val avatar: String? = null,
         @SerializedName("firstName")
-        val firstName: String,
+        val firstName: String?,
         @SerializedName("showContactPhone")
-        val showContactPhone: Boolean? = false
+        val showContactPhone: Boolean? = false,
+        @SerializedName("contactEmail")
+        val contactEmail: String?
 )
 
 data class Ability(

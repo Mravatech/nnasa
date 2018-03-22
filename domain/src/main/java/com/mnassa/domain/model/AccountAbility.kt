@@ -5,6 +5,6 @@ package com.mnassa.domain.model
  */
 interface AccountAbility {
     val isMain: Boolean
-    val name: String?
+    val name: String
     val place: String?
 }

@@ -31,6 +31,14 @@ class AbilitySelectableEditText : LinearLayout {
     constructor(context: Context, isMain: Boolean = false, listener: AddNewSelectableViewListener) : super(context) {
         isFirst = isMain
         addNewSelectableViewListener = listener
+        if (!isFirst) {
+            ivRemoveAbility.visibility = View.VISIBLE
+            ivRemoveAbility.setOnClickListener {
+                val parentViewGroup: LinearLayout = parent as LinearLayout
+                parentViewGroup.removeView(this)
+                addNewSelectableViewListener.addSelectableViewIsAvailable(true)
+            }
+        }
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -60,7 +68,10 @@ class AbilitySelectableEditText : LinearLayout {
     }
 
     fun getAbility(): AccountAbility {
-        return AccountAbilityImpl(isFirst, etCustomOccupation.text.toString(), etWorkAt.text.toString())
+        val occupation = tvSelectView.text.toString().takeIf {
+            it.isNotBlank() && it != fromDictionary(R.string.reg_dialog_other)
+        } ?: run { etCustomOccupation.text.toString() }
+        return AccountAbilityImpl(isFirst, occupation, etWorkAt.text.toString())
     }
 
     interface AddNewSelectableViewListener {

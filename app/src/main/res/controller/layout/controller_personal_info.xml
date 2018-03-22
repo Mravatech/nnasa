@@ -26,14 +26,14 @@
 
         <RelativeLayout style="@style/PersonalInfo.ImageContainer">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/ivUserAvatar"
                 style="@style/PersonalInfo.Image"
                 android:layout_below="@id/tvTitle"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 android:background="@color/white"
-                app:srcCompat="@drawable/ic_empty_ava" />
+                app:srcCompat="@drawable/ic_empty_avatar_placeholder" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabInfoAddPhoto"
@@ -99,6 +99,7 @@
                 <com.mnassa.widget.input.ClickableDrawableTextInputEditText
                     android:id="@+id/etPhoneNumber"
                     style="@style/PersonalInfo.EditText"
+                    android:inputType="number"
                     android:drawableEnd="@drawable/ic_eye_off"
                     android:drawablePadding="@dimen/personal_info_drawable_padding" />
             </android.support.design.widget.TextInputLayout>
@@ -112,6 +113,7 @@
                     style="@style/PersonalInfo.EditText"
                     android:drawableEnd="@drawable/ic_eye_off"
                     android:drawablePadding="@dimen/personal_info_drawable_padding"
+                    android:inputType="textEmailAddress"
                     android:imeOptions="actionDone" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>

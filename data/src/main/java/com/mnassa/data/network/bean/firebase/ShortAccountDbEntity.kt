@@ -57,7 +57,7 @@ internal data class ShortAccountAbilityDbEntity(
         @SerializedName("isMain")
         var isMain: Boolean,
         @SerializedName("name")
-        var name: String?,
+        var name: String,
         @SerializedName("place")
         var place: String?
 ) {

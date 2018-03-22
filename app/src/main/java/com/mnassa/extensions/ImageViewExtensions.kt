@@ -43,7 +43,7 @@ fun ImageView.avatarRound(avatarUrl: String?) {
 fun ImageView.avatarSquare(avatarUrl: String?) {
     //todo: add placeholder, error
 
-    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
 
     GlideApp.with(this)
             .load(avatarUrl)

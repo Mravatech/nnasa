@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import com.mnassa.R
 import com.yalantis.ucrop.UCrop
@@ -61,7 +62,12 @@ class CropActivity : AppCompatActivity() {
 
     private fun cropImage(uri: Uri?) {
         uri?.let {
-            UCrop.of(it, cachedUri).start(this)
+            val options = UCrop.Options()
+            options.setToolbarColor(ContextCompat.getColor(this, R.color.white))
+            options.setStatusBarColor(ContextCompat.getColor(this, R.color.white))
+            UCrop.of(it, cachedUri)
+                    .withOptions(options)
+                    .start(this)
         } ?: run {
             resultWithError()
         }

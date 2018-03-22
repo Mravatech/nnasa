@@ -40,6 +40,8 @@
     <string name="_android_registration_custom_occupation_INFO">Custom occupation</string>
     <string name="_android_registration_add_another_occupation_INFO">Add another occupation</string>
 
+    <string name="_android_email_validation_INFO">Email is not valid</string>
+
 
 
 </resources>

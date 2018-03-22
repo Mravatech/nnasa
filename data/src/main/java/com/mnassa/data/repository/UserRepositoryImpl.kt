@@ -13,10 +13,9 @@ import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.Ability
 import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
+import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
-import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
-import com.mnassa.data.network.exception.NetworkExceptionHandler
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
@@ -95,19 +94,20 @@ class UserRepositoryImpl(
     override suspend fun processAccount(account: PersonalInfoModel) {
         firebaseAuthApi.registerSendAccountInfo(RegisterSendingAccountInfoRequest(
                 account.birthdayDate,
-                account.personalInfo?.lastName?:"",//todo
+                account.personalInfo?.lastName,
                 account.userName,
                 account.showContactEmail,
                 account.language,
-                "personal",
+                account.accountType.name.toLowerCase(),
                 account.birthday,
                 account.contactPhone,
-                converter.convertCollection(account.abilities, Ability::class.java),//todo
-                requireNotNull(getAccountId()),//todo
+                converter.convertCollection(account.abilities, Ability::class.java),
+                requireNotNull(getAccountId()),
                 account.avatar,
-                account.personalInfo?.firstName?:"",//todo
-                account.showContactPhone
-        )).await()
+                account.personalInfo?.firstName,
+                account.showContactPhone,
+                account.contactEmail
+        )).handleException(exceptionHandler)
     }
 
     override suspend fun getFirebaseToken(): String? {

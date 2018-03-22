@@ -31,6 +31,7 @@ interface PersonalInfoModel : ShortAccountModel {
     val showContactEmail: Boolean?
     val birthday: Long?
     val showContactPhone: Boolean?
+    val contactEmail: String?
 }
 
 interface PersonalAccountDiffModel : Serializable {

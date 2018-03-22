@@ -6,14 +6,17 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.util.Patterns
 import android.view.View
 import android.widget.ImageView
+import com.bumptech.glide.request.RequestOptions
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.module.GlideApp
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -30,7 +33,9 @@ import java.util.*
  * Created by Peter on 2/27/2018.
  */
 
-class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalInfoViewModel>(/*data*/) {
+class PersonalInfoController(data: Bundle
+) : MnassaControllerImpl<PersonalInfoViewModel>(data
+) {
 
     override val layoutId: Int = R.layout.controller_personal_info
     override val viewModel: PersonalInfoViewModel by instance()
@@ -48,6 +53,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
+        view.etPhoneNumber.setText(accountModel.contactPhone)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
         view.etDateOfBirthday.isLongClickable = false
         view.etDateOfBirthday.isFocusableInTouchMode = false
@@ -80,13 +86,19 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
         view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
         view.btnHeaderNext.setOnClickListener {
+            val email = view.etYourEmail.text.toString()
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
+                view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
+                return@setOnClickListener
+            }
             viewModel.processAccount(accountModel,
                     view.etPhoneNumber.text.toString(),
                     view.containerSelectOccupation.getAllAbilities(),
                     view.etDateOfBirthday.text.toString(),
                     view.etYourEmail.isChosen,
                     timeMillis,
-                    view.etPhoneNumber.isChosen
+                    view.etPhoneNumber.isChosen,
+                    view.etYourEmail.text.toString()//todo email pattern
             )
         }
         onActivityResult.subscribe {
@@ -123,10 +135,18 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
                 open(controller)
             }
         }
+        val acc = AccountType.PERSONAL
+        Timber.i(acc.name.toLowerCase())
     }
 
     private fun setImage(imageView: ImageView, result: StorageReference?) {
-        GlideApp.with(imageView).load(result).into(imageView)
+        val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
+        GlideApp.with(imageView)
+                .load(result)
+                .apply(requestOptions)
+                .apply(RequestOptions.centerCropTransform())
+                .into(imageView)
+        //todo move to extension after merge
     }
 
     companion object {
@@ -138,11 +158,11 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         fun newInstance(ac: ShortAccountModel): PersonalInfoController {
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, ac)
-            return PersonalInfoController()
+            return PersonalInfoController(params)
         }
 
-        fun newInstance(): PersonalInfoController {
-            return PersonalInfoController()
-        }
+//        fun newInstance(): PersonalInfoController {
+//            return PersonalInfoController()
+//        }
     }
 }
