@@ -33,14 +33,6 @@
 
     <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>
     <string name="_android_invite_search_hint_INFO">Search people in Phone Book</string>
-    <string name="_android_invite_country_ukraine_INFO">Ukraine</string>
-    <string name="_android_invite_country_saudi_arabia_INFO">Saudi Arabia</string>
-    <string name="_android_invite_country_canada_INFO">Canada</string>
-    <string name="_android_invite_country_united_states_INFO">United States</string>
-    <string name="_android_invite_code_united_states_INFO">+1</string>
-    <string name="_android_invite_code_canada_INFO">+1</string>
-    <string name="_android_invite_code_saudi_arabia_INFO">+966</string>
-    <string name="_android_invite_code_ukraine_INFO">+380</string>
     <string name="_android_invite_send_with_more_INFO">More</string>
     <string name="_android_invite_send_with_sms_INFO">SMS</string>
     <string name="_android_invite_send_with_whats_app_INFO">Whats App</string>
