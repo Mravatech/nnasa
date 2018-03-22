@@ -2,14 +2,12 @@ package com.mnassa.screen.connections.recommended
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_recommended.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**

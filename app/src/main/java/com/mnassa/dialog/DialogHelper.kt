@@ -1,12 +1,13 @@
 package com.mnassa.dialog
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.support.v7.app.AlertDialog
-import android.support.annotation.IntRange
 import android.support.v7.widget.AppCompatRadioButton
 import android.view.LayoutInflater
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -17,11 +18,8 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_occupation.*
-import kotlinx.android.synthetic.main.dialog_photo.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
-import android.app.DatePickerDialog
-import java.util.Calendar
-
+import java.util.*
 
 
 class DialogHelper {
@@ -80,7 +78,6 @@ class DialogHelper {
                 calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
-}
     @SuppressLint("SetTextI18n")
     fun showLoginByEmailDialog(context: Context, listener: (email: String, password: String) -> Unit) {
         if (!BuildConfig.DEBUG) return

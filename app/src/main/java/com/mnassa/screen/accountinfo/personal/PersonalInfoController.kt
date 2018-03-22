@@ -11,17 +11,15 @@ import android.widget.ImageView
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
 import com.mnassa.R
-import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.activity.CropActivity
-import com.mnassa.activity.CropActivity.Companion.REQUEST_CODE_CAMERA
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.module.GlideApp
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 import java.text.DateFormatSymbols
@@ -65,9 +63,17 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         }
         view.fabInfoAddPhoto.setOnClickListener {
             dialog.showSelectImageSourceDialog(it.context) { imageSource ->
-                activity?.let {
-                    val intent = CropActivity.start(imageSource, it)
-                    startActivityForResult(intent, REQUEST_CODE_CROP)
+                launchCoroutineUI {
+                    activity?.let {
+                        if (CropActivity.ImageSource.CAMERA == imageSource) {
+                            val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            if (!permissionsResult.isAllGranted) {
+                                return@launchCoroutineUI
+                            }
+                        }
+                        val intent = CropActivity.start(imageSource, it)
+                        startActivityForResult(intent, REQUEST_CODE_CROP)
+                    }
                 }
             }
         }
@@ -119,23 +125,6 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         }
     }
 
-    private var cameraRequestJob: Job? = null
-    override fun startCropActivity(@IntRange(from = 1, to = 2) flag: Int) {
-        activity?.let {
-            cameraRequestJob?.cancel()
-            cameraRequestJob = launchCoroutineUI {
-                if (flag == REQUEST_CODE_CAMERA) {
-                    val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    if (!permissionsResult.isAllGranted) {
-                        return@launchCoroutineUI
-                    }
-                }
-                val intent = CropActivity.start(flag, it)
-                startActivityForResult(intent, REQUEST_CODE_CROP)
-            }
-        }
-    }
-
     private fun setImage(imageView: ImageView, result: StorageReference?) {
         GlideApp.with(imageView).load(result).into(imageView)
     }
@@ -144,12 +133,7 @@ class PersonalInfoController(/*data: Bundle*/) : MnassaControllerImpl<PersonalIn
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
 
-        const val STUDENT = 0
-        const val HOUSEWIFE = 1
-        const val EMPLOYEE = 2
-        const val BUSINESS_OWNER = 3
         const val OTHER = 4
-        const val NOT_SELECTED_POSITION = -1
 
         fun newInstance(ac: ShortAccountModel): PersonalInfoController {
             val params = Bundle()
