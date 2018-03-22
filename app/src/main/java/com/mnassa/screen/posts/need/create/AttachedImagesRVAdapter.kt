@@ -1,5 +1,6 @@
 package com.mnassa.screen.posts.need.create
 
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,9 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.extensions.image
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_post_add_image.view.*
 import kotlinx.android.synthetic.main.item_post_edit_image.view.*
-import java.io.File
 import java.io.Serializable
 
 /**
@@ -18,8 +19,52 @@ import java.io.Serializable
 class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.OnClickListener {
 
     var onAddImageClickListener = {}
-    var onRemoveImageClickListener = { image: AttachedImage -> }
-    var onReplaceImageClickListener = { image: AttachedImage -> }
+    var onRemoveImageClickListener = { position: Int, image: AttachedImage -> }
+    var onReplaceImageClickListener = { position: Int, image: AttachedImage -> }
+
+    init {
+        dataStorage = object : SimpleDataProviderImpl() {
+            override fun clear() {
+                set(emptyList())
+            }
+
+            override fun add(element: AttachedImage): Boolean {
+                set((filter { it.typeId != AttachedImage.TYPE_ADD } + element + AttachedImage.AddImage))
+                return true
+            }
+
+            override fun addAll(elements: Collection<AttachedImage>): Boolean {
+                set((filter { it.typeId != AttachedImage.TYPE_ADD } + elements + AttachedImage.AddImage))
+                return true
+            }
+
+            override fun set(elements: List<AttachedImage>) {
+                if (elements.size >= MAX_PHOTOS_COUNT || elements.contains(AttachedImage.AddImage)) {
+                    super.set(elements.take(MAX_PHOTOS_COUNT))
+                } else {
+                    super.set((elements + AttachedImage.AddImage).take(MAX_PHOTOS_COUNT))
+                }
+            }
+
+            override fun remove(element: AttachedImage): Boolean {
+                val copy = toMutableList()
+                val removeResult = copy.remove(element)
+                set(copy)
+                return removeResult
+            }
+        }
+
+        dataStorage.set(emptyList())
+    }
+
+    fun replace(oldImage: AttachedImage, newImage: AttachedImage) {
+        val listCopy = dataStorage.toMutableList()
+
+        val index = listCopy.indexOf(oldImage)
+        listCopy[index] = newImage
+
+        set(listCopy)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<AttachedImage> {
         return when (viewType) {
@@ -35,17 +80,14 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
     override fun onClick(view: View) {
 
         val viewHolder = view.tag as RecyclerView.ViewHolder
-        val position = viewHolder.adapterPosition
+        val position = convertAdapterPositionToDataIndex(viewHolder.adapterPosition)
+
         if (position < 0) return
 
         when (view.id) {
             R.id.vAddImage -> onAddImageClickListener()
-            R.id.btnDelete -> {
-                onRemoveImageClickListener(getDataItemByAdapterPosition(position))
-            }
-            R.id.btnReplace -> {
-                onReplaceImageClickListener(getDataItemByAdapterPosition(position))
-            }
+            R.id.btnDelete -> onRemoveImageClickListener(position, dataStorage[position])
+            R.id.btnReplace -> onReplaceImageClickListener(position, dataStorage[position])
         }
     }
 
@@ -53,6 +95,8 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
 
         override fun bind(item: AttachedImage) {
             itemView.ivImage.image((item as AttachedImage.UploadedImage).imageUrl)
+            itemView.btnReplace.text = fromDictionary(R.string.need_create_replace_photo)
+            itemView.btnDelete.text = fromDictionary(R.string.need_create_delete_photo)
         }
 
         companion object {
@@ -74,7 +118,9 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
     class LocalImageVH(itemView: View) : BaseVH<AttachedImage>(itemView) {
 
         override fun bind(item: AttachedImage) {
-
+            itemView.ivImage.image((item as AttachedImage.LocalImage).imageUri)
+            itemView.btnReplace.text = fromDictionary(R.string.need_create_replace_photo)
+            itemView.btnDelete.text = fromDictionary(R.string.need_create_delete_photo)
         }
 
         companion object {
@@ -109,12 +155,16 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
             }
         }
     }
+
+    companion object {
+        private const val MAX_PHOTOS_COUNT = 5
+    }
 }
 
 sealed class AttachedImage(val typeId: Int) : Serializable {
     class UploadedImage(val imageUrl: String) : AttachedImage(TYPE_UPLOADED)
-    class LocalImage(val imageFile: File) : AttachedImage(2)
-    class AddImage() : AttachedImage(3)
+    class LocalImage(val imageUri: Uri) : AttachedImage(TYPE_LOCAL)
+    object AddImage : AttachedImage(TYPE_ADD)
 
     companion object {
         const val TYPE_UPLOADED = 1

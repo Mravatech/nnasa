@@ -7,9 +7,8 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.*
+import timber.log.Timber
 
 /**
  * Created by Peter on 3/19/2018.
@@ -17,16 +16,18 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class NeedDetailsViewModelImpl(private val postId: String,
                                private val postsInteractor: PostsInteractor,
                                private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), NeedDetailsViewModel {
-    override val postChannel: ConflatedChannel<Post> = ConflatedChannel()
-    override val postTagsChannel: ConflatedChannel<List<TagModel>> = ConflatedChannel()
-    override val finishScreenChannel: RendezvousChannel<Unit> = RendezvousChannel()
+    override val postChannel: ConflatedBroadcastChannel<Post> = ConflatedBroadcastChannel()
+    override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
+    override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         handleException {
             postsInteractor.loadById(postId).consumeEach {
+                Timber.d("POST -> send $it")
                 postChannel.send(it)
+                Timber.d("POST -> sent ok $it")
                 postTagsChannel.send(loadTags(it.tags))
             }
         }

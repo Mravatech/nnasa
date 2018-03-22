@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor
 
+import android.net.Uri
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.PostPrivacyType
@@ -16,9 +17,20 @@ interface PostsInteractor {
 
     suspend fun createNeed(
             text: String,
-            images: List<File>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
             privacyType: PostPrivacyType,
+            toAll: Boolean,
             privacyConnections: List<String>): Post
+
+    suspend fun updateNeed(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacyType: PostPrivacyType,
+            toAll: Boolean,
+            privacyConnections: List<String>)
 
     suspend fun removePost(postId: String)
 

@@ -70,6 +70,8 @@
     <string name="need_create_tags_hint">_new_post_tags_placeholder</string>
     <string name="need_create_extra">_new_post_extra_details</string>
     <string name="need_create_price_hint">_new_post_extra_details_price_placeholder</string>
+    <string name="need_create_replace_photo">_android_create_post_replace_photo</string>
+    <string name="need_create_delete_photo">_android_create_post_delete_photo</string>
 
     <string name="need_item_btn_you_and_connections_can_help">_postCell_youAndFriendsCanHelp</string>
     <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
@@ -83,7 +85,7 @@
     <string name="need_action_repost">_post_details_alert_repost</string>
     <string name="need_action_report">_post_details_alert_report</string>
     <string name="need_action_edit">_post_details_alert_edit_post</string>
-    <string name="need_action_delete">_post_details_alert_delete_post</string>
+    <string name="need_action_delete">_android_create_post_delete_photo</string>
 
     <!-- sharing options -->
     <string name="sharing_options_title">_privacy_connections_nav_title</string>

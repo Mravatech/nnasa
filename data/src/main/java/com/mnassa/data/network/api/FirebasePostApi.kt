@@ -15,6 +15,9 @@ interface FirebasePostApi {
     @POST("/post")
     fun createPost(@Body request: CreatePostRequest): Deferred<CreatePostResponse>
 
+    @PUT("/post")
+    fun changePost(@Body request: CreatePostRequest): Deferred<MnassaResponse>
+
 //    @DELETE("/post/{postId}")
 //    fun deletePost(@Path("postId") postId: String): Deferred<MnassaResponse>
 

@@ -14,6 +14,7 @@ import com.github.salomonbrys.kodein.with
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.formattedName
@@ -25,6 +26,7 @@ import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import timber.log.Timber
 
 /**
  * Created by Peter on 3/19/2018.
@@ -52,6 +54,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
         launchCoroutineUI {
             viewModel.postChannel.consumeEach {
+                Timber.d("POST -> consume $it")
                 setPost(it)
             }
         }
@@ -68,7 +71,10 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
             }
         }
 
-        (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply { setPost(this) }
+        (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply {
+            setPost(this)
+            args.remove(EXTRA_NEED_MODEL)
+        }
     }
 
     private fun showMyPostMenu(view: View, post: Post) {
@@ -110,6 +116,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
     }
 
     private fun setPost(post: Post) {
+        Timber.d("POST -> setPost $post")
         val view = view ?: return
 
         with(view) {
@@ -146,7 +153,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
             }
             //price
             tvPrice.visibility = if (post.price > 0.0) View.VISIBLE else View.GONE
-            tvPrice.text = post.price.formatAsMoney()
+            tvPrice.text = post.price.formatAsMoneySAR()
 
 
             //location

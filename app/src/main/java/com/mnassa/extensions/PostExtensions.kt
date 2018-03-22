@@ -17,9 +17,13 @@ import com.mnassa.translation.fromDictionary
 /**
  * Created by Peter on 3/19/2018.
  */
-fun Double.formatAsMoney(): String {
-    val formatted = (this * 100).toLong() / 100L
-    return formatted.toString() + " SAR"
+fun Double.formatAsMoneySAR(): String {
+    return formatAsMoney().toString() + " SAR"
+}
+
+fun Double.formatAsMoney(): Double {
+    val formatted = (this * 100).toLong() / 100.0
+    return formatted
 }
 
 fun LocationPlaceModel?.formatted(): String {

@@ -23,6 +23,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.util.valueIterator
+import androidx.view.get
 
 /**
  * Created by IntelliJ IDEA.
@@ -109,9 +110,17 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     fun setTags(tags: List<TagModel>) {
         chips.clear()
-        flChipContainer.removeAllViews()
+        val viewsToRemove = ArrayList<ChipView>()
+        for (i in 0 until flChipContainer.childCount) {
+            val view = flChipContainer[i]
+            if (view is ChipView) {
+                viewsToRemove.add(view)
+            }
+        }
+        viewsToRemove.forEach {
+            flChipContainer.removeView(it)
+        }
         tags.forEach { addChip(it) }
-        etChipInput.requestFocus()
     }
 
     private fun focusLeftView() {

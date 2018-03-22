@@ -3,7 +3,6 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
-import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.extensions.toValueChannelWithPagination
@@ -71,15 +70,28 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.viewItems(ViewItemsRequest(ids, NetworkContract.ItemType.POST)).handleException(exceptionHandler)
     }
 
-    override suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post {
+    override suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>): Post {
         val result = postApi.createPost(CreatePostRequest(
                 type = NetworkContract.PostType.NEED,
                 text = text,
-                images = if (uploadedImagesUrls.isNotEmpty()) uploadedImagesUrls else null,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacyType.stringValue,
-                privacyConnections = if (privacyConnections.isNotEmpty()) privacyConnections else null
+                privacyConnections = privacyConnections.takeIf { it.isNotEmpty() },
+                allConnections = allConnections
         )).handleException(exceptionHandler)
         return result.data.run { converter.convert(this) }
+    }
+
+    override suspend fun updateNeed(postId: String, text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>) {
+        postApi.changePost(CreatePostRequest(
+                postId = postId,
+                type = NetworkContract.PostType.NEED,
+                text = text,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
+                privacyType = privacyType.stringValue,
+                privacyConnections = privacyConnections.takeIf { it.isNotEmpty() },
+                allConnections = allConnections
+        )).handleException(exceptionHandler)
     }
 
     override suspend fun removePost(postId: String) {

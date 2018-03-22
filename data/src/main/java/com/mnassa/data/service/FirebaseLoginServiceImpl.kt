@@ -6,15 +6,16 @@ import com.google.firebase.auth.*
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
-import com.mnassa.data.network.exception.*
+import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handleException
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.android.parcel.Parcelize
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -28,6 +29,7 @@ class FirebaseLoginServiceImpl(
     private val VERIFY_PHONE_NUMBER_TIMEOUT_SEC by lazy { context.resources.getInteger(com.mnassa.data.R.integer.validation_code_resend_delay_seconds).toLong() }
 
     override suspend fun checkPhone(phoneNumber: String, promoCode: String?) {
+        Timber.d("MNSA_LOGIN checkPhone $phoneNumber with promo $promoCode")
         authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleException(exceptionHandler)
     }
 
@@ -36,6 +38,7 @@ class FirebaseLoginServiceImpl(
 
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                Timber.d("MNSA_LOGIN requestVerificationCode -> onVerificationCompleted -> ${credential.smsCode}")
                 launch {
                     try {
                         signIn(credential)
@@ -52,19 +55,23 @@ class FirebaseLoginServiceImpl(
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
-                launch { sendChannel.send(OnCodeSent(
-                        phoneNumber = phoneNumber,
-                        verificationId = verificationId,
-                        token = token
-                )) }
+                Timber.d("MNSA_LOGIN requestVerificationCode -> onCodeSent")
+                launch {
+                    sendChannel.send(OnCodeSent(
+                            phoneNumber = phoneNumber,
+                            verificationId = verificationId,
+                            token = token
+                    ))
+                }
             }
         }
 
+        Timber.d("MNSA_LOGIN requestVerificationCode -> opening channel for $phoneNumber")
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,
                 VERIFY_PHONE_NUMBER_TIMEOUT_SEC,
                 TimeUnit.SECONDS,
-                { it.run()},
+                { it.run() },
                 callback,
                 (previousResponse as? OnCodeSent)?.token
         )
@@ -78,8 +85,10 @@ class FirebaseLoginServiceImpl(
     }
 
     override suspend fun signIn(verificationSMSCode: String?, response: PhoneVerificationModel) {
+        Timber.d("MNSA_LOGIN signIn verificationSMSCode $verificationSMSCode, response: $response")
         when {
-            verificationSMSCode == null && response is OnVerificationCompleted -> { /* do nothing */}
+            verificationSMSCode == null && response is OnVerificationCompleted -> { /* do nothing */
+            }
             verificationSMSCode != null && response is OnCodeSent ->
                 signIn(PhoneAuthProvider.getCredential(response.verificationId, verificationSMSCode))
         }
@@ -96,18 +105,18 @@ class FirebaseLoginServiceImpl(
     @Parcelize
     private class OnVerificationCompleted(
             override val phoneNumber: String,
-            override val isVerified: Boolean = true): PhoneVerificationModel
+            override val isVerified: Boolean = true) : PhoneVerificationModel
 
     @Parcelize
     private class OnCodeSent(
             override val phoneNumber: String,
             val verificationId: String,
             val token: PhoneAuthProvider.ForceResendingToken?,
-            override val isVerified: Boolean = false): PhoneVerificationModel
+            override val isVerified: Boolean = false) : PhoneVerificationModel
 
     @Parcelize
     private class EmailAuth(
             override val phoneNumber: String = "",
             override val isVerified: Boolean = true
-    ): PhoneVerificationModel
+    ) : PhoneVerificationModel
 }

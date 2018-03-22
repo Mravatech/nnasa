@@ -1,29 +1,36 @@
 package com.mnassa.domain.interactor.impl
 
+import android.net.Uri
 import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.PostsRepository
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import java.io.File
+import java.util.*
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Created by Peter on 3/16/2018.
  */
-class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsInteractor {
+class PostsInteractorImpl(private val postsRepository: PostsRepository,
+                          private val storageInteractor: StorageInteractor) : PostsInteractor {
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadById(id: String): ReceiveChannel<Post> = postsRepository.loadById(id)
 
-    private val viewedItemIdsBuffer = ConcurrentSkipListSet<String>()
-    private val sentViewedItemIds = ConcurrentSkipListSet<String>()
+    private val viewedItemIdsBuffer = Collections.synchronizedSet(HashSet<String>())
+    private val sentViewedItemIds = Collections.synchronizedSet(HashSet<String>())
     private val lastItemsSentTime = AtomicLong()
     private var sendViewedItemsJob: Job? = null
 
@@ -56,10 +63,32 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository) : PostsI
         }
     }
 
-    override suspend fun createNeed(text: String, images: List<File>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post {
-        //todo: upload images to filestore
+    override suspend fun createNeed(
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacyType: PostPrivacyType,
+            toAll: Boolean,
+            privacyConnections: List<String>
+    ): Post {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async {storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+        }.map { it.await() }
+        return postsRepository.createNeed(text, allImages, privacyType, toAll, privacyConnections)
+    }
 
-        return postsRepository.createNeed(text, emptyList(), privacyType, privacyConnections)
+    override suspend fun updateNeed(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacyType: PostPrivacyType,
+            toAll: Boolean,
+            privacyConnections: List<String>) {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async {storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+        }.map { it.await() }
+        postsRepository.updateNeed(postId, text, allImages, privacyType, toAll, privacyConnections)
     }
 
     override suspend fun removePost(postId: String) {

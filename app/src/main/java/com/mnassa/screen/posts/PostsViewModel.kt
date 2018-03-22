@@ -4,6 +4,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.Post
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**

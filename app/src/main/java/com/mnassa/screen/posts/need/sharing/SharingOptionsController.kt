@@ -6,6 +6,7 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
@@ -96,8 +97,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             return ShareToOptions(
                     isPromoted = rbPromotePost.isChecked,
                     isMyNewsFeedSelected = rbMyNewsFeed.isChecked,
-                    selectedConnections = adapter.selectedAccounts.toList(),
-                    selectedConnectionAccounts = adapter.selectedAccounts.map { id -> adapter.dataStorage.first { it.id == id } }
+                    selectedConnections = adapter.selectedAccounts.toList()
             )
         }
     }
@@ -125,11 +125,18 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     class ShareToOptions(
-            val isPromoted: Boolean,
-            val isMyNewsFeedSelected: Boolean,
-            val selectedConnections: List<String>,
-            val selectedConnectionAccounts: List<ShortAccountModel>? = null
+            var isPromoted: Boolean,
+            var isMyNewsFeedSelected: Boolean,
+            var selectedConnections: List<String>
     ) : Serializable {
+
+        val privacyType: PostPrivacyType get() {
+            return when {
+                isPromoted -> PostPrivacyType.WORLD
+                isMyNewsFeedSelected -> PostPrivacyType.PUBLIC
+                else -> PostPrivacyType.PRIVATE
+            }
+        }
 
         companion object {
             val EMPTY = ShareToOptions(false, true, emptyList())

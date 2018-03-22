@@ -2,6 +2,7 @@ package com.mnassa.extensions
 
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.request.RequestOptions
 import com.github.salomonbrys.kodein.android.appKodein
@@ -69,6 +70,16 @@ fun ImageView.image(url: String?) {
 
     GlideApp.with(this)
             .load(ref ?: "")
+            .apply(requestOptions)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
+}
+
+fun ImageView.image(uri: Uri) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+
+    GlideApp.with(this)
+            .load(uri)
             .apply(requestOptions)
             .apply(RequestOptions.centerCropTransform())
             .into(this)
