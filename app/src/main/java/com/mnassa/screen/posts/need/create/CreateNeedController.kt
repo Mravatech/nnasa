@@ -175,7 +175,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             launchCoroutineUI {
                 tvShareOptions.text = formatShareToOptions(sharingOptions)
             }
-
+            //no ability to change sharing options while post changing
+            tvShareOptions.visibility = View.GONE
         }
     }
 
