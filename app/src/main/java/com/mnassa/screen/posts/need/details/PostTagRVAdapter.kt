@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_post_tag.view.*
 /**
  * Created by Peter on 3/20/2018.
  */
-class TagRVAdapter : BasePaginationRVAdapter<TagModel>() {
+class PostTagRVAdapter : BasePaginationRVAdapter<TagModel>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<TagModel> {
         return TagVH.newInstance(parent)

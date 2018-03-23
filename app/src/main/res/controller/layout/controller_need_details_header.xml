@@ -4,253 +4,272 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/spacing_vertical">
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingBottom="@dimen/spacing_vertical"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal"
-        android:paddingTop="@dimen/spacing_vertical">
+        android:background="@color/backgroundHighlight"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/spacing_vertical">
 
-        <ImageView
-            android:id="@+id/ivAvatar"
-            android:layout_width="@dimen/avatar_list_item"
-            android:layout_height="@dimen/avatar_list_item"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
-            tools:src="@mipmap/ic_launcher" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/ivAvatar"
-            android:layout_toStartOf="@id/ivChat"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvUserName"
-                style="@style/Connections.UserName"
-                tools:text="User name" />
-
-            <TextView
-                android:id="@+id/tvPosition"
-                style="@style/Connections.UserPosition"
-                tools:text="at some company" />
-
-            <TextView
-                android:id="@+id/tvEventName"
-                style="@style/Connections.UserPosition"
-                tools:text="at some company" />
-        </LinearLayout>
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/ivChat"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_bnt_chat_43dp" />
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="@dimen/avatar_list_item"
+                android:layout_height="@dimen/avatar_list_item"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                tools:src="@mipmap/ic_launcher" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:background="@color/divider" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ivAvatar"
+                android:layout_toStartOf="@id/ivChat"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvNeedDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto"
-        android:paddingBottom="@dimen/spacing_vertical"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal"
-        android:paddingTop="@dimen/spacing_vertical"
-        android:textColor="@color/black"
-        android:textSize="17sp"
-        tools:text="Need description" />
+                <TextView
+                    android:id="@+id/tvUserName"
+                    style="@style/Connections.UserName"
+                    tools:text="User name" />
 
-    <FrameLayout
-        android:id="@+id/flImages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_vertical">
+                <TextView
+                    android:id="@+id/tvPosition"
+                    style="@style/Connections.UserPosition"
+                    tools:text="at some company" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vpImages"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            tools:background="#0f0" />
+                <TextView
+                    android:id="@+id/tvEventName"
+                    style="@style/Connections.UserPosition"
+                    tools:text="at some company" />
+            </LinearLayout>
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivChat"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_bnt_chat_43dp" />
+
+        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/shadow"
-            android:rotation="180" />
+            android:layout_height="@dimen/divider_width"
+            android:background="@color/divider" />
 
-        <com.rd.PageIndicatorView
-            android:id="@+id/pivImages"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tvNeedDescription"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="@dimen/spacing_vertical"
-            app:piv_animationType="worm"
-            app:piv_dynamicCount="true"
-            app:piv_interactiveAnimation="true"
-            app:piv_radius="4dp" />
-    </FrameLayout>
+            android:fontFamily="@font/roboto"
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            tools:text="Need description" />
+
+        <FrameLayout
+            android:id="@+id/flImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_vertical">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vpImages"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                tools:background="#0f0" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/shadow"
+                android:rotation="180" />
+
+            <com.rd.PageIndicatorView
+                android:id="@+id/pivImages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                app:piv_animationType="worm"
+                app:piv_dynamicCount="true"
+                app:piv_interactiveAnimation="true"
+                app:piv_radius="4dp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            tools:text="5000 SAR" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
+
+            <TextView
+                android:id="@+id/tvLocation"
+                style="@style/MnassaTextTiny"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/drawable_padding"
+                android:drawableStart="@drawable/ic_location"
+                android:textSize="16sp"
+                tools:text="LOCATION" />
+
+            <TextView
+                android:id="@+id/tvCreationTime"
+                style="@style/MnassaTextTiny"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                tools:text="5 min ago" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            tools:background="#00a"
+            tools:layout_height="60dp" />
+
+        <View
+            android:id="@+id/vTagsSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
+
+            <TextView
+                android:id="@+id/tvViewsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:drawablePadding="@dimen/drawable_padding"
+                android:drawableStart="@drawable/ic_eye_18dp"
+                android:focusable="true"
+                tools:text="Views " />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivRepost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_repost" />
+
+            <TextView
+                android:id="@+id/tvRepostsCount"
+                style="@style/MnassaText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                tools:text="200" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
+
+            <Button
+                android:id="@+id/btnComment"
+                style="@style/MnassaButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Comment" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="@dimen/spacing_horizontal"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnRecommend"
+                style="@style/MnassaButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Comment" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View style="@style/MnassaShadow" />
 
     <TextView
-        android:id="@+id/tvPrice"
+        android:id="@+id/tvCommentsCount"
+        style="@style/MnassaHeader2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_bold"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        tools:text="5000 SAR" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal">
-
-        <TextView
-            android:id="@+id/tvLocation"
-            style="@style/MnassaTextTiny"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawablePadding="@dimen/drawable_padding"
-            android:drawableStart="@drawable/ic_location"
-            android:textSize="16sp"
-            tools:text="LOCATION" />
-
-        <TextView
-            android:id="@+id/tvCreationTime"
-            style="@style/MnassaTextTiny"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            tools:text="5 min ago" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:layout_marginBottom="@dimen/spacing_horizontal"
-        android:layout_marginTop="@dimen/spacing_vertical"
-        android:background="@color/divider" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvTags"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginEnd="@dimen/spacing_horizontal"
-        tools:background="#00a"
-        tools:layout_height="60dp" />
-
-    <View
-        android:id="@+id/vTagsSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:layout_marginBottom="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginTop="@dimen/spacing_vertical"
-        android:background="@color/divider" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal">
-
-        <TextView
-            android:id="@+id/tvViewsCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:drawablePadding="@dimen/drawable_padding"
-            android:drawableStart="@drawable/ic_eye_18dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            tools:text="Views " />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/ivRepost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="?selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_repost" />
-
-        <TextView
-            android:id="@+id/tvRepostsCount"
-            style="@style/MnassaText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/spacing_horizontal"
-            tools:text="200" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:layout_marginBottom="@dimen/spacing_horizontal"
-        android:layout_marginTop="@dimen/spacing_vertical"
-        android:background="@color/divider" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal">
-
-        <Button
-            android:id="@+id/btnComment"
-            style="@style/MnassaButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="Comment" />
-
-        <android.support.v4.widget.Space
-            android:layout_width="@dimen/spacing_horizontal"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btnRecommend"
-            style="@style/MnassaButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="Comment" />
-    </LinearLayout>
+        tools:text="Comments" />
 
 </LinearLayout>

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/spacing_vertical"
-    android:background="@color/backgroundHighlight"
     android:orientation="vertical"
-    tools:background="#d7d7d7">
+    app:cardBackgroundColor="@color/backgroundHighlight">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/rlClickableRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,6 +69,7 @@
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/spacing_vertical"
             android:ellipsize="end"
+            android:fontFamily="@font/roboto"
             android:maxLines="2"
             android:textSize="17sp"
             tools:text="I need text \n second need text line \n third" />
@@ -130,6 +130,4 @@
 
     </LinearLayout>
 
-    <View style="@style/MnassaShadow"/>
-
-</LinearLayout>
+</android.support.v7.widget.CardView>

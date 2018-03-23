@@ -86,6 +86,7 @@
     <string name="need_action_report">_post_details_alert_report</string>
     <string name="need_action_edit">_post_details_alert_edit_post</string>
     <string name="need_action_delete">_android_create_post_delete_photo</string>
+    <string name="need_comments_count">_post_details_comments_header</string>
 
     <!-- sharing options -->
     <string name="sharing_options_title">_privacy_connections_nav_title</string>

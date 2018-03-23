@@ -38,8 +38,8 @@ internal object DatabaseContract {
     //
     const val TABLE_CONNECTIONS_RECOMMENDED = "recommendedConnections"
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_PHONE = "byPhone"
-    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_GROUPS = "byGroups"
-    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"
+    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_GROUPS = "byRefer" //byRefer
+    const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"//"byEvents" //
     //
     const val TABLE_NEWS_FEED = "newsfeed"
     const val NEWS_FEED_TYPE_NEED = "need"
@@ -52,7 +52,11 @@ internal object DatabaseContract {
     const val NEWS_FEED_PRIVACY_TYPE_WORLD = "world"
     //
     const val TABLE_PUBLIC_ACCOUNTS = "publicAccounts"
-
+    //
     const val TABLE_TAGS = "tags"
+    //
+    const val TABLE_COMMENTS = "comments"
+    //
+    const val TABLE_COMMENT_REPLIES = "replyComments"
 
 }

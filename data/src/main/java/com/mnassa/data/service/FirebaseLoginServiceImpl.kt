@@ -94,8 +94,10 @@ class FirebaseLoginServiceImpl(
         }
     }
 
-    private suspend fun signIn(credential: AuthCredential): AuthResult {
-        return FirebaseAuth.getInstance().signInWithCredential(credential).await(exceptionHandler)
+    private suspend fun signIn(credential: AuthCredential) {
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            FirebaseAuth.getInstance().signInWithCredential(credential).await(exceptionHandler)
+        }
     }
 
     override suspend fun signOut() {

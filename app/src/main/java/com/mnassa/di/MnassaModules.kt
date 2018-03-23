@@ -94,8 +94,8 @@ import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
+import com.mnassa.screen.posts.need.details.PostDetailsViewModel
+import com.mnassa.screen.posts.need.details.PostDetailsViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
@@ -142,7 +142,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
+    bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
 }
 
@@ -156,6 +156,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TagConverter( instance() ))
         converter.registerConverter(LocationConverter::class.java)
         converter.registerConverter(PostConverter::class.java)
+        converter.registerConverter(CommentsConverter::class.java)
         converter
     }
 }
@@ -178,6 +179,7 @@ private val repositoryModule = Kodein.Module {
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -194,6 +196,7 @@ private val interactorModule = Kodein.Module {
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
     bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance()) }
+    bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
 }
 
 private val networkModule = Kodein.Module {
