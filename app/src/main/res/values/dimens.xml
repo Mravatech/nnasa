@@ -20,6 +20,9 @@
 
     <dimen name="avatar_list_item">49dp</dimen>
     <dimen name="avatar_post_item">42dp</dimen>
+    <dimen name="avatar_comment_item">@dimen/avatar_post_item</dimen>
+    <dimen name="avatar_comment_reply_item">29</dimen>
+
     <dimen name="post_space_between_images">6dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>

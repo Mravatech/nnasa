@@ -51,11 +51,13 @@ class PostCommentsRVAdapter : BasePaginationRVAdapter<CommentModel>(), View.OnCl
 
         companion object {
             fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener): CommentViewHolder {
-                val view =
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
+                return CommentViewHolder(view, onClickListener)
             }
 
             fun newInstanceReply(parent: ViewGroup, onClickListener: View.OnClickListener): CommentViewHolder {
-                val view =
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment_reply, parent, false)
+                return CommentViewHolder(view, onClickListener)
             }
         }
     }
