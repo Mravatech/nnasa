@@ -28,6 +28,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
+
 /**
  * Created by Peter on 3/19/2018.
  */
@@ -77,7 +78,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             launchCoroutineUI {
                 tvShareOptions.text = formatShareToOptions(sharingOptions)
             }
-            tilNeed.hint = fromDictionary(R.string.need_create_need_placeholder)
+            etNeed.prefix = fromDictionary(R.string.need_create_prefix) + " "
+            etNeed.hint = fromDictionary(R.string.need_create_need_placeholder)
             etNeed.addTextChangedListener(SimpleTextWatcher { onNeedTextUpdated() })
             onNeedTextUpdated()
 

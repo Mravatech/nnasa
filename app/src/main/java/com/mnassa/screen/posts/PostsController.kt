@@ -7,6 +7,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.bind
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.PostDetailsController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -26,6 +27,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
             rvNewsFeed.adapter = adapter
             adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
             adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+            adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         }
 
         adapter.isLoadingEnabled = true

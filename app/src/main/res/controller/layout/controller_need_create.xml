@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/spacing_vertical">
+    android:orientation="vertical">
 
     <com.mnassa.widget.MnassaToolbar
         android:id="@+id/toolbar"
@@ -20,11 +19,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:paddingBottom="@dimen/spacing_vertical"
             android:background="@color/backgroundHighlight"
             android:orientation="vertical">
-
-
+            
             <TextView
                 android:id="@+id/tvShareOptions"
                 android:layout_width="wrap_content"
@@ -49,9 +47,9 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 app:counterEnabled="true"
                 app:counterMaxLength="@integer/max_need_length"
-                tools:hint="I ned something new">
+                tools:hint="I need something new">
 
-                <android.support.design.widget.TextInputEditText
+                <com.mnassa.widget.PrefixEditText
                     android:id="@+id/etNeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

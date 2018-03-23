@@ -209,7 +209,11 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             val view = view ?: return@launchCoroutineUI
             if (post.isMyPost()) {
                 view.toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
-            } else view.toolbar.onMoreClickListener = { showPostMenu(it) }
+                view.llOtherPersonPostActions.visibility = View.GONE
+            } else {
+                view.toolbar.onMoreClickListener = { showPostMenu(it) }
+                view.llOtherPersonPostActions.visibility = View.VISIBLE
+            }
         }
     }
 

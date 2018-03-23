@@ -25,10 +25,10 @@ class DialogHelper {
                         fromDictionary(R.string.image_source_gallery),
                         fromDictionary(R.string.image_source_camera)
                 )
-                .itemsCallbackSingleChoice(-1, { dialog, itemView, which, text ->
+                .itemsCallback{ dialog, itemView, which, text ->
                     listener(CropActivity.ImageSource.values()[which])
-                    true
-                })
+                    dialog.dismiss()
+                }
                 .cancelable(true)
                 .show()
     }

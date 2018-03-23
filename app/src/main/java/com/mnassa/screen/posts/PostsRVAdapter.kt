@@ -8,10 +8,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.PostType
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
-import com.mnassa.screen.posts.viewholder.GeneralViewHolder
-import com.mnassa.screen.posts.viewholder.NeedViewHolder
-import com.mnassa.screen.posts.viewholder.OfferViewHolder
-import com.mnassa.screen.posts.viewholder.ProfileViewHolder
+import com.mnassa.screen.posts.viewholder.*
 
 /**
  * Created by Peter on 3/14/2018.
@@ -20,6 +17,7 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
     var onAttachedToWindow: (item: Post) -> Unit = { }
     var onDetachedFromWindow: (item: Post) -> Unit = { }
     var onItemClickListener = { item: Post -> }
+    var onCreateNeedClickListener = {}
 
     override val itemsComparator: (item1: Post, item2: Post) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * -1
@@ -30,6 +28,11 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
         itemsTheSameComparator = { first, second -> first.id == second.id}
         contentTheSameComparator = { first, second -> first == second }
         dataStorage = SortedDataStorage(itemClass, this)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<Post> {
+        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent, this) else
+            super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<Post> {
@@ -83,9 +86,8 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<Post>(), View.OnClickListen
         val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
         when (view.id) {
-            R.id.rlClickableRoot -> {
-                onItemClickListener(getDataItemByAdapterPosition(position))
-            }
+            R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
+            R.id.flCreateNeed -> onCreateNeedClickListener()
         }
     }
 
