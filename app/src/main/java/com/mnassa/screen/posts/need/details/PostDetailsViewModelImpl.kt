@@ -5,6 +5,7 @@ import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -24,6 +25,7 @@ class PostDetailsViewModelImpl(private val postId: String,
     override val postChannel: ConflatedBroadcastChannel<Post> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,7 @@ class PostDetailsViewModelImpl(private val postId: String,
         handleException {
             val comments = commentsInteractor.getCommentsByPost(postId)
             Timber.i("COMMENTS: $comments")
+            commentsChannel.send(comments)
         }
     }
 

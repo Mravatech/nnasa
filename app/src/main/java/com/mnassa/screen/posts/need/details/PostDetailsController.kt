@@ -37,15 +37,15 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: PostDetailsViewModel by injector.with(postId).instance()
     private val tagsAdapter = PostTagRVAdapter()
+    private val commentsAdapter = PostCommentsRVAdapter()
     private var headerLayout = StateExecutor<View?, View>(null) { it != null }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         with(view) {
-            val adapter = PostCommentsRVAdapter()
-            adapter.onBindHeader = { headerLayout.value = it }
-            rvPostDetails.adapter = adapter
+            commentsAdapter.onBindHeader = { headerLayout.value = it }
+            rvPostDetails.adapter = commentsAdapter
             rvPostDetails.layoutManager = LinearLayoutManager(context)
         }
 
@@ -60,10 +60,8 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             }
         }
 
-
         launchCoroutineUI {
             viewModel.postChannel.consumeEach {
-                Timber.d("POST -> consume $it")
                 setPost(it)
             }
         }
@@ -74,6 +72,10 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
         launchCoroutineUI {
             viewModel.finishScreenChannel.consumeEach { close() }
+        }
+
+        launchCoroutineUI {
+            viewModel.commentsChannel.consumeEach { commentsAdapter.set(it) }
         }
 
         (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply {

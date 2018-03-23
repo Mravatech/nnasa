@@ -1,5 +1,6 @@
 package com.mnassa.screen.posts.need.details
 
+import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
@@ -13,6 +14,7 @@ interface PostDetailsViewModel : MnassaViewModel {
     val postChannel: BroadcastChannel<Post>
     val postTagsChannel: BroadcastChannel<List<TagModel>>
     val finishScreenChannel: BroadcastChannel<Unit>
+    val commentsChannel: BroadcastChannel<List<CommentModel>>
     fun delete()
 
 }
