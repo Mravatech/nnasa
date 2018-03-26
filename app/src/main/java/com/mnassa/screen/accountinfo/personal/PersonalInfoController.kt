@@ -98,7 +98,7 @@ class PersonalInfoController(data: Bundle
                     view.etYourEmail.isChosen,
                     timeMillis,
                     view.etPhoneNumber.isChosen,
-                    view.etYourEmail.text.toString()//todo email pattern
+                    view.etYourEmail.text.toString()
             )
         }
         onActivityResult.subscribe {
@@ -161,8 +161,5 @@ class PersonalInfoController(data: Bundle
             return PersonalInfoController(params)
         }
 
-//        fun newInstance(): PersonalInfoController {
-//            return PersonalInfoController()
-//        }
     }
 }
