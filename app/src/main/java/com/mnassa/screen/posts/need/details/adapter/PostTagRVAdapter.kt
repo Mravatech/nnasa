@@ -1,4 +1,4 @@
-package com.mnassa.screen.posts.need.details
+package com.mnassa.screen.posts.need.details.adapter
 
 import android.view.LayoutInflater
 import android.view.View

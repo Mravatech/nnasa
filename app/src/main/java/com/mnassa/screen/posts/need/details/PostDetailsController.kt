@@ -22,9 +22,11 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.controller_post_details.view.*
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
+import kotlinx.android.synthetic.main.controller_post_details.view.*
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -53,7 +55,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             with(it) {
                 rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
                         .setScrollingEnabled(false)
-                        .setRowStrategy(ChipsLayoutManager.STRATEGY_FILL_SPACE)
+                        .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
                         .setOrientation(ChipsLayoutManager.HORIZONTAL)
                         .build()
                 rvTags.adapter = tagsAdapter
@@ -61,9 +63,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         }
 
         launchCoroutineUI {
-            viewModel.postChannel.consumeEach {
-                setPost(it)
-            }
+            viewModel.postChannel.consumeEach { setPost(it) }
         }
 
         launchCoroutineUI {
@@ -74,8 +74,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             viewModel.finishScreenChannel.consumeEach { close() }
         }
 
+        commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
-            viewModel.commentsChannel.consumeEach { commentsAdapter.set(it) }
+            viewModel.commentsChannel.consumeEach {
+                commentsAdapter.isLoadingEnabled = false
+                commentsAdapter.set(it)
+            }
         }
 
         (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply {
@@ -209,10 +213,14 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             val view = view ?: return@launchCoroutineUI
             if (post.isMyPost()) {
                 view.toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
-                view.llOtherPersonPostActions.visibility = View.GONE
+                headerLayout.invoke {
+                    it.llOtherPersonPostActions.visibility = View.GONE
+                }
             } else {
                 view.toolbar.onMoreClickListener = { showPostMenu(it) }
-                view.llOtherPersonPostActions.visibility = View.VISIBLE
+                headerLayout.invoke {
+                    it.llOtherPersonPostActions.visibility = View.VISIBLE
+                }
             }
         }
     }

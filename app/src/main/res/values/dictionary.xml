@@ -50,7 +50,7 @@
 
     <!-- ===================================== TAB HOME ======================================== -->
     <string name="tab_home_needs_title">_nav_title_needs</string>
-    <string name="tab_home_events_title">_events_nav_title</string>
+    <string name="tab_home_events_title">_android_tab_events</string>
     <string name="tab_home_title">_android_news_feed_title</string>
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
     <string name="tab_home_button_create_offer">_post_type_offer_Info</string>

@@ -31,7 +31,7 @@
         app:badgeTextColor="@color/white"
         app:tabIndicatorColor="@color/white"
         app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/coolGray" />
+        app:tabTextColor="@color/tabLayoutInActive" />
 
     <View
         android:id="@+id/vShadow"

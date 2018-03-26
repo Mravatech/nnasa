@@ -8,6 +8,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
         android:background="?selectableItemBackground">
 
         <android.support.v7.widget.AppCompatImageView
@@ -76,10 +78,10 @@
             tools:text="Reply" />
 
         <View
+            android:id="@+id/vSeparator"
             style="@style/MnassaDivider"
             android:layout_width="wrap_content"
-            android:layout_alignStart="@id/tvUserName"
-            android:layout_below="@id/btnReply" />
+            android:layout_alignStart="@id/tvUserName" />
 
     </RelativeLayout>
 

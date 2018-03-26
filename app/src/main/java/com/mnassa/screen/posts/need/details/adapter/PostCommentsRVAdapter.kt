@@ -1,11 +1,19 @@
-package com.mnassa.screen.posts.need.details
+package com.mnassa.screen.posts.need.details.adapter
 
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import com.mnassa.R
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.CommentReplyModel
+import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 
 /**
@@ -44,12 +52,35 @@ class PostCommentsRVAdapter : BasePaginationRVAdapter<CommentModel>(), View.OnCl
         private const val TYPE_COMMENT_REPLY = 2
     }
 
-    private class CommentViewHolder(itemView: View, onClickListener: View.OnClickListener) : BaseVH<CommentModel>(itemView) {
-        override fun bind(item: CommentModel) {
+    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BaseVH<CommentModel>(itemView) {
 
+        override fun bind(item: CommentModel) {
+            val avatar = itemView.findViewById<ImageView>(R.id.ivAvatar)
+            val userName = itemView.findViewById<TextView>(R.id.tvUserName)
+            val comment = itemView.findViewById<TextView>(R.id.tvCommentText)
+            val recommendedAccounts = itemView.findViewById<RecyclerView>(R.id.rvRecommendedAccounts)
+            val creationTime = itemView.findViewById<TextView>(R.id.tvCreationTime)
+            val replyButton = itemView.findViewById<Button>(R.id.btnReply)
+
+            itemView.findViewById<View?>(R.id.vSeparator)?.visibility = if (adapterPosition <= FIRST_ITEM_POSITION) View.INVISIBLE else View.VISIBLE
+
+            avatar.avatarRound(item.creator.avatar)
+            userName.text = item.creator.formattedName
+            comment.text = item.text
+            comment.goneIfEmpty()
+
+            //TODO
+            recommendedAccounts.visibility = if (item.recommends.isEmpty()) View.GONE else View.VISIBLE
+
+            creationTime.text = item.createdAt.toTimeAgo()
+
+            replyButton.tag = this
+            replyButton.setOnClickListener(onClickListener)
         }
 
         companion object {
+            private const val FIRST_ITEM_POSITION = 1
+
             fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener): CommentViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
                 return CommentViewHolder(view, onClickListener)

@@ -44,7 +44,7 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
             val result = ArrayList<CommentModel>(tail.size + 1)
             result += head
             result += tail
-            return result
+            result
         }
     }
 

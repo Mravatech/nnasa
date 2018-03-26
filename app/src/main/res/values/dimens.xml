@@ -20,6 +20,7 @@
 
     <dimen name="avatar_list_item">49dp</dimen>
     <dimen name="avatar_post_item">42dp</dimen>
+    <dimen name="avatar_reply_item">29dp</dimen>
     <dimen name="avatar_comment_item">@dimen/avatar_post_item</dimen>
     <dimen name="avatar_comment_reply_item">29</dimen>
 
