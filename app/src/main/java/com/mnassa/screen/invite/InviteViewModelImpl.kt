@@ -41,7 +41,7 @@ class InviteViewModelImpl(
     override fun retrievePhoneContacts() {
         retrievePhoneJob?.cancel()
         retrievePhoneJob = handleException {
-            val contacts = connectionsInteractor.retrivePhoneContacts()
+            val contacts = connectionsInteractor.retrievePhoneContacts()
             phoneContactChannel.send(contacts)
         }
     }

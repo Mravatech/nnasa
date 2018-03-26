@@ -25,7 +25,7 @@ interface ConnectionsInteractor {
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     suspend fun sendPhoneContacts()
-    suspend fun retrivePhoneContacts():List<PhoneContact>
+    suspend fun retrievePhoneContacts():List<PhoneContact>
 
     suspend fun actionConnect(userAccountIds: List<String>)
     suspend fun actionAccept(userAccountIds: List<String>)

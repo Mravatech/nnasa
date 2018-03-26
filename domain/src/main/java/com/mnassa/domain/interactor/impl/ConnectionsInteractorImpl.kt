@@ -51,7 +51,7 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
     }
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
-    override suspend fun retrivePhoneContacts(): List<PhoneContact> {
+    override suspend fun retrievePhoneContacts(): List<PhoneContact> {
         return phoneContactsRepository.getPhoneContacts()
     }
 

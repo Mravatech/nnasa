@@ -1,28 +1,30 @@
 package com.mnassa.screen.invite
 
 import android.Manifest
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.AdapterView
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
-import android.widget.AdapterView
 import com.mnassa.delegate.CountryDelegate
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.intent.IntentHelper
+import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.history.HistoryController
 import com.mnassa.screen.login.enterphone.CountryCode
 import com.mnassa.screen.login.enterphone.CountryCodeAdapter
+import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.android.synthetic.main.toolbar_invite.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by IntelliJ IDEA.
@@ -72,7 +74,8 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                             ?: EMPTY_STRING, null))
         }
         launchCoroutineUI {
-            if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
+            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+            if (permissionsResult.isAllGranted) {
                 viewModel.retrievePhoneContacts()
                 viewModel.phoneContactChannel.consumeEach {
                     view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
@@ -80,7 +83,10 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                     view.rvInviteToMnassa.adapter = adapter
                 }
             } else {
-                //todo set after merge
+                Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
+                            view.context.openApplicationSettings()
+                        }.show()
             }
         }
         launchCoroutineUI {
@@ -111,16 +117,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 }
         )
         view.ivInvitesHistory.setOnClickListener {
-            launchCoroutineUI {
-                if (permissions.requestPermissions(Manifest.permission.READ_CONTACTS).isAllGranted) {
-                    viewModel.retrievePhoneContacts()
-                    viewModel.phoneContactChannel.consumeEach {
-                        open(HistoryController.newInstance())
-                    }
-                } else {
-                    //todo set after merge
-                }
-            }
+            open(HistoryController.newInstance())
         }
     }
 
