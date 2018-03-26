@@ -105,6 +105,8 @@
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
 
+    <!-- ========================================= PROFILE ====================================== -->
+    <string name="profile_connections">_connectionsList_navTitle_connections</string>
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>
@@ -112,4 +114,6 @@
 
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
+
+
 </resources>

@@ -9,58 +9,36 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import com.mnassa.AppInfoProviderImpl
+import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.api.FirebaseDictionaryApi
-import com.mnassa.data.network.exception.FirebaseExceptionHandler
-import com.mnassa.data.network.exception.FirebaseExceptionHandlerImpl
-import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
-import com.mnassa.data.network.exception.NetworkExceptionHandler
-import com.mnassa.data.repository.DictionaryRepositoryImpl
-import com.mnassa.data.repository.StorageRepositoryImpl
-import com.mnassa.data.repository.TagRepositoryImpl
-import com.mnassa.data.repository.UserRepositoryImpl
-import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.domain.other.LanguageProvider
-import com.mnassa.domain.repository.DictionaryRepository
-import com.mnassa.domain.repository.StorageRepository
-import com.mnassa.domain.repository.TagRepository
-import com.mnassa.domain.repository.UserRepository
-import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.screen.profile.ProfileViewModel
-import com.mnassa.screen.profile.ProfileViewModelImpl
-import com.mnassa.AppInfoProviderImpl
-import com.mnassa.data.converter.*
-import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
+import com.mnassa.data.service.FirebaseLoginServiceImpl
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
+import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.google.PlayServiceHelper
-import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
-import com.mnassa.screen.login.entercode.EnterCodeViewModel
-import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
-import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
-import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
-import com.mnassa.screen.main.MainViewModel
-import com.mnassa.screen.main.MainViewModelImpl
-import com.mnassa.screen.registration.RegistrationViewModel
-import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
 import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
 import com.mnassa.screen.connections.ConnectionsViewModelImpl
+import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
+import com.mnassa.screen.connections.allconnections.AllConnectionsViewModelImpl
 import com.mnassa.screen.connections.archived.ArchivedConnectionViewModel
 import com.mnassa.screen.connections.archived.ArchivedConnectionViewModelImpl
 import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
@@ -73,18 +51,27 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
-import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
-import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
-import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
-import com.mnassa.screen.connections.allconnections.AllConnectionsViewModelImpl
+import com.mnassa.screen.login.entercode.EnterCodeViewModel
+import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
+import com.mnassa.screen.main.MainViewModel
+import com.mnassa.screen.main.MainViewModelImpl
 import com.mnassa.screen.needs.NeedsViewModel
 import com.mnassa.screen.needs.NeedsViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
+import com.mnassa.screen.profile.ProfileViewModel
+import com.mnassa.screen.profile.ProfileViewModelImpl
+import com.mnassa.screen.registration.RegistrationViewModel
+import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
+import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
 /**
@@ -113,7 +100,7 @@ private val viewModelsModule = Kodein.Module {
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
-    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance()) }
+    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
     bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
@@ -135,7 +122,8 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
-        converter.registerConverter(TagConverter( instance() ))
+        converter.registerConverter(ProfileConverter::class.java)
+        converter.registerConverter(TagConverter(instance()))
         converter
     }
 }
@@ -157,8 +145,9 @@ private val repositoryModule = Kodein.Module {
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton {
-        PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance())
+        PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
     }
+    bind<OtherProfileRepository>() with singleton { OtherProfileRepositoryImpl(instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -174,11 +163,12 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
+    bind<OtherProfileInteractor>() with singleton { OtherProfileInteractorImpl(instance()) }
 }
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }
@@ -205,7 +195,7 @@ private val networkModule = Kodein.Module {
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
-    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
+    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl({ instance() }, { instance() }) }
 }
 
 private val otherModule = Kodein.Module {

@@ -24,6 +24,7 @@ import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.notifications.NotificationsController
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.nav_header.view.*
@@ -132,6 +133,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
+            R.id.nav_profile -> open(ProfileController.newInstance())
             R.id.nav_logout -> viewModel.logout()
         }
 
@@ -161,6 +163,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         mnassaRouter.open(self, controller)
 
     }
+
     override fun close(self: Controller) = mnassaRouter.close(self)
 
     private fun formatTabControllerTag(position: Int): String {
