@@ -5,6 +5,8 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
+import com.mnassa.data.network.bean.retrofit.response.CommentResponseEntity
+import com.mnassa.data.network.bean.retrofit.response.CreateCommentResponse
 import com.mnassa.data.network.bean.retrofit.response.GetCommentsResponse
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -17,35 +19,66 @@ import java.util.*
  */
 class CommentsConverter : ConvertersContextRegistrationCallback {
     override fun register(convertersContext: ConvertersContext) {
-        convertersContext.registerConverter(this::convertComment)
+        convertersContext.registerConverter(this::convertGetCommentsResponse)
+        convertersContext.registerConverter(this::convertCommentEntity)
+        convertersContext.registerConverter(this::convertCreateCommentResponse)
     }
 
-    private fun convertComment(input: GetCommentsResponse, token: Any?, converter: ConvertersContext): List<CommentModel> {
+    private fun convertGetCommentsResponse(input: GetCommentsResponse, token: Any?, converter: ConvertersContext): List<CommentModel> {
         return input.data.data.entries.flatMap { (mainCommentId, commentBody) ->
-            val head = CommentModelImpl(
-                    id = mainCommentId,
+            commentBody.id = mainCommentId
+            converter.convert(commentBody, token, List::class.java) as List<CommentModel>
+        }
+    }
+
+    private fun convertCreateCommentResponse(input: CreateCommentResponse, token: Any?, converter: ConvertersContext): CommentModel {
+        val parentId = token as? String
+
+        return input.data.comment.entries.map { (mainCommentId, commentBody) ->
+            commentBody.id = mainCommentId
+            commentBody.parentItemId = parentId
+
+            converter.convert(commentBody, token, List::class.java).first() as CommentModel
+        }.first()
+    }
+
+    private fun convertCommentEntity(input: CommentResponseEntity, token: Any?, converter: ConvertersContext): List<CommentModel> {
+        val parentItemId = input.parentItemId
+
+        val head: CommentModel = when {
+            parentItemId != null -> CommentReplyModelImpl(
+                    id = input.id,
+                    createdAt = Date(input.createdAt),
+                    creator = convertUser(input.creator, converter).first(),
+                    text = input.text,
+                    recommends = convertUser(input.recommendedAccounts
+                            ?: emptyMap(), converter),
+                    parentId = parentItemId
+            )
+            else -> CommentModelImpl(
+                    id = input.id,
+                    createdAt = Date(input.createdAt),
+                    creator = convertUser(input.creator, converter).first(),
+                    text = input.text,
+                    recommends = convertUser(input.recommendedAccounts ?: emptyMap(), converter)
+            )
+        }
+
+        val tail = (input.replies ?: emptyMap()).entries.map { (replyId, commentBody) ->
+            CommentReplyModelImpl(
+                    id = replyId,
                     createdAt = Date(commentBody.createdAt),
                     creator = convertUser(commentBody.creator, converter).first(),
                     text = commentBody.text,
-                    recommends = convertUser(commentBody.recommendedAccounts ?: emptyMap(), converter)
+                    recommends = convertUser(commentBody.recommendedAccounts ?: emptyMap(), converter),
+                    parentId = head.id
             )
-
-            val tail = (commentBody.replies ?: emptyMap()).map { (commentId, commentBody) ->
-                CommentReplyModelImpl(
-                        id = commentId,
-                        createdAt = Date(commentBody.createdAt),
-                        creator = convertUser(commentBody.creator, converter).first(),
-                        text = commentBody.text,
-                        recommends = convertUser(commentBody.recommendedAccounts ?: emptyMap(), converter),
-                        parentId = mainCommentId
-                )
-            }
-
-            val result = ArrayList<CommentModel>(tail.size + 1)
-            result += head
-            result += tail
-            result
         }
+
+        val result: MutableList<CommentModel> = ArrayList(tail.size + 1)
+        result += head
+        result += tail
+        return result
     }
 
     private fun convertUser(input: Map<String, ShortAccountDbEntity>, converter: ConvertersContext): List<ShortAccountModel> {

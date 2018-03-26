@@ -116,7 +116,7 @@ class PhotoPagerActivity : AppCompatActivity(), View.OnClickListener {
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val imageUrl = images[position]
             val view = LayoutInflater.from(container.context).inflate(R.layout.item_photo_pager, container, false)
-            view.ivImage.image(imageUrl)
+            view.ivImage.image(imageUrl, crop = false)
             view.ivImage.setOnClickListener(onClickListener)
             container.addView(view)
             return view

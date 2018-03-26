@@ -62,17 +62,21 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
             .into(this)
 }
 
-fun ImageView.image(url: String?) {
+fun ImageView.image(url: String?, crop: Boolean = true) {
     val storage = context.appKodein().instance<FirebaseStorage>()
     val ref = url?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
-    GlideApp.with(this)
+    var builder = GlideApp.with(this)
             .load(ref ?: "")
             .apply(requestOptions)
-            .apply(RequestOptions.centerCropTransform())
-            .into(this)
+
+    if (crop) {
+        builder = builder.apply(RequestOptions.centerCropTransform())
+    }
+
+    builder.into(this)
 }
 
 fun ImageView.image(uri: Uri) {

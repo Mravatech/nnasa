@@ -14,13 +14,43 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.extensions.toTimeAgo
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
+import com.mnassa.translation.fromDictionary
 
 /**
  * Created by Peter on 3/23/2018.
  */
-class PostCommentsRVAdapter : BasePaginationRVAdapter<CommentModel>(), View.OnClickListener {
+class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
     var onBindHeader = { header: View -> }
+    var onReplyClick = { comment: CommentModel -> }
+
+    override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
+        when {
+            itemsTheSameComparator(first, second) -> 0
+            first is CommentReplyModel && second is CommentReplyModel -> {
+                val parentComparingResult = first.parentId.compareTo(second.parentId)
+                if (parentComparingResult == 0) first.id.compareTo(second.id) else parentComparingResult
+            }
+            first is CommentReplyModel && second !is CommentReplyModel -> {
+                val parentComparingResult = first.parentId.compareTo(second.id)
+                if (parentComparingResult == 0) 1 else parentComparingResult
+            }
+            first !is CommentReplyModel && second is CommentReplyModel -> {
+                val parentComparingResult = first.id.compareTo(second.parentId)
+                if (parentComparingResult == 0) -1 else parentComparingResult
+            }
+            else -> first.id.compareTo(second.id)
+        }
+    }
+
+    override val itemClass: Class<CommentModel> = CommentModel::class.java
+
+    init {
+        dataStorage = SortedDataStorage(itemClass, this)
+        itemsTheSameComparator = { first, second ->
+            first.id == second.id
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> = when (viewType) {
         TYPE_COMMENT -> CommentViewHolder.newInstanceComment(parent, this)
@@ -44,7 +74,11 @@ class PostCommentsRVAdapter : BasePaginationRVAdapter<CommentModel>(), View.OnCl
     }
 
     override fun onClick(view: View) {
-
+        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        if (position < 0) return
+        when (view.id) {
+            R.id.btnReply -> onReplyClick(getDataItemByAdapterPosition(position))
+        }
     }
 
     companion object {
@@ -74,6 +108,7 @@ class PostCommentsRVAdapter : BasePaginationRVAdapter<CommentModel>(), View.OnCl
 
             creationTime.text = item.createdAt.toTimeAgo()
 
+            replyButton.text = fromDictionary(R.string.posts_comment_reply)
             replyButton.tag = this
             replyButton.setOnClickListener(onClickListener)
         }

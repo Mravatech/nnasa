@@ -60,6 +60,12 @@
     <string name="posts_header_need">_posts_header_iNeed</string>
     <string name="posts_header_type">_posts_header_type_your_need</string>
 
+    <!-- comments -->
+    <string name="posts_comment_reply">_commentCell_Reply</string>
+    <string name="posts_comment_create">_android_post_details_create_comment_post_btn</string>
+    <string name="posts_comment_placeholder">_post_details_write_comment</string>
+    <string name="posts_comment_reply_to">_replyingIndicator_title</string>
+
     <!-- create need -->
     <string name="need_create_title">_posts_header_iNeed</string>
     <string name="need_create_prefix">_post_type_need_Info</string>

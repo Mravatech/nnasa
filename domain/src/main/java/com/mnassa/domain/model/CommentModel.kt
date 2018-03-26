@@ -12,6 +12,11 @@ interface CommentModel : Model {
     val recommends: List<ShortAccountModel>
 }
 
-interface CommentReplyModel: CommentModel {
+interface CommentReplyModel : CommentModel {
     val parentId: String
 }
+
+val CommentModel.mostParentCommentId: String
+    get() {
+        return (this as? CommentReplyModel)?.parentId ?: id
+    }

@@ -3,8 +3,10 @@ package com.mnassa.screen.posts.need.details
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,18 +18,18 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.Post
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.comment_panel.view.*
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.controller_post_details.view.*
 import kotlinx.android.synthetic.main.item_image.view.*
+import kotlinx.android.synthetic.main.reply_panel.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -41,14 +43,46 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
     private var headerLayout = StateExecutor<View?, View>(null) { it != null }
+    private var replyTo: CommentModel? = null
+        set(value) {
+            field = value
+            launchCoroutineUI {
+                with (getViewSuspend()) {
+                    replyPanel.visibility = if (value != null) View.VISIBLE else View.GONE
+                    if (value == null) return@launchCoroutineUI
+                    replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
+                    replyPanel.tvReplyTo.append(" ")
+                    replyPanel.tvReplyTo.append(value.creator.formattedName)
+                }
+            }
+        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         with(view) {
             commentsAdapter.onBindHeader = { headerLayout.value = it }
+            commentsAdapter.onReplyClick = { comment -> replyTo = comment }
             rvPostDetails.adapter = commentsAdapter
             rvPostDetails.layoutManager = LinearLayoutManager(context)
+            rvPostDetails.itemAnimator = object : DefaultItemAnimator() {
+                override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean = true
+            }
+
+            btnCommentPost.text = fromDictionary(R.string.posts_comment_create)
+            btnCommentPost.setOnClickListener {
+                viewModel.createComment(etCommentText.text.toString(), emptyList(), replyTo)
+                etCommentText.text = null
+                replyTo = null
+            }
+            btnCommentPost.isEnabled = etCommentText.text.isNotEmpty()
+            etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
+            etCommentText.addTextChangedListener(SimpleTextWatcher {
+                btnCommentPost.isEnabled = it.isNotBlank()
+            })
+            ivReplyCancel.setOnClickListener {
+                replyTo = null
+            }
         }
 
         headerLayout.invoke {
@@ -77,8 +111,28 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.commentsChannel.consumeEach {
+                //TODO: bufferization
                 commentsAdapter.isLoadingEnabled = false
-                commentsAdapter.set(it)
+                when (it) {
+                    is ListItemEvent.Added -> commentsAdapter.dataStorage.add(it.item)
+                    is ListItemEvent.Changed -> commentsAdapter.dataStorage.add(it.item)
+                    is ListItemEvent.Moved -> commentsAdapter.dataStorage.add(it.item)
+                    is ListItemEvent.Removed -> commentsAdapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Cleared -> commentsAdapter.dataStorage.clear()
+
+                }
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.scrollToChannel.consumeEach { scrollToComment ->
+                view.rvPostDetails.post {
+                    val dataIndex = commentsAdapter.dataStorage.indexOfFirst { it.id == scrollToComment.id }
+                    if (dataIndex < 0) return@post
+                    val holderIndex = commentsAdapter.convertDataIndexToAdapterPosition(dataIndex)
+                    if (holderIndex < 0) return@post
+                    view.rvPostDetails?.smoothScrollToPosition(holderIndex)
+                }
             }
         }
 
@@ -86,6 +140,8 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             setPost(this)
             args.remove(EXTRA_NEED_MODEL)
         }
+
+        replyTo = replyTo //show reply section if reply available after View destroying
     }
 
     override fun onViewDestroyed(view: View) {

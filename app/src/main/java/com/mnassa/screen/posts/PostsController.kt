@@ -34,6 +34,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
 
         viewModel.handleException {
             viewModel.getNewsFeedChannel().consumeEach {
+                //TODO: bufferization
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
@@ -42,6 +43,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
                     is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
                     is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Cleared -> adapter.dataStorage.clear()
                 }
             }
         }.bind(this)

@@ -9,67 +9,33 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import com.mnassa.data.network.RetrofitConfig
-import com.mnassa.data.network.api.FirebaseAuthApi
-import com.mnassa.data.network.api.FirebaseDictionaryApi
-import com.mnassa.data.network.exception.FirebaseExceptionHandler
-import com.mnassa.data.network.exception.FirebaseExceptionHandlerImpl
-import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
-import com.mnassa.data.network.exception.NetworkExceptionHandler
-import com.mnassa.data.repository.DictionaryRepositoryImpl
-import com.mnassa.data.repository.StorageRepositoryImpl
-import com.mnassa.data.repository.TagRepositoryImpl
-import com.mnassa.data.repository.UserRepositoryImpl
-import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.domain.interactor.DictionaryInteractor
-import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.interactor.impl.DictionaryInteractorImpl
-import com.mnassa.domain.interactor.impl.LoginInteractorImpl
-import com.mnassa.domain.interactor.impl.StorageInteractorImpl
-import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
-import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.domain.other.LanguageProvider
-import com.mnassa.domain.repository.DictionaryRepository
-import com.mnassa.domain.repository.StorageRepository
-import com.mnassa.domain.repository.TagRepository
-import com.mnassa.domain.repository.UserRepository
-import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.screen.profile.ProfileViewModel
-import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
-import com.mnassa.data.converter.TagConverter
-import com.mnassa.data.network.api.FirebaseInviteApi
-import com.mnassa.data.network.api.FirebaseTagsApi
-import com.mnassa.data.network.api.FirebasePostApi
+import com.mnassa.data.network.RetrofitConfig
+import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
+import com.mnassa.data.service.FirebaseLoginServiceImpl
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
+import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.google.PlayServiceHelper
-import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
-import com.mnassa.screen.login.entercode.EnterCodeViewModel
-import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
-import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
-import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
-import com.mnassa.screen.main.MainViewModel
-import com.mnassa.screen.main.MainViewModelImpl
-import com.mnassa.screen.registration.RegistrationViewModel
-import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
+import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
 import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
 import com.mnassa.screen.connections.ConnectionsViewModelImpl
+import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
+import com.mnassa.screen.connections.allconnections.AllConnectionsViewModelImpl
 import com.mnassa.screen.connections.archived.ArchivedConnectionViewModel
 import com.mnassa.screen.connections.archived.ArchivedConnectionViewModelImpl
 import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
@@ -82,24 +48,33 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
-import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
-import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
-import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
-import com.mnassa.screen.connections.allconnections.AllConnectionsViewModelImpl
+import com.mnassa.screen.login.entercode.EnterCodeViewModel
+import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
-import com.mnassa.screen.posts.PostsViewModel
-import com.mnassa.screen.posts.PostsViewModelImpl
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
+import com.mnassa.screen.main.MainViewModel
+import com.mnassa.screen.main.MainViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
+import com.mnassa.screen.posts.PostsViewModel
+import com.mnassa.screen.posts.PostsViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
 import com.mnassa.screen.posts.need.details.PostDetailsViewModel
 import com.mnassa.screen.posts.need.details.PostDetailsViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
+import com.mnassa.screen.profile.ProfileViewModel
+import com.mnassa.screen.profile.ProfileViewModelImpl
+import com.mnassa.screen.registration.RegistrationViewModel
+import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
+import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
 /**
@@ -153,7 +128,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
-        converter.registerConverter(TagConverter( instance() ))
+        converter.registerConverter(TagConverter(instance()))
         converter.registerConverter(LocationConverter::class.java)
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(CommentsConverter::class.java)
@@ -177,7 +152,7 @@ private val repositoryModule = Kodein.Module {
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
-    bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl( instance<PlayServiceHelper>().googleApiClient, instance()) }
+    bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), instance()) }
 }
@@ -201,38 +176,28 @@ private val interactorModule = Kodein.Module {
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
-    bind<Retrofit>() with singleton {
-        instance<RetrofitConfig>().makeRetrofit()
-    }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
+    bind<Retrofit>() with singleton { instance<RetrofitConfig>().makeRetrofit() }
 
     //firebase functions API
-    bind<FirebaseAuthApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseAuthApi::class.java)
-    }
-    bind<FirebaseDictionaryApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseDictionaryApi::class.java)
-    }
-    bind<FirebaseInviteApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseInviteApi::class.java)
-    }
-    bind<FirebaseTagsApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseTagsApi::class.java)
-    }
-    bind<FirebasePostApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebasePostApi::class.java)
-    }
-
+    bindRetrofitApi<FirebaseAuthApi>()
+    bindRetrofitApi<FirebaseDictionaryApi>()
+    bindRetrofitApi<FirebaseInviteApi>()
+    bindRetrofitApi<FirebaseTagsApi>()
+    bindRetrofitApi<FirebasePostApi>()
+    bindRetrofitApi<FirebaseCommentsApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
-    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl( { instance() }, { instance() }) }
+    bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl({ instance() }, { instance() }) }
+}
+
+private inline fun <reified T : Any> Kodein.Builder.bindRetrofitApi() {
+    bind<T>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(T::class.java)
+    }
 }
 
 private val otherModule = Kodein.Module {
