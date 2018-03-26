@@ -1,28 +1,32 @@
 package com.mnassa.widget
 
 import android.content.Context
+import android.support.annotation.ColorRes
+import android.support.annotation.FloatRange
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.LongSparseArray
 import android.view.KeyEvent
 import android.view.View
+import android.view.View.OnFocusChangeListener
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
+import android.widget.TextView
 import androidx.util.isEmpty
+import androidx.util.valueIterator
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
-import android.support.annotation.ColorRes
-import android.support.annotation.FloatRange
-import android.support.v4.content.ContextCompat
-import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.util.valueIterator
 
 /**
  * Created by IntelliJ IDEA.
@@ -97,11 +101,20 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         listPopupWindow.dismiss()
     }
 
+    fun setTags(tags: List<TagModel>) {
+        tags.forEach { addChip(it) }
+        launch (UI){
+            delay(200) //todo remove
+            val transition = -etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical) * MARGIN_COUNT
+            animateViews(ANIMATION_EDIT_TEXT_SCALE_SHOW, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_DURATION, ANIMATION_TEXT_VIEW_SCALE_SMALL)
+            colorViews(tvChipHeader, vChipBottomLine, R.color.chip_default_edit_text_hint_color)
+        }
+    }
 
     fun getTags(): List<TagModel> {
         if (chips.isEmpty()) return emptyList()
         val tags = ArrayList<TagModel>(chips.size())
-        for (tag in chips.valueIterator()){
+        for (tag in chips.valueIterator()) {
             tags.add(tag)
         }
         return tags

@@ -56,7 +56,7 @@
         android:id="@+id/profileInfo"
         style="@style/ProfileHeaderItem.MainContainer"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/tvProfileCanHelpWith"
@@ -185,6 +185,7 @@
         android:id="@+id/flTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" />
+        android:orientation="horizontal">
+    </LinearLayout>
 
 </LinearLayout>

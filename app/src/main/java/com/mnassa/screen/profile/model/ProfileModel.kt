@@ -12,7 +12,8 @@ import com.mnassa.domain.model.TagModel
 data class ProfileModel(
         val profile: ProfileAccountModel,
         val interests: List<TagModel>?,
-        val offers: List<TagModel>?
+        val offers: List<TagModel>?,
+        val isMyProfile: Boolean
 )
 
 

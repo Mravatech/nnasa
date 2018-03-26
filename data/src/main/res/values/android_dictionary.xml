@@ -35,5 +35,6 @@
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
     <string name="_android_profile_points_given_INFO">Points given</string>
     <string name="_android_profile_more_info_INFO">MORE INFORMATION</string>
+    <string name="_android_edit_profile_main_info_INFO">Main Information</string>
 
 </resources>
