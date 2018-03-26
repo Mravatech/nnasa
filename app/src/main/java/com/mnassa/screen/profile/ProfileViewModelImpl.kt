@@ -4,10 +4,9 @@ import android.net.Uri
 import android.os.Bundle
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.OtherProfileInteractor
 import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -25,9 +24,8 @@ import timber.log.Timber
 class ProfileViewModelImpl(
         private val storageInteractor: StorageInteractor,
         private val storage: FirebaseStorage,
-        private val tagInteractor: UserProfileInteractor,
-        private val profileInteractor: OtherProfileInteractor,
-        private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), ProfileViewModel {
+        private val tagInteractor: TagInteractor,
+        private val profileInteractor: OtherProfileInteractor) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
@@ -41,7 +39,11 @@ class ProfileViewModelImpl(
                 )
                 Timber.i(profileAccountModel.toString())
                 if (profileAccountModel != null) {
-                    val profile = ProfileModel(profileAccountModel, null, null)
+                    val profile = ProfileModel(profileAccountModel,
+                            tagInteractor.getTagsByIds(profileAccountModel.interests
+                                    ?: emptyList()),
+                            tagInteractor.getTagsByIds(profileAccountModel.offers
+                                    ?: emptyList()))
                     profileChannel.send(profile)
                 }
 

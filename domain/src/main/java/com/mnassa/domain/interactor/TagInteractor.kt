@@ -11,4 +11,5 @@ import com.mnassa.domain.model.TagModel
 interface TagInteractor{
     suspend fun search(searchKeyword: String): List<TagModel>
     suspend fun createCustomTagIds(tags: List<String>): List<String>
+    suspend fun getTagsByIds(ids: List<String>): List<TagModel>
 }

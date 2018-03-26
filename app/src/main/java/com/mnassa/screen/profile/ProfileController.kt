@@ -14,7 +14,6 @@ import com.mnassa.extensions.avatarSquare
 import com.mnassa.module.GlideApp
 import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_profile.view.*
-import kotlinx.android.synthetic.main.profile_toolbar.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 

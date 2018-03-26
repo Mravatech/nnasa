@@ -11,14 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.mnassa.R
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.FlowLayout
 import com.mnassa.widget.SimpleChipView
-import kotlinx.android.synthetic.main.header_profile_item_view.view.*
-import kotlinx.android.synthetic.main.profile_information.view.*
+import kotlinx.android.synthetic.main.item_header_profile_view.view.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,14 +51,20 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
                 setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vBottomViewProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
                 setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, null, fromDictionary(R.string.profile_email), item.profile.contactEmail)
                 setCheckedTexts(tvLabelDateOfBirth, tvDateOfBirth, vBottomViewDateOfBirth, fromDictionary(R.string.profile_date_of_birth), item.profile.createdAtDate)
-                setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, vBottomViewCanHelpWith, item.profile.offers, fromDictionary(R.string.reg_account_can_help_with))
-                setCheckedTags(tvProfileInterestedIn, chipProfileInterestWith, vBottomViewInterestedIn, item.profile.interests, fromDictionary(R.string.reg_account_interested_in))
+                setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, vBottomViewCanHelpWith, item.offers, fromDictionary(R.string.reg_account_can_help_with))
+                setCheckedTags(tvProfileInterestedIn, chipProfileInterestWith, vBottomViewInterestedIn, item.interests, fromDictionary(R.string.reg_account_interested_in))
                 tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
                 flMoreInformation.setOnClickListener {
                     profileInfo.visibility = if (profileInfo.visibility == View.GONE) View.VISIBLE else View.GONE
+                    flTags.visibility = if (flTags.visibility == View.GONE) View.VISIBLE else View.GONE
                     val drawable = if (profileInfo.visibility == View.GONE) R.drawable.ic_down else R.drawable.ic_up
                     val img = ResourcesCompat.getDrawable(resources, drawable, null)
                     tvMoreInformation.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
+                }
+                item.profile.offers?.let {
+                    for (tag in it){
+                        flTags.addView(SimpleChipView(flTags.context, TagModelImpl(null, tag, null)))
+                    }
                 }
             }
         }
@@ -71,14 +77,14 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
             return span
         }
 
-        private fun setCheckedTags(tvLabel: TextView, flowLayout: FlowLayout, bottomView: View, tags: List<String>?, text: String) {
+        private fun setCheckedTags(tvLabel: TextView, flowLayout: FlowLayout, bottomView: View, tags: List<TagModel>?, text: String) {
             tags?.let {
                 tvLabel.text = text
                 for (tag in tags) {
                     flowLayout.visibility = View.VISIBLE
                     tvLabel.visibility = View.VISIBLE
                     bottomView.visibility = View.VISIBLE
-                    val chipView = SimpleChipView(flowLayout.context, TagModelImpl(null, tag, null))
+                    val chipView = SimpleChipView(flowLayout.context, tag)
                     val params = FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT)
                     chipView.layoutParams = params
                     flowLayout.addView(chipView)
@@ -107,7 +113,7 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
 
         companion object {
             fun newInstance(parent: ViewGroup, selectedAccount: List<ProfileModel>): ProfileViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.header_profile_item_view, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_profile_view, parent, false)
                 val viewHolder = ProfileViewHolder(selectedAccount, view)
                 return viewHolder
             }
