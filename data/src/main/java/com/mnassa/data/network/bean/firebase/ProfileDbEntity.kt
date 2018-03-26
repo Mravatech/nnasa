@@ -14,6 +14,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
     var createdAt: Long?
     @SerializedName("createdAtDate")
     var createdAtDate: String?
+    @SerializedName("contactEmail")
+    var contactEmail: String?
     @SerializedName("firebaseUserId")
     var firebaseUserId: String
     @SerializedName("interests")
@@ -26,6 +28,30 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
     var totalIncome: Int?
     @SerializedName("totalOutcome")
     var totalOutcome: Int?
+    @SerializedName("numberOfCommunities")
+    val numberOfCommunities: Int?
+    @SerializedName("numberOfConnections")
+    val numberOfConnections: Int?
+    @SerializedName("numberOfDisconnected")
+    val numberOfDisconnected: Int?
+    @SerializedName("numberOfRecommendations")
+    val numberOfRecommendations: Int?
+    @SerializedName("numberOfRequested")
+    val numberOfRequested: Int?
+    @SerializedName("numberOfSent")
+    val numberOfSent: Int?
+    @SerializedName("numberOfUnreadChats")
+    val numberOfUnreadChats: Int?
+    @SerializedName("numberOfUnreadEvents")
+    val numberOfUnreadEvents: Int?
+    @SerializedName("numberOfUnreadNeeds")
+    val numberOfUnreadNeeds: Int?
+    @SerializedName("numberOfUnreadNotifications")
+    val numberOfUnreadNotifications: Int?
+    @SerializedName("numberOfUnreadResponses")
+    val numberOfUnreadResponses: Int?
+    @SerializedName("visiblePoints")
+    val visiblePoints: Int
 
     constructor(id: String,
                 avatar: String?,
@@ -42,7 +68,20 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
                 offers: List<String>?,
                 points: Int?,
                 totalIncome: Int?,
-                totalOutcome: Int?
+                totalOutcome: Int?,
+                contactEmail: String?,
+                numberOfCommunities: Int?,
+                numberOfConnections: Int?,
+                numberOfDisconnected: Int?,
+                numberOfRecommendations: Int?,
+                numberOfRequested: Int?,
+                numberOfSent: Int?,
+                numberOfUnreadChats: Int?,
+                numberOfUnreadEvents: Int?,
+                numberOfUnreadNeeds: Int?,
+                numberOfUnreadNotifications: Int?,
+                numberOfUnreadResponses: Int?,
+                visiblePoints: Int
 
     ) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
         this.createdAt = createdAt
@@ -53,6 +92,19 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
         this.points = points
         this.totalIncome = totalIncome
         this.totalOutcome = totalOutcome
+        this.contactEmail = contactEmail
+        this.numberOfCommunities = numberOfCommunities
+        this.numberOfConnections = numberOfConnections
+        this.numberOfDisconnected = numberOfDisconnected
+        this.numberOfRecommendations = numberOfRecommendations
+        this.numberOfRequested = numberOfRequested
+        this.numberOfSent = numberOfSent
+        this.numberOfUnreadChats = numberOfUnreadChats
+        this.numberOfUnreadEvents = numberOfUnreadEvents
+        this.numberOfUnreadNeeds = numberOfUnreadNeeds
+        this.numberOfUnreadNotifications = numberOfUnreadNotifications
+        this.numberOfUnreadResponses = numberOfUnreadResponses
+        this.visiblePoints = visiblePoints
 
     }
 

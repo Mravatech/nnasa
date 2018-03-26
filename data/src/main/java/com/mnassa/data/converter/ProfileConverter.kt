@@ -65,26 +65,21 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
                 language = null,
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
-                abilities = convertersContext.convertCollection(input.abilitiesInternal ?: emptyList(), AccountAbility::class.java)
+                abilities = convertersContext.convertCollection(input.abilitiesInternal
+                        ?: emptyList(), AccountAbility::class.java),
+                contactEmail = input.contactEmail,
+                numberOfCommunities = input.numberOfCommunities,
+                numberOfConnections = input.numberOfConnections,
+                numberOfDisconnected = input.numberOfDisconnected,
+                numberOfRecommendations = input.numberOfRecommendations,
+                numberOfRequested = input.numberOfRequested,
+                numberOfSent = input.numberOfSent,
+                numberOfUnreadChats = input.numberOfUnreadChats,
+                numberOfUnreadEvents = input.numberOfUnreadEvents,
+                numberOfUnreadNeeds = input.numberOfUnreadNeeds,
+                numberOfUnreadNotifications = input.numberOfUnreadNotifications,
+                numberOfUnreadResponses = input.numberOfUnreadResponses,
+                visiblePoints = input.visiblePoints
         )
     }
-
-//    override val createdAt: Long?,
-//    override var id: String,
-//    override val createdAtDate: String?,
-//    override var firebaseUserId: String,
-//    override val interests: List<String>?,
-//    override val offers: List<String>?,
-//    override var userName: String,
-//    override val points: Int?,
-//    override var accountType: AccountType,
-//    override val totalIncome: Int?,
-//    override var avatar: String?,
-//    override val totalOutcome: Int?,
-//    override var contactPhone: String?,
-//    override var language: String?,
-//    override var personalInfo: PersonalAccountDiffModel?,
-//    override var organizationInfo: OrganizationAccountDiffModel?,
-//    override var abilities: List<AccountAbility>) : ProfileAccountModel
-
 }

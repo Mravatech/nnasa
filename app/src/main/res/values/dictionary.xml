@@ -107,6 +107,11 @@
 
     <!-- ========================================= PROFILE ====================================== -->
     <string name="profile_connections">_connectionsList_navTitle_connections</string>
+    <string name="profile_points_given">_android_profile_points_given</string>
+    <string name="profile_date_of_birth">_profileDetails_birthdayPersonal</string>
+    <string name="profile_mobile_phone">_profileDetails_labelMobile</string>
+    <string name="profile_email">_profileDetails_labelEmail</string>
+    <string name="profile_more_information">_android_profile_more_info</string>
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>

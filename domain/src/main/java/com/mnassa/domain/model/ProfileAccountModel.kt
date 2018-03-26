@@ -9,9 +9,22 @@ interface ProfileAccountModel : ShortAccountModel {
 
     val createdAt: Long?
     val createdAtDate: String?
+    val contactEmail: String?
     val interests: List<String>?
     val offers: List<String>?
-    val points : Int?
-    val totalIncome : Int?
-    val totalOutcome : Int?
+    val points: Int?
+    val totalIncome: Int?
+    val totalOutcome: Int?
+    val numberOfCommunities: Int?
+    val numberOfConnections: Int?
+    val numberOfDisconnected: Int?
+    val numberOfRecommendations: Int?
+    val numberOfRequested: Int?
+    val numberOfSent: Int?
+    val numberOfUnreadChats: Int?
+    val numberOfUnreadEvents: Int?
+    val numberOfUnreadNeeds: Int?
+    val numberOfUnreadNotifications: Int?
+    val numberOfUnreadResponses: Int?
+    val visiblePoints: Int
 }

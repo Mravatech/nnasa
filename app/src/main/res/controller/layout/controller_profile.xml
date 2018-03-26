@@ -8,6 +8,16 @@
         android:id="@+id/profileToolbar"
         layout="@layout/profile_toolbar" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:fabSize="normal"
+        app:layout_anchor="@id/profileCollapsing"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_chat" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvProfile"

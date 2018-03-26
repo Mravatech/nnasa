@@ -24,4 +24,18 @@ data class ProfileAccountModelImpl(
         override var language: String?,
         override var personalInfo: PersonalAccountDiffModel?,
         override var organizationInfo: OrganizationAccountDiffModel?,
-        override var abilities: List<AccountAbility>) : ProfileAccountModel
+        override var abilities: List<AccountAbility>,
+        override val contactEmail: String?,
+        override val numberOfCommunities: Int?,
+        override val numberOfConnections: Int?,
+        override val numberOfDisconnected: Int?,
+        override val numberOfRecommendations: Int?,
+        override val numberOfRequested: Int?,
+        override val numberOfSent: Int?,
+        override val numberOfUnreadChats: Int?,
+        override val numberOfUnreadEvents: Int?,
+        override val numberOfUnreadNeeds: Int?,
+        override val numberOfUnreadNotifications: Int?,
+        override val numberOfUnreadResponses: Int?,
+        override val visiblePoints: Int
+        ) : ProfileAccountModel

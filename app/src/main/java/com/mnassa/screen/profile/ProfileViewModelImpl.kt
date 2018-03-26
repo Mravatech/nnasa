@@ -9,13 +9,12 @@ import com.mnassa.domain.interactor.OtherProfileInteractor
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
+import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -31,36 +30,21 @@ class ProfileViewModelImpl(
         private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
-    override val allConnectionsCountChannel: BroadcastChannel<Int> = BroadcastChannel(10)
-    override val profileChannel: BroadcastChannel<ShortAccountModel> = BroadcastChannel(10)
+    override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
     override val tagChannel: BroadcastChannel<List<TagModel>> = BroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        ShortAccountModel
-//        handleException {//todo remove
-//            delay(1000)
-////                val v = tagInteractor.()
-//                val x = mutableListOf<TagModel>()
-//                for(z in 0..10){
-//                    x.add(TagModelImpl("bla $z", "bla $z", "bla $z"))
-//                }
-//                tagChannel.send(x)
-//
-//        }
         handleException {
             withProgressSuspend {
-                val v = profileInteractor.getPrifileByAccountId("-L7iL1VRfulD0PIQBT7V"//"-L8CtC3Vst4AcfsP67lf"-L7iL1VRfulD0PIQBT7V
+                val profileAccountModel = profileInteractor.getPrifileByAccountId("-L7iL1VRfulD0PIQBT7V"//"-L8CtC3Vst4AcfsP67lf"-L7iL1VRfulD0PIQBT7V
                 )
-                Timber.i(v.toString())
-                if (v != null)
-                    profileChannel.send(v)
-            }
-        }
-        handleException {
-            connectionsInteractor.getConnectedConnections().consumeEach {
-                allConnectionsCountChannel.send(it.size)
+                Timber.i(profileAccountModel.toString())
+                if (profileAccountModel != null) {
+                    val profile = ProfileModel(profileAccountModel, null, null)
+                    profileChannel.send(profile)
+                }
+
             }
         }
     }
