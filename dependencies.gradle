@@ -216,7 +216,7 @@ ext.deps = deps
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ext {
-    endpointRrod = 'https://release.com'
+    endpointProd = 'https://release.com'
     endpointPreProd = 'https://us-central1-mnassa4dev.cloudfunctions.net/'
     endpointDev = 'https://us-central1-fir-test-b7667.cloudfunctions.net/'
 }

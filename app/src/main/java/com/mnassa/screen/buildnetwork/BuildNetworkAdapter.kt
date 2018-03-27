@@ -1,5 +1,6 @@
 package com.mnassa.screen.buildnetwork
 
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,10 +26,6 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
         set(value) {
             selectedAccountsInternal.clear()
             selectedAccountsInternal.addAll(value)
-
-            val selectedAccountsCopy = selectedAccountsInternal.toList()
-            selectedAccountsInternal.clear()
-            selectedAccountsInternal.addAll(selectedAccountsCopy)
             onSelectedAccountsChangedListener(selectedAccountsInternal)
 
             notifyDataSetChanged()
@@ -38,8 +35,8 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
         return InviteViewHolder.newInstance(parent, this, selectedAccountsInternal)
     }
 
-    override fun onClick(v: View) {
-        val viewHolder = v.tag as? InviteViewHolder ?: return
+    override fun onClick(view: View) {
+        val viewHolder = view.tag as? InviteViewHolder ?: return
         val position = viewHolder.adapterPosition
 
         if (position >= 0) {

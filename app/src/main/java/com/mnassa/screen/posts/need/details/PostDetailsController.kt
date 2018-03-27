@@ -23,15 +23,13 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.CommentModel
-import com.mnassa.domain.model.Post
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
+import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.comment_panel.view.*
@@ -45,7 +43,9 @@ import timber.log.Timber
 /**
  * Created by Peter on 3/19/2018.
  */
-class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args), SharingOptionsController.OnSharingOptionsResult {
+class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args),
+        SharingOptionsController.OnSharingOptionsResult,
+        RecommendController.OnRecommendPostResult {
     override val layoutId: Int = R.layout.controller_post_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: PostDetailsViewModel by injector.with(postId).instance()
@@ -68,6 +68,8 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 }
             }
         }
+    override var selectedAccounts: List<ShortAccountModel> = emptyList()
+        set(value) {}
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -90,12 +92,9 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             }
             btnCommentPost.isEnabled = etCommentText.text.isNotEmpty()
             etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
-            etCommentText.addTextChangedListener(SimpleTextWatcher {
-                btnCommentPost.isEnabled = it.isNotBlank()
-            })
-            ivReplyCancel.setOnClickListener {
-                replyTo = null
-            }
+            etCommentText.addTextChangedListener(SimpleTextWatcher { btnCommentPost.isEnabled = it.isNotBlank() })
+            tvCommentRecommend.setOnClickListener { headerLayout.invoke { btnRecommend.performClick() } }
+            ivReplyCancel.setOnClickListener { replyTo = null }
         }
 
         headerLayout.invoke {
@@ -114,6 +113,22 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         launchCoroutineUI { viewModel.postTagsChannel.consumeEach { setTags(it) } }
 
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
+
+        launchCoroutineUI {
+            viewModel.canReadCommentsChannel.consumeEach { canReadComments ->
+                if (!canReadComments) {
+                    commentsAdapter.isLoadingEnabled = false
+                    commentsAdapter.clear()
+                    headerLayout.invoke { it.tvCommentsCount.visibility = View.GONE }
+                }
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.canWriteCommentsChannel.consumeEach { canWriteComments ->
+                view.commentPanel.visibility = if (canWriteComments) View.VISIBLE else View.GONE
+            }
+        }
 
         commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
@@ -150,9 +165,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     }
 
     private fun showMyPostMenu(view: View, post: Post) {
-        //Creating the instance of PopupMenu
         val popup = PopupMenu(view.context, view)
-        //Inflating the Popup using xml file
         popup.menuInflater.inflate(R.menu.post_edit, popup.menu)
         popup.menu.findItem(R.id.action_post_edit).title = fromDictionary(R.string.need_action_edit)
         popup.menu.findItem(R.id.action_post_delete).title = fromDictionary(R.string.need_action_delete)
@@ -276,11 +289,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 }
 
                 btnRecommend.text = recommendWithCount
-
-                btnRecommend.setOnClickListener {
-                    Toast.makeText(context, "RECOMMEND!", Toast.LENGTH_SHORT).show()
-                }
-
+                btnRecommend.setOnClickListener { openRecommendScreen(post) }
                 tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
             }
         }
@@ -313,6 +322,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
     private fun openSharingOptionsScreen() {
         val controller = SharingOptionsController.newInstance()
+        controller.targetController = this
+        open(controller)
+    }
+
+    private fun openRecommendScreen(post: Post) {
+        val controller = RecommendController.newInstance(post.author.formattedName, post.autoSuggest.accountIds)
         controller.targetController = this
         open(controller)
     }

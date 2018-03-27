@@ -10,11 +10,10 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
-import com.mnassa.data.network.bean.retrofit.request.RemovePostRequest
 import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
-import com.mnassa.data.network.exception.ExceptionHandler
-import com.mnassa.data.network.exception.handleException
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
 import com.mnassa.domain.model.ListItemEvent

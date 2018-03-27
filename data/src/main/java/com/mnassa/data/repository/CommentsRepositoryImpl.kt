@@ -6,8 +6,8 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseCommentsApi
 import com.mnassa.data.network.bean.retrofit.request.CreateCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.GetCommentsRequest
-import com.mnassa.data.network.exception.ExceptionHandler
-import com.mnassa.data.network.exception.handleException
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.repository.CommentsRepository
 

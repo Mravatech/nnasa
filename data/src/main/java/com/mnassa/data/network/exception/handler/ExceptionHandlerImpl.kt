@@ -1,4 +1,4 @@
-package com.mnassa.data.network.exception
+package com.mnassa.data.network.exception.handler
 
 import com.google.firebase.FirebaseException
 
@@ -11,7 +11,6 @@ class ExceptionHandlerImpl(
 
     private val firebaseExceptionHandler by lazy(firebaseExceptionHandlerLazy)
     private val networkExceptionHandler by lazy(networkExceptionHandlerLazy)
-
 
     override fun handle(throwable: Throwable): Throwable {
         return if (throwable is FirebaseException) firebaseExceptionHandler.handle(throwable) else networkExceptionHandler.handle(throwable)

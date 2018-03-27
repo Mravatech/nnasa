@@ -68,6 +68,13 @@
     <string name="posts_comment_edit">_android_post_comment_edit</string>
     <string name="posts_comment_delete">_android_post_comment_delete</string>
 
+    <!-- recommend -->
+    <string name="posts_recommend_title">_postProfile_navTitle</string>
+    <string name="posts_recommend_best_matches">_accountsSelector_bestSuggest_title</string>
+    <string name="posts_recommend_other_connections">_android_post_recommend_other_connections</string>
+    <string name="posts_recommend_subtitle">_suggestionFromNewsfeed_startRecommendation</string>
+    <string name="posts_recommend_button">_post_details_recommend</string>
+
     <!-- create need -->
     <string name="need_create_title">_posts_header_iNeed</string>
     <string name="need_create_prefix">_post_type_need_Info</string>

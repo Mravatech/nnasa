@@ -1,4 +1,4 @@
-package com.mnassa.data.network.exception
+package com.mnassa.data.network.exception.handler
 
 /**
  * Created by Peter on 26.02.2018.

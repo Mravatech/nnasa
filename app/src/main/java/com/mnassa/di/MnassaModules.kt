@@ -13,7 +13,7 @@ import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
-import com.mnassa.data.network.exception.*
+import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.dialog.DialogHelper
@@ -66,6 +66,8 @@ import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
 import com.mnassa.screen.posts.need.details.PostDetailsViewModel
 import com.mnassa.screen.posts.need.details.PostDetailsViewModelImpl
+import com.mnassa.screen.posts.need.recommend.RecommendViewModel
+import com.mnassa.screen.posts.need.recommend.RecommendViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
@@ -119,6 +121,8 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
+    bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
+
 }
 
 private val convertersModule = Kodein.Module {
@@ -154,7 +158,7 @@ private val repositoryModule = Kodein.Module {
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), instance()) }
+    bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -174,6 +178,8 @@ private val interactorModule = Kodein.Module {
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
 }
 
+private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
+
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
     bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
@@ -189,8 +195,10 @@ private val networkModule = Kodein.Module {
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
+    bind<NetworkExceptionHandler>(COMMENTS_EXCEPTION_HANDLER) with singleton { CommentsExceptionHandler(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
     bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl({ instance() }, { instance() }) }
+    bind<ExceptionHandler>(COMMENTS_EXCEPTION_HANDLER) with singleton { ExceptionHandlerImpl({ instance() }, { instance(COMMENTS_EXCEPTION_HANDLER) }) }
 }
 
 private inline fun <reified T : Any> Kodein.Builder.bindRetrofitApi() {

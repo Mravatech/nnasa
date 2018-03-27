@@ -27,7 +27,9 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        require(targetController is OnSharingOptionsResult)
+        require(targetController is OnSharingOptionsResult) {
+            "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
+        }
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.sharing_options_button)) {

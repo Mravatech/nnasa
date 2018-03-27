@@ -1,4 +1,4 @@
-package com.mnassa.data.network.exception
+package com.mnassa.data.network.exception.handler
 
 import android.content.Context
 import com.google.gson.Gson
@@ -17,7 +17,7 @@ import java.nio.charset.Charset
 /**
  * Created by Peter on 26.02.2018.
  */
-class NetworkExceptionHandlerImpl(private val gson: Gson, private val context: Context) : NetworkExceptionHandler {
+open class NetworkExceptionHandlerImpl(private val gson: Gson, private val context: Context) : NetworkExceptionHandler {
 
     private val networkDisabledMessage by lazy { context.getString(R.string._android_no_internet_connection_INFO) }
     private val unknownErrorMessage by lazy { context.getString(R.string._android_error_dialog_title_something_went_wrong_INFO) }

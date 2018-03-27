@@ -1,10 +1,10 @@
 package com.mnassa.data.network.api
 
-import com.mnassa.data.network.bean.retrofit.request.*
+import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
+import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
+import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.bean.retrofit.response.CreatePostResponse
-import com.mnassa.data.network.bean.retrofit.response.GetCommentsResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
-import com.mnassa.data.network.bean.retrofit.response.RepostPostResponse
 import kotlinx.coroutines.experimental.Deferred
 import retrofit2.http.*
 

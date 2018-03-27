@@ -10,6 +10,7 @@
         <item name="menu_labels_singleLine">true</item>
         <item name="menu_labels_ellipsize">end</item>
         <item name="menu_labels_position">left</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
     <style name="Fab.Item">
         <item name="android:layout_width">wrap_content</item>

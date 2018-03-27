@@ -18,6 +18,8 @@ interface PostDetailsViewModel : MnassaViewModel {
     val finishScreenChannel: BroadcastChannel<Unit>
     val scrollToChannel: BroadcastChannel<CommentModel>
     val commentsChannel: BroadcastChannel<List<CommentModel>>
+    val canReadCommentsChannel: BroadcastChannel<Boolean>
+    val canWriteCommentsChannel: BroadcastChannel<Boolean>
 
     fun delete()
     fun createComment(text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)

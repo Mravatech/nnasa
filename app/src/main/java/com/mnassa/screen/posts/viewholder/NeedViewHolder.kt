@@ -34,12 +34,12 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             rlClickableRoot.setOnClickListener(onClickListener)
             rlClickableRoot.tag = this@NeedViewHolder
 
-            btnAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.aids.isNotEmpty()) View.VISIBLE else View.GONE
+            btnAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
             btnAction.text = when {
-                item.autoSuggest.youCanHelp && item.autoSuggest.aids.isNotEmpty() ->
-                    fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.aids.size)
+                item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
+                    fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
                 item.autoSuggest.youCanHelp -> fromDictionary(R.string.need_item_btn_you_can_help)
-                item.autoSuggest.aids.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.aids.size)
+                item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
                 else -> null
             }
 

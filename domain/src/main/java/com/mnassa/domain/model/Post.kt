@@ -38,13 +38,13 @@ interface PostCounters : Serializable {
 interface PostAutoSuggest: Serializable {
     val total: Int
     val youCanHelp: Boolean
-    val aids: List<String>
+    val accountIds: List<String>
 
     companion object {
         val EMPTY = object: PostAutoSuggest {
             override val total: Int = 0
             override val youCanHelp: Boolean = false
-            override val aids: List<String> = emptyList()
+            override val accountIds: List<String> = emptyList()
         }
     }
 }

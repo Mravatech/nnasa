@@ -47,7 +47,7 @@ internal data class PostAutoSuggest(
         @SerializedName("aids") var aidsInternal: List<String>?
 ) : com.mnassa.domain.model.PostAutoSuggest {
 
-    override val aids: List<String>
+    override val accountIds: List<String>
         get() = aidsInternal ?: emptyList()
 }
 

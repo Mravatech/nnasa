@@ -1,4 +1,4 @@
-package com.mnassa.data.network.exception
+package com.mnassa.data.network.exception.handler
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException

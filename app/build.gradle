@@ -107,7 +107,7 @@ android {
     applicationVariants.all { variant ->
         switch (variant.getName()) {
             case 'release':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointRrod']}\""
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointProd']}\""
                 break
             case 'stage':
                 variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreProd']}\""
