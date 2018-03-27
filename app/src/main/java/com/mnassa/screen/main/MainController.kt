@@ -20,6 +20,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
+import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
@@ -71,7 +72,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                     )
             )
 
-            bnMain.isBehaviorTranslationEnabled = false
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
                 val page = adapter.getRouter(position)?.getControllerWithTag(formatTabControllerTag(position))
@@ -81,8 +81,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
                 true
             }
-            bnMain.isBehaviorTranslationEnabled = true
-
             navigationView.setNavigationItemSelectedListener(this@MainController)
         }
 
@@ -131,6 +129,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
+            R.id.nav_all_connections -> open(AllConnectionsController.newInstance())
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
@@ -148,8 +147,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             true
         } else {
             view.bnMain?.visibility = View.VISIBLE
-            view.bnMain?.isEnabled = true
-//            view.bnMain?.restoreBottomNavigation()
             super.handleBack()
         }
     }
@@ -162,9 +159,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
     }
 
     override fun open(self: Controller, controller: Controller) {
-//        view?.bnMain?.hideBottomNavigation()
-        view?.bnMain?.visibility = View.INVISIBLE
-        view?.bnMain?.isEnabled = false
+        view?.bnMain?.visibility = View.GONE
         mnassaRouter.open(self, controller)
 
     }

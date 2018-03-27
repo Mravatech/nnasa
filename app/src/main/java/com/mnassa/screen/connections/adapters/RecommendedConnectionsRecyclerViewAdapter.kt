@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.domain.model.mainAbility
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.formattedFromEvent
+import com.mnassa.extensions.formattedPosition
+import com.mnassa.extensions.invisibleIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connections_recommended.view.*
@@ -74,7 +76,13 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
             with(itemView) {
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
-                tvPosition.text = item.mainAbility(fromDictionary(R.string.invite_at_placeholder))
+
+                tvPosition.text = item.formattedPosition
+                tvPosition.invisibleIfEmpty()
+
+                tvEventName.text = item.formattedFromEvent
+                tvEventName.invisibleIfEmpty()
+
                 btnConnect.setOnClickListener(onClickListener)
                 btnConnect.tag = this@UserViewHolder
                 btnConnect.text = fromDictionary(R.string.tab_connections_recommended_connect)

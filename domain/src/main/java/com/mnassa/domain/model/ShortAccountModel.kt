@@ -55,11 +55,3 @@ val ShortAccountModel.formattedName: String
             }
         }
     }
-
-fun ShortAccountModel.mainAbility(atPlaceholder: String): String? {
-    val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return null
-    return when {
-        ability.name.isNullOrBlank() && ability.place.isNullOrBlank() ->  "${ability.name} $atPlaceholder ${ability.place}"
-        else -> ability.name ?: ability.place
-    }
-}

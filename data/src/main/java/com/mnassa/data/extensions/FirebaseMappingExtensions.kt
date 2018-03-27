@@ -1,22 +1,26 @@
 package com.mnassa.data.extensions
 
 import com.google.firebase.database.DataSnapshot
+import com.google.gson.Gson
 import com.mnassa.domain.model.HasId
 
 /**
  * Created by Peter on 2/26/2018.
  */
 //////////////////////////////////////////// MAPPING ///////////////////////////////////////////////
-internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?): T? {
-    if (dataSnapshot is T) return dataSnapshot
+private val gson = Gson()
 
-    return dataSnapshot?.run {
-        val res = getValue(T::class.java)
-        if (res is HasId) {
-            res.id = key
-        }
-        res
+internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?): T? {
+    if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
+    if (dataSnapshot == null) return null
+
+    val jsonElement = gson.toJsonTree(dataSnapshot.value)
+    val result = gson.fromJson(jsonElement, T::class.java)
+
+    if (result is HasId) {
+        result.id = dataSnapshot.key
     }
+    return result
 }
 
 internal inline fun <reified T : Any> DataSnapshot?.mapSingle(): T? {

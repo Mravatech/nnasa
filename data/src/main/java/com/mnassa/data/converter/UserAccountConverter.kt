@@ -61,7 +61,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 language = null,
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
-                abilities = convertersContext.convertCollection(input.abilitiesInternal, AccountAbility::class.java)
+                abilities = convertersContext.convertCollection(input.abilitiesInternal ?: emptyList(), AccountAbility::class.java)
         )
     }
 
@@ -139,7 +139,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 language = null,
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
-                abilities = convertersContext.convertCollection(input.abilitiesInternal, AccountAbility::class.java),
+                abilities = convertersContext.convertCollection(input.abilitiesInternal ?: emptyList(), AccountAbility::class.java),
                 declinedAt = Date(input.declinedAt)
         )
     }

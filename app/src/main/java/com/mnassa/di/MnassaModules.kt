@@ -80,6 +80,8 @@ import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
 import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
+import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
+import com.mnassa.screen.connections.allconnections.AllConnectionsViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.needs.NeedsViewModel
@@ -128,6 +130,7 @@ private val viewModelsModule = Kodein.Module {
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
+    bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
 }

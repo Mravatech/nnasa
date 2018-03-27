@@ -30,12 +30,6 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
             rvRecommendedConnections.adapter = adapter
 
             adapter.onConnectClickListener = { viewModel.connect(it) }
-            adapter.onDeclineClickListener = {
-                Toast.makeText(
-                        context,
-                        "Not possible fro recommended connections! Wrong UI!",
-                        Toast.LENGTH_SHORT).show()
-            }
         }
 
         adapter.isLoadingEnabled = true
