@@ -7,6 +7,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
+import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -84,6 +85,14 @@ class PostDetailsViewModelImpl(private val postId: String,
                 commentsInteractor.deleteComment(commentModel.id)
                 //TODO: remove this when comments counter will be fixed on the server side
                 loadComments()
+            }
+        }
+    }
+
+    override fun repost(sharingOptions: SharingOptionsController.ShareToOptions) {
+        handleException {
+            withProgressSuspend {
+                postsInteractor.repostPost(postId, null, sharingOptions.selectedConnections)
             }
         }
     }

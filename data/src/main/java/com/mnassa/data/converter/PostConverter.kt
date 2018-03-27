@@ -10,6 +10,7 @@ import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.PostData
+import com.mnassa.data.network.bean.retrofit.response.RepostData
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PRIVATE
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_WORLD
@@ -35,9 +36,17 @@ class PostConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertPostPrivacyType)
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertPostData)
+        convertersContext.registerConverter(this::convertRePostData)
     }
 
     private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostImpl {
+        val post = input.post
+        val id = input.id
+        post.id = id
+        return converter.convert(post)
+    }
+
+    private fun convertRePostData(input: RepostData, token: Any?, converter: ConvertersContext): PostImpl {
         val post = input.post
         val id = input.id
         post.id = id

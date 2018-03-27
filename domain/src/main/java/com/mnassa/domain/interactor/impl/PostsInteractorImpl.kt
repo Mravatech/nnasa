@@ -52,8 +52,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             val itemsToSend = viewedItemIdsBuffer.toList()
             viewedItemIdsBuffer.removeAll(itemsToSend)
             try {
-                postsRepository.sendViewed(itemsToSend)
-                sentViewedItemIds.addAll(itemsToSend)
+                if (itemsToSend.isNotEmpty()) {
+                    postsRepository.sendViewed(itemsToSend)
+                    sentViewedItemIds.addAll(itemsToSend)
+                }
                 lastItemsSentTime.set(System.currentTimeMillis())
             } catch (e: Exception) {
                 //ignore all exceptions here
@@ -93,6 +95,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun removePost(postId: String) {
         postsRepository.removePost(postId)
+    }
+
+    override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): Post {
+        return postsRepository.repostPost(postId, text, privacyConnections)
     }
 
     private companion object {

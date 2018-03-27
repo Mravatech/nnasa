@@ -16,5 +16,6 @@ interface PostsRepository {
     suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>): Post
     suspend fun updateNeed(postId: String, text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>)
     suspend fun removePost(postId: String)
+    suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): Post
 }
 

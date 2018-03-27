@@ -2,6 +2,7 @@ package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.CreateCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.GetCommentsRequest
+import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
 import com.mnassa.data.network.bean.retrofit.response.CreateCommentResponse
 import com.mnassa.data.network.bean.retrofit.response.GetCommentsResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse

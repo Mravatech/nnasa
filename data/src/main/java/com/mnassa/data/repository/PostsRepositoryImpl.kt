@@ -11,6 +11,7 @@ import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
 import com.mnassa.data.network.bean.retrofit.request.RemovePostRequest
+import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
@@ -96,5 +97,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun removePost(postId: String) {
         postApi.deletePost(postId).handleException(exceptionHandler)
+    }
+
+    override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): Post {
+        return postApi.repostComment(RepostCommentRequest(postId, text?.takeIf { it.isNotBlank() }, privacyConnections.takeIf { it.isNotEmpty() }))
+                .handleException(exceptionHandler)
+                .data
+                .run { converter.convert(this) }
     }
 }

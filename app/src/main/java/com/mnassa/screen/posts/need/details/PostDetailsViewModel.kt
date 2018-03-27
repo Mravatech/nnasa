@@ -5,6 +5,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.Post
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
+import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
@@ -21,4 +22,5 @@ interface PostDetailsViewModel : MnassaViewModel {
     fun delete()
     fun createComment(text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)
     fun deleteComment(commentModel: CommentModel)
+    fun repost(sharingOptions: SharingOptionsController.ShareToOptions)
 }

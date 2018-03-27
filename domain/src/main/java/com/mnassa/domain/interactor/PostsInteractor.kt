@@ -34,4 +34,5 @@ interface PostsInteractor {
 
     suspend fun removePost(postId: String)
 
+    suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): Post
 }

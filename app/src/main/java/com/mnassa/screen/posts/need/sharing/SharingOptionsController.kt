@@ -27,6 +27,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        require(targetController is OnSharingOptionsResult)
+
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.sharing_options_button)) {
                 resultListener.sharingOptions = getSelection()
@@ -93,7 +95,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     private fun getSelection(): ShareToOptions {
-        with(view!!) {
+        with(requireNotNull(view)) {
             return ShareToOptions(
                     isPromoted = rbPromotePost.isChecked,
                     isMyNewsFeedSelected = rbMyNewsFeed.isChecked,

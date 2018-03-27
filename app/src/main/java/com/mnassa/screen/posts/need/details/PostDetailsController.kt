@@ -23,12 +23,16 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
+import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.comment_panel.view.*
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
@@ -41,10 +45,13 @@ import timber.log.Timber
 /**
  * Created by Peter on 3/19/2018.
  */
-class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args) {
+class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args), SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_post_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: PostDetailsViewModel by injector.with(postId).instance()
+    override var sharingOptions: SharingOptionsController.ShareToOptions
+        get() = SharingOptionsController.ShareToOptions.EMPTY
+        set(value) = viewModel.repost(value)
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
     private var headerLayout = StateExecutor<View?, View>(null) { it != null }
@@ -52,7 +59,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         set(value) {
             field = value
             launchCoroutineUI {
-                with (getViewSuspend()) {
+                with(getViewSuspend()) {
                     replyPanel.visibility = if (value != null) View.VISIBLE else View.GONE
                     if (value == null) return@launchCoroutineUI
                     replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
@@ -169,7 +176,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_post_repost -> Toast.makeText(view.context, "Repost post", Toast.LENGTH_SHORT).show()
+                R.id.action_post_repost -> openSharingOptionsScreen()
                 R.id.action_post_report -> Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show()
             }
             true
@@ -253,9 +260,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
                 //views count
                 tvViewsCount.text = fromDictionary(R.string.need_views_count).format(post.counters.views)
-                ivRepost.setOnClickListener {
-                    Toast.makeText(context, "REPOST!", Toast.LENGTH_SHORT).show()
-                }
+                ivRepost.setOnClickListener { openSharingOptionsScreen() }
                 tvRepostsCount.text = post.counters.reposts.toString()
 
                 btnComment.text = fromDictionary(R.string.need_comment_button)
@@ -304,6 +309,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 tagsAdapter.set(tags)
             }
         }
+    }
+
+    private fun openSharingOptionsScreen() {
+        val controller = SharingOptionsController.newInstance()
+        controller.targetController = this
+        open(controller)
     }
 
     class RegistrationAdapter(private val images: List<String>, private val onClickListener: (String) -> Unit) : PagerAdapter() {
