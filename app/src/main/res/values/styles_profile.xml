@@ -6,9 +6,12 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ProfileHeaderItem"></style>
-
-    <style name="Profile"></style>
+    <style name="ProfileHeaderItem">
+    </style>
+    <style name="Profile">
+    </style>
+    <style name="EditProfile">
+    </style>
 
     <style name="ProfileHeaderItem.MainContainer">
         <item name="android:layout_width">match_parent</item>
@@ -102,6 +105,23 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/profile_toolbar_title_text_size</item>
     </style>
+
+    <style name="EditProfile.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="errorEnabled">true</item>
+    </style>
+
+    <style name="EditProfile.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
+    </style>
+
 
     <dimen name="profile_main_image_height">240dp</dimen>
     <dimen name="profile_toolbar_child_padding">16dp</dimen>

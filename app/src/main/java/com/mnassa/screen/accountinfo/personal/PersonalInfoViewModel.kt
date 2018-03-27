@@ -23,7 +23,8 @@ interface PersonalInfoViewModel : MnassaViewModel {
                        showContactEmail: Boolean?,
                        birthday: Long?,
                        showContactPhone: Boolean?,
-                       contactEmail: String
+                       contactEmail: String,
+                       isMale: Boolean
     )
 
     sealed class OpenScreenCommand {

@@ -10,6 +10,8 @@ interface ProfileAccountModel : ShortAccountModel {
     val createdAt: Long?
     val createdAtDate: String?
     val contactEmail: String?
+    val showContactEmail: Boolean?
+    val showContactPhone: Boolean?
     val interests: List<String>?
     val offers: List<String>?
     val points: Int?
@@ -28,4 +30,5 @@ interface ProfileAccountModel : ShortAccountModel {
     val numberOfUnreadResponses: Int?
     val visiblePoints: Int
     val location: LocationModel?
+    val gender: Gender
 }

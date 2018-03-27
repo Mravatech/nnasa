@@ -19,6 +19,8 @@ import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.FlowLayout
 import com.mnassa.widget.SimpleChipView
 import kotlinx.android.synthetic.main.item_header_profile_view.view.*
+import java.text.DateFormatSymbols
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,7 +52,7 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
                 tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
                 setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vTopProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
                 setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, vTopProfileEmail, fromDictionary(R.string.profile_email), item.profile.contactEmail)
-                setCheckedTexts(tvLabelDateOfBirth, tvDateOfBirth, vTopProfileDateOfBirth, fromDictionary(R.string.profile_date_of_birth), item.profile.createdAtDate)
+                setCheckedTexts(tvLabelDateOfBirth, tvDateOfBirth, vTopProfileDateOfBirth, fromDictionary(R.string.profile_date_of_birth), getDateByTimeMillis(item.profile.createdAt))
                 setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, null, item.offers, fromDictionary(R.string.reg_account_can_help_with))
                 setCheckedTags(tvProfileInterestedIn, chipProfileInterestWith, vTopProfileInterestedIn, item.interests, fromDictionary(R.string.reg_account_interested_in))
                 tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
@@ -109,6 +111,12 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
                 tvLabel.visibility = View.GONE
                 tvText.visibility = View.GONE
             }
+        }
+
+        private fun getDateByTimeMillis(createdAt: Long?): String {
+            val cal = Calendar.getInstance()
+            cal.timeInMillis = createdAt?: return ""
+            return "${DateFormatSymbols().months[cal.get(Calendar.MONTH)]} ${cal.get(Calendar.DAY_OF_MONTH)}, ${cal.get(Calendar.YEAR)}"
         }
 
         companion object {

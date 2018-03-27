@@ -106,7 +106,8 @@ class UserRepositoryImpl(
                 account.avatar,
                 account.personalInfo?.firstName,
                 account.showContactPhone,
-                account.contactEmail
+                account.contactEmail,
+                account.gender.name.toLowerCase()
         )).handleException(exceptionHandler)
     }
 

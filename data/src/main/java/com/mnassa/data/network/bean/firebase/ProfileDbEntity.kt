@@ -16,6 +16,10 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
     var createdAtDate: String?
     @SerializedName("contactEmail")
     var contactEmail: String?
+    @SerializedName("showContactEmail")
+    var showContactEmail: Boolean?
+    @SerializedName("showContactPhone")
+    var showContactPhone: Boolean?
     @SerializedName("firebaseUserId")
     var firebaseUserId: String
     @SerializedName("interests")
@@ -54,6 +58,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
     val visiblePoints: Int
     @SerializedName("location")
     val location: LocationDbEntity?
+    @SerializedName("gender")
+    val gender: String?
 
     constructor(id: String,
                 avatar: String?,
@@ -72,6 +78,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
                 totalIncome: Int?,
                 totalOutcome: Int?,
                 contactEmail: String?,
+                showContactPhone: Boolean?,
+                showContactEmail: Boolean?,
                 numberOfCommunities: Int?,
                 numberOfConnections: Int?,
                 numberOfDisconnected: Int?,
@@ -84,8 +92,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
                 numberOfUnreadNotifications: Int?,
                 numberOfUnreadResponses: Int?,
                 visiblePoints: Int,
-                location: LocationDbEntity
-
+                location: LocationDbEntity,
+                gender: String
     ) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
         this.createdAt = createdAt
         this.createdAtDate = createdAtDate
@@ -96,6 +104,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
         this.totalIncome = totalIncome
         this.totalOutcome = totalOutcome
         this.contactEmail = contactEmail
+        this.showContactEmail = showContactEmail
+        this.showContactPhone = showContactPhone
         this.numberOfCommunities = numberOfCommunities
         this.numberOfConnections = numberOfConnections
         this.numberOfDisconnected = numberOfDisconnected
@@ -109,6 +119,7 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
         this.numberOfUnreadResponses = numberOfUnreadResponses
         this.visiblePoints = visiblePoints
         this.location = location
+        this.gender = gender
     }
 
 }

@@ -47,7 +47,8 @@ data class PersonalInfoModelImpl(
         override val showContactEmail: Boolean?,
         override val birthday: Long?,
         override val showContactPhone: Boolean?,
-        override val contactEmail: String?
+        override val contactEmail: String?,
+        override val gender: Gender
 ) : PersonalInfoModel
 
 data class PersonalAccountDiffModelImpl(override var firstName: String, override var lastName: String) : PersonalAccountDiffModel

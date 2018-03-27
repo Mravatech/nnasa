@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.net.Uri
-import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.ImageView
@@ -28,13 +27,8 @@ import timber.log.Timber
 import java.text.DateFormatSymbols
 import java.util.*
 
-
-/**
- * Created by Peter on 2/27/2018.
- */
-
-class PersonalInfoController(data: Bundle
-) : MnassaControllerImpl<PersonalInfoViewModel>(data
+class PersonalInfoController(//data: Bundle
+) : MnassaControllerImpl<PersonalInfoViewModel>(//data
 ) {
 
     override val layoutId: Int = R.layout.controller_personal_info
@@ -53,7 +47,9 @@ class PersonalInfoController(data: Bundle
         view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
-        view.etPhoneNumber.setText(accountModel.contactPhone)
+//        view.etPhoneNumber.setText(accountModel.contactPhone)
+        view.etPhoneNumber.setHideMode(false)
+        view.etYourEmail.setHideMode(false)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
         view.etDateOfBirthday.isLongClickable = false
         view.etDateOfBirthday.isFocusableInTouchMode = false
@@ -98,7 +94,8 @@ class PersonalInfoController(data: Bundle
                     view.etYourEmail.isChosen,
                     timeMillis,
                     view.etPhoneNumber.isChosen,
-                    view.etYourEmail.text.toString()
+                    view.etYourEmail.text.toString(),
+                    view.rInfoBtnMale.isChecked
             )
         }
         onActivityResult.subscribe {
@@ -155,10 +152,19 @@ class PersonalInfoController(data: Bundle
 
         const val OTHER = 4
 
-        fun newInstance(ac: ShortAccountModel): PersonalInfoController {
-            val params = Bundle()
-            params.putSerializable(EXTRA_ACCOUNT, ac)
-            return PersonalInfoController(params)
+        fun newInstance(ac: ShortAccountModel
+        ): PersonalInfoController {
+//            val params = Bundle()
+//            params.putSerializable(EXTRA_ACCOUNT, ac)
+            return PersonalInfoController(//params
+                     )
+        }
+        fun newInstance(
+        ): PersonalInfoController {
+//            val params = Bundle()
+//            params.putSerializable(EXTRA_ACCOUNT, ac)
+            return PersonalInfoController(//params
+                     )
         }
 
     }

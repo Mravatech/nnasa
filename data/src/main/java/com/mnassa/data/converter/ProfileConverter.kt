@@ -61,6 +61,7 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
             else -> throw IllegalArgumentException("Illegal account type ${input.type}")
         }
         val location: LocationModel? = input.location?.let { convertersContext.convert(input.location, LocationModel::class.java) }
+        val gender: Gender = if (input.gender == "male") Gender.MALE else Gender.FEMALE
         return ProfileAccountModelImpl(
                 createdAt = input.createdAt,
                 id = input.id,
@@ -81,6 +82,8 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
                 abilities = convertersContext.convertCollection(input.abilitiesInternal
                         ?: emptyList(), AccountAbility::class.java),
                 contactEmail = input.contactEmail,
+                showContactEmail = input.showContactEmail,
+                showContactPhone = input.showContactPhone,
                 numberOfCommunities = input.numberOfCommunities,
                 numberOfConnections = input.numberOfConnections,
                 numberOfDisconnected = input.numberOfDisconnected,
@@ -93,7 +96,8 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
                 numberOfUnreadNotifications = input.numberOfUnreadNotifications,
                 numberOfUnreadResponses = input.numberOfUnreadResponses,
                 visiblePoints = input.visiblePoints,
-                location = location
+                location = location,
+                gender = gender
         )
     }
 }

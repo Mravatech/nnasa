@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <com.mnassa.widget.MnassaToolbar
         android:id="@+id/toolbarEditProfile"
         android:layout_width="match_parent"
@@ -52,7 +51,6 @@
                     app:elevation="0dp"
                     app:fabSize="normal"
                     app:srcCompat="@drawable/ic_camera" />
-
             </RelativeLayout>
 
             <TextView
@@ -75,47 +73,37 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilProfileFirstName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
+                    style="@style/EditProfile.TextInputLayout">
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/etProfileFirstName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
+                        style="@style/EditProfile.EditText" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilProfileLastName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    style="@style/EditProfile.TextInputLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/etProfileLastName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
+                        style="@style/EditProfile.EditText"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilProfileUserName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    style="@style/EditProfile.TextInputLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/etProfileUserName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
+                        style="@style/EditProfile.EditText" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilProfileCity"
-                    style="@style/Registration.TextInputLayout">
+                    style="@style/EditProfile.TextInputLayout">
 
                     <AutoCompleteTextView
                         android:id="@+id/actvProfileCity"
-                        style="@style/Registration.EditText" />
+                        style="@style/EditProfile.EditText" />
                 </android.support.design.widget.TextInputLayout>
 
                 <com.mnassa.widget.ChipLayout
@@ -127,9 +115,7 @@
                     android:id="@+id/clInterests"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/tvProfilePersonalInfo"
@@ -153,14 +139,11 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilEditProfileBirthday"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    style="@style/EditProfile.TextInputLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/etEditProfileBirthday"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
+                        style="@style/EditProfile.EditText" />
                 </android.support.design.widget.TextInputLayout>
 
                 <TextView
@@ -193,39 +176,38 @@
                         android:layout_marginStart="56dp" />
                 </RadioGroup>
 
-                <!--todo add ability layout-->
+                <com.mnassa.widget.input.AbilitiesContainerSelectableEditText
+                    android:id="@+id/containerProfileSelectOccupation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/personal_info_abilities_container_margin_vertical"
+                    android:layout_marginTop="@dimen/personal_info_abilities_container_margin_vertical" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilEditProfilePhoneNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    style="@style/EditProfile.TextInputLayout">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.mnassa.widget.input.ClickableDrawableTextInputEditText
                         android:id="@+id/etEditProfilePhoneNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_up" />
-
+                        style="@style/EditProfile.EditText"
+                        android:drawableEnd="@drawable/ic_eye_off"
+                        android:drawablePadding="@dimen/personal_info_drawable_padding"
+                        android:inputType="number" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilEditProfileEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    style="@style/EditProfile.TextInputLayout">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.mnassa.widget.input.ClickableDrawableTextInputEditText
                         android:id="@+id/etEditProfileEmail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_up" />
-
+                        style="@style/EditProfile.EditText"
+                        android:drawableEnd="@drawable/ic_eye_off"
+                        android:drawablePadding="@dimen/personal_info_drawable_padding"
+                        android:imeOptions="actionDone"
+                        android:inputType="textEmailAddress" />
                 </android.support.design.widget.TextInputLayout>
-
             </LinearLayout>
-
         </LinearLayout>
-
-
     </android.support.v4.widget.NestedScrollView>
-
 </LinearLayout>

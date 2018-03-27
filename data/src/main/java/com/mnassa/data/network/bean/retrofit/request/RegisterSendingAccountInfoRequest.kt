@@ -35,7 +35,9 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("showContactPhone")
         val showContactPhone: Boolean? = false,
         @SerializedName("contactEmail")
-        val contactEmail: String?
+        val contactEmail: String?,
+        @SerializedName("gender")
+        val gender: String
 )
 
 data class Ability(

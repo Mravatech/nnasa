@@ -32,6 +32,7 @@ interface PersonalInfoModel : ShortAccountModel {
     val birthday: Long?
     val showContactPhone: Boolean?
     val contactEmail: String?
+    val gender: Gender
 }
 
 interface PersonalAccountDiffModel : Serializable {
@@ -45,6 +46,10 @@ interface OrganizationAccountDiffModel : Serializable {
 
 enum class AccountType {
     PERSONAL, ORGANIZATION
+}
+
+enum class Gender {
+    MALE, FEMALE
 }
 
 val ShortAccountModel.formattedName: String

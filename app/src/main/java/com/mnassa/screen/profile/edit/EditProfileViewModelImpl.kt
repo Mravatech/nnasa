@@ -1,9 +1,11 @@
 package com.mnassa.screen.profile.edit
 
 import android.net.Uri
+import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
+import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -18,8 +20,8 @@ import timber.log.Timber
  */
 class EditProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
-        private val storageInteractor: StorageInteractor) : MnassaViewModelImpl(), EditProfileViewModel {
-
+        private val storageInteractor: StorageInteractor,
+        private val placeFinderInteractor: PlaceFinderInteractor) : MnassaViewModelImpl(), EditProfileViewModel {
 
     override val tagChannel: BroadcastChannel<EditProfileViewModel.TagCommand> = BroadcastChannel(10)
     override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
@@ -49,5 +51,10 @@ class EditProfileViewModelImpl(
 
     override suspend fun search(search: String): List<TagModel> {
         return tagInteractor.search(search)
+    }
+
+
+    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
+        return placeFinderInteractor.getReqieredPlaces(constraint)
     }
 }

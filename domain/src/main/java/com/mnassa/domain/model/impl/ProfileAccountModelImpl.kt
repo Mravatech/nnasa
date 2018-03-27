@@ -26,6 +26,8 @@ data class ProfileAccountModelImpl(
         override var organizationInfo: OrganizationAccountDiffModel?,
         override var abilities: List<AccountAbility>,
         override val contactEmail: String?,
+        override val showContactEmail: Boolean?,
+        override val showContactPhone: Boolean?,
         override val numberOfCommunities: Int?,
         override val numberOfConnections: Int?,
         override val numberOfDisconnected: Int?,
@@ -38,5 +40,6 @@ data class ProfileAccountModelImpl(
         override val numberOfUnreadNotifications: Int?,
         override val numberOfUnreadResponses: Int?,
         override val visiblePoints: Int,
-        override val location: LocationModel?
+        override val location: LocationModel?,
+        override val gender: Gender
 ) : ProfileAccountModel

@@ -8,6 +8,7 @@ import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.FOLDER_AVATARS
+import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.PersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -60,7 +61,8 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                                 showContactEmail: Boolean?,
                                 birthday: Long?,
                                 showContactPhone: Boolean?,
-                                contactEmail: String
+                                contactEmail: String,
+                                isMale: Boolean
     ) {
         processAccountJob?.cancel()
         processAccountJob = handleException {
@@ -80,7 +82,8 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                         showContactEmail,
                         birthday,
                         showContactPhone,
-                        contactEmail.takeIf { it.isNotBlank() }
+                        contactEmail.takeIf { it.isNotBlank() },
+                        if (isMale) Gender.MALE else Gender.FEMALE
                 )
                 userProfileInteractor.processAccount(personalInfo)
                 openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
