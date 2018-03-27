@@ -2,7 +2,6 @@ package com.mnassa.screen.base.adapter
 
 import android.support.v7.util.SortedList
 import android.support.v7.widget.util.SortedListAdapterCallback
-import timber.log.Timber
 
 /**
  * Created by Peter on 3/7/2018.

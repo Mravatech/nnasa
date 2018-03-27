@@ -111,16 +111,8 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.commentsChannel.consumeEach {
-                //TODO: bufferization
                 commentsAdapter.isLoadingEnabled = false
-                when (it) {
-                    is ListItemEvent.Added -> commentsAdapter.dataStorage.add(it.item)
-                    is ListItemEvent.Changed -> commentsAdapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> commentsAdapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> commentsAdapter.dataStorage.remove(it.item)
-                    is ListItemEvent.Cleared -> commentsAdapter.dataStorage.clear()
-
-                }
+                commentsAdapter.set(it)
             }
         }
 
@@ -199,7 +191,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             deleteSpan.setSpan(ForegroundColorSpan(deleteTextColor), 0, deleteSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             popup.menu.findItem(R.id.action_comment_delete).title = deleteSpan
 
-            popup.setOnMenuItemClickListener { item -> 
+            popup.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_comment_edit -> Toast.makeText(view.context, "Edit comment", Toast.LENGTH_SHORT).show()
                     R.id.action_comment_delete -> viewModel.deleteComment(commentModel)

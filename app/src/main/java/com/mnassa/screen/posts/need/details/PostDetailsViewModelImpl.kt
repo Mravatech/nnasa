@@ -23,7 +23,7 @@ class PostDetailsViewModelImpl(private val postId: String,
     override val postChannel: ConflatedBroadcastChannel<Post> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
-    override val commentsChannel: ArrayBroadcastChannel<ListItemEvent<CommentModel>> = ArrayBroadcastChannel(10)
+    override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
     override val scrollToChannel: ArrayBroadcastChannel<CommentModel> = ArrayBroadcastChannel(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,12 +42,7 @@ class PostDetailsViewModelImpl(private val postId: String,
 
     private fun loadComments() {
         handleException {
-            val comments = commentsInteractor.getCommentsByPost(postId)
-            Timber.i("COMMENTS: $comments")
-            if (comments.isEmpty()) {
-                commentsChannel.send(ListItemEvent.Cleared())
-            }
-            comments.forEach { commentsChannel.send(ListItemEvent.Added(it)) }
+            commentsChannel.send(commentsInteractor.getCommentsByPost(postId))
         }
     }
 
@@ -77,7 +72,7 @@ class PostDetailsViewModelImpl(private val postId: String,
                     )
                 }
 
-                commentsChannel.send(ListItemEvent.Added(createdComment))
+                commentsChannel.send((commentsChannel.valueOrNull ?: emptyList()) + createdComment)
                 scrollToChannel.send(createdComment)
             }
         }
@@ -87,7 +82,8 @@ class PostDetailsViewModelImpl(private val postId: String,
         handleException {
             withProgressSuspend {
                 commentsInteractor.deleteComment(commentModel.id)
-                commentsChannel.send(ListItemEvent.Removed(commentModel))
+                //TODO: remove this when comments counter will be fixed on the server side
+                loadComments()
             }
         }
     }
