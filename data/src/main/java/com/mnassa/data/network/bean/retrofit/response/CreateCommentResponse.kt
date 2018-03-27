@@ -7,9 +7,9 @@ import com.google.gson.annotations.SerializedName
  */
 class CreateCommentResponse : MnassaResponse() {
     @SerializedName("data")
-    internal lateinit var data: CreateCommentData
+    internal var data: CreateCommentData? = null
 }
 
 internal data class CreateCommentData(
-        @SerializedName("comment") val comment: Map<String, CommentResponseEntity>
+        @SerializedName("comment") val comment: Map<String, CommentResponseEntity>?
 )

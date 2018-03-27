@@ -82,6 +82,16 @@ class PostDetailsViewModelImpl(private val postId: String,
             }
         }
     }
+
+    override fun deleteComment(commentModel: CommentModel) {
+        handleException {
+            withProgressSuspend {
+                commentsInteractor.deleteComment(commentModel.id)
+                commentsChannel.send(ListItemEvent.Removed(commentModel))
+            }
+        }
+    }
+
     private suspend fun loadTags(tags: List<String>): List<TagModel> {
         return tags.map { asyncWorker { tagInteractor.get(it) } }.mapNotNull { it.await() }
     }

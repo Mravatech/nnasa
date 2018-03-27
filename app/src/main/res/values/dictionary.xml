@@ -65,6 +65,8 @@
     <string name="posts_comment_create">_android_post_details_create_comment_post_btn</string>
     <string name="posts_comment_placeholder">_post_details_write_comment</string>
     <string name="posts_comment_reply_to">_replyingIndicator_title</string>
+    <string name="posts_comment_edit">_android_post_comment_edit</string>
+    <string name="posts_comment_delete">_android_post_comment_delete</string>
 
     <!-- create need -->
     <string name="need_create_title">_posts_header_iNeed</string>

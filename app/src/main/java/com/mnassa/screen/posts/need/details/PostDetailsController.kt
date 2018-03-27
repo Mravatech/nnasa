@@ -1,12 +1,16 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +18,7 @@ import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
@@ -63,6 +68,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         with(view) {
             commentsAdapter.onBindHeader = { headerLayout.value = it }
             commentsAdapter.onReplyClick = { comment -> replyTo = comment }
+            commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
             rvPostDetails.adapter = commentsAdapter
             rvPostDetails.layoutManager = LinearLayoutManager(context)
             rvPostDetails.itemAnimator = object : DefaultItemAnimator() {
@@ -96,17 +102,11 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             }
         }
 
-        launchCoroutineUI {
-            viewModel.postChannel.consumeEach { setPost(it) }
-        }
+        launchCoroutineUI { viewModel.postChannel.consumeEach { setPost(it) } }
 
-        launchCoroutineUI {
-            viewModel.postTagsChannel.consumeEach { setTags(it) }
-        }
+        launchCoroutineUI { viewModel.postTagsChannel.consumeEach { setTags(it) } }
 
-        launchCoroutineUI {
-            viewModel.finishScreenChannel.consumeEach { close() }
-        }
+        launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
         commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
@@ -170,9 +170,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     }
 
     private fun showPostMenu(view: View) {
-        //Creating the instance of PopupMenu
         val popup = PopupMenu(view.context, view)
-        //Inflating the Popup using xml file
         popup.menuInflater.inflate(R.menu.post_view, popup.menu)
         popup.menu.findItem(R.id.action_post_repost).title = fromDictionary(R.string.need_action_repost)
         popup.menu.findItem(R.id.action_post_report).title = fromDictionary(R.string.need_action_report)
@@ -186,6 +184,31 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         }
 
         popup.show()
+    }
+
+    private fun showCommentMenu(view: View, commentModel: CommentModel) {
+        launchCoroutineUI {
+            if (!commentModel.isMyComment()) return@launchCoroutineUI
+
+            val popup = PopupMenu(view.context, view)
+            popup.menuInflater.inflate(R.menu.comment_edit, popup.menu)
+            popup.menu.findItem(R.id.action_comment_edit).title = fromDictionary(R.string.posts_comment_edit)
+
+            val deleteSpan = SpannableString(fromDictionary(R.string.posts_comment_delete))
+            val deleteTextColor = ContextCompat.getColor(App.context, R.color.red)
+            deleteSpan.setSpan(ForegroundColorSpan(deleteTextColor), 0, deleteSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            popup.menu.findItem(R.id.action_comment_delete).title = deleteSpan
+
+            popup.setOnMenuItemClickListener { item -> 
+                when (item.itemId) {
+                    R.id.action_comment_edit -> Toast.makeText(view.context, "Edit comment", Toast.LENGTH_SHORT).show()
+                    R.id.action_comment_delete -> viewModel.deleteComment(commentModel)
+                }
+                true
+            }
+
+            popup.show()
+        }
     }
 
     private fun setPost(post: Post) {
@@ -245,7 +268,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
                 btnComment.text = fromDictionary(R.string.need_comment_button)
                 btnComment.setOnClickListener {
-                    Toast.makeText(context, "COMMENT!", Toast.LENGTH_SHORT).show()
+                    view?.etCommentText?.apply { showKeyboard(this) }
                 }
 
                 val recommendWithCount = StringBuilder(fromDictionary(R.string.need_recommend_button))

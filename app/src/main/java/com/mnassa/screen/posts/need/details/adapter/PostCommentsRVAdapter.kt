@@ -23,6 +23,7 @@ import com.mnassa.translation.fromDictionary
 class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
+    var onCommentOptionsClick = { view: View, comment: CommentModel -> }
 
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
         when {
@@ -47,9 +48,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
 
     init {
         dataStorage = SortedDataStorage(itemClass, this)
-        itemsTheSameComparator = { first, second ->
-            first.id == second.id
-        }
+        itemsTheSameComparator = { first, second -> first.id == second.id }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> = when (viewType) {
@@ -78,6 +77,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
         if (position < 0) return
         when (view.id) {
             R.id.btnReply -> onReplyClick(getDataItemByAdapterPosition(position))
+            R.id.commentRoot -> onCommentOptionsClick(view, getDataItemByAdapterPosition(position))
         }
     }
 
@@ -86,7 +86,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
         private const val TYPE_COMMENT_REPLY = 2
     }
 
-    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BaseVH<CommentModel>(itemView) {
+    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
 
         override fun bind(item: CommentModel) {
             val avatar = itemView.findViewById<ImageView>(R.id.ivAvatar)
@@ -95,6 +95,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
             val recommendedAccounts = itemView.findViewById<RecyclerView>(R.id.rvRecommendedAccounts)
             val creationTime = itemView.findViewById<TextView>(R.id.tvCreationTime)
             val replyButton = itemView.findViewById<Button>(R.id.btnReply)
+            val commentRoot = itemView.findViewById<View>(R.id.commentRoot)
 
             itemView.findViewById<View?>(R.id.vSeparator)?.visibility = if (adapterPosition <= FIRST_ITEM_POSITION) View.INVISIBLE else View.VISIBLE
 
@@ -103,7 +104,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
             comment.text = item.text
             comment.goneIfEmpty()
 
-            //TODO
+            //TODO - recommends
             recommendedAccounts.visibility = if (item.recommends.isEmpty()) View.GONE else View.VISIBLE
 
             creationTime.text = item.createdAt.toTimeAgo()
@@ -111,6 +112,14 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
             replyButton.text = fromDictionary(R.string.posts_comment_reply)
             replyButton.tag = this
             replyButton.setOnClickListener(onClickListener)
+
+            commentRoot.tag = this
+            commentRoot.setOnLongClickListener(this)
+        }
+
+        override fun onLongClick(view: View): Boolean {
+            onClickListener.onClick(view)
+            return true
         }
 
         companion object {

@@ -8,6 +8,7 @@ import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.CommentResponseEntity
 import com.mnassa.data.network.bean.retrofit.response.CreateCommentResponse
 import com.mnassa.data.network.bean.retrofit.response.GetCommentsResponse
+import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.CommentModelImpl
@@ -25,21 +26,21 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertGetCommentsResponse(input: GetCommentsResponse, token: Any?, converter: ConvertersContext): List<CommentModel> {
-        return input.data.data.entries.flatMap { (mainCommentId, commentBody) ->
+        return input.data.data?.entries?.flatMap { (mainCommentId, commentBody) ->
             commentBody.id = mainCommentId
             converter.convert(commentBody, token, List::class.java) as List<CommentModel>
-        }
+        } ?: emptyList()
     }
 
     private fun convertCreateCommentResponse(input: CreateCommentResponse, token: Any?, converter: ConvertersContext): CommentModel {
         val parentId = token as? String
 
-        return input.data.comment.entries.map { (mainCommentId, commentBody) ->
+        return input.data?.comment?.entries?.map { (mainCommentId, commentBody) ->
             commentBody.id = mainCommentId
             commentBody.parentItemId = parentId
 
             converter.convert(commentBody, token, List::class.java).first() as CommentModel
-        }.first()
+        }?.first() ?: throw NetworkException("")
     }
 
     private fun convertCommentEntity(input: CommentResponseEntity, token: Any?, converter: ConvertersContext): List<CommentModel> {

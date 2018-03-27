@@ -40,6 +40,8 @@
     <string name="_android_create_post_delete_photo_INFO">Delete</string>
     <string name="_android_tab_events_INFO">Events</string>
     <string name="_android_post_details_create_comment_post_btn_INFO">Post</string>
+    <string name="_android_post_comment_edit_INFO">Edit</string>
+    <string name="_android_post_comment_delete_INFO">Delete</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

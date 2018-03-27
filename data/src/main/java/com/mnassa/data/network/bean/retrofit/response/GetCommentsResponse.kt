@@ -13,7 +13,7 @@ class GetCommentsResponse : MnassaResponse() {
 }
 
 internal data class GetCommentsResponseData(
-        @SerializedName("comments") var data: Map<String, CommentResponseEntity>
+        @SerializedName("comments") var data: Map<String, CommentResponseEntity>?
 )
 
 internal data class CommentResponseEntity(
