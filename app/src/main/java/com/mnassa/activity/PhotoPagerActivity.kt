@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.*
 import com.mnassa.R
 import com.mnassa.extensions.image
+import com.rd.PageIndicatorView
 import kotlinx.android.synthetic.main.activity_photo_pager.*
 import kotlinx.android.synthetic.main.item_image.view.*
 
@@ -74,9 +75,7 @@ class PhotoPagerActivity : AppCompatActivity(), View.OnClickListener {
                 View.SYSTEM_UI_FLAG_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 
-        val layoutParams = pivImages.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.bottomMargin = resources.getDimensionPixelSize(R.dimen.padding_vertical)
-        pivImages.layoutParams = layoutParams
+        pivImages.bottomMargin = resources.getDimensionPixelSize(R.dimen.padding_vertical)
     }
 
     private fun showSystemUI() {
@@ -85,9 +84,7 @@ class PhotoPagerActivity : AppCompatActivity(), View.OnClickListener {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
-        val layoutParams = pivImages.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.bottomMargin = getNavigationBarHeight() + resources.getDimensionPixelSize(R.dimen.padding_vertical)
-        pivImages.layoutParams = layoutParams
+        pivImages.bottomMargin = getNavigationBarHeight() + resources.getDimensionPixelSize(R.dimen.padding_vertical)
     }
 
     private fun getNavigationBarHeight(): Int {
@@ -97,6 +94,14 @@ class PhotoPagerActivity : AppCompatActivity(), View.OnClickListener {
             resources.getDimensionPixelSize(resourceId)
         } else 0
     }
+
+    private var PageIndicatorView.bottomMargin: Int
+        set(value) {
+            val layoutParams = layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.bottomMargin = value
+            pivImages.layoutParams = layoutParams
+        }
+        get() = (layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
 
     class RegistrationAdapter(private val images: List<String>, private val onClickListener: View.OnClickListener) : PagerAdapter() {
         override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
@@ -115,8 +120,6 @@ class PhotoPagerActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         override fun getCount(): Int = images.size
-
-
     }
 
     companion object {
