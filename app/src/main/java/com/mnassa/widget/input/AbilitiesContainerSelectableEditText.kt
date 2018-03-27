@@ -36,12 +36,17 @@ class AbilitiesContainerSelectableEditText : LinearLayout, AbilitySelectableEdit
         tvAddAnotherOccupation.visibility = if (isAvailable) View.VISIBLE else View.GONE
     }
 
-    fun getAllAbilities():List<AccountAbility>{
+    fun getAllAbilities(): List<AccountAbility> {
         val abilities = mutableListOf<AccountAbility>()
         for (i in 0 until containerSelectable.childCount) {
             val view = containerSelectable.getChildAt(i)
-            when(view){
-                is AbilitySelectableEditText -> abilities.add(view.getAbility())
+            when (view) {
+                is AbilitySelectableEditText -> {
+                    val ability = view.getAbility()
+                    if (requireNotNull(ability.name) != fromDictionary(R.string.reg_occupation_edit_text_place_holder)) {
+                        abilities.add(ability)
+                    }
+                }
             }
         }
         return abilities
