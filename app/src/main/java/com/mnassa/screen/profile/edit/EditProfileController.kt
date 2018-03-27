@@ -168,7 +168,7 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
             personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
             view.actvProfileCity.setText(personSelectedPlaceName ?: "")
         })
-
+        view.containerProfileSelectOccupation.setAbilities(accountModel.abilities)
     }
 
     private fun getDateByTimeMillis(createdAt: Long?): String {

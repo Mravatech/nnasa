@@ -115,6 +115,9 @@
     <string name="reg_occupation_edit_text_place_holder">_cellOccupation_occupationPlaceholder</string>
     <string name="reg_add_another_occupation">_android_registration_add_another_occupation</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
+    <string name="reg_person_occupation_label">_cellOccupation_occupationTitle_primary</string>
+    <string name="reg_person_occupation_make_primary">_cellOccupation_buttonMakePrimary</string>
+    <string name="reg_person_occupation_delete">_cellOccupation_buttonDelete</string>
 
     <!-- ========================================= PROFILE ====================================== -->
     <string name="profile_connections">_connectionsList_navTitle_connections</string>
