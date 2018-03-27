@@ -2,11 +2,11 @@ package com.mnassa.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.MotionEvent
+import android.widget.FrameLayout
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import kotlinx.android.synthetic.main.view_chip.view.*
-import android.view.MotionEvent
-import android.widget.FrameLayout
 
 
 /**

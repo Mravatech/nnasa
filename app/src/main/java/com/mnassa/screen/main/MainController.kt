@@ -133,6 +133,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
+//            R.id.personal_info -> open(PersonalInfoController.newInstance())
             R.id.nav_profile -> open(ProfileController.newInstance())
             R.id.nav_logout -> viewModel.logout()
         }

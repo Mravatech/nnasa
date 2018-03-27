@@ -7,6 +7,7 @@ import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.bean.firebase.TagDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CustomTagsRequest
 import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handleException
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import kotlinx.coroutines.experimental.async
@@ -30,7 +31,7 @@ class TagRepositoryImpl(
     }
 
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
-        return firebaseTagsApi.createCustomTagIds(CustomTagsRequest(tags)).await().data.tags
+        return firebaseTagsApi.createCustomTagIds(CustomTagsRequest(tags)).handleException(exceptionHandler).data.tags
     }
 
     override suspend fun getTagsByIds(ids: List<String>): List<TagModel> {

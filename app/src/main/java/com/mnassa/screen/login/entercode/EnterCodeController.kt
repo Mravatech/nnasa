@@ -2,22 +2,16 @@ package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
-import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PhoneVerificationModel
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.translation.fromDictionary
-import com.mnassa.extensions.onImeActionDone
-import com.mnassa.extensions.showKeyboard
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sms_code_input.view.*

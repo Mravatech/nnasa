@@ -1,5 +1,6 @@
 package com.mnassa.domain.repository
 
+import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 
 /**
@@ -26,7 +27,7 @@ interface UserRepository {
             interests: List<String>
     ): ShortAccountModel
 
-    suspend fun processAccount(account: ShortAccountModel, path: String?)
+    suspend fun processAccount(account: PersonalInfoModel)
 
     fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?

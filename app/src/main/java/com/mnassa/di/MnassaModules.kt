@@ -127,6 +127,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(GeoPlaceConverter::class.java)
         converter.registerConverter(ProfileConverter::class.java)
         converter.registerConverter(TagConverter(instance()))
+        converter.registerConverter(AbilityConverter::class.java)
         converter
     }
 }

@@ -1,10 +1,13 @@
 package com.mnassa.dialog
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.AppCompatRadioButton
 import android.view.LayoutInflater
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -14,7 +17,9 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
+import java.util.*
 
 
 class DialogHelper {
@@ -44,6 +49,33 @@ class DialogHelper {
                 .onPositive { _, _ -> onOkClick() }
                 .cancelListener { onOkClick() }
                 .show()
+    }
+
+    fun showChooseOccupationDialog(context: Context,
+                                   occupations: List<String>,
+                                   position: Int,
+                                   onSelectClick: (position: Int) -> Unit) {
+        val dialog = Dialog(context, R.style.OccupationDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_occupation)
+        fun closeDialogAfterClick(position: Int) {
+            onSelectClick(position)
+            dialog.dismiss()
+        }
+        dialog.tvOccupationHeader.text = fromDictionary(R.string.reg_dialog_header)
+        for ((index, value) in occupations.withIndex()) {
+            val radioButton = dialog.rOccupationContainer.getChildAt(index) as AppCompatRadioButton
+            radioButton.text = value
+            radioButton.setOnClickListener { closeDialogAfterClick(index) }
+            radioButton.isChecked = position == index
+        }
+        dialog.show()
+    }
+
+    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(context, listener, calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     @SuppressLint("SetTextI18n")

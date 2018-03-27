@@ -6,8 +6,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.impl.PersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
@@ -50,10 +52,39 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         }
     }
 
-    override fun processAccount(accountModel: ShortAccountModel) {
-        handleException {
-            userProfileInteractor.processAccount(accountModel, path)
-            openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
+    private var processAccountJob: Job? = null
+    override fun processAccount(accountModel: ShortAccountModel,
+                                contactPhone: String,
+                                abilities: List<AccountAbility>,
+                                birthdayDate: String,
+                                showContactEmail: Boolean?,
+                                birthday: Long?,
+                                showContactPhone: Boolean?,
+                                contactEmail: String
+    ) {
+        processAccountJob?.cancel()
+        processAccountJob = handleException {
+            withProgressSuspend {
+                val personalInfo = PersonalInfoModelImpl(
+                        accountModel.id,
+                        accountModel.firebaseUserId,
+                        accountModel.userName,
+                        accountModel.accountType,
+                        path,
+                        contactPhone.takeIf { it.isNotBlank() },
+                        accountModel.language,
+                        accountModel.personalInfo,
+                        accountModel.organizationInfo,
+                        abilities,
+                        birthdayDate.takeIf { it.isNotBlank() },
+                        showContactEmail,
+                        birthday,
+                        showContactPhone,
+                        contactEmail.takeIf { it.isNotBlank() }
+                )
+                userProfileInteractor.processAccount(personalInfo)
+                openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
+            }
         }
     }
 

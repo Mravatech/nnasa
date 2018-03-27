@@ -26,6 +26,14 @@ interface DeclinedShortAccountModel : ShortAccountModel {
     var declinedAt: Date
 }
 
+interface PersonalInfoModel : ShortAccountModel {
+    val birthdayDate: String?
+    val showContactEmail: Boolean?
+    val birthday: Long?
+    val showContactPhone: Boolean?
+    val contactEmail: String?
+}
+
 interface PersonalAccountDiffModel : Serializable {
     var firstName: String
     var lastName: String
@@ -51,3 +59,11 @@ val ShortAccountModel.formattedName: String
             }
         }
     }
+
+fun ShortAccountModel.mainAbility(atPlaceholder: String): String? {
+    val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return null
+    return when {
+        ability.name.isNullOrBlank() && ability.place.isNullOrBlank() -> "${ability.name} $atPlaceholder ${ability.place}"
+        else -> ability.name ?: ability.place
+    }
+}

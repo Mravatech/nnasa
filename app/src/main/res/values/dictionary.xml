@@ -103,6 +103,17 @@
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
+    <string name="reg_info_skip">_android_registration_skip</string>
+    <string name="reg_info_next">_newAcc_navItem_Next</string>
+    <string name="reg_dialog_other">_paccountsSelector_other_title</string>
+    <string name="reg_dialog_business_owner">_occupation_BusinessOwner</string>
+    <string name="reg_dialog_student">_occupation_Student</string>
+    <string name="reg_dialog_housewife">_android_registration_occupation_housewife</string>
+    <string name="reg_dialog_employee">_occupation_Employee</string>
+    <string name="reg_dialog_header">_android_registration_occupation_header</string>
+    <string name="reg_dialog_custom_occupation">_android_registration_custom_occupation</string>
+    <string name="reg_occupation_edit_text_place_holder">_cellOccupation_occupationPlaceholder</string>
+    <string name="reg_add_another_occupation">_android_registration_add_another_occupation</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
 
     <!-- ========================================= PROFILE ====================================== -->
@@ -118,6 +129,7 @@
     <string name="edit_profile_city">_new_post_offer_city_title</string>
 
     <!-- ========================================= OTHER ====================================== -->
+    <string name="email_is_not_valid">_android_email_validation</string>
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>
     <string name="loading">_android_loading</string>

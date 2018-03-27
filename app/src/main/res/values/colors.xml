@@ -7,6 +7,7 @@
 
     <color name="powderBlue">#bfddff</color>
     <color name="black">#000000</color>
+    <color name="blackAlpha">#61000000</color>
     <color name="coolGray">#abafb3</color>
     <color name="coolGrayAlpha">#82abafb3</color>
     <color name="coolGreen">#37d45c</color>
@@ -25,8 +26,9 @@
     <color name="backgroundMain">#f2f5f7</color>
     <color name="backgroundHighlight">@color/white</color>
     <color name="divider">#e8e8e8</color>
+    <color name="hintColor">#808080</color>
     <color name="backgroundTransparent">#00000000</color>
     <color name="dark_chip_shadow">#66000000</color>
     <color name="chip_default_edit_text_hint_color">#808080</color>
-
+    <color name="ucrop_color_toolbar_widget">#000</color>
 </resources>

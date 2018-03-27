@@ -57,15 +57,3 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
             .apply(RequestOptions.centerCropTransform())
             .into(this)
 }
-
-//fun ImageView.avatarSquare(avatarUrl: String?) {
-//    //todo: add placeholder, error
-//
-//    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
-//
-//    GlideApp.with(this)
-//            .load(avatarUrl)
-//            .apply(requestOptions)
-//            .apply(RequestOptions.centerCropTransform())
-//            .into(this)
-//}
