@@ -33,7 +33,7 @@
                 android:layout_height="196dp">
 
                 <ImageView
-                    android:id="@+id/ivUserAvatar"
+                    android:id="@+id/ivEditProfileUserAvatar"
                     android:layout_width="match_parent"
                     android:layout_height="168dp"
                     android:layout_below="@id/tvTitle"
@@ -49,6 +49,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginBottom="-28dp"
                     android:layout_marginEnd="16dp"
+                    app:elevation="0dp"
                     app:fabSize="normal"
                     app:srcCompat="@drawable/ic_camera" />
 
@@ -58,19 +59,19 @@
                 android:id="@+id/tvEditProfileMoreInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="#9fa9b5"
                 android:textSize="14sp"
                 android:textStyle="normal"
-                android:layout_marginBottom="16dp"
                 tools:text="Main Information" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:padding="16dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilProfileFirstName"
@@ -117,6 +118,97 @@
                     android:id="@+id/clInterests"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tvPersonalInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#9fa9b5"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                tools:text="Main Information" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilEditProfileBirthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etEditProfileBirthday"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tvEditProfileGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="8sp"
+                    android:textColor="#61000000"
+                    android:textSize="16sp"
+                    android:textStyle="normal"
+                    tools:text="Gender" />
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rInfoBtnMale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/rInfoBtnFemale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="56dp" />
+                </RadioGroup>
+
+                <!--todo add ability layout-->
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilEditProfilePhoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etEditProfilePhoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_up" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilEditProfileEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etEditProfileEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_up" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 

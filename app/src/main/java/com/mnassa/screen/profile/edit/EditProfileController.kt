@@ -17,7 +17,6 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_edit_profile.view.*
-import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -81,14 +80,22 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
         view.clOffers.chipSearch = viewModel
         view.clInterests.chipSearch = viewModel
         view.etProfileFirstName.setText(accountModel.personalInfo?.firstName)
-        view.etProfileLastName.setText( accountModel.personalInfo?.lastName)
+        view.etProfileLastName.setText(accountModel.personalInfo?.lastName)
         view.etProfileUserName.setText(accountModel.userName)
         view.tilProfileFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
         view.tilProfileLastName.hint = fromDictionary(R.string.reg_personal_last_name)
         view.tilProfileUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+        view.ivEditProfileUserAvatar.avatarSquare(accountModel.avatar)
+        view.tilEditProfileBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
+        view.etEditProfileBirthday.setText(accountModel.createdAtDate)
+        view.tilEditProfilePhoneNumber.hint = fromDictionary(R.string.reg_person_info_phone)
+        view.etEditProfilePhoneNumber.setText(accountModel.contactPhone)
+        view.tilEditProfileEmail.hint = fromDictionary(R.string.reg_person_info_email)
+        view.etEditProfileEmail.setText(accountModel.contactEmail)
+        view.tvEditProfileGender.hint = fromDictionary(R.string.reg_person_info_gender)
         launchCoroutineUI {
             viewModel.imageUploadedChannel.consumeEach {
-                view.ivCropImage.avatarSquare(it)
+                view.ivEditProfileUserAvatar.avatarSquare(it)
             }
         }
     }
