@@ -38,7 +38,7 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
                 view.toolbarProfile.subtitle = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
                 if (profileModel.isMyProfile) {
                     view.ivProfileEdit.visibility = View.VISIBLE
-                    view.ivProfileEdit.setOnClickListener { open(EditProfileController.newInstance(profileModel.profile)) }
+                    view.ivProfileEdit.setOnClickListener { open(EditProfileController.newInstance(profileModel)) }
                 } else {
                     view.ivProfileMenu.visibility = View.VISIBLE
                     view.fabProfile.visibility = View.VISIBLE

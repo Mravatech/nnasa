@@ -76,7 +76,7 @@
             android:visibility="gone" />
 
         <View
-            android:id="@+id/vBottomViewCanHelpWith"
+            android:id="@+id/vTopProfileInterestedIn"
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
@@ -100,7 +100,7 @@
             android:visibility="gone" />
 
         <View
-            android:id="@+id/vBottomViewInterestedIn"
+            android:id="@+id/vTopProfileDateOfBirth"
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
@@ -127,7 +127,7 @@
             tools:text="01 Februrary 1991 (26 years)" />
 
         <View
-            android:id="@+id/vBottomViewDateOfBirth"
+            android:id="@+id/vTopProfilePhone"
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
@@ -154,7 +154,7 @@
             tools:text="+38 (066) 752 02 65" />
 
         <View
-            android:id="@+id/vBottomViewProfilePhone"
+            android:id="@+id/vTopProfileEmail"
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"

@@ -18,10 +18,10 @@ import timber.log.Timber
  */
 class EditProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
-        private val storageInteractor: StorageInteractor ) : MnassaViewModelImpl(), EditProfileViewModel {
+        private val storageInteractor: StorageInteractor) : MnassaViewModelImpl(), EditProfileViewModel {
 
 
-    override val tagChannel: BroadcastChannel<List<TagModel>> = BroadcastChannel(10)
+    override val tagChannel: BroadcastChannel<EditProfileViewModel.TagCommand> = BroadcastChannel(10)
     override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
 
     private var sendPhotoJob: Job? = null
@@ -35,10 +35,16 @@ class EditProfileViewModelImpl(
     }
 
     private var tagJob: Job? = null
-    override fun getTagsByIds(ids: List<String>) {
-//        tagJob = handleException {
-//            tagInteractor.getTagsByIds(ids)
-//        }
+    override fun getTagsByIds(ids: List<String>?, isOffers: Boolean) {
+        val tagIds = ids ?: return
+        tagJob = handleException {
+            val tags = tagInteractor.getTagsByIds(tagIds)
+            if (isOffers) {
+                tagChannel.send(EditProfileViewModel.TagCommand.TagOffers(tags))
+            } else {
+                tagChannel.send(EditProfileViewModel.TagCommand.TagInterests(tags))
+            }
+        }
     }
 
     override suspend fun search(search: String): List<TagModel> {

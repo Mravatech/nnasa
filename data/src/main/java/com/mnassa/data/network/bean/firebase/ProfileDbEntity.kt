@@ -52,6 +52,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
     val numberOfUnreadResponses: Int?
     @SerializedName("visiblePoints")
     val visiblePoints: Int
+    @SerializedName("location")
+    val location: LocationDbEntity?
 
     constructor(id: String,
                 avatar: String?,
@@ -81,7 +83,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
                 numberOfUnreadNeeds: Int?,
                 numberOfUnreadNotifications: Int?,
                 numberOfUnreadResponses: Int?,
-                visiblePoints: Int
+                visiblePoints: Int,
+                location: LocationDbEntity
 
     ) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
         this.createdAt = createdAt
@@ -105,7 +108,29 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
         this.numberOfUnreadNotifications = numberOfUnreadNotifications
         this.numberOfUnreadResponses = numberOfUnreadResponses
         this.visiblePoints = visiblePoints
-
+        this.location = location
     }
 
 }
+
+internal data class LocationDbEntity(
+        @SerializedName("placeId")
+        val placeId: String?,
+        @SerializedName("en")
+        val en: LocationDetailDbEntity?,
+        @SerializedName("ar")
+        val ar: LocationDetailDbEntity?
+)
+
+internal data class LocationDetailDbEntity(
+        @SerializedName("city")
+        val city: String?,
+        @SerializedName("lat")
+        val lat: Double?,
+        @SerializedName("lng")
+        val lng: Double?,
+        @SerializedName("placeId")
+        val placeId: String?,
+        @SerializedName("placeName")
+        val placeName: String?
+)

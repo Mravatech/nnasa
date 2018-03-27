@@ -27,4 +27,5 @@ interface ProfileAccountModel : ShortAccountModel {
     val numberOfUnreadNotifications: Int?
     val numberOfUnreadResponses: Int?
     val visiblePoints: Int
+    val location: LocationModel?
 }

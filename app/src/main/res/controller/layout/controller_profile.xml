@@ -27,7 +27,7 @@
                 <ImageView
                     android:id="@+id/ivCropImage"
                     android:layout_width="match_parent"
-                    android:layout_height="240dp"
+                    android:layout_height="@dimen/profile_main_image_height"
                     android:contentDescription="@null"
                     tools:src="@mipmap/ic_launcher" />
 
@@ -47,22 +47,14 @@
 
                     <ImageView
                         android:id="@+id/ivProfileBack"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        style="@style/Profile.ToolbarBackView"
                         android:contentDescription="@null"
-                        android:paddingBottom="16dp"
-                        android:paddingEnd="16dp"
-                        android:paddingTop="16dp"
                         app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        style="@style/Profile.ToolbarTitle"
                         android:layout_toEndOf="@+id/ivProfileBack"
                         android:layout_toStartOf="@+id/flContainer"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
                         tools:text="Grinch" />
 
                     <FrameLayout
@@ -74,23 +66,17 @@
 
                         <ImageView
                             android:id="@+id/ivProfileEdit"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end|center_vertical"
-                            android:layout_marginEnd="8dp"
+                            style="@style/Profile.ToolbarMenuView"
+                            android:layout_marginEnd="@dimen/profile_toolbar_child_margin"
                             android:contentDescription="@null"
-                            android:padding="16dp"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_edit" />
 
                         <ImageView
                             android:id="@+id/ivProfileMenu"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end|center_vertical"
-                            android:layout_marginEnd="8dp"
+                            style="@style/Profile.ToolbarMenuView"
+                            android:layout_marginEnd="@dimen/profile_toolbar_child_margin"
                             android:contentDescription="@null"
-                            android:padding="16dp"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_menu" />
 
@@ -114,7 +100,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvProfile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

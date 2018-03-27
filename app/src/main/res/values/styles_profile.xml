@@ -6,9 +6,9 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ProfileHeaderItem">
+    <style name="ProfileHeaderItem"></style>
 
-    </style>
+    <style name="Profile"></style>
 
     <style name="ProfileHeaderItem.MainContainer">
         <item name="android:layout_width">match_parent</item>
@@ -62,7 +62,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingBottom">@dimen/profile_header_item_main_padding_vertical</item>
-        <item name="android:paddingStart">@dimen/profile_header_item_main_points_padding_start</item>
+        <item name="android:paddingStart">@dimen/profile_header_item_main_points_padding_start
+        </item>
         <item name="android:paddingTop">@dimen/profile_header_item_main_padding_vertical</item>
     </style>
 
@@ -77,6 +78,35 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textColor">@color/turquoiseBlue</item>
     </style>
+
+    <style name="Profile.ToolbarBackView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">@dimen/profile_toolbar_child_padding</item>
+        <item name="android:paddingEnd">@dimen/profile_toolbar_child_padding</item>
+        <item name="android:paddingTop">@dimen/profile_toolbar_child_padding</item>
+    </style>
+
+    <style name="Profile.ToolbarMenuView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:padding">@dimen/profile_toolbar_child_padding</item>
+        <item name="android:paddingTop">@dimen/profile_toolbar_child_padding</item>
+    </style>
+
+    <style name="Profile.ToolbarTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/profile_toolbar_title_text_size</item>
+    </style>
+
+    <dimen name="profile_main_image_height">240dp</dimen>
+    <dimen name="profile_toolbar_child_padding">16dp</dimen>
+    <dimen name="profile_toolbar_child_margin">8dp</dimen>
+    <dimen name="profile_toolbar_title_text_size">16sp</dimen>
 
     <dimen name="profile_header_item_main_padding_vertical">24dp</dimen>
     <dimen name="profile_header_item_main_points_padding_start">16dp</dimen>

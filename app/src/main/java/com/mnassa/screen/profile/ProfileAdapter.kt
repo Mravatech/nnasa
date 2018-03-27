@@ -48,11 +48,11 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
             with(itemView) {
                 tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
                 tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
-                setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vBottomViewProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
-                setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, null, fromDictionary(R.string.profile_email), item.profile.contactEmail)
-                setCheckedTexts(tvLabelDateOfBirth, tvDateOfBirth, vBottomViewDateOfBirth, fromDictionary(R.string.profile_date_of_birth), item.profile.createdAtDate)
-                setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, vBottomViewCanHelpWith, item.offers, fromDictionary(R.string.reg_account_can_help_with))
-                setCheckedTags(tvProfileInterestedIn, chipProfileInterestWith, vBottomViewInterestedIn, item.interests, fromDictionary(R.string.reg_account_interested_in))
+                setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vTopProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
+                setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, vTopProfileEmail, fromDictionary(R.string.profile_email), item.profile.contactEmail)
+                setCheckedTexts(tvLabelDateOfBirth, tvDateOfBirth, vTopProfileDateOfBirth, fromDictionary(R.string.profile_date_of_birth), item.profile.createdAtDate)
+                setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, null, item.offers, fromDictionary(R.string.reg_account_can_help_with))
+                setCheckedTags(tvProfileInterestedIn, chipProfileInterestWith, vTopProfileInterestedIn, item.interests, fromDictionary(R.string.reg_account_interested_in))
                 tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
                 flMoreInformation.setOnClickListener {
                     profileInfo.visibility = if (profileInfo.visibility == View.GONE) View.VISIBLE else View.GONE
@@ -77,13 +77,13 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
             return span
         }
 
-        private fun setCheckedTags(tvLabel: TextView, flowLayout: FlowLayout, bottomView: View, tags: List<TagModel>?, text: String) {
+        private fun setCheckedTags(tvLabel: TextView, flowLayout: FlowLayout, bottomView: View?, tags: List<TagModel>?, text: String) {
             tags?.let {
                 tvLabel.text = text
                 for (tag in tags) {
                     flowLayout.visibility = View.VISIBLE
                     tvLabel.visibility = View.VISIBLE
-                    bottomView.visibility = View.VISIBLE
+                    bottomView?.visibility = View.VISIBLE
                     val chipView = SimpleChipView(flowLayout.context, tag)
                     val params = FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT)
                     chipView.layoutParams = params
@@ -92,7 +92,7 @@ class ProfileAdapter() : BasePaginationRVAdapter<ProfileModel>() {
             } ?: kotlin.run {
                 flowLayout.visibility = View.GONE
                 tvLabel.visibility = View.GONE
-                bottomView.visibility = View.GONE
+                bottomView?.visibility = View.GONE
             }
 
         }

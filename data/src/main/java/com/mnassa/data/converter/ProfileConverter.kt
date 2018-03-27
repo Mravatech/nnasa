@@ -5,14 +5,11 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.bean.firebase.LocationDbEntity
+import com.mnassa.data.network.bean.firebase.LocationDetailDbEntity
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
-import com.mnassa.domain.model.AccountAbility
-import com.mnassa.domain.model.AccountType
-import com.mnassa.domain.model.OrganizationAccountDiffModel
-import com.mnassa.domain.model.PersonalAccountDiffModel
-import com.mnassa.domain.model.impl.OrganizationAccountDiffModelImpl
-import com.mnassa.domain.model.impl.PersonalAccountDiffModelImpl
-import com.mnassa.domain.model.impl.ProfileAccountModelImpl
+import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,6 +21,22 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertAccountFromDb)
+        convertersContext.registerConverter(this::convertLocation)
+        convertersContext.registerConverter(this::convertDetailLocation)
+    }
+
+    private fun convertLocation(input: LocationDbEntity, token: Any?, convertersContext: ConvertersContext): LocationModel {
+        val locationDetailAr: LocationDetailModel? = input.ar?.let {
+            convertersContext.convert(it, LocationDetailModel::class.java)
+        }
+        val locationDetailEn: LocationDetailModel? = input.en?.let {
+            convertersContext.convert(it, LocationDetailModel::class.java)
+        }
+        return LocationModelImpl(input.placeId, locationDetailEn, locationDetailAr)
+    }
+
+    private fun convertDetailLocation(input: LocationDetailDbEntity?, token: Any?, convertersContext: ConvertersContext): LocationDetailModel {
+        return LocationDetailModelImpl(input?.city, input?.lat, input?.lng, input?.placeId, input?.placeName)
     }
 
     private fun convertAccountFromDb(input: ProfileDbEntity, token: Any?, convertersContext: ConvertersContext): ProfileAccountModelImpl {
@@ -47,7 +60,7 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
             }
             else -> throw IllegalArgumentException("Illegal account type ${input.type}")
         }
-
+        val location: LocationModel? = input.location?.let { convertersContext.convert(input.location, LocationModel::class.java) }
         return ProfileAccountModelImpl(
                 createdAt = input.createdAt,
                 id = input.id,
@@ -79,7 +92,8 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
                 numberOfUnreadNeeds = input.numberOfUnreadNeeds,
                 numberOfUnreadNotifications = input.numberOfUnreadNotifications,
                 numberOfUnreadResponses = input.numberOfUnreadResponses,
-                visiblePoints = input.visiblePoints
+                visiblePoints = input.visiblePoints,
+                location = location
         )
     }
 }

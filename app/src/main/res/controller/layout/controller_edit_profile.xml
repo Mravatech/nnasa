@@ -45,7 +45,7 @@
                     android:id="@+id/fabInfoAddPhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/ivUserAvatar"
+                    android:layout_alignBottom="@+id/ivEditProfileUserAvatar"
                     android:layout_alignParentEnd="true"
                     android:layout_marginBottom="-28dp"
                     android:layout_marginEnd="16dp"
@@ -109,6 +109,15 @@
 
                 </android.support.design.widget.TextInputLayout>
 
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilProfileCity"
+                    style="@style/Registration.TextInputLayout">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/actvProfileCity"
+                        style="@style/Registration.EditText" />
+                </android.support.design.widget.TextInputLayout>
+
                 <com.mnassa.widget.ChipLayout
                     android:id="@+id/clOffers"
                     android:layout_width="match_parent"
@@ -123,19 +132,21 @@
 
 
             <TextView
-                android:id="@+id/tvPersonalInfo"
+                android:id="@+id/tvProfilePersonalInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="#9fa9b5"
                 android:textSize="14sp"
                 android:textStyle="normal"
-                tools:text="Main Information" />
+                tools:text="Personal Info" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="56dp"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:padding="16dp">

@@ -37,5 +37,6 @@ data class ProfileAccountModelImpl(
         override val numberOfUnreadNeeds: Int?,
         override val numberOfUnreadNotifications: Int?,
         override val numberOfUnreadResponses: Int?,
-        override val visiblePoints: Int
-        ) : ProfileAccountModel
+        override val visiblePoints: Int,
+        override val location: LocationModel?
+) : ProfileAccountModel
