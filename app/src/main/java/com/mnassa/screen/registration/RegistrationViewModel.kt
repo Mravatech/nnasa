@@ -17,6 +17,6 @@ interface RegistrationViewModel : MnassaViewModel, ChipsAdapter.ChipSearch ,Plac
 
     sealed class OpenScreenCommand {
         class PersonalInfoScreen(val shortAccountModel: ShortAccountModel) : OpenScreenCommand()
-        class OrganizationInfoScreen : OpenScreenCommand()
+        class OrganizationInfoScreen(val shortAccountModel: ShortAccountModel) : OpenScreenCommand()
     }
 }

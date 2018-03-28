@@ -51,6 +51,26 @@ data class PersonalInfoModelImpl(
         override val gender: Gender
 ) : PersonalInfoModel
 
+data class CompanyInfoModelImpl(
+        override var id: String,
+        override var firebaseUserId: String,
+        override var userName: String,
+        override var accountType: AccountType,
+        override var avatar: String?,
+        override var contactPhone: String?,
+        override var language: String?,
+        override var personalInfo: PersonalAccountDiffModel?,
+        override var organizationInfo: OrganizationAccountDiffModel?,
+        override var abilities: List<AccountAbility>,
+        override val showContactEmail: Boolean?,
+        override val showContactPhone: Boolean?,
+        override val contactEmail: String?,
+        override val founded: Long?,
+        override val organizationType: String?,
+        override val website: String?,
+        override val foundedDate: String?
+) : CompanyInfoModel
+
 data class PersonalAccountDiffModelImpl(override var firstName: String, override var lastName: String) : PersonalAccountDiffModel
 
 data class OrganizationAccountDiffModelImpl(override var organizationName: String) : OrganizationAccountDiffModel

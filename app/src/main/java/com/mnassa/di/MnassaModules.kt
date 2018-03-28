@@ -99,9 +99,9 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance(), instance()) }
-    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl() }
+    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl( instance(), instance()) }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
-    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
+    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }

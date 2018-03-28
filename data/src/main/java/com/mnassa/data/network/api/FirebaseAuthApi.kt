@@ -25,4 +25,7 @@ interface FirebaseAuthApi {
     @PUT("/processAccount")
     fun registerSendAccountInfo(@Body request: RegisterSendingAccountInfoRequest): Deferred<RegisterAccountInfoResponse>
 
+    @PUT("/processAccount")
+    fun registerSendCompanyAccountInfo(@Body request: RegisterSendingCompanyAccountInfoRequest): Deferred<RegisterAccountInfoResponse>
+
 }

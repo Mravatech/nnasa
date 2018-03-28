@@ -35,6 +35,29 @@ interface PersonalInfoModel : ShortAccountModel {
     val gender: Gender
 }
 
+
+interface ProfilePersonalInfoModel : PersonalInfoModel {
+    val locationId: String?
+    val interests: List<String>
+    val offers: List<String>
+}
+
+interface CompanyInfoModel : ShortAccountModel {
+    val showContactEmail: Boolean?
+    val showContactPhone: Boolean?
+    val contactEmail: String?
+    val founded: Long?
+    val foundedDate: String?
+    val organizationType: String?
+    val website: String?
+}
+
+interface ProfileCompanyInfoModel : CompanyInfoModel {
+    val locationId: String?
+    val interests: List<String>
+    val offers: List<String>
+}
+
 interface PersonalAccountDiffModel : Serializable {
     var firstName: String
     var lastName: String

@@ -2,8 +2,6 @@ package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
 import android.os.Bundle
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountAbility
@@ -18,14 +16,10 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import timber.log.Timber
 
-/**
- * Created by Peter on 2/27/2018.
- */
 class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor,
-                                private val storage: FirebaseStorage,
                                 private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), PersonalInfoViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
+    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
     override val openScreenChannel: ArrayBroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
     private var path: String? = null
 
@@ -47,7 +41,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         sendPhotoJob = handleException {
             path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
             path?.let {
-                imageUploadedChannel.send(storage.getReferenceFromUrl(it))
+                imageUploadedChannel.send(it)
             }
             Timber.i(path)
         }

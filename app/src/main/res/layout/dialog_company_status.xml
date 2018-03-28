@@ -6,32 +6,25 @@
     <TextView
         style="@style/DialogRegistration.TextView"
         android:layout_marginBottom="@dimen/occupation_dialog_text_view_vertical"
-        android:id="@+id/tvOccupationHeader"
+        android:id="@+id/tvCompanyStatusHeader"
         tools:text="Choose occupation" />
 
     <RadioGroup
         style="@style/DialogRegistration.RadioGroup"
-        android:id="@+id/rOccupationContainer"
+        android:id="@+id/rCompanyStatusContainer"
         android:orientation="vertical">
 
         <RadioButton
-            android:id="@+id/rStudent"
+            android:id="@+id/rCommercial"
             style="@style/DialogRegistration.RadioButton" />
 
         <RadioButton
-            android:id="@+id/rHouseWife"
+            android:id="@+id/rGovernmental"
             style="@style/DialogRegistration.RadioButton" />
 
         <RadioButton
-            android:id="@+id/rEmployee"
+            android:id="@+id/rNonProfit"
             style="@style/DialogRegistration.RadioButton" />
 
-        <RadioButton
-            android:id="@+id/rBusinessOwner"
-            style="@style/DialogRegistration.RadioButton" />
-
-        <RadioButton
-            android:id="@+id/rOther"
-            style="@style/DialogRegistration.RadioButton" />
     </RadioGroup>
 </LinearLayout>

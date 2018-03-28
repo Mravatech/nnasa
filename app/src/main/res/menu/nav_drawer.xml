@@ -47,6 +47,10 @@
                 android:icon="@drawable/ic_menu_manage"
                 android:title="PERSONAL INFO" />
             <item
+                android:id="@+id/company_info"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="COMPANY INFO" />
+            <item
                 android:id="@+id/nav_change_account"
                 android:icon="@drawable/ic_menu_manage"
                 android:title="CHANGE ACCOUNT" />

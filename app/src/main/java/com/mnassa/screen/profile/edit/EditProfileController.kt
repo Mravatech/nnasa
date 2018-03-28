@@ -20,8 +20,11 @@ import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
-import kotlinx.android.synthetic.main.controller_edit_profile.view.*
+import kotlinx.android.synthetic.main.controller_edit_personal_profile.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
+import kotlinx.android.synthetic.main.sub_personal_info.view.*
+import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
+import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 import java.text.DateFormatSymbols
@@ -35,7 +38,7 @@ import java.util.*
 
 class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileViewModel>(data) {
 
-    override val layoutId = R.layout.controller_edit_profile
+    override val layoutId = R.layout.controller_edit_personal_profile
     override val viewModel: EditProfileViewModel by instance()
     private val accountModel: ProfileAccountModel by lazy { args.getSerializable(EXTRA_PROFILE) as ProfileAccountModel }
     private val playServiceHelper: PlayServiceHelper by instance()
@@ -83,12 +86,12 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
                 }
             }
         }
-        view.etEditProfileBirthday.isLongClickable = false
-        view.etEditProfileBirthday.isFocusableInTouchMode = false
+        view.etDateOfBirthday.isLongClickable = false
+        view.etDateOfBirthday.isFocusableInTouchMode = false
         timeMillis = accountModel.createdAt
-        view.etEditProfileBirthday.setOnClickListener {
+        view.etDateOfBirthday.setOnClickListener {
             dialog.calendarDialog(view.context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-                view.etEditProfileBirthday.setText("${DateFormatSymbols().months[month]} $dayOfMonth, $year")
+                view.etDateOfBirthday.setText("${DateFormatSymbols().months[month]} $dayOfMonth, $year")
                 val cal = Calendar.getInstance()
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 cal.set(Calendar.MONTH, month)
@@ -98,7 +101,7 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
         }
         launchCoroutineUI {
             viewModel.imageUploadedChannel.consumeEach {
-                view.ivEditProfileUserAvatar.avatarSquare(it)
+                view.ivUserAvatar.avatarSquare(it)
             }
         }
         launchCoroutineUI {
@@ -106,8 +109,8 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
             viewModel.getTagsByIds(accountModel.interests, true)
             viewModel.tagChannel.consumeEach {
                 when (it) {
-                    is EditProfileViewModel.TagCommand.TagInterests -> view.clInterests.setTags(it.interests)
-                    is EditProfileViewModel.TagCommand.TagOffers -> view.clOffers.setTags(it.offers)
+                    is EditProfileViewModel.TagCommand.TagInterests -> view.chipPersonInterests.setTags(it.interests)
+                    is EditProfileViewModel.TagCommand.TagOffers -> view.chipPersonOffers.setTags(it.offers)
                 }
             }
         }
@@ -129,46 +132,50 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
         view.toolbarEditProfile.ivToolbarMore.setColorFilter(ContextCompat.getColor(view.context, R.color.turquoiseBlue), android.graphics.PorterDuff.Mode.SRC_IN)
         view.toolbarEditProfile.ivToolbarMore.visibility = View.VISIBLE
         view.tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
-        view.clOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
-        view.clOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.clOffers.chipSearch = viewModel
-        view.clOffers.setTags(emptyList())
-        view.clInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-        view.clInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.clInterests.chipSearch = viewModel
-        view.clInterests.setTags(emptyList())
-        view.etProfileFirstName.setText(accountModel.personalInfo?.firstName)
-        view.etProfileLastName.setText(accountModel.personalInfo?.lastName)
-        view.etProfileUserName.setText(accountModel.userName)
-        view.tilProfileFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
-        view.tilProfileLastName.hint = fromDictionary(R.string.reg_personal_last_name)
-        view.tilProfileUserName.hint = fromDictionary(R.string.reg_personal_user_name)
-        view.ivEditProfileUserAvatar.avatarSquare(accountModel.avatar)
-        view.tilEditProfileBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
-        view.etEditProfileBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
-        view.tilProfileCity.hint = fromDictionary(R.string.edit_profile_city)
-        view.tilEditProfilePhoneNumber.hint = fromDictionary(R.string.reg_person_info_phone)
-        view.etEditProfilePhoneNumber.setText(accountModel.contactPhone)
-        view.etEditProfilePhoneNumber.setHideMode(accountModel.showContactEmail ?: false)
-        view.tilEditProfileEmail.hint = fromDictionary(R.string.reg_person_info_email)
-        view.etEditProfileEmail.setText(accountModel.contactEmail)
-        view.etEditProfileEmail.setHideMode(accountModel.showContactPhone ?: false)
-        view.tvEditProfileGender.hint = fromDictionary(R.string.reg_person_info_gender)
+        view.chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+        view.chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+        view.chipPersonOffers.chipSearch = viewModel
+        view.chipPersonOffers.setTags(emptyList())
+        view.chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+        view.chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+        view.chipPersonInterests.chipSearch = viewModel
+        view.chipPersonInterests.setTags(emptyList())
+        view.etPersonFirstName.setText(accountModel.personalInfo?.firstName)
+        view.etPersonSecondName.setText(accountModel.personalInfo?.lastName)
+        view.etPersonUserName.setText(accountModel.userName)
+        view.tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
+        view.tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
+        view.tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+        view.ivUserAvatar.avatarSquare(accountModel.avatar)
+        view.etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
+        view.tilPersonCity.hint = fromDictionary(R.string.edit_profile_city)
+        view.etPhoneNumber.setText(accountModel.contactPhone)
+        view.etPhoneNumber.setHideMode(accountModel.showContactEmail ?: false)
+        view.etYourEmail.setText(accountModel.contactEmail)
+        view.etYourEmail.setHideMode(accountModel.showContactPhone ?: false)
+        view.tvInfoGender.hint = fromDictionary(R.string.reg_person_info_gender)
         view.tvProfilePersonalInfo.text = fromDictionary(R.string.reg_person_info_title)
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
         view.rInfoBtnFemale.isChecked = accountModel.gender.name.toLowerCase() == view.rInfoBtnMale.text.toString().toLowerCase()
         view.rInfoBtnMale.isChecked = accountModel.gender.name.toLowerCase() == view.rInfoBtnMale.text.toString().toLowerCase()
         val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
-        view.actvProfileCity.setText(accountModel.location?.en?.placeName)
-        view.actvProfileCity.setAdapter(placeAutocompleteAdapter)
-        view.actvProfileCity.setOnItemClickListener({ _, _, i, _ ->
+        view.actvPersonCity.setText(accountModel.location?.en?.placeName)
+        view.actvPersonCity.setAdapter(placeAutocompleteAdapter)
+        view.actvPersonCity.setOnItemClickListener({ _, _, i, _ ->
             placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
             personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
             personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
-            view.actvProfileCity.setText(personSelectedPlaceName ?: "")
+            view.actvPersonCity.setText(personSelectedPlaceName ?: "")
         })
-        view.containerProfileSelectOccupation.setAbilities(accountModel.abilities)
+        view.containerSelectOccupation.setAbilities(accountModel.abilities)
+
+        view.tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
+        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
+        view.tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
+        view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
+        view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
+        view.tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
     }
 
     private fun getDateByTimeMillis(createdAt: Long?): String {

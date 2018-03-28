@@ -24,8 +24,8 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*
-import kotlinx.android.synthetic.main.controller_registration_personal.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -76,7 +76,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         PersonalInfoController.newInstance(it.shortAccountModel)
                     }
                     is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
-                        OrganizationInfoController.newInstance()
+                        OrganizationInfoController.newInstance(it.shortAccountModel)
                     }
                 }
                 open(controller)

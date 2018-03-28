@@ -17,6 +17,7 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_company_status.*
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 import java.util.*
@@ -65,6 +66,27 @@ class DialogHelper {
         dialog.tvOccupationHeader.text = fromDictionary(R.string.reg_dialog_header)
         for ((index, value) in occupations.withIndex()) {
             val radioButton = dialog.rOccupationContainer.getChildAt(index) as AppCompatRadioButton
+            radioButton.text = value
+            radioButton.setOnClickListener { closeDialogAfterClick(index) }
+            radioButton.isChecked = position == index
+        }
+        dialog.show()
+    }
+
+    fun showChooseCompanyStatusDialog(context: Context,
+                                   statuses: List<String>,
+                                   position: Int,
+                                   onSelectClick: (position: Int) -> Unit) {
+        val dialog = Dialog(context, R.style.OccupationDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_company_status)
+        fun closeDialogAfterClick(position: Int) {
+            onSelectClick(position)
+            dialog.dismiss()
+        }
+        dialog.tvCompanyStatusHeader.text = fromDictionary(R.string.reg_company_status_label)
+        for ((index, value) in statuses.withIndex()) {
+            val radioButton = dialog.rCompanyStatusContainer.getChildAt(index) as AppCompatRadioButton
             radioButton.text = value
             radioButton.setOnClickListener { closeDialogAfterClick(index) }
             radioButton.isChecked = position == index

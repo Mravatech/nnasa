@@ -10,7 +10,7 @@ import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.SimpleChipView
 import kotlinx.android.synthetic.main.item_header_another_profile_company_view.view.*
-import kotlinx.android.synthetic.main.item_sub_header_company.view.*
+import kotlinx.android.synthetic.main.sub_header_company.view.*
 
 /**
  * Created by IntelliJ IDEA.

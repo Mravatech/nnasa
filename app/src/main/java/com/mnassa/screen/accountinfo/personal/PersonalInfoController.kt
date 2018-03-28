@@ -7,21 +7,20 @@ import android.app.DatePickerDialog
 import android.net.Uri
 import android.util.Patterns
 import android.view.View
-import android.widget.ImageView
-import com.bumptech.glide.request.RequestOptions
 import com.github.salomonbrys.kodein.instance
-import com.google.firebase.storage.StorageReference
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.module.GlideApp
+import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
+import kotlinx.android.synthetic.main.sub_personal_info.view.*
+import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 import java.text.DateFormatSymbols
@@ -42,11 +41,11 @@ class PersonalInfoController(//data: Bundle
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
-        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_person_info_phone)
+        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
         view.tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
         view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
-        view.tilYourEmail.hint = fromDictionary(R.string.reg_person_info_email)
+        view.tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
 //        view.etPhoneNumber.setText(accountModel.contactPhone)
         view.etPhoneNumber.setHideMode(false)
         view.etYourEmail.setHideMode(false)
@@ -119,7 +118,7 @@ class PersonalInfoController(//data: Bundle
         }
         launchCoroutineUI {
             viewModel.imageUploadedChannel.consumeEach {
-                setImage(view.ivUserAvatar, it)
+                view.ivUserAvatar.avatarSquare(it)
             }
         }
         launchCoroutineUI {
@@ -134,16 +133,6 @@ class PersonalInfoController(//data: Bundle
         }
         val acc = AccountType.PERSONAL
         Timber.i(acc.name.toLowerCase())
-    }
-
-    private fun setImage(imageView: ImageView, result: StorageReference?) {
-        val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
-        GlideApp.with(imageView)
-                .load(result)
-                .apply(requestOptions)
-                .apply(RequestOptions.centerCropTransform())
-                .into(imageView)
-        //todo move to extension after merge
     }
 
     companion object {

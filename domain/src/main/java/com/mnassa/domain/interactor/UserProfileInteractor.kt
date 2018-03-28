@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor
 
+import com.mnassa.domain.model.CompanyInfoModel
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 
@@ -15,6 +16,7 @@ interface UserProfileInteractor {
     suspend fun setCurrentUserAccount(account: ShortAccountModel)
 
     suspend fun processAccount(account: PersonalInfoModel)
+    suspend fun processAccount(account: CompanyInfoModel)
 
     suspend fun getToken(): String?
     suspend fun getAccountId(): String?

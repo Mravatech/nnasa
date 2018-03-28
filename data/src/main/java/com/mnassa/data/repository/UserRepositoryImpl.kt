@@ -10,12 +10,10 @@ import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
-import com.mnassa.data.network.bean.retrofit.request.Ability
-import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
-import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
-import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
+import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
+import com.mnassa.domain.model.CompanyInfoModel
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
@@ -108,6 +106,22 @@ class UserRepositoryImpl(
                 account.showContactPhone,
                 account.contactEmail,
                 account.gender.name.toLowerCase()
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun processAccount(account: CompanyInfoModel) {
+        firebaseAuthApi.registerSendCompanyAccountInfo(RegisterSendingCompanyAccountInfoRequest(
+                organizationName = requireNotNull(account.organizationInfo).organizationName,
+                avatar = account.avatar,
+                showContactEmail = account.showContactEmail,
+                contactEmail = account.contactEmail,
+                userName = account.userName,
+                language = account.language,
+                type = account.accountType.name.toLowerCase(),
+                founded = account.founded,
+                id = requireNotNull(getAccountId()),
+                website = account.website,
+                organizationType = account.organizationType
         )).handleException(exceptionHandler)
     }
 

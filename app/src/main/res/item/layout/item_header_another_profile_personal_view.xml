@@ -58,7 +58,7 @@
         android:layout_height="@dimen/divider_width"
         android:background="@color/divider" />
 
-    <include layout="@layout/item_sub_header_personal" />
+    <include layout="@layout/sub_header_personal" />
 
     <LinearLayout
         android:id="@+id/flTags"
