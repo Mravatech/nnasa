@@ -46,6 +46,16 @@ class DialogHelper {
                 .show()
     }
 
+    fun showConfirmPostRemovingDialog(context: Context, onOkClick: () -> Unit) {
+        MaterialDialog.Builder(context)
+                .title(fromDictionary(R.string.post_delete_dialog_title))
+                .content(fromDictionary(R.string.post_delete_dialog_description))
+                .positiveText(fromDictionary(R.string.post_delete_dialog_yes))
+                .negativeText(fromDictionary(R.string.post_delete_dialog_no))
+                .onPositive { _, _ -> onOkClick() }
+                .show()
+    }
+
     @SuppressLint("SetTextI18n")
     fun showLoginByEmailDialog(context: Context, listener: (email: String, password: String) -> Unit) {
         if (!BuildConfig.DEBUG) return

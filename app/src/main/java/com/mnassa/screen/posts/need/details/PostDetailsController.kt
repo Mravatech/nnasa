@@ -20,6 +20,7 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -51,6 +52,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     override var sharingOptions: SharingOptionsController.ShareToOptions
             = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
+    private val dialogHelper: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -188,7 +190,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_post_edit -> open(CreateNeedController.newInstanceEditMode(post))
-                R.id.action_post_delete -> viewModel.delete()
+                R.id.action_post_delete -> dialogHelper.showConfirmPostRemovingDialog(view.context) { viewModel.delete() }
             }
             true
         }
