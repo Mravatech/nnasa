@@ -145,6 +145,9 @@
     <!-- ========================================= OTHER ====================================== -->
     <string name="email_is_not_valid">_android_email_validation</string>
     <string name="company_name_is_not_valid">_android_organization_name_validation</string>
+    <string name="person_name_is_not_valid">_android_person_name_validation</string>
+    <string name="person_last_name_is_not_valid">_android_person_last_name_validation</string>
+    <string name="user_name_is_not_valid">_android_user_name_validation</string>
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>
     <string name="loading">_android_loading</string>

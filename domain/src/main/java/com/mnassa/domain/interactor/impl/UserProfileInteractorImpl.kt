@@ -1,9 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.CompanyInfoModel
-import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
 
 /**
@@ -45,6 +43,15 @@ class UserProfileInteractorImpl(
         )
         userRepository.setCurrentUserAccount(account)
         return account
+    }
+
+
+    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
+        userRepository.updateCompanyAccount(account)
+    }
+
+    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) {
+        userRepository.updatePersonalAccount(account)
     }
 
     override suspend fun processAccount(account: PersonalInfoModel) {

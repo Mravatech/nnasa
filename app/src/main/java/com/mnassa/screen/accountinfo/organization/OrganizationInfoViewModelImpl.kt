@@ -45,7 +45,6 @@ class OrganizationInfoViewModelImpl(
             showContactEmail: Boolean?,
             founded: Long?,
             contactEmail: String?,
-//            organizationName: String,
             website: String?) {
         processAccountJob?.cancel()
         processAccountJob = handleException {

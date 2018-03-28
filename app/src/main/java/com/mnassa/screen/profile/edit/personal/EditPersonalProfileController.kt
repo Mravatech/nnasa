@@ -6,6 +6,7 @@ import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.util.Patterns
 import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
@@ -50,6 +51,7 @@ class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPer
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
+        personSelectedPlaceId = accountModel.location?.placeId
         onActivityResult.subscribe {
             when (it.requestCode) {
                 REQUEST_CODE_CROP -> {
@@ -124,9 +126,46 @@ class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPer
         super.onDestroy()
     }
 
+    private fun updateProfile(view: View) {
+        val email = view.etYourEmail.text.toString()
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
+            view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
+            return
+        }
+        if (view.etPersonFirstName.text.isBlank()) {
+            view.etPersonFirstName.error = fromDictionary(R.string.person_name_is_not_valid)
+            return
+        }
+        if (view.etPersonSecondName.text.isBlank()) {
+            view.etPersonSecondName.error = fromDictionary(R.string.person_last_name_is_not_valid)
+            return
+        }
+        if (view.etPersonUserName.text.isBlank()) {
+            view.etPersonUserName.error = fromDictionary(R.string.user_name_is_not_valid)
+            return
+        }
+        viewModel.updatePersonalAccount(
+                profileAccountModel = accountModel,
+                firstName = view.etPersonFirstName.text.toString(),
+                secondName = view.etPersonSecondName.text.toString(),
+                userName = view.etPersonUserName.text.toString(),
+                showContactEmail = view.etYourEmail.isChosen,
+                contactEmail = view.etYourEmail.text.toString(),
+                showContactPhone = view.etPhoneNumber.isChosen,
+                contactPhone = view.etPhoneNumber.text.toString(),
+                birthday = timeMillis,
+                birthdayDate = view.etDateOfBirthday.text.toString(),
+                locationId = personSelectedPlaceId,
+                isMale = view.rInfoBtnMale.isChecked,
+                abilities = view.containerSelectOccupation.getAllAbilities(),
+                interests = view.chipPersonInterests.getTags(),
+                offers = view.chipPersonOffers.getTags()
+        )
+    }
+
     private fun setupViews(view: View) {
         view.toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
-        view.toolbarEditProfile.onMoreClickListener = { close() }
+        view.toolbarEditProfile.onMoreClickListener = { updateProfile(view) }
         view.toolbarEditProfile.backButtonEnabled = true
         view.toolbarEditProfile.ivToolbarMore.setImageResource(R.drawable.ic_check)
         view.toolbarEditProfile.ivToolbarMore.setColorFilter(ContextCompat.getColor(view.context, R.color.turquoiseBlue), android.graphics.PorterDuff.Mode.SRC_IN)

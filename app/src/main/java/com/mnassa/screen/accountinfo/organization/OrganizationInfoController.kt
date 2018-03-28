@@ -69,28 +69,19 @@ class OrganizationInfoController(data: Bundle
                 }
             }
         }
-//        view.etCompanyName.setText(accountModel.organizationInfo?.organizationName)
-//        view.etPhoneNumber.setHideMode(false)
         view.etCompanyEmail.setHideMode(false)
         view.btnHeaderNext.setOnClickListener {
             val email = view.etCompanyEmail.text.toString()
-//            if (view.etCompanyName.text.toString().isBlank()) {
-//                view.etCompanyName.error = fromDictionary(R.string.company_name_is_not_valid)
-//                return@setOnClickListener
-//            }
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
                 view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
                 return@setOnClickListener
             }
             viewModel.processAccount(accountModel,
-//                    view.etPhoneNumber.text.toString().takeIf { it.isNotBlank() },
                     view.vCompanyStatus.getOrganizationType(),
                     view.etFoundation.text.toString().takeIf { it.isNotBlank() },
                     view.etCompanyEmail.isChosen,
                     timeMillis,
-//                    view.etPhoneNumber.isChosen,
                     view.etCompanyEmail.text.toString().takeIf { it.isNotBlank() },
-//                    view.etCompanyName.text.toString(),
                     view.etWebSite.text.toString().takeIf { it.isNotBlank() }
             )
         }
@@ -134,9 +125,7 @@ class OrganizationInfoController(data: Bundle
         view.tvHeader.text = fromDictionary(R.string.reg_company_title)
         view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
         view.tilWebSite.hint = fromDictionary(R.string.reg_company_website)
-//        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
         view.tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
-//        view.tilCompanyName.hint = fromDictionary(R.string.reg_company_name)
         view.tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
     }

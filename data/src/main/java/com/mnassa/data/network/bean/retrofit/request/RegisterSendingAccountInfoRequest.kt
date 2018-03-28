@@ -54,3 +54,42 @@ data class Location(
         val placeId: String? = null
 
 )
+
+data class ProfilePersonAccountInfoRequest(
+        @SerializedName("birthdayDate")
+        val birthdayDate: String? = null,
+        @SerializedName("lastName")
+        val lastName: String?,
+        @SerializedName("userName")
+        val userName: String,
+        @SerializedName("showContactEmail")
+        val showContactEmail: Boolean? = false,
+        @SerializedName("language")
+        val language: String? = null,
+        @SerializedName("type")
+        val type: String,
+        @SerializedName("birthday")
+        val birthday: Long? = 0,
+        @SerializedName("contactPhone")
+        val contactPhone: String? = null,
+        @SerializedName("abilities")
+        val abilities: List<Ability>? = null,
+        @SerializedName("id")
+        val id: String,
+        @SerializedName("avatar")
+        val avatar: String? = null,
+        @SerializedName("firstName")
+        val firstName: String?,
+        @SerializedName("showContactPhone")
+        val showContactPhone: Boolean? = false,
+        @SerializedName("contactEmail")
+        val contactEmail: String?,
+        @SerializedName("gender")
+        val gender: String,
+        @SerializedName("locationId")
+        val locationId: String?,//todo not null
+        @SerializedName("interests")
+        val interests: List<String>,
+        @SerializedName("offers")
+        val offers: List<String>
+)

@@ -14,17 +14,13 @@ interface OrganizationInfoViewModel : MnassaViewModel {
     val openScreenChannel: ArrayBroadcastChannel<OrganizationInfoViewModel.OpenScreenCommand>
     fun uploadPhotoToStorage(uri: Uri)
     fun processAccount(accountModel: ShortAccountModel,
-//                       contactPhone: String?,
                        organizationType: String?,
                        foundedDate: String?,
                        showContactEmail: Boolean?,
                        founded: Long?,
-//                       showContactPhone: Boolean?,
                        contactEmail: String?,
-//                       organizationName: String,
                        website: String?
     )
-
     sealed class OpenScreenCommand {
         class InviteScreen : OpenScreenCommand()
     }

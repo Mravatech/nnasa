@@ -47,7 +47,7 @@ class PersonalInfoController(data: Bundle
         view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
         view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
         view.tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
-//        view.etPhoneNumber.setText(accountModel.contactPhone)
+        view.etPhoneNumber.setText(accountModel.contactPhone)
         view.etPhoneNumber.setHideMode(false)
         view.etYourEmail.setHideMode(false)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)

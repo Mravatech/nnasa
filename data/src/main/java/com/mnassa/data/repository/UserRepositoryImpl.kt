@@ -13,9 +13,7 @@ import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
-import com.mnassa.domain.model.CompanyInfoModel
-import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
 
 /**
@@ -91,21 +89,44 @@ class UserRepositoryImpl(
 
     override suspend fun processAccount(account: PersonalInfoModel) {
         firebaseAuthApi.registerSendAccountInfo(RegisterSendingAccountInfoRequest(
-                account.birthdayDate,
-                account.personalInfo?.lastName,
-                account.userName,
-                account.showContactEmail,
-                account.language,
-                account.accountType.name.toLowerCase(),
-                account.birthday,
-                account.contactPhone,
-                converter.convertCollection(account.abilities, Ability::class.java),
-                requireNotNull(getAccountId()),
-                account.avatar,
-                account.personalInfo?.firstName,
-                account.showContactPhone,
-                account.contactEmail,
-                account.gender.name.toLowerCase()
+                birthdayDate = account.birthdayDate,
+                lastName = account.personalInfo?.lastName,
+                userName = account.userName,
+                showContactEmail = account.showContactEmail,
+                language = account.language,
+                type = account.accountType.name.toLowerCase(),
+                birthday = account.birthday,
+                contactPhone = account.contactPhone,
+                abilities = converter.convertCollection(account.abilities, Ability::class.java),
+                id = requireNotNull(getAccountId()),
+                avatar = account.avatar,
+                firstName = account.personalInfo?.firstName,
+                showContactPhone = account.showContactPhone,
+                contactEmail = account.contactEmail,
+                gender = account.gender.name.toLowerCase()
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) {
+        firebaseAuthApi.profileUpdatePersonAccountInfo(ProfilePersonAccountInfoRequest(
+                birthdayDate = account.birthdayDate,
+                lastName = account.personalInfo?.lastName,
+                userName = account.userName,
+                showContactEmail = account.showContactEmail,
+                language = account.language,
+                type = account.accountType.name.toLowerCase(),
+                birthday = account.birthday,
+                contactPhone = account.contactPhone,
+                abilities = converter.convertCollection(account.abilities, Ability::class.java),
+                id = requireNotNull(getAccountId()),
+                avatar = account.avatar,
+                firstName = account.personalInfo?.firstName,
+                showContactPhone = account.showContactPhone,
+                contactEmail = account.contactEmail,
+                gender = account.gender.name.toLowerCase(),
+                locationId = account.locationId,
+                interests = account.interests,
+                offers = account.offers
         )).handleException(exceptionHandler)
     }
 
@@ -122,6 +143,25 @@ class UserRepositoryImpl(
                 id = requireNotNull(getAccountId()),
                 website = account.website,
                 organizationType = account.organizationType
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
+        firebaseAuthApi.profileUpdateCompanyAccountInfo(ProfileCompanyAccountInfoRequest(
+                organizationName = requireNotNull(account.organizationInfo).organizationName,
+                avatar = account.avatar,
+                showContactEmail = account.showContactEmail,
+                contactEmail = account.contactEmail,
+                userName = account.userName,
+                language = account.language,
+                type = account.accountType.name.toLowerCase(),
+                founded = account.founded,
+                id = requireNotNull(getAccountId()),
+                website = account.website,
+                organizationType = account.organizationType,
+                locationId = account.locationId,
+                interests = account.interests,
+                offers = account.offers
         )).handleException(exceptionHandler)
     }
 

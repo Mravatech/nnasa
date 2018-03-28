@@ -1,6 +1,8 @@
 package com.mnassa.screen.profile.edit.personal
 
 import android.net.Uri
+import com.mnassa.domain.model.AccountAbility
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
@@ -17,6 +19,23 @@ interface EditPersonalProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearc
     val tagChannel: BroadcastChannel<TagCommand>
     fun getTagsByIds(ids: List<String>?, isOffers: Boolean)
     fun uploadPhotoToStorage(uri: Uri)
+    fun updatePersonalAccount(
+            profileAccountModel: ProfileAccountModel,
+            firstName: String,
+            secondName: String,
+            userName: String,
+            showContactEmail: Boolean,
+            contactEmail: String?,
+            showContactPhone: Boolean,
+            contactPhone: String?,
+            birthday: Long?,
+            birthdayDate: String?,
+            locationId: String?,
+            isMale: Boolean,
+            abilities: List<AccountAbility>,
+            interests: List<TagModel>,
+            offers: List<TagModel>
+    )
 
     sealed class TagCommand {
         data class TagInterests(val interests: List<TagModel>) : TagCommand()
