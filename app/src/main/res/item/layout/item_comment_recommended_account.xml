@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:background="@color/commentRecommendedAccountBackground">
+
+    <RelativeLayout
+        android:id="@+id/rlClickableRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingBottom="@dimen/spacing_small"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_small">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/avatar_recommended_item"
+            android:layout_height="@dimen/avatar_recommended_item"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            style="@style/MnassaHeader2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ivAvatar"
+            android:layout_toStartOf="@id/ivArrow"
+            tools:text="Lou Rodriguez" />
+
+        <TextView
+            android:id="@+id/tvUserPosition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/tvUserName"
+            android:layout_below="@id/tvUserName"
+            android:layout_toStartOf="@id/ivArrow"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="Designer in ISDDESIGN" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/spacing_small"
+            app:srcCompat="@drawable/ic_arrow" />
+
+    </RelativeLayout>
+
+</FrameLayout>

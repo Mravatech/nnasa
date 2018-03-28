@@ -4,10 +4,12 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.CommentResponseEntity
 import com.mnassa.data.network.bean.retrofit.response.CreateCommentResponse
 import com.mnassa.data.network.bean.retrofit.response.GetCommentsResponse
+import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -26,6 +28,10 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertGetCommentsResponse(input: GetCommentsResponse, token: Any?, converter: ConvertersContext): List<CommentModel> {
+        if (input.data.infoRestriction == NetworkContract.ErrorCode.NO_RIGHTS_TO_COMMENT) {
+            throw NoRightsToComment(input.data.infoRestriction ?: input.toString())
+        }
+
         return input.data.data?.entries?.flatMap { (mainCommentId, commentBody) ->
             commentBody.id = mainCommentId
             converter.convert(commentBody, token, List::class.java) as List<CommentModel>
@@ -33,6 +39,10 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertCreateCommentResponse(input: CreateCommentResponse, token: Any?, converter: ConvertersContext): CommentModel {
+        if (input.data?.infoRestriction == NetworkContract.ErrorCode.NO_RIGHTS_TO_COMMENT) {
+            throw NoRightsToComment(input.data?.infoRestriction ?: input.toString())
+        }
+
         val parentId = token as? String
 
         return input.data?.comment?.entries?.map { (mainCommentId, commentBody) ->
@@ -40,7 +50,7 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
             commentBody.parentItemId = parentId
 
             converter.convert(commentBody, token, List::class.java).first() as CommentModel
-        }?.first() ?: throw NetworkException("")
+        }?.first() ?: throw NetworkException(input.toString())
     }
 
     private fun convertCommentEntity(input: CommentResponseEntity, token: Any?, converter: ConvertersContext): List<CommentModel> {

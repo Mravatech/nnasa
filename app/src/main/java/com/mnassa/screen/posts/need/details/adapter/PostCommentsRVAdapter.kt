@@ -10,10 +10,9 @@ import android.widget.TextView
 import com.mnassa.R
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.CommentReplyModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.avatarRound
-import com.mnassa.extensions.goneIfEmpty
-import com.mnassa.extensions.toTimeAgo
+import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 
@@ -24,6 +23,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
+    var onRecommendedAccountClick = { view: View, account: ShortAccountModel -> }
 
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
         when {
@@ -73,11 +73,12 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
     }
 
     override fun onClick(view: View) {
-        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
-        if (position < 0) return
+        val position = (view.tag as? RecyclerView.ViewHolder)?.adapterPosition ?: -1
+
         when (view.id) {
-            R.id.btnReply -> onReplyClick(getDataItemByAdapterPosition(position))
-            R.id.commentRoot -> onCommentOptionsClick(view, getDataItemByAdapterPosition(position))
+            R.id.rlClickableRoot -> onRecommendedAccountClick(view, view.tag as ShortAccountModel)
+            R.id.btnReply -> if (position >= 0) onReplyClick(getDataItemByAdapterPosition(position))
+            R.id.commentRoot -> if (position >= 0) onCommentOptionsClick(view, getDataItemByAdapterPosition(position))
         }
     }
 
@@ -89,23 +90,23 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
     private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
 
         override fun bind(item: CommentModel) {
+            //used findViewById because this method is identical for Comment and Reply
             val avatar = itemView.findViewById<ImageView>(R.id.ivAvatar)
             val userName = itemView.findViewById<TextView>(R.id.tvUserName)
             val comment = itemView.findViewById<TextView>(R.id.tvCommentText)
-            val recommendedAccounts = itemView.findViewById<RecyclerView>(R.id.rvRecommendedAccounts)
+
             val creationTime = itemView.findViewById<TextView>(R.id.tvCreationTime)
             val replyButton = itemView.findViewById<Button>(R.id.btnReply)
             val commentRoot = itemView.findViewById<View>(R.id.commentRoot)
 
-            itemView.findViewById<View?>(R.id.vSeparator)?.visibility = if (adapterPosition <= FIRST_ITEM_POSITION) View.INVISIBLE else View.VISIBLE
+            itemView.findViewById<View?>(R.id.vSeparator)?.isInvisible = adapterPosition <= FIRST_ITEM_POSITION
 
             avatar.avatarRound(item.creator.avatar)
             userName.text = item.creator.formattedName
             comment.text = item.text
             comment.goneIfEmpty()
 
-            //TODO - recommends
-            recommendedAccounts.visibility = if (item.recommends.isEmpty()) View.GONE else View.VISIBLE
+            bindRecommendedContactsList(item)
 
             creationTime.text = item.createdAt.toTimeAgo()
 
@@ -115,6 +116,22 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
 
             commentRoot.tag = this
             commentRoot.setOnLongClickListener(this)
+        }
+
+        private fun bindRecommendedContactsList(item: CommentModel) {
+            val recommendedAccounts = itemView.findViewById<RecyclerView>(R.id.rvRecommendedAccounts)
+
+            recommendedAccounts.isGone = item.recommends.isEmpty()
+            recommendedAccounts.isNestedScrollingEnabled = false
+            recommendedAccounts.itemAnimator = null
+
+            var adapter: RecommendedAccountsRVAdapter? = recommendedAccounts.adapter as RecommendedAccountsRVAdapter?
+            if (adapter == null) {
+                adapter = RecommendedAccountsRVAdapter()
+                recommendedAccounts.adapter = adapter
+            }
+            adapter.set(item.recommends)
+            adapter.onItemClickListener = onClickListener
         }
 
         override fun onLongClick(view: View): Boolean {

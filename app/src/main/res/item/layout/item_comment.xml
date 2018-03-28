@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/backgroundHighlight">
 
     <RelativeLayout
@@ -54,6 +55,9 @@
             android:layout_below="@id/tvCommentText"
             android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_comment_recommended_account"
+            tools:layout_height="120dp"
             tools:visibility="visible" />
 
         <TextView

@@ -30,4 +30,6 @@
     <color name="chip_default_edit_text_hint_color">#808080</color>
     <color name="tabLayoutInActive">#b2ffffff</color>
 
+    <color name="commentRecommendedAccountBackground">#7fe4e8eb</color>
+
 </resources>
