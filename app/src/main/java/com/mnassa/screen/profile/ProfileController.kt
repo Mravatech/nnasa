@@ -22,15 +22,17 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
     override val layoutId: Int = R.layout.controller_profile
     override val viewModel: ProfileViewModel by instance()
 
-    var adapter = ProfileAdapter()
+    private lateinit var adapter: ProfileAdapter
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.ivProfileBack.setOnClickListener { close() }
 //        open(AllConnectionsController.newInstance())
         viewModel.getProfileWithAccountId("-L7iL1VRfulD0PIQBT7V") //TODO set account id
+//        viewModel.getProfileWithAccountId("-L7ixl179JFvjPnaZxXn") //TODO set account id
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 view.rvProfile.layoutManager = LinearLayoutManager(view.context)
+                adapter = ProfileAdapter(profileModel)
                 view.rvProfile.adapter = adapter
                 adapter.set(listOf(profileModel))
                 view.ivCropImage.avatarSquare(profileModel.profile.avatar)

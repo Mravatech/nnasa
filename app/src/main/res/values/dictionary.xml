@@ -126,6 +126,7 @@
     <string name="profile_mobile_phone">_profileDetails_labelMobile</string>
     <string name="profile_email">_profileDetails_labelEmail</string>
     <string name="profile_more_information">_android_profile_more_info</string>
+    <string name="profile_date_of_foundation">_profileDetails_birthdayOrganization</string>
 
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
     <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
