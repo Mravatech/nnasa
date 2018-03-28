@@ -27,27 +27,6 @@ class ProfileViewModelImpl(
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
     override val tagChannel: BroadcastChannel<List<TagModel>> = BroadcastChannel(10)
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        handleException {
-//            withProgressSuspend {
-//                val profileAccountModel = profileInteractor.getPrifileByAccountId("-L7iL1VRfulD0PIQBT7V"//"-L8CtC3Vst4AcfsP67lf"-L7iL1VRfulD0PIQBT7V
-//                )
-//                Timber.i(profileAccountModel.toString())
-//                if (profileAccountModel != null) {
-//                    val profile = ProfileModel(profileAccountModel,
-//                            tagInteractor.getTagsByIds(profileAccountModel.interests
-//                                    ?: emptyList()),
-//                            tagInteractor.getTagsByIds(profileAccountModel.offers
-//                                    ?: emptyList()),
-//                            userProfileInteractor.getAccountId() == "-L7iL1VRfulD0PIQBT7V")
-//                    profileChannel.send(profile)
-//                }
-//
-//            }
-//        }
-//    }
-
     private var profileJob: Job? = null
     override fun getProfileWithAccountId(accountId: String) {
         profileJob?.cancel()
@@ -61,7 +40,7 @@ class ProfileViewModelImpl(
                                     ?: emptyList()),
                             tagInteractor.getTagsByIds(profileAccountModel.offers
                                     ?: emptyList()),
-                            userProfileInteractor.getAccountId() == "-L7iL1VRfulD0PIQBT7V")
+                            userProfileInteractor.getAccountId() == accountId)
                     profileChannel.send(profile)
                 }
 

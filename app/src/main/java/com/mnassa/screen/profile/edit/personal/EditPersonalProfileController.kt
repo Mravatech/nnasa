@@ -1,4 +1,4 @@
-package com.mnassa.screen.profile.edit
+package com.mnassa.screen.profile.edit.personal
 
 import android.Manifest
 import android.app.Activity
@@ -36,11 +36,11 @@ import java.util.*
  * Date: 3/26/2018
  */
 
-class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileViewModel>(data) {
+class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPersonalProfileViewModel>(data) {
 
     override val layoutId = R.layout.controller_edit_personal_profile
-    override val viewModel: EditProfileViewModel by instance()
-    private val accountModel: ProfileAccountModel by lazy { args.getSerializable(EXTRA_PROFILE) as ProfileAccountModel }
+    override val viewModel: EditPersonalProfileViewModel by instance()
+    private val accountModel: ProfileAccountModel by lazy { args.getParcelable(EXTRA_PROFILE) as ProfileAccountModel }
     private val playServiceHelper: PlayServiceHelper by instance()
     private val dialog: DialogHelper by instance()
     private var personSelectedPlaceName: String? = null
@@ -109,8 +109,8 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
             viewModel.getTagsByIds(accountModel.interests, true)
             viewModel.tagChannel.consumeEach {
                 when (it) {
-                    is EditProfileViewModel.TagCommand.TagInterests -> view.chipPersonInterests.setTags(it.interests)
-                    is EditProfileViewModel.TagCommand.TagOffers -> view.chipPersonOffers.setTags(it.offers)
+                    is EditPersonalProfileViewModel.TagCommand.TagInterests -> view.chipPersonInterests.setTags(it.interests)
+                    is EditPersonalProfileViewModel.TagCommand.TagOffers -> view.chipPersonOffers.setTags(it.offers)
                 }
             }
         }
@@ -188,10 +188,10 @@ class EditProfileController(data: Bundle) : MnassaControllerImpl<EditProfileView
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_PROFILE = "EXTRA_PROFILE"
 
-        fun newInstance(profileModel: ProfileModel): EditProfileController {
+        fun newInstance(profileModel: ProfileModel): EditPersonalProfileController {
             val params = Bundle()
-            params.putSerializable(EditProfileController.EXTRA_PROFILE, profileModel.profile)
-            return EditProfileController(params)
+            params.putParcelable(EXTRA_PROFILE, profileModel.profile)
+            return EditPersonalProfileController(params)
         }
     }
 

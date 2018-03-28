@@ -1,12 +1,14 @@
 package com.mnassa.domain.model.impl
 
 import com.mnassa.domain.model.*
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by IntelliJ IDEA.
  * User: okli
  * Date: 3/23/2018
  */
+@Parcelize
 data class ProfileAccountModelImpl(
         override val createdAt: Long?,
         override var id: String,

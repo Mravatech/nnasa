@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.net.Uri
+import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import com.github.salomonbrys.kodein.instance
@@ -27,9 +28,9 @@ import java.util.*
 /**
  * Created by Peter on 2/28/2018.
  */
-class OrganizationInfoController(//data: Bundle
+class OrganizationInfoController(data: Bundle
 ) : MnassaControllerImpl<OrganizationInfoViewModel>(
-        //data
+        data
 ) {
     override val layoutId: Int = R.layout.controller_organization_info
     override val viewModel: OrganizationInfoViewModel by instance()
@@ -73,10 +74,10 @@ class OrganizationInfoController(//data: Bundle
         view.etCompanyEmail.setHideMode(false)
         view.btnHeaderNext.setOnClickListener {
             val email = view.etCompanyEmail.text.toString()
-            if (view.etCompanyName.text.toString().isBlank()) {
-                view.etCompanyName.error = fromDictionary(R.string.company_name_is_not_valid)
-                return@setOnClickListener
-            }
+//            if (view.etCompanyName.text.toString().isBlank()) {
+//                view.etCompanyName.error = fromDictionary(R.string.company_name_is_not_valid)
+//                return@setOnClickListener
+//            }
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
                 view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
                 return@setOnClickListener
@@ -89,7 +90,7 @@ class OrganizationInfoController(//data: Bundle
                     timeMillis,
 //                    view.etPhoneNumber.isChosen,
                     view.etCompanyEmail.text.toString().takeIf { it.isNotBlank() },
-                    view.etCompanyName.text.toString(),
+//                    view.etCompanyName.text.toString(),
                     view.etWebSite.text.toString().takeIf { it.isNotBlank() }
             )
         }
@@ -135,7 +136,7 @@ class OrganizationInfoController(//data: Bundle
         view.tilWebSite.hint = fromDictionary(R.string.reg_company_website)
 //        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
         view.tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
-        view.tilCompanyName.hint = fromDictionary(R.string.reg_company_name)
+//        view.tilCompanyName.hint = fromDictionary(R.string.reg_company_name)
         view.tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
         view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
     }
@@ -143,13 +144,13 @@ class OrganizationInfoController(//data: Bundle
     companion object {
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
-        fun newInstance() = OrganizationInfoController()
+//        fun newInstance() = OrganizationInfoController()
 
         fun newInstance(ac: ShortAccountModel
         ): OrganizationInfoController {
-//            val params = Bundle()
-//            params.putSerializable(EXTRA_ACCOUNT, ac)
-            return OrganizationInfoController(//params
+            val params = Bundle()
+            params.putSerializable(EXTRA_ACCOUNT, ac)
+            return OrganizationInfoController(params
             )
         }
     }

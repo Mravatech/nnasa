@@ -1,11 +1,13 @@
 package com.mnassa.domain.model
 
+import android.os.Parcelable
+
 /**
  * Created by IntelliJ IDEA.
  * User: okli
  * Date: 3/23/2018
  */
-interface ProfileAccountModel : ShortAccountModel {
+interface ProfileAccountModel : ShortAccountModel, Parcelable {
 
     val createdAt: Long?
     val createdAtDate: String?

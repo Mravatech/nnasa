@@ -46,6 +46,7 @@
     <string name="_android_registration_company_status_commercial_INFO">Commercial</string>
     <string name="_android_registration_company_status_governmental_INFO">Governmental</string>
     <string name="_android_registration_company_status_non_profit_INFO">Non Profit</string>
+    <string name="_android_registration_company_name_INFO">Company name</string>
 
     <string name="_android_email_validation_INFO">Email is not valid</string>
     <string name="_android_organization_name_validation_INFO">Please enter your Organization name</string>

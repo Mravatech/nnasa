@@ -1,12 +1,14 @@
 package com.mnassa.domain.model
 
+import android.os.Parcelable
+
 /**
  * Created by IntelliJ IDEA.
  * User: okli
  * Date: 3/27/2018
  */
 
-interface LocationModel {
+interface LocationModel :Parcelable{
 
     val placeId: String?
     val en: LocationDetailModel?
@@ -14,7 +16,7 @@ interface LocationModel {
 
 }
 
-interface LocationDetailModel{
+interface LocationDetailModel:Parcelable{
     val city: String?
     val lat: Double?
     val lng: Double?

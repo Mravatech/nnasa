@@ -1,4 +1,4 @@
-package com.mnassa.screen.profile.edit
+package com.mnassa.screen.profile.edit.company
 
 import android.net.Uri
 import com.mnassa.domain.interactor.PlaceFinderInteractor
@@ -16,14 +16,14 @@ import timber.log.Timber
 /**
  * Created by IntelliJ IDEA.
  * User: okli
- * Date: 3/26/2018
+ * Date: 3/28/2018
  */
-class EditProfileViewModelImpl(
+class EditCompanyProfileViewModelImpl (
         private val tagInteractor: TagInteractor,
         private val storageInteractor: StorageInteractor,
-        private val placeFinderInteractor: PlaceFinderInteractor) : MnassaViewModelImpl(), EditProfileViewModel {
+        private val placeFinderInteractor: PlaceFinderInteractor) : MnassaViewModelImpl(), EditCompanyProfileViewModel {
 
-    override val tagChannel: BroadcastChannel<EditProfileViewModel.TagCommand> = BroadcastChannel(10)
+    override val tagChannel: BroadcastChannel<EditCompanyProfileViewModel.TagCommand> = BroadcastChannel(10)
     override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
 
     private var sendPhotoJob: Job? = null
@@ -42,9 +42,9 @@ class EditProfileViewModelImpl(
         tagJob = handleException {
             val tags = tagInteractor.getTagsByIds(tagIds)
             if (isOffers) {
-                tagChannel.send(EditProfileViewModel.TagCommand.TagOffers(tags))
+                tagChannel.send(EditCompanyProfileViewModel.TagCommand.TagOffers(tags))
             } else {
-                tagChannel.send(EditProfileViewModel.TagCommand.TagInterests(tags))
+                tagChannel.send(EditCompanyProfileViewModel.TagCommand.TagInterests(tags))
             }
         }
     }

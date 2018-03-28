@@ -67,8 +67,10 @@ import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
-import com.mnassa.screen.profile.edit.EditProfileViewModel
-import com.mnassa.screen.profile.edit.EditProfileViewModelImpl
+import com.mnassa.screen.profile.edit.company.EditCompanyProfileViewModel
+import com.mnassa.screen.profile.edit.company.EditCompanyProfileViewModelImpl
+import com.mnassa.screen.profile.edit.personal.EditPersonalProfileViewModel
+import com.mnassa.screen.profile.edit.personal.EditPersonalProfileViewModelImpl
 import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
@@ -115,7 +117,8 @@ private val viewModelsModule = Kodein.Module {
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
-    bind<EditProfileViewModel>() with provider { EditProfileViewModelImpl(instance(), instance(), instance()) }
+    bind<EditPersonalProfileViewModel>() with provider { EditPersonalProfileViewModelImpl(instance(), instance(), instance()) }
+    bind<EditCompanyProfileViewModel>() with provider { EditCompanyProfileViewModelImpl(instance(), instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {

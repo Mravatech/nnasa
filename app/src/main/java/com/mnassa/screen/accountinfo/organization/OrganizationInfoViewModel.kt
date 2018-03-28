@@ -21,7 +21,7 @@ interface OrganizationInfoViewModel : MnassaViewModel {
                        founded: Long?,
 //                       showContactPhone: Boolean?,
                        contactEmail: String?,
-                       organizationName: String,
+//                       organizationName: String,
                        website: String?
     )
 

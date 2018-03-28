@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.net.Uri
+import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import com.github.salomonbrys.kodein.instance
@@ -26,8 +27,8 @@ import timber.log.Timber
 import java.text.DateFormatSymbols
 import java.util.*
 
-class PersonalInfoController(//data: Bundle
-) : MnassaControllerImpl<PersonalInfoViewModel>(//data
+class PersonalInfoController(data: Bundle
+) : MnassaControllerImpl<PersonalInfoViewModel>(data
 ) {
 
     override val layoutId: Int = R.layout.controller_personal_info
@@ -143,18 +144,18 @@ class PersonalInfoController(//data: Bundle
 
         fun newInstance(ac: ShortAccountModel
         ): PersonalInfoController {
-//            val params = Bundle()
-//            params.putSerializable(EXTRA_ACCOUNT, ac)
-            return PersonalInfoController(//params
+            val params = Bundle()
+            params.putSerializable(EXTRA_ACCOUNT, ac)
+            return PersonalInfoController(params
                      )
         }
-        fun newInstance(
-        ): PersonalInfoController {
-//            val params = Bundle()
-//            params.putSerializable(EXTRA_ACCOUNT, ac)
-            return PersonalInfoController(//params
-                     )
-        }
+//        fun newInstance(
+//        ): PersonalInfoController {
+////            val params = Bundle()
+////            params.putSerializable(EXTRA_ACCOUNT, ac)
+//            return PersonalInfoController(//params
+//                     )
+//        }
 
     }
 }

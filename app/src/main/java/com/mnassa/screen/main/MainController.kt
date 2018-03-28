@@ -16,8 +16,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.screen.MnassaRouter
-import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
-import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
@@ -135,8 +133,8 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
-            R.id.personal_info -> open(PersonalInfoController.newInstance())
-            R.id.company_info -> open(OrganizationInfoController.newInstance())
+//            R.id.personal_info -> open(PersonalInfoController.newInstance())
+//            R.id.company_info -> open(OrganizationInfoController.newInstance())
             R.id.nav_profile -> open(ProfileController.newInstance())
             R.id.nav_logout -> viewModel.logout()
         }

@@ -45,7 +45,7 @@ class OrganizationInfoViewModelImpl(
             showContactEmail: Boolean?,
             founded: Long?,
             contactEmail: String?,
-            organizationName: String,
+//            organizationName: String,
             website: String?) {
         processAccountJob?.cancel()
         processAccountJob = handleException {
@@ -59,7 +59,7 @@ class OrganizationInfoViewModelImpl(
                         contactPhone = accountModel.contactPhone,
                         language = accountModel.language,
                         personalInfo = accountModel.personalInfo,
-                        organizationInfo = OrganizationAccountDiffModelImpl(organizationName),
+                        organizationInfo = OrganizationAccountDiffModelImpl(requireNotNull(accountModel.organizationInfo).organizationName),
                         abilities = emptyList(),
                         showContactEmail = showContactEmail,
                         showContactPhone = true,//todo handle

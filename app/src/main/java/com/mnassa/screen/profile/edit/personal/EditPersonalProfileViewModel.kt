@@ -1,4 +1,4 @@
-package com.mnassa.screen.profile.edit
+package com.mnassa.screen.profile.edit.personal
 
 import android.net.Uri
 import com.mnassa.domain.model.TagModel
@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * User: okli
  * Date: 3/26/2018
  */
-interface EditProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface EditPersonalProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val imageUploadedChannel: BroadcastChannel<String>
     val tagChannel: BroadcastChannel<TagCommand>
     fun getTagsByIds(ids: List<String>?, isOffers: Boolean)
