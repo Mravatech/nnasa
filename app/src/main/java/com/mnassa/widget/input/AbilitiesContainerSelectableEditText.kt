@@ -54,13 +54,18 @@ class AbilitiesContainerSelectableEditText : LinearLayout, AbilitySelectableEdit
 
     fun setAbilities(abilities: List<AccountAbility>) {
         if (abilities.isNotEmpty()) {
-            containerSelectable.removeAllViews()
+            for (i in 0..containerSelectable.childCount) {
+                val childView = containerSelectable.getChildAt(i)
+                when (childView) {
+                    is AbilitySelectableEditText -> containerSelectable.removeView(childView)
+                }
+            }
             tvAddAnotherOccupation.visibility = View.VISIBLE
         }
         abilities.forEach {
             val abilitySelectableEditText = AbilitySelectableEditText(context, it.isMain, this)
             abilitySelectableEditText.setAbility(it)
-            containerSelectable.addView(abilitySelectableEditText, containerSelectable.childCount)
+            containerSelectable.addView(abilitySelectableEditText, containerSelectable.childCount - PRE_LAST_POSITION)
         }
     }
 

@@ -17,8 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_toStartOf="@+id/vOccupationDivider"
             android:contentDescription="@null"
-            android:visibility="gone"
             android:textColor="@color/turquoiseBlue"
+            android:visibility="gone"
             tools:text="Make Primary" />
 
         <View
@@ -36,8 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
-            android:textColor="@color/red"
             android:contentDescription="@null"
+            android:textColor="@color/red"
             android:visibility="gone"
             tools:text="Delete" />
 
