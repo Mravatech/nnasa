@@ -40,9 +40,6 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
         with(view) {
             rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
-                    //set vertical gravity for all items in a row. Default = Gravity.CENTER_VERTICAL
-//                    .setChildGravity(Gravity.TOP)
-                    //whether RecyclerView can scroll. TRUE by default
                     .setScrollingEnabled(false)
                     .setRowStrategy(ChipsLayoutManager.STRATEGY_FILL_SPACE)
                     .setOrientation(ChipsLayoutManager.HORIZONTAL)
@@ -52,13 +49,13 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
         launchCoroutineUI {
             viewModel.postChannel.consumeEach {
-                setPost(it)
+                bindPost(it)
             }
         }
 
         launchCoroutineUI {
             viewModel.postTagsChannel.consumeEach {
-                setTags(it)
+                bindTags(it)
             }
         }
 
@@ -68,7 +65,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
             }
         }
 
-        (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply { setPost(this) }
+        (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply { bindPost(this) }
     }
 
     private fun showMyPostMenu(view: View, post: Post) {
@@ -109,7 +106,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         popup.show()
     }
 
-    private fun setPost(post: Post) {
+    private fun bindPost(post: Post) {
         val view = view ?: return
 
         with(view) {
@@ -189,7 +186,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         }
     }
 
-    private fun setTags(tags: List<TagModel>) {
+    private fun bindTags(tags: List<TagModel>) {
         with(view ?: return) {
             vTagsSeparator.visibility = if (tags.isEmpty()) View.GONE else View.VISIBLE
             rvTags.visibility = if (tags.isEmpty()) View.GONE else View.VISIBLE

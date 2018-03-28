@@ -15,12 +15,11 @@ interface FirebasePostApi {
     @POST("/post")
     fun createPost(@Body request: CreatePostRequest): Deferred<CreatePostResponse>
 
-//    @DELETE("/post/{postId}")
-//    fun deletePost(@Path("postId") postId: String): Deferred<MnassaResponse>
+    @PUT("/post")
+    fun changePost(@Body request: CreatePostRequest): Deferred<MnassaResponse>
 
-//    @FormUrlEncoded
-    @HTTP(method = "DELETE", path = "/post", hasBody = true)
-    fun deletePost(@Body request: RemovePostRequest): Deferred<MnassaResponse>
+    @DELETE("/post/{postId}")
+    fun deletePost(@Path("postId") postId: String): Deferred<MnassaResponse>
 
     @POST("/itemView")
     fun viewItems(@Body request: ViewItemsRequest): Deferred<MnassaResponse>

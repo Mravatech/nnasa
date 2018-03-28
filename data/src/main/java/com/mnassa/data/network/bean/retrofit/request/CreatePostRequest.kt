@@ -13,8 +13,6 @@ data class CreatePostRequest(
         @SerializedName("images") val images: List<String>? = null,
         @SerializedName("privacyType") val privacyType: String,
         @SerializedName("accountForRecommendation") val accountForRecommendation: String? = null,
-//        @SerializedName("sharingType") val sharingType: String,
-
         @SerializedName("privacyConnections") val privacyConnections: List<String>? = null,
         @SerializedName("price") val price: Long? = null
 )

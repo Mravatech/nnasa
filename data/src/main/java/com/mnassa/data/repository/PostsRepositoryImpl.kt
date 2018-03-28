@@ -83,6 +83,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun removePost(postId: String) {
-        postApi.deletePost(RemovePostRequest(postId)).handleException(exceptionHandler)
+        postApi.deletePost(postId).handleException(exceptionHandler)
     }
 }

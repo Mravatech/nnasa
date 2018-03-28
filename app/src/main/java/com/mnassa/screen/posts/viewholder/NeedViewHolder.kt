@@ -76,35 +76,17 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             return NeedViewHolder(view, onClickListener)
         }
 
-        fun newInstanceWithOneImage(parent: ViewGroup, onClickListener: View.OnClickListener): NeedViewHolder {
+        fun newInstanceWithImage(parent: ViewGroup, onClickListener: View.OnClickListener, imagesCount: Int): NeedViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)
             view.flImagesRoot.visibility = View.VISIBLE
-            inflater.inflate(R.layout.item_image_one, view.flImagesRoot, true)
-            return NeedViewHolder(view, onClickListener)
-        }
-
-        fun newInstanceWithTwoImages(parent: ViewGroup, onClickListener: View.OnClickListener): NeedViewHolder {
-            val inflater = LayoutInflater.from(parent.context)
-            val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)
-            view.flImagesRoot.visibility = View.VISIBLE
-            inflater.inflate(R.layout.item_image_two, view.flImagesRoot, true)
-            return NeedViewHolder(view, onClickListener)
-        }
-
-        fun newInstanceWithThreeImages(parent: ViewGroup, onClickListener: View.OnClickListener): NeedViewHolder {
-            val inflater = LayoutInflater.from(parent.context)
-            val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)
-            view.flImagesRoot.visibility = View.VISIBLE
-            inflater.inflate(R.layout.item_image_three, view.flImagesRoot, true)
-            return NeedViewHolder(view, onClickListener)
-        }
-
-        fun newInstanceWithMoreImages(parent: ViewGroup, onClickListener: View.OnClickListener): NeedViewHolder {
-            val inflater = LayoutInflater.from(parent.context)
-            val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)
-            view.flImagesRoot.visibility = View.VISIBLE
-            inflater.inflate(R.layout.item_image_more, view.flImagesRoot, true)
+            val imagesLayout = when (imagesCount) {
+                1 -> R.layout.item_image_one
+                2 -> R.layout.item_image_two
+                3 -> R.layout.item_image_three
+                else -> R.layout.item_image_more
+            }
+            inflater.inflate(imagesLayout, view.flImagesRoot, true)
             return NeedViewHolder(view, onClickListener)
         }
     }

@@ -19,7 +19,7 @@ import com.mnassa.translation.fromDictionary
  */
 fun Double.formatAsMoney(): String {
     val formatted = (this * 100).toLong() / 100L
-    return formatted.toString() + " SAR"
+    return formatted.toString() + " SAR" //TODO: discuss about currency
 }
 
 fun LocationPlaceModel?.formatted(): String {
