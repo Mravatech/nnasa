@@ -14,8 +14,6 @@ data class CreatePostRequest(
         @SerializedName("privacyType") val privacyType: String,
         @SerializedName("allConnections") val allConnections: Boolean,
         @SerializedName("accountForRecommendation") val accountForRecommendation: String? = null,
-//        @SerializedName("sharingType") val sharingType: String,
-
         @SerializedName("privacyConnections") val privacyConnections: List<String>? = null,
         @SerializedName("price") val price: Long? = null,
         @SerializedName("postId") val postId: String? = null //for post updating

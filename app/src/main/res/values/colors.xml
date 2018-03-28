@@ -32,4 +32,6 @@
 
     <color name="commentRecommendedAccountBackground">#7fe4e8eb</color>
 
+    <color name="moreImagesBackground">#6a000000</color>
+
 </resources>

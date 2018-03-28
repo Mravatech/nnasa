@@ -18,7 +18,7 @@ import com.mnassa.translation.fromDictionary
  * Created by Peter on 3/19/2018.
  */
 fun Double.formatAsMoneySAR(): String {
-    return formatAsMoney().toString() + " SAR"
+    return formatAsMoney().toString() + " SAR" //TODO: discuss about currency
 }
 
 fun Double.formatAsMoney(): Double {
