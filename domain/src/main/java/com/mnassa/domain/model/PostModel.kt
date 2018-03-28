@@ -6,7 +6,7 @@ import java.util.*
 /**
  * Created by Peter on 3/13/2018.
  */
-interface Post : Model {
+interface PostModel : Model {
     val allConnections: Boolean
     val type: PostType
     val createdAt: Date
@@ -24,6 +24,7 @@ interface Post : Model {
     val copyOwnerId: String?
     val price: Double
     val autoSuggest: PostAutoSuggest
+    val repostAuthor: ShortAccountModel?
 }
 
 interface PostCounters : Serializable {

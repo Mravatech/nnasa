@@ -8,7 +8,6 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
-import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -24,7 +23,7 @@ class PostDetailsViewModelImpl(private val postId: String,
                                private val tagInteractor: TagInteractor,
                                private val commentsInteractor: CommentsInteractor)
     : MnassaViewModelImpl(), PostDetailsViewModel {
-    override val postChannel: ConflatedBroadcastChannel<Post> = ConflatedBroadcastChannel()
+    override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()

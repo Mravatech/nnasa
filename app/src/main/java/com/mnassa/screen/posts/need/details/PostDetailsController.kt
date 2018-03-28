@@ -15,7 +15,6 @@ import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
-import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
@@ -167,7 +166,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             }
         }
 
-        (args.getSerializable(EXTRA_NEED_MODEL) as Post?)?.apply {
+        (args.getSerializable(EXTRA_NEED_MODEL) as PostModel?)?.apply {
             setPost(this)
             args.remove(EXTRA_NEED_MODEL)
         }
@@ -181,7 +180,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         super.onViewDestroyed(view)
     }
 
-    private fun showMyPostMenu(view: View, post: Post) {
+    private fun showMyPostMenu(view: View, post: PostModel) {
         val popup = PopupMenu(view.context, view)
         popup.menuInflater.inflate(R.menu.post_edit, popup.menu)
         popup.menu.findItem(R.id.action_post_edit).title = fromDictionary(R.string.need_action_edit)
@@ -240,7 +239,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         }
     }
 
-    private fun setPost(post: Post) {
+    private fun setPost(post: PostModel) {
         Timber.d("POST -> setPost $post")
 
         view?.toolbar?.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
@@ -342,7 +341,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         open(controller)
     }
 
-    private fun openRecommendScreen(post: Post) {
+    private fun openRecommendScreen(post: PostModel) {
         val controller = RecommendController.newInstance(post.author.formattedName, post.autoSuggest.accountIds, recommendedAccounts.map { it.id })
         controller.targetController = this
         open(controller)
@@ -379,7 +378,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             return PostDetailsController(args)
         }
 
-        fun newInstance(post: Post): PostDetailsController {
+        fun newInstance(post: PostModel): PostDetailsController {
             val args = Bundle()
             args.putString(EXTRA_NEED_ID, post.id)
             args.putSerializable(EXTRA_NEED_MODEL, post)

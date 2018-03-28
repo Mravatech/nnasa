@@ -5,7 +5,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.PostsRepository
@@ -15,9 +15,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
-import java.io.File
 import java.util.*
-import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -26,15 +24,15 @@ import java.util.concurrent.atomic.AtomicLong
 class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val storageInteractor: StorageInteractor) : PostsInteractor {
 
-    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>> = postsRepository.loadAllWithChangesHandling()
-    override suspend fun loadById(id: String): ReceiveChannel<Post> = postsRepository.loadById(id)
+    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
+    override suspend fun loadById(id: String): ReceiveChannel<PostModel> = postsRepository.loadById(id)
 
     private val viewedItemIdsBuffer = Collections.synchronizedSet(HashSet<String>())
     private val sentViewedItemIds = Collections.synchronizedSet(HashSet<String>())
     private val lastItemsSentTime = AtomicLong()
     private var sendViewedItemsJob: Job? = null
 
-    override suspend fun onItemViewed(item: Post) {
+    override suspend fun onItemViewed(item: PostModel) {
         val id = item.id
         if (sentViewedItemIds.contains(id)) {
             return
@@ -72,7 +70,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             privacyType: PostPrivacyType,
             toAll: Boolean,
             privacyConnections: List<String>
-    ): Post {
+    ): PostModel {
         val allImages = uploadedImages + imagesToUpload.map {
             async {storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
         }.map { it.await() }
@@ -97,7 +95,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.removePost(postId)
     }
 
-    override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): Post {
+    override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel {
         return postsRepository.repostPost(postId, text, privacyConnections)
     }
 

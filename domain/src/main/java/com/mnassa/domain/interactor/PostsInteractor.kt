@@ -2,18 +2,17 @@ package com.mnassa.domain.interactor
 
 import android.net.Uri
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import java.io.File
 
 /**
  * Created by Peter on 3/16/2018.
  */
 interface PostsInteractor {
-    suspend fun loadAll(): ReceiveChannel<ListItemEvent<Post>>
-    suspend fun loadById(id: String): ReceiveChannel<Post>
-    suspend fun onItemViewed(item: Post)
+    suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadById(id: String): ReceiveChannel<PostModel>
+    suspend fun onItemViewed(item: PostModel)
 
     suspend fun createNeed(
             text: String,
@@ -21,7 +20,7 @@ interface PostsInteractor {
             uploadedImages: List<String>,
             privacyType: PostPrivacyType,
             toAll: Boolean,
-            privacyConnections: List<String>): Post
+            privacyConnections: List<String>): PostModel
 
     suspend fun updateNeed(
             postId: String,
@@ -34,5 +33,5 @@ interface PostsInteractor {
 
     suspend fun removePost(postId: String)
 
-    suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): Post
+    suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel
 }

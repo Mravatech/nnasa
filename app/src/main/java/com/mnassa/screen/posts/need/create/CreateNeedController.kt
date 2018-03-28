@@ -14,7 +14,7 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.dialog.DialogHelper
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
 import com.mnassa.google.PlayServiceHelper
@@ -138,7 +138,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
 
         if (args.containsKey(EXTRA_POST_TO_EDIT)) {
-            setData(args.getSerializable(EXTRA_POST_TO_EDIT) as Post)
+            setData(args.getSerializable(EXTRA_POST_TO_EDIT) as PostModel)
             args.remove(EXTRA_POST_TO_EDIT)
         }
 
@@ -161,7 +161,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
     }
 
-    private fun setData(post: Post) {
+    private fun setData(post: PostModel) {
         with(view ?: return) {
             etNeed.setText(post.text)
             launchCoroutineUI {
@@ -223,7 +223,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
 
         fun newInstance() = CreateNeedController(Bundle())
-        fun newInstanceEditMode(post: Post): CreateNeedController {
+        fun newInstanceEditMode(post: PostModel): CreateNeedController {
             val args = Bundle()
             args.putSerializable(EXTRA_POST_TO_EDIT, post)
             args.putString(EXTRA_POST_ID, post.id)

@@ -2,7 +2,7 @@ package com.mnassa.screen.posts
 
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -12,9 +12,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 class PostsViewModelImpl(private val postsInteractor: PostsInteractor) : MnassaViewModelImpl(), PostsViewModel {
 
-    override suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<Post>> = postsInteractor.loadAll()
+    override suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<PostModel>> = postsInteractor.loadAll()
 
-    override fun onAttachedToWindow(post: Post) {
+    override fun onAttachedToWindow(post: PostModel) {
         handleException { postsInteractor.onItemViewed(post) }
     }
 

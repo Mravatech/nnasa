@@ -6,7 +6,7 @@ import java.util.*
 /**
  * Created by Peter on 3/15/2018.
  */
-data class PostImpl(
+data class PostModelImpl(
         override var id: String,
         override val allConnections: Boolean,
         override val type: PostType,
@@ -24,8 +24,9 @@ data class PostImpl(
         override val author: ShortAccountModel,
         override val copyOwnerId: String?,
         override val price: Double,
-        override val autoSuggest: PostAutoSuggest
-) : Post {
+        override val autoSuggest: PostAutoSuggest,
+        override val repostAuthor: ShortAccountModel?
+) : PostModel {
 }
 
 data class PostCountersImpl(
