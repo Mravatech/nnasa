@@ -224,6 +224,7 @@
         </LinearLayout>
 
         <View
+            android:id="@+id/vOtherPersonPostActionsSeparator"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_width"
             android:layout_marginBottom="@dimen/spacing_horizontal"

@@ -30,13 +30,15 @@ import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
+import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.comment_panel.view.*
+import kotlinx.android.synthetic.main.panel_comment.view.*
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.controller_post_details.view.*
 import kotlinx.android.synthetic.main.item_image.view.*
-import kotlinx.android.synthetic.main.reply_panel.view.*
+import kotlinx.android.synthetic.main.panel_recommend.view.*
+import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -54,6 +56,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         set(value) = viewModel.repost(value)
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
+    private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
     private var headerLayout = StateExecutor<View?, View>(null) { it != null }
     private var replyTo: CommentModel? = null
         set(value) {
@@ -68,8 +71,14 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 }
             }
         }
-    override var selectedAccounts: List<ShortAccountModel> = emptyList()
-        set(value) {}
+    override var recommendedAccounts: List<ShortAccountModel>
+        set(value) {
+            launchCoroutineUI {
+                getViewSuspend().recommendPanel.visibility = if (value.isEmpty()) View.GONE else View.VISIBLE
+                accountsToRecommendAdapter.set(value)
+            }
+        }
+        get() = accountsToRecommendAdapter.dataStorage.toList()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -79,21 +88,20 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             commentsAdapter.onReplyClick = { comment -> replyTo = comment }
             commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
             rvPostDetails.adapter = commentsAdapter
-            rvPostDetails.layoutManager = LinearLayoutManager(context)
-            rvPostDetails.itemAnimator = object : DefaultItemAnimator() {
-                override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean = true
-            }
+            rvAccountsToRecommend.adapter = accountsToRecommendAdapter
+            accountsToRecommendAdapter.onDataSourceChangedListener = { recommendPanel.isGone = it.isEmpty() }
 
             btnCommentPost.text = fromDictionary(R.string.posts_comment_create)
             btnCommentPost.setOnClickListener {
                 viewModel.createComment(etCommentText.text.toString(), emptyList(), replyTo)
                 etCommentText.text = null
                 replyTo = null
+                recommendedAccounts = emptyList()
             }
             btnCommentPost.isEnabled = etCommentText.text.isNotEmpty()
             etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
             etCommentText.addTextChangedListener(SimpleTextWatcher { btnCommentPost.isEnabled = it.isNotBlank() })
-            tvCommentRecommend.setOnClickListener { headerLayout.invoke { btnRecommend.performClick() } }
+            tvCommentRecommend.setOnClickListener { headerLayout.invoke { it.btnRecommend.performClick() } }
             ivReplyCancel.setOnClickListener { replyTo = null }
         }
 
@@ -119,7 +127,9 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 if (!canReadComments) {
                     commentsAdapter.isLoadingEnabled = false
                     commentsAdapter.clear()
-                    headerLayout.invoke { it.tvCommentsCount.visibility = View.GONE }
+                }
+                headerLayout.invoke {
+                    it.tvCommentsCount.visibility = if (canReadComments) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -127,6 +137,10 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         launchCoroutineUI {
             viewModel.canWriteCommentsChannel.consumeEach { canWriteComments ->
                 view.commentPanel.visibility = if (canWriteComments) View.VISIBLE else View.GONE
+                headerLayout.invoke {
+                    it.llOtherPersonPostActions.visibility = if (canWriteComments) View.VISIBLE else View.GONE
+                    it.vOtherPersonPostActionsSeparator.visibility = if (canWriteComments) View.VISIBLE else View.GONE
+                }
             }
         }
 
@@ -327,7 +341,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     }
 
     private fun openRecommendScreen(post: Post) {
-        val controller = RecommendController.newInstance(post.author.formattedName, post.autoSuggest.accountIds)
+        val controller = RecommendController.newInstance(post.author.formattedName, post.autoSuggest.accountIds, recommendedAccounts.map { it.id })
         controller.targetController = this
         open(controller)
     }

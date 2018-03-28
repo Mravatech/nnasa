@@ -38,4 +38,6 @@
 
     <dimen name="connection_recommended_item_height">220dp</dimen>
     <dimen name="connection_recommended_item_width">194dp</dimen>
+
+    <dimen name="post_recommended_accounts_height">64dp</dimen>
 </resources>

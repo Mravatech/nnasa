@@ -22,15 +22,17 @@ import java.util.TreeSet
 class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<String>) : BasePaginationRVAdapter<GroupedAccount>(), View.OnClickListener {
 
     private val selectedAccountsInternal: MutableSet<ShortAccountModel> = TreeSet(Comparator { first, second -> first.id.compareTo(second.id) })
-    var onSelectedAccountsChangedListener = { selectedAccountIds: Set<ShortAccountModel> -> }
+    var onSelectedAccountsChangedListener = { selectedAccountIds: List<ShortAccountModel> -> }
     var selectedAccounts: Set<ShortAccountModel>
         get() = selectedAccountsInternal
         set(value) {
-            selectedAccountsInternal.clear()
-            selectedAccountsInternal.addAll(value)
-            onSelectedAccountsChangedListener(selectedAccountsInternal)
+            if (value.size != selectedAccountsInternal.size || !selectedAccountsInternal.containsAll(value)) {
+                selectedAccountsInternal.clear()
+                selectedAccountsInternal.addAll(value)
+                onSelectedAccountsChangedListener(selectedAccountsInternal.toList())
 
-            notifyDataSetChanged()
+                notifyDataSetChanged()
+            }
         }
 
     fun setAccounts(accounts: List<ShortAccountModel>) {
@@ -68,7 +70,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
             }
             viewHolder.bind(item)
 
-            onSelectedAccountsChangedListener(selectedAccountsInternal)
+            onSelectedAccountsChangedListener(selectedAccountsInternal.toList())
         }
     }
 

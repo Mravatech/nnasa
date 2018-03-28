@@ -1,72 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.mnassa.widget.MnassaToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+
     <RelativeLayout
+        android:id="@+id/rlEmptyView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnRecommend"
+        android:layout_below="@id/toolbar"
+        android:visibility="invisible">
 
-        <RelativeLayout
-            android:id="@+id/rlEmptyView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/btnRecommend"
-            android:visibility="invisible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="EMPTY" />
-
-        </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/flSelectedAccounts"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/spacing_vertical"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal"
-            android:paddingTop="@dimen/spacing_vertical">
-
-            <TextView
-                android:id="@+id/tvRecommendHeader"
-                style="@style/MnassaTextTiny"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="Some text" />
-
-        </FrameLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvAccountsToRecommend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/flSelectedAccounts"
-            android:layout_above="@id/btnRecommend"
-            tools:listitem="@layout/item_connection_request" />
-
-        <Button
-            android:id="@+id/btnRecommend"
-            style="@style/MnassaButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone"
-            tools:visibility="visible"
-            tools:text="Recommend" />
+            android:layout_centerInParent="true"
+            android:text="EMPTY" />
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tvRecommendHeader"
+        style="@style/MnassaTextTiny"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:gravity="center"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical"
+        tools:text="Some text" />
 
-</LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvSelectedAccounts"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/post_recommended_accounts_height"
+        android:layout_below="@id/tvRecommendHeader"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_selected_account"
+        tools:orientation="horizontal" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvAccountsToRecommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btnRecommend"
+        android:layout_below="@id/rvSelectedAccounts"
+        tools:listitem="@layout/item_build_network" />
+
+    <Button
+        android:id="@+id/btnRecommend"
+        style="@style/MnassaButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        tools:text="Recommend"
+        tools:visibility="visible" />
+
+</RelativeLayout>

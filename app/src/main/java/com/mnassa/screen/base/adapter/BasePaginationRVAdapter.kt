@@ -43,8 +43,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     open fun add(list: List<ITEM>) = run { dataStorage.addAll(list); Unit }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onAttachedToRecyclerView(rv: RecyclerView?) = run { recyclerView.value = rv }
-    override fun onDetachedFromRecyclerView(rv: RecyclerView?) = run {
+    override fun onAttachedToRecyclerView(rv: RecyclerView) = run { recyclerView.value = rv }
+    override fun onDetachedFromRecyclerView(rv: RecyclerView) = run {
         recyclerView.value = null
         recyclerView.clear()
     }

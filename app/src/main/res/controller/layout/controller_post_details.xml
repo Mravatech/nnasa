@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.mnassa.widget.MnassaToolbar
@@ -16,20 +17,30 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/commentPanel"
         android:layout_below="@id/toolbar"
+        app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/item_comment" />
 
     <include
         android:id="@+id/replyPanel"
-        layout="@layout/reply_panel"
+        layout="@layout/panel_reply"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/commentPanel"
+        android:layout_above="@id/recommendPanel"
         android:visibility="gone"
         tools:visibility="visible" />
 
     <include
+        android:id="@+id/recommendPanel"
+        layout="@layout/panel_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/commentPanel"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <include
         android:id="@+id/commentPanel"
-        layout="@layout/comment_panel"
+        layout="@layout/panel_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />

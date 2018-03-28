@@ -17,6 +17,12 @@ class SelectedAccountRVAdapter : BasePaginationRVAdapter<ShortAccountModel>(), V
 
     var onDataSourceChangedListener = { items: List<ShortAccountModel> -> }
 
+    init {
+        dataStorage = SimpleDataProviderImpl {
+            onDataSourceChangedListener(dataStorage.toList())
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return AccountViewHolder.newInstance(parent, this)
     }
@@ -25,9 +31,6 @@ class SelectedAccountRVAdapter : BasePaginationRVAdapter<ShortAccountModel>(), V
         val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
         if (position >= 0) {
             dataStorage.remove(getDataItemByAdapterPosition(position))
-            postUpdate {
-                onDataSourceChangedListener(dataStorage.toList())
-            }
         }
     }
 
