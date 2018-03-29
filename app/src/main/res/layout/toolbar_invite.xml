@@ -6,7 +6,7 @@
     style="@style/Invite.Toolbar"
     android:orientation="horizontal">
 
-    <com.mnassa.widget.GoBackArrow
+    <com.mnassa.widget.GoBackBlackArrow
         android:id="@+id/ivToolbarBack"
         style="@style/Invite.BackIcon" />
 

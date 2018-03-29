@@ -11,7 +11,7 @@
 
     <style name="Invite.Toolbar">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/invite_toolbar_height</item>
         <item name="android:background">@color/backgroundHighlight</item>
         <item name="android:gravity">center_vertical</item>
     </style>
@@ -225,6 +225,7 @@
     <color name="blackAlpha">#61000000</color>
     <color name="blackDarkAlpha">#de000000</color>
     <dimen name="invite_main_screen_margin">8dp</dimen>
+    <dimen name="invite_toolbar_height">56dp</dimen>
     <dimen name="invite_main_margin_between_views">16dp</dimen>
     <dimen name="invite_region_number_margin">24dp</dimen>
     <dimen name="invite_divider_height">56dp</dimen>
