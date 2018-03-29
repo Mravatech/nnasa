@@ -2,6 +2,7 @@ package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
 import android.os.Bundle
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountAbility
@@ -44,6 +45,12 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                 imageUploadedChannel.send(it)
             }
             Timber.i(path)
+        }
+    }
+
+    override fun skipThisStep() {
+        launchCoroutineUI {
+            openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
 

@@ -8,7 +8,7 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ProfilePersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
-import com.mnassa.screen.base.MnassaViewModelImpl
+import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import timber.log.Timber
@@ -22,7 +22,7 @@ class EditPersonalProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
         private val storageInteractor: StorageInteractor,
         private val placeFinderInteractor: PlaceFinderInteractor,
-        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), EditPersonalProfileViewModel {
+        private val userProfileInteractor: UserProfileInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), EditPersonalProfileViewModel {
 
     override val tagChannel: BroadcastChannel<EditPersonalProfileViewModel.TagCommand> = BroadcastChannel(10)
     override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
@@ -38,6 +38,7 @@ class EditPersonalProfileViewModelImpl(
             Timber.i(path)
         }
     }
+
     override fun updatePersonalAccount(
             profileAccountModel: ProfileAccountModel,
             firstName: String,
@@ -105,15 +106,4 @@ class EditPersonalProfileViewModelImpl(
         return placeFinderInteractor.getReqieredPlaces(constraint)
     }
 
-    private suspend fun getFilteredTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
-        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
-        val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
-        val tags = arrayListOf<String>()
-        if (customTags.isNotEmpty()) {
-            val newTags = tagInteractor.createCustomTagIds(customTags)
-            tags.addAll(newTags)
-        }
-        tags.addAll(existsTags)
-        return tags
-    }
 }

@@ -71,7 +71,9 @@ class UserRepositoryImpl(
                 userName = userName,
                 type = NetworkContract.AccountType.PERSONAL,
                 offers = offers,
-                interests = interests
+                interests = interests,
+                location = Location(city),
+                locationId = city
         )).handleException(exceptionHandler)
         return converter.convert(result.account)
     }
@@ -82,7 +84,9 @@ class UserRepositoryImpl(
                 type = NetworkContract.AccountType.ORGANIZATION,
                 offers = offers,
                 interests = interests,
-                organizationName = companyName
+                organizationName = companyName,
+                location = Location(city),
+                locationId = city
         )).handleException(exceptionHandler)
         return converter.convert(result.account)
     }

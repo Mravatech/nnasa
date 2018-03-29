@@ -37,6 +37,12 @@ class AnotherPersonalProfileHolder(itemView: View) : BaseProfileHolder(itemView)
                 val drawable = if (profileInfo.visibility == View.GONE) R.drawable.ic_down else R.drawable.ic_up
                 val img = ResourcesCompat.getDrawable(resources, drawable, null)
                 tvMoreInformation.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
+                tvMoreInformation.text = if (profileInfo.visibility == View.GONE){
+                    fromDictionary(R.string.profile_more_information)
+                } else{
+                    fromDictionary(R.string.profile_less_information)
+                }
+
             }
             item.profile.offers?.let {
                 for (tag in it) {

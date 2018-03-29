@@ -17,9 +17,9 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
     @SerializedName("contactEmail")
     var contactEmail: String?
     @SerializedName("showContactEmail")
-    var showContactEmail: Boolean?
+    var showContactEmail: Boolean
     @SerializedName("showContactPhone")
-    var showContactPhone: Boolean?
+    var showContactPhone: Boolean
     @SerializedName("firebaseUserId")
     var firebaseUserId: String
     @SerializedName("interests")
@@ -78,8 +78,8 @@ internal class ProfileDbEntity : ShortAccountDbEntity {
                 totalIncome: Int?,
                 totalOutcome: Int?,
                 contactEmail: String?,
-                showContactPhone: Boolean?,
-                showContactEmail: Boolean?,
+                showContactPhone: Boolean,
+                showContactEmail: Boolean,
                 numberOfCommunities: Int?,
                 numberOfConnections: Int?,
                 numberOfDisconnected: Int?,

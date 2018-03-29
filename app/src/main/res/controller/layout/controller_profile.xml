@@ -9,7 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/turquoiseBlue">
+        android:background="@color/white">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/profileCollapsing"
@@ -29,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/profile_main_image_height"
                     android:contentDescription="@null"
-                    tools:src="@mipmap/ic_launcher" />
+                    app:srcCompat="@drawable/ic_empty_avatar_placeholder"/>
 
             </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.mnassa.screen.accountinfo.organization
 
 import android.net.Uri
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
@@ -37,14 +38,22 @@ class OrganizationInfoViewModelImpl(
         }
     }
 
+    override fun skipThisStep() {
+        launchCoroutineUI {
+            openScreenChannel.send(OrganizationInfoViewModel.OpenScreenCommand.InviteScreen())
+        }
+    }
+
     private var processAccountJob: Job? = null
     override fun processAccount(
             accountModel: ShortAccountModel,
             organizationType: String?,
             foundedDate: String?,
             showContactEmail: Boolean?,
+            showContactPhone: Boolean?,
             founded: Long?,
             contactEmail: String?,
+            contactPhone: String?,
             website: String?) {
         processAccountJob?.cancel()
         processAccountJob = handleException {
@@ -55,13 +64,13 @@ class OrganizationInfoViewModelImpl(
                         userName = accountModel.userName,
                         accountType = accountModel.accountType,
                         avatar = path,
-                        contactPhone = accountModel.contactPhone,
+                        contactPhone = contactPhone,
                         language = accountModel.language,
                         personalInfo = accountModel.personalInfo,
                         organizationInfo = OrganizationAccountDiffModelImpl(requireNotNull(accountModel.organizationInfo).organizationName),
                         abilities = emptyList(),
                         showContactEmail = showContactEmail,
-                        showContactPhone = true,//todo handle
+                        showContactPhone = showContactPhone,
                         contactEmail = contactEmail,
                         founded = founded,
                         organizationType = organizationType,

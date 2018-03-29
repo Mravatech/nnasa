@@ -35,6 +35,7 @@
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
     <string name="_android_profile_points_given_INFO">Points given</string>
     <string name="_android_profile_more_info_INFO">MORE INFORMATION</string>
+    <string name="_android_profile_less_info_INFO">LESS INFORMATION</string>
     <string name="_android_edit_profile_main_info_INFO">Main Information</string>
 
     <string name="_android_registration_skip_INFO">Skip This Step</string>
@@ -49,6 +50,7 @@
     <string name="_android_registration_company_name_INFO">Company name</string>
 
     <string name="_android_email_validation_INFO">Email is not valid</string>
+    <string name="_android_phone_validation_INFO">Phone is not valid</string>
     <string name="_android_organization_name_validation_INFO">Please enter your Organization name</string>
     <string name="_android_person_name_validation_INFO">Please enter your First name</string>
     <string name="_android_person_last_name_validation_INFO">Please enter your Last name</string>

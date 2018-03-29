@@ -136,6 +136,7 @@
     <string name="profile_mobile_phone">_profileDetails_labelMobile</string>
     <string name="profile_email">_profileDetails_labelEmail</string>
     <string name="profile_more_information">_android_profile_more_info</string>
+    <string name="profile_less_information">_android_profile_less_info</string>
     <string name="profile_date_of_foundation">_profileDetails_birthdayOrganization</string>
 
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
@@ -144,6 +145,7 @@
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="email_is_not_valid">_android_email_validation</string>
+    <string name="phone_is_not_valid">_android_phone_validation</string>
     <string name="company_name_is_not_valid">_android_organization_name_validation</string>
     <string name="person_name_is_not_valid">_android_person_name_validation</string>
     <string name="person_last_name_is_not_valid">_android_person_last_name_validation</string>
