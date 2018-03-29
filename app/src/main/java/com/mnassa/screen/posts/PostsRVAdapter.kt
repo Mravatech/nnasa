@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.isRepost
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
@@ -19,6 +20,7 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickL
     var onDetachedFromWindow: (item: PostModel) -> Unit = { }
     var onItemClickListener = { item: PostModel -> }
     var onCreateNeedClickListener = {}
+    var onRepostedByClickListener = { account: ShortAccountModel -> }
 
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * -1
@@ -97,6 +99,7 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickL
         when (view.id) {
             R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
             R.id.flCreateNeed -> onCreateNeedClickListener()
+            R.id.rlRepostRoot -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
         }
     }
 

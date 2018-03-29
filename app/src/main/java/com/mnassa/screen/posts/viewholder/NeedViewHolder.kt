@@ -3,8 +3,6 @@ package com.mnassa.screen.posts.viewholder
 import android.support.v4.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.TextPaint
-import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -80,30 +78,18 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
         with (itemView) {
             val repostedBySpan = SpannableStringBuilder(fromDictionary(R.string.need_item_reposted_by))
             repostedBySpan.append(" ")
-
             val startSpan = repostedBySpan.length
             repostedBySpan.append(requireNotNull(item.repostAuthor).formattedName)
-            val reposterTextColor = ContextCompat.getColor(context, R.color.black)
-            repostedBySpan.setSpan(ForegroundColorSpan(reposterTextColor), startSpan, repostedBySpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-//            val clickableSpan = object : ClickableSpan() {
-//                override fun onClick(widget: View) {
-//
-//                }
-//
-//                override fun updateDrawState(ds: TextPaint) {
-//                    ds.isUnderlineText = false
-//                    ds.linkColor = reposterTextColor
-//                }
-//            }
-//            repostedBySpan.setSpan(clickableSpan, startSpan, repostedBySpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
+            repostedBySpan.setSpan(
+                    ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)),
+                    startSpan,
+                    repostedBySpan.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             tvReplyText.text = repostedBySpan
-
             tvReplyTime.text = item.createdAt.toTimeAgo()
 
-            rlRepostRoot.setOnClickListener {
-                TODO()
-            }
+            rlRepostRoot.setOnClickListener(onClickListener)
+            rlRepostRoot.tag = this@NeedViewHolder
         }
     }
 

@@ -28,6 +28,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
             adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
             adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
             adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+            adapter.onRepostedByClickListener = { /*TODO*/ }
         }
 
         adapter.isLoadingEnabled = true
