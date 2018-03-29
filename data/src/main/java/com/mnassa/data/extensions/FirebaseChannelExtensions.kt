@@ -1,10 +1,12 @@
 package com.mnassa.data.extensions
 
+import android.util.Log
 import com.google.firebase.database.*
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.domain.model.HasId
-import kotlinx.coroutines.experimental.async
+import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
 /**
@@ -27,7 +29,7 @@ internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: Exce
 
         override fun onDataChange(dataSnapshot: DataSnapshot?) {
             val listener = this
-            async {
+            launch {
                 try {
                     channel.send(dataSnapshot.mapList())
                 } catch (e: ClosedSendChannelException) {
@@ -59,7 +61,7 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 
         override fun onDataChange(dataSnapshot: DataSnapshot?) {
             val listener = this
-            async {
+            launch {
                 try {
                     channel.send(dataSnapshot.mapSingle())
                 } catch (e: ClosedSendChannelException) {
@@ -77,15 +79,20 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 
 //////////////////////////// LOAD DATA WITHOUT CHANGES HANDLING USING PAGINATION/////////////////////
 // Simple pagination without handling content changes
-internal inline fun <reified T : HasId> load(databaseReference: DatabaseReference, path: String, limit: Int = DEFAULT_LIMIT, exceptionHandler: ExceptionHandler): Channel<T> {
-    val channel = ArrayChannel<T>(limit)
-    async {
+internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChannelWithPagination(
+        databaseReference: DatabaseReference,
+        exceptionHandler: ExceptionHandler,
+        crossinline mapper: (input: DbType) -> OutType = { it as OutType },
+        limit: Int = DEFAULT_LIMIT
+): Channel<OutType> {
+    val channel = ArrayChannel<OutType>(limit)
+    launch {
         try {
             var latestId: String? = null
             while (true) {
-                val portion = loadPortion<T>(databaseReference, path, latestId, limit, exceptionHandler)
+                val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
                 latestId = portion.lastOrNull()?.id
-                portion.forEach { channel.send(it) }
+                portion.forEach { channel.send(mapper(it)) }
                 if (portion.size < limit) {
                     channel.close()
                     break
@@ -95,7 +102,87 @@ internal inline fun <reified T : HasId> load(databaseReference: DatabaseReferenc
             //skip this exception
         } catch (e: Exception) {
             Timber.e(e)
+            channel.close(e)
         }
     }
+    return channel
+}
+
+internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithPagination(
+        exceptionHandler: ExceptionHandler,
+        crossinline mapper: (input: DbType) -> OutType = { it as OutType },
+        limit: Int = DEFAULT_LIMIT): Channel<OutType> {
+    return getValueChannelWithPagination(this, exceptionHandler, mapper, limit)
+}
+
+////////////////////////////////////// LOAD DATA WITH CHANGES HANDLING //////////////////////////////
+//sealed class ListItemEvent<T: Any>(item: T) {
+//    class Added<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
+//    class Moved<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
+//    class Changed<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
+//    class Removed<T: Any>(item: T) : ListItemEvent<T>(item)
+//}
+internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithChangesHandling(
+        exceptionHandler: ExceptionHandler,
+        crossinline mapper: (DbType) -> OutType = { it as OutType },
+        limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
+    val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
+
+    lateinit var listener: ChildEventListener
+
+    val MOVED = 1
+    val CHANGED = 2
+    val ADDED = 3
+    val REMOVED = 4
+
+
+    val emitter = { input: DataSnapshot, previousChildName: String?, eventType: Int ->
+        launch {
+            try {
+                val dbEntity = input.mapSingle<DbType>() ?: return@launch
+                val outModel = mapper(dbEntity)
+                val result: ListItemEvent<OutType> = when(eventType) {
+                    MOVED -> ListItemEvent.Moved(outModel, previousChildName)
+                    CHANGED -> ListItemEvent.Changed(outModel, previousChildName)
+                    ADDED -> ListItemEvent.Added(outModel, previousChildName)
+                    REMOVED -> ListItemEvent.Removed(outModel)
+                    else -> throw IllegalArgumentException("Illegal event type $eventType")
+                }
+
+                channel.send(result)
+            } catch (e: ClosedSendChannelException) {
+                removeEventListener(listener)
+            } catch (e: Exception) {
+                Timber.e(e)
+                removeEventListener(listener)
+                channel.close(exceptionHandler.handle(e))
+            }
+        }
+    }
+
+    listener = object : ChildEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            channel.close(exceptionHandler.handle(databaseError.toException()))
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            emitter(dataSnapshot, previousChildName, MOVED)
+        }
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            emitter(dataSnapshot, previousChildName, CHANGED)
+        }
+
+        override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            emitter(dataSnapshot, previousChildName, ADDED)
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+            emitter(dataSnapshot, null, REMOVED)
+        }
+    }
+
+    addChildEventListener(listener)
+
     return channel
 }

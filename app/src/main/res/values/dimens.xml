@@ -6,9 +6,10 @@
     <dimen name="spacing_vertical">12dp</dimen>
     <dimen name="spacing_horizontal">12dp</dimen>
 
-    <dimen name="divider_width">1dp</dimen>
+    <!--<dimen name="status_bar_height">24dp</dimen>-->
+    <dimen name="status_bar_height">0dp</dimen>
 
-    <dimen name="avatar_list_item">49dp</dimen>
+    <dimen name="divider_width">1dp</dimen>
 
     <dimen name="chip_et_margin_vertical">8dp</dimen>
     <dimen name="chip_layout_margin_horizontal">5dp</dimen>
@@ -17,12 +18,18 @@
     <dimen name="chip_layout_elevation">8dp</dimen>
     <dimen name="chip_layout_radius">3dp</dimen>
 
+    <dimen name="avatar_list_item">49dp</dimen>
+    <dimen name="avatar_post_item">42dp</dimen>
+    <dimen name="post_space_between_images">6dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+
+    <dimen name="drawable_padding">8dp</dimen>
 
 
     <dimen name="connection_recommended_item_height">220dp</dimen>

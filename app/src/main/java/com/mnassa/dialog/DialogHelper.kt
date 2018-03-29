@@ -47,7 +47,7 @@ class DialogHelper {
     }
 
     @SuppressLint("SetTextI18n")
-    fun showLoginByEmailDialog(context: Context, listener: (email: String, password: String) -> Unit) {
+    fun showLoginByEmailDebugDialog(context: Context, listener: (email: String, password: String) -> Unit) {
         if (!BuildConfig.DEBUG) return
         //!!!DEBUG ONLY!!!
         val container = LinearLayout(context)
@@ -83,6 +83,14 @@ class DialogHelper {
         btnHardcodedEmailAndPassword.text = "serg@u.net"
         btnHardcodedEmailAndPassword.setOnClickListener {
             listener("serg@u.net", "123123")
+            dialog.dismiss()
+        }
+        container.addView(btnHardcodedEmailAndPassword)
+        //
+        btnHardcodedEmailAndPassword = Button(context)
+        btnHardcodedEmailAndPassword.text = "anton@u.net"
+        btnHardcodedEmailAndPassword.setOnClickListener {
+            listener("anton@u.net", "123123")
             dialog.dismiss()
         }
         container.addView(btnHardcodedEmailAndPassword)

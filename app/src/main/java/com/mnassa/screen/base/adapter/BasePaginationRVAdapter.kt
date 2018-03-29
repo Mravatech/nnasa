@@ -98,7 +98,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         return when {
             index < 0 -> index
             index == 0 -> -1
-            index == (itemCount - 1) -> -1
+            index >= (itemCount - 1) -> -1
             else -> index - emptyHeaderItemsCount
         }
     }
@@ -119,8 +119,9 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         fun clear()
         fun add(element: T): Boolean
         fun addAll(elements: Collection<T>): Boolean
+        fun remove(element: T): Boolean
         fun set(elements: List<T>)
-        fun get(index: Int): T
+        operator fun get(index: Int): T
         val size: Int
     }
 
@@ -163,6 +164,19 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
                 super.addAll(elements)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
             }
+        }
+
+        override fun remove(element: ITEM): Boolean {
+            postUpdate {
+                val newDataList = ArrayList(this)
+                newDataList.remove(element)
+
+                val diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(this, ReadOnlyDataStorageWrapper(newDataList)), true)
+                super.clear()
+                super.addAll(newDataList)
+                diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
+            }
+            return true
         }
     }
 
@@ -224,6 +238,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         override fun clear(): Unit = wrappedMutableVal.clear()
         override fun add(element: T): Boolean = wrappedMutableVal.add(element)
         override fun addAll(elements: Collection<T>): Boolean = wrappedMutableVal.addAll(elements)
+        override fun remove(element: T): Boolean = wrappedMutableVal.remove(element)
         override fun set(elements: List<T>): Unit {
             wrappedMutableVal.clear()
             wrappedMutableVal.addAll(elements)
@@ -243,6 +258,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         override fun clear(): Unit = throw IllegalStateException("clear() called in the ReadOnlyDataStorageWrapper")
         override fun add(element: T): Boolean = throw IllegalStateException("add() called in the ReadOnlyDataStorageWrapper")
         override fun addAll(elements: Collection<T>): Boolean = throw IllegalStateException("addAll() called in the ReadOnlyDataStorageWrapper")
+        override fun remove(element: T): Boolean = throw  IllegalStateException("remove() called in the ReadOnlyDataStorageWrapper")
         override fun set(elements: List<T>): Unit = throw IllegalStateException("set() called in the ReadOnlyDataStorageWrapper")
         override fun get(index: Int): T = wrappedVal[index]
         override val size: Int get() =  wrappedVal.size

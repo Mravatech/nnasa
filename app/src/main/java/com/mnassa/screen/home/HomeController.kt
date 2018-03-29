@@ -8,9 +8,11 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
-import com.mnassa.screen.needs.NeedsController
+import com.mnassa.screen.posts.PostsController
+import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -18,7 +20,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 3/6/2018.
  */
-class HomeController : MnassaControllerImpl<HomeViewModel>() {
+class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
     override val layoutId: Int = R.layout.controller_home
     override val viewModel: HomeViewModel by instance()
 
@@ -26,7 +28,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    HomePage.NEEDS.ordinal -> NeedsController.newInstance()
+                    HomePage.NEEDS.ordinal -> PostsController.newInstance()
                     HomePage.EVENTS.ordinal -> EventsController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
@@ -60,8 +62,16 @@ class HomeController : MnassaControllerImpl<HomeViewModel>() {
                     tlHome.setBadgeText(HomePage.NEEDS.ordinal, if (it == 0) null else it.toString())
                 }
             }
+
+            fabCreateNeed.labelText = fromDictionary(R.string.tab_home_button_create_need)
+            fabCreateNeed.setOnClickListener { open(CreateNeedController.newInstance()) }
+
+            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
         }
     }
+
+    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
+    override fun close(self: Controller) = mnassaRouter.close(self)
 
 
     enum class HomePage {

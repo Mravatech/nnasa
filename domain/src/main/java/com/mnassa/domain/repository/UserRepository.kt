@@ -31,4 +31,6 @@ interface UserRepository {
     fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?
+
+    suspend fun getById(id: String): ShortAccountModel?
 }

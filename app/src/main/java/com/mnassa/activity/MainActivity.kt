@@ -14,6 +14,7 @@ import com.github.salomonbrys.kodein.android.*
 import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.mnassa.R
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope
     }
 
     override fun onBackPressed() {
+        hideKeyboard()
         if (!router.handleBack()) {
             super.onBackPressed()
         }

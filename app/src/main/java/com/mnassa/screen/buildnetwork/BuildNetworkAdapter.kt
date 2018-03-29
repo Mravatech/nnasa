@@ -7,6 +7,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
@@ -26,9 +27,8 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
             selectedAccountsInternal.addAll(value)
 
             val selectedAccountsCopy = selectedAccountsInternal.toList()
-            val allAccountsIds = dataStorage.map { it.id }
             selectedAccountsInternal.clear()
-            selectedAccountsInternal.addAll(selectedAccountsCopy.filter { allAccountsIds.contains(it) })
+            selectedAccountsInternal.addAll(selectedAccountsCopy)
             onSelectedAccountsChangedListener(selectedAccountsInternal)
 
             notifyDataSetChanged()
@@ -61,6 +61,8 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
                 tvUserName.text = item.formattedName
                 tvPosition.text = item.formattedPosition
                 tvPosition.goneIfEmpty()
+                tvEventName.text = item.formattedFromEvent
+                tvEventName.goneIfEmpty()
                 cbInvite.isChecked = selectedAccount.contains(item.id)
             }
         }

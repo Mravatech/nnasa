@@ -18,4 +18,5 @@ object EmptyWord : TranslatedWordModel {
     override val engTranslate: String? = null
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): String = ""
     override val arabicTranslate: String? = null
+    override fun toString(): String = ""
 }
