@@ -73,6 +73,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     private var editedComment: CommentModel? = null
         set(value) {
             field = value
+            updatePostCommentButtonState()
             launchCoroutineUI {
                 with (getViewSuspend()) {
                     editPanel.isGone = value == null
@@ -110,10 +111,9 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             rvAccountsToRecommend.adapter = accountsToRecommendAdapter
             accountsToRecommendAdapter.onDataSourceChangedListener = {
                 recommendPanel.isGone = it.isEmpty()
-                btnCommentPost.isEnabled = canPostComment
+                updatePostCommentButtonState()
             }
 
-            btnCommentPost.text = fromDictionary(R.string.posts_comment_create)
             btnCommentPost.setOnClickListener {
                 val editedCommentLocal = editedComment
                 if (editedCommentLocal != null) {
@@ -124,10 +124,10 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 editedComment = null
                 recommendedAccounts = emptyList()
             }
-            btnCommentPost.isEnabled = canPostComment
+            updatePostCommentButtonState()
 
             etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
-            etCommentText.addTextChangedListener(SimpleTextWatcher { btnCommentPost.isEnabled = canPostComment })
+            etCommentText.addTextChangedListener(SimpleTextWatcher { updatePostCommentButtonState() })
             tvCommentRecommend.setOnClickListener { headerLayout.invoke { it.btnRecommend.performClick() } }
             ivReplyCancel.setOnClickListener { replyTo = null }
 
@@ -379,6 +379,17 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     private val canPostComment: Boolean
         get() = (view?.etCommentText?.text?.isNotBlank()
                 ?: false) || accountsToRecommendAdapter.dataStorage.size > 0
+
+    private fun updatePostCommentButtonState() {
+        val text = when {
+            editedComment != null -> fromDictionary(R.string.posts_comment_edit_button)
+            else -> fromDictionary(R.string.posts_comment_create)
+        }
+        view?.btnCommentPost?.let {
+            it.text = text
+            it.isEnabled = canPostComment
+        }
+    }
 
     class RegistrationAdapter(private val images: List<String>, private val onClickListener: (String) -> Unit) : PagerAdapter() {
         override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj

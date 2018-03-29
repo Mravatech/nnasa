@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.convert
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseCommentsApi
 import com.mnassa.data.network.bean.retrofit.request.CreateCommentRequest
+import com.mnassa.data.network.bean.retrofit.request.EditCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.GetCommentsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
@@ -47,5 +48,14 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
 
     override suspend fun deleteComment(commentId: String) {
         commentsApi.deleteComment(commentId).handleException(exceptionHandler)
+    }
+
+    override suspend fun editPostComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>) {
+        commentsApi.editComment(EditCommentRequest(
+                commentId = originalCommentId,
+                text = text,
+                entityType = NetworkContract.ItemType.POST,
+                accountIds = accountsToRecommend
+        )).handleException(exceptionHandler)
     }
 }

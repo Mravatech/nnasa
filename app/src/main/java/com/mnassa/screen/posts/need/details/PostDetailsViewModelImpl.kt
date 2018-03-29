@@ -87,7 +87,12 @@ class PostDetailsViewModelImpl(private val postId: String,
     }
 
     override fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        handleException {
+            withProgressSuspend {
+                commentsInteractor.editPostComment(originalComment.id, text, accountsToRecommend)
+                loadComments()
+            }
+        }
     }
 
     override fun deleteComment(commentModel: CommentModel) {
