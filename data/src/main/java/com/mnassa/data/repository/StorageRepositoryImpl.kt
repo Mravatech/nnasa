@@ -16,9 +16,9 @@ import timber.log.Timber
 class StorageRepositoryImpl(private val ref: StorageReference,
                             private val exceptionHandler: ExceptionHandler) : StorageRepository {
 
-    override suspend fun uploadPhotoToStorage(uploadPhoto: StoragePhotoData, token: String): String {
+    override suspend fun uploadPhotoToStorage(uploadPhoto: StoragePhotoData, token: String, accountId: String): String {
         val uri = uploadPhoto.uri
-        val location = "${uploadPhoto.getFolder()}$token/${uri.lastPathSegment}"
+        val location = "${uploadPhoto.getFolder()}$token/$accountId"
         val uploadRef = ref.child(location)
         val uploadTask = uploadRef.putFile(uri).await(exceptionHandler)
         val bucket: String? = uploadTask.metadata?.bucket

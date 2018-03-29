@@ -23,8 +23,8 @@ class OtherProfileRepositoryImpl (
     override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
         val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)
+                .apply { keepSynced(true) }
                 .await<ProfileDbEntity>(exceptionHandler) ?: return null
         return converter.convert(bean)
-//        TODO()
     }
 }

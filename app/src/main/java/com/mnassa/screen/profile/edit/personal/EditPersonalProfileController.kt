@@ -14,6 +14,7 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.ProfileAccountModel
+import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.google.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -42,6 +43,8 @@ class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPer
     override val layoutId = R.layout.controller_edit_personal_profile
     override val viewModel: EditPersonalProfileViewModel by instance()
     private val accountModel: ProfileAccountModel by lazy { args.getParcelable(EXTRA_PROFILE) as ProfileAccountModel }
+    private val interests: ArrayList<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_INTERESTS) as ArrayList<TagModel> }
+    private val offers: ArrayList<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_OFFERS) as ArrayList<TagModel> }
     private val playServiceHelper: PlayServiceHelper by instance()
     private val dialog: DialogHelper by instance()
     private var personSelectedPlaceName: String? = null
@@ -106,16 +109,6 @@ class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPer
                 view.ivUserAvatar.avatarSquare(it)
             }
         }
-        launchCoroutineUI {
-            viewModel.getTagsByIds(accountModel.offers, true)
-            viewModel.getTagsByIds(accountModel.interests, true)
-            viewModel.tagChannel.consumeEach {
-                when (it) {
-                    is EditPersonalProfileViewModel.TagCommand.TagInterests -> view.chipPersonInterests.setTags(it.interests)
-                    is EditPersonalProfileViewModel.TagCommand.TagOffers -> view.chipPersonOffers.setTags(it.offers)
-                }
-            }
-        }
     }
 
     override fun onViewDestroyed(view: View) {
@@ -174,11 +167,11 @@ class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPer
         view.chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
         view.chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
         view.chipPersonOffers.chipSearch = viewModel
-        view.chipPersonOffers.setTags(emptyList())
+        view.chipPersonOffers.setTags(offers)
         view.chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
         view.chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
         view.chipPersonInterests.chipSearch = viewModel
-        view.chipPersonInterests.setTags(emptyList())
+        view.chipPersonInterests.setTags(interests)
         view.etPersonFirstName.setText(accountModel.personalInfo?.firstName)
         view.etPersonSecondName.setText(accountModel.personalInfo?.lastName)
         view.etPersonUserName.setText(accountModel.userName)
@@ -226,10 +219,14 @@ class EditPersonalProfileController(data: Bundle) : MnassaControllerImpl<EditPer
     companion object {
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_PROFILE = "EXTRA_PROFILE"
+        private const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
+        private const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
 
         fun newInstance(profileModel: ProfileModel): EditPersonalProfileController {
             val params = Bundle()
             params.putParcelable(EXTRA_PROFILE, profileModel.profile)
+            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, profileModel.interests as ArrayList<out TagModel>)
+            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, profileModel.offers as ArrayList<out TagModel>)
             return EditPersonalProfileController(params)
         }
     }
