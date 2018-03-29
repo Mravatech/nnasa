@@ -132,7 +132,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
         view.btnScreenHeaderAction.text = "EMAIL"
         view.btnScreenHeaderAction.visibility = View.VISIBLE
         view.btnScreenHeaderAction.setOnClickListener {
-            dialogHelper.showLoginByEmailDialog(it.context) { email, password ->
+            dialogHelper.showLoginByEmailDebugDialog(it.context) { email, password ->
                 viewModel.signInByEmail(email, password)
             }
         }

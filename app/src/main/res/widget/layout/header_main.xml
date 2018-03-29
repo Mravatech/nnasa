@@ -5,19 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/vShadow"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorAccent" />
+
     <LinearLayout
         android:id="@+id/rlHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/backgroundHighlight"
+        android:layout_marginTop="@dimen/status_bar_height"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        tools:background="#eaeaea">
+        android:orientation="horizontal">
+
+        <com.mnassa.widget.DrawerMenu
+            android:id="@+id/ivToolbarDrawer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            android:visibility="gone" />
 
         <com.mnassa.widget.GoBackArrow
             android:id="@+id/ivToolbarBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:paddingBottom="@dimen/spacing_vertical"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
@@ -34,6 +56,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textColor="@color/white"
             tools:text="Main header" />
 
         <include
@@ -58,15 +81,27 @@
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
             android:paddingTop="@dimen/spacing_vertical"
-            android:tint="@color/black"
+            android:tint="@color/white"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_more_vert_black_24dp"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/btnAction"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            tools:text="Action"
             tools:visibility="visible" />
 
     </LinearLayout>
 
     <View
+        android:id="@+id/vShadow"
         style="@style/MnassaShadow"
+        android:layout_width="match_parent"
         android:layout_below="@id/rlHeader" />
 
 </RelativeLayout>

@@ -4,6 +4,9 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.widget.ImageView
 import com.bumptech.glide.request.RequestOptions
+import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
+import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
 import com.mnassa.module.GlideApp
 
@@ -31,6 +34,21 @@ fun ImageView.enable() {
 fun ImageView.avatarRound(avatarUrl: String?) {
     //todo: add placeholder, error
 
+    val storage = context.appKodein().instance<FirebaseStorage>()
+    val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
+
+    val requestOptions = RequestOptions().placeholder(R.drawable.empty_ava).error(R.drawable.empty_ava).apply(RequestOptions.circleCropTransform())
+
+    GlideApp.with(this)
+            .load(ref ?: "")
+            .apply(requestOptions)
+            .apply(RequestOptions.circleCropTransform())
+            .into(this)
+}
+
+fun ImageView.avatarRound1(avatarUrl: String?) {
+    //todo: add placeholder, error
+
     val requestOptions = RequestOptions().placeholder(R.drawable.empty_ava).error(R.drawable.empty_ava).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)
@@ -43,10 +61,26 @@ fun ImageView.avatarRound(avatarUrl: String?) {
 fun ImageView.avatarSquare(avatarUrl: String?) {
     //todo: add placeholder, error
 
+    val storage = context.appKodein().instance<FirebaseStorage>()
+    val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
+
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
     GlideApp.with(this)
-            .load(avatarUrl)
+            .load(ref ?: "")
+            .apply(requestOptions)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
+}
+
+fun ImageView.image(url: String?) {
+    val storage = context.appKodein().instance<FirebaseStorage>()
+    val ref = url?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
+
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+
+    GlideApp.with(this)
+            .load(ref ?: "")
             .apply(requestOptions)
             .apply(RequestOptions.centerCropTransform())
             .into(this)

@@ -17,7 +17,9 @@ class TranslatedWordModelImpl(
     constructor(id: String, info: String): this(id, info, null, null)
     constructor(info: String): this(info, info)
 
-    override fun getValue(thisRef: Nothing?, property: KProperty<*>): String {
+    override fun getValue(thisRef: Nothing?, property: KProperty<*>): String = toString()
+
+    override fun toString(): String {
         val isoLanguage = Locale.getDefault().isO3Language
 
         return when {

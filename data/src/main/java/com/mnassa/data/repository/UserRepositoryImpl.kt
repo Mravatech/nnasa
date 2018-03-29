@@ -18,6 +18,7 @@ import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
 import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.domain.model.InvitedShortAccountModel
+import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -136,6 +137,15 @@ class UserRepositoryImpl(
     }
 
     override fun getAccountId(): String? = accountIdInternal
+
+    override suspend fun getById(id: String): ShortAccountModel? {
+        return db
+                .child(TABLE_PUBLIC_ACCOUNTS)
+                .child(id)
+                .await<ShortAccountDbEntity>(exceptionHandler)
+                ?.run { converter.convert(this) }
+
+    }
 
     companion object {
         private const val EXTRA_PREFS_NAME = "USER_REPOSITORY_PREFS"

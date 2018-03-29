@@ -18,7 +18,7 @@ class GoBackArrow : AppCompatImageView {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
-        setImageResource(R.drawable.ic_arrow_back_black_24dp)
+        setImageResource(R.drawable.ic_arrow_back_white_24dp)
 
         val outValue = TypedValue()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

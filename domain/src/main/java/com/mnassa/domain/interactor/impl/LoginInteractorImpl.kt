@@ -9,6 +9,7 @@ import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.launch
 
 /**
  * Created by Peter on 2/21/2018.
@@ -43,7 +44,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
         loginService.signOut()
         userRepository.setCurrentUserAccount(null)
 
-        async(UI) { onLogoutListener.emit(Unit) }
+        launch(UI) { onLogoutListener.emit(Unit) }
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {
