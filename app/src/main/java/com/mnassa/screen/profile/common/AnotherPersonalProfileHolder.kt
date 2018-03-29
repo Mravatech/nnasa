@@ -55,8 +55,7 @@ class AnotherPersonalProfileHolder(itemView: View) : BaseProfileHolder(itemView)
     companion object {
         fun newInstance(parent: ViewGroup): AnotherPersonalProfileHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_another_profile_personal_view, parent, false)
-            val viewHolder = AnotherPersonalProfileHolder(view)
-            return viewHolder
+            return AnotherPersonalProfileHolder(view)
         }
     }
 }

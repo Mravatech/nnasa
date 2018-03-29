@@ -14,8 +14,8 @@ interface ProfileAccountModel : ShortAccountModel, Parcelable {
     val contactEmail: String?
     val showContactEmail: Boolean
     val showContactPhone: Boolean
-    val interests: List<String>?
-    val offers: List<String>?
+    val interests: List<String>
+    val offers: List<String>
     val points: Int?
     val totalIncome: Int?
     val totalOutcome: Int?

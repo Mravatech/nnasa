@@ -16,7 +16,7 @@ import com.mnassa.screen.profile.model.ProfileModel
  * Date: 3/23/2018
  */
 
-class ProfileAdapter(private val profileModel: ProfileModel) : BasePaginationRVAdapter<ProfileModel>() {
+class ProfileAdapter(private val profileModel: ProfileModel, private val viewModel: ProfileViewModel) : BasePaginationRVAdapter<ProfileModel>() {
 
     private val selectedAccountsInternal: MutableList<ProfileModel> = mutableListOf()
     var data: List<ProfileModel>
@@ -31,8 +31,8 @@ class ProfileAdapter(private val profileModel: ProfileModel) : BasePaginationRVA
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ProfileModel> {
         return if (profileModel.isMyProfile) {
             when (profileModel.profile.accountType) {
-                AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent)
-                AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent)
+                AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel)
+                AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, viewModel)
             }
         } else {
             when (profileModel.profile.accountType) {

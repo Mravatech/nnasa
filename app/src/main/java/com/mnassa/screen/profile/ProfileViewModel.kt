@@ -1,6 +1,5 @@
 package com.mnassa.screen.profile
 
-import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -12,6 +11,14 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface ProfileViewModel : MnassaViewModel {
     val profileChannel: BroadcastChannel<ProfileModel>
-    val tagChannel: BroadcastChannel<List<TagModel>>
+    val profileClickChannel: BroadcastChannel<ProfileCommand>
     fun getProfileWithAccountId(accountId: String)
+    fun connectionClick()
+    fun walletClick()
+
+    sealed class ProfileCommand {
+        class ProfileConnection: ProfileCommand()
+        class ProfileWallet: ProfileCommand()
+    }
+
 }

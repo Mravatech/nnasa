@@ -55,8 +55,7 @@ class AnotherCompanyProfileHolder(itemView: View) : BaseProfileHolder(itemView) 
     companion object {
         fun newInstance(parent: ViewGroup): AnotherCompanyProfileHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_another_profile_company_view, parent, false)
-            val viewHolder = AnotherCompanyProfileHolder(view)
-            return viewHolder
+            return AnotherCompanyProfileHolder(view)
         }
     }
 }

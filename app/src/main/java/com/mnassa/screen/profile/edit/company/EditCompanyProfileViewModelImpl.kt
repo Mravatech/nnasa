@@ -24,7 +24,6 @@ class EditCompanyProfileViewModelImpl(
         private val placeFinderInteractor: PlaceFinderInteractor,
         private val userProfileInteractor: UserProfileInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), EditCompanyProfileViewModel {
 
-    override val tagChannel: BroadcastChannel<EditCompanyProfileViewModel.TagCommand> = BroadcastChannel(10)
     override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
     private var path: String? = null
     private var sendPhotoJob: Job? = null
@@ -36,19 +35,6 @@ class EditCompanyProfileViewModelImpl(
                 imageUploadedChannel.send(it)
             }
             Timber.i(path)
-        }
-    }
-
-    private var tagJob: Job? = null
-    override fun getTagsByIds(ids: List<String>?, isOffers: Boolean) {
-        val tagIds = ids ?: return
-        tagJob = handleException {
-            val tags = tagInteractor.getTagsByIds(tagIds)
-            if (isOffers) {
-                tagChannel.send(EditCompanyProfileViewModel.TagCommand.TagOffers(tags))
-            } else {
-                tagChannel.send(EditCompanyProfileViewModel.TagCommand.TagInterests(tags))
-            }
         }
     }
 

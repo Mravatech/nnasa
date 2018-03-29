@@ -1,13 +1,17 @@
 package com.mnassa.screen.profile
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.AccountType
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import kotlinx.android.synthetic.main.controller_profile.view.*
@@ -19,23 +23,28 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Date: 2/26/2018
  */
 
-class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
+class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data) {
 
     override val layoutId: Int = R.layout.controller_profile
     override val viewModel: ProfileViewModel by instance()
+    private val accountModel: ShortAccountModel? by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel? }
+    private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
 
     private lateinit var adapter: ProfileAdapter
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.ivProfileBack.setOnClickListener { close() }
-//        open(AllConnectionsController.newInstance())
-        viewModel.getProfileWithAccountId("-L8h7TSSSi1KL0KOcee9") //TODO set account my
-//        viewModel.getProfileWithAccountId("-L7iL1VRfulD0PIQBT7V") //TODO set account id serega
-//        viewModel.getProfileWithAccountId("-L7ixl179JFvjPnaZxXn") //TODO set account id lena
+
+        accountModel?.let {
+            viewModel.getProfileWithAccountId(it.id)
+            view.ivCropImage.avatarSquare(it.avatar)
+        } ?: run {
+            viewModel.getProfileWithAccountId(accountId)
+        }
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
+                adapter = ProfileAdapter(profileModel, viewModel)
                 view.rvProfile.layoutManager = LinearLayoutManager(view.context)
-                adapter = ProfileAdapter(profileModel)
                 view.rvProfile.adapter = adapter
                 adapter.set(listOf(profileModel))
                 view.ivCropImage.avatarSquare(profileModel.profile.avatar)
@@ -57,9 +66,29 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
                 }
             }
         }
+        launchCoroutineUI {
+            viewModel.profileClickChannel.consumeEach {
+                when (it) {
+                    is ProfileViewModel.ProfileCommand.ProfileConnection -> open(AllConnectionsController.newInstance())
+                    is ProfileViewModel.ProfileCommand.ProfileWallet -> Toast.makeText(view.context,"ProfileWallet", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     companion object {
-        fun newInstance() = ProfileController()
+        private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
+        private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
+        fun newInstance(account: ShortAccountModel): ProfileController {
+            val params = Bundle()
+            params.putSerializable(EXTRA_ACCOUNT, account)
+            return ProfileController(params)
+        }
+
+        fun newInstance(accountId: String): ProfileController {
+            val params = Bundle()
+            params.putString(EXTRA_ACCOUNT_ID, accountId)
+            return ProfileController(params)
+        }
     }
 }

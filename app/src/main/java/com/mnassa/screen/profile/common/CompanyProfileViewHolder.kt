@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.impl.TagModelImpl
+import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.SimpleChipView
-import kotlinx.android.synthetic.main.item_header_another_profile_company_view.view.*
+import kotlinx.android.synthetic.main.item_header_profile_company_view.view.*
 import kotlinx.android.synthetic.main.sub_header_company.view.*
 
 /**
@@ -18,7 +19,9 @@ import kotlinx.android.synthetic.main.sub_header_company.view.*
  * Date: 3/28/2018
  */
 
-class CompanyProfileViewHolder(itemView: View) : BaseProfileHolder(itemView) {
+class CompanyProfileViewHolder(
+        itemView: View,
+        private val viewModel: ProfileViewModel) : BaseProfileHolder(itemView) {
     override fun bind(item: ProfileModel) {
         with(itemView) {
             tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
@@ -37,9 +40,9 @@ class CompanyProfileViewHolder(itemView: View) : BaseProfileHolder(itemView) {
                 val drawable = if (profileInfo.visibility == View.GONE) R.drawable.ic_down else R.drawable.ic_up
                 val img = ResourcesCompat.getDrawable(resources, drawable, null)
                 tvMoreInformation.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
-                tvMoreInformation.text = if (profileInfo.visibility == View.GONE){
+                tvMoreInformation.text = if (profileInfo.visibility == View.GONE) {
                     fromDictionary(R.string.profile_more_information)
-                } else{
+                } else {
                     fromDictionary(R.string.profile_less_information)
                 }
             }
@@ -48,14 +51,15 @@ class CompanyProfileViewHolder(itemView: View) : BaseProfileHolder(itemView) {
                     flTags.addView(SimpleChipView(flTags.context, TagModelImpl(null, tag, null)))
                 }
             }
+            tvProfileConnections.setOnClickListener { viewModel.connectionClick() }
+            tvPointsGiven.setOnClickListener { viewModel.walletClick() }
         }
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup): AnotherCompanyProfileHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_another_profile_company_view, parent, false)
-            val viewHolder = AnotherCompanyProfileHolder(view)
-            return viewHolder
+        fun newInstance(parent: ViewGroup, viewModel: ProfileViewModel): CompanyProfileViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_profile_company_view, parent, false)
+            return CompanyProfileViewHolder(view, viewModel)
         }
     }
 }

@@ -16,8 +16,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EditPersonalProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val imageUploadedChannel: BroadcastChannel<String>
-    val tagChannel: BroadcastChannel<TagCommand>
-    fun getTagsByIds(ids: List<String>?, isOffers: Boolean)
     fun uploadPhotoToStorage(uri: Uri)
     fun updatePersonalAccount(
             profileAccountModel: ProfileAccountModel,
@@ -36,10 +34,5 @@ interface EditPersonalProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearc
             interests: List<TagModel>,
             offers: List<TagModel>
     )
-
-    sealed class TagCommand {
-        data class TagInterests(val interests: List<TagModel>) : TagCommand()
-        data class TagOffers(val offers: List<TagModel>) : TagCommand()
-    }
 
 }

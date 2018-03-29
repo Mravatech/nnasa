@@ -24,10 +24,10 @@ class EditPersonalProfileViewModelImpl(
         private val placeFinderInteractor: PlaceFinderInteractor,
         private val userProfileInteractor: UserProfileInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), EditPersonalProfileViewModel {
 
-    override val tagChannel: BroadcastChannel<EditPersonalProfileViewModel.TagCommand> = BroadcastChannel(10)
     override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
     private var path: String? = null
     private var sendPhotoJob: Job? = null
+
     override fun uploadPhotoToStorage(uri: Uri) {
         sendPhotoJob?.cancel()
         sendPhotoJob = handleException {
@@ -81,19 +81,6 @@ class EditPersonalProfileViewModelImpl(
                         offers = offersWithIds
                 )
                 userProfileInteractor.updatePersonalAccount(profile)
-            }
-        }
-    }
-
-    private var tagJob: Job? = null
-    override fun getTagsByIds(ids: List<String>?, isOffers: Boolean) {
-        val tagIds = ids ?: return
-        tagJob = handleException {
-            val tags = tagInteractor.getTagsByIds(tagIds)
-            if (isOffers) {
-                tagChannel.send(EditPersonalProfileViewModel.TagCommand.TagOffers(tags))
-            } else {
-                tagChannel.send(EditPersonalProfileViewModel.TagCommand.TagInterests(tags))
             }
         }
     }
