@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.SimpleChipView
@@ -38,15 +37,15 @@ class AnotherCompanyProfileHolder(itemView: View) : BaseProfileHolder(itemView) 
                 val drawable = if (profileInfo.visibility == View.GONE) R.drawable.ic_down else R.drawable.ic_up
                 val img = ResourcesCompat.getDrawable(resources, drawable, null)
                 tvMoreInformation.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
-                tvMoreInformation.text = if (profileInfo.visibility == View.GONE){
+                tvMoreInformation.text = if (profileInfo.visibility == View.GONE) {
                     fromDictionary(R.string.profile_more_information)
-                } else{
+                } else {
                     fromDictionary(R.string.profile_less_information)
                 }
             }
-            item.profile.offers?.let {
+            item.offers.let {
                 for (tag in it) {
-                    flTags.addView(SimpleChipView(flTags.context, TagModelImpl(null, tag, null)))
+                    flTags.addView(SimpleChipView(flTags.context, tag))
                 }
             }
         }

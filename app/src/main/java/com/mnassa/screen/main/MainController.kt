@@ -135,10 +135,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_create_account -> open(RegistrationController.newInstance())
 //            R.id.personal_info -> open(PersonalInfoController.newInstance())
 //            R.id.company_info -> open(OrganizationInfoController.newInstance())
+//            R.id.nav_profile -> open(ProfileController.newInstance("-L8lVgGlhYcMnBbtXFpS"))
+//            R.id.nav_profile -> open(ProfileController.newInstance("-L8h7TSSSi1KL0KOcee9"))
             R.id.nav_profile -> open(ProfileController.newInstance(view?.tvUserPosition?.text?.toString()?:""))
             R.id.nav_logout -> viewModel.logout()
         }
-
         return true
     }
 

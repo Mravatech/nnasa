@@ -20,6 +20,7 @@ class OtherProfileRepositoryImpl (
         private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference
 ) : OtherProfileRepository {
+
     override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
         val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)

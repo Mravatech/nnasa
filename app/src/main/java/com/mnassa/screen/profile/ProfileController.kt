@@ -34,13 +34,19 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.ivProfileBack.setOnClickListener { close() }
-
         accountModel?.let {
             viewModel.getProfileWithAccountId(it.id)
             view.ivCropImage.avatarSquare(it.avatar)
         } ?: run {
             viewModel.getProfileWithAccountId(accountId)
         }
+        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
+                view.tvTitleCollapsed.visibility = View.VISIBLE
+            } else {
+                view.tvTitleCollapsed.visibility = View.GONE
+            }
+        })
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter = ProfileAdapter(profileModel, viewModel)
@@ -48,8 +54,17 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 view.rvProfile.adapter = adapter
                 adapter.set(listOf(profileModel))
                 view.ivCropImage.avatarSquare(profileModel.profile.avatar)
-                view.toolbarProfile.title = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
-                view.toolbarProfile.subtitle = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
+                if (profileModel.profile.accountType == AccountType.PERSONAL) {
+                    view.profileName.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
+                    if (profileModel.profile.abilities.isNotEmpty()) {
+                        view.profileSubName.text = profileModel.profile.abilities[0].place
+                    }
+                    view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
+                } else {
+                    view.profileName.text = profileModel.profile.organizationInfo?.organizationName
+                    view.profileSubName.text = profileModel.profile.organizationType
+                    view.tvTitleCollapsed.text = profileModel.profile.organizationInfo?.organizationName
+                }
                 if (profileModel.isMyProfile) {
                     view.ivProfileEdit.visibility = View.VISIBLE
                     view.ivProfileEdit.setOnClickListener {
@@ -70,10 +85,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.profileClickChannel.consumeEach {
                 when (it) {
                     is ProfileViewModel.ProfileCommand.ProfileConnection -> open(AllConnectionsController.newInstance())
-                    is ProfileViewModel.ProfileCommand.ProfileWallet -> Toast.makeText(view.context,"ProfileWallet", Toast.LENGTH_SHORT).show()
+                    is ProfileViewModel.ProfileCommand.ProfileWallet -> Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+//        paleGray subcolor
     }
 
     companion object {

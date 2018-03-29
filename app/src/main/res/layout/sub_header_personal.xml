@@ -9,15 +9,15 @@
     <TextView
         android:id="@+id/tvProfileLocation"
         style="@style/ProfileHeaderItem.TextViewLabel"
-        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginBottom="24dp"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
-        android:drawableStart="@drawable/ic_eye_off"
+        android:layout_marginTop="24dp"
         android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_location"
         android:textColor="@color/black"
-        android:visibility="gone"
-        tools:text="I Can help with" />
+        android:visibility="visible"
+        tools:text="Dp" />
 
     <View
         android:id="@+id/vTopProfileCanHelpWith"

@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
@@ -19,7 +19,7 @@
             app:expandedTitleTextAppearance="@color/white"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -29,9 +29,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/profile_main_image_height"
                     android:contentDescription="@null"
-                    app:srcCompat="@drawable/ic_empty_avatar_placeholder"/>
+                    android:background="@drawable/avatar_shadow"
+                    app:srcCompat="@drawable/ic_empty_avatar_placeholder" />
 
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_margin="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/profileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/profile_toolbar_title_expanded_text_size"
+                        android:textStyle="normal"
+                        tools:text="Calvin Chambers" />
+
+                    <TextView
+                        android:id="@+id/profileSubName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/paleGray"
+                        android:textSize="@dimen/profile_toolbar_title_expanded_sub_text_size"
+                        android:textStyle="normal"
+                        tools:text="UI/UX Designer in ISDDESIGN" />
+                </LinearLayout>
+            </FrameLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbarProfile"
@@ -52,6 +80,7 @@
                         app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
 
                     <TextView
+                        android:id="@+id/tvTitleCollapsed"
                         style="@style/Profile.ToolbarTitle"
                         android:layout_toEndOf="@+id/ivProfileBack"
                         android:layout_toStartOf="@+id/flContainer"

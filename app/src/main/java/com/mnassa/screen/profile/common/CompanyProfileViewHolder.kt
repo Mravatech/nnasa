@@ -30,7 +30,7 @@ class CompanyProfileViewHolder(
             setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, vTopProfileEmail, fromDictionary(R.string.profile_email), item.profile.contactEmail)
             setCheckedTexts(tvLabelDateOfFoundation, tvDateOfFoundation, vTopProfileDateOfFoundation, fromDictionary(R.string.profile_date_of_foundation), getDateByTimeMillis(item.profile.createdAt))
             setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vTopProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
-            setCheckedTags(tvProfileWeCanHelpWith, chipProfileWeCanHelpWith, null, item.offers, fromDictionary(R.string.reg_account_can_help_with))
+            setCheckedTags(tvProfileWeCanHelpWith, chipProfileWeCanHelpWith, vTopProfileWeCanHelpWith, item.offers, fromDictionary(R.string.reg_account_can_help_with))
             setCheckedTags(tvProfileOurInterestedIn, chipProfileOurInterestWith, vTopProfileOurInterestedIn, item.interests, fromDictionary(R.string.reg_account_interested_in))
             tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
             flMoreInformation.setOnClickListener {

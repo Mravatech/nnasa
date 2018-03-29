@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.SimpleChipView
@@ -44,9 +43,9 @@ class AnotherPersonalProfileHolder(itemView: View) : BaseProfileHolder(itemView)
                 }
 
             }
-            item.profile.offers?.let {
+            item.offers.let {
                 for (tag in it) {
-                    flTags.addView(SimpleChipView(flTags.context, TagModelImpl(null, tag, null)))
+                    flTags.addView(SimpleChipView(flTags.context, tag))
                 }
             }
         }

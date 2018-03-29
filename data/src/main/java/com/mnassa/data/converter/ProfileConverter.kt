@@ -61,7 +61,7 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
             else -> throw IllegalArgumentException("Illegal account type ${input.type}")
         }
         val location: LocationModel? = input.location?.let { convertersContext.convert(input.location, LocationModel::class.java) }
-        val gender: Gender = if (input.gender == "male") Gender.MALE else Gender.FEMALE
+        val gender: Gender = if (input.gender == Gender.MALE.toString().toLowerCase()) Gender.MALE else Gender.FEMALE
         return ProfileAccountModelImpl(
                 createdAt = input.createdAt,
                 id = input.id,

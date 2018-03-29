@@ -122,11 +122,12 @@
         <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
     </style>
 
-
     <dimen name="profile_main_image_height">240dp</dimen>
     <dimen name="profile_toolbar_child_padding">16dp</dimen>
     <dimen name="profile_toolbar_child_margin">8dp</dimen>
-    <dimen name="profile_toolbar_title_text_size">16sp</dimen>
+    <dimen name="profile_toolbar_title_text_size">20sp</dimen>
+    <dimen name="profile_toolbar_title_expanded_text_size">23sp</dimen>
+    <dimen name="profile_toolbar_title_expanded_sub_text_size">15sp</dimen>
 
     <dimen name="profile_header_item_main_padding_vertical">24dp</dimen>
     <dimen name="profile_header_item_main_points_padding_start">16dp</dimen>
