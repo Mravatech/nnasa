@@ -43,6 +43,8 @@
     <string name="_android_post_comment_edit_INFO">Edit</string>
     <string name="_android_post_comment_delete_INFO">Delete</string>
     <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
+    <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
+    <string name="_android_post_comment_edit_button_INFO">Edit</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

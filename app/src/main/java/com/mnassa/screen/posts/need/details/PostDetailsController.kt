@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.controller_post_details.view.*
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.panel_comment.view.*
+import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -69,6 +70,26 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 }
             }
         }
+    private var editedComment: CommentModel? = null
+        set(value) {
+            field = value
+            launchCoroutineUI {
+                with (getViewSuspend()) {
+                    editPanel.isGone = value == null
+                    if (value == null) {
+                        hideKeyboard(commentPanel.etCommentText)
+                        return@launchCoroutineUI
+                    }
+
+                    editPanel.tvEditText.text = value.text
+                    editPanel.tvEditText.goneIfEmpty()
+                    commentPanel.etCommentText.setText(value.text)
+                    commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
+                    showKeyboard(commentPanel.etCommentText)
+                    recommendedAccounts = value.recommends
+                }
+            }
+        }
     override var recommendedAccounts: List<ShortAccountModel>
         set(value) {
             launchCoroutineUI {
@@ -94,9 +115,13 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
             btnCommentPost.text = fromDictionary(R.string.posts_comment_create)
             btnCommentPost.setOnClickListener {
-                viewModel.createComment(etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
+                val editedCommentLocal = editedComment
+                if (editedCommentLocal != null) {
+                    viewModel.editComment(editedCommentLocal, etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
+                } else viewModel.createComment(etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
                 etCommentText.text = null
                 replyTo = null
+                editedComment = null
                 recommendedAccounts = emptyList()
             }
             btnCommentPost.isEnabled = canPostComment
@@ -105,6 +130,9 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             etCommentText.addTextChangedListener(SimpleTextWatcher { btnCommentPost.isEnabled = canPostComment })
             tvCommentRecommend.setOnClickListener { headerLayout.invoke { it.btnRecommend.performClick() } }
             ivReplyCancel.setOnClickListener { replyTo = null }
+
+            editPanel.tvEditTitle.text = fromDictionary(R.string.posts_comment_edit_title)
+            editPanel.ivEditCancel.setOnClickListener { editedComment = null }
         }
 
         headerLayout.invoke {
@@ -172,6 +200,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         }
 
         replyTo = replyTo //show reply section if reply available after View destroying
+        editedComment = editedComment
     }
 
     override fun onViewDestroyed(view: View) {
@@ -229,7 +258,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
             popup.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.action_comment_edit -> Toast.makeText(view.context, "Edit comment", Toast.LENGTH_SHORT).show()
+                    R.id.action_comment_edit -> editedComment = commentModel
                     R.id.action_comment_delete -> viewModel.deleteComment(commentModel)
                 }
                 true

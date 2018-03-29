@@ -74,6 +74,9 @@
     <string name="posts_comment_edit">_android_post_comment_edit</string>
     <string name="posts_comment_delete">_android_post_comment_delete</string>
 
+    <string name="posts_comment_edit_title">_android_post_comment_edit_title</string>
+    <string name="posts_comment_edit_button">_android_post_comment_edit_button</string>
+
     <!-- recommend -->
     <string name="posts_recommend_title">_postProfile_navTitle</string>
     <string name="posts_recommend_best_matches">_accountsSelector_bestSuggest_title</string>

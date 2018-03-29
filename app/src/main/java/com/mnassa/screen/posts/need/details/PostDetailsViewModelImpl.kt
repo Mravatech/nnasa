@@ -36,9 +36,7 @@ class PostDetailsViewModelImpl(private val postId: String,
 
         handleException {
             postsInteractor.loadById(postId).consumeEach {
-                Timber.d("POST -> send $it")
                 postChannel.send(it)
-                Timber.d("POST -> sent ok $it")
                 postTagsChannel.send(loadTags(it.tags))
                 loadComments()
             }
@@ -86,6 +84,10 @@ class PostDetailsViewModelImpl(private val postId: String,
                 scrollToChannel.send(createdComment)
             }
         }
+    }
+
+    override fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun deleteComment(commentModel: CommentModel) {

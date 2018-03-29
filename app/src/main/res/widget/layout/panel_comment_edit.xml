@@ -14,7 +14,7 @@
         android:paddingStart="@dimen/spacing_horizontal">
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/ivReplyCancel"
+            android:id="@+id/ivEditCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?selectableItemBackgroundBorderless"
@@ -32,15 +32,33 @@
             android:layout_marginTop="@dimen/spacing_vertical"
             android:background="@color/colorAccent" />
 
-        <TextView
-            android:id="@+id/tvReplyTo"
-            style="@style/MnassaText"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_weight="1"
-            tools:text="Replying to " />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvEditTitle"
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Edit comment" />
+
+            <TextView
+                android:id="@+id/tvEditText"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="12sp"
+                tools:text="Edit comment text" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <View

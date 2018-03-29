@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/backgroundHighlight"
-    app:cardElevation="4dp"
-    app:contentPaddingBottom="@dimen/spacing_vertical"
-    app:contentPaddingLeft="@dimen/spacing_horizontal"
-    app:contentPaddingRight="@dimen/spacing_horizontal"
-    app:contentPaddingTop="@dimen/spacing_vertical"
+    android:background="@color/backgroundHighlight"
+    android:paddingBottom="@dimen/spacing_vertical"
+    android:paddingEnd="@dimen/spacing_horizontal"
+    android:paddingStart="@dimen/spacing_horizontal"
+    android:paddingTop="@dimen/spacing_vertical"
     tools:background="#f1f1f1">
 
     <LinearLayout
@@ -34,8 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:imeOptions="actionDone"
-            android:maxLines="4"
             android:maxLength="1000"
+            android:maxLines="4"
             tools:text="a1\na2\na3\n14\na5\na6" />
 
         <Button
@@ -47,4 +46,4 @@
             tools:text="POST" />
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</RelativeLayout>
