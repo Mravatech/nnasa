@@ -92,7 +92,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     open val emptyItemCount: Int get() = emptyHeaderItemsCount + emptyBottomItemsCount
     private val emptyHeaderItemsCount = 1
     private val emptyBottomItemsCount = 1
-    fun getDataItemByAdapterPosition(position: Int): ITEM = dataStorage.get(position - emptyHeaderItemsCount)
+    fun getDataItemByAdapterPosition(position: Int): ITEM = dataStorage[position - emptyHeaderItemsCount]
     fun convertDataIndexToAdapterPosition(index: Int): Int = index + emptyHeaderItemsCount
     fun convertAdapterPositionToDataIndex(index: Int): Int {
         return when {
@@ -203,8 +203,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             return if (oldItemType == TYPE_UNDEFINED && newItemType == TYPE_UNDEFINED) {
                 val oldClientPos = oldItemPosition - emptyHeaderItemsCount
                 val newClientPos = newItemPosition - emptyHeaderItemsCount
-                val oldClientItem = oldData.get(oldClientPos)
-                val newClientItem = newData.get(newClientPos)
+                val oldClientItem = oldData[oldClientPos]
+                val newClientItem = newData[newClientPos]
 
                 return itemsTheSameComparator.invoke(oldClientItem, newClientItem)
             } else {
@@ -230,8 +230,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
 
                 val oldClientPos = oldItemPosition - emptyHeaderItemsCount
                 val newClientPos = newItemPosition - emptyHeaderItemsCount
-                val oldClientItem = oldData.get(oldClientPos)
-                val newClientItem = newData.get(newClientPos)
+                val oldClientItem = oldData[oldClientPos]
+                val newClientItem = newData[newClientPos]
 
                 return contentTheSameComparator.invoke(oldClientItem, newClientItem)
             } else oldItemType == newItemType

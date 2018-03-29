@@ -170,6 +170,7 @@ dependencies {
     implementation deps.glide.glide
     kapt deps.glide.glideCompiler
     implementation deps.glide.glideTransformers
+    implementation deps.glide.glideOkHttp
 
     //ucrop
     implementation deps.ucrop.general
@@ -193,6 +194,7 @@ dependencies {
     implementation deps.other.logger
     implementation deps.other.leak
     implementation deps.stetho.runtime
+    implementation deps.stetho.http
 
     //network
     implementation deps.network.retrofit

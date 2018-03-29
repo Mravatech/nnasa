@@ -2,7 +2,9 @@ package com.mnassa.dialog
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
+import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.Button
@@ -12,7 +14,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
-import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
@@ -120,7 +121,12 @@ class DialogHelper {
     }
 
     fun showProgressDialog(context: Context): Dialog {
-        val dialog = MnassaProgressDialog(context, R.style.MnassaProgressTheme)
+        val dialog = object: ProgressDialog(context, R.style.MnassaProgressTheme) {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.dialog_progress)
+            }
+        }
         dialog.setCancelable(false)
         dialog.show()
         return dialog
