@@ -17,7 +17,6 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_edit_company_profile.view.*
-import kotlinx.android.synthetic.main.controller_organization_info.view.*
 import kotlinx.android.synthetic.main.sub_company_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
@@ -52,8 +51,12 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         setCalendarEditText(view.etFoundation)
         view.etCompanyEmail.setHideMode(accountModel.showContactEmail)
         view.etCompanyEmail.setText(accountModel.contactEmail)
+        view.etCompanyName.setText(accountModel.organizationInfo?.organizationName)
+        view.etCompanyUserName.setText(accountModel.userName)
         view.etCompanyPhone.setHideMode(accountModel.showContactPhone)
         view.etCompanyPhone.setText(accountModel.contactPhone)
+        view.etWebSite.setText(accountModel.website)
+        view.vCompanyStatus.setOrganization(accountModel.organizationType)
         view.etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
         view.chipCompanyOffers.chipSearch = viewModel
         view.chipCompanyOffers.setTags(offers)
@@ -133,8 +136,6 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         view.chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
         view.chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
         view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
-        view.tvHeader.text = fromDictionary(R.string.reg_company_title)
-        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
         view.tilWebSite.hint = fromDictionary(R.string.reg_company_website)
         view.tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
         view.tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)

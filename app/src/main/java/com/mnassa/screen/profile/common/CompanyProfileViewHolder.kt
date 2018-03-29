@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
@@ -27,7 +26,7 @@ class CompanyProfileViewHolder(
             tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
             tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
             tvProfileLocation.text = item.profile.location?.en?.placeName
-            setCheckedTexts(tvLabelProfileWebSite, tvProfileWebSite, vTopProfileWebSite, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
+            setCheckedTexts(tvLabelProfileWebSite, tvProfileWebSite, vTopProfileWebSite, fromDictionary(R.string.profile_website), item.profile.website)
             setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, vTopProfileEmail, fromDictionary(R.string.profile_email), item.profile.contactEmail)
             setCheckedTexts(tvLabelDateOfFoundation, tvDateOfFoundation, vTopProfileDateOfFoundation, fromDictionary(R.string.profile_date_of_foundation), getDateByTimeMillis(item.profile.createdAt))
             setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vTopProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
@@ -46,9 +45,9 @@ class CompanyProfileViewHolder(
                     fromDictionary(R.string.profile_less_information)
                 }
             }
-            item.profile.offers?.let {
+            item.offers.let {
                 for (tag in it) {
-                    flTags.addView(SimpleChipView(flTags.context, TagModelImpl(null, tag, null)))
+                    flTags.addView(SimpleChipView(flTags.context, tag))
                 }
             }
             tvProfileConnections.setOnClickListener { viewModel.connectionClick() }

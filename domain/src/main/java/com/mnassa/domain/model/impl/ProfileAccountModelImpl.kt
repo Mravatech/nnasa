@@ -43,5 +43,7 @@ data class ProfileAccountModelImpl(
         override val numberOfUnreadResponses: Int?,
         override val visiblePoints: Int,
         override val location: LocationModel?,
-        override val gender: Gender
+        override val gender: Gender,
+        override val website: String?,
+        override val organizationType: String?
 ) : ProfileAccountModel

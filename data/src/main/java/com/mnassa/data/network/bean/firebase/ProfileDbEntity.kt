@@ -41,7 +41,9 @@ internal class ProfileDbEntity(
         @SerializedName("numberOfUnreadResponses") val numberOfUnreadResponses: Int?,
         @SerializedName("visiblePoints") val visiblePoints: Int,
         location: LocationDbEntity,
-        gender: String
+        gender: String,
+        @SerializedName("website") val website: String?,
+        @SerializedName("organizationType") val organizationType: String?
 ) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
 
     @SerializedName("createdAt")

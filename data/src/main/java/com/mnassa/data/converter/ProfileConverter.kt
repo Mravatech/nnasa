@@ -97,7 +97,9 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
                 numberOfUnreadResponses = input.numberOfUnreadResponses,
                 visiblePoints = input.visiblePoints,
                 location = location,
-                gender = gender
+                gender = gender,
+                website = input.website,
+                organizationType = input.organizationType
         )
     }
 }

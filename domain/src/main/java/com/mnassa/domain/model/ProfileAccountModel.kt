@@ -33,4 +33,6 @@ interface ProfileAccountModel : ShortAccountModel, Parcelable {
     val visiblePoints: Int
     val location: LocationModel?
     val gender: Gender
+    val website: String?
+    val organizationType: String?
 }
