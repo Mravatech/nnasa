@@ -99,7 +99,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
         toolbar.onMoreClickListener = { proccesProfile(view) }
         toolbar.backButtonEnabled = true
         toolbar.ivToolbarMore.setImageResource(R.drawable.ic_check)
-        toolbar.ivToolbarMore.setColorFilter(ContextCompat.getColor(view.context, R.color.turquoiseBlue), android.graphics.PorterDuff.Mode.SRC_IN)
+        toolbar.ivToolbarMore.setColorFilter(ContextCompat.getColor(view.context, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
         toolbar.ivToolbarMore.visibility = View.VISIBLE
     }
 
