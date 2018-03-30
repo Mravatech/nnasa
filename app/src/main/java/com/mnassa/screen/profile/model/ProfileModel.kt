@@ -1,5 +1,6 @@
 package com.mnassa.screen.profile.model
 
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 
@@ -14,6 +15,23 @@ data class ProfileModel(
         val interests: List<TagModel>,
         val offers: List<TagModel>,
         val isMyProfile: Boolean
-)
+) {
+    fun getAccountType(): Accounts {
+        return if (isMyProfile && profile.accountType == AccountType.ORGANIZATION) {
+            Accounts.MY_COMPANY
+        } else if (isMyProfile && profile.accountType == AccountType.PERSONAL) {
+            Accounts.MY_PERSONAL
+        }else if (profile.accountType == AccountType.ORGANIZATION) {
+            Accounts.USER_COMPANY
+        }else if (profile.accountType == AccountType.PERSONAL) {
+            Accounts.USER_PERSONAL
+        }else{
+            throw IllegalArgumentException("There is")
+        }
+    }
+}
 
+enum class Accounts {
+    MY_PERSONAL, MY_COMPANY, USER_PERSONAL, USER_COMPANY
+}
 
