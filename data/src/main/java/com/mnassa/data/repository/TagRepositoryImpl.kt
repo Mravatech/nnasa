@@ -2,6 +2,7 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.bean.firebase.TagDbEntity
@@ -18,6 +19,13 @@ class TagRepositoryImpl(
         private val exceptionHandler: ExceptionHandler,
         private val firebaseTagsApi: FirebaseTagsApi
 ) : TagRepository {
+
+    override suspend fun get(id: String): TagModel? {
+        return databaseReference.child(DatabaseContract.TABLE_TAGS)
+                .child(id)
+                .await<TagDbEntity>(exceptionHandler)
+                ?.run { converter.convert(this, TagModel::class.java) }
+    }
 
     override suspend fun search(searchKeyword: String): List<TagModel> {
         val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)

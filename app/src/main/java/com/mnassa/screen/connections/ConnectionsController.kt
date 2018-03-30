@@ -46,6 +46,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private val recommendedConnectionsAdapter = RecommendedConnectionsRecyclerViewAdapter()
     private val newConnectionRequestsAdapter = NewConnectionRequestsRecyclerViewAdapter()
     private var isHeaderBounded = false
+    private var permissionsSnackbar: Snackbar? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -92,6 +93,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
     override fun onViewDestroyed(view: View) {
         isHeaderBounded = false
+        permissionsSnackbar = null
         super.onViewDestroyed(view)
     }
 
@@ -103,17 +105,21 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {
+                permissionsSnackbar?.dismiss()
                 viewModel.onContactPermissionsGranted()
             } else {
                 val view = view?.clSnackbarParent ?: return@launchCoroutineUI
-                Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
-                            if (permissionsResult.isShouldShowRequestPermissionRationale) {
-                                onPageSelected()
-                            } else {
-                                view.context.openApplicationSettings()
+                if (permissionsSnackbar?.isShown != true) {
+                    permissionsSnackbar = Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
+                                if (permissionsResult.isShouldShowRequestPermissionRationale) {
+                                    onPageSelected()
+                                } else {
+                                    view.context.openApplicationSettings()
+                                }
                             }
-                        }.show()
+                    permissionsSnackbar?.show()
+                }
             }
         }
     }

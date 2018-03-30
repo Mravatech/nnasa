@@ -14,12 +14,13 @@ import com.mnassa.translation.fromDictionary
  */
 val ShortAccountModel.formattedFromEvent: CharSequence
     get() {
-        val head = "From event " //TODO: from dictionary
-        val spannable = SpannableString(head + "Some event name")
-        val context = App.context
-        val color = ContextCompat.getColor(requireNotNull(context), R.color.black)
-        spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return spannable
+//        val head = "From event " //TODO: from dictionary
+//        val spannable = SpannableString(head + "Some event name")
+//        val context = App.context
+//        val color = ContextCompat.getColor(requireNotNull(context), R.color.black)
+//        spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        return spannable
+        return ""
     }
 
 val ShortAccountModel.formattedPosition: CharSequence

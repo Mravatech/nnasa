@@ -235,14 +235,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             city.setAdapter(placeAutocompleteAdapter)
             city.setOnItemClickListener({ _, _, i, _ ->
-                placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 if (isPerson) {
-                    personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                    personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                    personSelectedPlaceId = item.placeId
+                    personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                     city.setText(personSelectedPlaceName ?: "")
                 } else {
-                    companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                    companySelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                    companySelectedPlaceId = item.placeId
+                    companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                     city.setText(companySelectedPlaceName ?: "")
                 }
             })

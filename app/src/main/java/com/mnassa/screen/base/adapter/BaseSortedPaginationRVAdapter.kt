@@ -10,6 +10,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
     abstract val itemsComparator: (item1: ITEM, item2: ITEM) -> Int
     abstract val itemClass: Class<ITEM>
 
+
     class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> {
         private val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 
@@ -35,6 +36,15 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.addAll(elements)
+                wrappedList.endBatchedUpdates()
+            }
+            return true
+        }
+
+        override fun remove(element: ITEM): Boolean {
+            adapter.postUpdate {
+                wrappedList.beginBatchedUpdates()
+                wrappedList.remove(element)
                 wrappedList.endBatchedUpdates()
             }
             return true

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundHighlight"
+    android:orientation="vertical">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_title="@string/sharing_options_title" />
+
+    <RelativeLayout
+        android:id="@+id/rvPromotePostRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <TextView
+            android:id="@+id/tvPromotePostTitle"
+            style="@style/MnassaHeader2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/rbPromotePost"
+            tools:text="Promote post (200 points)" />
+
+        <TextView
+            android:id="@+id/tvPromotePostDescription"
+            style="@style/MnassaTextTiny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvPromotePostTitle"
+            android:layout_toStartOf="@id/rbPromotePost"
+            tools:text="Will be shown to all MNASSA community" />
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/rbPromotePost"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <View style="@style/MnassaDivider" />
+
+    <RelativeLayout
+        android:id="@+id/rvMyNewsFeedRoot"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <TextView
+            android:id="@+id/tvMyNewsFeed"
+            style="@style/MnassaHeader2"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/rbMyNewsFeed"
+            tools:text="My Newsfeed" />
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/rbMyNewsFeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <View style="@style/MnassaDivider" />
+
+    <TextView
+        android:id="@+id/tvConnections"
+        style="@style/MnassaHeader2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical"
+        tools:text="Connections" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvAllConnections"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

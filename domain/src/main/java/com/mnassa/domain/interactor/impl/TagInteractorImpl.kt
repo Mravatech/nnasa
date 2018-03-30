@@ -12,7 +12,10 @@ import com.mnassa.domain.repository.TagRepository
 
 class TagInteractorImpl(
         private val tagRepository: TagRepository
-) : TagInteractor {
+        ) : TagInteractor {
+
+    override suspend fun get(id: String): TagModel? = tagRepository.get(id)
+
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
         return tagRepository.createCustomTagIds(tags)
     }

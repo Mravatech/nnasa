@@ -30,5 +30,8 @@
     <color name="backgroundTransparent">#00000000</color>
     <color name="dark_chip_shadow">#66000000</color>
     <color name="chip_default_edit_text_hint_color">#808080</color>
+
+    <color name="moreImagesBackground">#6a000000</color>
+
     <color name="ucrop_color_toolbar_widget">#000</color>
 </resources>

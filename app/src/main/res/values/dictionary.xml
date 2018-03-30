@@ -52,6 +52,50 @@
     <!-- ===================================== TAB HOME ======================================== -->
     <string name="tab_home_needs_title">_nav_title_needs</string>
     <string name="tab_home_events_title">_events_nav_title</string>
+    <string name="tab_home_title">_android_news_feed_title</string>
+    <string name="tab_home_button_create_need">_post_type_need_Info</string>
+    <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
+
+    <!-- ========================================= POSTS ======================================== -->
+    <string name="need_prefix">_post_type_need_Info</string>
+
+    <!-- create need -->
+    <string name="need_create_title">_posts_header_iNeed</string>
+    <string name="need_create_action_button">_new_post_navbar_title_newPost</string>
+    <string name="need_create_share_to_prefix">_android_create_post_share_to</string>
+    <string name="need_create_to_all_mnassa">_android_create_post_promote_short</string>
+    <string name="need_create_to_newsfeed">_share_to_in_newsfeed</string>
+    <string name="need_create_to_connections_other">_share_to_and_more_than</string>
+    <string name="need_create_need_placeholder">_posts_header_type_your_need</string>
+    <string name="need_create_city_hint">_new_post_extra_details_city_placeholder</string>
+    <string name="need_create_tags_hint">_new_post_tags_placeholder</string>
+    <string name="need_create_extra">_new_post_extra_details</string>
+    <string name="need_create_price_hint">_new_post_extra_details_price_placeholder</string>
+
+    <string name="need_item_btn_you_and_connections_can_help">_postCell_youAndFriendsCanHelp</string>
+    <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
+    <string name="need_item_btn_you_can_help">_postCell_youCanHelp</string>
+
+    <!-- need details -->
+    <string name="need_details_title">_android_need_details_title</string>
+    <string name="need_views_count">_post_details_numOfViews</string>
+    <string name="need_comment_button">_post_details_comment</string>
+    <string name="need_recommend_button">_post_details_recommend</string>
+    <string name="need_action_repost">_post_details_alert_repost</string>
+    <string name="need_action_report">_post_details_alert_report</string>
+    <string name="need_action_edit">_post_details_alert_edit_post</string>
+    <string name="need_action_delete">_post_details_alert_delete_post</string>
+
+    <!-- sharing options -->
+    <string name="sharing_options_title">_privacy_connections_nav_title</string>
+    <string name="sharing_options_button">_accountSelector_rigthButton_Apply</string>
+    <string name="sharing_options_promote_title">_android_create_post_promote_title</string>
+    <string name="sharing_options_promote_description">_android_create_post_promote_description</string>
+    <string name="sharing_options_newsfeed_title">_share_to_in_newsfeed</string>
+    <string name="sharing_options_connections_title">_connectionsList_navTitle_connections</string>
+
+    <!-- ========================================== OFFER ======================================= -->
+    <string name="offer_prefix">_post_type_offer_Info</string>
 
     <!-- ===================================== TAB CONNECTIONS ================================== -->
     <string name="tab_connections_title">_connectionsList_navTitle_connections</string>

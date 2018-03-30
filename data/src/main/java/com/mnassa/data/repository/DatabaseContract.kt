@@ -42,6 +42,18 @@ internal object DatabaseContract {
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_PHONE = "byPhone"
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_GROUPS = "byGroups"
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"
+    //
+    const val TABLE_NEWS_FEED = "newsfeed"
+    const val NEWS_FEED_TYPE_NEED = "need"
+    const val NEWS_FEED_TYPE_ACCOUNT = "account"
+    const val NEWS_FEED_TYPE_OFFER = "offer"
+    const val NEWS_FEED_TYPE_GENERAL = "general"
+
+    const val NEWS_FEED_PRIVACY_TYPE_PUBLIC = "public"
+    const val NEWS_FEED_PRIVACY_TYPE_PRIVATE = "private"
+    const val NEWS_FEED_PRIVACY_TYPE_WORLD = "world"
+    //
+    const val TABLE_PUBLIC_ACCOUNTS = "publicAccounts"
 
     const val TABLE_TAGS = "tags"
 

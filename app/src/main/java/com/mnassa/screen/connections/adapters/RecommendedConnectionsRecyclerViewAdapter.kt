@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.avatarRound
-import com.mnassa.extensions.formattedFromEvent
-import com.mnassa.extensions.formattedPosition
-import com.mnassa.extensions.invisibleIfEmpty
+import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connections_recommended.view.*
@@ -74,7 +71,7 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     private class UserViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<ShortAccountModel>(itemView) {
         override fun bind(item: ShortAccountModel) {
             with(itemView) {
-                ivAvatar.avatarRound(item.avatar)
+                ivAvatar.avatarSquare(item.avatar)
                 tvUserName.text = item.formattedName
 
                 tvPosition.text = item.formattedPosition

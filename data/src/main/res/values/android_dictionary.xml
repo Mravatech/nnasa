@@ -30,6 +30,12 @@
     <string name="_android_connections_permissions_declined_button_INFO">Allow</string>
     <string name="_android_connections_new_requests_empty_description_INFO">You have no new requests yet (description)</string>
     <string name="_android_connections_archived_empty_description_INFO">You have no rejected users yet (description)</string>
+    <string name="_android_news_feed_title_INFO">News feed</string>
+    <string name="_android_need_details_title_INFO">%s Demands</string>
+    <string name="_android_create_post_promote_title_INFO">Promote post (200 points)</string>
+    <string name="_android_create_post_promote_description_INFO">Will be shown to all MNASSA community</string>
+    <string name="_android_create_post_promote_short_INFO">all MNASSA community</string>
+    <string name="_android_create_post_share_to_INFO">to %s</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

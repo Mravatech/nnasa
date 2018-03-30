@@ -14,31 +14,52 @@ import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.api.FirebaseDictionaryApi
+import com.mnassa.data.network.exception.FirebaseExceptionHandler
+import com.mnassa.data.network.exception.FirebaseExceptionHandlerImpl
+import com.mnassa.data.network.exception.NetworkExceptionHandlerImpl
+import com.mnassa.data.network.exception.NetworkExceptionHandler
+import com.mnassa.data.repository.DictionaryRepositoryImpl
+import com.mnassa.data.repository.StorageRepositoryImpl
+import com.mnassa.data.repository.TagRepositoryImpl
+import com.mnassa.data.repository.UserRepositoryImpl
+import com.mnassa.data.service.FirebaseLoginServiceImpl
+import com.mnassa.domain.interactor.DictionaryInteractor
+import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.impl.DictionaryInteractorImpl
+import com.mnassa.domain.interactor.impl.LoginInteractorImpl
+import com.mnassa.domain.interactor.impl.StorageInteractorImpl
+import com.mnassa.domain.interactor.impl.UserProfileInteractorImpl
+import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.domain.repository.DictionaryRepository
+import com.mnassa.domain.repository.StorageRepository
+import com.mnassa.domain.repository.TagRepository
+import com.mnassa.domain.repository.UserRepository
+import com.mnassa.domain.service.FirebaseLoginService
+import com.mnassa.screen.profile.ProfileViewModel
+import com.mnassa.screen.profile.ProfileViewModelImpl
+import com.mnassa.data.converter.*
+import com.mnassa.data.converter.TagConverter
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.api.FirebaseTagsApi
+import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
-import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
-import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
-import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.google.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModelImpl
-import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
-import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
 import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
 import com.mnassa.screen.connections.ConnectionsViewModelImpl
-import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
-import com.mnassa.screen.connections.allconnections.AllConnectionsViewModelImpl
 import com.mnassa.screen.connections.archived.ArchivedConnectionViewModel
 import com.mnassa.screen.connections.archived.ArchivedConnectionViewModelImpl
 import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
@@ -57,16 +78,20 @@ import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
+import com.mnassa.screen.posts.PostsViewModel
+import com.mnassa.screen.posts.PostsViewModelImpl
 import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
 import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
-import com.mnassa.screen.needs.NeedsViewModel
-import com.mnassa.screen.needs.NeedsViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
-import com.mnassa.screen.profile.ProfileViewModel
-import com.mnassa.screen.profile.ProfileViewModelImpl
+import com.mnassa.screen.posts.need.create.CreateNeedViewModel
+import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
+import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
+import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileViewModel
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileViewModelImpl
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileViewModel
@@ -107,7 +132,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
-    bind<NeedsViewModel>() with provider { NeedsViewModelImpl() }
+    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
@@ -117,6 +142,9 @@ private val viewModelsModule = Kodein.Module {
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
+    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
+    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
+    bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
     bind<EditPersonalProfileViewModel>() with provider { EditPersonalProfileViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EditCompanyProfileViewModel>() with provider { EditCompanyProfileViewModelImpl(instance(), instance(), instance(), instance()) }
 }
@@ -131,6 +159,8 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(ProfileConverter::class.java)
         converter.registerConverter(TagConverter(instance()))
         converter.registerConverter(AbilityConverter::class.java)
+        converter.registerConverter(LocationConverter::class.java)
+        converter.registerConverter(PostConverter::class.java)
         converter
     }
 }
@@ -154,6 +184,7 @@ private val repositoryModule = Kodein.Module {
     bind<PlaceFinderRepository>() with singleton {
         PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
     }
+    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -169,6 +200,7 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance()) }
 }
 
 private val networkModule = Kodein.Module {
@@ -194,6 +226,10 @@ private val networkModule = Kodein.Module {
     bind<FirebaseTagsApi>() with singleton {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebaseTagsApi::class.java)
+    }
+    bind<FirebasePostApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebasePostApi::class.java)
     }
 
 

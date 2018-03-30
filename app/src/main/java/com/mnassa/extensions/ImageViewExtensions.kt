@@ -34,10 +34,13 @@ fun ImageView.enable() {
 fun ImageView.avatarRound(avatarUrl: String?) {
     //todo: add placeholder, error
 
+    val storage = context.appKodein().instance<FirebaseStorage>()
+    val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
+
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)
-            .load(avatarUrl)
+            .load(ref ?: "")
             .apply(requestOptions)
             .apply(RequestOptions.circleCropTransform())
             .into(this)
@@ -50,6 +53,19 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
     val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
     val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
+
+    GlideApp.with(this)
+            .load(ref ?: "")
+            .apply(requestOptions)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
+}
+
+fun ImageView.image(url: String?) {
+    val storage = context.appKodein().instance<FirebaseStorage>()
+    val ref = url?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
+
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
     GlideApp.with(this)
             .load(ref ?: "")
