@@ -7,6 +7,7 @@ import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.api.FirebaseConnectionsApi
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.bean.firebase.ConnectionDbStatuses
 import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
@@ -15,9 +16,7 @@ import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
 import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.domain.model.DeclinedShortAccountModel
-import com.mnassa.domain.model.RecommendedConnections
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RecommendedConnectionsImpl
 import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -32,6 +31,7 @@ class ConnectionsRepositoryImpl(
         private val exceptionHandler: ExceptionHandler,
         private val databaseReference: DatabaseReference,
         private val userRepository: UserRepository,
+        private val firebaseConnectionsApi: FirebaseConnectionsApi,
         private val converter: ConvertersContext) : ConnectionsRepository {
 
     override suspend fun sendContacts(phoneNumbers: List<String>) {
@@ -53,6 +53,10 @@ class ConnectionsRepositoryImpl(
                 }
     }
 
+    override suspend fun actionConnection(connectionAction: ConnectionAction) {
+        firebaseConnectionsApi.connectionAction(connectionAction.name.toLowerCase())
+    }
+
     override suspend fun getConnectionRequests(): ReceiveChannel<List<ShortAccountModel>> {
         return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_REQUESTED)
     }
@@ -65,13 +69,24 @@ class ConnectionsRepositoryImpl(
         return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_SENT)
     }
 
-    override suspend fun getStatusConnections(userAccountId: String): String? {
+    override suspend fun getStatusConnections(userAccountId: String): ReceiveChannel<ConnectionStatus> {
+        return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
+                .child(requireNotNull(userRepository.getAccountId()))
+                .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
+                .child(userAccountId)
+                .toValueChannel<ConnectionDbStatuses>(exceptionHandler)
+                .map {
+                    converter.convert(it?.connectionsStatus ?: "", ConnectionStatus::class.java)
+                }
+    }
+
+    override suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus {
         val status = databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
                 .child(requireNotNull(userRepository.getAccountId()))
                 .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
                 .child(userAccountId)
                 .await<ConnectionDbStatuses>(exceptionHandler)
-        return status?.connectionsStatus
+        return converter.convert(status?.connectionsStatus ?: "", ConnectionStatus::class.java)
     }
 
     override suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>> {

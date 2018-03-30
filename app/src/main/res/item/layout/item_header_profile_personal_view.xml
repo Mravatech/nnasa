@@ -55,9 +55,15 @@
     <include layout="@layout/sub_header_personal" />
 
     <LinearLayout
-        android:id="@+id/flTags"
+        android:id="@+id/llBottomTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"/>
 
+    <View
+        android:visibility="gone"
+        android:id="@+id/vBottomDivider"
+        android:layout_width="match_parent"
+        android:background="@color/backgroundTransparent"
+        android:layout_height="24dp"/>
 </LinearLayout>

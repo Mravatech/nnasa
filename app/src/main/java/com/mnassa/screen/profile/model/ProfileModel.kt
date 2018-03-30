@@ -1,6 +1,7 @@
 package com.mnassa.screen.profile.model
 
 import com.mnassa.domain.model.AccountType
+import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 
@@ -14,7 +15,8 @@ data class ProfileModel(
         val profile: ProfileAccountModel,
         val interests: List<TagModel>,
         val offers: List<TagModel>,
-        val isMyProfile: Boolean
+        val isMyProfile: Boolean,
+        val connectionStatus: ConnectionStatus
 ) {
     fun getAccountType(): Accounts {
         return if (isMyProfile && profile.accountType == AccountType.ORGANIZATION) {
@@ -26,7 +28,7 @@ data class ProfileModel(
         }else if (profile.accountType == AccountType.PERSONAL) {
             Accounts.USER_PERSONAL
         }else{
-            throw IllegalArgumentException("There is")
+            throw IllegalArgumentException("Wrong ProfileModel")
         }
     }
 }

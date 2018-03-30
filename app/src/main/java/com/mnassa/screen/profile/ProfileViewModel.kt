@@ -1,11 +1,13 @@
 package com.mnassa.screen.profile
 
+import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -16,16 +18,17 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface ProfileViewModel : MnassaViewModel {
     val profileChannel: BroadcastChannel<ProfileModel>
     val profileClickChannel: BroadcastChannel<ProfileCommand>
-    val statusesConnectionsChannel: BroadcastChannel<String?>
+    val statusesConnectionsChannel: ConflatedBroadcastChannel<ConnectionStatus>
     suspend fun getPostsById(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     fun getProfileWithAccountId(accountId: String)
     fun connectionClick()
     fun walletClick()
+    fun connectionStatusClick(connectionStatus: ConnectionStatus)
     fun <T> handleException(function: suspend () -> T): Job
 
     sealed class ProfileCommand {
-        class ProfileConnection: ProfileCommand()
-        class ProfileWallet: ProfileCommand()
+        class ProfileConnection : ProfileCommand()
+        class ProfileWallet : ProfileCommand()
     }
 
 }

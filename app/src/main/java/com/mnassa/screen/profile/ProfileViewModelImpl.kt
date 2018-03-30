@@ -5,13 +5,14 @@ import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import timber.log.Timber
 
@@ -29,7 +30,7 @@ class ProfileViewModelImpl(
 
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
     override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
-    override val statusesConnectionsChannel: BroadcastChannel<String?> = BroadcastChannel(10)
+    override val statusesConnectionsChannel: ConflatedBroadcastChannel<ConnectionStatus> = ConflatedBroadcastChannel()
     override suspend fun getPostsById(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsInteractor.loadAllUserPostByAccountUd(accountId)
 
     private var profileClickJob: Job? = null
@@ -42,6 +43,7 @@ class ProfileViewModelImpl(
 
     private var walletClickJob: Job? = null
     override fun walletClick() {
+        walletClickJob?.cancel()
         walletClickJob = launchCoroutineUI {
             profileClickChannel.send(ProfileViewModel.ProfileCommand.ProfileWallet())
         }
@@ -49,23 +51,27 @@ class ProfileViewModelImpl(
 
     override fun getProfileWithAccountId(accountId: String) {
         handleException {
-            var profileAccountModel: ProfileAccountModel? = null
             withProgressSuspend {
-                profileAccountModel = userProfileInteractor.getPrifileByAccountId(accountId)
+                val profileAccountModel = userProfileInteractor.getPrifileByAccountId(accountId)
                 Timber.i(profileAccountModel.toString())
-            }
-            profileAccountModel?.let {
-                val profile = ProfileModel(it,
-                        tagInteractor.getTagsByIds(it.interests),
-                        tagInteractor.getTagsByIds(it.offers),
-                        userProfileInteractor.getAccountId() == accountId)
-                profileChannel.send(profile)
-                if (profile.isMyProfile) return@handleException
-                val status = connectionsInteractor.getStatusesConnections(accountId)
-                statusesConnectionsChannel.send(status)
+                profileAccountModel?.let {
+                    val profile = ProfileModel(it,
+                            tagInteractor.getTagsByIds(it.interests),
+                            tagInteractor.getTagsByIds(it.offers),
+                            userProfileInteractor.getAccountId() == accountId
+                            , connectionsInteractor.getConnectedStatusById(accountId))
+                    profileChannel.send(profile)
+                }
             }
         }
     }
+
+    override fun connectionStatusClick(connectionStatus: ConnectionStatus) {
+//        connectionsInteractor.actionConnection()
+
+
+    }
+
     override fun <T> handleException(function: suspend () -> T): Job {
         return super.handleException(function)
     }

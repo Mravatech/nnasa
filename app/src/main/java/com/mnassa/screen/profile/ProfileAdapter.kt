@@ -23,8 +23,8 @@ class ProfileAdapter(private val profileModel: ProfileModel, private val viewMod
             return when (profileModel.getAccountType()) {
                 Accounts.MY_COMPANY -> CompanyProfileViewHolder.newInstance(parent, viewModel, profileModel)
                 Accounts.MY_PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel, profileModel)
-                Accounts.USER_COMPANY -> AnotherCompanyProfileHolder.newInstance(parent, profileModel)
-                Accounts.USER_PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, profileModel)
+                Accounts.USER_COMPANY -> AnotherCompanyProfileHolder.newInstance(parent, viewModel, profileModel)
+                Accounts.USER_PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, viewModel, profileModel)
             }
         } else {
             super.onCreateViewHolder(parent, viewType)

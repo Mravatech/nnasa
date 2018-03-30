@@ -1,15 +1,19 @@
 package com.mnassa.screen.profile.common
 
-import android.graphics.Color
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
 import android.widget.TextView
+import com.mnassa.R
+import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.FlowLayout
 import com.mnassa.widget.SimpleChipView
 import java.text.DateFormatSymbols
@@ -22,11 +26,11 @@ import java.util.*
  */
 abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
 
-    protected fun getSpannableText(count: String, text: String): SpannableString {
+    protected fun getSpannableText(count: String, text: String, color: Int): SpannableString {
         val value = "$count\n$text"
         val span = SpannableString(value)
-        span.setSpan(ForegroundColorSpan(Color.BLACK), 0, count.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(RelativeSizeSpan(1.5f), 0, count.length, 0)
+        span.setSpan(ForegroundColorSpan(color), START_SPAN, count.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(PROPORTION_TEXT_SIZE), START_SPAN, count.length, 0)
         return span
     }
 
@@ -50,6 +54,52 @@ abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseV
 
     }
 
+    protected fun onMoreClick(profileInfo: View, llBottomTags: View, tvMoreInformation: TextView, vBottomDivider: View, areThereTags: Boolean) {
+        profileInfo.visibility = if (profileInfo.visibility == View.GONE) View.VISIBLE else View.GONE
+        llBottomTags.visibility = if (llBottomTags.visibility == View.GONE) View.VISIBLE else View.GONE
+        val drawable = if (profileInfo.visibility == View.GONE) R.drawable.ic_down else R.drawable.ic_up
+        val img = ResourcesCompat.getDrawable(tvMoreInformation.resources, drawable, null)
+        tvMoreInformation.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
+        tvMoreInformation.text = if (profileInfo.visibility == View.GONE) {
+            vBottomDivider.visibility = if (areThereTags) View.GONE else View.VISIBLE
+            fromDictionary(R.string.profile_more_information)
+        } else {
+            vBottomDivider.visibility = View.VISIBLE
+            fromDictionary(R.string.profile_less_information)
+        }
+    }
+
+    protected fun handleConnection(textView: TextView, connectionStatus: ConnectionStatus) {
+        when (connectionStatus) {
+            ConnectionStatus.CONNECTED -> {
+                textView.text =
+                        getSpannableText(EMPTY_CONNECTIONS_TEXT,
+                                fromDictionary(R.string.user_profile_connection_connected),
+                                ContextCompat.getColor(textView.context, R.color.coolGreen))
+            }
+            ConnectionStatus.REQUESTED -> {
+                textView.text =
+                        getSpannableText(EMPTY_CONNECTIONS_TEXT,
+                                fromDictionary(R.string.user_profile_connection_connect),
+                                ContextCompat.getColor(textView.context, R.color.coolGreen))
+            }
+            ConnectionStatus.RECOMMENDED -> {
+                textView.text =
+                        getSpannableText(EMPTY_CONNECTIONS_TEXT,
+                                fromDictionary(R.string.user_profile_connection_connect),
+                                ContextCompat.getColor(textView.context, R.color.coolGreen))
+            }
+            ConnectionStatus.SENT -> {
+                textView.text =
+                        getSpannableText(EMPTY_CONNECTIONS_TEXT,
+                                fromDictionary(R.string.user_profile_connection_pending),
+                                ContextCompat.getColor(textView.context, R.color.hintColor))
+            }
+            else -> {
+            }
+        }
+    }
+
     protected fun setCheckedTexts(tvLabel: TextView, tvText: TextView, topView: View?, hint: String, text: String?) {
         text?.let {
             topView?.visibility = View.VISIBLE
@@ -68,6 +118,12 @@ abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseV
         val cal = Calendar.getInstance()
         cal.timeInMillis = createdAt ?: return null
         return "${DateFormatSymbols().months[cal.get(Calendar.MONTH)]} ${cal.get(Calendar.DAY_OF_MONTH)}, ${cal.get(Calendar.YEAR)}"
+    }
+
+    companion object {
+        const val START_SPAN = 0
+        const val PROPORTION_TEXT_SIZE = 1.5f
+        const val EMPTY_CONNECTIONS_TEXT = " "
     }
 
 }

@@ -3,9 +3,7 @@ package com.mnassa.domain.interactor.impl
 import android.Manifest
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
-import com.mnassa.domain.model.DeclinedShortAccountModel
-import com.mnassa.domain.model.RecommendedConnections
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.ContactsRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -38,8 +36,15 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
     override suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>> =
             connectionsRepository.getMutedConnections()
 
-    override suspend fun getStatusesConnections(userAccountId: String): String? =
+    override suspend fun getStatusesConnections(userAccountId: String): ReceiveChannel<ConnectionStatus> =
             connectionsRepository.getStatusConnections(userAccountId)
+
+    override suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus =
+            connectionsRepository.getConnectedStatusById(userAccountId)
+
+    override suspend fun actionConnection(connectionAction: ConnectionAction) {
+        connectionsRepository.actionConnection(connectionAction)
+    }
 
     override suspend fun getDisconnectTimeoutDays(): Int = connectionsRepository.getDisconnectTimeoutDays()
 

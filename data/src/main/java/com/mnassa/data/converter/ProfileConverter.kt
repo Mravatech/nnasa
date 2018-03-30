@@ -20,19 +20,7 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertAccountFromDb)
-        convertersContext.registerConverter(this::convertLocationPlace)
-//        convertersContext.registerConverter(this::convertDetailLocation)
     }
-
-//    private fun convertLocation(input: LocationDbEntity, token: Any?, convertersContext: ConvertersContext): LocationModel {
-//        val locationDetailAr: LocationDetailModel? = input.ar?.let {
-//            convertersContext.convert(it, LocationDetailModel::class.java)
-//        }
-//        val locationDetailEn: LocationDetailModel? = input.en?.let {
-//            convertersContext.convert(it, LocationDetailModel::class.java)
-//        }
-//        return LocationModelImpl(input.placeId, locationDetailEn, locationDetailAr)
-//    }
 
     private fun convertLocationPlace(input: LocationDbEntity): LocationPlaceModelImpl {
         val city: TranslatedWordModel? =
@@ -47,10 +35,6 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
 
         return LocationPlaceModelImpl(city = city, lat = input.en?.lat ?: 0.0, lng = input.en?.lng ?: 0.0, placeId = input.placeId, placeName = placeName)
     }
-
-//    private fun convertDetailLocation(input: LocationDetailDbEntity?, token: Any?, convertersContext: ConvertersContext): LocationDetailModel {
-//        return LocationDetailModelImpl(input?.city, input?.lat, input?.lng, input?.placeId, input?.placeName)
-//    }
 
     private fun convertAccountFromDb(input: ProfileDbEntity, token: Any?, convertersContext: ConvertersContext): ProfileAccountModelImpl {
 

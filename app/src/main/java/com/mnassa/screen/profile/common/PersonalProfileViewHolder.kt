@@ -1,6 +1,6 @@
 package com.mnassa.screen.profile.common
 
-import android.support.v4.content.res.ResourcesCompat
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +28,8 @@ class PersonalProfileViewHolder(
 
     init {
         with(itemView) {
-            tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
-            tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
+            tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections), Color.BLACK)
+            tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given), Color.BLACK)
             item.profile.location?.let {
                 tvProfileLocation.text = it.formatted()
                 tvProfileLocation.visibility = View.VISIBLE
@@ -41,20 +41,16 @@ class PersonalProfileViewHolder(
             setCheckedTags(tvProfileInterestedIn, chipProfileInterestWith, vTopProfileInterestedIn, item.interests, fromDictionary(R.string.reg_account_interested_in))
             tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
             flMoreInformation.setOnClickListener {
-                profileInfo.visibility = if (profileInfo.visibility == View.GONE) View.VISIBLE else View.GONE
-                flTags.visibility = if (flTags.visibility == View.GONE) View.VISIBLE else View.GONE
-                val drawable = if (profileInfo.visibility == View.GONE) R.drawable.ic_down else R.drawable.ic_up
-                val img = ResourcesCompat.getDrawable(resources, drawable, null)
-                tvMoreInformation.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
-                tvMoreInformation.text = if (profileInfo.visibility == View.GONE) {
-                    fromDictionary(R.string.profile_more_information)
-                } else {
-                    fromDictionary(R.string.profile_less_information)
-                }
+                onMoreClick(profileInfo = profileInfo,
+                        llBottomTags = llBottomTags,
+                        tvMoreInformation =  tvMoreInformation,
+                        vBottomDivider =  vBottomDivider,
+                        areThereTags =  item.offers.isNotEmpty())
             }
+            vBottomDivider.visibility = if (item.offers.isEmpty()) View.VISIBLE else View.GONE
             item.offers.let {
                 for (tag in it) {
-                    flTags.addView(SimpleChipView(flTags.context, tag))
+                    llBottomTags.addView(SimpleChipView(llBottomTags.context, tag))
                 }
             }
             tvProfileConnections.setOnClickListener { viewModel.connectionClick() }

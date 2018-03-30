@@ -1,6 +1,7 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
@@ -14,6 +15,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
@@ -59,6 +61,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 view.ivCropImage.avatarSquare(profileModel.profile.avatar)
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
+                handleFab(profileModel.connectionStatus, view.fabProfile)
                 viewModel.handleException {
                     viewModel.getPostsById(accountModel?.id ?: accountId).consumeEach {
                         //TODO: bufferization
@@ -84,16 +87,33 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
-        launchCoroutineUI {
-            viewModel.statusesConnectionsChannel.consumeEach {
-                view.fabProfile.visibility = View.VISIBLE
-                view.fabProfile.setOnClickListener { }
+    }
 
-//                when(it){
-//                    is ConnectionStatus.CONNECTED ->
-//                }
-                ConnectionStatus.CONNECTED
-                Toast.makeText(view.context, "$it", Toast.LENGTH_SHORT).show()
+    private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
+        Toast.makeText(activity, connectionStatus.name, Toast.LENGTH_LONG).show()
+        //todo handle here
+        when (connectionStatus) {
+            ConnectionStatus.CONNECTED -> {
+                fab.visibility = View.VISIBLE
+                fab.setOnClickListener { open(ChatListController.newInstance()) }
+                fab.setImageResource(R.drawable.ic_chat)
+            }
+            ConnectionStatus.RECOMMENDED -> {
+                fab.visibility = View.VISIBLE
+                fab.setOnClickListener {  }
+                fab.setImageResource(R.drawable.ic_recommend)
+            }
+            ConnectionStatus.SENT -> {
+                fab.visibility = View.VISIBLE
+                fab.setOnClickListener {  }
+                fab.setImageResource(R.drawable.ic_camera)
+            }
+            ConnectionStatus.REQUESTED -> {
+            }
+            ConnectionStatus.DISCONNECTED -> {
+            }
+            ConnectionStatus.NONE -> {
+                //todo smth
             }
         }
     }
