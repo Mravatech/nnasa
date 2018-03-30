@@ -10,6 +10,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.avatarSquare
+import com.mnassa.extensions.formatted
 import com.mnassa.google.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -48,7 +49,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         view.rInfoBtnFemale.isChecked = accountModel.gender.name.toLowerCase() == view.rInfoBtnMale.text.toString().toLowerCase()
         view.rInfoBtnMale.isChecked = accountModel.gender.name.toLowerCase() == view.rInfoBtnMale.text.toString().toLowerCase()
         val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
-        view.actvPersonCity.setText(accountModel.location?.en?.placeName)
+        view.actvPersonCity.setText(accountModel.location?.formatted())
         view.actvPersonCity.setAdapter(placeAutocompleteAdapter)
         view.actvPersonCity.setOnItemClickListener({ _, _, i, _ ->
             placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener

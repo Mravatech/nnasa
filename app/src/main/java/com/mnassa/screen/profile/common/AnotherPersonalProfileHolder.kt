@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
+import com.mnassa.extensions.formatted
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.SimpleChipView
@@ -23,8 +24,8 @@ class AnotherPersonalProfileHolder(itemView: View) : BaseProfileHolder(itemView)
             tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
             tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
             tvConnectionStatus.text = getSpannableText(" ", "Connected")
-            item.profile.location?.en?.placeName?.let {
-                tvProfileLocation.text = it
+            item.profile.location?.let {
+                tvProfileLocation.text = it.formatted()
                 tvProfileLocation.visibility = View.VISIBLE
             }
             setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vTopProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)

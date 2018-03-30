@@ -31,7 +31,7 @@ interface ProfileAccountModel : ShortAccountModel, Parcelable {
     val numberOfUnreadNotifications: Int?
     val numberOfUnreadResponses: Int?
     val visiblePoints: Int
-    val location: LocationModel?
+    val location: LocationPlaceModel?
     val gender: Gender
     val website: String?
     val organizationType: String?

@@ -6,7 +6,6 @@ import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.LocationDbEntity
-import com.mnassa.data.network.bean.firebase.LocationDetailDbEntity
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.*
@@ -21,23 +20,37 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertAccountFromDb)
-        convertersContext.registerConverter(this::convertLocation)
-        convertersContext.registerConverter(this::convertDetailLocation)
+        convertersContext.registerConverter(this::convertLocationPlace)
+//        convertersContext.registerConverter(this::convertDetailLocation)
     }
 
-    private fun convertLocation(input: LocationDbEntity, token: Any?, convertersContext: ConvertersContext): LocationModel {
-        val locationDetailAr: LocationDetailModel? = input.ar?.let {
-            convertersContext.convert(it, LocationDetailModel::class.java)
-        }
-        val locationDetailEn: LocationDetailModel? = input.en?.let {
-            convertersContext.convert(it, LocationDetailModel::class.java)
-        }
-        return LocationModelImpl(input.placeId, locationDetailEn, locationDetailAr)
+//    private fun convertLocation(input: LocationDbEntity, token: Any?, convertersContext: ConvertersContext): LocationModel {
+//        val locationDetailAr: LocationDetailModel? = input.ar?.let {
+//            convertersContext.convert(it, LocationDetailModel::class.java)
+//        }
+//        val locationDetailEn: LocationDetailModel? = input.en?.let {
+//            convertersContext.convert(it, LocationDetailModel::class.java)
+//        }
+//        return LocationModelImpl(input.placeId, locationDetailEn, locationDetailAr)
+//    }
+
+    private fun convertLocationPlace(input: LocationDbEntity): LocationPlaceModelImpl {
+        val city: TranslatedWordModel? =
+                if (!input.en?.city.isNullOrBlank() || !input.ar?.city.isNullOrBlank()) {
+                    TranslatedWordModelImpl("", "", input.en?.city, input.ar?.city)
+                } else null
+
+        val placeName: TranslatedWordModel? =
+                if (!input.en?.placeName.isNullOrBlank() || !input.ar?.placeName.isNullOrBlank()) {
+                    TranslatedWordModelImpl("", "", input.en?.placeName, input.ar?.placeName)
+                } else null
+
+        return LocationPlaceModelImpl(city = city, lat = input.en?.lat ?: 0.0, lng = input.en?.lng ?: 0.0, placeId = input.placeId, placeName = placeName)
     }
 
-    private fun convertDetailLocation(input: LocationDetailDbEntity?, token: Any?, convertersContext: ConvertersContext): LocationDetailModel {
-        return LocationDetailModelImpl(input?.city, input?.lat, input?.lng, input?.placeId, input?.placeName)
-    }
+//    private fun convertDetailLocation(input: LocationDetailDbEntity?, token: Any?, convertersContext: ConvertersContext): LocationDetailModel {
+//        return LocationDetailModelImpl(input?.city, input?.lat, input?.lng, input?.placeId, input?.placeName)
+//    }
 
     private fun convertAccountFromDb(input: ProfileDbEntity, token: Any?, convertersContext: ConvertersContext): ProfileAccountModelImpl {
 
@@ -60,7 +73,7 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
             }
             else -> throw IllegalArgumentException("Illegal account type ${input.type}")
         }
-        val location: LocationModel? = input.location?.let { convertersContext.convert(input.location, LocationModel::class.java) }
+        val location: LocationPlaceModel? = input.location?.let { convertLocationPlace(input.location) }
         val gender: Gender = if (input.gender == Gender.MALE.toString().toLowerCase()) Gender.MALE else Gender.FEMALE
         return ProfileAccountModelImpl(
                 createdAt = input.createdAt,

@@ -42,7 +42,7 @@ data class ProfileAccountModelImpl(
         override val numberOfUnreadNotifications: Int?,
         override val numberOfUnreadResponses: Int?,
         override val visiblePoints: Int,
-        override val location: LocationModel?,
+        override val location: LocationPlaceModel?,
         override val gender: Gender,
         override val website: String?,
         override val organizationType: String?

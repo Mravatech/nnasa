@@ -10,6 +10,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.avatarSquare
+import com.mnassa.extensions.formatted
 import com.mnassa.google.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -64,7 +65,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         view.chipCompanyInterests.setTags(interests)
         addPhoto(view.fabInfoAddPhoto)
         val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
-        view.actvCompanyCity.setText(accountModel.location?.en?.placeName)
+        view.actvCompanyCity.setText(accountModel.location?.formatted())
         view.actvCompanyCity.setAdapter(placeAutocompleteAdapter)
         view.actvCompanyCity.setOnItemClickListener({ _, _, i, _ ->
             placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener

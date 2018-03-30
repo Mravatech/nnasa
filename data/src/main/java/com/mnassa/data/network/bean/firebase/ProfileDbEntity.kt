@@ -55,24 +55,24 @@ internal class ProfileDbEntity(
 
 }
 
-internal data class LocationDbEntity(
-        @SerializedName("placeId")
-        val placeId: String?,
-        @SerializedName("en")
-        val en: LocationDetailDbEntity?,
-        @SerializedName("ar")
-        val ar: LocationDetailDbEntity?
-)
+//internal data class LocationDbEntity(
+//        @SerializedName("placeId")
+//        val placeId: String?,
+//        @SerializedName("en")
+//        val en: LocationDetailDbEntity?,
+//        @SerializedName("ar")
+//        val ar: LocationDetailDbEntity?
+//)
 
-internal data class LocationDetailDbEntity(
-        @SerializedName("city")
-        val city: String?,
-        @SerializedName("lat")
-        val lat: Double?,
-        @SerializedName("lng")
-        val lng: Double?,
-        @SerializedName("placeId")
-        val placeId: String?,
-        @SerializedName("placeName")
-        val placeName: String?
-)
+//internal data class LocationDetailDbEntity(
+//        @SerializedName("city")
+//        val city: String?,
+//        @SerializedName("lat")
+//        val lat: Double?,
+//        @SerializedName("lng")
+//        val lng: Double?,
+//        @SerializedName("placeId")
+//        val placeId: String?,
+//        @SerializedName("placeName")
+//        val placeName: String?
+//)
