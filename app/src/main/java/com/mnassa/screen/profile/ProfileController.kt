@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.bind
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.AccountType
+import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarSquare
@@ -87,6 +88,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.statusesConnectionsChannel.consumeEach {
                 view.fabProfile.visibility = View.VISIBLE
                 view.fabProfile.setOnClickListener { }
+
+//                when(it){
+//                    is ConnectionStatus.CONNECTED ->
+//                }
+                ConnectionStatus.CONNECTED
                 Toast.makeText(view.context, "$it", Toast.LENGTH_SHORT).show()
             }
         }

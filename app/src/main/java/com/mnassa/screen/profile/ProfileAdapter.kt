@@ -18,24 +18,6 @@ import com.mnassa.screen.profile.model.ProfileModel
 
 class ProfileAdapter(private val profileModel: ProfileModel, private val viewModel: ProfileViewModel) : PostsRVAdapter() {
 
-
-    //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ProfileModel> {
-//        return if (viewType == TYPE_HEADER) {
-//            return if (profileModel.isMyProfile) {
-//                when (profileModel.profile.accountType) {
-//                    AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel)
-//                    AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, viewModel)
-//                }
-//            } else {
-//                when (profileModel.profile.accountType) {
-//                    AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent)
-//                    AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent)
-//                }
-//            }
-//        } else {
-//            super.onCreateViewHolder(parent, viewType)
-//        }
-//    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
         return if (viewType == TYPE_HEADER) {
             return if (profileModel.isMyProfile) {
@@ -53,20 +35,4 @@ class ProfileAdapter(private val profileModel: ProfileModel, private val viewMod
             super.onCreateViewHolder(parent, viewType)
         }
     }
-
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ProfileModel> {
-//        return if (profileModel.isMyProfile) {
-//            when (profileModel.profile.accountType) {
-//                AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel)
-//                AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, viewModel)
-//            }
-//        } else {
-//            when (profileModel.profile.accountType) {
-//                AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent)
-//                AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent)
-//            }
-//        }
-//    }
-
-
 }
