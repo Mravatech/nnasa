@@ -45,6 +45,10 @@
     <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
     <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
     <string name="_android_post_comment_edit_button_INFO">Edit</string>
+    <string name="_android_my_wallet_title_INFO">My wallet</string>
+    <string name="_android_my_wallet_balance_INFO">Balance</string>
+    <string name="_android_my_wallet_spent_INFO">Spent</string>
+    <string name="_android_my_wallet_gained_INFO">Gained</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

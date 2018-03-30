@@ -96,6 +96,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         }
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     private fun getSelection(): ShareToOptions {
         with(requireNotNull(view)) {
             return ShareToOptions(

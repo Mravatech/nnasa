@@ -147,6 +147,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
     }
 
+    override fun onDestroyView(view: View) {
+        attachedImagesAdapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
         val permissionsList = when (imageSource) {
             CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)

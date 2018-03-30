@@ -124,7 +124,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
     bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
-    bind<WalletViewModel>() with provider { WalletViewModelImpl() }
+    bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
 
 }
 
@@ -132,13 +132,14 @@ private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
         converter.registerConverter(UserAccountConverter::class.java)
-        converter.registerConverter(TranslatedWordConverter::class.java)
+        converter.registerConverter(TranslatedWordConverter(instance()))
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
         converter.registerConverter(TagConverter(instance()))
-        converter.registerConverter(LocationConverter::class.java)
+        converter.registerConverter(LocationConverter(instance()))
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(CommentsConverter::class.java)
+        converter.registerConverter(WalletConverter::class.java)
         converter
     }
 }
@@ -154,7 +155,7 @@ private val repositoryModule = Kodein.Module {
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
@@ -162,6 +163,7 @@ private val repositoryModule = Kodein.Module {
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
+    bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -177,8 +179,9 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance()) }
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
+    bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
@@ -195,6 +198,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseTagsApi>()
     bindRetrofitApi<FirebasePostApi>()
     bindRetrofitApi<FirebaseCommentsApi>()
+    bindRetrofitApi<FirebaseWalletApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }

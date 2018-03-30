@@ -180,6 +180,12 @@
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
 
+    <!-- ======================================= WALLET ======================================== -->
+    <string name="wallet_title">_android_my_wallet_title</string>
+    <string name="wallet_balance">_android_my_wallet_balance</string>
+    <string name="wallet_spent">_android_my_wallet_spent</string>
+    <string name="wallet_gained">_android_my_wallet_gained</string>
+
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>

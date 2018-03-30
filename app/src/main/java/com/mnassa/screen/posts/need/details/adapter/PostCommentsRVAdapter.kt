@@ -25,6 +25,13 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
     var onRecommendedAccountClick = { view: View, account: ShortAccountModel -> }
 
+    fun destroyCallbacks() {
+        onBindHeader = {  }
+        onReplyClick = {  }
+        onCommentOptionsClick = { _: View, _: CommentModel -> }
+        onRecommendedAccountClick = { _: View, _: ShortAccountModel -> }
+    }
+
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
         when {
             itemsTheSameComparator(first, second) -> 0

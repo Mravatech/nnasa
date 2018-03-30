@@ -84,6 +84,11 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
         checkPermissions()
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     private var checkPermissionsJob: Job? = null
     @SuppressLint("MissingPermission")
     private fun checkPermissions() {

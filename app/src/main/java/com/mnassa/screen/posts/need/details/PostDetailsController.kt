@@ -203,10 +203,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         editedComment = editedComment
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
         headerLayout.value = null
         headerLayout.clear()
-        super.onViewDestroyed(view)
+        commentsAdapter.destroyCallbacks()
+        accountsToRecommendAdapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     private fun showMyPostMenu(view: View, post: PostModel) {

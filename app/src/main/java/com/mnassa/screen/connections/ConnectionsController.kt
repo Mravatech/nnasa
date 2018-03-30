@@ -93,10 +93,13 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
+        allConnectionsAdapter.destroyCallbacks()
+        recommendedConnectionsAdapter.destoryCallbacks()
+        newConnectionRequestsAdapter.destroyCallbacks()
         isHeaderBounded = false
         permissionsSnackbar = null
-        super.onViewDestroyed(view)
+        super.onDestroyView(view)
     }
 
     private var onPageSelectedJob: Job? = null

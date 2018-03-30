@@ -26,7 +26,6 @@ import java.util.*
  * Created by Peter on 3/15/2018.
  */
 class PostConverter : ConvertersContextRegistrationCallback {
-    private val gson = Gson()
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertPost)

@@ -34,4 +34,7 @@
 
     <color name="moreImagesBackground">#6a000000</color>
 
+    <color name="spentMoney">#c40e42</color>
+    <color name="gainedMoney">@color/coolGreen</color>
+
 </resources>

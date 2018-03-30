@@ -22,6 +22,12 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
     var onRemoveImageClickListener = { position: Int, image: AttachedImage -> }
     var onReplaceImageClickListener = { position: Int, image: AttachedImage -> }
 
+    fun destroyCallbacks() {
+        onAddImageClickListener = {}
+        onRemoveImageClickListener = { _, _ -> }
+        onReplaceImageClickListener = { _, _ ->}
+    }
+
     init {
         dataStorage = object : SimpleDataProviderImpl() {
             override fun clear() {

@@ -48,6 +48,11 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
         }
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     companion object {
         fun newInstance() = SelectAccountController()
     }

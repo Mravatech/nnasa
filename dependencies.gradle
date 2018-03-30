@@ -10,18 +10,18 @@ deps.data = project(":data")
 deps.domain = project(":domain")
 
 //============================================== BUILD =============================================
-versions.androidGradlePluginVersion = '3.0.1'   //'3.1.0'
+versions.androidGradlePluginVersion = '3.0.1'
 deps.androidGradlePlugin = "com.android.tools.build:gradle:$versions.androidGradlePluginVersion"
 
 def build_versions = [:]
 build_versions.min_sdk = 19
 build_versions.target_sdk = 26
 build_versions.compile_sdk = 26
-build_versions.build_tools = "27.0.3"
+build_versions.build_tools = "26.0.2"
 ext.build_versions = build_versions
 
 //=============================================== SUPPORT ==========================================
-versions.support = "27.1.0"
+versions.support = "27.0.2"
 
 def support = [:]
 support.annotations =   "com.android.support:support-annotations:$versions.support"
@@ -190,7 +190,8 @@ def other = [:]
 versions.crashlyticsVersion = '2.9.1'
 
 other.billing = 'com.android.billingclient:billing:1.0'
-other.leak =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
+other.leakDebug =    'com.squareup.leakcanary:leakcanary-android:1.5.4'
+other.leakRelease =  'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 other.logger =  'com.jakewharton.timber:timber:4.6.1'
 other.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlyticsVersion@aar"
 

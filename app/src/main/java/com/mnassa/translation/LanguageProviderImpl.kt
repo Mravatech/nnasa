@@ -1,6 +1,7 @@
 package com.mnassa.translation
 
 import android.content.Context
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
 import java.util.*
 
@@ -15,4 +16,14 @@ class LanguageProviderImpl(private val context: Context) : LanguageProvider {
         }
     override val language: String
         get() = locale.language
+
+    override fun chooseTranslate(word: TranslatedWordModel): String {
+        return with(word) {
+            when {
+                isArabian && !arabicTranslate.isNullOrBlank() -> arabicTranslate!!
+                !engTranslate.isNullOrBlank() -> engTranslate!!
+                else -> info
+            }
+        }
+    }
 }

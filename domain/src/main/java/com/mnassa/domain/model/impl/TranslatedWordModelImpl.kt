@@ -1,31 +1,24 @@
 package com.mnassa.domain.model.impl
 
 import com.mnassa.domain.model.TranslatedWordModel
-import java.util.*
+import com.mnassa.domain.other.LanguageProvider
 import kotlin.reflect.KProperty
 
 /**
  * Created by Peter on 2/23/2018.
  */
 class TranslatedWordModelImpl(
+        private val languageProvider: LanguageProvider,
         override var id: String,
         override val info: String,
         override val engTranslate: String?,
         override val arabicTranslate: String?
 ) : TranslatedWordModel {
 
-    constructor(id: String, info: String): this(id, info, null, null)
-    constructor(info: String): this(info, info)
+    constructor(languageProvider: LanguageProvider, id: String, info: String) : this(languageProvider, id, info, null, null)
+    constructor(languageProvider: LanguageProvider, info: String) : this(languageProvider, info, info)
 
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): String = toString()
 
-    override fun toString(): String {
-        val isoLanguage = Locale.getDefault().isO3Language
-
-        return when {
-            (isoLanguage == "ara" || isoLanguage == "ar") && !arabicTranslate.isNullOrBlank() -> arabicTranslate!!
-            !engTranslate.isNullOrBlank() -> engTranslate!!
-            else -> info
-        }
-    }
+    override fun toString(): String = languageProvider.chooseTranslate(this)
 }

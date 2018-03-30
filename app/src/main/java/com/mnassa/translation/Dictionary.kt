@@ -10,9 +10,12 @@ import com.mnassa.domain.interactor.DictionaryInteractor
  * Created by Peter on 24.02.2018.
  */
 fun fromDictionary(@StringRes stringId: Int): String {
+    return fromDictionary(App.context.getString(stringId))
+}
+
+fun fromDictionary(key: String): String {
     val ctx = App.context
     val dictionaryRepository: DictionaryInteractor = ctx.appKodein.invoke().instance()
-    val key = ctx.getString(stringId)
     val result: String by dictionaryRepository.getWord(key)
     return result.replace("%i", "%d")
 }

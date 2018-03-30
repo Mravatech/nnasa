@@ -35,6 +35,10 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
             }
         }
 
+    fun destroyCallbacks() {
+        onSelectedAccountsChangedListener = {}
+    }
+
     fun setAccounts(accounts: List<ShortAccountModel>) {
         val result = ArrayList<GroupedAccount>()
 

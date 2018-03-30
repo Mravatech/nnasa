@@ -52,7 +52,11 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
                 view.rvAllConnections.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
             }
         }
+    }
 
+    override fun onDestroyView(view: View) {
+        allConnectionsAdapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     private fun openChat(accountModel: ShortAccountModel) {

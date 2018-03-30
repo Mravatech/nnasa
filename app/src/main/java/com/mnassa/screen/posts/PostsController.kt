@@ -50,6 +50,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         }.bind(this)
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     companion object {
         fun newInstance() = PostsController()
     }

@@ -16,6 +16,9 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_NUM_UNREAD_NEEDS = "numberOfUnreadNeeds"
     const val TABLE_ACCOUNTS_COL_NUM_UNREAD_NOTIFICATIONS = "numberOfUnreadNotifications"
     const val TABLE_ACCOUNTS_COL_NUM_UNREAD_RESPONSES = "numberOfUnreadResponses"
+    const val TABLE_ACCOUNTS_COL_POINTS = "points"
+    const val TABLE_ACCOUNTS_COL_TOTAL_INCOME = "totalIncome"
+    const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -58,5 +61,7 @@ internal object DatabaseContract {
     const val TABLE_COMMENTS = "comments"
     //
     const val TABLE_COMMENT_REPLIES = "replyComments"
+    //
+    const val TABLE_TRANSACTIONS = "transactions"
 
 }

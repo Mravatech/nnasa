@@ -10,7 +10,6 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
     abstract val itemsComparator: (item1: ITEM, item2: ITEM) -> Int
     abstract val itemClass: Class<ITEM>
 
-
     class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> {
         private val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 

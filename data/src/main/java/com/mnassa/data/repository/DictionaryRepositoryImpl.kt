@@ -11,9 +11,10 @@ import com.mnassa.data.network.bean.retrofit.request.RegisterUiKeyRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.repository.dictionary.DictionaryPreferences
 import com.mnassa.data.repository.dictionary.DictionaryResources
-import com.mnassa.domain.model.EmptyWord
 import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -28,11 +29,12 @@ class DictionaryRepositoryImpl(
         private val converter: ConvertersContext,
         private val dictionaryApi: FirebaseDictionaryApi,
         private val exceptionHandler: ExceptionHandler,
+        private val languageProvider: LanguageProvider,
         context: Context,
         appInfoProvider: AppInfoProvider) : DictionaryRepository {
 
-    private val dictionaryPreferences = DictionaryPreferences(context, appInfoProvider)
-    private val dictionaryResources = DictionaryResources(context, appInfoProvider)
+    private val dictionaryPreferences = DictionaryPreferences(context, languageProvider)
+    private val dictionaryResources = DictionaryResources(context, appInfoProvider, languageProvider)
 
     override fun getMobileUiVersion(): ReceiveChannel<Int> {
         return databaseReference
@@ -76,7 +78,7 @@ class DictionaryRepositoryImpl(
 
         //3.
         registerWord(id)
-        return EmptyWord
+        return TranslatedWordModelImpl(languageProvider, id, id)
     }
 
     private fun registerWord(id: String, info: String? = null) {

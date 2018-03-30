@@ -41,6 +41,11 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
         }
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destoryCallbacks()
+        super.onDestroyView(view)
+    }
+
     companion object {
         fun newInstance() = SentConnectionsController()
     }
