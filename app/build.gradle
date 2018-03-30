@@ -17,7 +17,6 @@ def globalConfiguration = rootProject.extensions.getByName("ext")
 
 android {
     compileSdkVersion build_versions.compile_sdk
-    buildToolsVersion build_versions.build_tools
 
     testBuildType "debug"
 
