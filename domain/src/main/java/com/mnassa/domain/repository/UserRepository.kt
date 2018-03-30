@@ -31,6 +31,8 @@ interface UserRepository {
     suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel)
     suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel)
 
+    suspend fun getPrifileByAccountId(accountId: String) : ProfileAccountModel?
+
     fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?

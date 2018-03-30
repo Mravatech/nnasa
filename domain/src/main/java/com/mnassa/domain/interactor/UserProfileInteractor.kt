@@ -20,4 +20,6 @@ interface UserProfileInteractor {
 
     suspend fun getToken(): String?
     suspend fun getAccountId(): String?
+
+    suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel?
 }

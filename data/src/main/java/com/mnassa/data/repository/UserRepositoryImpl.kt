@@ -9,6 +9,7 @@ import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.ExceptionHandler
@@ -167,6 +168,14 @@ class UserRepositoryImpl(
                 interests = account.interests,
                 offers = account.offers
         )).handleException(exceptionHandler)
+    }
+
+    override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
+        val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
+                .child(accountId)
+                .apply { keepSynced(true) }
+                .await<ProfileDbEntity>(exceptionHandler) ?: return null
+        return converter.convert(bean)
     }
 
     override suspend fun getFirebaseToken(): String? {

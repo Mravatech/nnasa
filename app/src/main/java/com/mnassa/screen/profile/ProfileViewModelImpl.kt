@@ -1,7 +1,6 @@
 package com.mnassa.screen.profile
 
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.interactor.OtherProfileInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -17,8 +16,7 @@ import timber.log.Timber
  */
 class ProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
-        private val userProfileInteractor: UserProfileInteractor,
-        private val profileInteractor: OtherProfileInteractor) : MnassaViewModelImpl(), ProfileViewModel {
+        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
     override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
@@ -43,7 +41,7 @@ class ProfileViewModelImpl(
         profileJob?.cancel()
         profileJob = handleException {
             withProgressSuspend {
-                val profileAccountModel = profileInteractor.getPrifileByAccountId(accountId)
+                val profileAccountModel = userProfileInteractor.getPrifileByAccountId(accountId)
                 Timber.i(profileAccountModel.toString())
                 if (profileAccountModel != null) {
                     val profile = ProfileModel(profileAccountModel,

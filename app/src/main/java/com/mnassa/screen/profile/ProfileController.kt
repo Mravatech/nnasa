@@ -14,6 +14,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
+import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -54,17 +55,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 view.rvProfile.adapter = adapter
                 adapter.set(listOf(profileModel))
                 view.ivCropImage.avatarSquare(profileModel.profile.avatar)
-                if (profileModel.profile.accountType == AccountType.PERSONAL) {
-                    view.profileName.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
-                    if (profileModel.profile.abilities.isNotEmpty()) {
-                        view.profileSubName.text = profileModel.profile.abilities[0].place
-                    }
-                    view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
-                } else {
-                    view.profileName.text = profileModel.profile.organizationInfo?.organizationName
-                    view.profileSubName.text = profileModel.profile.organizationType
-                    view.tvTitleCollapsed.text = profileModel.profile.organizationInfo?.organizationName
-                }
+                setTitle(profileModel, view)
                 if (profileModel.isMyProfile) {
                     view.ivProfileEdit.visibility = View.VISIBLE
                     view.ivProfileEdit.setOnClickListener {
@@ -89,7 +80,20 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
-//        paleGray subcolor
+    }
+
+    private fun setTitle(profileModel: ProfileModel, view: View) {
+        if (profileModel.profile.accountType == AccountType.PERSONAL) {
+            view.profileName.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
+            if (profileModel.profile.abilities.isNotEmpty()) {
+                view.profileSubName.text = profileModel.profile.abilities[0].place
+            }
+            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
+        } else {
+            view.profileName.text = profileModel.profile.organizationInfo?.organizationName
+            view.profileSubName.text = profileModel.profile.organizationType
+            view.tvTitleCollapsed.text = profileModel.profile.organizationInfo?.organizationName
+        }
     }
 
     companion object {

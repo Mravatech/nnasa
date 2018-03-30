@@ -45,6 +45,9 @@ class UserProfileInteractorImpl(
         return account
     }
 
+    override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
+        return userRepository.getPrifileByAccountId(accountId)
+    }
 
     override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
         userRepository.updateCompanyAccount(account)
