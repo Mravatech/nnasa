@@ -8,6 +8,7 @@ import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseInviteApi
+import com.mnassa.data.network.bean.firebase.ConnectionDbStatuses
 import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
@@ -62,6 +63,15 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getSentConnections(): ReceiveChannel<List<ShortAccountModel>> {
         return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_SENT)
+    }
+
+    override suspend fun getStatusConnections(userAccountId: String): String? {
+        val status = databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
+                .child(requireNotNull(userRepository.getAccountId()))
+                .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
+                .child(userAccountId)
+                .await<ConnectionDbStatuses>(exceptionHandler)
+        return status?.connectionsStatus
     }
 
     override suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>> {

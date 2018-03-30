@@ -16,6 +16,7 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_all.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -60,8 +61,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
     }
 
     private fun openProfile(accountModel: ShortAccountModel) {
-        Toast.makeText(App.context, "Opening profile of ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
-
+        open(ProfileController.newInstance(accountModel))
     }
 
 

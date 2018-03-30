@@ -171,11 +171,12 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
-        val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
+        val dbChild = if (accountId == getAccountId()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
+        val profile = db.child(dbChild)
                 .child(accountId)
                 .apply { keepSynced(true) }
                 .await<ProfileDbEntity>(exceptionHandler) ?: return null
-        return converter.convert(bean)
+        return converter.convert(profile)
     }
 
     override suspend fun getFirebaseToken(): String? {

@@ -19,6 +19,8 @@ internal object DatabaseContract {
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
+    const val TABLE_PUBLIC_ACCOUNTS = "publicAccounts"
+    //
     const val TABLE_CLIENT_DATA = "clientData"
     const val TABLE_CLIENT_DATA_COL_UI_VERSION = "mobileUiVersion"
     const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"

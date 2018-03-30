@@ -23,7 +23,10 @@ class AnotherCompanyProfileHolder(itemView: View) : BaseProfileHolder(itemView) 
             tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
             tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
             tvConnectionStatus.text = getSpannableText(" ", "Connected")
-            tvProfileLocation.text = item.profile.location?.en?.placeName
+            item.profile.location?.en?.placeName?.let {
+                tvProfileLocation.text = it
+                tvProfileLocation.visibility = View.VISIBLE
+            }
             setCheckedTexts(tvLabelProfileWebSite, tvProfileWebSite, vTopProfileWebSite, fromDictionary(R.string.profile_website), item.profile.website)
             setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, vTopProfileEmail, fromDictionary(R.string.profile_email), item.profile.contactEmail)
             setCheckedTexts(tvLabelDateOfFoundation, tvDateOfFoundation, vTopProfileDateOfFoundation, fromDictionary(R.string.profile_date_of_foundation), getDateByTimeMillis(item.profile.createdAt))

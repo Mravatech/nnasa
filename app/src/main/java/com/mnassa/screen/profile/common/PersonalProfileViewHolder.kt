@@ -25,7 +25,10 @@ class PersonalProfileViewHolder(
         with(itemView) {
             tvProfileConnections.text = getSpannableText(item.profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections))
             tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given))
-            tvProfileLocation.text = item.profile.location?.en?.placeName
+            item.profile.location?.en?.placeName?.let {
+                tvProfileLocation.text = it
+                tvProfileLocation.visibility = View.VISIBLE
+            }
             setCheckedTexts(tvLabelProfilePhone, tvProfilePhone, vTopProfilePhone, fromDictionary(R.string.profile_mobile_phone), item.profile.contactPhone)
             setCheckedTexts(tvLabelProfileEmail, tvProfileEmail, vTopProfileEmail, fromDictionary(R.string.profile_email), item.profile.contactEmail)
             setCheckedTexts(tvLabelDateOfBirth, tvDateOfBirth, vTopProfileDateOfBirth, fromDictionary(R.string.profile_date_of_birth), getDateByTimeMillis(item.profile.createdAt))

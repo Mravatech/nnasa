@@ -66,9 +66,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     }
                 } else {
                     view.ivProfileMenu.visibility = View.VISIBLE
-                    view.fabProfile.visibility = View.VISIBLE
                     view.ivProfileMenu.setOnClickListener { }
-                    view.fabProfile.setOnClickListener { }
                 }
             }
         }
@@ -80,6 +78,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
+        launchCoroutineUI {
+            viewModel.statusesConnectionsChannel.consumeEach {
+                view.fabProfile.visibility = View.VISIBLE
+                view.fabProfile.setOnClickListener { }
+                Toast.makeText(view.context,"$it", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     private fun setTitle(profileModel: ProfileModel, view: View) {

@@ -16,7 +16,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_location"
         android:textColor="@color/black"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:text="I Can help with" />
 
     <View

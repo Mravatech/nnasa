@@ -12,6 +12,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface ProfileViewModel : MnassaViewModel {
     val profileChannel: BroadcastChannel<ProfileModel>
     val profileClickChannel: BroadcastChannel<ProfileCommand>
+    val statusesConnectionsChannel: BroadcastChannel<String?>
     fun getProfileWithAccountId(accountId: String)
     fun connectionClick()
     fun walletClick()

@@ -19,9 +19,9 @@ internal class ProfileDbEntity(
         abilitiesInternal: List<ShortAccountAbilityDbEntity>,
         createdAt: Long,
         @SerializedName("createdAtDate") var createdAtDate: String?,
-        @SerializedName("firebaseUserId") var firebaseUserId: String,
-        @SerializedName("interests") var interests: List<String>,
-        @SerializedName("offers") var offers: List<String>,
+//        @SerializedName("firebaseUserId") var firebaseUserId: String,
+        @SerializedName("interests") var interests: List<String>?,
+        @SerializedName("offers") var offers: List<String>?,
         @SerializedName("points") var points: Int?,
         @SerializedName("totalIncome") var totalIncome: Int?,
         @SerializedName("totalOutcome") var totalOutcome: Int?,
@@ -40,8 +40,8 @@ internal class ProfileDbEntity(
         @SerializedName("numberOfUnreadNotifications") val numberOfUnreadNotifications: Int?,
         @SerializedName("numberOfUnreadResponses") val numberOfUnreadResponses: Int?,
         @SerializedName("visiblePoints") val visiblePoints: Int,
-        location: LocationDbEntity,
-        gender: String,
+        location: LocationDbEntity?,
+        gender: String?,
         @SerializedName("website") val website: String?,
         @SerializedName("organizationType") val organizationType: String?
 ) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {

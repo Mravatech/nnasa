@@ -17,7 +17,7 @@ interface ConnectionsRepository {
     suspend fun getSentConnections(): ReceiveChannel<List<ShortAccountModel>>
     suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>>
     suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>>
-
+    suspend fun getStatusConnections(userAccountId: String): String?
     suspend fun getDisconnectTimeoutDays(): Int
 
 

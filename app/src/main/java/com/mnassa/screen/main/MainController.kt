@@ -13,6 +13,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.screen.MnassaRouter
@@ -37,6 +38,8 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener, MnassaRouter {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
+
+    private var myAccId: ShortAccountModel? = null
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -102,6 +105,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                 view.ivUserAvatar?.avatarRound(it.avatar)
                 view.tvUserName?.text = it.formattedName
                 view.tvUserPosition?.text = it.id
+                myAccId = it
 //                    view.tvUserPosition.text = it.mainAbility(fromDictionary(R.string.invite_at_placeholder))
 //                    view.tvUserPosition.goneIfEmpty()
 
@@ -133,11 +137,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())
             R.id.nav_create_account -> open(RegistrationController.newInstance())
-//            R.id.personal_info -> open(PersonalInfoController.newInstance())
-//            R.id.company_info -> open(OrganizationInfoController.newInstance())
 //            R.id.nav_profile -> open(ProfileController.newInstance("-L8lVgGlhYcMnBbtXFpS"))
 //            R.id.nav_profile -> open(ProfileController.newInstance("-L8h7TSSSi1KL0KOcee9"))
-            R.id.nav_profile -> open(ProfileController.newInstance(view?.tvUserPosition?.text?.toString()?:""))
+            R.id.nav_profile -> {
+                myAccId?.let {
+                    open(ProfileController.newInstance(it))
+                }
+            }
             R.id.nav_logout -> viewModel.logout()
         }
         return true
