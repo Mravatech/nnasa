@@ -2,15 +2,12 @@ package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.PopupMenu
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.github.salomonbrys.kodein.instance
@@ -24,6 +21,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
@@ -32,7 +30,6 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.controller_post_details.view.*
-import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.panel_comment.view.*
 import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
@@ -74,31 +71,37 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         set(value) {
             field = value
             updatePostCommentButtonState()
-            launchCoroutineUI {
-                with (getViewSuspend()) {
-                    editPanel.isGone = value == null
-                    if (value == null) {
-                        hideKeyboard(commentPanel.etCommentText)
-                        return@launchCoroutineUI
-                    }
-
-                    editPanel.tvEditText.text = value.text
-                    editPanel.tvEditText.goneIfEmpty()
-                    commentPanel.etCommentText.setText(value.text)
-                    commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
-                    showKeyboard(commentPanel.etCommentText)
-                    recommendedAccounts = value.recommends
-                }
-            }
+            bindEditedComment(value)
+            value?.let { recommendedAccounts = it.recommends }
         }
     override var recommendedAccounts: List<ShortAccountModel>
-        set(value) {
-            launchCoroutineUI {
-                getViewSuspend().recommendPanel.isGone = value.isEmpty()
-                accountsToRecommendAdapter.set(value)
+        set(value) = bindRecommendedAccounts(value)
+        get() = accountsToRecommendAdapter.dataStorage.toList()
+
+    private fun bindEditedComment(value: CommentModel?) {
+        launchCoroutineUI {
+            with (getViewSuspend()) {
+                editPanel.isGone = value == null
+                if (value == null) {
+                    hideKeyboard(commentPanel.etCommentText)
+                    return@launchCoroutineUI
+                }
+
+                editPanel.tvEditText.text = value.text
+                editPanel.tvEditText.goneIfEmpty()
+                commentPanel.etCommentText.setText(value.text)
+                commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
+                showKeyboard(commentPanel.etCommentText)
             }
         }
-        get() = accountsToRecommendAdapter.dataStorage.toList()
+    }
+
+    private fun bindRecommendedAccounts(value: List<ShortAccountModel>) {
+        launchCoroutineUI {
+            getViewSuspend().recommendPanel.isGone = value.isEmpty()
+            accountsToRecommendAdapter.set(value)
+        }
+    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -199,8 +202,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             args.remove(EXTRA_NEED_MODEL)
         }
 
-        replyTo = replyTo //show reply section if reply available after View destroying
-        editedComment = editedComment
+        bindEditedComment(editedComment)
     }
 
     override fun onDestroyView(view: View) {
@@ -298,7 +300,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                     pivImages.count = post.images.size
                     pivImages.selection = 0
 
-                    vpImages.adapter = RegistrationAdapter(post.images) {
+                    vpImages.adapter = PhotoPagerAdapter(post.images) {
                         PhotoPagerActivity.start(context, post.images, post.images.indexOf(it))
                     }
                     vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -392,23 +394,6 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             it.isEnabled = canPostComment
         }
     }
-
-    class RegistrationAdapter(private val images: List<String>, private val onClickListener: (String) -> Unit) : PagerAdapter() {
-        override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val imageUrl = images[position]
-            val view = LayoutInflater.from(container.context).inflate(R.layout.item_image, container, false)
-            view.ivImage.image(imageUrl)
-            view.setOnClickListener { onClickListener(imageUrl) }
-            container.addView(view)
-            return view
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, view: Any) = container.removeView(view as View)
-        override fun getCount(): Int = images.size
-    }
-
 
     companion object {
         private const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
