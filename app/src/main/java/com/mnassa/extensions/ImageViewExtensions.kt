@@ -9,7 +9,7 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
-import com.mnassa.module.GlideApp
+import com.mnassa.helper.GlideApp
 
 
 /**

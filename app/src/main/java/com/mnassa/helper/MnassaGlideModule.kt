@@ -1,4 +1,4 @@
-package com.mnassa.module
+package com.mnassa.helper
 
 import android.content.Context
 import com.bumptech.glide.Glide

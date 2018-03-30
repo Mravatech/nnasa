@@ -12,7 +12,7 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.PATTERN_PHONE_TAIL

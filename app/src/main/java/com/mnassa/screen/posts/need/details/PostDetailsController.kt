@@ -1,12 +1,7 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
-import android.support.v7.widget.PopupMenu
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
@@ -16,9 +11,9 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
@@ -46,10 +41,9 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     override val layoutId: Int = R.layout.controller_post_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: PostDetailsViewModel by injector.with(postId).instance()
-    override var sharingOptions: SharingOptionsController.ShareToOptions
-            = SharingOptionsController.ShareToOptions.EMPTY
+    override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
-    private val dialogHelper: DialogHelper by instance()
+    private val popupMenuHelper: PopupMenuHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -80,7 +74,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
     private fun bindEditedComment(value: CommentModel?) {
         launchCoroutineUI {
-            with (getViewSuspend()) {
+            with(getViewSuspend()) {
                 editPanel.isGone = value == null
                 if (value == null) {
                     hideKeyboard(commentPanel.etCommentText)
@@ -213,62 +207,23 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         super.onDestroyView(view)
     }
 
-    private fun showMyPostMenu(view: View, post: PostModel) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.post_edit, popup.menu)
-        popup.menu.findItem(R.id.action_post_edit).title = fromDictionary(R.string.need_action_edit)
-        popup.menu.findItem(R.id.action_post_delete).title = fromDictionary(R.string.need_action_delete)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_post_edit -> open(CreateNeedController.newInstanceEditMode(post))
-                R.id.action_post_delete -> dialogHelper.showConfirmPostRemovingDialog(view.context) { viewModel.delete() }
-            }
-            true
-        }
-
-        popup.show()
-    }
-
     private fun showPostMenu(view: View) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.post_view, popup.menu)
-        popup.menu.findItem(R.id.action_post_repost).title = fromDictionary(R.string.need_action_repost)
-        popup.menu.findItem(R.id.action_post_report).title = fromDictionary(R.string.need_action_report)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_post_repost -> openSharingOptionsScreen()
-                R.id.action_post_report -> Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show()
-            }
-            true
-        }
-
-        popup.show()
+        popupMenuHelper.showPostMenu(
+                view = view,
+                onRepost = { openSharingOptionsScreen() },
+                onReport = { Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show() }
+        )
     }
 
     private fun showCommentMenu(view: View, commentModel: CommentModel) {
         launchCoroutineUI {
             if (!commentModel.isMyComment()) return@launchCoroutineUI
 
-            val popup = PopupMenu(view.context, view)
-            popup.menuInflater.inflate(R.menu.comment_edit, popup.menu)
-            popup.menu.findItem(R.id.action_comment_edit).title = fromDictionary(R.string.posts_comment_edit)
-
-            val deleteSpan = SpannableString(fromDictionary(R.string.posts_comment_delete))
-            val deleteTextColor = ContextCompat.getColor(view.context, R.color.red)
-            deleteSpan.setSpan(ForegroundColorSpan(deleteTextColor), 0, deleteSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            popup.menu.findItem(R.id.action_comment_delete).title = deleteSpan
-
-            popup.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_comment_edit -> editedComment = commentModel
-                    R.id.action_comment_delete -> viewModel.deleteComment(commentModel)
-                }
-                true
-            }
-
-            popup.show()
+            popupMenuHelper.showMyCommentMenu(
+                    view = view,
+                    onEditComment = { editedComment = commentModel },
+                    onDeleteComment = { viewModel.deleteComment(commentModel) }
+            )
         }
     }
 
@@ -345,7 +300,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         launchCoroutineUI {
             val view = view ?: return@launchCoroutineUI
             if (post.isMyPost()) {
-                view.toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
+                view.toolbar.onMoreClickListener = {
+                    popupMenuHelper.showMyPostMenu(
+                            view = it,
+                            onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
+                            onDeletePost = { viewModel.delete() })
+                }
                 headerLayout.invoke {
                     it.llOtherPersonPostActions.visibility = View.GONE
                 }

@@ -16,14 +16,15 @@ import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
 import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.PlayServiceHelper
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
@@ -219,5 +220,6 @@ private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
     bind<DialogHelper>() with singleton { DialogHelper() }
+    bind<PopupMenuHelper>() with singleton { PopupMenuHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }

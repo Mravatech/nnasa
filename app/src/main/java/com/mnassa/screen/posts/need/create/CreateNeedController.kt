@@ -13,11 +13,11 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
@@ -100,7 +100,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
 
             rvImages.layoutManager = LinearLayoutManager(context)
-//            rvImages.isNestedScrollingEnabled = false
             rvImages.adapter = attachedImagesAdapter
             attachedImagesAdapter.onAddImageClickListener = {
                 dialogHelper.showSelectImageSourceDialog(context) { launchCoroutineUI { selectImage(it) } }

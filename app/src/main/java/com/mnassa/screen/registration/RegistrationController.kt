@@ -15,7 +15,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
 import com.mnassa.extensions.hideKeyboard
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
