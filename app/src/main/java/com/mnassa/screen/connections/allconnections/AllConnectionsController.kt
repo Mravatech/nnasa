@@ -74,7 +74,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
         popup.menu.findItem(R.id.action_connections_view_profile).title = fromDictionary(R.string.tab_connections_all_item_view_profile)
 
         val disconnectSpan = SpannableString(fromDictionary(R.string.tab_connections_all_item_disconnect))
-        val disconnectTextColor = ContextCompat.getColor(App.context, R.color.red)
+        val disconnectTextColor = ContextCompat.getColor(sender.context, R.color.red)
         disconnectSpan.setSpan(ForegroundColorSpan(disconnectTextColor), 0, disconnectSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         popup.menu.findItem(R.id.action_connections_disconnect).title = disconnectSpan
 

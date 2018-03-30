@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import com.bluelinelabs.conductor.Conductor
+import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.*
@@ -20,7 +21,7 @@ import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope<Activity>>, MnassaRouter by MnassaRouterDelegate() {
+open class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope<Activity>>, MnassaRouter by MnassaRouterDelegate() {
     override val kodeinScope: AndroidScope<Activity> = androidActivityScope
     override fun initializeInjector() {
         val activityModule = Kodein.Module {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope
 
         router = Conductor.attachRouter(this, container, savedInstanceState)
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(SplashController.newInstance()))
+            router.setRoot(RouterTransaction.with(createRootControllerInstance()))
         }
 
         onLogoutListener = instance<LoginInteractor>().value.onLogoutListener.subscribe {
@@ -61,6 +62,8 @@ class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope
             router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
         }
     }
+
+    protected open fun createRootControllerInstance(): Controller = SplashController.newInstance()
 
     override fun onBackPressed() {
         hideKeyboard()
@@ -73,6 +76,5 @@ class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope
         instance<LoginInteractor>().value.onLogoutListener.unSubscribe(onLogoutListener)
         destroyInjector()
         super.onDestroy()
-
     }
 }

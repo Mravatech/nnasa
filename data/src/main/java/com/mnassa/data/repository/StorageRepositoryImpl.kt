@@ -2,7 +2,7 @@ package com.mnassa.data.repository
 
 import com.google.firebase.storage.StorageReference
 import com.mnassa.data.extensions.await
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.StoragePhotoData
 import com.mnassa.domain.repository.StorageRepository
 import timber.log.Timber

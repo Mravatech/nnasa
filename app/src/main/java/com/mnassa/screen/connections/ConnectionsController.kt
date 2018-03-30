@@ -12,6 +12,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.App.Companion.context
@@ -20,6 +21,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.openApplicationSettings
+import com.mnassa.extensions.setHeaderWithCounter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
@@ -145,7 +147,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             viewModel.allConnectionsChannel.consumeEach {
                 allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
-                header.tvAllConnections.text = formatTextWithCounter(R.string.tab_connections_all, it.size)
+                header.tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, it.size)
 
                 header.tvAllConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
                 header.vAllConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
@@ -155,7 +157,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         launchCoroutineUI {
             viewModel.recommendedConnectionsChannel.consumeEach {
                 recommendedConnectionsAdapter.setWithMaxRange(it, MAX_RECOMMENDED_ITEMS_COUNT)
-                header.tvRecommendedConnections.text = formatTextWithCounter(R.string.tab_connections_recommended, it.size)
+                header.tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
 
                 header.tvRecommendedConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
                 header.rvRecommendedConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
@@ -170,7 +172,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                 header.vNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
 
                 root.toolbar.counter = it.size
-                header.tvNewConnectionRequests.text = formatTextWithCounter(R.string.tab_connections_new_requests, it.size)
+                header.tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
             }
         }
     }
@@ -218,15 +220,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private fun formatTextWithCounter(dictionaryResId: Int, counterValue: Int): CharSequence {
-        val head = "${fromDictionary(dictionaryResId)}  "
-        val spannable = SpannableString(head + counterValue.toString())
-        val color = ContextCompat.getColor(requireNotNull(applicationContext), R.color.coolGray)
-        spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return spannable
-    }
-
 
     class BlockedScrollingLayoutManager(context: Context, orientation: Int,
                                         reverseLayout: Boolean) : LinearLayoutManager(context, orientation, reverseLayout) {

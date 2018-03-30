@@ -13,8 +13,8 @@ import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
 import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
-import com.mnassa.data.network.exception.ExceptionHandler
-import com.mnassa.data.network.exception.handleException
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.DeclinedShortAccountModel
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel

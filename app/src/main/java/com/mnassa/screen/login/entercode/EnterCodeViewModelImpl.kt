@@ -7,6 +7,7 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import timber.log.Timber
 
 /**
  * Created by Peter on 23.02.2018.
@@ -52,6 +53,8 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
 
         signInJob = handleException {
             withProgressSuspend {
+                Timber.d("MNSA_LOGIN EnterCodeViewModelImpl->signIn with code $code")
+
                 val accounts = loginInteractor.signIn(verificationResponse, code)
                 val nextScreen = when {
                     accounts.isEmpty() -> EnterCodeViewModel.OpenScreenCommand.RegistrationScreen()
@@ -61,6 +64,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor) : Mna
                     }
                     else -> EnterCodeViewModel.OpenScreenCommand.SelectAccount(accounts)
                 }
+                Timber.d("MNSA_LOGIN EnterCodeViewModelImpl->signIn open $nextScreen")
                 openScreenChannel.send(nextScreen)
             }
         }

@@ -12,9 +12,11 @@ import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
-import com.mnassa.data.network.exception.ExceptionHandler
-import com.mnassa.data.network.exception.handleException
 import com.mnassa.domain.model.*
+import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
+import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.domain.model.ShortAccountModel

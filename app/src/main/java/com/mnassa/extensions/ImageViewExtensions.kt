@@ -2,6 +2,7 @@ package com.mnassa.extensions
 
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.request.RequestOptions
 import com.github.salomonbrys.kodein.android.appKodein
@@ -61,14 +62,28 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
             .into(this)
 }
 
-fun ImageView.image(url: String?) {
+fun ImageView.image(url: String?, crop: Boolean = true) {
     val storage = context.appKodein().instance<FirebaseStorage>()
     val ref = url?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
-    GlideApp.with(this)
+    var builder = GlideApp.with(this)
             .load(ref ?: "")
+            .apply(requestOptions)
+
+    if (crop) {
+        builder = builder.apply(RequestOptions.centerCropTransform())
+    }
+
+    builder.into(this)
+}
+
+fun ImageView.image(uri: Uri) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+
+    GlideApp.with(this)
+            .load(uri)
             .apply(requestOptions)
             .apply(RequestOptions.centerCropTransform())
             .into(this)

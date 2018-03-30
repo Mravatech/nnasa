@@ -2,7 +2,7 @@ package com.mnassa.data.repository
 
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.toValueChannel
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.repository.CountersRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel

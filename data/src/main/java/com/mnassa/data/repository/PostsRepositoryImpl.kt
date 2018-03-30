@@ -12,10 +12,14 @@ import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
+import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
+import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -31,29 +35,29 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val converter: ConvertersContext,
                           private val postApi: FirebasePostApi) : PostsRepository {
 
-    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<Post>> {
+    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
         val userId = requireNotNull(userRepository.getAccountId())
 
         return db.child(TABLE_NEWS_FEED)
                 .child(userId)
-                .toValueChannelWithChangesHandling<PostDbEntity, Post>(
+                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(Post::class.java)
+                        mapper = converter.convertFunc(PostModel::class.java)
                 )
     }
 
-    override suspend fun loadAllWithPagination(): ReceiveChannel<Post> {
+    override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> {
         val userId = requireNotNull(userRepository.getAccountId())
 
         return db
                 .child(TABLE_NEWS_FEED)
                 .child(userId)
-                .toValueChannelWithPagination<PostDbEntity, Post>(
+                .toValueChannelWithPagination<PostDbEntity, PostModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(Post::class.java))
+                        mapper = converter.convertFunc(PostModel::class.java))
     }
 
-    override suspend fun loadById(id: String): ReceiveChannel<Post> {
+    override suspend fun loadById(id: String): ReceiveChannel<PostModel> {
         val userId = requireNotNull(userRepository.getAccountId())
 
         return db
@@ -61,7 +65,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .child(userId)
                 .child(id)
                 .toValueChannel<PostDbEntity>(exceptionHandler)
-                .map { converter.convert<Post>(it!!) }
+                .map { converter.convert<PostModel>(it!!) }
     }
 
     override suspend fun sendViewed(ids: List<String>) {
@@ -69,18 +73,38 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 //        postApi.viewItems(ViewItemsRequest(ids, NetworkContract.ItemType.POST)).handleException(exceptionHandler)
     }
 
-    override suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post {
+    override suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>): PostModel {
         val result = postApi.createPost(CreatePostRequest(
                 type = NetworkContract.PostType.NEED,
                 text = text,
-                images = if (uploadedImagesUrls.isNotEmpty()) uploadedImagesUrls else null,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacyType.stringValue,
-                privacyConnections = if (privacyConnections.isNotEmpty()) privacyConnections else null
+                privacyConnections = privacyConnections.takeIf { it.isNotEmpty() },
+                allConnections = allConnections
         )).handleException(exceptionHandler)
         return result.data.run { converter.convert(this) }
     }
 
+    override suspend fun updateNeed(postId: String, text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>) {
+        postApi.changePost(CreatePostRequest(
+                postId = postId,
+                type = NetworkContract.PostType.NEED,
+                text = text,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
+                privacyType = privacyType.stringValue,
+                privacyConnections = privacyConnections.takeIf { it.isNotEmpty() },
+                allConnections = allConnections
+        )).handleException(exceptionHandler)
+    }
+
     override suspend fun removePost(postId: String) {
         postApi.deletePost(postId).handleException(exceptionHandler)
+    }
+
+    override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel {
+        return postApi.repostComment(RepostCommentRequest(postId, text?.takeIf { it.isNotBlank() }, privacyConnections.takeIf { it.isNotEmpty() }))
+                .handleException(exceptionHandler)
+                .data
+                .run { converter.convert(this) }
     }
 }

@@ -2,7 +2,6 @@ package com.mnassa.screen.login.selectaccount
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -43,9 +42,7 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 when (it) {
-                    is SelectAccountViewModel.OpenScreenCommand.MainScreen -> {
-                        open(MainController.newInstance())
-                    }
+                    is SelectAccountViewModel.OpenScreenCommand.MainScreen -> open(MainController.newInstance())
                 }
             }
         }

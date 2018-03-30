@@ -8,7 +8,7 @@ import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseDictionaryApi
 import com.mnassa.data.network.bean.firebase.TranslatedWordDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RegisterUiKeyRequest
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.repository.dictionary.DictionaryPreferences
 import com.mnassa.data.repository.dictionary.DictionaryResources
 import com.mnassa.domain.model.EmptyWord

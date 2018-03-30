@@ -2,6 +2,7 @@ package com.mnassa.screen
 
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
+import com.mnassa.activity.SecondActivity
 import com.mnassa.screen.login.entercode.EnterCodeController
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.login.enterpromo.EnterPromoController
@@ -15,6 +16,12 @@ import com.mnassa.screen.splash.SplashController
  */
 class MnassaRouterDelegate : MnassaRouter {
     override fun open(self: Controller, controller: Controller) {
+
+        if (openInNewActivity(self, controller)) {
+            SecondActivity.start(context = requireNotNull(self.activity), controller = controller)
+            return
+        }
+
         val router = self.router
 
         if (addToStack(self, controller)) {
@@ -32,6 +39,7 @@ class MnassaRouterDelegate : MnassaRouter {
     private fun addToStack(self: Controller, controller: Controller): Boolean {
         return when {
             controller is MainController -> false
+            controller is EnterPromoController -> true
             self is SplashController -> false
             self is EnterPhoneController -> false
             self is EnterPromoController -> false
@@ -41,5 +49,13 @@ class MnassaRouterDelegate : MnassaRouter {
 
             else -> true
         }
+    }
+
+    private fun openInNewActivity(self: Controller, controller: Controller): Boolean {
+        return isInMainController(self) && self.activity !is SecondActivity
+    }
+
+    private fun isInMainController(controller: Controller): Boolean {
+        return controller is MainController || controller.parentController?.let { isInMainController(it) } ?: false
     }
 }
