@@ -45,9 +45,10 @@ internal data class PostCountersDbEntity(
 internal data class PostAutoSuggest(
         @SerializedName("total") override var total: Int,
         @SerializedName("youCanHelp") override var youCanHelp: Boolean,
-        @SerializedName("aids") var aidsInner: List<String>?
+        @SerializedName("aids") var aidsInternal: List<String>?
 ) : com.mnassa.domain.model.PostAutoSuggest {
-    override val aids: List<String>
-        get() = aidsInner ?: emptyList()
+
+    override val accountIds: List<String>
+        get() = aidsInternal ?: emptyList()
 }
 

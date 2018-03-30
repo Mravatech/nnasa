@@ -8,6 +8,7 @@ import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.bean.firebase.TagDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CustomTagsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import kotlinx.coroutines.experimental.async

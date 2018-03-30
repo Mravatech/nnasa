@@ -168,8 +168,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(self, controller)
 
-    }
-
     override fun close(self: Controller) = mnassaRouter.close(self)
 
     private fun formatTabControllerTag(position: Int): String = "tab_controller_$position"

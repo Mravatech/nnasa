@@ -7,9 +7,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
 import android.widget.TextView
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.widget.FlowLayout
 import com.mnassa.widget.SimpleChipView
 import java.text.DateFormatSymbols
@@ -20,7 +20,7 @@ import java.util.*
  * User: okli
  * Date: 3/28/2018
  */
-abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<ProfileModel>(itemView) {
+abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
 
     protected fun getSpannableText(count: String, text: String): SpannableString {
         val value = "$count\n$text"

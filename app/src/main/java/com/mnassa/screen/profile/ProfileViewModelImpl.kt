@@ -2,13 +2,17 @@ package com.mnassa.screen.profile
 
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ConnectionsInteractor
+import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import timber.log.Timber
 
 /**
@@ -19,21 +23,14 @@ import timber.log.Timber
 class ProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
         private val userProfileInteractor: UserProfileInteractor,
-        private val connectionsInteractor: ConnectionsInteractor
+        private val connectionsInteractor: ConnectionsInteractor,
+        private val postsInteractor: PostsInteractor
 ) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
     override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
     override val statusesConnectionsChannel: BroadcastChannel<String?> = BroadcastChannel(10)
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        handleException {
-//            connectionsInteractor.getStatusesConnections().consumeEach {
-//                statusesConnectionsChannel.send(it)
-//            }
-//        }
-//    }
+    override suspend fun getPostsById(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsInteractor.loadAllUserPostByAccountUd(accountId)
 
     private var profileClickJob: Job? = null
     override fun connectionClick() {
@@ -68,5 +65,8 @@ class ProfileViewModelImpl(
                 statusesConnectionsChannel.send(status)
             }
         }
+    }
+    override fun <T> handleException(function: suspend () -> T): Job {
+        return super.handleException(function)
     }
 }

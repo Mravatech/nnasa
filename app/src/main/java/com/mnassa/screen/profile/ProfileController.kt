@@ -6,8 +6,10 @@ import android.view.View
 import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
+import com.mnassa.core.addons.bind
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.AccountType
+import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -30,8 +32,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override val viewModel: ProfileViewModel by instance()
     private val accountModel: ShortAccountModel? by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel? }
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
-
     private lateinit var adapter: ProfileAdapter
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.ivProfileBack.setOnClickListener { close() }
@@ -53,21 +55,24 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 adapter = ProfileAdapter(profileModel, viewModel)
                 view.rvProfile.layoutManager = LinearLayoutManager(view.context)
                 view.rvProfile.adapter = adapter
-                adapter.set(listOf(profileModel))
                 view.ivCropImage.avatarSquare(profileModel.profile.avatar)
                 setTitle(profileModel, view)
-                if (profileModel.isMyProfile) {
-                    view.ivProfileEdit.visibility = View.VISIBLE
-                    view.ivProfileEdit.setOnClickListener {
-                        open(when (profileModel.profile.accountType) {
-                            AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel)
-                            AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel)
-                        })
+                onEditProfile(profileModel, view)
+                viewModel.handleException {
+                    viewModel.getPostsById(accountModel?.id ?: accountId).consumeEach {
+                        //TODO: bufferization
+                        when (it) {
+                            is ListItemEvent.Added -> {
+                                adapter.isLoadingEnabled = false
+                                adapter.dataStorage.add(it.item)
+                            }
+                            is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
+                            is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
+                            is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                            is ListItemEvent.Cleared -> adapter.dataStorage.clear()
+                        }
                     }
-                } else {
-                    view.ivProfileMenu.visibility = View.VISIBLE
-                    view.ivProfileMenu.setOnClickListener { }
-                }
+                }.bind(this@ProfileController)
             }
         }
         launchCoroutineUI {
@@ -82,10 +87,24 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.statusesConnectionsChannel.consumeEach {
                 view.fabProfile.visibility = View.VISIBLE
                 view.fabProfile.setOnClickListener { }
-                Toast.makeText(view.context,"$it", Toast.LENGTH_SHORT).show()
+                Toast.makeText(view.context, "$it", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
+    private fun onEditProfile(profileModel: ProfileModel, view: View) {
+        if (profileModel.isMyProfile) {
+            view.ivProfileEdit.visibility = View.VISIBLE
+            view.ivProfileEdit.setOnClickListener {
+                open(when (profileModel.profile.accountType) {
+                    AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel)
+                    AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel)
+                })
+            }
+        } else {
+            view.ivProfileMenu.visibility = View.VISIBLE
+            view.ivProfileMenu.setOnClickListener { }
+        }
     }
 
     private fun setTitle(profileModel: ProfileModel, view: View) {

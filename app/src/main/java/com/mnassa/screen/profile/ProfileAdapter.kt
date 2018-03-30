@@ -1,9 +1,9 @@
 package com.mnassa.screen.profile
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mnassa.domain.model.AccountType
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.domain.model.PostModel
+import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.profile.common.AnotherCompanyProfileHolder
 import com.mnassa.screen.profile.common.AnotherPersonalProfileHolder
 import com.mnassa.screen.profile.common.CompanyProfileViewHolder
@@ -16,19 +16,10 @@ import com.mnassa.screen.profile.model.ProfileModel
  * Date: 3/23/2018
  */
 
-class ProfileAdapter(private val profileModel: ProfileModel, private val viewModel: ProfileViewModel) : BasePaginationRVAdapter<ProfileModel>() {
+class ProfileAdapter(private val profileModel: ProfileModel, private val viewModel: ProfileViewModel) : PostsRVAdapter() {
 
-    private val selectedAccountsInternal: MutableList<ProfileModel> = mutableListOf()
-    var data: List<ProfileModel>
-        get() = selectedAccountsInternal
-        set(value) {
-            selectedAccountsInternal.clear()
-            selectedAccountsInternal.addAll(value)
 
-            notifyDataSetChanged()
-        }
-
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ProfileModel> {
+    //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ProfileModel> {
 //        return if (viewType == TYPE_HEADER) {
 //            return if (profileModel.isMyProfile) {
 //                when (profileModel.profile.accountType) {
@@ -45,20 +36,37 @@ class ProfileAdapter(private val profileModel: ProfileModel, private val viewMod
 //            super.onCreateViewHolder(parent, viewType)
 //        }
 //    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ProfileModel> {
-        return if (profileModel.isMyProfile) {
-            when (profileModel.profile.accountType) {
-                AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel)
-                AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, viewModel)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
+        return if (viewType == TYPE_HEADER) {
+            return if (profileModel.isMyProfile) {
+                when (profileModel.profile.accountType) {
+                    AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel, profileModel)
+                    AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, viewModel, profileModel)
+                }
+            } else {
+                when (profileModel.profile.accountType) {
+                    AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, profileModel)
+                    AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, profileModel)
+                }
             }
         } else {
-            when (profileModel.profile.accountType) {
-                AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent)
-                AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent)
-            }
+            super.onCreateViewHolder(parent, viewType)
         }
     }
+
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ProfileModel> {
+//        return if (profileModel.isMyProfile) {
+//            when (profileModel.profile.accountType) {
+//                AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel)
+//                AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, viewModel)
+//            }
+//        } else {
+//            when (profileModel.profile.accountType) {
+//                AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent)
+//                AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent)
+//            }
+//        }
+//    }
 
 
 }

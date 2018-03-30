@@ -15,7 +15,7 @@ import com.mnassa.screen.posts.viewholder.*
 /**
  * Created by Peter on 3/14/2018.
  */
-class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
+open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
     var onAttachedToWindow: (item: PostModel) -> Unit = { }
     var onDetachedFromWindow: (item: PostModel) -> Unit = { }
     var onItemClickListener = { item: PostModel -> }
