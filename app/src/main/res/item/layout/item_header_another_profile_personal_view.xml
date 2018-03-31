@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -40,8 +41,8 @@
     <FrameLayout
         android:id="@+id/flMoreInformation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="?selectableItemBackground"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tvMoreInformation"
@@ -64,12 +65,13 @@
         android:id="@+id/llBottomTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/backgroundMain"
         android:orientation="horizontal"/>
 
     <View
         android:visibility="gone"
         android:id="@+id/vBottomDivider"
         android:layout_width="match_parent"
-        android:background="@color/backgroundTransparent"
+        android:background="@color/backgroundMain"
         android:layout_height="24dp"/>
 </LinearLayout>

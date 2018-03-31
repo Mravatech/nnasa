@@ -7,7 +7,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.widget.ChipsAdapter
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,8 +15,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Date: 3/26/2018
  */
 interface EditPersonalProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
-    val imageUploadedChannel: BroadcastChannel<String>
-    fun uploadPhotoToStorage(uri: Uri)
+    val openScreenChannel: ArrayBroadcastChannel<PersonalScreenCommander>
+    fun saveLocallyAvatarUri(uri: Uri)
     fun updatePersonalAccount(
             profileAccountModel: ProfileAccountModel,
             firstName: String,
@@ -34,5 +34,7 @@ interface EditPersonalProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearc
             interests: List<TagModel>,
             offers: List<TagModel>
     )
-
+    sealed class PersonalScreenCommander{
+        class ClosePersonalEditScreen : PersonalScreenCommander()
+    }
 }

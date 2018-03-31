@@ -3,28 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:baselineAligned="false">
 
         <TextView
             android:id="@+id/tvProfileConnections"
+            android:background="?selectableItemBackground"
             style="@style/ProfileHeaderItem.TextView"
             android:layout_weight="1"
             tools:text="999" />
 
         <TextView
             android:id="@+id/tvPointsGiven"
+            android:background="?selectableItemBackground"
             style="@style/ProfileHeaderItem.TextView"
             android:layout_weight="1"
             tools:text="999" />
 
     </LinearLayout>
-
 
     <View
         android:layout_width="match_parent"
@@ -35,7 +36,7 @@
         android:id="@+id/flMoreInformation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="?selectableItemBackground">
 
         <TextView
             android:id="@+id/tvMoreInformation"
@@ -58,12 +59,13 @@
         android:id="@+id/llBottomTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/backgroundMain"
         android:orientation="horizontal"/>
 
     <View
         android:visibility="gone"
         android:id="@+id/vBottomDivider"
         android:layout_width="match_parent"
-        android:background="@color/backgroundTransparent"
+        android:background="@color/backgroundMain"
         android:layout_height="24dp"/>
 </LinearLayout>

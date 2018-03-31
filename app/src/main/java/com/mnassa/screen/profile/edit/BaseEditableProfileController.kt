@@ -41,7 +41,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
                         Activity.RESULT_OK -> {
                             val uri: Uri? = it.data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
                             uri?.let {
-                                photoResult(it)
+                                photoResult(it, view)
                             } ?: run {
                                 Timber.i("uri is null")
                             }
@@ -104,7 +104,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
     }
 
     abstract fun proccesProfile(view: View)
-    abstract fun photoResult(uri: Uri)
+    abstract fun photoResult(uri: Uri, view: View)
     companion object {
         private const val REQUEST_CODE_CROP = 101
     }

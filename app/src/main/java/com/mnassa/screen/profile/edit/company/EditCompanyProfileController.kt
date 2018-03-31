@@ -76,8 +76,8 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         setToolbar(view.toolbarEditProfile, view)
         view.ivUserAvatar.avatarSquare(accountModel.avatar)
         launchCoroutineUI {
-            viewModel.imageUploadedChannel.consumeEach {
-                view.ivUserAvatar.avatarSquare(it)
+            viewModel.openScreenChannel.consumeEach {
+                close()
             }
         }
     }
@@ -90,8 +90,9 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         super.onDestroy()
     }
 
-    override fun photoResult(uri: Uri) {
-        viewModel.uploadPhotoToStorage(uri)
+    override fun photoResult(uri: Uri, view: View) {
+        view.ivUserAvatar?.avatarSquare(uri)
+        viewModel.saveLocallyAvatarUri(uri)
     }
 
     override fun proccesProfile(view: View) {
@@ -106,12 +107,17 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             return
         }
         if (view.etCompanyUserName.text.isBlank()) {
-            view.etCompanyUserName.error = fromDictionary(R.string.company_name_is_not_valid)
+            view.etCompanyUserName.error = fromDictionary(R.string.user_name_is_not_valid)
+            return
+        }
+        if (view.etCompanyName.text.isBlank()) {
+            view.etCompanyName.error = fromDictionary(R.string.company_name_is_not_valid)
             return
         }
         viewModel.updateCompanyAccount(
                 profileAccountModel = accountModel,
                 userName = view.etCompanyUserName.text.toString(),
+                companyName = view.etCompanyName.text.toString(),
                 showContactEmail = view.etCompanyEmail.isChosen,
                 showContactPhone = view.etCompanyPhone.isChosen,
                 contactEmail = view.etCompanyEmail.text.toString(),

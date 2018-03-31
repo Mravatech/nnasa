@@ -64,7 +64,6 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         view.etYourEmail.setHideMode(accountModel.showContactPhone)
         addPhoto(view.fabInfoAddPhoto)
         view.etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
-        view.ivUserAvatar.avatarSquare(accountModel.avatar)
         view.chipPersonInterests.chipSearch = viewModel
         view.chipPersonInterests.setTags(interests)
         view.chipPersonOffers.chipSearch = viewModel
@@ -75,9 +74,10 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         setToolbar(view.toolbarEditProfile, view)
         timeMillis = accountModel.createdAt
         setCalendarEditText(view.etDateOfBirthday)
+        view.ivUserAvatar.avatarSquare(accountModel.avatar)
         launchCoroutineUI {
-            viewModel.imageUploadedChannel.consumeEach {
-                view.ivUserAvatar.avatarSquare(it)
+            viewModel.openScreenChannel.consumeEach {
+                close()
             }
         }
     }
@@ -90,8 +90,9 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         super.onDestroy()
     }
 
-    override fun photoResult(uri: Uri) {
-        viewModel.uploadPhotoToStorage(uri)
+    override fun photoResult(uri: Uri, view: View) {
+        view.ivUserAvatar?.avatarSquare(uri)
+        viewModel.saveLocallyAvatarUri(uri)
     }
 
     override fun proccesProfile(view: View) {

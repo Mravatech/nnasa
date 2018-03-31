@@ -12,8 +12,6 @@ import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/28/2018.
@@ -22,20 +20,12 @@ class OrganizationInfoViewModelImpl(
         private val storageInteractor: StorageInteractor,
         private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), OrganizationInfoViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
     override val openScreenChannel: ArrayBroadcastChannel<OrganizationInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    private var path: String? = null
 
-    private var sendPhotoJob: Job? = null
-    override fun uploadPhotoToStorage(uri: Uri) {
-        sendPhotoJob?.cancel()
-        sendPhotoJob = handleException {
-            path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
-            path?.let {
-                imageUploadedChannel.send(it)
-            }
-            Timber.i(path)
-        }
+    private var avatarSavedPath: String? = null
+    private var avatarUri: Uri? = null
+    override fun saveLocallyAvatarUri(uri: Uri) {
+        this.avatarUri = uri
     }
 
     override fun skipThisStep() {
@@ -58,12 +48,13 @@ class OrganizationInfoViewModelImpl(
         processAccountJob?.cancel()
         processAccountJob = handleException {
             withProgressSuspend {
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val companyInfo = CompanyInfoModelImpl(
                         id = accountModel.id,
                         firebaseUserId = accountModel.firebaseUserId,
                         userName = accountModel.userName,
                         accountType = accountModel.accountType,
-                        avatar = path,
+                        avatar = avatarSavedPath,
                         contactPhone = contactPhone,
                         language = accountModel.language,
                         personalInfo = accountModel.personalInfo,

@@ -37,11 +37,6 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             viewModel.skipThisStep()
         }
         launchCoroutineUI {
-            viewModel.imageUploadedChannel.consumeEach {
-                view.ivUserAvatar.avatarSquare(it)
-            }
-        }
-        launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     is OrganizationInfoViewModel.OpenScreenCommand.InviteScreen -> {
@@ -53,8 +48,9 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
         }
     }
 
-    override fun photoResult(uri: Uri) {
-        viewModel.uploadPhotoToStorage(uri)
+    override fun photoResult(uri: Uri, view: View) {
+        view.ivUserAvatar?.avatarSquare(uri)
+        viewModel.saveLocallyAvatarUri(uri)
     }
 
     override fun proccesProfile(view: View) {

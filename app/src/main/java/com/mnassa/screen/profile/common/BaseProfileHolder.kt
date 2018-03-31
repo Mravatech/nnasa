@@ -4,6 +4,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
@@ -101,17 +102,17 @@ abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseV
     }
 
     protected fun setCheckedTexts(tvLabel: TextView, tvText: TextView, topView: View?, hint: String, text: String?) {
-        text?.let {
-            topView?.visibility = View.VISIBLE
-            tvLabel.visibility = View.VISIBLE
-            tvText.visibility = View.VISIBLE
-            tvLabel.text = hint
-            tvText.text = it
-        } ?: run {
+        if (TextUtils.isEmpty(text)) {
             topView?.visibility = View.GONE
             tvLabel.visibility = View.GONE
             tvText.visibility = View.GONE
+            return
         }
+        topView?.visibility = View.VISIBLE
+        tvLabel.visibility = View.VISIBLE
+        tvText.visibility = View.VISIBLE
+        tvLabel.text = hint
+        tvText.text = text
     }
 
     protected fun getDateByTimeMillis(createdAt: Long?): String? {

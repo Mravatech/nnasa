@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -14,18 +15,17 @@
         <TextView
             android:id="@+id/tvProfileConnections"
             style="@style/ProfileHeaderItem.TextView"
+            android:background="?selectableItemBackground"
             android:layout_weight="1"
             tools:text="999" />
 
         <TextView
             android:id="@+id/tvPointsGiven"
             style="@style/ProfileHeaderItem.TextView"
+            android:background="?selectableItemBackground"
             android:layout_weight="1"
             tools:text="999" />
-
     </LinearLayout>
-
-
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_width"
@@ -34,8 +34,8 @@
     <FrameLayout
         android:id="@+id/flMoreInformation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="?selectableItemBackground"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tvMoreInformation"
@@ -58,12 +58,13 @@
         android:id="@+id/llBottomTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/backgroundMain"
         android:orientation="horizontal"/>
 
     <View
         android:visibility="gone"
         android:id="@+id/vBottomDivider"
         android:layout_width="match_parent"
-        android:background="@color/backgroundTransparent"
+        android:background="@color/backgroundMain"
         android:layout_height="24dp"/>
 </LinearLayout>

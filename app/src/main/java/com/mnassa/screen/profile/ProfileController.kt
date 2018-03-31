@@ -3,10 +3,12 @@ package com.mnassa.screen.profile
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PopupMenu
 import android.view.View
 import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
+import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.bind
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.AccountType
@@ -58,7 +60,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 adapter = ProfileAdapter(profileModel, viewModel)
                 view.rvProfile.layoutManager = LinearLayoutManager(view.context)
                 view.rvProfile.adapter = adapter
-                view.ivCropImage.avatarSquare(profileModel.profile.avatar)
+                profileModel.profile.avatar?.let { avatar ->
+                    view.ivCropImage.avatarSquare(profileModel.profile.avatar)
+                    view.ivCropImage.setOnClickListener {
+                        PhotoPagerActivity.start(view.context, listOf(avatar), 0)
+                    }
+                }
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
                 handleFab(profileModel.connectionStatus, view.fabProfile)
@@ -100,12 +107,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
             ConnectionStatus.RECOMMENDED -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener {  }
+                fab.setOnClickListener { }
                 fab.setImageResource(R.drawable.ic_recommend)
             }
             ConnectionStatus.SENT -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener {  }
+                fab.setOnClickListener { }
                 fab.setImageResource(R.drawable.ic_camera)
             }
             ConnectionStatus.REQUESTED -> {
@@ -116,6 +123,21 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 //todo smth
             }
         }
+    }
+
+    private fun onSettingsClick(profileModel: ProfileModel, view: View) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.user_profile_item, popup.menu)
+        popup.menu.findItem(R.id.action_share_profile).title = "Share Profile" //todo set from dict
+        popup.menu.findItem(R.id.action_complain_about_profile).title = "Complain about Profile" //todo set from dict
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_share_profile -> Toast.makeText(view.context, "Share Profile", Toast.LENGTH_SHORT).show()
+                R.id.action_complain_about_profile -> Toast.makeText(view.context, "Complain about Profile", Toast.LENGTH_SHORT).show()
+            }
+            true
+        }
+        popup.show()
     }
 
     private fun onEditProfile(profileModel: ProfileModel, view: View) {
@@ -129,7 +151,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         } else {
             view.ivProfileMenu.visibility = View.VISIBLE
-            view.ivProfileMenu.setOnClickListener { }
+            view.ivProfileMenu.setOnClickListener {
+                onSettingsClick(profileModel, it)
+            }
         }
     }
 

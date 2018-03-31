@@ -6,12 +6,11 @@ import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.OrganizationAccountDiffModelImpl
 import com.mnassa.domain.model.impl.ProfileCompanyInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import timber.log.Timber
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,18 +23,11 @@ class EditCompanyProfileViewModelImpl(
         private val placeFinderInteractor: PlaceFinderInteractor,
         private val userProfileInteractor: UserProfileInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), EditCompanyProfileViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
-    private var path: String? = null
-    private var sendPhotoJob: Job? = null
-    override fun uploadPhotoToStorage(uri: Uri) {
-        sendPhotoJob?.cancel()
-        sendPhotoJob = handleException {
-            path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
-            path?.let {
-                imageUploadedChannel.send(it)
-            }
-            Timber.i(path)
-        }
+    override val openScreenChannel: ArrayBroadcastChannel<EditCompanyProfileViewModel.CompanyScreenCommander> = ArrayBroadcastChannel(10)
+    private var avatarSavedPath: String? = null
+    private var avatarUri: Uri? = null
+    override fun saveLocallyAvatarUri(uri: Uri) {
+        this.avatarUri = uri
     }
 
     override suspend fun search(search: String): List<TagModel> {
@@ -45,6 +37,7 @@ class EditCompanyProfileViewModelImpl(
     override fun updateCompanyAccount(
             profileAccountModel: ProfileAccountModel,
             userName: String,
+            companyName: String,
             showContactEmail: Boolean,
             showContactPhone: Boolean,
             contactEmail: String?,
@@ -61,16 +54,18 @@ class EditCompanyProfileViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+
                 val profile = ProfileCompanyInfoModelImpl(
                         id = profileAccountModel.id,
                         firebaseUserId = profileAccountModel.firebaseUserId,
                         userName = userName,
                         accountType = AccountType.ORGANIZATION,
-                        avatar = path,
+                        avatar = avatarSavedPath,
                         contactPhone = contactPhone,
                         language = profileAccountModel.language,
                         personalInfo = profileAccountModel.personalInfo,
-                        organizationInfo = profileAccountModel.organizationInfo,
+                        organizationInfo = OrganizationAccountDiffModelImpl(companyName),
                         abilities = profileAccountModel.abilities,
                         showContactEmail = showContactEmail,
                         showContactPhone = showContactPhone,
@@ -83,6 +78,7 @@ class EditCompanyProfileViewModelImpl(
                         interests = interestsWithIds,
                         offers = offersWithIds)
                 userProfileInteractor.updateCompanyAccount(profile)
+                openScreenChannel.send(EditCompanyProfileViewModel.CompanyScreenCommander.CloseCompanyEditScreen())
             }
         }
     }

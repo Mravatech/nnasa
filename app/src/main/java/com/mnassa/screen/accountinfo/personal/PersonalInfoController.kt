@@ -37,11 +37,6 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
         addPhoto(view.fabInfoAddPhoto)
         view.btnHeaderNext.setOnClickListener { proccesProfile(view) }
         launchCoroutineUI {
-            viewModel.imageUploadedChannel.consumeEach {
-                view.ivUserAvatar.avatarSquare(it)
-            }
-        }
-        launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
                     is PersonalInfoViewModel.OpenScreenCommand.InviteScreen -> {
@@ -76,8 +71,9 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
         )
     }
 
-    override fun photoResult(uri: Uri) {
-        viewModel.uploadPhotoToStorage(uri)
+    override fun photoResult(uri: Uri, view: View) {
+        view.ivUserAvatar?.avatarSquare(uri)
+        viewModel.saveLocallyAvatarUri(uri)
     }
 
     private fun setupViews(view: View) {

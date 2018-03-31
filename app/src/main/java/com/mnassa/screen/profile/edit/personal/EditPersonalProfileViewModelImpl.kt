@@ -6,12 +6,11 @@ import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.PersonalAccountDiffModelImpl
 import com.mnassa.domain.model.impl.ProfilePersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import timber.log.Timber
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,19 +23,11 @@ class EditPersonalProfileViewModelImpl(
         private val placeFinderInteractor: PlaceFinderInteractor,
         private val userProfileInteractor: UserProfileInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), EditPersonalProfileViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<String> = BroadcastChannel(10)
-    private var path: String? = null
-    private var sendPhotoJob: Job? = null
-
-    override fun uploadPhotoToStorage(uri: Uri) {
-        sendPhotoJob?.cancel()
-        sendPhotoJob = handleException {
-            path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
-            path?.let {
-                imageUploadedChannel.send(it)
-            }
-            Timber.i(path)
-        }
+    override val openScreenChannel: ArrayBroadcastChannel<EditPersonalProfileViewModel.PersonalScreenCommander> = ArrayBroadcastChannel(10)
+    private var avatarSavedPath: String? = null
+    private var avatarUri: Uri? = null
+    override fun saveLocallyAvatarUri(uri: Uri) {
+        this.avatarUri = uri
     }
 
     override fun updatePersonalAccount(
@@ -59,15 +50,16 @@ class EditPersonalProfileViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val profile = ProfilePersonalInfoModelImpl(
                         id = profileAccountModel.id,
                         firebaseUserId = profileAccountModel.firebaseUserId,
                         userName = userName,
                         accountType = AccountType.PERSONAL,
-                        avatar = path,
+                        avatar = avatarSavedPath,
                         contactPhone = contactPhone,
                         language = profileAccountModel.language,
-                        personalInfo = profileAccountModel.personalInfo,
+                        personalInfo = PersonalAccountDiffModelImpl(firstName, secondName),
                         organizationInfo = profileAccountModel.organizationInfo,
                         abilities = abilities,
                         birthdayDate = birthdayDate,
@@ -81,6 +73,7 @@ class EditPersonalProfileViewModelImpl(
                         offers = offersWithIds
                 )
                 userProfileInteractor.updatePersonalAccount(profile)
+                openScreenChannel.send(EditPersonalProfileViewModel.PersonalScreenCommander.ClosePersonalEditScreen())
             }
         }
     }
