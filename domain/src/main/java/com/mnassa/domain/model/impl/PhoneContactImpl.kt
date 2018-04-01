@@ -21,7 +21,5 @@ data class PhoneContactInvitedImpl(
         override val description: String?,
         override val used: Boolean
 ) :  PhoneContactInvited {
-//    override fun compareTo(other: PhoneContactInvited) =
-//            compareValuesBy(this, other, PhoneContactInvited::createdAt, PhoneContactInvited::createdAt)
     override val fullName: String = ""
 }

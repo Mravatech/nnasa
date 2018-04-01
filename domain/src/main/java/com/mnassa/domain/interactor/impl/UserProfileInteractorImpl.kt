@@ -16,10 +16,10 @@ class UserProfileInteractorImpl(
     override suspend fun getProfile(): ShortAccountModel {
         return requireNotNull(userRepository.getCurrentUser())
     }
-    override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>{
+
+    override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
         return userRepository.getCurrentUserWithChannel()
     }
-//    override suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
 
     override suspend fun createPersonalAccount(firstName: String,
                                                secondName: String,

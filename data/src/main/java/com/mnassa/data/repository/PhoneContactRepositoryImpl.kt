@@ -53,7 +53,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                     }
                 }
             }
-//            if (appInfoProvider.isDebug) {
+//            if (appInfoProvider.isDebug) {//todo uncomment to test
 //                result.clear()
 //                result.addAll(getDebugPhoneList())
 //            }

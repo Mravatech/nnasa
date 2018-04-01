@@ -222,8 +222,6 @@
     <dimen name="invite_item_contact_name_text_size">16sp</dimen>
     <dimen name="invite_item_view_image_size">50dp</dimen>
 
-    <color name="blackAlpha">#61000000</color>
-    <color name="blackDarkAlpha">#de000000</color>
     <dimen name="invite_main_screen_margin">8dp</dimen>
     <dimen name="invite_toolbar_height">56dp</dimen>
     <dimen name="invite_main_margin_between_views">16dp</dimen>

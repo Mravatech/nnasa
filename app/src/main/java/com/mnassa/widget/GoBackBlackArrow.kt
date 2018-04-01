@@ -10,8 +10,11 @@ import com.mnassa.R
 
 
 /**
- * Created by Peter on 12.03.2018.
+ * Created by IntelliJ IDEA.
+ * User: okli
+ * Date: 3/12/2018
  */
+
 class GoBackBlackArrow : AppCompatImageView {
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -25,8 +28,6 @@ class GoBackBlackArrow : AppCompatImageView {
             context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
             setBackgroundResource(outValue.resourceId)
         }
-
-        isClickable = true
 
         setOnClickListener {
             val activity = it.context as? Activity

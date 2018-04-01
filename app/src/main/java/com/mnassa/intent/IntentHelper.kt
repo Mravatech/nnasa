@@ -27,8 +27,7 @@ class IntentHelper {
 
     fun getWhatsAppIntent(text: String, number: String): Intent {
         val intent = Intent(Intent.ACTION_VIEW)
-        val url = WHATS_APP_START_URI + number + WHATS_APP_MIDDLE_URI +
-                URLEncoder.encode(text, "UTF-8")
+        val url = "$WHATS_APP_START_URI$number$WHATS_APP_MIDDLE_URI${URLEncoder.encode(text, "UTF-8")}"
         intent.`package` = WHATS_APP_PACKAGE
         intent.data = Uri.parse(url)
         return intent

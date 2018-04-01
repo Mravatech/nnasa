@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/llSMS"
+        android:id="@+id/llShortMessageService"
         style="@style/Invite.DialogInviteWithLinearLayout"
         android:orientation="horizontal">
 
@@ -48,7 +48,7 @@
             app:srcCompat="@drawable/ic_sms" />
 
         <TextView
-            android:id="@+id/tvSMS"
+            android:id="@+id/tvShortMessageService"
             style="@style/Invite.DialogInviteTextView"
             android:layout_marginStart="@dimen/invite_dialog_invite_with_items_indent"
             tools:text="SMS" />

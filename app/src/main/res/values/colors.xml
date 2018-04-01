@@ -31,5 +31,8 @@
     <color name="chip_default_edit_text_hint_color">#808080</color>
 
     <color name="moreImagesBackground">#6a000000</color>
+    <color name="blackAlphaLight">#32000000</color>
+    <color name="blackAlpha">#61000000</color>
+    <color name="blackDarkAlpha">#de000000</color>
 
 </resources>

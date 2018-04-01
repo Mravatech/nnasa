@@ -55,7 +55,7 @@ class DialogHelper {
         val dialog = Dialog(context, R.style.DialogInvite)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_invite_with)
-        dialog.tvSMS.text = fromDictionary(R.string.invite_invite_send_with_sms)
+        dialog.tvShortMessageService.text = fromDictionary(R.string.invite_invite_send_with_sms)
         dialog.tvMore.text = fromDictionary(R.string.invite_invite_send_with_more)
         dialog.tvWhatsApp.text = fromDictionary(R.string.invite_invite_send_with_whats_app)
         dialog.tvInviteDialogSubTitle.text = fromDictionary(R.string.invite_invite_select_way_to_send)
@@ -68,7 +68,7 @@ class DialogHelper {
         if (isWhatsAppInstalled) {
             dialog.llWhatsApp.setOnClickListener { sendInvite(INVITE_WITH_WHATS_APP) }
         }
-        dialog.llSMS.setOnClickListener { sendInvite(INVITE_WITH_SMS) }
+        dialog.llShortMessageService.setOnClickListener { sendInvite(INVITE_WITH_SMS) }
         dialog.llMore.setOnClickListener { sendInvite(INVITE_WITH_SHARE) }
         dialog.show()
     }
