@@ -7,7 +7,6 @@ import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -18,7 +17,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface ProfileViewModel : MnassaViewModel {
     val profileChannel: BroadcastChannel<ProfileModel>
     val profileClickChannel: BroadcastChannel<ProfileCommand>
-    val statusesConnectionsChannel: ConflatedBroadcastChannel<ConnectionStatus>
+    val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus>
     suspend fun getPostsById(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     fun getProfileWithAccountId(accountId: String)
     fun connectionClick()

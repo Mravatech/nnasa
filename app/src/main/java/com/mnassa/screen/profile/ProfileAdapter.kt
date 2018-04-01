@@ -16,15 +16,22 @@ import com.mnassa.screen.profile.model.ProfileModel
  * Date: 3/23/2018
  */
 
-class ProfileAdapter(private val profileModel: ProfileModel, private val viewModel: ProfileViewModel) : PostsRVAdapter() {
+class ProfileAdapter() : PostsRVAdapter() {
+
+    var profileModel: ProfileModel? = null
+        set(value) {
+            field = value
+            notifyItemChanged(0)
+        }
+    lateinit var viewModel: ProfileViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
-        return if (viewType == TYPE_HEADER) {
-            return when (profileModel.getAccountType()) {
-                Accounts.MY_COMPANY -> CompanyProfileViewHolder.newInstance(parent, viewModel, profileModel)
-                Accounts.MY_PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel, profileModel)
-                Accounts.USER_COMPANY -> AnotherCompanyProfileHolder.newInstance(parent, viewModel, profileModel)
-                Accounts.USER_PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, viewModel, profileModel)
+        return if (viewType == TYPE_HEADER && profileModel != null) {
+            return when (requireNotNull(profileModel).getAccountType()) {
+                Accounts.MY_COMPANY -> CompanyProfileViewHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
+                Accounts.MY_PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
+                Accounts.USER_COMPANY -> AnotherCompanyProfileHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
+                Accounts.USER_PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
             }
         } else {
             super.onCreateViewHolder(parent, viewType)

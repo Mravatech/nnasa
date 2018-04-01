@@ -11,6 +11,7 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.bind
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent
@@ -37,10 +38,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override val viewModel: ProfileViewModel by instance()
     private val accountModel: ShortAccountModel? by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel? }
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
-    private lateinit var adapter: ProfileAdapter
+    private var adapter = ProfileAdapter()
+    private val dialog: DialogHelper by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+        adapter.viewModel = viewModel
         view.ivProfileBack.setOnClickListener { close() }
         accountModel?.let {
             viewModel.getProfileWithAccountId(it.id)
@@ -57,7 +60,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         })
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
-                adapter = ProfileAdapter(profileModel, viewModel)
+                adapter.profileModel = profileModel
                 view.rvProfile.layoutManager = LinearLayoutManager(view.context)
                 view.rvProfile.adapter = adapter
                 profileModel.profile.avatar?.let { avatar ->
@@ -91,6 +94,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 when (it) {
                     is ProfileViewModel.ProfileCommand.ProfileConnection -> open(AllConnectionsController.newInstance())
                     is ProfileViewModel.ProfileCommand.ProfileWallet -> Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        launchCoroutineUI {
+            viewModel.statusesConnectionsChannel.consumeEach {
+                dialog.connectionsDialog(view.context) {
+
                 }
             }
         }

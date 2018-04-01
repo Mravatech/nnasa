@@ -12,7 +12,6 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import timber.log.Timber
 
@@ -30,7 +29,7 @@ class ProfileViewModelImpl(
 
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
     override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
-    override val statusesConnectionsChannel: ConflatedBroadcastChannel<ConnectionStatus> = ConflatedBroadcastChannel()
+    override val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus> = BroadcastChannel(10)
     override suspend fun getPostsById(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsInteractor.loadAllUserPostByAccountUd(accountId)
 
     private var profileClickJob: Job? = null
@@ -68,7 +67,9 @@ class ProfileViewModelImpl(
 
     override fun connectionStatusClick(connectionStatus: ConnectionStatus) {
 //        connectionsInteractor.actionConnection()
-
+        launchCoroutineUI {
+            statusesConnectionsChannel.send(connectionStatus)
+        }
 
     }
 

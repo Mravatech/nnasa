@@ -20,6 +20,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_company_status.*
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
+import kotlinx.android.synthetic.main.dialog_yes_no.*
 import java.util.*
 
 
@@ -31,7 +32,7 @@ class DialogHelper {
                         fromDictionary(R.string.image_source_gallery),
                         fromDictionary(R.string.image_source_camera)
                 )
-                .itemsCallback{ dialog, itemView, which, text ->
+                .itemsCallback { dialog, itemView, which, text ->
                     listener(CropActivity.ImageSource.values()[which])
                     dialog.dismiss()
                 }
@@ -84,9 +85,9 @@ class DialogHelper {
     }
 
     fun showChooseCompanyStatusDialog(context: Context,
-                                   statuses: List<String>,
-                                   position: Int,
-                                   onSelectClick: (position: Int) -> Unit) {
+                                      statuses: List<String>,
+                                      position: Int,
+                                      onSelectClick: (position: Int) -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_company_status)
@@ -108,6 +109,20 @@ class DialogHelper {
         val calendar = Calendar.getInstance()
         DatePickerDialog(context, listener, calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+    }
+
+    fun connectionsDialog(context: Context, onOkClick: () -> Unit) {
+        val dialog = Dialog(context, R.style.OccupationDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_yes_no)
+        dialog.tvYes.text = "Yes"
+        dialog.tvNo.text = "No"
+        dialog.tvNo.setOnClickListener { dialog.dismiss() }
+        dialog.tvYes.setOnClickListener {
+            onOkClick()
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     @SuppressLint("SetTextI18n")

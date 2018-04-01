@@ -49,6 +49,8 @@
         <item name="android:paddingTop">@dimen/et_chip_inner_item_padding</item>
     </style>
 
+    <dimen name="count_chip_view_inner_margin">10dp</dimen>
+    <dimen name="count_chip_view_margin">4dp</dimen>
     <dimen name="bottom_line_height">1dp</dimen>
     <dimen name="et_chip_min_width">100dp</dimen>
     <dimen name="et_chip_inner_item_padding">8dp</dimen>

@@ -10,7 +10,6 @@ import com.mnassa.extensions.formatted
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
-import com.mnassa.widget.SimpleChipView
 import kotlinx.android.synthetic.main.item_header_profile_personal_view.view.*
 import kotlinx.android.synthetic.main.sub_header_personal.view.*
 
@@ -48,11 +47,12 @@ class PersonalProfileViewHolder(
                         areThereTags =  item.offers.isNotEmpty())
             }
             vBottomDivider.visibility = if (item.offers.isEmpty()) View.VISIBLE else View.GONE
-            item.offers.let {
-                for (tag in it) {
-                    llBottomTags.addView(SimpleChipView(llBottomTags.context, tag))
-                }
-            }
+            llBottomTags.setTags(item.offers)
+//            item.offers.let {
+//                for (tag in it) {
+//                    llBottomTags.addView(SimpleChipView(llBottomTags.context, tag))
+//                }
+//            }
             tvProfileConnections.setOnClickListener { viewModel.connectionClick() }
             tvPointsGiven.setOnClickListener { viewModel.walletClick() }
         }
