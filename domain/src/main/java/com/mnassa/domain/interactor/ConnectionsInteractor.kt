@@ -21,7 +21,7 @@ interface ConnectionsInteractor {
     suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus
 
     suspend fun getDisconnectTimeoutDays(): Int
-    suspend fun actionConnection(connectionAction: ConnectionAction)
+    suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>)
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     suspend fun sendPhoneContacts()

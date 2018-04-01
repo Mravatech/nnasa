@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -21,5 +22,6 @@ interface UserProfileInteractor {
     suspend fun getToken(): String?
     suspend fun getAccountId(): String?
 
-    suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel?
+    suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel?
+    suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?>
 }

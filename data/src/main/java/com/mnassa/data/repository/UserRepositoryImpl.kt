@@ -7,20 +7,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
-import com.mnassa.domain.model.*
-import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
-import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
 
 /**
  * Created by Peter on 2/21/2018.
@@ -182,6 +181,16 @@ class UserRepositoryImpl(
                 .apply { keepSynced(true) }
                 .await<ProfileDbEntity>(exceptionHandler) ?: return null
         return converter.convert(profile)
+    }
+
+    override suspend fun getPrifileById(accountId: String): ReceiveChannel<ProfileAccountModel?> {
+        val dbChild = if (accountId == getAccountId()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
+        return db.child(dbChild)
+                .child(accountId)
+                .apply { keepSynced(true) }
+                .toValueChannel<ProfileDbEntity>(exceptionHandler)
+                .map { converter.convert(it!!, ProfileAccountModel::class.java) }
+//        return converter.convert(profile)
     }
 
     override suspend fun getFirebaseToken(): String? {

@@ -214,6 +214,7 @@
     <string name="profile_more_information">_android_profile_more_info</string>
     <string name="profile_less_information">_android_profile_less_info</string>
     <string name="profile_date_of_foundation">_profileDetails_birthdayOrganization</string>
+    <string name="profile_request_was_sent">_android_request_was_sent</string>
     <string name="user_profile_connection_connected">_connections_group_header_connected</string>
     <string name="user_profile_connection_connect">connections_button_connect</string>
     <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>

@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -45,9 +46,12 @@ class UserProfileInteractorImpl(
         return account
     }
 
-    override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
+    override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
         return userRepository.getPrifileByAccountId(accountId)
     }
+
+    override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> =
+            userRepository.getPrifileById(accountId)
 
     override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
         userRepository.updateCompanyAccount(account)

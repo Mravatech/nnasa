@@ -52,6 +52,7 @@
     <string name="_android_profile_more_info_INFO">MORE INFORMATION</string>
     <string name="_android_profile_less_info_INFO">LESS INFORMATION</string>
     <string name="_android_edit_profile_main_info_INFO">Main Information</string>
+    <string name="_android_request_was_sent_INFO">Request was sent</string>
 
     <string name="_android_registration_skip_INFO">Skip This Step</string>
     <string name="_android_registration_occupation_header_INFO">Choose occupation</string>

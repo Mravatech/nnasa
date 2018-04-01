@@ -1,6 +1,7 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -32,6 +33,7 @@ interface UserRepository {
     suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel)
 
     suspend fun getPrifileByAccountId(accountId: String) : ProfileAccountModel?
+    suspend fun getPrifileById(accountId: String) : ReceiveChannel<ProfileAccountModel?>
 
     fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?

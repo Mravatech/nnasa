@@ -42,8 +42,8 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
     override suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus =
             connectionsRepository.getConnectedStatusById(userAccountId)
 
-    override suspend fun actionConnection(connectionAction: ConnectionAction) {
-        connectionsRepository.actionConnection(connectionAction)
+    override suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>) {
+        connectionsRepository.actionConnectionStatus(connectionAction, aids)
     }
 
     override suspend fun getDisconnectTimeoutDays(): Int = connectionsRepository.getDisconnectTimeoutDays()

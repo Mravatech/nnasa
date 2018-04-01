@@ -93,7 +93,7 @@ abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseV
             ConnectionStatus.SENT -> {
                 textView.text =
                         getSpannableText(EMPTY_CONNECTIONS_TEXT,
-                                fromDictionary(R.string.user_profile_connection_pending),
+                                fromDictionary(R.string.profile_request_was_sent),
                                 ContextCompat.getColor(textView.context, R.color.hintColor))
             }
             else -> {

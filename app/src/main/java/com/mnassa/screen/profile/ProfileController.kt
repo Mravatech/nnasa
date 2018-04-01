@@ -9,7 +9,6 @@ import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
-import com.mnassa.core.addons.bind
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.AccountType
@@ -45,12 +44,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         super.onViewCreated(view)
         adapter.viewModel = viewModel
         view.ivProfileBack.setOnClickListener { close() }
-        accountModel?.let {
-            viewModel.getProfileWithAccountId(it.id)
-            view.ivCropImage.avatarSquare(it.avatar)
-        } ?: run {
-            viewModel.getProfileWithAccountId(accountId)
-        }
         view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
                 view.tvTitleCollapsed.visibility = View.VISIBLE
@@ -58,6 +51,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 view.tvTitleCollapsed.visibility = View.GONE
             }
         })
+        val id = accountModel?.let {
+            view.ivCropImage.avatarSquare(it.avatar)
+            it.id
+        } ?: run { accountId }
+        viewModel.getProfileWithAccountId(id)
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter.profileModel = profileModel
@@ -72,21 +70,23 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
                 handleFab(profileModel.connectionStatus, view.fabProfile)
-                viewModel.handleException {
-                    viewModel.getPostsById(accountModel?.id ?: accountId).consumeEach {
-                        //TODO: bufferization
-                        when (it) {
-                            is ListItemEvent.Added -> {
-                                adapter.isLoadingEnabled = false
-                                adapter.dataStorage.add(it.item)
-                            }
-                            is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                            is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                            is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
-                            is ListItemEvent.Cleared -> adapter.dataStorage.clear()
-                        }
+            }
+        }
+        viewModel.getPostsById(id)
+        launchCoroutineUI {
+            viewModel.postChannel.consumeEach {
+                //TODO: bufferization
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.add(it.item)
                     }
-                }.bind(this@ProfileController)
+                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Cleared -> adapter.dataStorage.clear()
+                }
+
             }
         }
         launchCoroutineUI {
@@ -99,8 +99,19 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach {
-                dialog.connectionsDialog(view.context) {
-
+                when (it) {
+                    ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context) {
+                        viewModel.sendConnectionStatus(it, id, true)
+                    }
+                    ConnectionStatus.SENT -> dialog.connectionsDialog(view.context) {//todo set later on
+                        viewModel.sendConnectionStatus(it, id, true)
+                    }
+                    ConnectionStatus.RECOMMENDED -> dialog.connectionsDialog(view.context) {
+                        viewModel.sendConnectionStatus(it, id, true)
+                    }
+                    ConnectionStatus.REQUESTED -> dialog.connectionsDialog(view.context) {
+                        viewModel.sendConnectionStatus(it, id, true)
+                    }
                 }
             }
         }
@@ -118,12 +129,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             ConnectionStatus.RECOMMENDED -> {
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
-                fab.setImageResource(R.drawable.ic_recommend)
+                fab.setImageResource(R.drawable.ic_recommend)//todo icons
             }
             ConnectionStatus.SENT -> {
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
-                fab.setImageResource(R.drawable.ic_camera)
+                fab.setImageResource(R.drawable.ic_camera)//todo icons
             }
             ConnectionStatus.REQUESTED -> {
             }
@@ -169,11 +180,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun setTitle(profileModel: ProfileModel, view: View) {
         if (profileModel.profile.accountType == AccountType.PERSONAL) {
-            view.profileName.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
-            if (profileModel.profile.abilities.isNotEmpty()) {
-                view.profileSubName.text = profileModel.profile.abilities[0].place
-            }
-            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName} ${profileModel.profile.personalInfo?.lastName}"
+            view.profileName.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
+            view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
+            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
         } else {
             view.profileName.text = profileModel.profile.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.profile.organizationType

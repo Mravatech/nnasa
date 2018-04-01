@@ -13,6 +13,7 @@ import com.mnassa.data.network.bean.firebase.ConnectionDbStatuses
 import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
+import com.mnassa.data.network.bean.retrofit.request.ConnectionStatusRequest
 import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
@@ -53,8 +54,8 @@ class ConnectionsRepositoryImpl(
                 }
     }
 
-    override suspend fun actionConnection(connectionAction: ConnectionAction) {
-        firebaseConnectionsApi.connectionAction(connectionAction.name.toLowerCase())
+    override suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>) {
+        firebaseConnectionsApi.connectionAction(ConnectionStatusRequest(connectionAction.name.toLowerCase(), aids))
     }
 
     override suspend fun getConnectionRequests(): ReceiveChannel<List<ShortAccountModel>> {

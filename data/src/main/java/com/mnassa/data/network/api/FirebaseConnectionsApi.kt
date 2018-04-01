@@ -1,5 +1,6 @@
 package com.mnassa.data.network.api
 
+import com.mnassa.data.network.bean.retrofit.request.ConnectionStatusRequest
 import kotlinx.coroutines.experimental.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -13,6 +14,6 @@ import retrofit2.http.POST
 interface FirebaseConnectionsApi {
 
     @POST("/connectionAction")
-    fun connectionAction(@Body request: String): Deferred<Any>
+    fun connectionAction(@Body request: ConnectionStatusRequest): Deferred<Any>
 
 }

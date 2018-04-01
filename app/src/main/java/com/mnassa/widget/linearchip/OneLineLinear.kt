@@ -24,45 +24,44 @@ class OneLineLinear : LinearLayout {
             override fun onGlobalLayout() {
                 viewTreeObserver.removeOnGlobalLayoutListener(this)
                 var width = measuredWidth
-                var count = 0
-                val marginsWidth = +resources.getDimension(R.dimen.count_chip_view_inner_margin) * 2 + resources.getDimension(R.dimen.count_chip_view_margin) * 2
+                var count = START_COUNT_TO_DISPLAY
+                val marginsWidth = +resources.getDimension(R.dimen.count_chip_view_inner_margin) * HALF_VIEW + resources.getDimension(R.dimen.count_chip_view_margin) * HALF_VIEW
                 for (tag in tags) {
                     val tagView = SimpleChipView(context, tag)
-                    if (width > 0) {
+                    if (width > MIN_SPACE_ON_SCREEN_TO_ADD_VIEW) {
                         addView(tagView)
                         tagView.measure(0, 0)
                         val viewWidth = tagView.measuredWidth
                         width -= viewWidth + marginsWidth.toInt()
-                        if (width + marginsWidth < 0) {
+                        if (width + marginsWidth < MIN_SPACE_ON_SCREEN_TO_ADD_VIEW) {
                             removeView(tagView)
                             btnCount = CountChipView(context)
-                            btnCount.layoutParams =
-                                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                            LinearLayout.LayoutParams.MATCH_PARENT)
                             addView(btnCount)
                             break
                         }
                         count++
-                    }else{
+                    } else {
                         btnCount = CountChipView(context)
-                        btnCount.layoutParams =
-                                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT)
                         addView(btnCount)
                         break
                     }
                 }
                 val left = tags.size - count
-                if (left == 0 && ::btnCount.isInitialized) {
+                if (left == END_COUNT_TO_DISPLAY && ::btnCount.isInitialized) {
                     btnCount.visibility = View.GONE
                     return
                 } else if (::btnCount.isInitialized) {
                     btnCount.setText("+$left")
                 }
-
             }
         })
+    }
 
+    companion object {
+        const val HALF_VIEW = 2
+        const val MIN_SPACE_ON_SCREEN_TO_ADD_VIEW = 0
+        const val START_COUNT_TO_DISPLAY = 0
+        const val END_COUNT_TO_DISPLAY = 0
     }
 
 }
