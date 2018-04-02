@@ -8,11 +8,10 @@ import com.mnassa.data.network.bean.firebase.InvitationDbEntity
 import com.mnassa.data.network.bean.retrofit.request.ContactsRequest
 import com.mnassa.data.network.bean.retrofit.request.PhoneContactRequest
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
-import com.mnassa.data.network.exception.ExceptionHandler
-import com.mnassa.data.network.exception.handleException
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
-import com.mnassa.domain.model.impl.PhoneContactInvitedImpl
 import com.mnassa.domain.repository.InviteRepository
 import kotlinx.coroutines.experimental.async
 import timber.log.Timber

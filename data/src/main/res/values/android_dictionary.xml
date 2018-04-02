@@ -35,7 +35,16 @@
     <string name="_android_create_post_promote_title_INFO">Promote post (200 points)</string>
     <string name="_android_create_post_promote_description_INFO">Will be shown to all MNASSA community</string>
     <string name="_android_create_post_promote_short_INFO">all MNASSA community</string>
-    <string name="_android_create_post_share_to_INFO">to %s</string>
+    <string name="_android_create_post_share_to_prefix_INFO">to %s</string>
+    <string name="_android_create_post_replace_photo_INFO">Replace</string>
+    <string name="_android_create_post_delete_photo_INFO">Delete</string>
+    <string name="_android_tab_events_INFO">Events</string>
+    <string name="_android_post_details_create_comment_post_btn_INFO">Post</string>
+    <string name="_android_post_comment_edit_INFO">Edit</string>
+    <string name="_android_post_comment_delete_INFO">Delete</string>
+    <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
+    <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
+    <string name="_android_post_comment_edit_button_INFO">Edit</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

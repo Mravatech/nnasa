@@ -1,6 +1,7 @@
 package com.mnassa.screen.base
 
 import android.app.Dialog
+import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
@@ -14,6 +15,7 @@ import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.events.awaitFirst
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
@@ -122,6 +124,13 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
                 else -> throw IllegalStateException("Mnassa router not found for $this")
             }
         }
+
+    protected suspend fun getViewSuspend(): View {
+        val localView = view
+        if (localView != null) return localView
+        lifecycle.awaitFirst { it.ordinal >= Lifecycle.Event.ON_START.ordinal && it.ordinal < Lifecycle.Event.ON_STOP.ordinal }
+        return requireNotNull(view)
+    }
 
     private companion object {
         private val CONTEXT_SCOPES = WeakHashMap<MnassaController<*>, ScopeRegistry>()

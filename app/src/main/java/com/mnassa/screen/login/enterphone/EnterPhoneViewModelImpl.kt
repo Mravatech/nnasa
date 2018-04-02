@@ -7,6 +7,7 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -37,6 +38,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
                 when {
                     it.isVerified -> signIn(it)
                     else -> {
+                        Timber.d("MNSA_LOGIN requestVerificationCode -> openScreenChannel.send EnterVerificationCode")
                         hideProgress()
                         openScreenChannel.send(
                                 EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
@@ -58,6 +60,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
 
     private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
         withProgressSuspend {
+            Timber.d("MNSA_LOGIN signIn $phoneVerificationModel")
             val accounts = loginInteractor.signIn(phoneVerificationModel)
 
             val nextScreen = when {
@@ -69,6 +72,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
                 else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)
             }
 
+            Timber.d("MNSA_LOGIN signIn -> open $nextScreen")
             openScreenChannel.send(nextScreen)
         }
     }

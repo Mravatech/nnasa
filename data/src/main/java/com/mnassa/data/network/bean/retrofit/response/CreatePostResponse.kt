@@ -14,6 +14,6 @@ class CreatePostResponse : MnassaResponse() {
 internal class PostData {
     @SerializedName("id")
     internal lateinit var id: String
-    @SerializedName("post")
+    @SerializedName("post", alternate = ["repost"])
     internal lateinit var post: PostDbEntity
 }

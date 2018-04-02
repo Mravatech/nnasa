@@ -65,7 +65,6 @@ class RetrofitConfig(
                 }
             }
             response
-
         }
 
         val retrofitBuilder = Retrofit.Builder()

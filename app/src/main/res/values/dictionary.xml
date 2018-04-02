@@ -50,18 +50,45 @@
 
     <!-- ===================================== TAB HOME ======================================== -->
     <string name="tab_home_needs_title">_nav_title_needs</string>
-    <string name="tab_home_events_title">_events_nav_title</string>
+    <string name="tab_home_events_title">_android_tab_events</string>
     <string name="tab_home_title">_android_news_feed_title</string>
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
     <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
 
     <!-- ========================================= POSTS ======================================== -->
     <string name="need_prefix">_post_type_need_Info</string>
+    <string name="posts_header_need">_posts_header_iNeed</string>
+    <string name="posts_header_type">_posts_header_type_your_need</string>
+
+
+    <string name="post_delete_dialog_title">_question_postDeleting_title</string>
+    <string name="post_delete_dialog_description">_question_postDeleting_message</string>
+    <string name="post_delete_dialog_yes">_question_postDeleting_ok</string>
+    <string name="post_delete_dialog_no">_question_postDeleting_cancel</string>
+
+    <!-- comments -->
+    <string name="posts_comment_reply">_commentCell_Reply</string>
+    <string name="posts_comment_create">_android_post_details_create_comment_post_btn</string>
+    <string name="posts_comment_placeholder">_post_details_write_comment</string>
+    <string name="posts_comment_reply_to">_replyingIndicator_title</string>
+    <string name="posts_comment_edit">_android_post_comment_edit</string>
+    <string name="posts_comment_delete">_android_post_comment_delete</string>
+
+    <string name="posts_comment_edit_title">_android_post_comment_edit_title</string>
+    <string name="posts_comment_edit_button">_android_post_comment_edit_button</string>
+
+    <!-- recommend -->
+    <string name="posts_recommend_title">_postProfile_navTitle</string>
+    <string name="posts_recommend_best_matches">_accountsSelector_bestSuggest_title</string>
+    <string name="posts_recommend_other_connections">_android_post_recommend_other_connections</string>
+    <string name="posts_recommend_subtitle">_suggestionFromNewsfeed_startRecommendation</string>
+    <string name="posts_recommend_button">_post_details_recommend</string>
 
     <!-- create need -->
     <string name="need_create_title">_posts_header_iNeed</string>
+    <string name="need_create_prefix">_post_type_need_Info</string>
     <string name="need_create_action_button">_new_post_navbar_title_newPost</string>
-    <string name="need_create_share_to_prefix">_android_create_post_share_to</string>
+    <string name="need_create_share_to_prefix">_android_create_post_share_to_prefix</string>
     <string name="need_create_to_all_mnassa">_android_create_post_promote_short</string>
     <string name="need_create_to_newsfeed">_share_to_in_newsfeed</string>
     <string name="need_create_to_connections_other">_share_to_and_more_than</string>
@@ -70,10 +97,13 @@
     <string name="need_create_tags_hint">_new_post_tags_placeholder</string>
     <string name="need_create_extra">_new_post_extra_details</string>
     <string name="need_create_price_hint">_new_post_extra_details_price_placeholder</string>
+    <string name="need_create_replace_photo">_android_create_post_replace_photo</string>
+    <string name="need_create_delete_photo">_android_create_post_delete_photo</string>
 
     <string name="need_item_btn_you_and_connections_can_help">_postCell_youAndFriendsCanHelp</string>
     <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
     <string name="need_item_btn_you_can_help">_postCell_youCanHelp</string>
+    <string name="need_item_reposted_by">_repost_container_reposted_by</string>
 
     <!-- need details -->
     <string name="need_details_title">_android_need_details_title</string>
@@ -83,7 +113,8 @@
     <string name="need_action_repost">_post_details_alert_repost</string>
     <string name="need_action_report">_post_details_alert_report</string>
     <string name="need_action_edit">_post_details_alert_edit_post</string>
-    <string name="need_action_delete">_post_details_alert_delete_post</string>
+    <string name="need_action_delete">_android_create_post_delete_photo</string>
+    <string name="need_comments_count">_post_details_comments_header</string>
 
     <!-- sharing options -->
     <string name="sharing_options_title">_privacy_connections_nav_title</string>

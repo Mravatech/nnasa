@@ -1,7 +1,7 @@
 package com.mnassa.data.extensions
 
 import com.google.android.gms.tasks.Task
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 
 /**

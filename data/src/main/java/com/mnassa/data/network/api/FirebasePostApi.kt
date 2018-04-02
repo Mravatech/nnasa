@@ -1,7 +1,7 @@
 package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
-import com.mnassa.data.network.bean.retrofit.request.RemovePostRequest
+import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.bean.retrofit.response.CreatePostResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
@@ -23,4 +23,7 @@ interface FirebasePostApi {
 
     @POST("/itemView")
     fun viewItems(@Body request: ViewItemsRequest): Deferred<MnassaResponse>
+
+    @POST("/repost")
+    fun repostComment(@Body request: RepostCommentRequest): Deferred<CreatePostResponse>
 }

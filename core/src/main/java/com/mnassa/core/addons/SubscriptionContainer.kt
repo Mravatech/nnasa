@@ -2,6 +2,9 @@ package com.mnassa.core.addons
 
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.SendChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 2/20/2018.
@@ -108,3 +111,5 @@ fun <T> SubscriptionContainer.asyncUI(start: CoroutineStart = CoroutineStart.DEF
     result.bind(this)
     return result
 }
+
+suspend fun <T, R> ReceiveChannel<T>.consumeTo(sendChannel: SendChannel<R>, mapper: (T) -> R = { it as R }) = consumeEach { sendChannel.send(mapper(it)) }

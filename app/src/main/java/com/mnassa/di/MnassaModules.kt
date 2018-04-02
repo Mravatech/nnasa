@@ -14,7 +14,7 @@ import com.mnassa.country.CountryHelper
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
-import com.mnassa.data.network.exception.*
+import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.dialog.DialogHelper
@@ -70,8 +70,10 @@ import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
+import com.mnassa.screen.posts.need.details.PostDetailsViewModel
+import com.mnassa.screen.posts.need.details.PostDetailsViewModelImpl
+import com.mnassa.screen.posts.need.recommend.RecommendViewModel
+import com.mnassa.screen.posts.need.recommend.RecommendViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
@@ -122,11 +124,13 @@ private val viewModelsModule = Kodein.Module {
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
+    bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
-    bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
-    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
-    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
+    bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
+    bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
+
 }
 
 private val convertersModule = Kodein.Module {
@@ -136,9 +140,10 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
-        converter.registerConverter(TagConverter( instance() ))
+        converter.registerConverter(TagConverter(instance()))
         converter.registerConverter(LocationConverter::class.java)
         converter.registerConverter(PostConverter::class.java)
+        converter.registerConverter(CommentsConverter::class.java)
         converter.registerConverter(InvitationConverter::class.java)
         converter
     }
@@ -160,11 +165,10 @@ private val repositoryModule = Kodein.Module {
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
-    bind<PlaceFinderRepository>() with singleton {
-        PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
-    }
+    bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -180,44 +184,39 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance()) }
+    bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
 }
 
+private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
+
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
-    bind<Retrofit>() with singleton {
-        instance<RetrofitConfig>().makeRetrofit()
-    }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
+    bind<Retrofit>() with singleton { instance<RetrofitConfig>().makeRetrofit() }
 
     //firebase functions API
-    bind<FirebaseAuthApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseAuthApi::class.java)
-    }
-    bind<FirebaseDictionaryApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseDictionaryApi::class.java)
-    }
-    bind<FirebaseInviteApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseInviteApi::class.java)
-    }
-    bind<FirebaseTagsApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebaseTagsApi::class.java)
-    }
-    bind<FirebasePostApi>() with singleton {
-        val retrofit: Retrofit = instance()
-        retrofit.create(FirebasePostApi::class.java)
-    }
-
+    bindRetrofitApi<FirebaseAuthApi>()
+    bindRetrofitApi<FirebaseDictionaryApi>()
+    bindRetrofitApi<FirebaseInviteApi>()
+    bindRetrofitApi<FirebaseTagsApi>()
+    bindRetrofitApi<FirebasePostApi>()
+    bindRetrofitApi<FirebaseCommentsApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
+    bind<NetworkExceptionHandler>(COMMENTS_EXCEPTION_HANDLER) with singleton { CommentsExceptionHandler(instance(), instance()) }
     bind<FirebaseExceptionHandler>() with singleton { FirebaseExceptionHandlerImpl() }
     bind<ExceptionHandler>() with singleton { ExceptionHandlerImpl({ instance() }, { instance() }) }
+    bind<ExceptionHandler>(COMMENTS_EXCEPTION_HANDLER) with singleton { ExceptionHandlerImpl({ instance() }, { instance(COMMENTS_EXCEPTION_HANDLER) }) }
+}
+
+private inline fun <reified T : Any> Kodein.Builder.bindRetrofitApi() {
+    bind<T>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(T::class.java)
+    }
 }
 
 private val otherModule = Kodein.Module {

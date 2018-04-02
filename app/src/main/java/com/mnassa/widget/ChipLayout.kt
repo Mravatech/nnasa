@@ -24,6 +24,7 @@ import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
+import androidx.view.get
 
 /**
  * Created by IntelliJ IDEA.
@@ -106,6 +107,21 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             tags.add(tag)
         }
         return tags
+    }
+
+    fun setTags(tags: List<TagModel>) {
+        chips.clear()
+        val viewsToRemove = ArrayList<ChipView>()
+        for (i in 0 until flChipContainer.childCount) {
+            val view = flChipContainer[i]
+            if (view is ChipView) {
+                viewsToRemove.add(view)
+            }
+        }
+        viewsToRemove.forEach {
+            flChipContainer.removeView(it)
+        }
+        tags.forEach { addChip(it) }
     }
 
     private fun focusLeftView() {
