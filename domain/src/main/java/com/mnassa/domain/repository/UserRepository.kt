@@ -1,6 +1,8 @@
 package com.mnassa.domain.repository
 
+import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -8,6 +10,7 @@ import com.mnassa.domain.model.ShortAccountModel
 interface UserRepository {
     suspend fun setCurrentUserAccount(account: ShortAccountModel?)
     suspend fun getCurrentUser(): ShortAccountModel?
+    suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>
     suspend fun getAccounts(): List<ShortAccountModel>
 
     suspend fun createPersonAccount(

@@ -1,28 +1,29 @@
 package com.mnassa.widget
 
 import android.content.Context
+import android.support.annotation.ColorRes
+import android.support.annotation.FloatRange
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.LongSparseArray
 import android.view.KeyEvent
 import android.view.View
+import android.view.View.OnFocusChangeListener
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
+import android.widget.TextView
 import androidx.util.isEmpty
+import androidx.util.valueIterator
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
-import android.support.annotation.ColorRes
-import android.support.annotation.FloatRange
-import android.support.v4.content.ContextCompat
-import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.util.valueIterator
 import androidx.view.get
 
 /**
@@ -128,7 +129,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
             animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
         }
-        colorViews(tvChipHeader, vChipBottomLine, R.color.chip_default_edit_text_hint_color)
+        colorViews(tvChipHeader, vChipBottomLine, R.color.chipDefaultEditTextHintColor)
     }
 
     private fun focusOnView() {

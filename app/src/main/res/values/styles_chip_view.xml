@@ -28,7 +28,7 @@
     <style name="ChipBottomLine">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/bottom_line_height</item>
-        <item name="android:background">@color/chip_default_edit_text_hint_color</item>
+        <item name="android:background">@color/chipDefaultEditTextHintColor</item>
     </style>
 
     <style name="ChipItemView" parent="ChipCommon">

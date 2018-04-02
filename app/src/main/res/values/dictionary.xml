@@ -209,4 +209,24 @@
 
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
+
+    <!-- ========================================= INVITE ====================================== -->
+    <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
+    <string name="invite_search_hint">_android_invite_search_hint</string>
+    <string name="invite_phone_number_hint">_accEdit_cellPhone_title</string>
+    <string name="invite_invite_button_text">_newAccNetwork_navItem_Invite</string>
+    <string name="invite_invite_header">_settings_row_inviteFriends</string>
+    <string name="invite_invite_send_with_sms">_android_invite_send_with_sms</string>
+    <string name="invite_invite_send_with_more">_android_invite_send_with_more</string>
+    <string name="invite_invite_send_with_whats_app">_android_invite_send_with_whats_app</string>
+    <string name="invite_invite_select_way_to_send">_android_invite_select_send_way</string>
+    <string name="invite_invite_you_invite">_android_invite_title_invite</string>
+    <string name="invite_invite_you_invite_unknown_name">_inviteSharing_title_unknownName</string>
+    <string name="invite_invite_massage_whats_app">_inviteSharing_whatsappDefMessage</string>
+    <string name="invite_invite_massage_email">_inviteSharing_emailDefMessage</string>
+    <string name="invite_invite_invites_left">_android_invite_invites_left</string>
+    <string name="invite_invite_history_pending">_android_invite_history_pending</string>
+    <string name="invite_invite_history_registered">_android_invite_history_registered</string>
+    <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.mnassa.helper
+package com.mnassa.dialog
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -14,7 +15,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
+import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
+import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
 
@@ -64,6 +69,28 @@ class DialogHelper {
                 .negativeText(fromDictionary(R.string.post_delete_dialog_no))
                 .onPositive { _, _ -> onOkClick() }
                 .show()
+    }
+
+    fun chooseSendInviteWith(context: Context, name: String?, isWhatsAppInstalled: Boolean, onInviteWithClick: (inviteWith: Int) -> Unit) {
+        val dialog = Dialog(context, R.style.DialogInvite)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_invite_with)
+        dialog.tvShortMessageService.text = fromDictionary(R.string.invite_invite_send_with_sms)
+        dialog.tvMore.text = fromDictionary(R.string.invite_invite_send_with_more)
+        dialog.tvWhatsApp.text = fromDictionary(R.string.invite_invite_send_with_whats_app)
+        dialog.tvInviteDialogSubTitle.text = fromDictionary(R.string.invite_invite_select_way_to_send)
+        dialog.tvInviteDialogTitle.text = name?.let { fromDictionary(R.string.invite_invite_you_invite).format(it) }
+                ?: run { fromDictionary(R.string.invite_invite_you_invite_unknown_name) }
+        fun sendInvite(inviteWith: Int) {
+            onInviteWithClick(inviteWith)
+            dialog.dismiss()
+        }
+        if (isWhatsAppInstalled) {
+            dialog.llWhatsApp.setOnClickListener { sendInvite(INVITE_WITH_WHATS_APP) }
+        }
+        dialog.llShortMessageService.setOnClickListener { sendInvite(INVITE_WITH_SMS) }
+        dialog.llMore.setOnClickListener { sendInvite(INVITE_WITH_SHARE) }
+        dialog.show()
     }
 
     @SuppressLint("SetTextI18n")

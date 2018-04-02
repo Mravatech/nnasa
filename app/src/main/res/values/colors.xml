@@ -22,6 +22,7 @@
 
     <color name="red">#e10000</color>
 
+    <color name="paleBlue">#b5e2ec</color>
     <color name="backgroundMain">#f2f5f7</color>
     <color name="backgroundHighlight">@color/white</color>
     <color name="divider">#e8e8e8</color>
@@ -31,8 +32,13 @@
     <color name="tabLayoutInActive">#b2ffffff</color>
 
     <color name="commentRecommendedAccountBackground">#7fe4e8eb</color>
+    <color name="darkChipShadow">#66000000</color>
+    <color name="chipDefaultEditTextHintColor">#808080</color>
 
     <color name="moreImagesBackground">#6a000000</color>
+    <color name="blackAlphaLight">#32000000</color>
+    <color name="blackAlpha">#61000000</color>
+    <color name="blackDarkAlpha">#de000000</color>
 
     <color name="spentMoney">#c40e42</color>
     <color name="gainedMoney">@color/coolGreen</color>

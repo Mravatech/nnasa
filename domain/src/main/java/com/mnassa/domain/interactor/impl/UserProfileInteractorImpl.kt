@@ -1,8 +1,10 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -13,6 +15,10 @@ class UserProfileInteractorImpl(
 
     override suspend fun getProfile(): ShortAccountModel {
         return requireNotNull(userRepository.getCurrentUser())
+    }
+
+    override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
+        return userRepository.getCurrentUserWithChannel()
     }
 
     override suspend fun createPersonalAccount(firstName: String,
