@@ -4,11 +4,12 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.ChatDbModel
-import com.mnassa.data.network.bean.firebase.ChatLastMessageDbModel
+import com.mnassa.data.network.bean.firebase.ChatMessageDbModel
+import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ChatRoomModel
-import com.mnassa.domain.model.LastMessageModel
+import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.domain.model.impl.ChatRoomModelImpl
-import com.mnassa.domain.model.impl.LastMessageModelImpl
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,23 +20,22 @@ import com.mnassa.domain.model.impl.LastMessageModelImpl
 class ChatConverter : ConvertersContextRegistrationCallback {
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::chatListConvert)
+        convertersContext.registerConverter(this::messageChatConvert)
     }
 
     private fun chatListConvert(input: ChatDbModel, token: Any?, converter: ConvertersContext): ChatRoomModel {
         return ChatRoomModelImpl(
-                viewedAtDate = input.viewedAtDate,
-                viewedAt = input.viewedAt,
+                viewedAtDate = Date(input.viewedAtDate),
                 unreadCount = input.unreadCount,
-                lastMessageModel = input.lastMessage?.let { lastChatConvert(it) },
+                chatMessageModel = input.lastMessage?.let { converter.convert(it, ChatMessageModel::class.java) },
                 id = input.id,
-                members =  input.members?.keys?.toList()
+                members = input.members?.keys?.toList()
         )
     }
 
-    private fun lastChatConvert(input: ChatLastMessageDbModel): LastMessageModel {
-        return LastMessageModelImpl(
-                createdAt = input.createdAt,
-                createdAtDate = input.createdAtDate,
+    private fun messageChatConvert(input: ChatMessageDbModel, token: Any?, converter: ConvertersContext): ChatMessageModel {
+        return ChatMessageModelImpl(
+                createdAt = Date(input.createdAt),
                 creator = input.creator,
                 text = input.text,
                 type = input.type,

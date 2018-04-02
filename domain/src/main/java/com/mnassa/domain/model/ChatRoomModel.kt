@@ -1,5 +1,7 @@
 package com.mnassa.domain.model
 
+import java.util.*
+
 /**
  * Created by IntelliJ IDEA.
  * User: okli
@@ -8,17 +10,15 @@ package com.mnassa.domain.model
 
 interface ChatRoomModel : Model {
 
-    val viewedAtDate: Long
-    val viewedAt: String
+    val viewedAtDate: Date
     val unreadCount: Int
-    val lastMessageModel: LastMessageModel?
+    val chatMessageModel: ChatMessageModel?
     var members: List<String>?
 }
 
 
-interface LastMessageModel {
-    val createdAt: Long
-    val createdAtDate: String
+interface ChatMessageModel {
+    val createdAt: Date
     val creator: String
     val text: String
     val type: String

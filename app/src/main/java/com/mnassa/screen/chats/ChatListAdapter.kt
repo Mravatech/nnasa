@@ -33,7 +33,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     override val itemClass: Class<ChatRoomModel> = ChatRoomModel::class.java
 
     init {
-        itemsTheSameComparator = { first, second -> first.lastMessageModel?.text == second.lastMessageModel?.text }
+        itemsTheSameComparator = { first, second -> first.chatMessageModel?.text == second.chatMessageModel?.text }
         contentTheSameComparator = { first, second -> first == second }
         dataStorage = SortedDataStorage(itemClass, this)
     }
@@ -56,10 +56,9 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         override fun bind(item: ChatRoomModel) {
             itemView.llCharRoom.tag = this@ChatRoomViewHolder
             itemView.llCharRoom.setOnClickListener(onClickListener)
-            itemView.ivChatUserIcon.avatarRound(item.lastMessageModel?.account?.avatar)
-            itemView.tvLastMessage.text = item.lastMessageModel?.text
-            itemView.tvUserName.text = item.lastMessageModel?.account?.userName
-            itemView.tvMessageCame.text = item.viewedAt
+            itemView.ivChatUserIcon.avatarRound(item.chatMessageModel?.account?.avatar)
+            itemView.tvLastMessage.text = item.chatMessageModel?.text
+            itemView.tvUserName.text = item.chatMessageModel?.account?.userName
             item.takeIf { it.unreadCount > 0 }?.let {
                 itemView.tvMessageUnread.visibility = View.VISIBLE
                 itemView.tvMessageUnread.text = it.unreadCount.toString()
@@ -73,7 +72,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
 
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())//todo move from here
             sdf.timeZone = TimeZone.getTimeZone("GMT")
-            val time = item.viewedAtDate
+            val time = item.viewedAtDate.time
             val now = System.currentTimeMillis()
             val ago = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS)
             itemView.tvMessageCame.text = ago

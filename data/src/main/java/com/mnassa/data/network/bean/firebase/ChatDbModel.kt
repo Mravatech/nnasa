@@ -15,21 +15,17 @@ internal data class ChatDbModel(
         @Nullable
         override var id: String,
         @SerializedName("unreadCount") var unreadCount: Int,
-        @SerializedName("viewedAt") var viewedAt: String,
         @SerializedName("viewedAtDate") var viewedAtDate: Long,
-        @SerializedName("lastMessage") var lastMessage: ChatLastMessageDbModel?,
+        @SerializedName("lastMessage") var lastMessage: ChatMessageDbModel?,
         @SerializedName("members") var members: HashMap<String, Int>?
         ) : HasId
 
-internal data class ChatLastMessageDbModel(
+internal data class ChatMessageDbModel(
         @SerializedName("creator") var creator: String,
         @SerializedName("text") var text: String,
         @SerializedName("type") var type: String,
-        @SerializedName("createdAtDate") var createdAtDate: String,
-        @SerializedName("createdAt") var createdAt: Long
-)
-
-//internal data class ChatMembers(
-//        @SerializedName("creator") var creator: String,
-//        @SerializedName("text") var text: String,
-//)
+        @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName("id")
+        @Nullable
+        override var id: String
+): HasId

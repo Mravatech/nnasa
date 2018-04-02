@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbarChatMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <LinearLayout
+        android:id="@+id/llNoMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_chat_disabled" />
+
+        <TextView
+            android:id="@+id/tvNoMessages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:textColor="#abafb3"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:text="No messages here yet…" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMessages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llCreateMessageContainer"
+        android:layout_below="@+id/toolbarChatMessage" />
+
+    <RelativeLayout
+        android:id="@+id/llCreateMessageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <ImageView
+            android:id="@+id/ivAttach"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:paddingEnd="20dp"
+            android:paddingStart="20dp"
+            app:srcCompat="@drawable/ic_attach" />
+
+        <EditText
+            android:id="@+id/etWriteMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/ivAttach"
+            android:layout_toStartOf="@+id/btnSend"
+            android:background="@color/backgroundTransparent"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:textColor="#abafb3"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:text="Write a message…" />
+
+        <TextView
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:background="@color/backgroundTransparent"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:paddingEnd="20dp"
+            android:paddingStart="20dp"
+            android:textColor="#abafb3"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:text="POST" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

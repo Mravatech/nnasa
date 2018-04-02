@@ -8,8 +8,8 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
-import com.mnassa.screen.invite.InviteController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -30,7 +30,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
         view.rvMessages.layoutManager = LinearLayoutManager(view.context)
         view.rvMessages.addItemDecoration(ChatRoomItemDecoration(ContextCompat.getDrawable(view.context, R.drawable.chat_decorator)!!))
         view.rvMessages.adapter = adapter
-        adapter.onItemClickListener = { open(InviteController.newInstance()) }
+        adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(requireNotNull(it.chatMessageModel).account), it.id)) }
         view.tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
         launchCoroutineUI {
             viewModel.getMessagesChannel().consumeEach {

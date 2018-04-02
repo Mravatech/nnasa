@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.ChatInteractor
+import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.repository.ChatRepository
@@ -16,5 +17,8 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
 
     override suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>> =
             chatRepository.listOfChats()
+
+    override suspend fun listOfMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> =
+            chatRepository.listOfMessages(chatId)
 
 }

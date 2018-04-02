@@ -34,6 +34,8 @@ import com.mnassa.screen.buildnetwork.BuildNetworkViewModel
 import com.mnassa.screen.buildnetwork.BuildNetworkViewModelImpl
 import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
+import com.mnassa.screen.chats.message.ChatMessageViewModel
+import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
 import com.mnassa.screen.connections.ConnectionsViewModelImpl
 import com.mnassa.screen.connections.allconnections.AllConnectionsViewModel
@@ -117,6 +119,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
+    bind<ChatMessageViewModel>() with provider { ChatMessageViewModelImpl(instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }

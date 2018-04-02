@@ -4,10 +4,13 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.network.bean.firebase.ChatDbModel
+import com.mnassa.data.network.bean.firebase.ChatMessageDbModel
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_LIST
+import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_MESSAGES
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_TYPE
+import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.repository.ChatRepository
@@ -41,13 +44,27 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         mapper = converter.convertFunc(ChatRoomModel::class.java)
                 )
                 .map {
-                    it.item.lastMessageModel?.account = userRepository
+                    it.item.chatMessageModel?.account = userRepository
                             .getById(it.item.members?.first { it != userId }
-                            ?: "")
+                                    ?: "")
                     it
                 }
                 .filter {
-                    it.item.lastMessageModel?.account != null
+                    it.item.chatMessageModel?.account != null
                 }
+    }
+
+    override suspend fun listOfMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
+        val userId = requireNotNull(userRepository.getAccountId())
+        return db.child(TABLE_CHAT)
+                .child(TABLE_CHAT_MESSAGES)
+                .child(TABLE_CHAT_TYPE)
+                .child(userId)
+                .child(chatId)
+                .apply { keepSynced(true) }
+                .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = converter.convertFunc(ChatMessageModel::class.java)
+                )
     }
 }

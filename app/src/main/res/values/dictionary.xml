@@ -160,6 +160,9 @@
     <!-- ========================================= CHAT ====================================== -->
 
     <string name="chats_no_conversation">_chats_controller_empty_state_title</string>
+    <string name="chats_no_messages">_chat_controller_empty_state_title</string>
+    <string name="chats_send_messages_post">_android_message_chat_post</string>
+    <string name="chats_send_messages_write">_chat_controller_message_placeholder</string>
 
     <!-- ========================================= INVITE ====================================== -->
     <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
