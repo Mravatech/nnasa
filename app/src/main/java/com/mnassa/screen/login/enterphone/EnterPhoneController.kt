@@ -12,9 +12,8 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.delegate.CountryDelegate
+import com.mnassa.country.CountryHelper
 import com.mnassa.dialog.DialogHelper
-import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.onImeActionDone
@@ -40,7 +39,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
     private val dialogHelper: DialogHelper by instance()
-    private val countryCodes by CountryDelegate()
+    private val countryHelper: CountryHelper by instance()
 
     protected val phoneNumber: String
         get() {
@@ -97,7 +96,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
 
-            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryCodes)
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()

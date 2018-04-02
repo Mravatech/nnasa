@@ -1,20 +1,19 @@
-package com.mnassa.delegate
+package com.mnassa.country
 
 import com.mnassa.R
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.screen.login.enterphone.CountryCode
 import com.mnassa.screen.login.enterphone.PhonePrefix
 import com.mnassa.translation.fromDictionary
-import kotlin.reflect.KProperty
 
 /**
  * Created by IntelliJ IDEA.
  * User: okli
- * Date: 3/21/2018
+ * Date: 4/2/2018
  */
-class CountryDelegate {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): MutableList<CountryCode>{
-        return mutableListOf(
+
+class CountryHelper {
+        val countries = mutableListOf(
                 CountryCode(
                         flagRes = R.drawable.ic_flag_of_saudi_arabia,
                         name = TranslatedWordModelImpl(fromDictionary(R.string.country_saudi_arabia)),
@@ -32,5 +31,4 @@ class CountryDelegate {
                         name = TranslatedWordModelImpl(fromDictionary(R.string.country_canada)),
                         phonePrefix = PhonePrefix.Canada)
         )
-    }
 }

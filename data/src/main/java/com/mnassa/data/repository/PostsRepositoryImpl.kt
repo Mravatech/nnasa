@@ -3,7 +3,6 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
-import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.extensions.toValueChannelWithPagination
@@ -11,8 +10,6 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
-import com.mnassa.data.network.bean.retrofit.request.RemovePostRequest
-import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
 import com.mnassa.data.network.stringValue
@@ -68,7 +65,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun sendViewed(ids: List<String>) {
-        postApi.viewItems(ViewItemsRequest(ids, NetworkContract.ItemType.POST)).handleException(exceptionHandler)
+//        postApi.viewItems(ViewItemsRequest(ids, NetworkContract.ItemType.POST)).handleException(exceptionHandler)
     }
 
     override suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post {

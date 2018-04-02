@@ -9,7 +9,7 @@ import android.widget.AdapterView
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.delegate.CountryDelegate
+import com.mnassa.country.CountryHelper
 import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
@@ -37,6 +37,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     override val viewModel: InviteViewModel by instance()
     private var adapter: InviteAdapter = InviteAdapter()
     private val dialog: DialogHelper by instance()
+    private val countryHelper: CountryHelper by instance()
     private val intentHelper: IntentHelper by instance()
 
     private val phoneNumber: String
@@ -49,46 +50,10 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                     view.etPhoneNumberTail.text.toString()
         }
 
-    private val countryCodes by CountryDelegate()
-
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        view.tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
-        view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
-        view.etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
-        view.etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
-        view.btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
-        view.spinnerPhoneCode.adapter = CountryCodeAdapter(view.spinnerPhoneCode.context, countryCodes)
-        view.spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
-        }
-        view.etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
-            view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
-            adapter.searchByNumber(it)
-        })
-        view.btnInvite.setOnClickListener {
-            viewModel.checkPhoneContact(PhoneContactImpl(
-                    phoneNumber + view.etPhoneNumberTail.text.toString(),
-                    adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
-                            ?: EMPTY_STRING, null))
-        }
-        launchCoroutineUI {
-            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
-            if (permissionsResult.isAllGranted) {
-                viewModel.retrievePhoneContacts()
-                viewModel.phoneContactChannel.consumeEach {
-                    view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
-                    adapter.setData(it, viewModel)
-                    view.rvInviteToMnassa.adapter = adapter
-                }
-            } else {
-                Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
-                            view.context.openApplicationSettings()
-                        }.show()
-            }
-        }
+        initViews(view)
+        checkReadContactPermission(view)
         launchCoroutineUI {
             viewModel.phoneSelectedChannel.consumeEach {
                 view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
@@ -110,6 +75,48 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             viewModel.invitesCountChannel.consumeEach {
                 view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
+        }
+    }
+
+    private fun checkReadContactPermission(view: View) {
+        launchCoroutineUI {
+            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+            if (permissionsResult.isAllGranted) {
+                viewModel.retrievePhoneContacts()
+                viewModel.phoneContactChannel.consumeEach {
+                    view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
+                    adapter.setData(it, viewModel)
+                    view.rvInviteToMnassa.adapter = adapter
+                }
+            } else {
+                Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
+                            view.context.openApplicationSettings()
+                        }.show()
+            }
+        }
+    }
+
+    private fun initViews(view: View) {
+        view.tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
+        view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
+        view.etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
+        view.etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
+        view.btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
+        view.spinnerPhoneCode.adapter = CountryCodeAdapter(view.spinnerPhoneCode.context, countryHelper.countries)
+        view.spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+        }
+        view.etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
+            view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
+            adapter.searchByNumber(it)
+        })
+        view.btnInvite.setOnClickListener {
+            viewModel.checkPhoneContact(PhoneContactImpl(
+                    phoneNumber + view.etPhoneNumberTail.text.toString(),
+                    adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
+                            ?: EMPTY_STRING, null))
         }
         view.etInviteSearch.addTextChangedListener(
                 SimpleTextWatcher { searchWord ->
