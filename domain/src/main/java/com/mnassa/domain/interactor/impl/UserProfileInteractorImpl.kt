@@ -47,11 +47,11 @@ class UserProfileInteractorImpl(
     }
 
     override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
-        return userRepository.getPrifileByAccountId(accountId)
+        return userRepository.getProfileByAccountId(accountId)
     }
 
     override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> =
-            userRepository.getPrifileById(accountId)
+            userRepository.getProfileById(accountId)
 
     override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
         userRepository.updateCompanyAccount(account)

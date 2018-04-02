@@ -7,6 +7,7 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.avatarSquare
@@ -46,8 +47,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         setupViews(view)
         playServiceHelper.googleApiClient.connect()
         personSelectedPlaceId = accountModel.location?.placeId
-        view.rInfoBtnFemale.isChecked = accountModel.gender.name.toLowerCase() == view.rInfoBtnMale.text.toString().toLowerCase()
-        view.rInfoBtnMale.isChecked = accountModel.gender.name.toLowerCase() == view.rInfoBtnMale.text.toString().toLowerCase()
+        view.rInfoBtnFemale.isChecked = accountModel.gender == Gender.MALE
+        view.rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
         val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
         view.actvPersonCity.setText(accountModel.location?.formatted())
         view.actvPersonCity.setAdapter(placeAutocompleteAdapter)

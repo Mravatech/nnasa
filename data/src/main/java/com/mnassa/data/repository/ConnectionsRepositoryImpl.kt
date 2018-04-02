@@ -55,7 +55,7 @@ class ConnectionsRepositoryImpl(
     }
 
     override suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>) {
-        firebaseConnectionsApi.connectionAction(ConnectionStatusRequest(connectionAction.name.toLowerCase(), aids))
+        firebaseConnectionsApi.connectionAction(ConnectionStatusRequest(getConnectionAction(connectionAction), aids))
     }
 
     override suspend fun getConnectionRequests(): ReceiveChannel<List<ShortAccountModel>> {
@@ -150,4 +150,18 @@ class ConnectionsRepositoryImpl(
                 .toListChannel<ShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, ShortAccountModel::class.java) }
     }
+
+    private fun getConnectionAction(action: ConnectionAction) =
+            when (action) {
+
+                ConnectionAction.CONNECT -> NetworkContract.ConnectionAction.CONNECT
+                ConnectionAction.ACCEPT -> NetworkContract.ConnectionAction.ACCEPT
+                ConnectionAction.DECLINE -> NetworkContract.ConnectionAction.DECLINE
+                ConnectionAction.DISCONNECT -> NetworkContract.ConnectionAction.DISCONNECT
+                ConnectionAction.MUTE -> NetworkContract.ConnectionAction.MUTE
+                ConnectionAction.UN_MUTE -> NetworkContract.ConnectionAction.UN_MUTE
+                ConnectionAction.REVOKE -> NetworkContract.ConnectionAction.REVOKE
+                else -> throw IllegalArgumentException("No Such ConnectionStatus Type")
+            }
+
 }

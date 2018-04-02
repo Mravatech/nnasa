@@ -103,7 +103,7 @@ class UserRepositoryImpl(
                 userName = account.userName,
                 showContactEmail = account.showContactEmail,
                 language = account.language,
-                type = account.accountType.name.toLowerCase(),
+                type = getAccountType(account.accountType),
                 birthday = account.birthday,
                 contactPhone = account.contactPhone,
                 abilities = converter.convertCollection(account.abilities, Ability::class.java),
@@ -112,7 +112,7 @@ class UserRepositoryImpl(
                 firstName = account.personalInfo?.firstName,
                 showContactPhone = account.showContactPhone,
                 contactEmail = account.contactEmail,
-                gender = account.gender.name.toLowerCase()
+                gender = getGender(account.gender)
         )).handleException(exceptionHandler)
     }
 
@@ -123,7 +123,7 @@ class UserRepositoryImpl(
                 userName = account.userName,
                 showContactEmail = account.showContactEmail,
                 language = account.language,
-                type = account.accountType.name.toLowerCase(),
+                type = getAccountType(account.accountType),
                 birthday = account.birthday,
                 contactPhone = account.contactPhone,
                 abilities = converter.convertCollection(account.abilities, Ability::class.java),
@@ -132,7 +132,7 @@ class UserRepositoryImpl(
                 firstName = account.personalInfo?.firstName,
                 showContactPhone = account.showContactPhone,
                 contactEmail = account.contactEmail,
-                gender = account.gender.name.toLowerCase(),
+                gender = getGender(account.gender),
                 locationId = account.locationId,
                 interests = account.interests,
                 offers = account.offers
@@ -147,7 +147,7 @@ class UserRepositoryImpl(
                 contactEmail = account.contactEmail,
                 userName = account.userName,
                 language = account.language,
-                type = account.accountType.name.toLowerCase(),
+                type = getAccountType(account.accountType),
                 founded = account.founded,
                 id = requireNotNull(getAccountId()),
                 website = account.website,
@@ -163,7 +163,7 @@ class UserRepositoryImpl(
                 contactEmail = account.contactEmail,
                 userName = account.userName,
                 language = account.language,
-                type = account.accountType.name.toLowerCase(),
+                type = getAccountType(account.accountType),
                 founded = account.founded,
                 id = requireNotNull(getAccountId()),
                 website = account.website,
@@ -174,7 +174,7 @@ class UserRepositoryImpl(
         )).handleException(exceptionHandler)
     }
 
-    override suspend fun getPrifileByAccountId(accountId: String): ProfileAccountModel? {
+    override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
         val dbChild = if (accountId == getAccountId()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
         val profile = db.child(dbChild)
                 .child(accountId)
@@ -183,14 +183,13 @@ class UserRepositoryImpl(
         return converter.convert(profile)
     }
 
-    override suspend fun getPrifileById(accountId: String): ReceiveChannel<ProfileAccountModel?> {
+    override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> {
         val dbChild = if (accountId == getAccountId()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
         return db.child(dbChild)
                 .child(accountId)
                 .apply { keepSynced(true) }
                 .toValueChannel<ProfileDbEntity>(exceptionHandler)
                 .map { converter.convert(it!!, ProfileAccountModel::class.java) }
-//        return converter.convert(profile)
     }
 
     override suspend fun getFirebaseToken(): String? {
@@ -212,6 +211,16 @@ class UserRepositoryImpl(
                 .await<ShortAccountDbEntity>(exceptionHandler)
                 ?.run { converter.convert(this) }
 
+    }
+
+    private fun getAccountType(type: AccountType) = when (type) {
+        AccountType.PERSONAL -> NetworkContract.AccountType.PERSONAL
+        AccountType.ORGANIZATION -> NetworkContract.AccountType.ORGANIZATION
+    }
+
+    private fun getGender(gender: Gender) = when (gender) {
+        Gender.FEMALE -> NetworkContract.Gender.FEMALE
+        Gender.MALE -> NetworkContract.Gender.MALE
     }
 
     companion object {
