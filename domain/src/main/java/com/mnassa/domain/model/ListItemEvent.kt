@@ -14,6 +14,6 @@ sealed class ListItemEvent<T : Any>() {
     class Cleared<T : Any> : ListItemEvent<T>()
 
     override fun toString(): String {
-        return super.toString() + "; item: ${if (this::item.isInitialized) item else "_UNINITIALIZED_"}"
+        return "${super.toString()}; item: ${if (this::item.isInitialized) item else "_UNINITIALIZED_"}"
     }
 }

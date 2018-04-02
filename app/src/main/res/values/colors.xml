@@ -27,13 +27,13 @@
     <color name="backgroundHighlight">@color/white</color>
     <color name="divider">#e8e8e8</color>
     <color name="backgroundTransparent">#00000000</color>
+    <color name="darkChipShadow">#66000000</color>
+    <color name="chipDefaultEditTextHintColor">#808080</color>
     <color name="dark_chip_shadow">#66000000</color>
     <color name="chip_default_edit_text_hint_color">#808080</color>
     <color name="tabLayoutInActive">#b2ffffff</color>
 
     <color name="commentRecommendedAccountBackground">#7fe4e8eb</color>
-    <color name="darkChipShadow">#66000000</color>
-    <color name="chipDefaultEditTextHintColor">#808080</color>
 
     <color name="moreImagesBackground">#6a000000</color>
     <color name="blackAlphaLight">#32000000</color>

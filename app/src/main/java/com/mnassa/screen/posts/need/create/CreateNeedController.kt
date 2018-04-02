@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.need.create
 import android.Manifest
 import android.app.Activity
 import android.arch.lifecycle.Lifecycle
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -52,6 +53,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private val dialogHelper: DialogHelper by instance()
     private val attachedImagesAdapter = AttachedImagesRVAdapter()
     private var placeId: String? = null
+    private var imageToReplace: AttachedImage? = null
 
 
     override fun onViewCreated(view: View) {
@@ -102,33 +104,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             attachedImagesAdapter.onAddImageClickListener = {
                 dialogHelper.showSelectImageSourceDialog(context) { launchCoroutineUI { selectImage(it) } }
             }
-            var imageToReplace: AttachedImage? = null
-            onActivityResult.subscribe {
-                if (it.requestCode != REQUEST_CODE_CROP) return@subscribe
-                when (it.resultCode) {
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
-                        uri?.let {
-                            val imageToReplaceLocal = imageToReplace
-                            val newImage = AttachedImage.LocalImage(uri)
-                            if (imageToReplaceLocal != null) {
-                                attachedImagesAdapter.replace(imageToReplaceLocal, newImage)
-                            } else {
-                                attachedImagesAdapter.dataStorage.add(newImage)
-                            }
-                            imageToReplace = null
-                        }
-                    }
-                    CropActivity.GET_PHOTO_ERROR -> {
-                        imageToReplace = null
-                        Timber.e("CropActivity.GET_PHOTO_ERROR")
-                    }
-                }
-            }
-            attachedImagesAdapter.onRemoveImageClickListener = { position, item ->
+            attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
                 attachedImagesAdapter.dataStorage.remove(item)
             }
-            attachedImagesAdapter.onReplaceImageClickListener = { position, item ->
+            attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
                 imageToReplace = item
                 attachedImagesAdapter.onAddImageClickListener()
             }
@@ -141,6 +120,30 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         launchCoroutineUI {
             viewModel.closeScreenChannel.consumeEach { close() }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_CODE_CROP) return
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                val uri: Uri? = data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
+                uri?.let {
+                    val imageToReplaceLocal = imageToReplace
+                    val newImage = AttachedImage.LocalImage(uri)
+                    if (imageToReplaceLocal != null) {
+                        attachedImagesAdapter.replace(imageToReplaceLocal, newImage)
+                    } else {
+                        attachedImagesAdapter.dataStorage.add(newImage)
+                    }
+                    imageToReplace = null
+                }
+            }
+            CropActivity.GET_PHOTO_ERROR -> {
+                imageToReplace = null
+                Timber.e("CropActivity.GET_PHOTO_ERROR")
+            }
         }
     }
 
