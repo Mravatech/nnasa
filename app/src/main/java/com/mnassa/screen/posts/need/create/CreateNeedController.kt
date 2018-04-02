@@ -100,7 +100,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
 
             rvImages.layoutManager = LinearLayoutManager(context)
-//            rvImages.isNestedScrollingEnabled = false
             rvImages.adapter = attachedImagesAdapter
             attachedImagesAdapter.onAddImageClickListener = {
                 dialogHelper.showSelectImageSourceDialog(context) { launchCoroutineUI { selectImage(it) } }
@@ -128,10 +127,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                     }
                 }
             }
-            attachedImagesAdapter.onRemoveImageClickListener = { position, item ->
+            attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
                 attachedImagesAdapter.dataStorage.remove(item)
             }
-            attachedImagesAdapter.onReplaceImageClickListener = { position, item ->
+            attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
                 imageToReplace = item
                 attachedImagesAdapter.onAddImageClickListener()
             }

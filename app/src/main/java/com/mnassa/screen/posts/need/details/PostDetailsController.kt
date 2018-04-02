@@ -103,10 +103,11 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        commentsAdapter.onBindHeader = { headerLayout.value = it }
+        commentsAdapter.onReplyClick = { comment -> replyTo = comment }
+        commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
+
         with(view) {
-            commentsAdapter.onBindHeader = { headerLayout.value = it }
-            commentsAdapter.onReplyClick = { comment -> replyTo = comment }
-            commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
             rvPostDetails.adapter = commentsAdapter
             rvAccountsToRecommend.adapter = accountsToRecommendAdapter
             accountsToRecommendAdapter.onDataSourceChangedListener = {
@@ -114,16 +115,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 updatePostCommentButtonState()
             }
 
-            btnCommentPost.setOnClickListener {
-                val editedCommentLocal = editedComment
-                if (editedCommentLocal != null) {
-                    viewModel.editComment(editedCommentLocal, etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
-                } else viewModel.createComment(etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
-                etCommentText.text = null
-                replyTo = null
-                editedComment = null
-                recommendedAccounts = emptyList()
-            }
+            btnCommentPost.setOnClickListener { onPostCommentClick() }
             updatePostCommentButtonState()
 
             etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
@@ -207,6 +199,19 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         headerLayout.value = null
         headerLayout.clear()
         super.onViewDestroyed(view)
+    }
+
+    private fun onPostCommentClick() {
+        with(view ?: return) {
+            val editedCommentLocal = editedComment
+            if (editedCommentLocal != null) {
+                viewModel.editComment(editedCommentLocal, etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
+            } else viewModel.createComment(etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
+            etCommentText.text = null
+            replyTo = null
+            editedComment = null
+            recommendedAccounts = emptyList()
+        }
     }
 
     private fun showMyPostMenu(view: View, post: PostModel) {
