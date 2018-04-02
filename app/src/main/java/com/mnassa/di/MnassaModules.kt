@@ -10,19 +10,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.mnassa.AppInfoProviderImpl
-import com.mnassa.country.CountryHelper
+import com.mnassa.helper.CountryHelper
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
-import com.mnassa.data.network.RetrofitConfig
-import com.mnassa.data.network.api.*
-import com.mnassa.data.network.exception.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.helper.DialogHelper
-import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.other.AppInfoProvider
@@ -31,9 +26,7 @@ import com.mnassa.domain.repository.*
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.helper.PopupMenuHelper
-import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.google.PlayServiceHelper
-import com.mnassa.intent.IntentHelper
+import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
@@ -68,10 +61,6 @@ import com.mnassa.screen.invite.InviteViewModel
 import com.mnassa.screen.invite.InviteViewModelImpl
 import com.mnassa.screen.invite.history.HistoryViewModel
 import com.mnassa.screen.invite.history.HistoryViewModelImpl
-import com.mnassa.screen.login.entercode.EnterCodeViewModel
-import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
-import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
@@ -100,7 +89,6 @@ import com.mnassa.screen.wallet.WalletViewModel
 import com.mnassa.screen.wallet.WalletViewModelImpl
 import com.mnassa.screen.wallet.send.SendPointsViewModel
 import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
-import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
@@ -147,7 +135,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
-    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
+    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
     bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
     bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
@@ -251,6 +239,6 @@ private val otherModule = Kodein.Module {
     bind<DialogHelper>() with singleton { DialogHelper() }
     bind<PopupMenuHelper>() with singleton { PopupMenuHelper(instance()) }
     bind<IntentHelper>() with singleton { IntentHelper() }
-    bind<CountryHelper>() with singleton { CountryHelper() }
+    bind<CountryHelper>() with singleton { CountryHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }

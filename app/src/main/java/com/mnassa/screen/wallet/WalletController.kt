@@ -8,9 +8,9 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.wallet.send.SendPointsController
 import com.mnassa.translation.fromDictionary

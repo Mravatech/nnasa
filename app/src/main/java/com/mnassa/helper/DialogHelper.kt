@@ -1,4 +1,4 @@
-package com.mnassa.dialog
+package com.mnassa.helper
 
 import android.annotation.SuppressLint
 import android.app.Dialog
