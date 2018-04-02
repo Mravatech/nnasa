@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight">
+    android:background="@color/background_highlighted">
 
     <RelativeLayout
         android:id="@+id/rvConnectionRoot"
@@ -62,7 +62,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="@dimen/spacing_vertical"
-            android:tint="@color/coolGray"
+            android:tint="@color/gray_cool"
             app:srcCompat="@drawable/ic_more_vert_black_24dp" />
 
     </RelativeLayout>

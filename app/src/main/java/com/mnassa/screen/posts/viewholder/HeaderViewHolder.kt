@@ -2,8 +2,6 @@ package com.mnassa.screen.posts.viewholder
 
 import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.TypefaceCompat
-import android.support.v4.graphics.TypefaceCompatUtil
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -38,7 +36,7 @@ class HeaderViewHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<Any>(ite
 
             val tail = fromDictionary(R.string.posts_header_type)
             val startTailSpan = text.length
-            val tailColor = ContextCompat.getColor(parent.context, R.color.coolGray)
+            val tailColor = ContextCompat.getColor(parent.context, R.color.gray_cool)
             text.append(tail)
             text.setSpan(ForegroundColorSpan(tailColor), startTailSpan, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 

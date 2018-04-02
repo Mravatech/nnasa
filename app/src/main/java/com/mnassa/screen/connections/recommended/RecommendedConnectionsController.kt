@@ -23,13 +23,13 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onConnectClickListener = { viewModel.connect(it) }
+
         with(view) {
             toolbar.title = fromDictionary(R.string.recommended_connections_title)
 
             rvRecommendedConnections.layoutManager = LinearLayoutManager(context)
             rvRecommendedConnections.adapter = adapter
-
-            adapter.onConnectClickListener = { viewModel.connect(it) }
         }
 
         adapter.isLoadingEnabled = true

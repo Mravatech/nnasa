@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginTop="@dimen/spacing_vertical"
-            android:textColor="@color/coolGray"
+            android:textColor="@color/gray_cool"
             tools:text="Skip this step" />
 
     </RelativeLayout>

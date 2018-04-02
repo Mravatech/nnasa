@@ -5,7 +5,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="menu_backgroundColor">#ccffffff</item>
-        <item name="menu_colorNormal">@color/colorAccent</item>
+        <item name="menu_colorNormal">@color/accent</item>
         <item name="menu_colorPressed">@color/tealish</item>
         <item name="menu_labels_singleLine">true</item>
         <item name="menu_labels_ellipsize">end</item>
@@ -18,7 +18,7 @@
         <item name="fab_size">mini</item>
         <item name="android:src">@drawable/ic_edit_white_24dp</item>
         <item name="fab_label">@string/app_name</item>
-        <item name="fab_colorNormal">@color/colorAccent</item>
+        <item name="fab_colorNormal">@color/accent</item>
         <item name="fab_colorPressed">@color/tealish</item>
     </style>
 </resources>

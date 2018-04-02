@@ -29,7 +29,7 @@
     <dimen name="btn_corner_radius">2dp</dimen>
     <color name="control_highlight">#1f000000</color>
     <color name="btn_pressed">@color/cerulean</color>
-    <color name="btn_active">@color/colorAccent</color>
-    <color name="btn_disabled">@color/coolGrayAlpha</color>
+    <color name="btn_active">@color/accent</color>
+    <color name="btn_disabled">@color/gray_cool_transparent</color>
 
 </resources>

@@ -1,9 +1,11 @@
 package com.mnassa.screen.main
 
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import android.view.View
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification
 import com.bluelinelabs.conductor.Controller
@@ -61,15 +63,17 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
         with(view) {
             vpMain.adapter = adapter
-            vpMain.offscreenPageLimit = adapter.count
+//            vpMain.offscreenPageLimit = adapter.count
 
+            bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
+            bnMain.accentColor = ContextCompat.getColor(view.context, R.color.accent)
             bnMain.addItems(
-                    //TODO: design needed
+
                     mutableListOf(
-                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
-                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
-                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent),
-                            AHBottomNavigationItem(R.string.app_name, R.drawable.ic_home_white_24dp, R.color.colorAccent)
+                            AHBottomNavigationItem(0, R.drawable.ic_tab_home, R.color.accent),
+                            AHBottomNavigationItem(0, R.drawable.ic_tab_connections, R.color.accent),
+                            AHBottomNavigationItem(0, R.drawable.ic_tab_notifications, R.color.accent),
+                            AHBottomNavigationItem(0, R.drawable.ic_tab_chat, R.color.accent)
                     )
             )
 
@@ -114,11 +118,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
     private fun setCounter(pageIndex: Int, counterValue: Int) {
         val view = view ?: return
 
-        //TODO: design for notification badges
         val notification = if (counterValue != 0) AHNotification.Builder()
                 .setText(counterValue.toString())
-//                .setBackgroundColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_back))
-//                .setTextColor(ContextCompat.getColor(this@DemoActivity, R.color.color_notification_text))
+                .setBackgroundColor(ContextCompat.getColor(view.context, R.color.accent))
+                .setTextColor(ContextCompat.getColor(view.context, R.color.white))
                 .build() else null
         view.bnMain.setNotification(notification, pageIndex)
 

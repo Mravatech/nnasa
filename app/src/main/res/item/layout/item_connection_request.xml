@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight">
+    android:background="@color/background_highlighted">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -63,7 +63,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="@dimen/spacing_vertical"
-            android:tint="@color/coolGray"
+            android:tint="@color/gray_cool"
             app:srcCompat="@drawable/ic_close_white_24dp" />
 
         <android.support.v7.widget.AppCompatImageView
@@ -76,7 +76,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="@dimen/spacing_vertical"
-            android:tint="@color/colorAccent"
+            android:tint="@color/accent"
             app:srcCompat="@drawable/ic_done_white_24dp" />
 
     </RelativeLayout>

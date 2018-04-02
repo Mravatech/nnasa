@@ -92,7 +92,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     private fun updateAccountTypeSwitch() {
         val view = view ?: return
 
-        val grayColor = ContextCompat.getColor(view.context, R.color.coolGray)
+        val grayColor = ContextCompat.getColor(view.context, R.color.gray_cool)
         val blackColor = ContextCompat.getColor(view.context, R.color.black)
 
         when (view.vpRegistration.currentItem) {

@@ -64,8 +64,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
 
 
-
-
         with(view) {
             toolbar.backButtonEnabled = false
             toolbar.title = fromDictionary(R.string.tab_connections_title)

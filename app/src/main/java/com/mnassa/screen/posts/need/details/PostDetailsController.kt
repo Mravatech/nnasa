@@ -103,14 +103,14 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         commentsAdapter.onBindHeader = { headerLayout.value = it }
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
+        accountsToRecommendAdapter.onDataSourceChangedListener = {
+            view.recommendPanel.isGone = it.isEmpty()
+            updatePostCommentButtonState()
+        }
 
         with(view) {
             rvPostDetails.adapter = commentsAdapter
             rvAccountsToRecommend.adapter = accountsToRecommendAdapter
-            accountsToRecommendAdapter.onDataSourceChangedListener = {
-                recommendPanel.isGone = it.isEmpty()
-                updatePostCommentButtonState()
-            }
 
             btnCommentPost.setOnClickListener { onPostCommentClick() }
             updatePostCommentButtonState()

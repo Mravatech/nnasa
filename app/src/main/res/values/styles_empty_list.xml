@@ -12,7 +12,7 @@
 
     <style name="EmptyList.Title" parent="@style/MnassaHeader2">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:layout_marginTop">@dimen/spacing_vertical</item>
     </style>

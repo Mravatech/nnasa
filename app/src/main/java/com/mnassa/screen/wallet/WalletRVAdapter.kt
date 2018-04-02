@@ -9,7 +9,6 @@ import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.extensions.toTimeAgo
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_wallet_transaction_income.view.*
@@ -63,7 +62,7 @@ class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
             fun newInstanceSpent(parent: ViewGroup): TransactionViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_wallet_transaction_income, parent, false)
                 with(view) {
-                    tvAmount.setTextColor(ContextCompat.getColor(parent.context, R.color.spentMoney))
+                    tvAmount.setTextColor(ContextCompat.getColor(parent.context, R.color.money_spent))
                     tvAmount.setBackgroundResource(R.drawable.transaction_corners_spent)
                 }
                 return TransactionViewHolder(view)
@@ -72,7 +71,7 @@ class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
             fun newInstanceGained(parent: ViewGroup): TransactionViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_wallet_transaction_income, parent, false)
                 with(view) {
-                    tvAmount.setTextColor(ContextCompat.getColor(parent.context, R.color.gainedMoney))
+                    tvAmount.setTextColor(ContextCompat.getColor(parent.context, R.color.money_gained))
                     tvAmount.setBackgroundResource(R.drawable.transaction_corners_gained)
                 }
                 return TransactionViewHolder(view)

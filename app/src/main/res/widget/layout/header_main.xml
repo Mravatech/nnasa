@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/vShadow"
         android:layout_alignParentTop="true"
-        android:background="@color/colorAccent" />
+        android:background="@color/accent" />
 
     <LinearLayout
         android:id="@+id/rlHeader"

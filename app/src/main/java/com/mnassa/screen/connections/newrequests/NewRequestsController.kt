@@ -22,6 +22,9 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onAcceptClickListener = { viewModel.accept(it) }
+        adapter.onDeclineClickListener = { viewModel.decline(it) }
+
         with(view) {
             toolbar.title = fromDictionary(R.string.new_requests_title)
             tvEmptyTitle.text = fromDictionary(R.string.new_requests_empty_title)
@@ -29,9 +32,6 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
 
             rvNewConnectionRequests.layoutManager = LinearLayoutManager(context)
             rvNewConnectionRequests.adapter = adapter
-
-            adapter.onAcceptClickListener = { viewModel.accept(it) }
-            adapter.onDeclineClickListener = { viewModel.decline(it) }
         }
 
         adapter.isLoadingEnabled = true

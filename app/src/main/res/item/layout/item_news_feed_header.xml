@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/spacing_vertical"
     android:orientation="vertical"
-    app:cardBackgroundColor="@color/backgroundHighlight">
+    app:cardBackgroundColor="@color/background_highlighted">
 
     <FrameLayout
         android:id="@+id/flCreateNeed"
