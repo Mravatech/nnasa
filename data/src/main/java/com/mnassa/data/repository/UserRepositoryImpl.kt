@@ -7,17 +7,22 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.bean.firebase.InviteShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
 import com.mnassa.data.network.exception.ExceptionHandler
 import com.mnassa.data.network.exception.handleException
 import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
+import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
 
 /**
  * Created by Peter on 2/21/2018.
@@ -59,6 +64,14 @@ class UserRepositoryImpl(
                 .child(accountId)
                 .await<ShortAccountDbEntity>(exceptionHandler) ?: return null
         return converter.convert(bean)
+    }
+    override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>{
+        val accountId = accountIdInternal
+        return  db.child(DatabaseContract.TABLE_ACCOUNTS)
+                .child(accountId)
+                .toValueChannel<InviteShortAccountDbEntity>(exceptionHandler).map {
+                    converter.convert<InvitedShortAccountModel>(requireNotNull(it))
+                }
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {

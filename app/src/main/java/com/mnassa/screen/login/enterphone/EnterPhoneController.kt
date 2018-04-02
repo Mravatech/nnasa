@@ -12,8 +12,8 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.country.CountryHelper
 import com.mnassa.dialog.DialogHelper
-import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.onImeActionDone
@@ -39,26 +39,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
     override val layoutId: Int = R.layout.controller_enter_phone
     override val viewModel: EnterPhoneViewModel by instance()
     private val dialogHelper: DialogHelper by instance()
-    private val countryCodes = mutableListOf(
-            CountryCode(
-                    flagRes = R.drawable.ic_flag_of_saudi_arabia,
-                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_saudi_arabia)),
-                    phonePrefix = PhonePrefix.SaudiArabia),
-            CountryCode(
-                    flagRes = R.drawable.ic_flag_of_ukraine,
-                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_ukraine)),
-                    phonePrefix = PhonePrefix.Ukraine),
-            CountryCode(
-                    flagRes = R.drawable.ic_flag_of_the_united_states,
-                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_united_states)),
-                    phonePrefix = PhonePrefix.UnitedState),
-            CountryCode(
-                    flagRes = R.drawable.ic_flag_of_canada,
-                    name = TranslatedWordModelImpl(fromDictionary(R.string.country_canada)),
-                    phonePrefix = PhonePrefix.Canada)
-    )
-
-
+    private val countryHelper: CountryHelper by instance()
 
     protected val phoneNumber: String
         get() {
@@ -115,7 +96,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
 
 
-            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryCodes)
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()

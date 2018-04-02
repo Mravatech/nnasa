@@ -37,7 +37,7 @@ fun ImageView.avatarRound(avatarUrl: String?) {
     val storage = context.appKodein().instance<FirebaseStorage>()
     val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
-    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main).apply(RequestOptions.circleCropTransform())
+    val requestOptions = RequestOptions().placeholder(R.drawable.empty_ava).error(R.drawable.empty_ava).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)
             .load(ref ?: "")

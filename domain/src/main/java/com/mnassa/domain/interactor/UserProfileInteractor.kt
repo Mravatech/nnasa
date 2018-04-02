@@ -1,6 +1,8 @@
 package com.mnassa.domain.interactor
 
+import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import com.mnassa.domain.model.TagModel
 
 /**
@@ -9,6 +11,7 @@ import com.mnassa.domain.model.TagModel
 interface UserProfileInteractor {
 
     suspend fun getProfile(): ShortAccountModel
+    suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>
     suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel
     suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel
 

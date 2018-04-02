@@ -1,6 +1,7 @@
 package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
+import com.mnassa.data.network.bean.retrofit.request.ContactsRequest
 import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
 import kotlinx.coroutines.experimental.Deferred
@@ -16,4 +17,7 @@ interface FirebaseInviteApi {
 
     @POST("/connectionAction")
     fun executeConnectionAction(@Body request: ConnectionActionRequest): Deferred<MnassaResponse>
+
+    @POST("/invite")
+    fun inviteContact(@Body request: ContactsRequest): Deferred<MnassaResponse>
 }
