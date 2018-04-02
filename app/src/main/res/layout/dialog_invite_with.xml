@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvInviteDialogTitle"
+        style="@style/Invite.DialogInviteWithTitle"
+        android:layout_marginStart="@dimen/invite_dialog_invite_with_horizontal_indent"
+        android:layout_marginTop="16dp"
+        tools:text="You invite Lou Rodriguez" />
+
+    <TextView
+        android:id="@+id/tvInviteDialogSubTitle"
+        style="@style/Invite.DialogInviteWithSubTitle"
+        android:layout_marginStart="@dimen/invite_dialog_invite_with_horizontal_indent"
+        tools:text="Select a way to send invite" />
+
+    <LinearLayout
+        android:id="@+id/llWhatsApp"
+        style="@style/Invite.DialogInviteWithLinearLayout"
+        android:layout_marginTop="@dimen/invite_dialog_invite_with_items_indent"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/Invite.DialogInviteImageView"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_whatsapp" />
+
+        <TextView
+            android:id="@+id/tvWhatsApp"
+            style="@style/Invite.DialogInviteTextView"
+            android:layout_marginStart="@dimen/invite_dialog_invite_with_items_indent"
+            tools:text="Whats App" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llShortMessageService"
+        style="@style/Invite.DialogInviteWithLinearLayout"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/Invite.DialogInviteImageView"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_sms" />
+
+        <TextView
+            android:id="@+id/tvShortMessageService"
+            style="@style/Invite.DialogInviteTextView"
+            android:layout_marginStart="@dimen/invite_dialog_invite_with_items_indent"
+            tools:text="SMS" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llMore"
+        style="@style/Invite.DialogInviteWithLinearLayout"
+        android:layout_marginBottom="@dimen/invite_dialog_invite_with_items_indent"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/Invite.DialogInviteImageView"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_more" />
+
+        <TextView
+            android:id="@+id/tvMore"
+            style="@style/Invite.DialogInviteTextView"
+            android:layout_marginStart="@dimen/invite_dialog_invite_with_items_indent"
+            tools:text="More" />
+    </LinearLayout>
+</LinearLayout>

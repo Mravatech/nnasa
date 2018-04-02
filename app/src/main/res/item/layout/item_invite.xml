@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Invite.ItemViewContainer"
+    android:layout_margin="@dimen/invite_item_view_main_margin"
+    android:orientation="horizontal">
+
+    <ImageView
+        style="@style/Invite.ItemViewImage"
+        android:id="@+id/ivPhoneContactAvatar"
+        android:contentDescription="@null"
+        tools:background="@mipmap/ic_launcher" />
+
+    <LinearLayout
+        style="@style/Invite.ItemViewContainer"
+        android:layout_marginStart="@dimen/invite_item_view_main_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvInviteContactName"
+            style="@style/Invite.ItemViewContactName"
+            tools:text="Mae Owens" />
+
+        <TextView
+            android:id="@+id/tvInviteContactNumber"
+            style="@style/Invite.ItemViewContactNumber"
+            tools:text="+389483758473" />
+    </LinearLayout>
+
+</LinearLayout>
