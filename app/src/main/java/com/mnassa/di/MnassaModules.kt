@@ -223,7 +223,7 @@ private inline fun <reified T : Any> Kodein.Builder.bindRetrofitApi() {
 
 private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
-    bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
+    bind<LanguageProvider>() with singleton { LanguageProviderImpl() }
     bind<DialogHelper>() with singleton { DialogHelper() }
     bind<PopupMenuHelper>() with singleton { PopupMenuHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }

@@ -1,6 +1,7 @@
 package com.mnassa.screen.connections.select
 
 import android.view.View
+import com.bluelinelabs.conductor.Controller
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -50,7 +51,12 @@ class SelectConnectionController : MnassaControllerImpl<SelectConnectionViewMode
     }
 
     companion object {
-        fun newInstance() = SelectConnectionController()
+
+        fun <T> newInstance(listener: T): SelectConnectionController where T : OnProfileSelectedListener, T : Controller {
+            val result = SelectConnectionController()
+            result.targetController = listener
+            return result
+        }
     }
 
     interface OnProfileSelectedListener {

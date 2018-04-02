@@ -70,9 +70,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 )
             }
             tvShareOptions.setOnClickListener {
-                val screen = SharingOptionsController.newInstance(sharingOptions)
-                screen.targetController = this@CreateNeedController
-                open(screen)
+                open(SharingOptionsController.newInstance(sharingOptions, this@CreateNeedController))
             }
 
             launchCoroutineUI {

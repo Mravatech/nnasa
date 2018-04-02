@@ -1,6 +1,5 @@
 package com.mnassa.translation
 
-import android.content.Context
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
 import java.util.*
@@ -8,7 +7,7 @@ import java.util.*
 /**
  * Created by Peter on 2/26/2018.
  */
-class LanguageProviderImpl(private val context: Context) : LanguageProvider {
+class LanguageProviderImpl : LanguageProvider {
     override var locale: Locale
         get() = Locale.getDefault()
         set(value) {

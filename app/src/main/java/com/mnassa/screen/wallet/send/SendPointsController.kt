@@ -1,6 +1,7 @@
 package com.mnassa.screen.wallet.send
 
 import android.view.View
+import com.bluelinelabs.conductor.Controller
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -11,6 +12,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.select.SelectConnectionController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_send_points.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 4/2/2018.
@@ -44,9 +46,7 @@ class SendPointsController : MnassaControllerImpl<SendPointsViewModel>(), Select
             }
 
             etRecipient.setOnClickListener {
-                val controller = SelectConnectionController.newInstance()
-                controller.targetController = this@SendPointsController
-                open(controller)
+                open(SelectConnectionController.newInstance(this@SendPointsController))
             }
             etRecipient.hint = fromDictionary(R.string.send_points_recipient_hint)
             etComment.hint = fromDictionary(R.string.send_points_comments_hint)
@@ -54,6 +54,16 @@ class SendPointsController : MnassaControllerImpl<SendPointsViewModel>(), Select
 
             bindSelectedAccount(selectedAccount)
             updateSendButtonState()
+        }
+
+        launchCoroutineUI {
+            viewModel.resultListenerChannel.consumeEach {
+                val target = targetController
+                if (target is OnSentPointsResultListener) {
+                    target.onPointsSent(it.amount, it.recipient)
+                }
+                close()
+            }
         }
     }
 
@@ -64,6 +74,14 @@ class SendPointsController : MnassaControllerImpl<SendPointsViewModel>(), Select
     }
 
     companion object {
-        fun newInstance() = SendPointsController()
+        fun <T> newInstance(targetController: T): SendPointsController where T : OnSentPointsResultListener, T : Controller {
+            val result = SendPointsController()
+            result.targetController = targetController
+            return result
+        }
+    }
+
+    interface OnSentPointsResultListener {
+        fun onPointsSent(amount: Long, recipient: ShortAccountModel)
     }
 }

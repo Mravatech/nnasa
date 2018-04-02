@@ -35,16 +35,25 @@ class DialogHelper {
     }
 
     fun showWelcomeDialog(context: Context, onOkClick: () -> Unit) {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_welcome, null)
-        dialogView.tvTitle.text = fromDictionary(R.string.welcome_dialog_title)
-        dialogView.tvDescription.text = fromDictionary(R.string.welcome_dialog_description)
+        showSuccessDialog(
+                context,
+                fromDictionary(R.string.welcome_dialog_title),
+                fromDictionary(R.string.welcome_dialog_description),
+                onOkClick)
+    }
 
-        MaterialDialog.Builder(context)
+    fun showSuccessDialog(context: Context, title: CharSequence, description: CharSequence, onOkClick: () -> Unit = {}) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_welcome, null)
+        dialogView.tvTitle.text = title
+        dialogView.tvDescription.text = description
+
+        val dialog = MaterialDialog.Builder(context)
                 .customView(dialogView, false)
-                .positiveText(android.R.string.ok)
-                .onPositive { _, _ -> onOkClick() }
                 .cancelListener { onOkClick() }
                 .show()
+
+        dialogView.btnOk.setOnClickListener { dialog.cancel() }
+        dialogView.btnOk.setText(android.R.string.ok)
     }
 
     fun showConfirmPostRemovingDialog(context: Context, onOkClick: () -> Unit) {

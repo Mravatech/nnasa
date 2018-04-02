@@ -194,6 +194,10 @@
     <string name="send_points_recipient_hint">_android_my_wallet_send_points_recipient_hint</string>
     <string name="send_points_amount_hint">_android_my_wallet_send_points_amount_hint</string>
     <string name="send_points_comments_hint">_android_my_wallet_send_points_comments_hint</string>
+    <string name="send_points_success_title">_android_my_wallet_successfully_sent_title</string>
+    <string name="send_points_success_description">_android_my_wallet_successfully_sent_description</string>
+    <string name="send_points_success_description_points">_android_my_wallet_successfully_sent_description_points</string>
+    <string name="send_points_success_description_to">_android_my_wallet_successfully_sent_description_to</string>
 
     <!-- ================================= SELECT RECIPIENT =================================== -->
     <string name="select_recipient_title">_android_select_recipient_title</string>

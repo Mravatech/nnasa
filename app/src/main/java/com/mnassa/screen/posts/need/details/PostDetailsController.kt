@@ -329,9 +329,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     }
 
     private fun openSharingOptionsScreen() {
-        val controller = SharingOptionsController.newInstance()
-        controller.targetController = this
-        open(controller)
+        open(SharingOptionsController.newInstance(listener = this))
     }
 
     private fun openRecommendScreen(post: PostModel) {

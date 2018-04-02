@@ -1,12 +1,13 @@
 package com.mnassa.domain.other
 
 import com.mnassa.domain.model.TranslatedWordModel
+import java.io.Serializable
 import java.util.*
 
 /**
  * Created by Peter on 2/26/2018.
  */
-interface LanguageProvider {
+interface LanguageProvider : Serializable {
     var locale: Locale
     val language: String
 
