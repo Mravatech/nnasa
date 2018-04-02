@@ -10,6 +10,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.country.CountryHelper
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
@@ -24,6 +25,7 @@ import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.google.PlayServiceHelper
+import com.mnassa.intent.IntentHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
@@ -48,6 +50,14 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
+import com.mnassa.screen.login.entercode.EnterCodeViewModel
+import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
+import com.mnassa.screen.invite.InviteViewModel
+import com.mnassa.screen.invite.InviteViewModelImpl
+import com.mnassa.screen.invite.history.HistoryViewModel
+import com.mnassa.screen.invite.history.HistoryViewModelImpl
 import com.mnassa.screen.login.entercode.EnterCodeViewModel
 import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
@@ -120,6 +130,10 @@ private val viewModelsModule = Kodein.Module {
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
+    bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
+    bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
+    bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
+    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
     bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
 
@@ -136,6 +150,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(LocationConverter::class.java)
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(CommentsConverter::class.java)
+        converter.registerConverter(InvitationConverter::class.java)
         converter
     }
 }
@@ -157,6 +172,10 @@ private val repositoryModule = Kodein.Module {
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
+    bind<PlaceFinderRepository>() with singleton {
+        PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance())
+    }
+    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
 }
@@ -176,6 +195,8 @@ private val interactorModule = Kodein.Module {
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
     bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance()) }
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance()) }
+    bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
@@ -212,5 +233,7 @@ private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
     bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
     bind<DialogHelper>() with singleton { DialogHelper() }
+    bind<IntentHelper>() with singleton { IntentHelper() }
+    bind<CountryHelper>() with singleton { CountryHelper() }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }
