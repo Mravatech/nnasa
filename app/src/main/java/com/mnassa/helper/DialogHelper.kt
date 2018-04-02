@@ -31,7 +31,7 @@ class DialogHelper {
                         fromDictionary(R.string.image_source_gallery),
                         fromDictionary(R.string.image_source_camera)
                 )
-                .itemsCallback{ dialog, itemView, which, text ->
+                .itemsCallback{ dialog, _, which, _ ->
                     listener(CropActivity.ImageSource.values()[which])
                     dialog.dismiss()
                 }

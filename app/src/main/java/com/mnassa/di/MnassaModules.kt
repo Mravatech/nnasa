@@ -27,8 +27,6 @@ import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.helper.IntentHelper
-import com.mnassa.google.PlayServiceHelper
-import com.mnassa.intent.IntentHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
