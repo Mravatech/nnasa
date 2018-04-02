@@ -24,13 +24,6 @@ import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
-import android.support.annotation.ColorRes
-import android.support.annotation.FloatRange
-import android.support.v4.content.ContextCompat
-import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.util.valueIterator
 import androidx.view.get
 
 /**
