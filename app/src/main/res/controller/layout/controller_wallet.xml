@@ -26,7 +26,7 @@
             style="@style/MnassaTextTiny"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/wallet_balance"/>
+            android:text="@string/wallet_balance" />
 
         <TextView
             android:id="@+id/tvBalance"
@@ -98,7 +98,7 @@
             style="@style/MnassaTextTiny"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/wallet_gained"/>
+            android:text="@string/wallet_gained" />
 
         <TextView
             android:id="@+id/tvGained"
@@ -110,6 +110,26 @@
             android:textSize="32sp"
             tools:text="9999" />
     </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tvTransactions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/llGainedRoot"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_wallet_transaction_income" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnCreateTransaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/padding_vertical"
+        android:layout_marginEnd="@dimen/padding_horizontal"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_transfer" />
 
 
 </RelativeLayout>

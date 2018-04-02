@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
+import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.impl.TransactionModelImpl
@@ -14,7 +15,7 @@ import java.util.*
 /**
  * Created by Peter on 3/30/2018.
  */
-class WalletConverter : ConvertersContextRegistrationCallback {
+class WalletConverter(private val lazyDictionaryRepository: () -> DictionaryInteractor) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertTransaction)
@@ -24,7 +25,7 @@ class WalletConverter : ConvertersContextRegistrationCallback {
         return TransactionModelImpl(
                 id = input.id,
                 time = Date(input.transactionAt),
-                type = input.type,
+                type = fromDictionary("_transaction_" + input.type),
                 afterBalance = input.afterBalance,
                 amount = input.amount,
                 byAccount = input.by?.run { convertUser(this, convertersContext) },
@@ -39,5 +40,10 @@ class WalletConverter : ConvertersContextRegistrationCallback {
             userBody.id = userId
             converter.convert<ShortAccountModel>(userBody)
         }.firstOrNull()
+    }
+
+    private fun fromDictionary(key: String): String {
+        val result: String by lazyDictionaryRepository().getWord(key)
+        return result.replace("%i", "%d")
     }
 }

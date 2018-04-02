@@ -11,4 +11,6 @@ interface WalletRepository {
     suspend fun getSpentPointsCount(): ReceiveChannel<Long>
     suspend fun getGainedPointsCount(): ReceiveChannel<Long>
     suspend fun getTransactions(): ReceiveChannel<List<TransactionModel>>
+
+    suspend fun sendPoints(amount: Long, recipientId: String, description: String?)
 }

@@ -6,7 +6,9 @@ import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseWalletApi
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
+import com.mnassa.data.network.bean.retrofit.request.SendPointsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.repository.WalletRepository
@@ -53,5 +55,14 @@ class WalletRepositoryImpl(
                 .child(userRepository.getAccountId())
                 .toListChannel<TransactionDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
+    }
+
+    override suspend fun sendPoints(amount: Long, recipientId: String, description: String?) {
+        walletApi.sendPoints(SendPointsRequest(
+                fromAid = requireNotNull(userRepository.getAccountId()),
+                toAid = recipientId,
+                amount = amount,
+                userDescription = description
+        )).handleException(exceptionHandler)
     }
 }

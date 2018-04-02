@@ -43,6 +43,8 @@ import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
 import com.mnassa.screen.connections.newrequests.NewRequestsViewModelImpl
 import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModel
 import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModelImpl
+import com.mnassa.screen.connections.select.SelectConnectionViewModel
+import com.mnassa.screen.connections.select.SelectConnectionViewModelImpl
 import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
@@ -79,6 +81,8 @@ import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import com.mnassa.screen.wallet.WalletViewModel
 import com.mnassa.screen.wallet.WalletViewModelImpl
+import com.mnassa.screen.wallet.send.SendPointsViewModel
+import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
@@ -126,7 +130,8 @@ private val viewModelsModule = Kodein.Module {
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
     bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
     bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
-
+    bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
+    bind< SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -140,7 +145,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(LocationConverter(instance()))
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(CommentsConverter::class.java)
-        converter.registerConverter(WalletConverter::class.java)
+        converter.registerConverter(WalletConverter( { instance() } ))
         converter
     }
 }
@@ -156,7 +161,7 @@ private val repositoryModule = Kodein.Module {
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }

@@ -68,4 +68,29 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
 
         popup.show()
     }
+
+    fun showConnectedAccountMenu(view: View, onChat: () -> Unit, onProfile: () -> Unit, onDisconnect: () -> Unit) {
+        //Creating the instance of PopupMenu
+        val popup = PopupMenu(view.context, view)
+        //Inflating the Popup using xml file
+        popup.menuInflater.inflate(R.menu.connections_item, popup.menu)
+        popup.menu.findItem(R.id.action_connections_send_message).title = fromDictionary(R.string.tab_connections_all_item_send_message)
+        popup.menu.findItem(R.id.action_connections_view_profile).title = fromDictionary(R.string.tab_connections_all_item_view_profile)
+
+        val disconnectSpan = SpannableString(fromDictionary(R.string.tab_connections_all_item_disconnect))
+        val disconnectTextColor = ContextCompat.getColor(view.context, R.color.red)
+        disconnectSpan.setSpan(ForegroundColorSpan(disconnectTextColor), 0, disconnectSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        popup.menu.findItem(R.id.action_connections_disconnect).title = disconnectSpan
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_connections_send_message -> onChat()
+                R.id.action_connections_view_profile -> onProfile()
+                R.id.action_connections_disconnect -> onDisconnect()
+            }
+            true
+        }
+
+        popup.show()
+    }
 }

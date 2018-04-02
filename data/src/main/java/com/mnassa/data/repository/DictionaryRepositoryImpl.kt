@@ -26,13 +26,14 @@ import timber.log.Timber
  */
 class DictionaryRepositoryImpl(
         private val databaseReference: DatabaseReference,
-        private val converter: ConvertersContext,
+        converterLazy: () -> ConvertersContext,
         private val dictionaryApi: FirebaseDictionaryApi,
         private val exceptionHandler: ExceptionHandler,
         private val languageProvider: LanguageProvider,
         context: Context,
         appInfoProvider: AppInfoProvider) : DictionaryRepository {
 
+    private val converter by lazy(converterLazy)
     private val dictionaryPreferences = DictionaryPreferences(context, languageProvider)
     private val dictionaryResources = DictionaryResources(context, appInfoProvider, languageProvider)
 

@@ -15,7 +15,7 @@ fun fromDictionary(@StringRes stringId: Int): String {
 
 fun fromDictionary(key: String): String {
     val ctx = App.context
-    val dictionaryRepository: DictionaryInteractor = ctx.appKodein.invoke().instance()
-    val result: String by dictionaryRepository.getWord(key)
+    val dictionaryInteractor: DictionaryInteractor = ctx.appKodein.invoke().instance()
+    val result: String by dictionaryInteractor.getWord(key)
     return result.replace("%i", "%d")
 }
