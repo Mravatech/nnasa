@@ -211,6 +211,9 @@ dependencies {
     implementation deps.ui.pagerIndicator
     implementation deps.ui.chipsLayoutManager
     implementation deps.ui.timeAgo
+    implementation (deps.ui.navigationDrawer) {
+        transitive = true
+    }
 
     //kotlin
     implementation deps.kotlin.stdlib

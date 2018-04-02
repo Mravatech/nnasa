@@ -1,5 +1,7 @@
 package com.mnassa.screen.main
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -13,6 +15,13 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
+import com.mikepenz.materialdrawer.AccountHeaderBuilder
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem
+import com.mikepenz.materialdrawer.util.DrawerItemViewHelper
+import com.mikepenz.materialize.util.UIUtils
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.formattedName
@@ -37,9 +46,10 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 2/21/2018.
  */
-class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener, MnassaRouter {
+class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
+    private var drawer: Drawer? = null
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -65,10 +75,43 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             vpMain.adapter = adapter
 //            vpMain.offscreenPageLimit = adapter.count
 
+            // Create a few sample profile
+            val profile = ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(R.drawable.ic_archive)
+            val profile2 = ProfileDrawerItem().withName("Max Muster").withEmail("max.mustermann@gmail.com").withIcon(R.drawable.ic_archive)
+            val profile3 = ProfileDrawerItem().withName("Felix House").withEmail("felix.house@gmail.com").withIcon(R.drawable.ic_archive)
+            val profile4 = ProfileDrawerItem().withName("Mr. X").withEmail("mister.x.super@gmail.com").withIcon(R.drawable.ic_archive)
+            val profile5 = ProfileDrawerItem().withName("Batman").withEmail("batman@gmail.com").withIcon(R.drawable.ic_archive)
+
+            val header = AccountHeaderBuilder()
+                    .withActivity(requireNotNull(activity))
+                    .withCompactStyle(true)
+                    .withTranslucentStatusBar(true)
+                    .withHeaderBackground(ColorDrawable(Color.parseColor("#FDFDFD")))
+//                    .withHeightPx(UIUtils.getActionBarHeight(this))
+//                    .withAccountHeader(R.layout.material_drawer_compact_persistent_header)
+                    .withTextColor(Color.BLACK)
+                    .addProfiles(
+                            profile,
+                            profile2,
+                            profile3,
+                            profile4,
+                            profile5
+                    )
+//                    .withSavedInstance(savedInstanceState)
+                    .build();
+
+            drawer = DrawerBuilder(requireNotNull(activity))
+                    .withRootView(root)
+                    .withAccountHeader(header)
+                    .addDrawerItems(
+                            PrimaryDrawerItem().withName("Hi1").withIcon(R.drawable.ic_archive).withIdentifier(1)
+                    )
+                    .buildForFragment()
+
+
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
             bnMain.accentColor = ContextCompat.getColor(view.context, R.color.accent)
             bnMain.addItems(
-
                     mutableListOf(
                             AHBottomNavigationItem(0, R.drawable.ic_tab_home, R.color.accent),
                             AHBottomNavigationItem(0, R.drawable.ic_tab_connections, R.color.accent),
@@ -86,7 +129,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
                 true
             }
-            navigationView.setNavigationItemSelectedListener(this@MainController)
         }
 
         launchCoroutineUI {
@@ -127,10 +169,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+    fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
 
-        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
+//        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
             R.id.nav_wallet -> open(WalletController.newInstance())
@@ -146,9 +188,8 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
     }
 
     override fun handleBack(): Boolean {
-        val view = requireNotNull(view)
-        return if (view.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            view.drawerLayout.closeDrawer(GravityCompat.START)
+        return if (drawer?.isDrawerOpen == true) {
+            drawer?.closeDrawer()
             true
         } else {
             super.handleBack()
