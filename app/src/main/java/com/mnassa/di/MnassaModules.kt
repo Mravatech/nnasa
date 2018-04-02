@@ -116,14 +116,14 @@ private val viewModelsModule = Kodein.Module {
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
-    bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
+    bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
-    bind<HistoryViewModel>() with provider { HistoryViewModelImpl( instance()) }
+    bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
@@ -136,10 +136,11 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(TranslatedWordConverter::class.java)
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
-        converter.registerConverter(TagConverter( instance() ))
+        converter.registerConverter(TagConverter(instance()))
         converter.registerConverter(LocationConverter::class.java)
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(InvitationConverter::class.java)
+        converter.registerConverter(ChatConverter::class.java)
         converter
     }
 }
@@ -165,6 +166,7 @@ private val repositoryModule = Kodein.Module {
     }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -182,11 +184,12 @@ private val interactorModule = Kodein.Module {
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
     bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
+    bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(),instance()) }
 }
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() },  { instance() } , { instance() }, { instance() }) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
     bind<Retrofit>() with singleton {
         instance<RetrofitConfig>().makeRetrofit()
     }

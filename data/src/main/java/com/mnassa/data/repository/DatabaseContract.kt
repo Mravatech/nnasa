@@ -41,6 +41,10 @@ internal object DatabaseContract {
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_GROUPS = "byGroups"
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"
     //
+    const val TABLE_CHAT = "chats"
+    const val TABLE_CHAT_LIST = "chatsList"
+    const val TABLE_CHAT_TYPE = "private"
+    //
     const val TABLE_INVITETION = "invitations"
     //
     const val TABLE_NEWS_FEED = "newsfeed"

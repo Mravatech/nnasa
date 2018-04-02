@@ -157,6 +157,10 @@
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
 
+    <!-- ========================================= CHAT ====================================== -->
+
+    <string name="chats_no_conversation">_chats_controller_empty_state_title</string>
+
     <!-- ========================================= INVITE ====================================== -->
     <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
     <string name="invite_search_hint">_android_invite_search_hint</string>

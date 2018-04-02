@@ -1,13 +1,17 @@
 package com.mnassa.screen.chats
 
+import com.mnassa.domain.interactor.ChatInteractor
+import com.mnassa.domain.model.ChatRoomModel
+import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 3/6/2018.
  */
-class ChatListViewModelImpl : MnassaViewModelImpl(), ChatListViewModel {
-    override val messagesChannel: BroadcastChannel<List<Any>> = BroadcastChannel(10)
+class ChatListViewModelImpl(private val chatInteractor: ChatInteractor) : MnassaViewModelImpl(), ChatListViewModel {
+    override suspend fun getMessagesChannel(): ReceiveChannel<ListItemEvent<ChatRoomModel>> = chatInteractor.listOfChats()
+
 
 
 }
