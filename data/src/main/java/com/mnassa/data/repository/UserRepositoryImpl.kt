@@ -23,6 +23,7 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 
@@ -48,8 +49,14 @@ class UserRepositoryImpl(
         }
         set(value) = sharedPrefs.edit().putString(EXTRA_ACCOUNT_ID, value).apply()
 
+    override val currentProfile: BroadcastChannel<ShortAccountModel>
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-    override suspend fun setCurrentUserAccount(account: ShortAccountModel?) {
+    override suspend fun getAllAccounts(): BroadcastChannel<List<ShortAccountModel>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override suspend fun setCurrentAccount(account: ShortAccountModel?) {
         if (account == null) {
             //clear account
             accountIdInternal = null
@@ -59,7 +66,7 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getCurrentUser(): ShortAccountModel? {
+    override suspend fun getCurrentAccount(): ShortAccountModel? {
         val accountId = accountIdInternal ?: return null
 
         val bean = db.child(DatabaseContract.TABLE_ACCOUNTS)
@@ -68,9 +75,9 @@ class UserRepositoryImpl(
         return converter.convert(bean)
     }
 
-    override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>{
+    override suspend fun getCurrentAccountChannel(): ReceiveChannel<InvitedShortAccountModel>{
         val accountId = accountIdInternal
-        return  db.child(DatabaseContract.TABLE_ACCOUNTS)
+        return db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)
                 .toValueChannel<InviteShortAccountDbEntity>(exceptionHandler).map {
                     converter.convert<InvitedShortAccountModel>(requireNotNull(it))
@@ -137,7 +144,7 @@ class UserRepositoryImpl(
 
     override fun getAccountId(): String? = accountIdInternal
 
-    override suspend fun getById(id: String): ShortAccountModel? {
+    override suspend fun getAccountById(id: String): ShortAccountModel? {
         return db
                 .child(TABLE_PUBLIC_ACCOUNTS)
                 .child(id)

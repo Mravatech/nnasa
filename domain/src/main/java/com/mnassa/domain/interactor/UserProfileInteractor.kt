@@ -12,6 +12,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface UserProfileInteractor {
 
     val currentProfile: BroadcastChannel<ShortAccountModel>
+    suspend fun getAllAccounts(): BroadcastChannel<List<ShortAccountModel>>
+    suspend fun selectAccount(account: ShortAccountModel)
+
     suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>
     suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel
     suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel

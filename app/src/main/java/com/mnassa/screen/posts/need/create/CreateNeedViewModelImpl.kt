@@ -54,7 +54,7 @@ class CreateNeedViewModelImpl(
         }
     }
 
-    override suspend fun getUser(userId: String): ShortAccountModel? = userRepository.getById(userId)
+    override suspend fun getUser(userId: String): ShortAccountModel? = userRepository.getAccountById(userId)
 
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
 

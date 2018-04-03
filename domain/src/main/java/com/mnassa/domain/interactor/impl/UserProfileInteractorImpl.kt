@@ -5,7 +5,7 @@ import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -15,10 +15,14 @@ class UserProfileInteractorImpl(
         private val userRepository: UserRepository
 ) : UserProfileInteractor {
 
-    override val currentProfile: ConflatedBroadcastChannel<ShortAccountModel> = ConflatedBroadcastChannel()
+    override val currentProfile: BroadcastChannel<ShortAccountModel> get() = userRepository.currentProfile
+
+    override suspend fun getAllAccounts(): BroadcastChannel<List<ShortAccountModel>>  = userRepository.getAllAccounts()
+
+    override suspend fun selectAccount(account: ShortAccountModel) = userRepository.setCurrentAccount(account)
 
     override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
-        return userRepository.getCurrentUserWithChannel()
+        return userRepository.getCurrentAccountChannel()
     }
 
     override suspend fun createPersonalAccount(firstName: String,
@@ -35,7 +39,7 @@ class UserProfileInteractorImpl(
                 city = city,
                 offers = offers,
                 interests = interests)
-        userRepository.setCurrentUserAccount(account)
+        userRepository.setCurrentAccount(account)
         return account
     }
 
@@ -47,7 +51,7 @@ class UserProfileInteractorImpl(
                 offers = offers,
                 interests = interests
         )
-        userRepository.setCurrentUserAccount(account)
+        userRepository.setCurrentAccount(account)
         return account
     }
 
@@ -57,7 +61,7 @@ class UserProfileInteractorImpl(
     }
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
-        userRepository.setCurrentUserAccount(account)
+        userRepository.setCurrentAccount(account)
         currentProfile.send(account)
     }
 
