@@ -73,14 +73,6 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.showSoftInput(etChipInput, InputMethodManager.SHOW_IMPLICIT)
         }
-        val observer = tvChipHeader.viewTreeObserver
-        observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                tvChipHeader.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
-                animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, INIT_DURATION, INIT_DURATION, ANIMATION_TEXT_VIEW_SCALE_BIG)
-            }
-        })
     }
 
     override fun onChipClick(tagModel: TagModel) {
@@ -99,6 +91,23 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         listPopupWindow.dismiss()
     }
 
+    fun setTags(tags: List<TagModel>) {
+        val observer = tvChipHeader.viewTreeObserver
+        observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                tvChipHeader.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                if (tags.isEmpty()) {
+                    val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
+                    animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, INIT_DURATION, INIT_DURATION, ANIMATION_TEXT_VIEW_SCALE_BIG)
+                } else {
+                    val transition = -etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical) * MARGIN_COUNT
+                    animateViews(ANIMATION_EDIT_TEXT_SCALE_SHOW, transition, INIT_DURATION, INIT_DURATION, ANIMATION_TEXT_VIEW_SCALE_SMALL)
+                }
+            }
+        })
+        tags.forEach { addChip(it) }
+    }
+
     fun getTags(): List<TagModel> {
         if (chips.isEmpty()) return emptyList()
         val tags = ArrayList<TagModel>(chips.size())
@@ -106,21 +115,6 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             tags.add(tag)
         }
         return tags
-    }
-
-    fun setTags(tags: List<TagModel>) {
-        chips.clear()
-        val viewsToRemove = ArrayList<ChipView>()
-        for (i in 0 until flChipContainer.childCount) {
-            val view = flChipContainer[i]
-            if (view is ChipView) {
-                viewsToRemove.add(view)
-            }
-        }
-        viewsToRemove.forEach {
-            flChipContainer.removeView(it)
-        }
-        tags.forEach { addChip(it) }
     }
 
     private fun focusLeftView() {

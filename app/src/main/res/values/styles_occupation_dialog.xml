@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="DialogOccupation">
+    <style name="DialogRegistration">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="DialogOccupation.RadioButton">
+    <style name="DialogRegistration.RadioButton">
         <item name="android:paddingBottom">@dimen/occupation_dialog_rb_padding_vertical</item>
         <item name="android:paddingTop">@dimen/occupation_dialog_rb_padding_vertical</item>
         <item name="android:button">@drawable/radio_button_selector</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:paddingLeft">@dimen/occupation_dialog_rb_text_padding</item>
     </style>
-    <style name="DialogOccupation.RadioGroup">
+    <style name="DialogRegistration.RadioGroup">
         <item name="android:paddingBottom">@dimen/occupation_dialog_rb_padding_vertical</item>
         <item name="android:paddingTop">@dimen/occupation_dialog_rb_padding_vertical</item>
     </style>
 
-    <style name="DialogOccupation.TextView">
+    <style name="DialogRegistration.TextView">
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="DialogOccupation.Container">
+    <style name="DialogRegistration.Container">
         <item name="android:padding">24dp</item>
         <item name="android:orientation">vertical</item>
     </style>

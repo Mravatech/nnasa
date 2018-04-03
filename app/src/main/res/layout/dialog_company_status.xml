@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/DialogRegistration.Container">
+
+    <TextView
+        style="@style/DialogRegistration.TextView"
+        android:layout_marginBottom="@dimen/occupation_dialog_text_view_vertical"
+        android:id="@+id/tvCompanyStatusHeader"
+        tools:text="Choose occupation" />
+
+    <RadioGroup
+        style="@style/DialogRegistration.RadioGroup"
+        android:id="@+id/rCompanyStatusContainer"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rCommercial"
+            style="@style/DialogRegistration.RadioButton" />
+
+        <RadioButton
+            android:id="@+id/rGovernmental"
+            style="@style/DialogRegistration.RadioButton" />
+
+        <RadioButton
+            android:id="@+id/rNonProfit"
+            style="@style/DialogRegistration.RadioButton" />
+
+    </RadioGroup>
+</LinearLayout>

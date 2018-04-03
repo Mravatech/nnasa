@@ -41,15 +41,15 @@ class RegistrationViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
-                userProfileInteractor.createOrganizationAccount(
+                val shortAccountModel = userProfileInteractor.createOrganizationAccount(
                         companyName = companyName,
                         userName = userName,
                         city = city,
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
+                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(shortAccountModel))
             }
-            openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen())
         }
     }
 

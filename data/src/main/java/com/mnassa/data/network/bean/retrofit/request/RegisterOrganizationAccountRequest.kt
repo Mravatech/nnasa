@@ -15,5 +15,9 @@ data class RegisterOrganizationAccountRequest(
         @SerializedName("offers")
         val offers: List<String>,
         @SerializedName("interests")
-        val interests: List<String>
+        val interests: List<String>,
+        @SerializedName("location")
+        val location: Location,
+        @SerializedName("locationId")
+        val locationId: String
 )

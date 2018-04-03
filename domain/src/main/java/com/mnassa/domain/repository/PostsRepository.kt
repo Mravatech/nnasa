@@ -10,6 +10,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface PostsRepository {
     suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadAllByAccountUd(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
     suspend fun loadById(id: String): ReceiveChannel<PostModel>
     suspend fun sendViewed(ids: List<String>)

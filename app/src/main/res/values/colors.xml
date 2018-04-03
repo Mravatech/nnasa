@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="primary">@color/blue_turquoise</color>
     <color name="primary_dark">@color/blue_turquoise</color>
     <color name="accent">@color/blue_turquoise</color>
@@ -45,6 +45,7 @@
     <!-- comments -->
     <color name="background_comment_recommended_account">#7fe4e8eb</color>
 
+    <color name="ucrop_color_toolbar_widget" tools:override="true">#000</color>
     <!-- wallet -->
     <color name="money_spent">#c40e42</color>
     <color name="money_gained">@color/green_cool</color>

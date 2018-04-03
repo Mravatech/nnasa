@@ -1,56 +1,33 @@
 package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
-import android.os.Bundle
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.FOLDER_AVATARS
+import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.PersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import timber.log.Timber
 
-/**
- * Created by Peter on 2/27/2018.
- */
-class PersonalInfoViewModelImpl(
-    private val storageInteractor: StorageInteractor,
-    private val storage: FirebaseStorage,
-    private val userProfileInteractor: UserProfileInteractor
-) : MnassaViewModelImpl(), PersonalInfoViewModel {
+class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor,
+                                private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), PersonalInfoViewModel {
 
-    override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
     override val openScreenChannel: ArrayBroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    private var path: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        savedInstanceState?.apply {
-            path = getString(EXTRA_PHOTO_PATH)
-        }
+    private var avatarSavedPath: String? = null
+    private var avatarUri: Uri? = null
+    override fun saveLocallyAvatarUri(uri: Uri) {
+        this.avatarUri = uri
     }
 
-    override fun saveInstanceState(outBundle: Bundle) {
-        super.saveInstanceState(outBundle)
-        outBundle.putString(EXTRA_PHOTO_PATH, path)
-    }
-
-    private var sendPhotoJob: Job? = null
-    override fun uploadPhotoToStorage(uri: Uri) {
-        sendPhotoJob?.cancel()
-        sendPhotoJob = handleException {
-            path = storageInteractor.sendAvatar(StoragePhotoDataImpl(uri, FOLDER_AVATARS))
-            path?.let {
-                imageUploadedChannel.send(storage.getReferenceFromUrl(it))
-            }
-            Timber.i(path)
+    override fun skipThisStep() {
+        launchCoroutineUI {
+            openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
 
@@ -62,17 +39,19 @@ class PersonalInfoViewModelImpl(
                                 showContactEmail: Boolean?,
                                 birthday: Long?,
                                 showContactPhone: Boolean?,
-                                contactEmail: String
+                                contactEmail: String,
+                                isMale: Boolean
     ) {
         processAccountJob?.cancel()
         processAccountJob = handleException {
             withProgressSuspend {
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val personalInfo = PersonalInfoModelImpl(
                         accountModel.id,
                         accountModel.firebaseUserId,
                         accountModel.userName,
                         accountModel.accountType,
-                        path,
+                        avatarSavedPath,
                         contactPhone.takeIf { it.isNotBlank() },
                         accountModel.language,
                         accountModel.personalInfo,
@@ -82,7 +61,8 @@ class PersonalInfoViewModelImpl(
                         showContactEmail,
                         birthday,
                         showContactPhone,
-                        contactEmail.takeIf { it.isNotBlank() }
+                        contactEmail.takeIf { it.isNotBlank() },
+                        if (isMale) Gender.MALE else Gender.FEMALE
                 )
                 userProfileInteractor.processAccount(personalInfo)
                 openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())

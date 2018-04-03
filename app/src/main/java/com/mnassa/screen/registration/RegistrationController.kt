@@ -23,9 +23,9 @@ import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_registration.view.*
-import kotlinx.android.synthetic.main.controller_registration_organization.view.*
-import kotlinx.android.synthetic.main.controller_registration_personal.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.sub_reg_company.view.*
+import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -76,7 +76,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         PersonalInfoController.newInstance(it.shortAccountModel)
                     }
                     is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
-                        OrganizationInfoController.newInstance()
+                        OrganizationInfoController.newInstance(it.shortAccountModel)
                     }
                 }
                 open(controller)
@@ -210,16 +210,18 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
                 chipPersonOffers.chipSearch = viewModel
+                chipPersonOffers.setTags(emptyList())
                 chipPersonInterests.chipSearch = viewModel
+                chipPersonInterests.setTags(emptyList())
             }
             setAdapter(view.actvPersonCity, true)
         }
 
         private fun onOrganizationPageCreated(view: View) {
             with(view) {
-                tilCompanyName.hint = "Company name" //TODO: translation
-                tilCompanyUserName.hint = "User name"
-                tilCompanyCity.hint = "City"
+                view.tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
+                view.tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+                view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
                 chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)

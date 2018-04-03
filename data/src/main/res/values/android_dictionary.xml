@@ -64,15 +64,29 @@
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
+    <string name="_android_profile_points_given_INFO">Points given</string>
+    <string name="_android_profile_more_info_INFO">MORE INFORMATION</string>
+    <string name="_android_profile_less_info_INFO">LESS INFORMATION</string>
+    <string name="_android_edit_profile_main_info_INFO">Main Information</string>
+    <string name="_android_request_was_sent_INFO">Request was sent</string>
 
     <string name="_android_registration_skip_INFO">Skip This Step</string>
     <string name="_android_registration_occupation_header_INFO">Choose occupation</string>
     <string name="_android_registration_occupation_housewife_INFO">Housewife</string>
     <string name="_android_registration_custom_occupation_INFO">Custom occupation</string>
     <string name="_android_registration_add_another_occupation_INFO">Add another occupation</string>
+    <string name="_android_registration_company_title_INFO">Company Info</string>
+    <string name="_android_registration_company_status_commercial_INFO">Commercial</string>
+    <string name="_android_registration_company_status_governmental_INFO">Governmental</string>
+    <string name="_android_registration_company_status_non_profit_INFO">Non Profit</string>
+    <string name="_android_registration_company_name_INFO">Company name</string>
 
     <string name="_android_email_validation_INFO">Email is not valid</string>
-
+    <string name="_android_phone_validation_INFO">Phone is not valid</string>
+    <string name="_android_organization_name_validation_INFO">Please enter your Organization name</string>
+    <string name="_android_person_name_validation_INFO">Please enter your First name</string>
+    <string name="_android_person_last_name_validation_INFO">Please enter your Last name</string>
+    <string name="_android_user_name_validation_INFO">Please enter your User name</string>
 
 
     <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>

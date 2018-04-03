@@ -1,31 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/btnTakePhotoFromCamera">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
-        <ImageView
-            android:id="@+id/ivCropImage"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/profileCollapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_margin="8dp"
-            android:contentDescription="@null" />
-    </RelativeLayout>
+            app:contentScrim="@color/turquoiseBlue"
+            app:expandedTitleTextAppearance="@color/white"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btnTakePhotoFromCamera"
-        style="@style/MnassaButton"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivCropImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/profile_main_image_height"
+                    android:contentDescription="@null"
+                    android:background="@drawable/avatar_shadow"
+                    app:srcCompat="@drawable/ic_empty_avatar_placeholder" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_margin="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/profileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/profile_toolbar_title_expanded_text_size"
+                        android:textStyle="normal"
+                        tools:text="Calvin Chambers" />
+
+                    <TextView
+                        android:id="@+id/profileSubName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/paleGray"
+                        android:textSize="@dimen/profile_toolbar_title_expanded_sub_text_size"
+                        android:textStyle="normal"
+                        tools:text="UI/UX Designer in ISDDESIGN" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbarProfile"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:expandedTitleTextAppearance="@android:color/black"
+                app:layout_collapseMode="pin">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/ivProfileBack"
+                        style="@style/Profile.ToolbarBackView"
+                        android:contentDescription="@null"
+                        app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
+
+                    <TextView
+                        android:id="@+id/tvTitleCollapsed"
+                        style="@style/Profile.ToolbarTitle"
+                        android:layout_toEndOf="@+id/ivProfileBack"
+                        android:layout_toStartOf="@+id/flContainer"
+                        tools:text="Grinch" />
+
+                    <FrameLayout
+                        android:id="@+id/flContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true">
+
+
+                        <ImageView
+                            android:id="@+id/ivProfileEdit"
+                            style="@style/Profile.ToolbarMenuView"
+                            android:layout_marginEnd="@dimen/profile_toolbar_child_margin"
+                            android:contentDescription="@null"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_edit" />
+
+                        <ImageView
+                            android:id="@+id/ivProfileMenu"
+                            style="@style/Profile.ToolbarMenuView"
+                            android:layout_marginEnd="@dimen/profile_toolbar_child_margin"
+                            android:contentDescription="@null"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_menu" />
+
+                    </FrameLayout>
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="8dp"
-        tools:text="Take Photo" />
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:fabSize="normal"
+        app:layout_anchor="@id/profileCollapsing"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_chat" />
 
-</RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvProfile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</android.support.design.widget.CoordinatorLayout>

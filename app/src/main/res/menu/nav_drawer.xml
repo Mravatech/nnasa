@@ -35,13 +35,13 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="BUILD NETWORK" />
             <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_menu_share"
+                android:title="PROFILE" />
+            <item
                 android:id="@+id/nav_create_account"
                 android:icon="@drawable/ic_menu_share"
                 android:title="CREATE ACCOUNT" />
-            <item
-                android:id="@+id/personal_info"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="PERSONAL INFO" />
             <item
                 android:id="@+id/nav_change_account"
                 android:icon="@drawable/ic_menu_manage"

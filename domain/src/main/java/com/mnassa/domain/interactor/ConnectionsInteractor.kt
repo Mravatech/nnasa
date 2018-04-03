@@ -6,6 +6,7 @@ import com.mnassa.domain.model.DeclinedShortAccountModel
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -20,8 +21,11 @@ interface ConnectionsInteractor {
     suspend fun getSentConnections(): ReceiveChannel<List<ShortAccountModel>>
     suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>>
     suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>>
+    suspend fun getStatusesConnections(userAccountId: String): ReceiveChannel<ConnectionStatus>
+    suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus
 
     suspend fun getDisconnectTimeoutDays(): Int
+    suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>)
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     suspend fun sendPhoneContacts()

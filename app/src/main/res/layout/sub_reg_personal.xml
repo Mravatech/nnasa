@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroundHighlight"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_horizontal">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilPersonFirstName"
+        style="@style/Registration.TextInputLayout">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etPersonFirstName"
+            style="@style/Registration.EditText" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilPersonSecondName"
+        style="@style/Registration.TextInputLayout">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etPersonSecondName"
+            style="@style/Registration.EditText" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilPersonUserName"
+        style="@style/Registration.TextInputLayout">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etPersonUserName"
+            style="@style/Registration.EditText" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilPersonCity"
+        style="@style/Registration.TextInputLayout">
+
+        <AutoCompleteTextView
+            android:id="@+id/actvPersonCity"
+            style="@style/Registration.EditText" />
+    </android.support.design.widget.TextInputLayout>
+
+    <com.mnassa.widget.ChipLayout
+        android:id="@+id/chipPersonOffers"
+        style="@style/Registration.ChipLayout" />
+
+    <com.mnassa.widget.ChipLayout
+        android:id="@+id/chipPersonInterests"
+        style="@style/Registration.ChipLayout"
+        android:layout_marginTop="@dimen/chip_layout_interests_margin_top" />
+</LinearLayout>

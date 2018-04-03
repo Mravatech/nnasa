@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:baselineAligned="false">
+
+        <TextView
+            android:id="@+id/tvProfileConnections"
+            style="@style/ProfileHeaderItem.TextView"
+            android:layout_weight="1"
+            tools:text="999" />
+
+        <TextView
+            android:id="@+id/tvPointsGiven"
+            style="@style/ProfileHeaderItem.TextView"
+            android:layout_weight="1"
+            tools:text="999" />
+
+        <TextView
+            android:id="@+id/tvConnectionStatus"
+            style="@style/ProfileHeaderItem.TextView"
+            android:layout_weight="1"
+            tools:text="999" />
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <FrameLayout
+        android:id="@+id/flMoreInformation"
+        android:layout_width="match_parent"
+        android:background="?selectableItemBackground"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvMoreInformation"
+            style="@style/ProfileHeaderItem.TextViewMore"
+            android:layout_gravity="center"
+            android:drawableEnd="@drawable/ic_down"
+            android:drawablePadding="8dp"
+            tools:text="MORE INFORMATION" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <include layout="@layout/sub_header_personal" />
+
+    <com.sk4atg89.alexander.tattag.OneLineLinear
+        android:id="@+id/llBottomTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/backgroundMain"
+        android:orientation="horizontal"/>
+
+    <View
+        android:visibility="gone"
+        android:id="@+id/vBottomDivider"
+        android:layout_width="match_parent"
+        android:background="@color/backgroundMain"
+        android:layout_height="24dp"/>
+</LinearLayout>

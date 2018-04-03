@@ -5,6 +5,8 @@ import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import com.mnassa.domain.model.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -37,6 +39,12 @@ interface UserRepository {
     ): ShortAccountModel
 
     suspend fun processAccount(account: PersonalInfoModel)
+    suspend fun processAccount(account: CompanyInfoModel)
+    suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel)
+    suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel)
+
+    suspend fun getProfileByAccountId(accountId: String) : ProfileAccountModel?
+    suspend fun getProfileById(accountId: String) : ReceiveChannel<ProfileAccountModel?>
 
     fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?

@@ -40,6 +40,7 @@
     <string name="reg_account_type_organization">_android_account_type_organization</string>
     <string name="reg_account_can_help_with">_accEdit_cellOffers_placeholder</string>
     <string name="reg_account_interested_in">_accEdit_cellInterests_placeholder</string>
+    <string name="reg_account_company_name">_android_registration_company_name</string>
 
     <!-- ==================================== BUILD NETWORK (INVITE) =========================== -->
     <string name="invite_title">_newAccNetwork_navTitle</string>
@@ -169,15 +170,13 @@
     <string name="archived_connections_empty_title">_connectionsList_empty_rejects</string>
     <string name="archived_connections_empty_description">_android_connections_archived_empty_description</string>
 
-    <!-- ====================================== REG PERSON =================================== -->
+    <!-- ====================================== REG =================================== -->
     <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
-    <string name="reg_person_info_phone">_accEdit_cellPhone_title</string>
     <string name="reg_person_info_at">_cellOccupation_placeTitle</string>
     <string name="reg_person_info_title">_newAccDetails_navTitle</string>
     <string name="reg_person_info_female_gender">_cellGender_Female</string>
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
-    <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
     <string name="reg_info_skip">_android_registration_skip</string>
     <string name="reg_info_next">_newAcc_navItem_Next</string>
     <string name="reg_dialog_other">_paccountsSelector_other_title</string>
@@ -190,6 +189,39 @@
     <string name="reg_occupation_edit_text_place_holder">_cellOccupation_occupationPlaceholder</string>
     <string name="reg_add_another_occupation">_android_registration_add_another_occupation</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
+    <string name="reg_person_occupation_label">_cellOccupation_occupationTitle_primary</string>
+    <string name="reg_person_occupation_make_primary">_cellOccupation_buttonMakePrimary</string>
+    <string name="reg_person_occupation_delete">_cellOccupation_buttonDelete</string>
+    <string name="reg_info_email">_accEdit_cellEmail_placeholder</string>
+    <string name="reg_info_phone_number">_accEdit_cellPhone_title</string>
+    <string name="reg_company_title">_android_registration_company_title</string>
+    <string name="reg_company_website">_accEdit_cellWebsite_placeholder</string>
+    <string name="reg_company_name">_accEdit_cellOrganizationName_placeholder</string>
+    <string name="reg_company_founded">_accEdit_cellOrganizationFounded_title</string>
+    <string name="reg_company_status_label">_accEdit_cellOrganizationType_title</string>
+    <string name="reg_company_status">_accEdit_cellOrganizationType_placeholder</string>
+    <string name="reg_company_status_commercial">_android_registration_company_status_commercial</string>
+    <string name="reg_company_status_governmental">_android_registration_company_status_governmental</string>
+    <string name="reg_company_status_non_profit">_android_registration_company_status_non_profit</string>
+
+    <!-- ========================================= PROFILE ====================================== -->
+    <string name="profile_connections">_connectionsList_navTitle_connections</string>
+    <string name="profile_points_given">_android_profile_points_given</string>
+    <string name="profile_date_of_birth">_profileDetails_birthdayPersonal</string>
+    <string name="profile_mobile_phone">_profileDetails_labelMobile</string>
+    <string name="profile_website">_profileDetails_labelWebsite</string>
+    <string name="profile_email">_profileDetails_labelEmail</string>
+    <string name="profile_more_information">_android_profile_more_info</string>
+    <string name="profile_less_information">_android_profile_less_info</string>
+    <string name="profile_date_of_foundation">_profileDetails_birthdayOrganization</string>
+    <string name="profile_request_was_sent">_android_request_was_sent</string>
+    <string name="user_profile_connection_connected">_connections_group_header_connected</string>
+    <string name="user_profile_connection_connect">connections_button_connect</string>
+    <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>
+
+    <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
+    <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
+    <string name="edit_profile_city">_new_post_offer_city_title</string>
 
     <!-- ======================================= WALLET ======================================== -->
     <string name="wallet_title">_android_my_wallet_title</string>
@@ -215,6 +247,11 @@
 
     <!-- ========================================= OTHER ====================================== -->
     <string name="email_is_not_valid">_android_email_validation</string>
+    <string name="phone_is_not_valid">_android_phone_validation</string>
+    <string name="company_name_is_not_valid">_android_organization_name_validation</string>
+    <string name="person_name_is_not_valid">_android_person_name_validation</string>
+    <string name="person_last_name_is_not_valid">_android_person_last_name_validation</string>
+    <string name="user_name_is_not_valid">_android_user_name_validation</string>
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>
     <string name="loading">_android_loading</string>

@@ -4,8 +4,10 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -55,8 +57,26 @@ class UserProfileInteractorImpl(
         return account
     }
 
+    override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
+        return userRepository.getProfileByAccountId(accountId)
+    }
+
+    override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> =
+            userRepository.getProfileById(accountId)
+
+    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
+        userRepository.updateCompanyAccount(account)
+    }
+
+    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) {
+        userRepository.updatePersonalAccount(account)
+    }
+
     override suspend fun processAccount(account: PersonalInfoModel) {
-//todo handle response
+        userRepository.processAccount(account)
+    }
+
+    override suspend fun processAccount(account: CompanyInfoModel) {
         userRepository.processAccount(account)
     }
 

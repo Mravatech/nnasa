@@ -10,8 +10,10 @@ import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.data.network.bean.firebase.InviteShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
+import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.bean.retrofit.request.Ability
 import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
 import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
@@ -20,9 +22,12 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
@@ -97,7 +102,9 @@ class UserRepositoryImpl(
                 userName = userName,
                 type = NetworkContract.AccountType.PERSONAL,
                 offers = offers,
-                interests = interests
+                interests = interests,
+                location = Location(city),
+                locationId = city
         )).handleException(exceptionHandler)
         return converter.convert(result.account)
     }
@@ -108,28 +115,107 @@ class UserRepositoryImpl(
                 type = NetworkContract.AccountType.ORGANIZATION,
                 offers = offers,
                 interests = interests,
-                organizationName = companyName
+                organizationName = companyName,
+                location = Location(city),
+                locationId = city
         )).handleException(exceptionHandler)
         return converter.convert(result.account)
     }
 
     override suspend fun processAccount(account: PersonalInfoModel) {
         firebaseAuthApi.registerSendAccountInfo(RegisterSendingAccountInfoRequest(
-                account.birthdayDate,
-                account.personalInfo?.lastName,
-                account.userName,
-                account.showContactEmail,
-                account.language,
-                account.accountType.name.toLowerCase(),
-                account.birthday,
-                account.contactPhone,
-                converter.convertCollection(account.abilities, Ability::class.java),
-                requireNotNull(getAccountId()),
-                account.avatar,
-                account.personalInfo?.firstName,
-                account.showContactPhone,
-                account.contactEmail
+                birthdayDate = account.birthdayDate,
+                lastName = account.personalInfo?.lastName,
+                userName = account.userName,
+                showContactEmail = account.showContactEmail,
+                language = account.language,
+                type = getAccountType(account.accountType),
+                birthday = account.birthday,
+                contactPhone = account.contactPhone,
+                abilities = converter.convertCollection(account.abilities, Ability::class.java),
+                id = requireNotNull(getAccountId()),
+                avatar = account.avatar,
+                firstName = account.personalInfo?.firstName,
+                showContactPhone = account.showContactPhone,
+                contactEmail = account.contactEmail,
+                gender = getGender(account.gender)
         )).handleException(exceptionHandler)
+    }
+
+    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) {
+        firebaseAuthApi.profileUpdatePersonAccountInfo(ProfilePersonAccountInfoRequest(
+                birthdayDate = account.birthdayDate,
+                lastName = account.personalInfo?.lastName,
+                userName = account.userName,
+                showContactEmail = account.showContactEmail,
+                language = account.language,
+                type = getAccountType(account.accountType),
+                birthday = account.birthday,
+                contactPhone = account.contactPhone,
+                abilities = converter.convertCollection(account.abilities, Ability::class.java),
+                id = requireNotNull(getAccountId()),
+                avatar = account.avatar,
+                firstName = account.personalInfo?.firstName,
+                showContactPhone = account.showContactPhone,
+                contactEmail = account.contactEmail,
+                gender = getGender(account.gender),
+                locationId = account.locationId,
+                interests = account.interests,
+                offers = account.offers
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun processAccount(account: CompanyInfoModel) {
+        firebaseAuthApi.registerSendCompanyAccountInfo(RegisterSendingCompanyAccountInfoRequest(
+                organizationName = requireNotNull(account.organizationInfo).organizationName,
+                avatar = account.avatar,
+                showContactEmail = account.showContactEmail,
+                contactEmail = account.contactEmail,
+                userName = account.userName,
+                language = account.language,
+                type = getAccountType(account.accountType),
+                founded = account.founded,
+                id = requireNotNull(getAccountId()),
+                website = account.website,
+                organizationType = account.organizationType
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
+        firebaseAuthApi.profileUpdateCompanyAccountInfo(ProfileCompanyAccountInfoRequest(
+                organizationName = requireNotNull(account.organizationInfo).organizationName,
+                avatar = account.avatar,
+                showContactEmail = account.showContactEmail,
+                contactEmail = account.contactEmail,
+                userName = account.userName,
+                language = account.language,
+                type = getAccountType(account.accountType),
+                founded = account.founded,
+                id = requireNotNull(getAccountId()),
+                website = account.website,
+                organizationType = account.organizationType,
+                locationId = account.locationId,
+                interests = account.interests,
+                offers = account.offers
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
+        val dbChild = if (accountId == getAccountId()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
+        val profile = db.child(dbChild)
+                .child(accountId)
+                .apply { keepSynced(true) }
+                .await<ProfileDbEntity>(exceptionHandler) ?: return null
+        return converter.convert(profile)
+    }
+
+    override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> {
+        val dbChild = if (accountId == getAccountId()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
+        return db.child(dbChild)
+                .child(accountId)
+                .apply { keepSynced(true) }
+                .toValueChannel<ProfileDbEntity>(exceptionHandler)
+                .map { converter.convert(it!!, ProfileAccountModel::class.java) }
     }
 
     override suspend fun getFirebaseToken(): String? {
@@ -151,6 +237,16 @@ class UserRepositoryImpl(
                 .await<ShortAccountDbEntity>(exceptionHandler)
                 ?.run { converter.convert(this) }
 
+    }
+
+    private fun getAccountType(type: AccountType) = when (type) {
+        AccountType.PERSONAL -> NetworkContract.AccountType.PERSONAL
+        AccountType.ORGANIZATION -> NetworkContract.AccountType.ORGANIZATION
+    }
+
+    private fun getGender(gender: Gender) = when (gender) {
+        Gender.FEMALE -> NetworkContract.Gender.FEMALE
+        Gender.MALE -> NetworkContract.Gender.MALE
     }
 
     companion object {
