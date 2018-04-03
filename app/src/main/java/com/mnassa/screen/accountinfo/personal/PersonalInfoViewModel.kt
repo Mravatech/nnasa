@@ -2,6 +2,7 @@ package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
 import com.google.firebase.storage.StorageReference
+import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -15,7 +16,15 @@ interface PersonalInfoViewModel : MnassaViewModel {
     val openScreenChannel: ArrayBroadcastChannel<OpenScreenCommand>
 
     fun uploadPhotoToStorage(uri: Uri)
-    fun processAccount(accountModel: ShortAccountModel)
+    fun processAccount(accountModel: ShortAccountModel,
+                       contactPhone: String,
+                       abilities: List<AccountAbility>,
+                       birthdayDate: String,
+                       showContactEmail: Boolean?,
+                       birthday: Long?,
+                       showContactPhone: Boolean?,
+                       contactEmail: String
+    )
 
     sealed class OpenScreenCommand {
         class InviteScreen : OpenScreenCommand()

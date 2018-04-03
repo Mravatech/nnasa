@@ -65,6 +65,16 @@
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
 
+    <string name="_android_registration_skip_INFO">Skip This Step</string>
+    <string name="_android_registration_occupation_header_INFO">Choose occupation</string>
+    <string name="_android_registration_occupation_housewife_INFO">Housewife</string>
+    <string name="_android_registration_custom_occupation_INFO">Custom occupation</string>
+    <string name="_android_registration_add_another_occupation_INFO">Add another occupation</string>
+
+    <string name="_android_email_validation_INFO">Email is not valid</string>
+
+
+
     <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>
     <string name="_android_invite_search_hint_INFO">Search people in Phone Book</string>
     <string name="_android_invite_send_with_more_INFO">More</string>

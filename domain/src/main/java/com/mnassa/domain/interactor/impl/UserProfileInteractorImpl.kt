@@ -2,6 +2,7 @@ package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.InvitedShortAccountModel
+import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -50,9 +51,9 @@ class UserProfileInteractorImpl(
         return account
     }
 
-    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
+    override suspend fun processAccount(account: PersonalInfoModel) {
 //todo handle response
-        userRepository.processAccount(account, path)
+        userRepository.processAccount(account)
     }
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {

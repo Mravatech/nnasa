@@ -1,8 +1,8 @@
 package com.mnassa.screen.registration
 
-import android.support.v4.content.ContextCompat
 import android.content.Context
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
@@ -18,9 +18,9 @@ import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
-import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.controller_registration_organization.view.*

@@ -1,10 +1,10 @@
 package com.mnassa.screen.registration
 
-import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.PlaceFinderInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.GeoPlaceModel
+import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 

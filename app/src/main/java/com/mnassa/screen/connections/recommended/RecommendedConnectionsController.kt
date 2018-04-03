@@ -8,7 +8,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_recommended.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**

@@ -3,19 +3,19 @@ package com.mnassa
 import android.annotation.SuppressLint
 import android.content.Context
 import android.support.multidex.MultiDexApplication
+import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.autoAndroidModule
 import com.google.firebase.FirebaseApp
-import com.mnassa.di.*
+import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import com.squareup.leakcanary.LeakCanary
+import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 
 /**
  * Created by Peter on 2/20/2018.

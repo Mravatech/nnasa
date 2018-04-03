@@ -1,18 +1,20 @@
 package com.mnassa.screen.profile
 
 import android.app.Activity
-import android.view.View
-import com.github.salomonbrys.kodein.instance
-import com.mnassa.R
-import com.mnassa.screen.base.MnassaControllerImpl
-import kotlinx.android.synthetic.main.controller_profile.view.*
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
+import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
+import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.GlideApp
+import com.mnassa.dialog.DialogHelper
+import com.mnassa.module.GlideApp
+import com.mnassa.screen.base.MnassaControllerImpl
+import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 

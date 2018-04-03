@@ -10,6 +10,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.mnassa.AppInfoProviderImpl
+import com.mnassa.data.converter.*
+import com.mnassa.data.network.RetrofitConfig
+import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.api.FirebaseDictionaryApi
+import com.mnassa.data.network.api.FirebaseInviteApi
+import com.mnassa.data.network.api.FirebaseTagsApi
+import com.mnassa.data.network.exception.*
+import com.mnassa.AppInfoProviderImpl
 import com.mnassa.helper.CountryHelper
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
@@ -17,12 +25,16 @@ import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
+import com.mnassa.dialog.DialogHelper
+import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
+import com.mnassa.domain.service.FirebaseLoginService
+import com.mnassa.google.PlayServiceHelper
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -61,12 +73,22 @@ import com.mnassa.screen.login.entercode.EnterCodeViewModel
 import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
+import com.mnassa.screen.login.entercode.EnterCodeViewModel
+import com.mnassa.screen.login.entercode.EnterCodeViewModelImpl
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
+import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModel
 import com.mnassa.screen.login.enterpromo.EnterPromoViewModelImpl
 import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
 import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
+import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
+import com.mnassa.screen.main.MainViewModel
+import com.mnassa.screen.main.MainViewModelImpl
+import com.mnassa.screen.needs.NeedsViewModel
+import com.mnassa.screen.needs.NeedsViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.posts.PostsViewModel
@@ -83,12 +105,17 @@ import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
+import com.mnassa.screen.profile.ProfileViewModel
+import com.mnassa.screen.profile.ProfileViewModelImpl
+import com.mnassa.screen.registration.RegistrationViewModel
+import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import com.mnassa.screen.wallet.WalletViewModel
 import com.mnassa.screen.wallet.WalletViewModelImpl
 import com.mnassa.screen.wallet.send.SendPointsViewModel
 import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
+import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
@@ -155,6 +182,8 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(CommentsConverter::class.java)
         converter.registerConverter(WalletConverter({ instance() }))
         converter.registerConverter(InvitationConverter::class.java)
+        converter.registerConverter(TagConverter( instance() ))
+        converter.registerConverter(AbilityConverter::class.java)
         converter
     }
 }

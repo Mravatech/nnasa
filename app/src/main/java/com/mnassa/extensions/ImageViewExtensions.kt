@@ -79,7 +79,7 @@ fun ImageView.image(url: String?, crop: Boolean = true) {
 }
 
 fun ImageView.image(uri: Uri) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
 
     GlideApp.with(this)
             .load(uri)

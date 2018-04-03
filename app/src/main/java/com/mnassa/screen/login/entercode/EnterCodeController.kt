@@ -12,6 +12,7 @@ import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sms_code_input.view.*
