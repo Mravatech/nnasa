@@ -72,7 +72,7 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:gravity">center</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:textSize">@dimen/personal_info_text_view_skip_this_step_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -94,7 +94,7 @@
         <item name="android:gravity">center</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/turquoiseBlue</item>
+        <item name="android:textColor">@color/blue_turquoise</item>
         <item name="android:textSize">@dimen/personal_info_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -103,14 +103,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/personal_info_bottom_view_height</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@color/hintColor</item>
+        <item name="android:background">@color/gray_cool</item>
     </style>
 
     <style name="PersonalInfo.SelectableTextViewLabel">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/blackAlpha</item>
+        <item name="android:textColor">@color/black_transparent_40</item>
         <item name="android:textSize">@dimen/personal_info_label_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -119,7 +119,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/blackAlpha</item>
+        <item name="android:textColor">@color/black_transparent_40</item>
         <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -147,6 +147,6 @@
     <dimen name="image_height">168dp</dimen>
     <dimen name="image_container_height">196dp</dimen>
     <dimen name="bottom_view">28dp</dimen>
-    <color name="light_blue_color">@color/backgroundMain</color>
+    <color name="light_blue_color">@color/background_main</color>
 
 </resources>

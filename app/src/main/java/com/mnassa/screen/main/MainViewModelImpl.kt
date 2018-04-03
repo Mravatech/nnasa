@@ -66,8 +66,8 @@ class MainViewModelImpl(
         }
 
         handleException {
-            val profile = userProfileInteractor.getProfile()
-            currentAccountChannel.send(profile)
+//            val profile = userProfileInteractor.getProfile()
+//            currentAccountChannel.send(profile)
         }
     }
 

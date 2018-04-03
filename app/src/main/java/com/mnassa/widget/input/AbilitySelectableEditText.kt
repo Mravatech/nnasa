@@ -7,9 +7,9 @@ import android.widget.LinearLayout
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
-import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.impl.AccountAbilityImpl
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.selectable_fake_edit_text.view.*

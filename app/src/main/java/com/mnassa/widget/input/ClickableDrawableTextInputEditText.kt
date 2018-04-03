@@ -33,13 +33,13 @@ class ClickableDrawableTextInputEditText : TextInputEditText {
                 if (event.rawX >= (right - compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
                     when (isChosen) {
                         true -> onDrawableRightClick(R.color.black, R.drawable.ic_eye_on)
-                        false -> onDrawableRightClick(R.color.coolGray, R.drawable.ic_eye_off)
+                        false -> onDrawableRightClick(R.color.gray_cool, R.drawable.ic_eye_off)
                     }
                 }
             }
             false
         }
-        onDrawableRightClick(R.color.coolGray, R.drawable.ic_eye_off)
+        onDrawableRightClick(R.color.gray_cool, R.drawable.ic_eye_off)
     }
 
     private fun onDrawableRightClick(@ColorRes color: Int, @DrawableRes drawable: Int) {

@@ -10,9 +10,6 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.helper.DialogHelper
-import com.mnassa.helper.GlideApp
-import com.mnassa.dialog.DialogHelper
-import com.mnassa.module.GlideApp
 import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -70,7 +67,7 @@ class ProfileController : MnassaControllerImpl<ProfileViewModel>() {
     }
 
     private fun setImage(imageView: ImageView, result: StorageReference?) {
-        GlideApp.with(imageView).load(result).into(imageView)
+//        GlideApp.with(imageView).load(result).into(imageView)
     }
 
     companion object {

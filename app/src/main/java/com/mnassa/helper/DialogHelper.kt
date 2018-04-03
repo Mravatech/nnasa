@@ -1,11 +1,13 @@
 package com.mnassa.helper
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.AppCompatRadioButton
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.Button
@@ -20,7 +22,9 @@ import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_invite_with.*
+import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
+import java.util.*
 
 class DialogHelper {
 
@@ -45,6 +49,34 @@ class DialogHelper {
                 fromDictionary(R.string.welcome_dialog_description),
                 onOkClick)
     }
+
+    fun showChooseOccupationDialog(context: Context,
+                                   occupations: List<String>,
+                                   position: Int,
+                                   onSelectClick: (position: Int) -> Unit) {
+        val dialog = Dialog(context, R.style.OccupationDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_occupation)
+        fun closeDialogAfterClick(position: Int) {
+            onSelectClick(position)
+            dialog.dismiss()
+        }
+        dialog.tvOccupationHeader.text = fromDictionary(R.string.reg_dialog_header)
+        for ((index, value) in occupations.withIndex()) {
+            val radioButton = dialog.rOccupationContainer.getChildAt(index) as AppCompatRadioButton
+            radioButton.text = value
+            radioButton.setOnClickListener { closeDialogAfterClick(index) }
+            radioButton.isChecked = position == index
+        }
+        dialog.show()
+    }
+
+    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(context, listener, calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+    }
+
 
     fun showSuccessDialog(context: Context, title: CharSequence, description: CharSequence, onOkClick: () -> Unit = {}) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_welcome, null)

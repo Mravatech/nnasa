@@ -31,7 +31,7 @@
     </style>
 
     <style name="OccupationDialog" parent="@android:style/Theme.Dialog">
-        <item name="android:windowBackground">@drawable/photo_dialog_background</item>
+        <!--<item name="android:windowBackground">@drawable/photo_dialog_background</item>-->
         <item name="android:windowMinWidthMajor">80%</item>
         <item name="android:windowMinWidthMinor">80%</item>
     </style>
