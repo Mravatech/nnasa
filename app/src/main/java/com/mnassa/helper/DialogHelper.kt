@@ -22,7 +22,6 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 
-
 class DialogHelper {
 
     fun showSelectImageSourceDialog(context: Context, listener: (CropActivity.ImageSource) -> Unit) {
@@ -31,7 +30,7 @@ class DialogHelper {
                         fromDictionary(R.string.image_source_gallery),
                         fromDictionary(R.string.image_source_camera)
                 )
-                .itemsCallback{ dialog, _, which, _ ->
+                .itemsCallback { dialog, _, which, _ ->
                     listener(CropActivity.ImageSource.values()[which])
                     dialog.dismiss()
                 }
@@ -157,7 +156,7 @@ class DialogHelper {
     }
 
     fun showProgressDialog(context: Context): Dialog {
-        val dialog = object: ProgressDialog(context, R.style.MnassaProgressTheme) {
+        val dialog = object : ProgressDialog(context, R.style.MnassaProgressTheme) {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
                 setContentView(R.layout.dialog_progress)
@@ -167,5 +166,4 @@ class DialogHelper {
         dialog.show()
         return dialog
     }
-
 }

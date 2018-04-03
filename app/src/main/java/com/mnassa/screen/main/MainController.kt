@@ -2,9 +2,8 @@ package com.mnassa.screen.main
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.support.design.widget.NavigationView
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
@@ -15,17 +14,17 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.salomonbrys.kodein.instance
+import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
-import com.mikepenz.materialdrawer.util.DrawerItemViewHelper
-import com.mikepenz.materialize.util.UIUtils
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.formattedPosition
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
@@ -42,7 +41,6 @@ import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
-
 /**
  * Created by Peter on 2/21/2018.
  */
@@ -50,6 +48,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
     private var drawer: Drawer? = null
+    private var accountHeader: AccountHeader? = null
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -68,46 +67,48 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
         override fun getCount(): Int = Pages.values().size
     }
 
-    override fun onViewCreated(view: View) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view)
+
+        launchCoroutineUI {
+            viewModel.availableAccountsChannel.consumeEach { accounts ->
+                accountHeader?.apply {
+                    clear()
+                    accounts.forEach { profile ->
+                        ProfileDrawerItem()
+                                .withName(profile.formattedName)
+                                .withEmail(profile.formattedPosition.toString())
+                                .withIcon(profile.avatar)
+                    }
+                }
+            }
+        }
 
         with(view) {
             vpMain.adapter = adapter
-//            vpMain.offscreenPageLimit = adapter.count
+            vpMain.offscreenPageLimit = adapter.count
 
             // Create a few sample profile
-            val profile = ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(R.drawable.ic_archive)
-            val profile2 = ProfileDrawerItem().withName("Max Muster").withEmail("max.mustermann@gmail.com").withIcon(R.drawable.ic_archive)
-            val profile3 = ProfileDrawerItem().withName("Felix House").withEmail("felix.house@gmail.com").withIcon(R.drawable.ic_archive)
-            val profile4 = ProfileDrawerItem().withName("Mr. X").withEmail("mister.x.super@gmail.com").withIcon(R.drawable.ic_archive)
-            val profile5 = ProfileDrawerItem().withName("Batman").withEmail("batman@gmail.com").withIcon(R.drawable.ic_archive)
+//            val profile = ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(R.drawable.ic_archive)
+//            val profile2 = ProfileDrawerItem().withName("Max Muster").withEmail("max.mustermann@gmail.com").withIcon(R.drawable.ic_archive)
+//            val profile3 = ProfileDrawerItem().withName("Felix House").withEmail("felix.house@gmail.com").withIcon(R.drawable.ic_archive)
+//            val profile4 = ProfileDrawerItem().withName("Mr. X").withEmail("mister.x.super@gmail.com").withIcon(R.drawable.ic_archive)
+//            val profile5 = ProfileDrawerItem().withName("Batman").withEmail("batman@gmail.com").withIcon(R.drawable.ic_archive)
 
-            val header = AccountHeaderBuilder()
+            accountHeader = AccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
-                    .withCompactStyle(true)
-                    .withTranslucentStatusBar(true)
-                    .withHeaderBackground(ColorDrawable(Color.parseColor("#FDFDFD")))
-//                    .withHeightPx(UIUtils.getActionBarHeight(this))
-//                    .withAccountHeader(R.layout.material_drawer_compact_persistent_header)
                     .withTextColor(Color.BLACK)
-                    .addProfiles(
-                            profile,
-                            profile2,
-                            profile3,
-                            profile4,
-                            profile5
-                    )
-//                    .withSavedInstance(savedInstanceState)
-                    .build();
+                    .withSavedInstance(savedInstanceState)
+                    .build()
 
             drawer = DrawerBuilder(requireNotNull(activity))
                     .withRootView(root)
-                    .withAccountHeader(header)
+                    .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
                             PrimaryDrawerItem().withName("Hi1").withIcon(R.drawable.ic_archive).withIdentifier(1)
                     )
+                    .withSavedInstance(savedInstanceState)
                     .buildForFragment()
-
 
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
             bnMain.accentColor = ContextCompat.getColor(view.context, R.color.accent)
@@ -151,10 +152,16 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                 view.tvUserPosition?.text = it.id
 //                    view.tvUserPosition.text = it.mainAbility(fromDictionary(R.string.invite_at_placeholder))
 //                    view.tvUserPosition.goneIfEmpty()
-
             }
         }
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        var result = outState
+        drawer?.apply { result = saveInstanceState(result) }
+        accountHeader?.apply { result = saveInstanceState(result) }
+
+        super.onSaveInstanceState(result)
     }
 
     private fun setCounter(pageIndex: Int, counterValue: Int) {
@@ -166,7 +173,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                 .setTextColor(ContextCompat.getColor(view.context, R.color.white))
                 .build() else null
         view.bnMain.setNotification(notification, pageIndex)
-
     }
 
     fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -196,11 +202,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
         }
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
         if (!requireNotNull(activity).isChangingConfigurations) {
             view.vpMain.adapter = null
         }
-        super.onViewDestroyed(view)
+        drawer = null
+        accountHeader = null
+        super.onDestroyView(view)
     }
 
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(self, controller)

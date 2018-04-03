@@ -12,7 +12,6 @@ import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
  */
 class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
     override fun bind(item: PostModel) {
-
     }
 
     companion object {

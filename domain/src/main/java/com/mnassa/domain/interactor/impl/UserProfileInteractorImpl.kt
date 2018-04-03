@@ -4,6 +4,7 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -13,9 +14,7 @@ class UserProfileInteractorImpl(
         private val userRepository: UserRepository
 ) : UserProfileInteractor {
 
-    override suspend fun getProfile(): ShortAccountModel {
-        return requireNotNull(userRepository.getCurrentUser())
-    }
+    override val currentProfile: ConflatedBroadcastChannel<ShortAccountModel> = ConflatedBroadcastChannel()
 
     override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
         return userRepository.getCurrentUserWithChannel()
@@ -58,6 +57,7 @@ class UserProfileInteractorImpl(
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
         userRepository.setCurrentUserAccount(account)
+        currentProfile.send(account)
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()

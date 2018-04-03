@@ -18,7 +18,7 @@ class SelectedAccountRVAdapter : BasePaginationRVAdapter<ShortAccountModel>(), V
     var onDataSourceChangedListener = { items: List<ShortAccountModel> -> }
 
     fun destroyCallbacks() {
-        onDataSourceChangedListener =  { items: List<ShortAccountModel> -> }
+        onDataSourceChangedListener = { items: List<ShortAccountModel> -> }
     }
 
     init {

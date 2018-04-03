@@ -90,11 +90,9 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
                 }
             }, 0, termsAndCond.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-
             tvTermsAndConditions.append(" ")
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
-
 
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -119,7 +117,6 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
             showKeyboard(etPhoneNumberTail)
         }
-
 
         addSignInViaEmailAbility()
     }

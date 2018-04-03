@@ -13,8 +13,8 @@ interface SendPointsViewModel : MnassaViewModel {
     fun sendPoints(amount: Long, recipient: ShortAccountModel, description: String?)
 
     data class SendPointsResult(
-            val amount: Long,
-            val recipient: ShortAccountModel,
-            val description: String?
+        val amount: Long,
+        val recipient: ShortAccountModel,
+        val description: String?
     )
 }

@@ -48,7 +48,6 @@ class App : MultiDexApplication(), KodeinAware {
         }
     }
 
-
     companion object {
         @SuppressLint("StaticFieldLeak")
         private lateinit var APP_CONTEXT: Context

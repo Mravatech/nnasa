@@ -12,9 +12,9 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  * Created by Peter on 2/26/2018.
  */
 class RegistrationViewModelImpl(
-        private val userProfileInteractor: UserProfileInteractor,
-        private val tagInteractor: TagInteractor,
-        private val placeFinderInteractor: PlaceFinderInteractor
+    private val userProfileInteractor: UserProfileInteractor,
+    private val tagInteractor: TagInteractor,
+    private val placeFinderInteractor: PlaceFinderInteractor
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -72,5 +72,4 @@ class RegistrationViewModelImpl(
         tags.addAll(existsTags)
         return tags
     }
-
 }

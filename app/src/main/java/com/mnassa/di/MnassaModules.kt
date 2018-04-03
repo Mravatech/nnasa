@@ -153,7 +153,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(LocationConverter(instance()))
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(CommentsConverter::class.java)
-        converter.registerConverter(WalletConverter( { instance() } ))
+        converter.registerConverter(WalletConverter({ instance() }))
         converter.registerConverter(InvitationConverter::class.java)
         converter
     }

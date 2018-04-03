@@ -17,6 +17,7 @@ def build_versions = [:]
 build_versions.min_sdk = 19
 build_versions.target_sdk = 27
 build_versions.compile_sdk = 27
+build_versions.build_tools = "27.0.3"
 ext.build_versions = build_versions
 
 //=============================================== SUPPORT ==========================================
@@ -204,12 +205,11 @@ deps.tests = tests
 static def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
-    handler.maven {
-        url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
-        url 'https://jitpack.io'
-        url 'https://maven.fabric.io/public'
-    }
+
+    handler.maven { url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/" }
     handler.maven { url "https://jitpack.io" }
+    handler.maven { url "https://maven.fabric.io/public" }
+    handler.maven { url "https://plugins.gradle.org/m2/" }
 }
 ext.addRepos = this.&addRepos
 

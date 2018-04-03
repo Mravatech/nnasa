@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/blue_powder</color>
-    <color name="primary_dark">@color/gray_cool</color>
+    <color name="primary">@color/blue_turquoise</color>
+    <color name="primary_dark">@color/blue_turquoise</color>
     <color name="accent">@color/blue_turquoise</color>
 
     <!-- =============== COMMON COLORS ================= -->

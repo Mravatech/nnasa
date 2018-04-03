@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
+
 //def getGitHash = { ->
 //    def stdout = new ByteArrayOutputStream()
 //    exec {
@@ -17,6 +18,7 @@ def globalConfiguration = rootProject.extensions.getByName("ext")
 
 android {
     compileSdkVersion build_versions.compile_sdk
+    buildToolsVersion build_versions.build_tools
 
     testBuildType "debug"
 

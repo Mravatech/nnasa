@@ -93,7 +93,7 @@ class CropActivity : AppCompatActivity() {
         }
     }
 
-    private fun resultWithError(){
+    private fun resultWithError() {
         setResult(GET_PHOTO_ERROR)
         finish()
     }
@@ -114,5 +114,4 @@ class CropActivity : AppCompatActivity() {
     enum class ImageSource {
         GALLERY, CAMERA
     }
-
 }

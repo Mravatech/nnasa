@@ -52,7 +52,6 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     }
 
     override fun provideOverridingModule() = Kodein.Module {
-
     }
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -136,4 +135,3 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         private val CONTEXT_SCOPES = WeakHashMap<MnassaController<*>, ScopeRegistry>()
     }
 }
-

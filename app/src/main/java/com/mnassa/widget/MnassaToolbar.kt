@@ -8,11 +8,9 @@ import android.widget.FrameLayout
 import com.mnassa.R
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.red_badge.view.*
-import android.content.res.TypedArray
 import android.os.Build
 import android.support.annotation.RequiresApi
 import com.mnassa.translation.fromDictionary
-
 
 /**
  * Created by Peter on 3/13/2018.
@@ -77,7 +75,7 @@ class MnassaToolbar : FrameLayout {
             toolbarBadge.visibility = if (value == 0) View.GONE else View.VISIBLE
         }
 
-    var onMoreClickListener : ((View) -> Unit)? = null
+    var onMoreClickListener: ((View) -> Unit)? = null
         set(value) {
             field = value
             ivToolbarMore.visibility = if (value != null) View.VISIBLE else View.GONE
@@ -111,5 +109,4 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             btnAction.isEnabled = value
         }
-
 }

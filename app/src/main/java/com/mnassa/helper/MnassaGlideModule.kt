@@ -20,7 +20,6 @@ import okhttp3.Call
 import okhttp3.OkHttpClient
 import java.io.InputStream
 
-
 @Suppress("unused")
 @com.bumptech.glide.annotation.GlideModule
 class MnassaGlideModule : AppGlideModule() {
@@ -87,4 +86,3 @@ class MnassaGlideModule : AppGlideModule() {
         }
     }
 }
-

@@ -21,5 +21,4 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor) : MnassaV
     override fun <T> handleException(function: suspend () -> T): Job {
         return super.handleException(function)
     }
-
 }

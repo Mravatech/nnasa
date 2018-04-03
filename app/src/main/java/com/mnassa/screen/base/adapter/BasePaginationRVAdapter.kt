@@ -13,7 +13,6 @@ import com.mnassa.core.addons.StateExecutor
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
 
-
 abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = StateExecutor<RecyclerView?, RecyclerView>(null) { it != null }
     protected inline fun postUpdate(crossinline update: (() -> Unit)) {
@@ -115,7 +114,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
 
     ////////////////////////////////////// ABSTRACT DATA STORAGE ///////////////////////////////////
 
-    interface DataStorage<T>: Iterable<T> {
+    interface DataStorage<T> : Iterable<T> {
         fun clear()
         fun add(element: T): Boolean
         fun addAll(elements: Collection<T>): Boolean
@@ -236,7 +235,6 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
                 return contentTheSameComparator.invoke(oldClientItem, newClientItem)
             } else oldItemType == newItemType
         }
-
     }
 
     class MutableDataStorageWrapper<T>(private val wrappedMutableVal: MutableList<T>) : ReadOnlyDataStorageWrapper<T>(wrappedMutableVal) {
@@ -244,13 +242,13 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         override fun add(element: T): Boolean = wrappedMutableVal.add(element)
         override fun addAll(elements: Collection<T>): Boolean = wrappedMutableVal.addAll(elements)
         override fun remove(element: T): Boolean = wrappedMutableVal.remove(element)
-        override fun set(elements: List<T>): Unit {
+        override fun set(elements: List<T>) {
             wrappedMutableVal.clear()
             wrappedMutableVal.addAll(elements)
         }
 
         override fun iterator(): Iterator<T> {
-            return object: Iterator<T> {
+            return object : Iterator<T> {
                 private var cursor: Int = 0
                 override fun hasNext(): Boolean = cursor < size
 
@@ -263,13 +261,13 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         override fun clear(): Unit = throw IllegalStateException("clear() called in the ReadOnlyDataStorageWrapper")
         override fun add(element: T): Boolean = throw IllegalStateException("add() called in the ReadOnlyDataStorageWrapper")
         override fun addAll(elements: Collection<T>): Boolean = throw IllegalStateException("addAll() called in the ReadOnlyDataStorageWrapper")
-        override fun remove(element: T): Boolean = throw  IllegalStateException("remove() called in the ReadOnlyDataStorageWrapper")
+        override fun remove(element: T): Boolean = throw IllegalStateException("remove() called in the ReadOnlyDataStorageWrapper")
         override fun set(elements: List<T>): Unit = throw IllegalStateException("set() called in the ReadOnlyDataStorageWrapper")
         override fun get(index: Int): T = wrappedVal[index]
-        override val size: Int get() =  wrappedVal.size
+        override val size: Int get() = wrappedVal.size
 
         override fun iterator(): Iterator<T> {
-            return object: Iterator<T> {
+            return object : Iterator<T> {
                 private var cursor: Int = 0
                 override fun hasNext(): Boolean = cursor < size
 

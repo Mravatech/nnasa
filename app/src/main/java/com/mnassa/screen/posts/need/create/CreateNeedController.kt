@@ -29,7 +29,6 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
-
 /**
  * Created by Peter on 3/19/2018.
  */
@@ -54,7 +53,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private val attachedImagesAdapter = AttachedImagesRVAdapter()
     private var placeId: String? = null
     private var imageToReplace: AttachedImage? = null
-
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)

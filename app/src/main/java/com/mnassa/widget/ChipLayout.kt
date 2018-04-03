@@ -99,11 +99,10 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         listPopupWindow.dismiss()
     }
 
-
     fun getTags(): List<TagModel> {
         if (chips.isEmpty()) return emptyList()
         val tags = ArrayList<TagModel>(chips.size())
-        for (tag in chips.valueIterator()){
+        for (tag in chips.valueIterator()) {
             tags.add(tag)
         }
         return tags
@@ -156,12 +155,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         etChipInput.text = null
     }
 
-
-    private fun animateViews(@FloatRange(from = 0.0, to = 1.0) scale: Float,
-                             transition: Float,
-                             timeTV: Long,
-                             timeET: Long,
-                             @FloatRange(from = 0.0, to = 1.0) scaleTV: Float) {
+    private fun animateViews(
+        @FloatRange(from = 0.0, to = 1.0) scale: Float,
+        transition: Float,
+        timeTV: Long,
+        timeET: Long,
+        @FloatRange(from = 0.0, to = 1.0) scaleTV: Float
+    ) {
         etChipInput.animate().setDuration(timeET).scaleX(scale)
         etChipInput.animate().setDuration(timeET).scaleY(scale)
         val transit = tvChipHeader.width / HALF_VIEW_WIDTH * scaleTV - tvChipHeader.width / HALF_VIEW_WIDTH
@@ -236,5 +236,4 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         private const val TV_HEADER_TRANSITION_X_DURATION = 50L
         private const val INIT_DURATION = 0L
     }
-
 }

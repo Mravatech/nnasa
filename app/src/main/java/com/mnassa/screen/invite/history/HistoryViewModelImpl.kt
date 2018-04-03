@@ -14,7 +14,7 @@ import timber.log.Timber
  */
 
 class HistoryViewModelImpl(
-        private val inviteInteractor: InviteInteractor
+    private val inviteInteractor: InviteInteractor
 ) : MnassaViewModelImpl(), HistoryViewModel {
 
     override val phoneContactChannel: BroadcastChannel<List<PhoneContactInvited>> = BroadcastChannel(10)
@@ -23,12 +23,11 @@ class HistoryViewModelImpl(
     override fun retrievePhoneContacts() {
         retrievePhoneJob?.cancel()
         retrievePhoneJob = handleException {
-            withProgressSuspend{
+            withProgressSuspend {
                 val contacts = inviteInteractor.getInvitedContacts()
                 Timber.i(contacts.toString())
                 phoneContactChannel.send(contacts)
             }
         }
     }
-
 }

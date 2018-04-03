@@ -2,17 +2,11 @@ package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
-import com.bluelinelabs.conductor.RouterTransaction
 import com.github.salomonbrys.kodein.instance
-import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PhoneVerificationModel
-import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
-import com.mnassa.extensions.onImeActionDone
-import com.mnassa.extensions.showKeyboard
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
@@ -35,7 +29,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
     override val viewModel: EnterCodeViewModel by instance()
     private val resendSmsCodeDelay by lazy { resources!!.getInteger(R.integer.validation_code_resend_delay_seconds) }
     private var resendCodeSecondCounter: Int = -1
-    private val verificationResponse by lazy { args.getParcelable<PhoneVerificationModel>(EXTRA_VERIFICATION_CODE_RESPONSE)}
+    private val verificationResponse by lazy { args.getParcelable<PhoneVerificationModel>(EXTRA_VERIFICATION_CODE_RESPONSE) }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)

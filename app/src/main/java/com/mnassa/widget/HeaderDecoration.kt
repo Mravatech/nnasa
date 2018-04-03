@@ -22,7 +22,6 @@ class HeaderDecoration(context: Context, parent: RecyclerView, @LayoutRes resId:
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
     }
 
-
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
         super.onDraw(c, parent, state)
         // layout basically just gets drawn on the reserved space on top of the first view

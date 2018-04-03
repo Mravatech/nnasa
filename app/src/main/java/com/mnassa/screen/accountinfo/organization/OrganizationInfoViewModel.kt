@@ -5,5 +5,4 @@ import com.mnassa.screen.base.MnassaViewModel
 /**
  * Created by Peter on 2/28/2018.
  */
-interface OrganizationInfoViewModel : MnassaViewModel {
-}
+interface OrganizationInfoViewModel : MnassaViewModel

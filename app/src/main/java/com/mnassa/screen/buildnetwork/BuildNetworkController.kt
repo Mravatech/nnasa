@@ -29,7 +29,6 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
     private val dialogHelper: DialogHelper by instance()
     private val adapter = BuildNetworkAdapter()
 
-
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 

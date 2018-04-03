@@ -12,7 +12,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.App.Companion.context
@@ -36,7 +35,6 @@ import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
-
 
 /**
  * Created by Peter on 3/6/2018.
@@ -62,7 +60,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
         allConnectionsAdapter.onBindHeader = { bindHeader(it) }
         allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
-
 
         with(view) {
             toolbar.backButtonEnabled = false
@@ -181,7 +178,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
     }
 
-
     ///////////////////////////////////////// CONNECTION TYPE SCREENS ///////////////////////////////
 
     private fun openRecommendedConnectionsScreen() = open(RecommendedConnectionsController.newInstance())
@@ -195,7 +191,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
     private fun openProfile(accountModel: ShortAccountModel) {
         Toast.makeText(context, "Opening profile of ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
-
     }
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {
@@ -225,8 +220,11 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class BlockedScrollingLayoutManager(context: Context, orientation: Int,
-                                        reverseLayout: Boolean) : LinearLayoutManager(context, orientation, reverseLayout) {
+    class BlockedScrollingLayoutManager(
+        context: Context,
+        orientation: Int,
+        reverseLayout: Boolean
+    ) : LinearLayoutManager(context, orientation, reverseLayout) {
         override fun canScrollHorizontally(): Boolean = false
         override fun canScrollVertically(): Boolean = false
     }

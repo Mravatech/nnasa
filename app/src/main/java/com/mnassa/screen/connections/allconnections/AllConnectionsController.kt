@@ -58,7 +58,6 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
 
     private fun openProfile(accountModel: ShortAccountModel) {
         Toast.makeText(App.context, "Opening profile of ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
-
     }
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {

@@ -9,7 +9,6 @@ import com.mnassa.App
 import com.mnassa.domain.other.LanguageProvider
 import java.util.*
 
-
 /**
  * Created by Peter on 3/15/2018.
  */

@@ -18,9 +18,11 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/27/2018.
  */
-class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor,
-                                private val storage: FirebaseStorage,
-                                private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), PersonalInfoViewModel {
+class PersonalInfoViewModelImpl(
+    private val storageInteractor: StorageInteractor,
+    private val storage: FirebaseStorage,
+    private val userProfileInteractor: UserProfileInteractor
+) : MnassaViewModelImpl(), PersonalInfoViewModel {
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
     override val openScreenChannel: ArrayBroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -60,5 +62,4 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     companion object {
         const val EXTRA_PHOTO_PATH = "EXTRA_PHOTO_PATH"
     }
-
 }

@@ -20,9 +20,9 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Date: 3/19/2018
  */
 class InviteViewModelImpl(
-        private val connectionsInteractor: ConnectionsInteractor,
-        private val inviteInteractor: InviteInteractor,
-        private val userProfileInteractor: UserProfileInteractor
+    private val connectionsInteractor: ConnectionsInteractor,
+    private val inviteInteractor: InviteInteractor,
+    private val userProfileInteractor: UserProfileInteractor
 ) : MnassaViewModelImpl(), InviteViewModel {
 
     override val invitesCountChannel: BroadcastChannel<Int> = BroadcastChannel(10)
@@ -74,5 +74,4 @@ class InviteViewModelImpl(
             }
         }
     }
-
 }

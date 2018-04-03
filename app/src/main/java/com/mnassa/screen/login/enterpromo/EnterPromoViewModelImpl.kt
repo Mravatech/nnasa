@@ -6,5 +6,4 @@ import com.mnassa.screen.login.enterphone.EnterPhoneViewModelImpl
 /**
  * Created by Peter on 3/1/2018.
  */
-class EnterPromoViewModelImpl(loginInteractor: LoginInteractor) : EnterPhoneViewModelImpl(loginInteractor), EnterPromoViewModel {
-}
+class EnterPromoViewModelImpl(loginInteractor: LoginInteractor) : EnterPhoneViewModelImpl(loginInteractor), EnterPromoViewModel

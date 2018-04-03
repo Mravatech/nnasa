@@ -50,5 +50,4 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
     companion object {
         fun newInstance() = HistoryController()
     }
-
 }

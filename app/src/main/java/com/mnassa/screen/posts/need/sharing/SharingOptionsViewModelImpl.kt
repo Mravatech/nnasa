@@ -21,5 +21,4 @@ class SharingOptionsViewModelImpl(private val connectionsInteractor: Connections
             }
         }
     }
-
 }

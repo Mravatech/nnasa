@@ -16,8 +16,11 @@ import timber.log.Timber
  * User: okli
  * Date: 2/26/2018
  */
-class ProfileViewModelImpl(private val storageInteractor: StorageInteractor
-                           , private val storage: FirebaseStorage) : MnassaViewModelImpl(), ProfileViewModel {
+class ProfileViewModelImpl(
+    private val storageInteractor: StorageInteractor
+                           ,
+    private val storage: FirebaseStorage
+) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val imageUploadedChannel: BroadcastChannel<StorageReference> = BroadcastChannel(10)
 

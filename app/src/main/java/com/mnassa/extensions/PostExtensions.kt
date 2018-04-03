@@ -48,7 +48,6 @@ val PostModel.formattedText: CharSequence?
             spannable.append(text)
             spannable
         } else text
-
     }
 
 suspend fun PostModel.isMyPost(): Boolean {

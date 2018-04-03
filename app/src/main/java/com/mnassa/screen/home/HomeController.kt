@@ -78,7 +78,6 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
     override fun close(self: Controller) = mnassaRouter.close(self)
 
-
     enum class HomePage {
         NEEDS, EVENTS
     }

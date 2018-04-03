@@ -19,13 +19,12 @@ import kotlinx.android.synthetic.main.item_news_feed_header.view.*
  */
 class HeaderViewHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<Any>(itemView) {
     override fun bind(item: Any) {
-
     }
 
     companion object {
         fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): HeaderViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_header, parent, false)
-            val viewHolder =  HeaderViewHolder(view)
+            val viewHolder = HeaderViewHolder(view)
 
             val text = SpannableStringBuilder(fromDictionary(R.string.posts_header_need))
             text.setSpan(StyleSpan(Typeface.BOLD), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

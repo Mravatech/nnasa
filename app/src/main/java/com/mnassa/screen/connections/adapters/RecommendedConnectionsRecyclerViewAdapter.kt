@@ -37,7 +37,6 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
         }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return when (viewType) {
             TYPE_ITEM -> UserViewHolder.newInstance(parent, this)

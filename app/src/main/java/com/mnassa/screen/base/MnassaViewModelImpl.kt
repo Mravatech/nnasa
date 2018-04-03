@@ -57,7 +57,6 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
     }
 
     override fun provideOverridingModule() = Kodein.Module {
-
     }
 
     @CallSuper

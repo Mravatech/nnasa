@@ -8,7 +8,6 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PostPrivacyType
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
@@ -123,7 +122,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     companion object {
         private const val EXTRA_PREDEFINED_OPTIONS = "EXTRA_PREDEFINED_OPTIONS"
 
-        fun <T> newInstance(options: ShareToOptions = ShareToOptions.EMPTY, listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller{
+        fun <T> newInstance(options: ShareToOptions = ShareToOptions.EMPTY, listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
             val args = Bundle()
             args.putSerializable(EXTRA_PREDEFINED_OPTIONS, options)
             val result = SharingOptionsController(args)
@@ -137,9 +136,9 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     class ShareToOptions(
-            var isPromoted: Boolean,
-            var isMyNewsFeedSelected: Boolean,
-            var selectedConnections: List<String>
+        var isPromoted: Boolean,
+        var isMyNewsFeedSelected: Boolean,
+        var selectedConnections: List<String>
     ) : Serializable {
 
         val privacyType: PostPrivacyType get() {

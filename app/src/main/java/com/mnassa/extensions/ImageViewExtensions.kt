@@ -11,7 +11,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
 import com.mnassa.helper.GlideApp
 
-
 /**
  * Created by Peter on 3/2/2018.
  */

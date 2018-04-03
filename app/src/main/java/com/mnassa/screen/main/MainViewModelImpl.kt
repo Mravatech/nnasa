@@ -1,7 +1,7 @@
 package com.mnassa.screen.main
 
 import android.os.Bundle
-import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.CountersInteractor
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -16,9 +16,10 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Created by Peter on 2/21/2018.
  */
 class MainViewModelImpl(
-        private val loginInteractor: LoginInteractor,
-        private val userProfileInteractor: UserProfileInteractor,
-        private val countersInteractor: CountersInteractor) : MnassaViewModelImpl(), MainViewModel {
+    private val loginInteractor: LoginInteractor,
+    private val userProfileInteractor: UserProfileInteractor,
+    private val countersInteractor: CountersInteractor
+) : MnassaViewModelImpl(), MainViewModel {
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
 
     override val unreadChatsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
@@ -29,26 +30,21 @@ class MainViewModelImpl(
     override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
 
     override val currentAccountChannel: ConflatedBroadcastChannel<ShortAccountModel> = ConflatedBroadcastChannel()
+    override val availableAccountsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         handleException {
-            countersInteractor.numberOfUnreadChats.consumeEach {
-                unreadChatsCountChannel.send(it)
-            }
+            countersInteractor.numberOfUnreadChats.consumeTo(unreadChatsCountChannel)
         }
 
         handleException {
-            countersInteractor.numberOfUnreadNotifications.consumeEach {
-                unreadNotificationsCountChannel.send(it)
-            }
+            countersInteractor.numberOfUnreadNotifications.consumeTo(unreadNotificationsCountChannel)
         }
 
         handleException {
-            countersInteractor.numberOfRequested.consumeEach {
-                unreadConnectionsCountChannel.send(it)
-            }
+            countersInteractor.numberOfRequested.consumeTo(unreadConnectionsCountChannel)
         }
 
         handleException {
@@ -73,7 +69,6 @@ class MainViewModelImpl(
             val profile = userProfileInteractor.getProfile()
             currentAccountChannel.send(profile)
         }
-
     }
 
     override fun logout() {

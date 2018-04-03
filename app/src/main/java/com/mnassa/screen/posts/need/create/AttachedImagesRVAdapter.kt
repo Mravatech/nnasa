@@ -25,7 +25,7 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
     fun destroyCallbacks() {
         onAddImageClickListener = {}
         onRemoveImageClickListener = { _, _ -> }
-        onReplaceImageClickListener = { _, _ ->}
+        onReplaceImageClickListener = { _, _ -> }
     }
 
     init {
@@ -148,7 +148,6 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
     class AddImageVH(itemView: View) : BaseVH<AttachedImage>(itemView) {
 
         override fun bind(item: AttachedImage) {
-
         }
 
         companion object {
@@ -177,5 +176,4 @@ sealed class AttachedImage(val typeId: Int) : Serializable {
         const val TYPE_LOCAL = 2
         const val TYPE_ADD = 3
     }
-
 }

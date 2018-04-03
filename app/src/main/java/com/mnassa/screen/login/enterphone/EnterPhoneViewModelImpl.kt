@@ -84,7 +84,6 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
         }
     }
 
-
     private companion object {
         private const val EXTRA_VERIFICATION_RESPONSE = "EXTRA_VERIFICATION_RESPONSE"
     }

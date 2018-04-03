@@ -49,7 +49,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = registrationAdapter
-            vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
+            vpRegistration.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                 override fun onPageSelected(position: Int) {
                     updateAccountTypeSwitch()
                     hideKeyboard()
@@ -158,7 +158,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     inner class RegistrationAdapter(
-            private val context: Context)
+        private val context: Context
+    )
         : PagerAdapter() {
 
         private var companySelectedPlaceName: String? = null
@@ -245,6 +246,5 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 }
             })
         }
-
     }
 }
