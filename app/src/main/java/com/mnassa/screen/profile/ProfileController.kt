@@ -10,7 +10,6 @@ import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent

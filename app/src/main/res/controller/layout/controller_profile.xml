@@ -15,7 +15,7 @@
             android:id="@+id/profileCollapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="@color/turquoiseBlue"
+            app:contentScrim="@color/blue_turquoise"
             app:expandedTitleTextAppearance="@color/white"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
@@ -54,7 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
-                        android:textColor="@color/paleGray"
+                        android:textColor="@color/gray_pale"
                         android:textSize="@dimen/profile_toolbar_title_expanded_sub_text_size"
                         android:textStyle="normal"
                         tools:text="UI/UX Designer in ISDDESIGN" />

@@ -30,6 +30,7 @@ import com.mnassa.screen.connections.newrequests.NewRequestsController
 import com.mnassa.screen.connections.recommended.RecommendedConnectionsController
 import com.mnassa.screen.connections.sent.SentConnectionsController
 import com.mnassa.screen.main.OnPageSelected
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
@@ -190,7 +191,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     }
 
     private fun openProfile(accountModel: ShortAccountModel) {
-        Toast.makeText(context, "Opening profile of ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
+        open(ProfileController.newInstance(accountModel))
     }
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {

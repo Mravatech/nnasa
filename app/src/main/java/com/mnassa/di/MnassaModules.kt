@@ -118,13 +118,13 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
-    bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance()) }
+    bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
-    bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance()) }
+    bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
-    bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance(), instance()) }
+    bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl( instance(), instance()) }
-    bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance()) }
+    bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance(), instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
@@ -155,22 +155,18 @@ private val viewModelsModule = Kodein.Module {
 private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
-        converter.registerConverter(UserAccountConverter::class.java)
+        converter.registerConverter(UserAccountConverter())
         converter.registerConverter(TranslatedWordConverter(instance()))
-        converter.registerConverter(ConnectionsConverter::class.java)
-        converter.registerConverter(GeoPlaceConverter::class.java)
+        converter.registerConverter(ConnectionsConverter())
+        converter.registerConverter(GeoPlaceConverter())
         converter.registerConverter(TagConverter(instance()))
         converter.registerConverter(LocationConverter(instance()))
-        converter.registerConverter(TagConverter(instance()))
-        converter.registerConverter(ProfileConverter::class.java)
-        converter.registerConverter(AbilityConverter::class.java)
-        converter.registerConverter(LocationConverter::class.java)
-        converter.registerConverter(PostConverter::class.java)
-        converter.registerConverter(CommentsConverter::class.java)
+        converter.registerConverter(ProfileConverter(instance()))
+        converter.registerConverter(AbilityConverter())
+        converter.registerConverter(PostConverter())
+        converter.registerConverter(CommentsConverter())
         converter.registerConverter(WalletConverter({ instance() }))
-        converter.registerConverter(InvitationConverter::class.java)
-        converter.registerConverter(TagConverter( instance() ))
-        converter.registerConverter(AbilityConverter::class.java)
+        converter.registerConverter(InvitationConverter())
         converter
     }
 }

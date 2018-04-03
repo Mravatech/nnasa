@@ -11,7 +11,7 @@ import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter

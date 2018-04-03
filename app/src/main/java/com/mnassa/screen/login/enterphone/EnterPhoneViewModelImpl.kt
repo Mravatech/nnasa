@@ -2,6 +2,7 @@ package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
@@ -12,7 +13,7 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/21/2018.
  */
-open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
+open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor, private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: PhoneVerificationModel
 
     override val openScreenChannel: ArrayBroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -66,7 +67,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
             val nextScreen = when {
                 accounts.isEmpty() -> EnterPhoneViewModel.OpenScreenCommand.Registration()
                 accounts.size == 1 -> {
-                    loginInteractor.selectAccount(accounts.first())
+                    userProfileInteractor.selectAccount(accounts.first())
                     EnterPhoneViewModel.OpenScreenCommand.MainScreen()
                 }
                 else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)

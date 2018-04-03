@@ -76,25 +76,25 @@ abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseV
                 textView.text =
                         getSpannableText(EMPTY_CONNECTIONS_TEXT,
                                 fromDictionary(R.string.user_profile_connection_connected),
-                                ContextCompat.getColor(textView.context, R.color.coolGreen))
+                                ContextCompat.getColor(textView.context, R.color.green_cool))
             }
             ConnectionStatus.REQUESTED -> {
                 textView.text =
                         getSpannableText(EMPTY_CONNECTIONS_TEXT,
                                 fromDictionary(R.string.user_profile_connection_connect),
-                                ContextCompat.getColor(textView.context, R.color.coolGreen))
+                                ContextCompat.getColor(textView.context, R.color.green_cool))
             }
             ConnectionStatus.RECOMMENDED -> {
                 textView.text =
                         getSpannableText(EMPTY_CONNECTIONS_TEXT,
                                 fromDictionary(R.string.user_profile_connection_connect),
-                                ContextCompat.getColor(textView.context, R.color.coolGreen))
+                                ContextCompat.getColor(textView.context, R.color.green_cool))
             }
             ConnectionStatus.SENT -> {
                 textView.text =
                         getSpannableText(EMPTY_CONNECTIONS_TEXT,
                                 fromDictionary(R.string.profile_request_was_sent),
-                                ContextCompat.getColor(textView.context, R.color.hintColor))
+                                ContextCompat.getColor(textView.context, R.color.gray_cool))
             }
             else -> {
             }

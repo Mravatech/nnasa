@@ -44,7 +44,7 @@ class ClickableDrawableTextInputEditText : TextInputEditText {
         isChosen = hasToHide
         when (hasToHide) {
             true -> onDrawableRightClick(R.color.black, R.drawable.ic_eye_on)
-            false -> onDrawableRightClick(R.color.coolGray, R.drawable.ic_eye_off)
+            false -> onDrawableRightClick(R.color.gray_cool, R.drawable.ic_eye_off)
         }
     }
 

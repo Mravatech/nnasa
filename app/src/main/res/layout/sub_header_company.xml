@@ -90,7 +90,7 @@
         android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:textColor="@color/turquoiseBlue"
+        android:textColor="@color/blue_turquoise"
         android:visibility="gone"
         tools:text="+38 (066) 752 02 65" />
 
@@ -117,7 +117,7 @@
         android:layout_marginBottom="@dimen/profile_header_item_offers_margin_bottom"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:textColor="@color/turquoiseBlue"
+        android:textColor="@color/blue_turquoise"
         android:visibility="gone"
         tools:text="calvin@gmail.com" />
 

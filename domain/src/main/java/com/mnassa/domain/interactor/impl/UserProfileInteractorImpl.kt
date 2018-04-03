@@ -8,7 +8,6 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -19,7 +18,7 @@ class UserProfileInteractorImpl(
 
     override val currentProfile: BroadcastChannel<ShortAccountModel> get() = userRepository.currentProfile
 
-    override suspend fun getAllAccounts(): BroadcastChannel<List<ShortAccountModel>>  = userRepository.getAllAccounts()
+    override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>>  = userRepository.getAllAccounts()
 
     override suspend fun selectAccount(account: ShortAccountModel) = userRepository.setCurrentAccount(account)
 

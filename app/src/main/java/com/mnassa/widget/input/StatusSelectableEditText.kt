@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.company_status_fake_edit_text.view.*
 

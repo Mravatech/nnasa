@@ -5,8 +5,8 @@
             <solid android:color="#FFDDDDDD" />
             <gradient
                 android:angle="0"
-                android:endColor="@color/turquoiseBlue"
-                android:startColor="@color/turquoiseBlue" />
+                android:endColor="@color/blue_turquoise"
+                android:startColor="@color/blue_turquoise" />
         </shape>
     </item>
 
@@ -16,7 +16,7 @@
         android:right="1dp"
         android:top="1dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/backgroundMain" />
+            <solid android:color="@color/background_main" />
         </shape>
     </item>
 

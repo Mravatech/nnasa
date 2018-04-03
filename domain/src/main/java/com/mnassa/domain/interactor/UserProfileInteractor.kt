@@ -6,7 +6,6 @@ import com.mnassa.domain.model.ShortAccountModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import com.mnassa.domain.model.*
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -14,7 +13,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface UserProfileInteractor {
 
     val currentProfile: BroadcastChannel<ShortAccountModel>
-    suspend fun getAllAccounts(): BroadcastChannel<List<ShortAccountModel>>
+    suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>>
     suspend fun selectAccount(account: ShortAccountModel)
 
     suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>

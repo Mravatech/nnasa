@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
@@ -26,11 +27,8 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.launch
 
 /**
  * Created by Peter on 2/21/2018.
@@ -54,11 +52,24 @@ class UserRepositoryImpl(
         }
         set(value) = sharedPrefs.edit().putString(EXTRA_ACCOUNT_ID, value).apply()
 
-    override val currentProfile: BroadcastChannel<ShortAccountModel>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    private val innerCurrentProfileChannel = ConflatedBroadcastChannel<ShortAccountModel>()
+    override val currentProfile: BroadcastChannel<ShortAccountModel> get() {
+        if (innerCurrentProfileChannel.valueOrNull == null) {
+            launch {
+                getCurrentAccount()?.let { innerCurrentProfileChannel.send(it) }
+            }
+        }
 
-    override suspend fun getAllAccounts(): BroadcastChannel<List<ShortAccountModel>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO: update user when model was changed
+
+        return innerCurrentProfileChannel
+    }
+
+    override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> {
+        val uid = getFirebaseUserId()  ?: return produce {  }
+        return db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(uid)
+                .toListChannel<ShortAccountDbEntity>(exceptionHandler)
+                .map { converter.convertCollection(it, ShortAccountModel::class.java) }
     }
 
     override suspend fun setCurrentAccount(account: ShortAccountModel?) {
@@ -68,6 +79,7 @@ class UserRepositoryImpl(
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
+            this.innerCurrentProfileChannel.send(account)
         }
     }
 
@@ -90,8 +102,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {
-        val user = FirebaseAuth.getInstance().currentUser ?: return emptyList()
-        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(user.uid).awaitList<ShortAccountDbEntity>(exceptionHandler)
+        val localAccountId = getAccountId() ?: return emptyList()
+        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(localAccountId).awaitList<ShortAccountDbEntity>(exceptionHandler)
         return converter.convertCollection(beans, ShortAccountModel::class.java)
     }
 
@@ -223,10 +235,7 @@ class UserRepositoryImpl(
         return user.getIdToken(false).await(exceptionHandler).token
     }
 
-    override suspend fun getFirebaseUserId(): String? {
-        val user = FirebaseAuth.getInstance().currentUser ?: return null
-        return user.uid
-    }
+    override suspend fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun getAccountId(): String? = accountIdInternal
 

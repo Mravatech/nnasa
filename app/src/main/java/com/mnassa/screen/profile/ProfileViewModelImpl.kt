@@ -1,10 +1,8 @@
 package com.mnassa.screen.profile
 
+import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.interactor.ConnectionsInteractor
-import com.mnassa.domain.interactor.PostsInteractor
-import com.mnassa.domain.interactor.TagInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.ConnectionAction
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent
@@ -21,11 +19,6 @@ import timber.log.Timber
  * User: okli
  * Date: 2/26/2018
  */
-class ProfileViewModelImpl(
-    private val storageInteractor: StorageInteractor
-                           ,
-    private val storage: FirebaseStorage
-) : MnassaViewModelImpl(), ProfileViewModel {
 class ProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
         private val userProfileInteractor: UserProfileInteractor,

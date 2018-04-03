@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_toStartOf="@+id/vOccupationDivider"
             android:contentDescription="@null"
-            android:textColor="@color/turquoiseBlue"
+            android:textColor="@color/blue_turquoise"
             android:visibility="gone"
             tools:text="Make Primary" />
 

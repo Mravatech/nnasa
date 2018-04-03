@@ -9,6 +9,7 @@ import com.mnassa.data.network.bean.firebase.LocationDbEntity
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.*
+import com.mnassa.domain.other.LanguageProvider
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +17,7 @@ import com.mnassa.domain.model.impl.*
  * Date: 3/23/2018
  */
 
-class ProfileConverter : ConvertersContextRegistrationCallback {
+class ProfileConverter(private val languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertAccountFromDb)
@@ -25,12 +26,12 @@ class ProfileConverter : ConvertersContextRegistrationCallback {
     private fun convertLocationPlace(input: LocationDbEntity): LocationPlaceModelImpl {
         val city: TranslatedWordModel? =
                 if (!input.en?.city.isNullOrBlank() || !input.ar?.city.isNullOrBlank()) {
-                    TranslatedWordModelImpl("", "", input.en?.city, input.ar?.city)
+                    TranslatedWordModelImpl(languageProvider, "", "", input.en?.city, input.ar?.city)
                 } else null
 
         val placeName: TranslatedWordModel? =
                 if (!input.en?.placeName.isNullOrBlank() || !input.ar?.placeName.isNullOrBlank()) {
-                    TranslatedWordModelImpl("", "", input.en?.placeName, input.ar?.placeName)
+                    TranslatedWordModelImpl(languageProvider, "", "", input.en?.placeName, input.ar?.placeName)
                 } else null
 
         return LocationPlaceModelImpl(city = city, lat = input.en?.lat ?: 0.0, lng = input.en?.lng ?: 0.0, placeId = input.placeId, placeName = placeName)
