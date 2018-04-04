@@ -60,7 +60,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor, priva
                 val nextScreen = when {
                     accounts.isEmpty() -> EnterCodeViewModel.OpenScreenCommand.RegistrationScreen()
                     accounts.size == SINGLE_ACCOUNT_COUNT -> {
-                        userProfileInteractor.selectAccount(accounts.first())
+                        userProfileInteractor.setCurrentUserAccount(accounts.first())
                         EnterCodeViewModel.OpenScreenCommand.MainScreen()
                     }
                     else -> EnterCodeViewModel.OpenScreenCommand.SelectAccount(accounts)

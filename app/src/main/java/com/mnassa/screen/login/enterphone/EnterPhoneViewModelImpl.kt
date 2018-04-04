@@ -67,7 +67,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor,
             val nextScreen = when {
                 accounts.isEmpty() -> EnterPhoneViewModel.OpenScreenCommand.Registration()
                 accounts.size == 1 -> {
-                    userProfileInteractor.selectAccount(accounts.first())
+                    userProfileInteractor.setCurrentUserAccount(accounts.first())
                     EnterPhoneViewModel.OpenScreenCommand.MainScreen()
                 }
                 else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)

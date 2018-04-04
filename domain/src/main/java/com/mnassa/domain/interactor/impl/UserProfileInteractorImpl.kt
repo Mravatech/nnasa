@@ -1,9 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.InvitedShortAccountModel
-import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -16,11 +14,11 @@ class UserProfileInteractorImpl(
         private val userRepository: UserRepository
 ) : UserProfileInteractor {
 
+    override val onAccountChangedListener: SimpleCompositeEventListener<ShortAccountModel> = SimpleCompositeEventListener()
+
     override val currentProfile: BroadcastChannel<ShortAccountModel> get() = userRepository.currentProfile
 
-    override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>>  = userRepository.getAllAccounts()
-
-    override suspend fun selectAccount(account: ShortAccountModel) = userRepository.setCurrentAccount(account)
+    override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> = userRepository.getAllAccounts()
 
     override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
         return userRepository.getCurrentAccountChannel()
@@ -82,6 +80,7 @@ class UserProfileInteractorImpl(
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
         userRepository.setCurrentAccount(account)
         currentProfile.send(account)
+        onAccountChangedListener.emit(account)
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()

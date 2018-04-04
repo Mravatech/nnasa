@@ -93,7 +93,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getCurrentAccountChannel(): ReceiveChannel<InvitedShortAccountModel>{
-        val accountId = accountIdInternal
+        val accountId = getAccountId() ?: return produce {  }
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)
                 .toValueChannel<InviteShortAccountDbEntity>(exceptionHandler).map {
@@ -102,8 +102,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {
-        val localAccountId = getAccountId() ?: return emptyList()
-        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(localAccountId).awaitList<ShortAccountDbEntity>(exceptionHandler)
+        val localFirebaseUserId = getFirebaseUserId()?: return emptyList()
+        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(localFirebaseUserId).awaitList<ShortAccountDbEntity>(exceptionHandler)
         return converter.convertCollection(beans, ShortAccountModel::class.java)
     }
 

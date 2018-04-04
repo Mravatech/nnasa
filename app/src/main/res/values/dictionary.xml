@@ -259,6 +259,8 @@
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
 
+    <string name="position_not_specified">_android_position_not_specified</string>
+
     <!-- ========================================= INVITE ====================================== -->
     <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
     <string name="invite_search_hint">_android_invite_search_hint</string>

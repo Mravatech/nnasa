@@ -87,7 +87,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
         }
     }
 
-    protected open fun <T> handleException(function: suspend () -> T): Job {
+    open fun <T> handleException(function: suspend () -> T): Job {
         return launchCoroutineUI { handleExceptionsSuspend(function) }
     }
 

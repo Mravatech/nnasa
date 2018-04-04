@@ -11,6 +11,7 @@ import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
 import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
+import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
@@ -79,8 +80,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun sendViewed(ids: List<String>) {
-        //todo crash here
-//        postApi.viewItems(ViewItemsRequest(ids, NetworkContract.ItemType.POST)).handleException(exceptionHandler)
+        postApi.viewItems(ViewItemsRequest(ids, NetworkContract.ItemType.POST)).handleException(exceptionHandler)
     }
 
     override suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>): PostModel {

@@ -119,6 +119,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         fun add(element: T): Boolean
         fun addAll(elements: Collection<T>): Boolean
         fun remove(element: T): Boolean
+        fun removeAll(elements: Collection<T>): Boolean
         fun set(elements: List<T>)
         operator fun get(index: Int): T
         val size: Int
@@ -173,6 +174,20 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             postUpdate {
                 val newDataList = ArrayList(this)
                 newDataList.remove(element)
+
+                val diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(this, ReadOnlyDataStorageWrapper(newDataList)), true)
+                super.clear()
+                super.addAll(newDataList)
+                diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
+                onDataChangedListener()
+            }
+            return true
+        }
+
+        override fun removeAll(elements: Collection<ITEM>): Boolean {
+            postUpdate {
+                val newDataList = ArrayList(this)
+                newDataList.removeAll(elements)
 
                 val diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(this, ReadOnlyDataStorageWrapper(newDataList)), true)
                 super.clear()
@@ -242,10 +257,12 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         override fun add(element: T): Boolean = wrappedMutableVal.add(element)
         override fun addAll(elements: Collection<T>): Boolean = wrappedMutableVal.addAll(elements)
         override fun remove(element: T): Boolean = wrappedMutableVal.remove(element)
+        override fun removeAll(elements: Collection<T>): Boolean = wrappedMutableVal.removeAll(elements)
         override fun set(elements: List<T>) {
             wrappedMutableVal.clear()
             wrappedMutableVal.addAll(elements)
         }
+        override fun get(index: Int): T = wrappedMutableVal[index]
 
         override fun iterator(): Iterator<T> {
             return object : Iterator<T> {
@@ -262,6 +279,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         override fun add(element: T): Boolean = throw IllegalStateException("add() called in the ReadOnlyDataStorageWrapper")
         override fun addAll(elements: Collection<T>): Boolean = throw IllegalStateException("addAll() called in the ReadOnlyDataStorageWrapper")
         override fun remove(element: T): Boolean = throw IllegalStateException("remove() called in the ReadOnlyDataStorageWrapper")
+        override fun removeAll(elements: Collection<T>): Boolean = throw IllegalStateException("removeAll() called in the ReadOnlyDataStorageWrapper")
+
         override fun set(elements: List<T>): Unit = throw IllegalStateException("set() called in the ReadOnlyDataStorageWrapper")
         override fun get(index: Int): T = wrappedVal[index]
         override val size: Int get() = wrappedVal.size

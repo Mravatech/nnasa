@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor
 
+import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.PersonalInfoModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -11,10 +12,10 @@ import com.mnassa.domain.model.*
  * Created by Peter on 2/21/2018.
  */
 interface UserProfileInteractor {
+    val onAccountChangedListener: CompositeEventListener<ShortAccountModel>
 
     val currentProfile: BroadcastChannel<ShortAccountModel>
     suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>>
-    suspend fun selectAccount(account: ShortAccountModel)
 
     suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel>
     suspend fun createPersonalAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel

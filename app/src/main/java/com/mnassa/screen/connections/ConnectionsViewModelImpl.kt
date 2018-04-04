@@ -2,50 +2,29 @@ package com.mnassa.screen.connections
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.os.Bundle
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.ReConsumeWhenAccountChangedConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.map
 import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
  */
 class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), ConnectionsViewModel {
-    override val newConnectionRequestsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val recommendedConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val allConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-
-    private var sendPhoneContactsJob: Job? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val randomSeed = System.currentTimeMillis()
-
-        handleException {
-            connectionsInteractor.getConnectionRequests().consumeEach {
-                val random = Random(randomSeed)
-                newConnectionRequestsChannel.send(it.shuffled(random))
-            }
-        }
-
-        handleException {
-            connectionsInteractor.getRecommendedConnections().consumeEach {
-                val random = Random(randomSeed)
-                recommendedConnectionsChannel.send(it.shuffled(random))
-            }
-        }
-
-        handleException {
-            connectionsInteractor.getConnectedConnections().consumeEach {
-                allConnectionsChannel.send(it)
-            }
-        }
+    private val randomSeed = System.currentTimeMillis()
+    override val newConnectionRequestsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+        connectionsInteractor.getConnectionRequests().map { it.shuffled(Random(randomSeed)) }
+    }
+    override val recommendedConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+        connectionsInteractor.getRecommendedConnections().map { it.shuffled(Random(randomSeed)) }
+    }
+    override val allConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+        connectionsInteractor.getConnectedConnections().map { it.shuffled(Random(randomSeed)) }
     }
 
     override fun connect(account: ShortAccountModel) {
@@ -80,6 +59,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
         }
     }
 
+    private var sendPhoneContactsJob: Job? = null
     @SuppressLint("MissingPermission")
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override fun onContactPermissionsGranted() {
