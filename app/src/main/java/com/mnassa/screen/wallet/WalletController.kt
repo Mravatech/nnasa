@@ -5,7 +5,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI

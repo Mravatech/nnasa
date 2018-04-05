@@ -3,7 +3,6 @@ package com.mnassa.di
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
-import com.github.salomonbrys.kodein.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -98,6 +97,8 @@ import com.mnassa.screen.wallet.WalletViewModelImpl
 import com.mnassa.screen.wallet.send.SendPointsViewModel
 import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
+import org.kodein.di.Kodein
+import org.kodein.di.generic.*
 import retrofit2.Retrofit
 
 /**

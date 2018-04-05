@@ -5,9 +5,8 @@ import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
-import com.github.salomonbrys.kodein.*
-import com.github.salomonbrys.kodein.android.autoAndroidModule
 import com.google.firebase.FirebaseApp
+import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.other.AppInfoProvider
@@ -15,14 +14,19 @@ import com.mnassa.helper.CrashReportingTree
 import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.experimental.launch
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.androidModule
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.provider
 import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
  */
 class App : MultiDexApplication(), KodeinAware {
-    override val kodein: Kodein by Kodein.lazy {
-        import(autoAndroidModule(this@App))
+    override val kodein: Kodein = Kodein.lazy {
+        import(androidModule(this@App))
         registerAppModules(this)
         bind<Context>() with provider { this@App }
     }
@@ -32,7 +36,7 @@ class App : MultiDexApplication(), KodeinAware {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        if (instance<AppInfoProvider>().isDebug) {
+        if (getInstance<AppInfoProvider>().isDebug) {
             if (LeakCanary.isInAnalyzerProcess(this)) return
             LeakCanary.install(this)
 
@@ -44,7 +48,7 @@ class App : MultiDexApplication(), KodeinAware {
         }
 
         launch {
-            instance<DictionaryInteractor>().handleDictionaryUpdates()
+            getInstance<DictionaryInteractor>().handleDictionaryUpdates()
         }
     }
 

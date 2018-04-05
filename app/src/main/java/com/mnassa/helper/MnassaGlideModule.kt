@@ -12,9 +12,8 @@ import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import com.bumptech.glide.module.AppGlideModule
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.firebase.ui.storage.images.FirebaseImageLoader
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.StorageReference
+import com.mnassa.di.getInstance
 import com.mnassa.domain.other.AppInfoProvider
 import okhttp3.Call
 import okhttp3.OkHttpClient
@@ -29,7 +28,7 @@ class MnassaGlideModule : AppGlideModule() {
         registry.append(StorageReference::class.java, InputStream::class.java, FirebaseImageLoader.Factory())
 
         val builder = OkHttpClient.Builder()
-        if (context.appKodein().instance<AppInfoProvider>().isDebug) {
+        if (context.getInstance<AppInfoProvider>().isDebug) {
             builder.addNetworkInterceptor(StethoInterceptor())
         }
         val client = builder.build()

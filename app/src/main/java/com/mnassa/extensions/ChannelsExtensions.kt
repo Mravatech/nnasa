@@ -1,11 +1,11 @@
 package com.mnassa.extensions
 
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.*
+import org.kodein.di.generic.instance
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

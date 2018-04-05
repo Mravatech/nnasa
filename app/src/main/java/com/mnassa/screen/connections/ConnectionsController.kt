@@ -9,7 +9,7 @@ import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -91,15 +91,15 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     @SuppressLint("MissingPermission")
     override fun onPageSelected() {
         onPageSelectedJob?.cancel()
-        onPageSelectedJob = launchCoroutineUI {
-            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+        onPageSelectedJob = launchCoroutineUI { thisRef ->
+            val permissionsResult = thisRef().permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {
-                permissionsSnackbar?.dismiss()
-                viewModel.onContactPermissionsGranted()
+                thisRef().permissionsSnackbar?.dismiss()
+                thisRef().viewModel.onContactPermissionsGranted()
             } else {
-                val view = view?.clSnackbarParent ?: return@launchCoroutineUI
-                if (permissionsSnackbar?.isShown != true) {
+                val view = thisRef().view?.clSnackbarParent ?: return@launchCoroutineUI
+                if (thisRef().permissionsSnackbar?.isShown != true) {
                     permissionsSnackbar = Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
                             .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
                                 if (permissionsResult.isShouldShowRequestPermissionRationale) {

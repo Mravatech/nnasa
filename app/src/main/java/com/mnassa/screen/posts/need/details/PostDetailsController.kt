@@ -5,8 +5,7 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.with
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
@@ -40,7 +39,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         RecommendController.OnRecommendPostResult {
     override val layoutId: Int = R.layout.controller_post_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
-    override val viewModel: PostDetailsViewModel by injector.with(postId).instance()
+    override val viewModel: PostDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
@@ -103,9 +102,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         commentsAdapter.onBindHeader = { headerLayout.value = it }
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
+
         accountsToRecommendAdapter.onDataSourceChangedListener = {
-            view.recommendPanel.isGone = it.isEmpty()
-            updatePostCommentButtonState()
+            launchCoroutineUI { thisRef ->
+                thisRef().view?.recommendPanel?.isGone = it.isEmpty()
+                updatePostCommentButtonState()
+            }
         }
 
         with(view) {
@@ -204,8 +206,15 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         with(view ?: return) {
             val editedCommentLocal = editedComment
             if (editedCommentLocal != null) {
-                viewModel.editComment(editedCommentLocal, etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
-            } else viewModel.createComment(etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
+                viewModel.editComment(
+                        originalComment = editedCommentLocal,
+                        text = etCommentText.text.toString(),
+                        accountsToRecommend = recommendedAccounts.map { it.id },
+                        replyTo = replyTo)
+            } else viewModel.createComment(
+                    text = etCommentText.text.toString(),
+                    accountsToRecommend = recommendedAccounts.map { it.id },
+                    replyTo = replyTo)
             etCommentText.text = null
             replyTo = null
             editedComment = null

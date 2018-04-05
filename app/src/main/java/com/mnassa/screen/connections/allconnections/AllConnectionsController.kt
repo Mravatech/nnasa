@@ -2,7 +2,6 @@ package com.mnassa.screen.connections.allconnections
 
 import android.view.View
 import android.widget.Toast
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -15,6 +14,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_all.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/14/2018.

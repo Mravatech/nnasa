@@ -2,7 +2,7 @@ package com.mnassa.screen.connections.select
 
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel

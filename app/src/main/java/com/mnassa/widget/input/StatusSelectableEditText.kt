@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.helper.DialogHelper
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.company_status_fake_edit_text.view.*
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +19,8 @@ import kotlinx.android.synthetic.main.company_status_fake_edit_text.view.*
 
 class StatusSelectableEditText : LinearLayout {
 
-    private val dialogHelper = context.appKodein().instance<DialogHelper>()
+    private val kodeine by closestKodein()
+    private val dialogHelper: DialogHelper by kodeine.instance()
     private var occupationPositionInList = -1
 
     constructor(context: Context) : super(context)
@@ -53,8 +54,8 @@ class StatusSelectableEditText : LinearLayout {
         text?.let {
             tvCompanyStatusLabel.visibility = View.VISIBLE
             tvCompanyStatusView.text = it
-            for ((index, status ) in statuses.withIndex()){
-                if (status == text){
+            for ((index, status) in statuses.withIndex()) {
+                if (status == text) {
                     occupationPositionInList = index
                 }
             }

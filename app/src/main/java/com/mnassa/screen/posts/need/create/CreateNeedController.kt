@@ -8,16 +8,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.with
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
@@ -27,6 +25,7 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**
@@ -36,7 +35,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_need_create
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
-    override val viewModel: CreateNeedViewModel by injector.with(postId).instance()
+    override val viewModel: CreateNeedViewModel by instance(arg = postId)
     private var waitForResumeJob: Job? = null
     override var sharingOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) {
@@ -59,7 +58,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         playServiceHelper.googleApiClient.connect()
 
         attachedImagesAdapter.onAddImageClickListener = {
-            dialogHelper.showSelectImageSourceDialog(view.context) { launchCoroutineUI { selectImage(it) } }
+            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
         }
         attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
             attachedImagesAdapter.dataStorage.remove(item)

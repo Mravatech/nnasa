@@ -115,6 +115,6 @@ class PostDetailsViewModelImpl(
     }
 
     private suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { asyncWorker { tagInteractor.get(it) } }.mapNotNull { it.await() }
+        return tags.map { tag -> asyncWorker { tagInteractor.get(tag) } }.mapNotNull { it.await() }
     }
 }

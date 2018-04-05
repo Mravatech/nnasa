@@ -9,7 +9,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.EditText
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -58,8 +58,8 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
     protected fun addPhoto(fab: FloatingActionButton){
         fab.setOnClickListener {
             dialog.showSelectImageSourceDialog(it.context) { imageSource ->
-                launchCoroutineUI {
-                    activity?.let {
+                launchCoroutineUI { thisRef ->
+                    thisRef().activity?.let {
                         if (CropActivity.ImageSource.CAMERA == imageSource) {
                             val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             if (!permissionsResult.isAllGranted) {

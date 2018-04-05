@@ -4,15 +4,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.impl.AccountAbilityImpl
 import com.mnassa.helper.DialogHelper
-import com.mnassa.screen.accountinfo.personal.PersonalInfoController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.selectable_fake_edit_text.view.*
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,7 +21,8 @@ import kotlinx.android.synthetic.main.selectable_fake_edit_text.view.*
 
 class AbilitySelectableEditText : LinearLayout {
 
-    private val dialogHelper = context.appKodein().instance<DialogHelper>()
+    private val kodein by closestKodein()
+    private val dialogHelper by kodein.instance<DialogHelper>()
     private var occupationPositionInList = -1
 
     private var isFirst: Boolean = true
@@ -100,6 +100,7 @@ class AbilitySelectableEditText : LinearLayout {
     interface AddNewSelectableViewListener {
         fun addSelectableViewIsAvailable(isAvailable: Boolean)
     }
+
     companion object {
         const val OTHER = 4
     }

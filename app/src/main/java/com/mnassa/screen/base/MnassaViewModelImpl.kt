@@ -2,15 +2,6 @@ package com.mnassa.screen.base
 
 import android.os.Bundle
 import android.support.annotation.CallSuper
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.KodeinInjected
-import com.github.salomonbrys.kodein.KodeinInjector
-import com.github.salomonbrys.kodein.android.AndroidInjector
-import com.github.salomonbrys.kodein.android.AndroidScope
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.bindings.InstanceBinding
-import com.github.salomonbrys.kodein.bindings.ScopeRegistry
-import com.github.salomonbrys.kodein.erased
 import com.google.firebase.FirebaseException
 import com.mnassa.App
 import com.mnassa.R
@@ -24,44 +15,29 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.KodeinTrigger
+import org.kodein.di.android.closestKodein
 import timber.log.Timber
-import java.util.*
 
 /**
  * Created by Peter on 2/20/2018.
  */
-abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, AndroidInjector<MnassaViewModel, AndroidScope<MnassaViewModel>> {
-    final override val injector = KodeinInjector()
-    final override val kodeinComponent = super.kodeinComponent
-    final override val kodeinScope: AndroidScope<MnassaViewModel> = object : AndroidScope<MnassaViewModel> {
-        override fun getRegistry(context: MnassaViewModel): ScopeRegistry = synchronized(CONTEXT_SCOPES) { CONTEXT_SCOPES.getOrPut(context) { ScopeRegistry() } }
-        override fun removeFromScope(context: MnassaViewModel): ScopeRegistry? = CONTEXT_SCOPES.remove(context)
+abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaViewModel {
+    override val kodeinTrigger = KodeinTrigger()
+    override val kodein: Kodein = Kodein.lazy {
+        val parentKodein by closestKodein(requireNotNull(App.context))
+        extend(parentKodein, allowOverride = true)
     }
+
     override val errorMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
     override val isProgressEnabledChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel()
 
-    override fun initializeInjector() {
-        val applicationContext = App.context
-
-        val activityModule = Kodein.Module {
-            Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MnassaViewModelImpl)
-            import(provideOverridingModule(), allowOverride = true)
-        }
-
-        val kodein = Kodein {
-            extend(applicationContext.appKodein(), allowOverride = true)
-            import(activityModule, allowOverride = true)
-        }
-
-        injector.inject(kodein)
-    }
-
-    override fun provideOverridingModule() = Kodein.Module {
-    }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
-        initializeInjector()
+        kodeinTrigger.trigger()
         super.onCreate(savedInstanceState)
     }
 
@@ -101,6 +77,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
             hideProgress()
         }
     }
+
     protected open fun <T> withProgress(function: () -> T) {
         showProgress()
         try {
@@ -110,7 +87,4 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), MnassaViewModel, Andro
         }
     }
 
-    private companion object {
-        private val CONTEXT_SCOPES = WeakHashMap<MnassaViewModel, ScopeRegistry>()
-    }
 }

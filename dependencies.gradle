@@ -113,12 +113,12 @@ mapper.core =            'com.androidkotlincore:entityconverter:0.0.5'
 deps.mapper = mapper
 
 //=============================================== DI ===============================================
-versions.kodein = '4.1.0'
+versions.kodein = '5.0.0'
 
 def di = [:]
 
-di.core = "com.github.salomonbrys.kodein:kodein:${versions.kodein}"
-di.android = "com.github.salomonbrys.kodein:kodein-android:${versions.kodein}"
+di.core = "org.kodein.di:kodein-di-generic-jvm:${versions.kodein}"
+di.android = "org.kodein.di:kodein-di-framework-android:${versions.kodein}"
 
 deps.di = di
 
@@ -210,6 +210,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.maven { url "https://jitpack.io" }
     handler.maven { url "https://maven.fabric.io/public" }
     handler.maven { url "https://plugins.gradle.org/m2/" }
+    handler.maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI/' }
 }
 ext.addRepos = this.&addRepos
 

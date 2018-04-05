@@ -12,9 +12,14 @@ import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
+import java.lang.ref.WeakReference
 
 abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
-    protected var recyclerView = StateExecutor<RecyclerView?, RecyclerView>(null) { it != null }
+    protected var recyclerView = StateExecutor(
+            initState = WeakReference(null as RecyclerView?),
+            executionPredicate = { it.get() != null },
+            transformer = { requireNotNull(it.get()) })
+
     protected inline fun postUpdate(crossinline update: (() -> Unit)) {
         recyclerView.invoke {
             it.post { update() }
@@ -42,9 +47,9 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     open fun add(list: List<ITEM>) = run { dataStorage.addAll(list); Unit }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onAttachedToRecyclerView(rv: RecyclerView) = run { recyclerView.value = rv }
+    override fun onAttachedToRecyclerView(rv: RecyclerView) = run { recyclerView.value = WeakReference(rv) }
     override fun onDetachedFromRecyclerView(rv: RecyclerView) = run {
-        recyclerView.value = null
+        recyclerView.value.clear()
         recyclerView.clear()
     }
 

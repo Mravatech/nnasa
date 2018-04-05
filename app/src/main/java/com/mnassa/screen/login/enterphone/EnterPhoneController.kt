@@ -8,7 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
