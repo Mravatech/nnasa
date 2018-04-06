@@ -9,16 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.core.addons.StateExecutor
+import com.mnassa.core.addons.WeakStateExecutor
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
 
 abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
-    protected var recyclerView = StateExecutor(
-            initState = WeakReference(null as RecyclerView?),
-            executionPredicate = { it.get() != null },
-            transformer = { requireNotNull(it.get()) })
+    protected var recyclerView = WeakStateExecutor<RecyclerView?, RecyclerView>(
+            initState = null,
+            executionPredicate = { it != null })
 
     protected inline fun postUpdate(crossinline update: (() -> Unit)) {
         recyclerView.invoke {

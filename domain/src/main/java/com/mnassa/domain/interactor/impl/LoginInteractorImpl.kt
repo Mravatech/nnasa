@@ -40,9 +40,12 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
     }
 
     override suspend fun signOut() {
+        val wasLoggedIn = isLoggedIn()
         loginService.signOut()
         userRepository.setCurrentAccount(null)
 
-        launch(UI) { onLogoutListener.emit(Unit) }
+        if (wasLoggedIn) {
+            launch(UI) { onLogoutListener.emit(Unit) }
+        }
     }
 }

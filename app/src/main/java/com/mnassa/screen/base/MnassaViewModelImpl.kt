@@ -10,6 +10,8 @@ import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
+import com.mnassa.domain.exception.NotAuthorizedException
+import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
@@ -19,6 +21,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinTrigger
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**
@@ -50,6 +53,10 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         } catch (e: NetworkDisableException) {
             Timber.d(e)
             errorMessageChannel.send(fromDictionary(R.string.error_no_internet))
+        } catch (e: NotAuthorizedException) {
+            Timber.e(e)
+            val loginInteractor by kodein.instance<LoginInteractor>()
+            loginInteractor.signOut()
         } catch (e: NetworkException) {
             Timber.d(e)
             errorMessageChannel.send(e.message)

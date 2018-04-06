@@ -102,4 +102,9 @@
     <string name="_android_invite_history_invited_in_INFO">Invited in %s</string>
 
     <string name="_android_position_not_specified_INFO">Position not specified</string>
+
+    <string name="_android_side_menu_profile_INFO">My Profile</string>
+    <string name="_android_side_menu_logout_INFO">Logout</string>
+    <string name="_android_side_menu_add_account_INFO">Add Account</string>
+
 </resources>

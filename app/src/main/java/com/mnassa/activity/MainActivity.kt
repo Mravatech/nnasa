@@ -1,5 +1,6 @@
 package com.mnassa.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.bluelinelabs.conductor.Conductor
@@ -44,8 +45,13 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
         }
 
         onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe {
-            router.popToRoot()
-            router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
+//            router.popToRoot()
+//            router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
+
+            startActivity(
+                    Intent(this@MainActivity, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
     }
 

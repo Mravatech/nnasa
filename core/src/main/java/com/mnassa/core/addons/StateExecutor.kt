@@ -1,5 +1,6 @@
 package com.mnassa.core.addons
 
+import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -13,13 +14,14 @@ import kotlin.reflect.KProperty
  * @property transformer - function that receives [State] and returns [OutState]
  * @constructor creates [StateExecutor]
  */
-class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<Any?, State> {
-    var value: State
+open class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<Any?, State> {
+    open var value: State
         set(value) {
             field = value
             if (actionsQueue.isNotEmpty() && executionPredicate(value)) {
+                val transformedValue = transformer(value)
                 while (actionsQueue.isNotEmpty()) {
-                    actionsQueue.poll().invoke(transformer(value))
+                    actionsQueue.poll().invoke(transformedValue)
                 }
             }
         }
@@ -70,4 +72,27 @@ class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<Any?,
      * Clear [actionsQueue]
      * */
     fun clear() = actionsQueue.clear()
+}
+
+class WeakStateExecutor<State : Any?, out OutState : Any?> : StateExecutor<WeakReference<State>, OutState> {
+
+    constructor(initState: State, executionPredicate: ((state: State) -> Boolean)) :
+            super(
+                    initState = WeakReference(initState),
+                    executionPredicate = {
+                        val input = it.get()
+                        input != null && executionPredicate(input)
+                    },
+                    transformer = { it.get() as OutState }
+            )
+
+    constructor(initState: State, executionPredicate: ((state: State) -> Boolean), transformer: ((inState: State) -> OutState)) :
+            super(
+                    initState = WeakReference(initState),
+                    executionPredicate = {
+                        val input = it.get()
+                        input != null && executionPredicate(input)
+                    },
+                    transformer = { transformer(it.get()!!) })
+
 }

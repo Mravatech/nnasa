@@ -34,7 +34,7 @@ class MnassaProfileDrawerItem : ProfileDrawerItem() {
         return this
     }
 
-    private class MnassaImageHolder(private val firebaseImage: String?) : ImageHolder(firebaseImage) {
+    private class MnassaImageHolder(private val firebaseImage: String?) : ImageHolder(firebaseImage ?: "") {
 
         override fun applyTo(imageView: ImageView, tag: String?): Boolean {
             imageView.avatarRound(firebaseImage)

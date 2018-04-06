@@ -28,6 +28,8 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
     }
 }
 
+var start = System.currentTimeMillis()
+
 internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: ExceptionHandler): T? {
     return suspendCancellableCoroutine { continuation ->
         addListenerForSingleValueEvent(object : ValueEventListener {

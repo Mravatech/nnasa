@@ -280,4 +280,14 @@
     <string name="invite_invite_history_registered">_android_invite_history_registered</string>
     <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
 
+    <!-- ======================================== SIDE MENU ===================================== -->
+    <string name="side_menu_profile">_android_side_menu_profile</string>
+    <string name="side_menu_wallet">_sidemenu_wallet</string>
+    <string name="side_menu_invite">_sidemenu_invite</string>
+    <string name="side_menu_settings">_sidemenu_settings</string>
+    <string name="side_menu_help">_sidemenu_helpsupp</string>
+    <string name="side_menu_terms">_sidemenu_termsandcond</string>
+    <string name="side_menu_logout">_android_side_menu_logout</string>
+    <string name="side_menu_add_account">_android_side_menu_add_account</string>
+
 </resources>

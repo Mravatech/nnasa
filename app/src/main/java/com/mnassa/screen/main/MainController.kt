@@ -16,9 +16,7 @@ import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
+import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -33,9 +31,12 @@ import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
+import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.screen.wallet.WalletController
+import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.nav_header.view.*
@@ -71,7 +72,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     private fun updateActiveProfile(fireOnProfileChanged: Boolean = false) {
         accountHeader?.apply {
             profiles.forEach {
-                if ((it as MnassaProfileDrawerItem).account.id == activeAccountId) {
+                if ((it as? MnassaProfileDrawerItem)?.account?.id == activeAccountId) {
                     setActiveProfile(it, fireOnProfileChanged)
                 }
             }
@@ -90,12 +91,17 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withSavedInstance(savedInstanceState)
                     .withHeaderBackground(R.color.accent)
                     .withOnAccountHeaderListener { _, profile, _ ->
-                        val account = (profile as MnassaProfileDrawerItem).account
-                        drawer?.closeDrawer()
+                        if (profile is MnassaProfileDrawerItem) {
+                            val account = profile.account
+                            drawer?.closeDrawer()
 
-                        activeAccountId = account.id
-                        viewModel.selectAccount(account)
-                        true
+                            activeAccountId = account.id
+                            viewModel.selectAccount(account)
+                            true
+                        } else if (profile.identifier == ACCOUNT_ADD) {
+                            post { open(RegistrationController.newInstance()) }
+                            false
+                        } else false
                     }
                     .build()
 
@@ -103,9 +109,29 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withRootView(root)
                     .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
-                            PrimaryDrawerItem().withName("Hi1").withIcon(R.drawable.ic_archive).withIdentifier(1),
-                            SecondaryDrawerItem().withName("Hi2").withIcon(R.drawable.ic_archive).withIdentifier(2)
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_archive).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_archive).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_archive).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_archive).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_help)).withIcon(R.drawable.ic_archive).withIdentifier(HELP.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_terms)).withIcon(R.drawable.ic_archive).withIdentifier(TERMS.ordinal.toLong()).withSelectable(false),
+                            DividerDrawerItem(),
+                            SecondaryDrawerItem().withName(fromDictionary(R.string.side_menu_logout)).withIdentifier(LOGOUT.ordinal.toLong()).withSelectable(false),
+                            SecondaryDrawerItem().withName("Mnassa 4.0").withEnabled(false).withSelectable(false)
                     )
+                    .withSelectedItem(-1)
+                    .withOnDrawerItemClickListener { _, _, item ->
+                        when (values()[item.identifier.toInt()]) {
+                            PROFILE -> open(ProfileController.newInstance(activeAccountId))
+                            WALLET -> open(WalletController.newInstance())
+                            INVITE -> open(InviteController.newInstance())
+                            SETTINGS -> {} //TODO
+                            HELP -> {} //TODO
+                            TERMS -> {} //TODO
+                            LOGOUT -> viewModel.logout()
+                        }
+                        true
+                    }
                     .withSavedInstance(savedInstanceState)
                     .buildForFragment()
 
@@ -134,16 +160,18 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
         launchCoroutineUI {
             viewModel.unreadChatsCountChannel.consumeEach { setCounter(Pages.CHAT.ordinal, it) }
         }
+
         launchCoroutineUI {
             viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS.ordinal, it) }
         }
+
         launchCoroutineUI {
             viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(Pages.CONNECTIONS.ordinal, it) }
         }
+
         launchCoroutineUI {
             viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(Pages.HOME.ordinal, it) }
         }
-
 
         launchCoroutineUI {
             viewModel.availableAccountsChannel.consumeEach { accounts ->
@@ -152,6 +180,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     accounts.forEach { account ->
                         addProfile(MnassaProfileDrawerItem().withAccount(account), profiles.size)
                     }
+                    addProfile(ProfileSettingDrawerItem()
+                            .withName(fromDictionary(R.string.side_menu_add_account))
+                            .withIcon(R.drawable.ic_add_black_24dp)
+                            .withIdentifier(ACCOUNT_ADD)
+                            .withSelectable(false), profiles.size)
                     updateActiveProfile()
                 }
             }
@@ -184,24 +217,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
         view.bnMain.setNotification(notification, pageIndex)
     }
 
-    fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-
-//        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
-
-        when (item.itemId) {
-            R.id.nav_wallet -> open(WalletController.newInstance())
-            R.id.nav_all_connections -> open(AllConnectionsController.newInstance())
-            R.id.nav_build_network -> open(BuildNetworkController.newInstance())
-            R.id.nav_change_account -> open(SelectAccountController.newInstance())
-            R.id.nav_create_account -> open(RegistrationController.newInstance())
-            R.id.nav_invite_to_mnassa -> open(InviteController.newInstance())
-            R.id.nav_logout -> viewModel.logout()
-        }
-
-        return true
-    }
-
     override fun handleBack(): Boolean {
         return if (drawer?.isDrawerOpen == true) {
             drawer?.closeDrawer()
@@ -227,10 +242,27 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     private fun formatTabControllerTag(position: Int): String = "tab_controller_$position"
 
     private enum class Pages {
-        HOME, CONNECTIONS, NOTIFICATIONS, CHAT
+        HOME,
+        CONNECTIONS,
+        NOTIFICATIONS,
+        CHAT
+    }
+
+    enum class DrawerItem {
+        PROFILE,
+        WALLET,
+        INVITE,
+        SETTINGS,
+        HELP,
+        TERMS,
+        LOGOUT
     }
 
     companion object {
+        const val ACCOUNT_ADD = -998L
+
         fun newInstance() = MainController()
     }
+
+
 }

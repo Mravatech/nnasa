@@ -48,10 +48,9 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
         val addItemsCache: MutableList<E> = ArrayList()
 
         val sendItems = suspend {
-            if (addItemsCache.isNotEmpty()) {
-                outputChannel.send(ListItemEvent.Added(addItemsCache.toMutableList()))
-                addItemsCache.clear()
-            }
+            outputChannel.send(ListItemEvent.Added(addItemsCache.toMutableList()))
+            addItemsCache.clear()
+            lastItemsSentAt = System.currentTimeMillis()
         }
 
         consumeEach {
@@ -66,7 +65,6 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
                     sendItemsJob = subscriptionContainer.launchCoroutineUI {
                         delay(bufferizationTimeMillis)
                         sendItems()
-                        lastItemsSentAt = System.currentTimeMillis()
                     }
                 }
                 is ListItemEvent.Changed -> {
@@ -87,6 +85,12 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
                 }
             }
             Unit
+        }
+
+        //emit empty list when no items consumed
+        sendItemsJob = subscriptionContainer.launchCoroutineUI {
+            delay(bufferizationTimeMillis)
+            sendItems()
         }
     }
 

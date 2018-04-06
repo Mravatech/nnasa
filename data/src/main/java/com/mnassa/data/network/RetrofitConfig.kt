@@ -59,11 +59,7 @@ class RetrofitConfig(
             }
 
             val response = chain.proceed(newRequest.build())
-            if (response.code() == NetworkContract.ResponseCode.UNAUTHORIZED) {
-                runBlocking {
-                    loginInteractor.signOut()
-                }
-            }
+
             response
         }
 
