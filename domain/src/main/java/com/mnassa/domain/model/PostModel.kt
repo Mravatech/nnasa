@@ -27,6 +27,10 @@ interface PostModel : Model {
     val repostAuthor: ShortAccountModel?
 }
 
+interface RecommendedProfilePostModel : PostModel {
+    val recommendedProfile: ShortAccountModel
+}
+
 interface PostCounters : Serializable {
     val comments: Int
     val likes: Int

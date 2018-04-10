@@ -29,6 +29,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             rvNewsFeed.layoutManager = LinearLayoutManager(context)

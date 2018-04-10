@@ -107,4 +107,6 @@
     <string name="_android_side_menu_logout_INFO">Logout</string>
     <string name="_android_side_menu_add_account_INFO">Add Account</string>
 
+    <string name="_android_post_recommends_INFO">Recommends</string>
+
 </resources>

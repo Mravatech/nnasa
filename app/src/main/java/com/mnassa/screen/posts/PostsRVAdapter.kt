@@ -21,6 +21,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     var onItemClickListener = { item: PostModel -> }
     var onCreateNeedClickListener = {}
     var onRepostedByClickListener = { account: ShortAccountModel -> }
+    var onPostedByClickListener = { account: ShortAccountModel -> }
 
     fun destroyCallbacks() {
         onAttachedToWindow = {}
@@ -28,6 +29,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         onItemClickListener = {}
         onCreateNeedClickListener = {}
         onRepostedByClickListener = {}
+        onPostedByClickListener = {}
     }
 
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->
@@ -107,6 +109,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
             R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
             R.id.flCreateNeed -> onCreateNeedClickListener()
             R.id.rlRepostRoot -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
+            R.id.rlAuthorRoot -> onPostedByClickListener(getDataItemByAdapterPosition(position).author)
         }
     }
 
