@@ -9,18 +9,20 @@ import java.util.*
  */
 
 interface ChatRoomModel : Model {
-
     val viewedAtDate: Date
     val unreadCount: Int
     val chatMessageModel: ChatMessageModel?
     var members: List<String>?
+    var account: ShortAccountModel?
 }
 
 
-interface ChatMessageModel {
+interface ChatMessageModel : Model {
     val createdAt: Date
     val creator: String
     val text: String
     val type: String
-    var account: ShortAccountModel?
+    val chatID: String?
+    var replyMessage: Pair<String, ChatMessageModel?>?
+    var replyPost: Pair<String, Post?>?
 }

@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_loading.view.*
 
 abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = StateExecutor<RecyclerView?, RecyclerView>(null) { it != null }
-    protected inline fun postUpdate(crossinline update: (() -> Unit)) {
+    inline fun postUpdate(crossinline update: (() -> Unit)) {
         recyclerView.invoke {
             it.post { update() }
         }

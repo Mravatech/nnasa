@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvDeleteForMe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/black"
+        tools:text="Delete to me" />
+
+    <TextView
+        android:id="@+id/tvDeleteForBoth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        tools:text="Delete To Both" />
+
+    <TextView
+        android:id="@+id/tvCopyChatMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/black"
+        tools:text="Copy" />
+
+    <TextView
+        android:id="@+id/tvReply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        tools:text="Reply" />
+
+    <TextView
+        android:id="@+id/tvCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/black"
+        tools:text="Cancel" />
+
+</LinearLayout>

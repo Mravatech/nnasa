@@ -25,6 +25,9 @@ internal data class ChatMessageDbModel(
         @SerializedName("text") var text: String,
         @SerializedName("type") var type: String,
         @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName("chatID") var chatID: String?,
+        @SerializedName("linkedMessageId") var linkedMessageId: String?,
+        @SerializedName("linkedPostId") var linkedPostId: String?,
         @SerializedName("id")
         @Nullable
         override var id: String

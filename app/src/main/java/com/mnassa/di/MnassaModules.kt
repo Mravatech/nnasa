@@ -169,7 +169,7 @@ private val repositoryModule = Kodein.Module {
     }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(),instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -217,6 +217,10 @@ private val networkModule = Kodein.Module {
     bind<FirebasePostApi>() with singleton {
         val retrofit: Retrofit = instance()
         retrofit.create(FirebasePostApi::class.java)
+    }
+    bind<FirebaseChatApi>() with singleton {
+        val retrofit: Retrofit = instance()
+        retrofit.create(FirebaseChatApi::class.java)
     }
 
 

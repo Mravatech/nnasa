@@ -3,18 +3,16 @@ package com.mnassa.screen.chats
 import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.extensions.avatarRound
+import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import kotlinx.android.synthetic.main.item_chat_room.view.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 /**
@@ -28,14 +26,18 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     var onItemClickListener = { item: ChatRoomModel -> }
 
     override val itemsComparator: (item1: ChatRoomModel, item2: ChatRoomModel) -> Int = { first, second ->
-        first.viewedAtDate.compareTo(second.viewedAtDate) * -1
+        requireNotNull(first.chatMessageModel).createdAt.compareTo(requireNotNull(second.chatMessageModel).createdAt) * -1
     }
     override val itemClass: Class<ChatRoomModel> = ChatRoomModel::class.java
 
     init {
-        itemsTheSameComparator = { first, second -> first.chatMessageModel?.text == second.chatMessageModel?.text }
-        contentTheSameComparator = { first, second -> first == second }
-        dataStorage = SortedDataStorage(itemClass, this)
+        itemsTheSameComparator = { first, second -> first.id == second.id }
+        contentTheSameComparator = { first, second ->
+            first.chatMessageModel?.text == second.chatMessageModel?.text &&
+                    first.viewedAtDate == second.viewedAtDate &&
+                    first.unreadCount == second.unreadCount
+        }
+        dataStorage = ChatDataStorage(this)
     }
 
     override fun onClick(view: View) {
@@ -56,9 +58,9 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         override fun bind(item: ChatRoomModel) {
             itemView.llCharRoom.tag = this@ChatRoomViewHolder
             itemView.llCharRoom.setOnClickListener(onClickListener)
-            itemView.ivChatUserIcon.avatarRound(item.chatMessageModel?.account?.avatar)
+            itemView.ivChatUserIcon.avatarRound(item.account?.avatar)
             itemView.tvLastMessage.text = item.chatMessageModel?.text
-            itemView.tvUserName.text = item.chatMessageModel?.account?.userName
+            itemView.tvUserName.text = item.account?.userName
             item.takeIf { it.unreadCount > 0 }?.let {
                 itemView.tvMessageUnread.visibility = View.VISIBLE
                 itemView.tvMessageUnread.text = it.unreadCount.toString()
@@ -69,12 +71,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
                 itemView.tvUserName.setTypeface(itemView.tvUserName.typeface, Typeface.NORMAL)
                 itemView.tvLastMessage.setTextColor(ContextCompat.getColor(itemView.context, R.color.coolGray))
             }
-
-            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())//todo move from here
-            sdf.timeZone = TimeZone.getTimeZone("GMT")
-            val time = item.viewedAtDate.time
-            val now = System.currentTimeMillis()
-            val ago = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS)
+            val ago = requireNotNull(item.chatMessageModel).createdAt.toTimeAgo()
             itemView.tvMessageCame.text = ago
         }
 
@@ -85,6 +82,27 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
                 return ChatRoomViewHolder(view, onClickListener)
             }
         }
+    }
+
+    class ChatDataStorage(private val adapter: BaseSortedPaginationRVAdapter<ChatRoomModel>) :
+            SortedDataStorage<ChatRoomModel>(ChatRoomModel::class.java, adapter), DataStorage<ChatRoomModel> {
+        private val idToModel = HashMap<String, ChatRoomModel>()
+        override fun add(element: ChatRoomModel): Boolean {
+            adapter.postUpdate {
+                wrappedList.beginBatchedUpdates()
+                val oldEntity = idToModel[element.id]
+                if (oldEntity != null && wrappedList.indexOf(oldEntity) != -1) {
+                    val position = wrappedList.indexOf(oldEntity)
+                    wrappedList.updateItemAt(position, element)
+                } else {
+                    wrappedList.add(element)
+                }
+                idToModel[element.id] = element
+                wrappedList.endBatchedUpdates()
+            }
+            return true
+        }
+
     }
 
 }

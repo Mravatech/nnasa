@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-
     <LinearLayout
         android:id="@+id/llNoMessages"
         android:layout_width="match_parent"
@@ -28,14 +27,8 @@
 
         <TextView
             android:id="@+id/tvNoMessages"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:textColor="#abafb3"
-            android:textSize="16sp"
-            android:textStyle="normal"
+            style="@style/ChatRoom.NoContentText"
+            android:layout_marginTop="@dimen/chat_message_base_margin"
             tools:text="No messages here yet…" />
 
     </LinearLayout>
@@ -44,61 +37,83 @@
         android:id="@+id/rvMessages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/llCreateMessageContainer"
+        android:layout_above="@+id/llBottomContainer"
         android:layout_below="@+id/toolbarChatMessage" />
 
-    <RelativeLayout
-        android:id="@+id/llCreateMessageContainer"
+    <LinearLayout
+        android:id="@+id/llBottomContainer"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="center">
+        android:orientation="vertical">
 
-        <View
+        <RelativeLayout
+            android:id="@+id/rlReplyMessageContainer"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/ivAttach"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:paddingEnd="20dp"
-            android:paddingStart="20dp"
-            app:srcCompat="@drawable/ic_attach" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
 
-        <EditText
-            android:id="@+id/etWriteMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@+id/ivAttach"
-            android:layout_toStartOf="@+id/btnSend"
-            android:background="@color/backgroundTransparent"
-            android:fontFamily="sans-serif"
-            android:gravity="center"
-            android:textColor="#abafb3"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            tools:text="Write a message…" />
+            <TextView
+                android:id="@+id/tvReplyMessageText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/chat_message_half_base_margin"
+                android:paddingStart="@dimen/chat_message_base_padding"
+                android:paddingEnd="@dimen/chat_message_base_padding"
+                android:layout_toStartOf="@+id/ivReplyClose" />
 
-        <TextView
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:background="@color/backgroundTransparent"
-            android:fontFamily="sans-serif"
-            android:gravity="center"
-            android:paddingEnd="20dp"
-            android:paddingStart="20dp"
-            android:textColor="#abafb3"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            tools:text="POST" />
+            <ImageView
+                android:id="@+id/ivReplyClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@null"
+                android:padding="@dimen/chat_message_half_base_padding"
+                app:srcCompat="@drawable/ic_close_black_24dp" />
 
-    </RelativeLayout>
+        </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/llCreateMessageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/chat_message_send_container_height"
+            android:gravity="center">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
+            <ImageView
+                android:id="@+id/ivAttach"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:paddingEnd="@dimen/chat_message_attach_size"
+                android:paddingStart="@dimen/chat_message_attach_size"
+                app:srcCompat="@drawable/ic_attach" />
+
+            <EditText
+                android:id="@+id/etWriteMessage"
+                style="@style/ChatMessage.EditText"
+                android:layout_toEndOf="@+id/ivAttach"
+                android:layout_toStartOf="@+id/btnSend"
+                tools:hint="Write a message…" />
+
+            <TextView
+                android:id="@+id/btnSend"
+                style="@style/ChatMessage.SendTextView"
+                android:layout_alignParentEnd="true"
+                tools:text="POST" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 </RelativeLayout>

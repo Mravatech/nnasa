@@ -30,7 +30,9 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
         view.rvMessages.layoutManager = LinearLayoutManager(view.context)
         view.rvMessages.addItemDecoration(ChatRoomItemDecoration(ContextCompat.getDrawable(view.context, R.drawable.chat_decorator)!!))
         view.rvMessages.adapter = adapter
-        adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(requireNotNull(it.chatMessageModel).account), it.id)) }
+        view.toolbar.title = fromDictionary(R.string.chats_title)
+        view.toolbar.title = fromDictionary(R.string.chats_title)
+        adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(it.account))) }
         view.tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
         launchCoroutineUI {
             viewModel.getMessagesChannel().consumeEach {

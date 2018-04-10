@@ -3,6 +3,7 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.extensions.toValueChannelWithPagination
@@ -62,6 +63,18 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .child(id)
                 .toValueChannel<PostDbEntity>(exceptionHandler)
                 .map { converter.convert<Post>(it!!) }
+    }
+
+    override suspend fun loadUserPostById(id: String, accountId: String): Post? {
+        val post = db
+                .child(TABLE_NEWS_FEED)
+                .child(accountId)
+                .child(id)
+                .await<PostDbEntity>(exceptionHandler)
+        post?.let {
+            return converter.convert(id)
+        }
+        return null
     }
 
     override suspend fun sendViewed(ids: List<String>) {

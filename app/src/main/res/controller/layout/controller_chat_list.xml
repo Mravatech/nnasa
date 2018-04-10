@@ -34,14 +34,8 @@
 
         <TextView
             android:id="@+id/tvNoConversation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:textColor="#abafb3"
-            android:textSize="16sp"
-            android:textStyle="normal"
+            style="@style/ChatRoom.NoContentText"
+            android:layout_marginTop="@dimen/chat_room_base_margin"
             tools:text="You have no conversations yet" />
 
     </LinearLayout>
@@ -52,8 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        app:fab_size="mini"
-        app:srcCompat="@drawable/ic_close_white_24dp" />
+        android:layout_margin="@dimen/chat_room_base_margin"
+        app:fab_size="normal"
+        app:srcCompat="@drawable/ic_add_white_24dp" />
 
 </RelativeLayout>

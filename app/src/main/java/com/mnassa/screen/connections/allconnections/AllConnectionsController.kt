@@ -15,6 +15,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_all.view.*
@@ -56,7 +57,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
     }
 
     private fun openChat(accountModel: ShortAccountModel) {
-        Toast.makeText(App.context, "Opening chat with user ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
+        open(ChatMessageController.newInstance(accountModel))
     }
 
     private fun openProfile(accountModel: ShortAccountModel) {

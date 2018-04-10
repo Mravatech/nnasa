@@ -29,17 +29,23 @@ class ChatConverter : ConvertersContextRegistrationCallback {
                 unreadCount = input.unreadCount,
                 chatMessageModel = input.lastMessage?.let { converter.convert(it, ChatMessageModel::class.java) },
                 id = input.id,
-                members = input.members?.keys?.toList()
+                members = input.members?.keys?.toList(),
+                account = null
         )
     }
 
     private fun messageChatConvert(input: ChatMessageDbModel, token: Any?, converter: ConvertersContext): ChatMessageModel {
+        val postPair = input.linkedPostId?.let { Pair(it, null) }?:kotlin.run { null }
+        val chatPair = input.linkedMessageId?.let { Pair(it, null) }?:kotlin.run { null }
         return ChatMessageModelImpl(
                 createdAt = Date(input.createdAt),
                 creator = input.creator,
                 text = input.text,
                 type = input.type,
-                account = null
+                chatID = input.chatID,
+                replyMessage = chatPair,
+                replyPost = postPair,
+                id = input.id ?: ""
         )
     }
 

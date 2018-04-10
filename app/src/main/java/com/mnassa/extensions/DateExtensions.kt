@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
  * Created by Peter on 3/15/2018.
  */
 fun Date.isTheSameDay(date: Date): Boolean = isTheSameDay(this.time, date.time)
+
 fun Date.isTheSameDay(date: Calendar): Boolean = isTheSameDay(this.time, date.timeInMillis)
 fun Date.isTheSameDay(date: Long): Boolean = isTheSameDay(this.time, date)
 
@@ -64,4 +65,10 @@ fun Date.toTimeAgo(): String {
         TimeUnit.MILLISECONDS.toDays(diffMillis) < 30 -> TimeUnit.MILLISECONDS.toDays(diffMillis).toString() + " days ago"
         else -> dateFormat.format(this)
     }
+
+}
+
+fun Date.hhmm(): String {
+    val localDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return localDateFormat.format(this)
 }

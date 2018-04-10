@@ -12,6 +12,7 @@ interface PostsRepository {
     suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<Post>>
     suspend fun loadAllWithPagination(): ReceiveChannel<Post>
     suspend fun loadById(id: String): ReceiveChannel<Post>
+    suspend fun loadUserPostById(id: String, accountId: String): Post?
     suspend fun sendViewed(ids: List<String>)
     suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, privacyConnections: List<String>): Post
     suspend fun removePost(postId: String)
