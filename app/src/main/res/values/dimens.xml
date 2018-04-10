@@ -9,7 +9,7 @@
     <dimen name="spacing_small">8dp</dimen>
 
     <!--<dimen name="status_bar_height">24dp</dimen>-->
-    <dimen name="status_bar_height">0dp</dimen>
+    <dimen name="status_bar_height">24dp</dimen>
 
     <dimen name="divider_width">1dp</dimen>
 
@@ -44,4 +44,6 @@
     <dimen name="connection_recommended_item_width">194dp</dimen>
 
     <dimen name="post_recommended_accounts_height">64dp</dimen>
+
+    <dimen name="material_drawer_account_header_height">172dp</dimen>
 </resources>

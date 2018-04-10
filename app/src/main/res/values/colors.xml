@@ -49,5 +49,8 @@
     <!-- wallet -->
     <color name="money_spent">#c40e42</color>
     <color name="money_gained">@color/green_cool</color>
+    <!-- drawer -->
+    <color name="drawer_name">@color/white</color>
+    <color name="drawer_position">#ccffffff</color>
 
 </resources>

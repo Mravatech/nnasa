@@ -10,10 +10,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.mikepenz.materialdrawer.AccountHeader
-import com.mikepenz.materialdrawer.AccountHeaderBuilder
-import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.*
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
@@ -82,10 +79,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
             vpMain.adapter = adapter
 //            vpMain.offscreenPageLimit = adapter.count
 
-            accountHeader = AccountHeaderBuilder()
+            accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
                     .withSavedInstance(savedInstanceState)
-                    .withHeaderBackground(R.color.accent)
+                    .withTranslucentStatusBar(true)
+                    .withAccountHeader(R.layout.drawer_header)
                     .withOnAccountHeaderListener { _, profile, _ ->
                         when {
                             profile is MnassaProfileDrawerItem -> {
@@ -110,12 +108,12 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withRootView(root)
                     .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_archive).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_archive).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_archive).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_archive).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_help)).withIcon(R.drawable.ic_archive).withIdentifier(HELP.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_terms)).withIcon(R.drawable.ic_archive).withIdentifier(TERMS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_profile).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_wallet).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_invite).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_settings).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_help)).withIcon(R.drawable.ic_support).withIdentifier(HELP.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_terms)).withIcon(R.drawable.ic_terms).withIdentifier(TERMS.ordinal.toLong()).withSelectable(false),
                             DividerDrawerItem(),
                             SecondaryDrawerItem().withName(fromDictionary(R.string.side_menu_logout)).withIdentifier(LOGOUT.ordinal.toLong()).withSelectable(false),
                             SecondaryDrawerItem().withName("${appInfoProvider.appName} ${appInfoProvider.versionName}").withEnabled(false).withSelectable(false)

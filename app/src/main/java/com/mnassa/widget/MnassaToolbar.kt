@@ -36,6 +36,9 @@ class MnassaToolbar : FrameLayout {
         addView(innerView)
 
         ivToolbarMore.setOnClickListener { onMoreClickListener?.invoke(it) }
+        val headerRootLayoutParams = rlHeader.layoutParams as MarginLayoutParams
+        headerRootLayoutParams.topMargin = getStatusBarHeight(context, false)
+        rlHeader.layoutParams = headerRootLayoutParams
     }
 
     private fun processAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) {
@@ -109,4 +112,28 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             btnAction.isEnabled = value
         }
+}
+
+/**
+ * helper to calculate the statusBar height
+ *
+ * @param context
+ * @param force   pass true to get the height even if the device has no translucent statusBar
+ * @return
+ */
+private fun getStatusBarHeight(context: Context, force: Boolean): Int {
+    var result = 0
+    val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        result = context.resources.getDimensionPixelSize(resourceId)
+    }
+
+    val dimenResult = context.resources.getDimensionPixelSize(com.mikepenz.materialize.R.dimen.tool_bar_top_padding)
+    //if our dimension is 0 return 0 because on those devices we don't need the height
+    return if (dimenResult == 0 && !force) {
+        0
+    } else {
+        //if our dimens is > 0 && the result == 0 use the dimenResult else the result;
+        if (result == 0) dimenResult else result
+    }
 }

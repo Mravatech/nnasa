@@ -16,11 +16,10 @@
         android:id="@+id/rlHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/status_bar_height"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.mnassa.widget.DrawerMenu
+        <com.mnassa.widget.drawer.DrawerMenu
             android:id="@+id/ivToolbarDrawer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
