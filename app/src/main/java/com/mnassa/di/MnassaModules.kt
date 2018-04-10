@@ -80,6 +80,8 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
+import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModel
+import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
@@ -127,6 +129,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateNeedViewModel>() with provider { CreateNeedViewModelImpl(instance(), instance(), instance()) }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
+    bind<TermsAndConditionsViewModel>() with provider { TermsAndConditionsViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

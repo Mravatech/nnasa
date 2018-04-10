@@ -51,4 +51,7 @@
     <string name="_android_invite_history_registered_INFO">REGISTERED</string>
     <string name="_android_invite_history_pending_INFO">PENDING</string>
     <string name="_android_invite_history_invited_in_INFO">Invited in %s</string>
+
+    <string name="_android_terms_and_conditions_INFO">Terms and conditions</string>
+
 </resources>
