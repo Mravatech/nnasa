@@ -2,7 +2,6 @@ package com.mnassa.screen.main
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.view.MenuItem
 import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
@@ -11,26 +10,23 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import org.kodein.di.generic.instance
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
-import com.mikepenz.materialdrawer.model.*
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.avatarRound
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
-import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
-import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
@@ -39,8 +35,8 @@ import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
-import kotlinx.android.synthetic.main.nav_header.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 2/21/2018.
@@ -91,19 +87,24 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withSavedInstance(savedInstanceState)
                     .withHeaderBackground(R.color.accent)
                     .withOnAccountHeaderListener { _, profile, _ ->
-                        if (profile is MnassaProfileDrawerItem) {
-                            val account = profile.account
-                            drawer?.closeDrawer()
-
-                            activeAccountId = account.id
-                            viewModel.selectAccount(account)
-                            true
-                        } else if (profile.identifier == ACCOUNT_ADD) {
-                            post { open(RegistrationController.newInstance()) }
-                            false
-                        } else false
+                        when {
+                            profile is MnassaProfileDrawerItem -> {
+                                val account = profile.account
+                                drawer?.closeDrawer()
+                                activeAccountId = account.id
+                                viewModel.selectAccount(account)
+                                true
+                            }
+                            profile.identifier == ACCOUNT_ADD -> {
+                                post { open(RegistrationController.newInstance()) }
+                                false
+                            }
+                            else -> false
+                        }
                     }
                     .build()
+
+            val appInfoProvider: AppInfoProvider by instance()
 
             drawer = DrawerBuilder(requireNotNull(activity))
                     .withRootView(root)
@@ -117,7 +118,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_terms)).withIcon(R.drawable.ic_archive).withIdentifier(TERMS.ordinal.toLong()).withSelectable(false),
                             DividerDrawerItem(),
                             SecondaryDrawerItem().withName(fromDictionary(R.string.side_menu_logout)).withIdentifier(LOGOUT.ordinal.toLong()).withSelectable(false),
-                            SecondaryDrawerItem().withName("Mnassa 4.0").withEnabled(false).withSelectable(false)
+                            SecondaryDrawerItem().withName("${appInfoProvider.appName} ${appInfoProvider.versionName}").withEnabled(false).withSelectable(false)
                     )
                     .withSelectedItem(-1)
                     .withOnDrawerItemClickListener { _, _, item ->
@@ -125,9 +126,12 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             PROFILE -> open(ProfileController.newInstance(activeAccountId))
                             WALLET -> open(WalletController.newInstance())
                             INVITE -> open(InviteController.newInstance())
-                            SETTINGS -> {} //TODO
-                            HELP -> {} //TODO
-                            TERMS -> {} //TODO
+                            SETTINGS -> {
+                            } //TODO
+                            HELP -> {
+                            } //TODO
+                            TERMS -> {
+                            } //TODO
                             LOGOUT -> viewModel.logout()
                         }
                         true

@@ -9,22 +9,20 @@ import com.mnassa.extensions.ReConsumeWhenAccountChangedConflatedBroadcastChanne
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.map
-import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
  */
 class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), ConnectionsViewModel {
-    private val randomSeed = System.currentTimeMillis()
+
     override val newConnectionRequestsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
-        connectionsInteractor.getConnectionRequests().map { it.shuffled(Random(randomSeed)) }
+        connectionsInteractor.getConnectionRequests()
     }
     override val recommendedConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
-        connectionsInteractor.getRecommendedConnections().map { it.shuffled(Random(randomSeed)) }
+        connectionsInteractor.getRecommendedConnections()
     }
     override val allConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
-        connectionsInteractor.getConnectedConnections().map { it.shuffled(Random(randomSeed)) }
+        connectionsInteractor.getConnectedConnections()
     }
 
     override fun connect(account: ShortAccountModel) {
