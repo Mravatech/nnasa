@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
@@ -38,6 +39,17 @@ class DialogHelper {
                 )
                 .itemsCallback { dialog, _, which, _ ->
                     listener(CropActivity.ImageSource.values()[which])
+                    dialog.dismiss()
+                }
+                .cancelable(true)
+                .show()
+    }
+
+    fun showComplaintDialog(context: Context, reports: List<TranslatedWordModel>,  listener: (TranslatedWordModel) -> Unit)  {
+        MaterialDialog.Builder(context)
+                .items(                        reports                )
+                .itemsCallback { dialog, _, which, _ ->
+                    listener(reports[which])
                     dialog.dismiss()
                 }
                 .cancelable(true)

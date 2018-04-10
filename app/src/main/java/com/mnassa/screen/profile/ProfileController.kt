@@ -6,24 +6,22 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import android.widget.Toast
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.AccountType
-import com.mnassa.domain.model.ConnectionStatus
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
+import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,6 +37,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
+    private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -56,6 +55,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             it.id
         } ?: run { accountId }
         viewModel.getProfileWithAccountId(id)
+        launchCoroutineUI {
+            viewModel.reportsChannel.consumeEach {
+                reportsList = it
+            }
+        }
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter.profileModel = profileModel
@@ -103,7 +107,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context) {
                         viewModel.sendConnectionStatus(it, id, true)
                     }
-                    ConnectionStatus.SENT -> dialog.connectionsDialog(view.context) {//todo set later on
+                    ConnectionStatus.SENT -> dialog.connectionsDialog(view.context) {
+                        //todo set later on
                         viewModel.sendConnectionStatus(it, id, true)
                     }
                     ConnectionStatus.RECOMMENDED -> dialog.connectionsDialog(view.context) {
@@ -115,6 +120,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
+
     }
 
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
@@ -136,13 +142,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 fab.setOnClickListener { }
                 fab.setImageResource(R.drawable.ic_camera)//todo icons
             }
-            ConnectionStatus.REQUESTED -> {
-            }
-            ConnectionStatus.DISCONNECTED -> {
-            }
-            ConnectionStatus.NONE -> {
-                //todo smth
-            }
         }
     }
 
@@ -154,11 +153,21 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share_profile -> Toast.makeText(view.context, "Share Profile", Toast.LENGTH_SHORT).show()
-                R.id.action_complain_about_profile -> Toast.makeText(view.context, "Complain about Profile", Toast.LENGTH_SHORT).show()
+                R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
             }
             true
         }
         popup.show()
+    }
+
+    private fun complainAboutProfile(profileModel: ProfileModel, view: View) {
+        dialog.showComplaintDialog(view.context, reportsList) {
+            if (it.id == OTHER) {
+                open(ComplaintOtherController.newInstance())
+            } else {
+                viewModel.sendComplaint(profileModel.profile.id, it.toString())
+            }
+        }
     }
 
     private fun onEditProfile(profileModel: ProfileModel, view: View) {
@@ -180,9 +189,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun setTitle(profileModel: ProfileModel, view: View) {
         if (profileModel.profile.accountType == AccountType.PERSONAL) {
-            view.profileName.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
+            view.profileName.text = "${profileModel.profile.personalInfo?.firstName
+                    ?: ""} ${profileModel.profile.personalInfo?.lastName ?: ""}"
             view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
-            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
+            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName
+                    ?: ""} ${profileModel.profile.personalInfo?.lastName ?: ""}"
         } else {
             view.profileName.text = profileModel.profile.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.profile.organizationType
@@ -193,6 +204,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
+        private const val OTHER = "other"
         fun newInstance(account: ShortAccountModel): ProfileController {
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, account)
