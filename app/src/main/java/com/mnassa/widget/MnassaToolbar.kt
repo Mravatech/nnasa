@@ -58,11 +58,6 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             if (value) drawerButtonEnabled = false
             ivToolbarBack.visibility = if (value) View.VISIBLE else View.GONE
-
-            val titleMargin = if (value) 0 else horizontalSpacing
-            val layoutParams = tvToolbarScreenHeader.layoutParams as MarginLayoutParams
-            layoutParams.marginStart = titleMargin
-            tvToolbarScreenHeader.layoutParams = layoutParams
         }
 
     var title: String
@@ -99,11 +94,6 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             if (value) backButtonEnabled = false
             ivToolbarDrawer.visibility = if (value) View.VISIBLE else View.GONE
-
-            val titleMargin = if (value) 0 else horizontalSpacing
-            val layoutParams = tvToolbarScreenHeader.layoutParams as MarginLayoutParams
-            layoutParams.marginStart = titleMargin
-            tvToolbarScreenHeader.layoutParams = layoutParams
         }
 
     fun withActionButton(actionText: String, listener: (View) -> Unit) {

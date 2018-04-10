@@ -1,7 +1,7 @@
 package com.mnassa.data.extensions
 
 import com.google.firebase.database.*
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 

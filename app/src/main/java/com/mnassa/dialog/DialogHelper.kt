@@ -30,10 +30,10 @@ class DialogHelper {
                         fromDictionary(R.string.image_source_gallery),
                         fromDictionary(R.string.image_source_camera)
                 )
-                .itemsCallbackSingleChoice(-1, { dialog, itemView, which, text ->
+                .itemsCallback{ dialog, itemView, which, text ->
                     listener(CropActivity.ImageSource.values()[which])
-                    true
-                })
+                    dialog.dismiss()
+                }
                 .cancelable(true)
                 .show()
     }
@@ -48,6 +48,16 @@ class DialogHelper {
                 .positiveText(android.R.string.ok)
                 .onPositive { _, _ -> onOkClick() }
                 .cancelListener { onOkClick() }
+                .show()
+    }
+
+    fun showConfirmPostRemovingDialog(context: Context, onOkClick: () -> Unit) {
+        MaterialDialog.Builder(context)
+                .title(fromDictionary(R.string.post_delete_dialog_title))
+                .content(fromDictionary(R.string.post_delete_dialog_description))
+                .positiveText(fromDictionary(R.string.post_delete_dialog_yes))
+                .negativeText(fromDictionary(R.string.post_delete_dialog_no))
+                .onPositive { _, _ -> onOkClick() }
                 .show()
     }
 

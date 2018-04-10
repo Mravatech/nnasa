@@ -30,9 +30,8 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
     }
 
     override fun onBindViewHolder(holder: BaseVH<ShortAccountModel>, position: Int) {
-        if (holder is HeaderHolder) {
-            onBindHeader(holder.itemView)
-        } else super.onBindViewHolder(holder, position)
+        if (holder is HeaderHolder) onBindHeader(holder.itemView)
+        else super.onBindViewHolder(holder, position)
     }
 
     override fun onClick(v: View) {
@@ -46,8 +45,8 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
         }
     }
 
-    private class HeaderHolder(itemView: View) : BaseVH<ShortAccountModel>(itemView) {
-        override fun bind(item: ShortAccountModel) = Unit
+    private class HeaderHolder(itemView: View) : BaseVH<Any>(itemView) {
+        override fun bind(item: Any) = Unit
 
         companion object {
             fun newInstance(parent: ViewGroup): HeaderHolder {

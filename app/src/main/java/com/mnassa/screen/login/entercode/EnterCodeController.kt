@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.sms_code_input.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -66,6 +67,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
 
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
+                Timber.d("MNSA_LOGIN EnterCodeController->onViewCreated->openScreenChannel-> open $it")
                 when (it) {
                     is EnterCodeViewModel.OpenScreenCommand.MainScreen -> open(MainController.newInstance())
                     is EnterCodeViewModel.OpenScreenCommand.RegistrationScreen -> open(RegistrationController.newInstance())

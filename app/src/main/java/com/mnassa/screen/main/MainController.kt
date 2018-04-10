@@ -148,7 +148,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
             view.drawerLayout.closeDrawer(GravityCompat.START)
             true
         } else {
-            view.bnMain?.visibility = View.VISIBLE
             super.handleBack()
         }
     }
@@ -160,17 +159,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         super.onViewDestroyed(view)
     }
 
-    override fun open(self: Controller, controller: Controller) {
-        view?.bnMain?.visibility = View.GONE
-        mnassaRouter.open(self, controller)
-
-    }
+    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(self, controller)
 
     override fun close(self: Controller) = mnassaRouter.close(self)
 
-    private fun formatTabControllerTag(position: Int): String {
-        return "tab_controller_$position"
-    }
+    private fun formatTabControllerTag(position: Int): String = "tab_controller_$position"
 
     private enum class Pages {
         HOME, CONNECTIONS, NOTIFICATIONS, CHAT

@@ -10,16 +10,20 @@ import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.LocationPlaceModel
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
 import com.mnassa.translation.fromDictionary
 
 /**
  * Created by Peter on 3/19/2018.
  */
-fun Double.formatAsMoney(): String {
-    val formatted = (this * 100).toLong() / 100L
-    return formatted.toString() + " SAR" //TODO: discuss about currency
+fun Double.formatAsMoneySAR(): String {
+    return formatAsMoney().toString() + " SAR" //TODO: discuss about currency
+}
+
+fun Double.formatAsMoney(): Double {
+    val formatted = (this * 100).toLong() / 100.0
+    return formatted
 }
 
 fun LocationPlaceModel?.formatted(): String {
@@ -34,7 +38,7 @@ fun LocationPlaceModel?.formatted(): String {
     return result.toString()
 }
 
-val Post.formattedText: CharSequence?
+val PostModel.formattedText: CharSequence?
     get() {
         if (text.isNullOrBlank()) return text
         return if (type == PostType.NEED) {
@@ -47,6 +51,8 @@ val Post.formattedText: CharSequence?
 
     }
 
-suspend fun Post.isMyPost(): Boolean {
+suspend fun PostModel.isMyPost(): Boolean {
     return author.id == App.context.appKodein().instance<UserProfileInteractor>().getAccountId()
 }
+
+val PostModel.isRepost: Boolean get() = originalId != id

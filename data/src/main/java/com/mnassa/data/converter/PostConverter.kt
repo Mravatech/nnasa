@@ -19,7 +19,7 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.PostCountersImpl
-import com.mnassa.domain.model.impl.PostImpl
+import com.mnassa.domain.model.impl.PostModelImpl
 import java.util.*
 
 /**
@@ -37,16 +37,16 @@ class PostConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertPostData)
     }
 
-    private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostImpl {
+    private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostModelImpl {
         val post = input.post
         val id = input.id
         post.id = id
         return converter.convert(post)
     }
 
-    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostImpl {
+    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
 
-        return PostImpl(
+        return PostModelImpl(
                 id = input.id,
                 allConnections = input.allConnections,
                 type = converter.convert(input.type),
@@ -66,7 +66,8 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 author = convertAuthor(input.author, converter),
                 copyOwnerId = input.copyOwner,
                 price = input.price ?: 0.0,
-                autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY
+                autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
+                repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) }
         )
     }
 

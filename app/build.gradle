@@ -107,7 +107,7 @@ android {
     applicationVariants.all { variant ->
         switch (variant.getName()) {
             case 'release':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointRrod']}\""
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointProd']}\""
                 variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsProd']}\""
                 break
             case 'stage':
@@ -210,6 +210,7 @@ dependencies {
     implementation deps.ui.fab
     implementation deps.ui.pagerIndicator
     implementation deps.ui.chipsLayoutManager
+    implementation deps.ui.timeAgo
 
     //kotlin
     implementation deps.kotlin.stdlib
@@ -217,7 +218,7 @@ dependencies {
 
     //crashlytics
     implementation (deps.other.crashlytics) {
-        transitive = true;
+        transitive = true
     }
 }
 

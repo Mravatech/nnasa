@@ -43,8 +43,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     open fun add(list: List<ITEM>) = run { dataStorage.addAll(list); Unit }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onAttachedToRecyclerView(rv: RecyclerView?) = run { recyclerView.value = rv }
-    override fun onDetachedFromRecyclerView(rv: RecyclerView?) = run {
+    override fun onAttachedToRecyclerView(rv: RecyclerView) = run { recyclerView.value = rv }
+    override fun onDetachedFromRecyclerView(rv: RecyclerView) = run {
         recyclerView.value = null
         recyclerView.clear()
     }
@@ -127,12 +127,13 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
 
     ////////////////////////////////////////// DATA STORAGE ////////////////////////////////////////
 
-    private inner class SimpleDataProviderImpl : ArrayList<ITEM>(), DataStorage<ITEM> {
+    open inner class SimpleDataProviderImpl(private val onDataChangedListener: () -> Unit = { }) : ArrayList<ITEM>(), DataStorage<ITEM> {
         override fun clear() {
             postUpdate {
                 val previousSize = size
                 super.clear()
                 if (previousSize != 0) notifyItemRangeRemoved(emptyHeaderItemsCount, previousSize)
+                onDataChangedListener()
             }
         }
 
@@ -140,6 +141,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             postUpdate {
                 super.add(element)
                 notifyItemInserted(itemCount - emptyBottomItemsCount - 1)
+                onDataChangedListener()
             }
             return true
         }
@@ -153,6 +155,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
+                onDataChangedListener()
             }
             return true
         }
@@ -163,6 +166,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
                 super.clear()
                 super.addAll(elements)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
+                onDataChangedListener()
             }
         }
 
@@ -175,6 +179,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
+                onDataChangedListener()
             }
             return true
         }
