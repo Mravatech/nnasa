@@ -10,6 +10,7 @@ import com.mnassa.extensions.ReConsumeWhenAccountChangedConflatedBroadcastChanne
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -32,20 +33,12 @@ class MainViewModelImpl(
         countersInteractor.numberOfRequested
     }
     private val unreadEventsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel(
-            receiveChannelProvider = { countersInteractor.numberOfUnreadEvents },
-            onEachEvent = {
-                unreadEventsAndNeedsCountChannel.send((unreadNeedsCountChannel.valueOrNull
-                        ?: 0) + it)
-            }
+            receiveChannelProvider = { countersInteractor.numberOfUnreadEvents }
     )
     private val unreadNeedsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel(
-            receiveChannelProvider = { countersInteractor.numberOfUnreadNeeds },
-            onEachEvent = {
-                unreadEventsAndNeedsCountChannel.send((unreadEventsCountChannel.valueOrNull
-                        ?: 0) + it)
-            }
+            receiveChannelProvider = { countersInteractor.numberOfUnreadNeeds }
     )
-    override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel(0)
 
     override val currentAccountChannel: ConflatedBroadcastChannel<ShortAccountModel> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
         userProfileInteractor.currentProfile.openSubscription()
@@ -58,13 +51,30 @@ class MainViewModelImpl(
         handleException {
             userProfileInteractor.getAllAccounts().consumeTo(availableAccountsChannel)
         }
+
+        var unreadEventsCount = 0
+        var unreadNeedsCount = 0
+
+        handleException {
+            unreadEventsCountChannel.consumeEach {
+                unreadEventsCount = it
+                unreadEventsAndNeedsCountChannel.send(unreadNeedsCount + it)
+            }
+        }
+
+        handleException {
+            unreadNeedsCountChannel.consumeEach {
+                unreadNeedsCount = it
+                unreadEventsAndNeedsCountChannel.send(unreadEventsCount + it)
+            }
+        }
     }
 
     override fun selectAccount(account: ShortAccountModel) {
         handleException {
             withProgressSuspend {
                 userProfileInteractor.setCurrentUserAccount(account)
-                delay(1_000)
+                delay(1_000) //for animation purpose. Also this time is needed to update all counters
             }
         }
     }

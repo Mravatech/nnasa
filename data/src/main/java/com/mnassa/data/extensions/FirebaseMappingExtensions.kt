@@ -29,29 +29,20 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?
     return result
 }
 
-internal inline fun <reified T : Any> DataSnapshot?.mapSingle(): T? {
-    return mapSingleValue(this)
-}
+internal inline fun <reified T : Any> DataSnapshot?.mapSingle(): T? = mapSingleValue(this)
 
 internal inline fun <reified T : Any> mapListOfValues(dataSnapshot: DataSnapshot?): List<T> {
     if (dataSnapshot == null) return emptyList()
     return dataSnapshot.children.map { requireNotNull(it.mapSingle<T>()) }
 }
 
-internal inline fun <reified T : Any> DataSnapshot?.mapList(): List<T> {
-    return mapListOfValues(this)
-}
+internal inline fun <reified T : Any> DataSnapshot?.mapList(): List<T> = mapListOfValues(this)
 
-internal inline fun <reified T : Any> Iterable<DataSnapshot>.mapList(): List<T> {
-    return mapNotNull { mapSingleValue<T>(it) }
-}
+internal inline fun <reified T : Any> Iterable<DataSnapshot>.mapList(): List<T> = mapNotNull { mapSingleValue<T>(it) }
 
 internal inline val DatabaseReference.path: String
     get() {
         return "[${this.toString().substring(this.root.toString().length)}]"
     }
 
-internal inline val DataSnapshot?.path: String
-    get() {
-        return this?.ref?.path ?: "[NULL]"
-    }
+internal inline val DataSnapshot?.path: String get() = this?.ref?.path ?: "[NULL]"

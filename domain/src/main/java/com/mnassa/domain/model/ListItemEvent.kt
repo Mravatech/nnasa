@@ -53,6 +53,12 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
             lastItemsSentAt = System.currentTimeMillis()
         }
 
+        //emit empty list when no items consumed
+        sendItemsJob = subscriptionContainer.launchCoroutineUI {
+            delay(bufferizationTimeMillis)
+            sendItems()
+        }
+
         consumeEach {
             when (it) {
                 is ListItemEvent.Added -> {
@@ -85,12 +91,6 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
                 }
             }
             Unit
-        }
-
-        //emit empty list when no items consumed
-        sendItemsJob = subscriptionContainer.launchCoroutineUI {
-            delay(bufferizationTimeMillis)
-            sendItems()
         }
     }
 

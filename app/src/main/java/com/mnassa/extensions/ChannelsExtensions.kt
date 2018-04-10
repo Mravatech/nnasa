@@ -12,6 +12,14 @@ import kotlin.reflect.KProperty
 /**
  * Created by Peter on 4/4/2018.
  */
+
+/**
+ * Channel delegate, which wraps the input channel and emits each input event from it to the
+ * output channel.
+ * Also, when [reConsumableEvent] happens, input channel will be cancelled and the output channel
+ * will be subscribed to the NEW input channel which must be provided by [receiveChannelProvider].
+ * !!! Always returns a new channel !!!
+ */
 abstract class ReConsumableBroadcastChannel<T>(
         outputChannelInstanceCreator: () -> BroadcastChannel<T>,
         private val beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = {},
