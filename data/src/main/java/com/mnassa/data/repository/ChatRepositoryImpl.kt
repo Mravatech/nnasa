@@ -44,6 +44,34 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
     override suspend fun getChatIdByUserId(accountId: String): String =
             chatApi.addChat(ChatRoomRequest(accountId)).await().data.chatID
 
+    override suspend fun getSupportChat(): String {
+        return chatApi.addSupprotyChat().await().data.chatID
+    }
+
+
+    override suspend fun listOfSupportMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
+        val myUserId = requireNotNull(userRepository.getAccountId())
+        return db.child(TABLE_CHAT)
+                .child(TABLE_CHAT_MESSAGES)
+                .child(TABLE_CHAT_TYPE)
+                .child(myUserId)
+                .child(chatId)
+                .apply { keepSynced(true) }
+                .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = converter.convertFunc(ChatMessageModel::class.java)
+                )
+                .map {
+                    it.item.replyMessage?.first?.let { first ->
+                        val replyMessage: ChatMessageDbModel? = getMessage(myUserId, chatId, first)
+                        replyMessage?.let { _ ->
+                            it.item.replyMessage = it.item.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
+                        }
+                    }
+                    it
+                }
+    }
+
     override suspend fun resetChatUnreadCount(chatId: String) {
         chatApi.resetChatUnreadCount(ChatUnreadCountRequest(chatId))
     }
@@ -76,13 +104,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 )
                 .map {
                     it.item.replyMessage?.first?.let { first ->
-                        val replyMessage: ChatMessageDbModel? = db.child(TABLE_CHAT)
-                                .child(TABLE_CHAT_MESSAGES)
-                                .child(TABLE_CHAT_TYPE)
-                                .child(myUserId)
-                                .child(chatId)
-                                .child(first)
-                                .await(exceptionHandler)
+                        val replyMessage: ChatMessageDbModel? = getMessage(myUserId, chatId, first)
                         replyMessage?.let { _ ->
                             it.item.replyMessage = it.item.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
                         }
@@ -118,4 +140,16 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                     it.item.account != null
                 }
     }
+
+    private suspend fun getMessage(myUserId: String, chatId: String, first: String): ChatMessageDbModel? {
+        return db.child(TABLE_CHAT)
+                .child(TABLE_CHAT_MESSAGES)
+                .child(TABLE_CHAT_TYPE)
+                .child(myUserId)
+                .child(chatId)
+                .child(first)
+                .await(exceptionHandler)
+    }
+
 }
+

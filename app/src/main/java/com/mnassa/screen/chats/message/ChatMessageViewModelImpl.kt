@@ -2,6 +2,7 @@ package com.mnassa.screen.chats.message
 
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ChatInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -14,11 +15,16 @@ import timber.log.Timber
  * User: okli
  * Date: 4/2/2018
  */
-class ChatMessageViewModelImpl(private val chatInteractor: ChatInteractor) : MnassaViewModelImpl(), ChatMessageViewModel {
+class ChatMessageViewModelImpl(
+        private val chatInteractor: ChatInteractor,
+        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), ChatMessageViewModel {
 
     override val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>> = BroadcastChannel(10)
+    override val accountChannel: BroadcastChannel<String> = BroadcastChannel(10)
 
     private lateinit var chatID: String
+
+    override suspend fun retrieveMyAccount() = requireNotNull(userProfileInteractor.getAccountId())
 
     override fun retrieveChatId(accointId: String) {
         handleException {
@@ -27,6 +33,18 @@ class ChatMessageViewModelImpl(private val chatInteractor: ChatInteractor) : Mna
             chatID = chatId
             hideProgress()
             chatInteractor.listOfMessages(chatId, accointId).consumeEach {
+                messageChannel.send(it)
+            }
+        }
+    }
+
+    override fun retrieveChatWithAdmin() {
+        handleException {
+            showProgress()
+            val chatId = chatInteractor.getSupportChat()
+            chatID = chatId
+            hideProgress()
+            chatInteractor.listOfSupportMessages(chatId).consumeEach {
                 messageChannel.send(it)
             }
         }

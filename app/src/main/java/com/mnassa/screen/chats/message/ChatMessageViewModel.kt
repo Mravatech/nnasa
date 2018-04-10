@@ -13,11 +13,13 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 interface ChatMessageViewModel : MnassaViewModel {
     val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>>
+    val accountChannel: BroadcastChannel<String>
 
+    suspend fun retrieveMyAccount() :String
     fun retrieveChatId(accointId: String)
     fun resetChatUnreadCount()
-
     fun sendMessage(text: String, type: String, linkedMessageId: String?, linkedPostId: String?)
     fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean)
+    fun retrieveChatWithAdmin()
 
 }

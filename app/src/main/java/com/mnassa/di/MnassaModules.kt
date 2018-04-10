@@ -119,7 +119,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
-    bind<ChatMessageViewModel>() with provider { ChatMessageViewModelImpl(instance()) }
+    bind<ChatMessageViewModel>() with provider { ChatMessageViewModelImpl(instance(), instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
@@ -169,7 +169,7 @@ private val repositoryModule = Kodein.Module {
     }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(),instance(), instance()) }
+    bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -187,7 +187,7 @@ private val interactorModule = Kodein.Module {
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
     bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
-    bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(),instance()) }
+    bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance()) }
 }
 
 private val networkModule = Kodein.Module {

@@ -21,6 +21,9 @@ interface FirebaseChatApi {
     @POST("/addChat")
     fun addChat(@Body request: ChatRoomRequest): Deferred<ChatResponse>
 
+    @POST("/addSupportChat")
+    fun addSupprotyChat(): Deferred<ChatResponse>
+
     @POST("/message")
     fun sendMessage(@Body request: MessageRequest): Deferred<Any>
 

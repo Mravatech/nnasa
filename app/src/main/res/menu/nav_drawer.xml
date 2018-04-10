@@ -47,6 +47,10 @@
                 android:icon="@drawable/ic_menu_manage"
                 android:title="INVITE TO MNASSA" />
             <item
+                android:id="@+id/nav_contact_us"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="CONTACT US" />
+            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_send"
                 android:title="LOGOUT" />

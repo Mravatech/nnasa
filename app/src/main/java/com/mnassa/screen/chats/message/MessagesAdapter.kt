@@ -12,7 +12,6 @@ import com.mnassa.extensions.getStartOfDay
 import com.mnassa.extensions.isTheSameDay
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.chats.message.viewholder.*
-import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -22,8 +21,9 @@ import kotlin.collections.HashMap
  * Date: 4/2/2018
  */
 
-class MessagesAdapter(private val accountId: String) : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.OnClickListener, View.OnLongClickListener {
+class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.OnClickListener, View.OnLongClickListener {
 
+    lateinit var accountId: String
     var onMyMessageLongClick = { item: ChatMessageModel -> }
     var onUserMessageLongClick = { item: ChatMessageModel -> }
     var onReplyClick = { chatModel: ChatMessageModel?, post: Post? -> }
@@ -55,12 +55,12 @@ class MessagesAdapter(private val accountId: String) : BaseSortedPaginationRVAda
         return when (item.creator) {
             DATE_CREATOR -> DATE_MESSAGE
             accountId -> when (item.replyMessage?.second != null || item.replyPost?.second != null) {
-                false -> USER_MESSAGE
-                true -> USER_MESSAGE_WITH_REPLY
-            }
-            else -> when (item.replyMessage?.second != null || item.replyPost?.second != null) {
                 false -> MY_MESSAGE
                 true -> MY_MESSAGE_WITH_REPLY
+            }
+            else -> when (item.replyMessage?.second != null || item.replyPost?.second != null) {
+                false -> USER_MESSAGE
+                true -> USER_MESSAGE_WITH_REPLY
             }
         }
     }
@@ -100,11 +100,9 @@ class MessagesAdapter(private val accountId: String) : BaseSortedPaginationRVAda
             val dateElement = dateMessages[element.createdAt.getStartOfDay()]
             if (dateElement == null) {
                 addDateMessage(element)
-                Timber.i("testtest1 ${element}")
             } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt < element.createdAt) {
                 super.remove(dateElement)
                 addDateMessage(element)
-                Timber.i("testtest2 ${element}")
             }
             return super.add(element)
         }

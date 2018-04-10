@@ -14,7 +14,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface ChatRepository {
     suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>>
     suspend fun listOfMessages(chatId: String, accointId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>>
+    suspend fun listOfSupportMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>>
     suspend fun getChatIdByUserId(accountId: String): String
+    suspend fun getSupportChat(): String
     suspend fun sendMessage(message: ChatMessageModel)
     suspend fun deleteMessage(messageId: String, chatID: String, isDeleteForBoth: Boolean)
     suspend fun resetChatUnreadCount(chatId: String)

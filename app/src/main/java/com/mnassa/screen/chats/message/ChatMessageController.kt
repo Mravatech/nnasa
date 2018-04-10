@@ -32,11 +32,11 @@ import timber.log.Timber
 class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageViewModel>(data) {
     override val layoutId: Int = R.layout.controller_chat_message
     override val viewModel: ChatMessageViewModel by instance()
-    private val accountModel: ShortAccountModel by lazy { args.getSerializable(CHAT_ACCOUNT) as ShortAccountModel }
+    private val accountModel: ShortAccountModel? by lazy { args.getSerializable(CHAT_ACCOUNT) as ShortAccountModel? }
     private val postModel: Post? by lazy { args.getSerializable(CHAT_POST) as Post? }
     private val dialog: DialogHelper by instance()
 
-    val adapter = MessagesAdapter(accountModel.id)
+    val adapter = MessagesAdapter()
     private var replyMessageModel: ChatMessageModel? = null
     private var replyPostModel: Post? = null
 
@@ -44,17 +44,39 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         super.onViewCreated(view)
         setupView(view)
         setupOnClickListeners(view)
-        view.toolbarChatMessage.title = accountModel.userName
+        view.toolbarChatMessage.title = accountModel?.userName ?: "admin"//todo get known what should be here
         view.toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
         view.toolbarChatMessage.onMoreClickListener = { Toast.makeText(view.context, "Set profile after merge", Toast.LENGTH_SHORT).show() }
         view.rvMessages.layoutManager = LinearLayoutManager(view.context)
         view.rvMessages.adapter = adapter
-        viewModel.retrieveChatId(accountModel.id)
+        launchCoroutineUI {
+            val accountId = viewModel.retrieveMyAccount()
+            adapter.accountId = accountId
+            accountModel?.let {
+                viewModel.retrieveChatId(it.id)
+            } ?: run {
+                viewModel.retrieveChatWithAdmin()
+            }
+        }
         postModel?.let {
             view.rlReplyMessageContainer.visibility = View.VISIBLE
             view.tvReplyMessageText.text = it.text
             replyPostModel = postModel
         }
+        consumeMessages(view)
+        adapter.onUserMessageLongClick = { callDialog(view, false, it) }
+        adapter.onMyMessageLongClick = { callDialog(view, true, it) }
+        adapter.onReplyClick = { chatMessageModel, post ->
+            if (post != null) {
+                open(NeedDetailsController.newInstance(post))
+            } else {
+                val position = adapter.dataStorage.indexOf(chatMessageModel)
+                view.rvMessages.scrollToPosition(position)
+            }
+        }
+    }
+
+    private fun consumeMessages(view: View) {
         launchCoroutineUI {
             viewModel.messageChannel.consumeEach {
                 Timber.i(it.item.toString())
@@ -72,16 +94,6 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                     viewModel.resetChatUnreadCount()
                 }
                 view.rvMessages.scrollToPosition(adapter.itemCount)//todo handle here doesn't work properly
-            }
-        }
-        adapter.onUserMessageLongClick = { callDialog(view, false, it) }
-        adapter.onMyMessageLongClick = { callDialog(view, true, it) }
-        adapter.onReplyClick = { chatMessageModel, post ->
-            if (post != null) {
-                open(NeedDetailsController.newInstance(post))
-            } else {
-                val position = adapter.dataStorage.indexOf(chatMessageModel)
-                view.rvMessages.scrollToPosition(position)
             }
         }
     }
@@ -132,6 +144,11 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         private const val CHAT_ACCOUNT = "CHAT_ACCOUNT"
         private const val CHAT_POST = "CHAT_POST"
 
+        fun newInstance(): ChatMessageController {
+            val params = Bundle()
+            return ChatMessageController(params)
+        }
+
         fun newInstance(account: ShortAccountModel): ChatMessageController {
             val params = Bundle()
             params.putSerializable(CHAT_ACCOUNT, account)
@@ -144,6 +161,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             params.putSerializable(CHAT_ACCOUNT, account)
             return ChatMessageController(params)
         }
+
     }
 
 }
