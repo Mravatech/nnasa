@@ -16,9 +16,10 @@ interface MainViewModel : MnassaViewModel {
     val unreadEventsAndNeedsCountChannel: BroadcastChannel<Int>
 
     val currentAccountChannel: BroadcastChannel<ShortAccountModel>
+    val availableAccountsChannel: BroadcastChannel<List<ShortAccountModel>>
 
+    fun selectAccount(account: ShortAccountModel)
     fun logout()
 
-    enum class ScreenType {
-    }
+    enum class ScreenType
 }

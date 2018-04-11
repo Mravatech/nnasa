@@ -12,9 +12,10 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 
 class ChipsAdapter(
-        context: Context,
-        private val chipListener: ChipListener,
-        private val chipSearch: ChipSearch)
+    context: Context,
+    private val chipListener: ChipListener,
+    private val chipSearch: ChipSearch
+)
     : ArrayAdapter<TagModel>(context,
         android.R.layout.simple_expandable_list_item_1,
         android.R.id.text1) {

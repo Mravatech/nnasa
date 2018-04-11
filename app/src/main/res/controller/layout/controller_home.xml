@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/vShadow"
         android:layout_alignParentTop="true"
-        android:background="@color/colorAccent" />
+        android:background="@color/accent" />
 
     <com.mnassa.widget.MnassaToolbar
         android:id="@+id/toolbar"
@@ -27,11 +27,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
-        app:badgeBackgroundColor="@color/red"
-        app:badgeTextColor="@color/white"
+        app:badgeBackgroundColor="@color/white"
+        app:badgeTextColor="@color/accent"
         app:tabIndicatorColor="@color/white"
         app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/coolGray" />
+        app:tabTextColor="@color/tab_layout_active" />
 
     <View
         android:id="@+id/vShadow"

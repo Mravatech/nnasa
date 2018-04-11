@@ -84,27 +84,44 @@ fun Job.bind(subscriptionContainer: SubscriptionContainer): Job {
 /**
  * Creates coroutine, which will be automatically added to the subscription container
  */
-fun SubscriptionContainer.launchCoroutineWorker(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                                                       block: suspend CoroutineScope.() -> Unit): Job =
-        launch(context = WORKER_POOL, start = start, block = block).bind(this)
+
+fun <CancellableContext> CancellableContext.launchCoroutineWorker(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Unit): Job where CancellableContext : SubscriptionContainer {
+    val thisReference = this.asReference()
+    val coroutineBlockWrapper: suspend CoroutineScope.() -> Unit = { block(this, thisReference) }
+    return launch(context = WORKER_POOL, start = start, block = coroutineBlockWrapper).bind(this)
+}
 
 /**
  * Creates coroutine, which will be automatically added to the subscription container
  */
-fun SubscriptionContainer.launchCoroutineUI(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                                                   block: suspend CoroutineScope.() -> Unit): Job =
-        launch(context = UI_POOL, start = start, block = block).bind(this)
+fun <CancellableContext> CancellableContext.launchCoroutineUI(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Unit): Job where CancellableContext : SubscriptionContainer {
+    val thisReference = this.asReference()
+    val coroutineBlockWrapper: suspend CoroutineScope.() -> Unit = { block(this, thisReference) }
+    return launch(context = UI_POOL, start = start, block = coroutineBlockWrapper).bind(this)
+}
 
-fun <T> SubscriptionContainer.asyncWorker(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                                                 block: suspend CoroutineScope.() -> T): Deferred<T> {
-    val result = async(context = WORKER_POOL, start = start, block = block)
+fun <Result, CancellableContext> CancellableContext.asyncWorker(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Result): Deferred<Result> where CancellableContext : SubscriptionContainer {
+    val thisReference = this.asReference()
+    val coroutineBlockWrapper: suspend CoroutineScope.() -> Result = { block(this, thisReference) }
+
+    val result = async(context = WORKER_POOL, start = start, block = coroutineBlockWrapper)
     result.bind(this)
     return result
 }
 
-fun <T> SubscriptionContainer.asyncUI(start: CoroutineStart = CoroutineStart.DEFAULT,
-                                                             block: suspend CoroutineScope.() -> T): Deferred<T> {
-    val result = async(context = UI_POOL, start = start, block = block)
+fun <Result, CancellableContext> CancellableContext.asyncUI(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Result): Deferred<Result> where CancellableContext : SubscriptionContainer {
+    val thisReference = this.asReference()
+    val coroutineBlockWrapper: suspend CoroutineScope.() -> Result = { block(this, thisReference) }
+
+    val result = async(context = UI_POOL, start = start, block = coroutineBlockWrapper)
     result.bind(this)
     return result
 }

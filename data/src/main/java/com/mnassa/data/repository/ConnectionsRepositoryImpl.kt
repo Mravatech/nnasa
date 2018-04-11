@@ -7,16 +7,17 @@ import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.api.FirebaseConnectionsApi
 import com.mnassa.data.network.api.FirebaseInviteApi
+import com.mnassa.data.network.bean.firebase.ConnectionDbStatuses
 import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
+import com.mnassa.data.network.bean.retrofit.request.ConnectionStatusRequest
 import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
-import com.mnassa.data.network.exception.ExceptionHandler
-import com.mnassa.data.network.exception.handleException
-import com.mnassa.domain.model.DeclinedShortAccountModel
-import com.mnassa.domain.model.RecommendedConnections
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RecommendedConnectionsImpl
 import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -31,6 +32,7 @@ class ConnectionsRepositoryImpl(
         private val exceptionHandler: ExceptionHandler,
         private val databaseReference: DatabaseReference,
         private val userRepository: UserRepository,
+        private val firebaseConnectionsApi: FirebaseConnectionsApi,
         private val converter: ConvertersContext) : ConnectionsRepository {
 
     override suspend fun sendContacts(phoneNumbers: List<String>) {
@@ -52,6 +54,10 @@ class ConnectionsRepositoryImpl(
                 }
     }
 
+    override suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>) {
+        firebaseConnectionsApi.connectionAction(ConnectionStatusRequest(getConnectionAction(connectionAction), aids))
+    }
+
     override suspend fun getConnectionRequests(): ReceiveChannel<List<ShortAccountModel>> {
         return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_REQUESTED)
     }
@@ -62,6 +68,26 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getSentConnections(): ReceiveChannel<List<ShortAccountModel>> {
         return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_SENT)
+    }
+
+    override suspend fun getStatusConnections(userAccountId: String): ReceiveChannel<ConnectionStatus> {
+        return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
+                .child(requireNotNull(userRepository.getAccountId()))
+                .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
+                .child(userAccountId)
+                .toValueChannel<ConnectionDbStatuses>(exceptionHandler)
+                .map {
+                    converter.convert(it?.connectionsStatus ?: "", ConnectionStatus::class.java)
+                }
+    }
+
+    override suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus {
+        val status = databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
+                .child(requireNotNull(userRepository.getAccountId()))
+                .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
+                .child(userAccountId)
+                .await<ConnectionDbStatuses>(exceptionHandler)
+        return converter.convert(status?.connectionsStatus ?: "", ConnectionStatus::class.java)
     }
 
     override suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>> {
@@ -124,4 +150,18 @@ class ConnectionsRepositoryImpl(
                 .toListChannel<ShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, ShortAccountModel::class.java) }
     }
+
+    private fun getConnectionAction(action: ConnectionAction) =
+            when (action) {
+
+                ConnectionAction.CONNECT -> NetworkContract.ConnectionAction.CONNECT
+                ConnectionAction.ACCEPT -> NetworkContract.ConnectionAction.ACCEPT
+                ConnectionAction.DECLINE -> NetworkContract.ConnectionAction.DECLINE
+                ConnectionAction.DISCONNECT -> NetworkContract.ConnectionAction.DISCONNECT
+                ConnectionAction.MUTE -> NetworkContract.ConnectionAction.MUTE
+                ConnectionAction.UN_MUTE -> NetworkContract.ConnectionAction.UN_MUTE
+                ConnectionAction.REVOKE -> NetworkContract.ConnectionAction.REVOKE
+                else -> throw IllegalArgumentException("No Such ConnectionStatus Type")
+            }
+
 }

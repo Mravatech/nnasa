@@ -29,7 +29,7 @@
                 android:layout_alignTop="@id/accountTypeDivider"
                 android:layout_marginEnd="@dimen/padding_horizontal"
                 android:layout_marginStart="@dimen/padding_horizontal"
-                android:background="@color/backgroundHighlight"
+                android:background="@color/background_highlighted"
                 tools:background="#b3ecb3" />
 
             <LinearLayout
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:textAllCaps="true"
-                    android:textColor="@color/coolGray"
+                    android:textColor="@color/gray_cool"
                     tools:text='or' />
 
                 <View

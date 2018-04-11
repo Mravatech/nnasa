@@ -1,58 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PersonalInfo.ScrollContainer"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/PersonalInfo.LinearContainer"
+        android:layout_marginEnd="@dimen/personal_info_horizontal_main_margin"
+        android:layout_marginStart="@dimen/personal_info_horizontal_main_margin"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvHeader"
+                style="@style/PersonalInfo.HeaderTitle" />
+
+            <Button
+                android:id="@+id/btnHeaderNext"
+                style="@style/PersonalInfo.HeaderNext" />
+        </LinearLayout>
+
+        <include layout="@layout/sub_profile_avatar" />
+
+        <include layout="@layout/sub_company_info" />
 
         <TextView
-            android:id="@+id/tvTitle"
-            style="@style/MnassaHeader1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Org info" />
-
-        <ImageView
-            android:id="@+id/ivUserAvatar"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            tools:background="#aca" />
-
-        <TextView
-            android:id="@+id/tvDateOfBirth"
-            style="@style/MnassaHeader2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Date of birth" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.AppCompatRadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Male" />
-
-            <android.support.v7.widget.AppCompatRadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Female" />
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="NEXT" />
-
-
+            android:id="@+id/tvSkipThisStep"
+            style="@style/PersonalInfo.TextViewSkipThisStep" />
     </LinearLayout>
-
-
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

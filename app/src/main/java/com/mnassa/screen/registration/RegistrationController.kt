@@ -1,31 +1,31 @@
 package com.mnassa.screen.registration
 
-import android.support.v4.content.ContextCompat
 import android.content.Context
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
 import com.mnassa.extensions.hideKeyboard
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
-import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_registration.view.*
-import kotlinx.android.synthetic.main.controller_registration_organization.view.*
-import kotlinx.android.synthetic.main.controller_registration_personal.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
+import kotlinx.android.synthetic.main.sub_reg_company.view.*
+import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -49,7 +49,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
             vpRegistration.adapter = registrationAdapter
-            vpRegistration.addOnPageChangeListener(object: ViewPager.SimpleOnPageChangeListener() {
+            vpRegistration.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                 override fun onPageSelected(position: Int) {
                     updateAccountTypeSwitch()
                     hideKeyboard()
@@ -76,7 +76,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                         PersonalInfoController.newInstance(it.shortAccountModel)
                     }
                     is RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen -> {
-                        OrganizationInfoController.newInstance()
+                        OrganizationInfoController.newInstance(it.shortAccountModel)
                     }
                 }
                 open(controller)
@@ -92,7 +92,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     private fun updateAccountTypeSwitch() {
         val view = view ?: return
 
-        val grayColor = ContextCompat.getColor(view.context, R.color.coolGray)
+        val grayColor = ContextCompat.getColor(view.context, R.color.gray_cool)
         val blackColor = ContextCompat.getColor(view.context, R.color.black)
 
         when (view.vpRegistration.currentItem) {
@@ -158,7 +158,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     inner class RegistrationAdapter(
-            private val context: Context)
+        private val context: Context
+    )
         : PagerAdapter() {
 
         private var companySelectedPlaceName: String? = null
@@ -209,16 +210,18 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
                 chipPersonOffers.chipSearch = viewModel
+                chipPersonOffers.setTags(emptyList())
                 chipPersonInterests.chipSearch = viewModel
+                chipPersonInterests.setTags(emptyList())
             }
             setAdapter(view.actvPersonCity, true)
         }
 
         private fun onOrganizationPageCreated(view: View) {
             with(view) {
-                tilCompanyName.hint = "Company name" //TODO: translation
-                tilCompanyUserName.hint = "User name"
-                tilCompanyCity.hint = "City"
+                view.tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
+                view.tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+                view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
                 chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
@@ -245,6 +248,5 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 }
             })
         }
-
     }
 }

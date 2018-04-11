@@ -16,8 +16,10 @@ import com.mnassa.domain.model.GeoPlaceModel
  * Date: 3/5/2018
  */
 
-class PlaceAutocompleteAdapter(context: Context,
-                               private val placeAutoCompleteListener: PlaceAutoCompleteListener)
+class PlaceAutocompleteAdapter(
+    context: Context,
+    private val placeAutoCompleteListener: PlaceAutoCompleteListener
+)
     : ArrayAdapter<GeoPlaceModel>(context,
         android.R.layout.simple_expandable_list_item_2,
         android.R.id.text1), Filterable {
@@ -76,5 +78,4 @@ class PlaceAutocompleteAdapter(context: Context,
     interface PlaceAutoCompleteListener {
         fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel>
     }
-
 }

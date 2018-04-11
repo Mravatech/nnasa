@@ -6,5 +6,4 @@ import com.mnassa.screen.login.enterphone.EnterPhoneViewModel
 /**
  * Created by Peter on 3/1/2018.
  */
-interface EnterPromoViewModel : MnassaViewModel, EnterPhoneViewModel {
-}
+interface EnterPromoViewModel : MnassaViewModel, EnterPhoneViewModel

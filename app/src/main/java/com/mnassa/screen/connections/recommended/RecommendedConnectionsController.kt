@@ -2,14 +2,12 @@ package com.mnassa.screen.connections.recommended
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_recommended.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -23,13 +21,13 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onConnectClickListener = { viewModel.connect(it) }
+
         with(view) {
             toolbar.title = fromDictionary(R.string.recommended_connections_title)
 
             rvRecommendedConnections.layoutManager = LinearLayoutManager(context)
             rvRecommendedConnections.adapter = adapter
-
-            adapter.onConnectClickListener = { viewModel.connect(it) }
         }
 
         adapter.isLoadingEnabled = true
@@ -40,6 +38,11 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
                 view.rlEmptyView.visibility = if (it.isEmpty) View.VISIBLE else View.INVISIBLE
             }
         }
+    }
+
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     companion object {

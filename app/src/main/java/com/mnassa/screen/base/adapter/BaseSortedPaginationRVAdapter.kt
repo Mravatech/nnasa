@@ -10,9 +10,8 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
     abstract val itemsComparator: (item1: ITEM, item2: ITEM) -> Int
     abstract val itemClass: Class<ITEM>
 
-
-   open class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> {
-        val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
+    class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> {
+        private val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 
         override fun clear() {
             adapter.postUpdate {
@@ -59,12 +58,24 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
             }
         }
 
+        override fun removeAll(elements: Collection<ITEM>): Boolean {
+            adapter.postUpdate {
+                wrappedList.beginBatchedUpdates()
+                wrappedList.clear()
+                elements.forEach {
+                    wrappedList.remove(it)
+                }
+                wrappedList.endBatchedUpdates()
+            }
+            return true
+        }
+
         override fun get(index: Int): ITEM = wrappedList[index]
 
-        override val size: Int get() =  wrappedList.size()
+        override val size: Int get() = wrappedList.size()
 
         override fun iterator(): Iterator<ITEM> {
-            return object: Iterator<ITEM> {
+            return object : Iterator<ITEM> {
                 private var cursor: Int = 0
                 override fun hasNext(): Boolean = cursor < size
                 override fun next(): ITEM = get(cursor++)

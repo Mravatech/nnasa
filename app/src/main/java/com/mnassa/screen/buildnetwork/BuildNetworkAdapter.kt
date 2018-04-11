@@ -25,21 +25,21 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
         set(value) {
             selectedAccountsInternal.clear()
             selectedAccountsInternal.addAll(value)
-
-            val selectedAccountsCopy = selectedAccountsInternal.toList()
-            selectedAccountsInternal.clear()
-            selectedAccountsInternal.addAll(selectedAccountsCopy)
             onSelectedAccountsChangedListener(selectedAccountsInternal)
 
             notifyDataSetChanged()
         }
 
+    fun destroyCallbacks() {
+        onSelectedAccountsChangedListener = { }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return InviteViewHolder.newInstance(parent, this, selectedAccountsInternal)
     }
 
-    override fun onClick(v: View) {
-        val viewHolder = v.tag as? InviteViewHolder ?: return
+    override fun onClick(view: View) {
+        val viewHolder = view.tag as? InviteViewHolder ?: return
         val position = viewHolder.adapterPosition
 
         if (position >= 0) {

@@ -1,6 +1,6 @@
 package com.mnassa.screen.notifications
 
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.screen.base.MnassaControllerImpl
 

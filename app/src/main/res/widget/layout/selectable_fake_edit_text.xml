@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/personal_info_abilities_inner_margin"
+    android:layout_marginStart="@dimen/personal_info_abilities_inner_margin"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="16dp">
+
+        <TextView
+            android:id="@+id/tvMakePrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/vOccupationDivider"
+            android:contentDescription="@null"
+            android:textColor="@color/blue_turquoise"
+            android:visibility="gone"
+            tools:text="Make Primary" />
+
+        <View
+            android:id="@+id/vOccupationDivider"
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toStartOf="@+id/tvRemoveAbility"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/tvRemoveAbility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:contentDescription="@null"
+            android:textColor="@color/red"
+            android:visibility="gone"
+            tools:text="Delete" />
+
+        <TextView
+            android:id="@+id/tvSelectLabel"
+            style="@style/PersonalInfo.SelectableTextViewLabel"
+            android:visibility="invisible"
+            tools:text="Primary Occupation" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvSelectView"
+        style="@style/PersonalInfo.SelectableTextView"
+        android:layout_marginStart="@dimen/personal_info_inner_margin_start"
+        android:layout_marginTop="@dimen/personal_info_inner_margin_start"
+        android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"
+        tools:text="Select your occupation" />
+
+    <View
+        style="@style/PersonalInfo.BottomView"
+        android:layout_marginBottom="@dimen/personal_info_abilities_container_margin_vertical"
+        android:layout_marginEnd="@dimen/personal_info_inner_margin_start"
+        android:layout_marginStart="@dimen/personal_info_inner_margin_start"
+        android:layout_marginTop="@dimen/personal_info_abilities_bottom_view" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilCustomOccupation"
+        style="@style/PersonalInfo.TextInputLayout"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etCustomOccupation"
+            style="@style/PersonalInfo.EditText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilWorkAt"
+        style="@style/PersonalInfo.TextInputLayout"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etWorkAt"
+            style="@style/PersonalInfo.EditText" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

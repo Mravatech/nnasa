@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight">
+    android:background="@color/background_highlighted">
 
     <RelativeLayout
         android:id="@+id/rlRoot"
@@ -22,7 +22,6 @@
             android:layout_width="@dimen/avatar_list_item"
             android:layout_height="@dimen/avatar_list_item"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
             tools:src="@mipmap/ic_launcher" />
 
         <LinearLayout
@@ -30,6 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_toEndOf="@id/ivAvatar"
             android:gravity="center_vertical"
             android:orientation="vertical">

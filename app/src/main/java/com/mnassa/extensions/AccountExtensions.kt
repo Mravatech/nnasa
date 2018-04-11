@@ -1,10 +1,5 @@
 package com.mnassa.extensions
 
-import android.support.v4.content.ContextCompat
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.translation.fromDictionary
@@ -27,7 +22,7 @@ val ShortAccountModel.formattedPosition: CharSequence
     get() {
         val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return ""
         return when {
-            !ability.name.isNullOrBlank() && !ability.place.isNullOrBlank() ->  "${ability.name}${fromDictionary(R.string.invite_at_placeholder)}${ability.place}"
+            !ability.name.isNullOrBlank() && !ability.place.isNullOrBlank() -> "${ability.name}${fromDictionary(R.string.invite_at_placeholder)}${ability.place}"
             else -> ability.name ?: ability.place ?: ""
         }
     }

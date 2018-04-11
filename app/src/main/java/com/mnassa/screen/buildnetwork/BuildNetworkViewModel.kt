@@ -19,6 +19,6 @@ interface BuildNetworkViewModel : MnassaViewModel {
     fun inviteUsers(accountIds: List<String>)
 
     sealed class OpenScreenCommand {
-        class MainScreen: OpenScreenCommand()
+        class MainScreen : OpenScreenCommand()
     }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight">
+    android:background="@color/background_highlighted">
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/ivDescriptionIcon"
@@ -24,6 +24,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_toEndOf="@id/ivDescriptionIcon"
         tools:text="New requests can be sent ...." />
 

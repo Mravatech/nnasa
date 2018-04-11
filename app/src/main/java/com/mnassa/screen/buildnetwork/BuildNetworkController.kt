@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
@@ -28,7 +28,6 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
     override val viewModel: BuildNetworkViewModel by instance()
     private val dialogHelper: DialogHelper by instance()
     private val adapter = BuildNetworkAdapter()
-
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -82,6 +81,11 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
         }
 
         checkPermissions()
+    }
+
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     private var checkPermissionsJob: Job? = null

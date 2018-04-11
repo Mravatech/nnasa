@@ -21,18 +21,21 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
     var onItemClickListener = { account: ShortAccountModel, sender: View -> }
     var onBindHeader = { header: View -> }
 
+    fun destroyCallbacks() {
+        onItemClickListener = { _, _ -> }
+        onBindHeader = { }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> =
             UserViewHolder.newInstance(parent, this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ShortAccountModel> {
-        return if (viewType == TYPE_HEADER && withHeader) HeaderHolder.newInstance(parent) else
-            super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER && withHeader) HeaderHolder.newInstance(parent) else super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseVH<ShortAccountModel>, position: Int) {
-        if (holder is HeaderHolder) {
-            onBindHeader(holder.itemView)
-        } else super.onBindViewHolder(holder, position)
+        if (holder is HeaderHolder) onBindHeader(holder.itemView)
+        else super.onBindViewHolder(holder, position)
     }
 
     override fun onClick(v: View) {
@@ -46,8 +49,8 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
         }
     }
 
-    private class HeaderHolder(itemView: View) : BaseVH<ShortAccountModel>(itemView) {
-        override fun bind(item: ShortAccountModel) = Unit
+    private class HeaderHolder(itemView: View) : BaseVH<Any>(itemView) {
+        override fun bind(item: Any) = Unit
 
         companion object {
             fun newInstance(parent: ViewGroup): HeaderHolder {

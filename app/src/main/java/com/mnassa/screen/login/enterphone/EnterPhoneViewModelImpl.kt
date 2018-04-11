@@ -2,16 +2,18 @@ package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
  */
-open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
+open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor, private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: PhoneVerificationModel
 
     override val openScreenChannel: ArrayBroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -37,6 +39,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
                 when {
                     it.isVerified -> signIn(it)
                     else -> {
+                        Timber.d("MNSA_LOGIN requestVerificationCode -> openScreenChannel.send EnterVerificationCode")
                         hideProgress()
                         openScreenChannel.send(
                                 EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
@@ -58,17 +61,19 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
 
     private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
         withProgressSuspend {
+            Timber.d("MNSA_LOGIN signIn $phoneVerificationModel")
             val accounts = loginInteractor.signIn(phoneVerificationModel)
 
             val nextScreen = when {
                 accounts.isEmpty() -> EnterPhoneViewModel.OpenScreenCommand.Registration()
                 accounts.size == 1 -> {
-                    loginInteractor.selectAccount(accounts.first())
+                    userProfileInteractor.setCurrentUserAccount(accounts.first())
                     EnterPhoneViewModel.OpenScreenCommand.MainScreen()
                 }
                 else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)
             }
 
+            Timber.d("MNSA_LOGIN signIn -> open $nextScreen")
             openScreenChannel.send(nextScreen)
         }
     }
@@ -79,7 +84,6 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor)
             outBundle.putParcelable(EXTRA_VERIFICATION_RESPONSE, verificationResponse)
         }
     }
-
 
     private companion object {
         private const val EXTRA_VERIFICATION_RESPONSE = "EXTRA_VERIFICATION_RESPONSE"

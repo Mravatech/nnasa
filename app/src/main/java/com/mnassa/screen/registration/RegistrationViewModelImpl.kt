@@ -1,10 +1,10 @@
 package com.mnassa.screen.registration
 
-import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.PlaceFinderInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.GeoPlaceModel
+import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
@@ -12,9 +12,9 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  * Created by Peter on 2/26/2018.
  */
 class RegistrationViewModelImpl(
-        private val userProfileInteractor: UserProfileInteractor,
-        private val tagInteractor: TagInteractor,
-        private val placeFinderInteractor: PlaceFinderInteractor
+    private val userProfileInteractor: UserProfileInteractor,
+    private val tagInteractor: TagInteractor,
+    private val placeFinderInteractor: PlaceFinderInteractor
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
@@ -41,15 +41,15 @@ class RegistrationViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
-                userProfileInteractor.createOrganizationAccount(
+                val shortAccountModel = userProfileInteractor.createOrganizationAccount(
                         companyName = companyName,
                         userName = userName,
                         city = city,
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
+                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(shortAccountModel))
             }
-            openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen())
         }
     }
 
@@ -72,5 +72,4 @@ class RegistrationViewModelImpl(
         tags.addAll(existsTags)
         return tags
     }
-
 }

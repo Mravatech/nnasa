@@ -12,4 +12,5 @@ interface TagInteractor{
     suspend fun get(id: String): TagModel?
     suspend fun search(searchKeyword: String): List<TagModel>
     suspend fun createCustomTagIds(tags: List<String>): List<String>
+    suspend fun getTagsByIds(ids: List<String>): List<TagModel>
 }
