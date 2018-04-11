@@ -9,13 +9,18 @@ import android.widget.Toast
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.AccountType
+import com.mnassa.domain.model.ConnectionStatus
+import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.PostDetailsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -29,7 +34,7 @@ import org.kodein.di.generic.instance
  * Date: 2/26/2018
  */
 
-class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data) {
+class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data), ComplaintOtherController.OnComplaintResult {
 
     override val layoutId: Int = R.layout.controller_profile
     override val viewModel: ProfileViewModel by instance()
@@ -37,7 +42,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
-    private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -55,11 +59,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             it.id
         } ?: run { accountId }
         viewModel.getProfileWithAccountId(id)
-        launchCoroutineUI {
-            viewModel.reportsChannel.consumeEach {
-                reportsList = it
-            }
-        }
+        adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter.profileModel = profileModel
@@ -120,8 +122,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
-
     }
+
+    override var onComplaint: String = ""
+        set(value) {
+            val id = accountModel?.id ?: accountId
+            viewModel.sendComplaint(id, value)
+        }
 
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
         Toast.makeText(activity, connectionStatus.name, Toast.LENGTH_LONG).show()
@@ -161,11 +168,16 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun complainAboutProfile(profileModel: ProfileModel, view: View) {
-        dialog.showComplaintDialog(view.context, reportsList) {
-            if (it.id == OTHER) {
-                open(ComplaintOtherController.newInstance())
-            } else {
-                viewModel.sendComplaint(profileModel.profile.id, it.toString())
+        launchCoroutineUI {
+            val reportsList = viewModel.retrieveComplaints()
+            dialog.showComplaintDialog(view.context, reportsList) {
+                if (it.id == OTHER) {
+                    val controller = ComplaintOtherController.newInstance()
+                    controller.targetController = this@ProfileController
+                    open(controller)
+                } else {
+                    viewModel.sendComplaint(profileModel.profile.id, it.toString())
+                }
             }
         }
     }

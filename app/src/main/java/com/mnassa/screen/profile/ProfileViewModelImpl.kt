@@ -2,6 +2,7 @@ package com.mnassa.screen.profile
 
 import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
@@ -9,7 +10,6 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 
@@ -30,23 +30,24 @@ class ProfileViewModelImpl(
     override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
     override val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus> = BroadcastChannel(10)
     override val postChannel: BroadcastChannel<ListItemEvent<PostModel>> = BroadcastChannel(10)
-    override val reportsChannel: BroadcastChannel<List<TranslatedWordModel>> = ConflatedBroadcastChannel()
+
+    private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleException {
-            val reporst = complaintInteractor.getReports()
-            reportsChannel.send(reporst)
+            reportsList = complaintInteractor.getReports()
         }
     }
 
-    override fun retreiveComplaints() {
+    override suspend fun retrieveComplaints(): List<TranslatedWordModel> {
+        if (reportsList.isNotEmpty()) return reportsList
         handleException {
             withProgressSuspend {
-                val reporst = complaintInteractor.getReports()
-                reportsChannel.send(reporst)
+                reportsList = complaintInteractor.getReports()
             }
         }
+        return reportsList
     }
 
     private var profileClickJob: Job? = null
@@ -97,7 +98,7 @@ class ProfileViewModelImpl(
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
-                        type = ACCOUNT_TYPE,
+                        type = NetworkContract.Complaint.ACCOUNT_TYPE,
                         reason = reason
                 ))
             }
@@ -124,9 +125,4 @@ class ProfileViewModelImpl(
             }
         }
     }
-
-    companion object {
-        const val ACCOUNT_TYPE = "account"
-    }
-
 }

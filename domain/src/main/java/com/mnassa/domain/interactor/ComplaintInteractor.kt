@@ -11,8 +11,6 @@ import com.mnassa.domain.model.TranslatedWordModel
  */
 
 interface ComplaintInteractor {
-
     suspend fun sendComplaint(complaintModel: ComplaintModel)
     suspend fun getReports(): List<TranslatedWordModel>
-
 }

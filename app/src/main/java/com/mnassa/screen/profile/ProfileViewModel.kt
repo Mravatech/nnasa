@@ -18,7 +18,6 @@ interface ProfileViewModel : MnassaViewModel {
     val profileClickChannel: BroadcastChannel<ProfileCommand>
     val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus>
     val postChannel: BroadcastChannel<ListItemEvent<PostModel>>
-    val reportsChannel: BroadcastChannel<List<TranslatedWordModel>>
 
     fun getPostsById(accountId: String)
     fun getProfileWithAccountId(accountId: String)
@@ -27,7 +26,7 @@ interface ProfileViewModel : MnassaViewModel {
     fun connectionStatusClick(connectionStatus: ConnectionStatus)
     fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String, isAcceptConnect: Boolean)
     fun sendComplaint(id: String, reason: String)
-    fun retreiveComplaints()
+    suspend fun retrieveComplaints():List<TranslatedWordModel>
     sealed class ProfileCommand {
         class ProfileConnection : ProfileCommand()
         class ProfileWallet : ProfileCommand()
