@@ -6,9 +6,16 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
+import com.mnassa.domain.interactor.ConnectionsInteractor
+import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.ConnectionAction
+import com.mnassa.domain.model.ConnectionStatus
+import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -27,7 +34,6 @@ class ProfileViewModelImpl(
 ) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
-    override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
     override val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus> = BroadcastChannel(10)
     override val postChannel: BroadcastChannel<ListItemEvent<PostModel>> = BroadcastChannel(10)
 
@@ -50,22 +56,6 @@ class ProfileViewModelImpl(
         return reportsList
     }
 
-    private var profileClickJob: Job? = null
-    override fun connectionClick() {
-        profileClickJob?.cancel()
-        profileClickJob = launchCoroutineUI {
-            profileClickChannel.send(ProfileViewModel.ProfileCommand.ProfileConnection())
-        }
-    }
-
-    private var walletClickJob: Job? = null
-    override fun walletClick() {
-        walletClickJob?.cancel()
-        walletClickJob = launchCoroutineUI {
-            profileClickChannel.send(ProfileViewModel.ProfileCommand.ProfileWallet())
-        }
-    }
-
     override fun getProfileWithAccountId(accountId: String) {
         handleException {
             showProgress()
@@ -81,6 +71,11 @@ class ProfileViewModelImpl(
                     profileChannel.send(profile)
                 }
                 hideProgress()
+            }
+        }
+        handleException {
+            connectionsInteractor.getStatusesConnections(accountId).consumeEach {
+                statusesConnectionsChannel.send(it)
             }
         }
     }
@@ -102,12 +97,6 @@ class ProfileViewModelImpl(
                         reason = reason
                 ))
             }
-        }
-    }
-
-    override fun connectionStatusClick(connectionStatus: ConnectionStatus) {
-        launchCoroutineUI {
-            statusesConnectionsChannel.send(connectionStatus)
         }
     }
 

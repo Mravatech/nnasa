@@ -1,6 +1,10 @@
 package com.mnassa.screen.profile
 
+import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.ViewGroup
+import com.mnassa.R
+import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.profile.common.AnotherCompanyProfileHolder
@@ -16,22 +20,35 @@ import com.mnassa.screen.profile.model.ProfileModel
  * Date: 3/23/2018
  */
 
-class ProfileAdapter() : PostsRVAdapter() {
+class ProfileAdapter() : PostsRVAdapter() , View.OnClickListener {
+
+    var onConnectionsClickListener =  {}
+    var onWalletClickListener =  {}
+    var onConnectionStatusClickListener = { item: ConnectionStatus? -> }
 
     var profileModel: ProfileModel? = null
         set(value) {
             field = value
             notifyItemChanged(0)
         }
-    lateinit var viewModel: ProfileViewModel
+
+    override fun onClick(view: View) {
+        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        if (position < 0) return
+        when (view.id) {
+            R.id.tvProfileConnections -> onConnectionsClickListener()
+            R.id.tvPointsGiven -> onWalletClickListener()
+            R.id.tvConnectionStatus -> onConnectionStatusClickListener(requireNotNull(profileModel).connectionStatus)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
         return if (viewType == TYPE_HEADER && profileModel != null) {
             return when (requireNotNull(profileModel).getAccountType()) {
-                Accounts.MY_COMPANY -> CompanyProfileViewHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
-                Accounts.MY_PERSONAL -> PersonalProfileViewHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
-                Accounts.USER_COMPANY -> AnotherCompanyProfileHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
-                Accounts.USER_PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, viewModel, requireNotNull(profileModel))
+                Accounts.MY_COMPANY -> CompanyProfileViewHolder.newInstance(parent, this, requireNotNull(profileModel))
+                Accounts.MY_PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, requireNotNull(profileModel))
+                Accounts.USER_COMPANY -> AnotherCompanyProfileHolder.newInstance(parent, this, requireNotNull(profileModel))
+                Accounts.USER_PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, requireNotNull(profileModel))
             }
         } else {
             super.onCreateViewHolder(parent, viewType)
