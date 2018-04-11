@@ -36,9 +36,10 @@ class MnassaToolbar : FrameLayout {
         addView(innerView)
 
         ivToolbarMore.setOnClickListener { onMoreClickListener?.invoke(it) }
-        val headerRootLayoutParams = rlHeader.layoutParams as MarginLayoutParams
-        headerRootLayoutParams.topMargin = getStatusBarHeight(context, false)
-        rlHeader.layoutParams = headerRootLayoutParams
+
+//        val headerRootLayoutParams = rlHeader.layoutParams as MarginLayoutParams
+//        headerRootLayoutParams.topMargin = getStatusBarHeight(context, false)
+//        rlHeader.layoutParams = headerRootLayoutParams
     }
 
     private fun processAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) {
