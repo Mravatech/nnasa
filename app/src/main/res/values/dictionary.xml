@@ -218,6 +218,9 @@
     <string name="user_profile_connection_connected">_connections_group_header_connected</string>
     <string name="user_profile_connection_connect">connections_button_connect</string>
     <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>
+    <string name="user_profile_you_want_to_disconnect">_connectionAction_disconnectMessageTitle</string>
+    <string name="user_profile_yes">_pin_cancel_yes</string>
+    <string name="user_profile_no">_pin_cancel_no</string>
 
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
     <string name="edit_profile_main_info">_android_edit_profile_main_info</string>

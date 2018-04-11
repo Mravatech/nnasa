@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import android.widget.Toast
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -22,8 +21,10 @@ import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,7 +43,22 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        adapter.viewModel = viewModel
+        val id = accountModel?.let {
+            view.ivCropImage.avatarSquare(it.avatar)
+            it.id
+        } ?: run { accountId }
+        viewModel.getProfileWithAccountId(id)
+        adapter.onConnectionStatusClickListener = {
+            when (it) {
+                ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                    viewModel.sendConnectionStatus(it, id, true)
+                }
+                ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
+                    viewModel.sendConnectionStatus(it, id, true)
+            }
+        }
+        adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
+        adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
         view.ivProfileBack.setOnClickListener { close() }
         view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
@@ -51,11 +67,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 view.tvTitleCollapsed.visibility = View.GONE
             }
         })
-        val id = accountModel?.let {
-            view.ivCropImage.avatarSquare(it.avatar)
-            it.id
-        } ?: run { accountId }
-        viewModel.getProfileWithAccountId(id)
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter.profileModel = profileModel
@@ -90,36 +101,17 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
         launchCoroutineUI {
-            viewModel.profileClickChannel.consumeEach {
-                when (it) {
-                    is ProfileViewModel.ProfileCommand.ProfileConnection -> open(AllConnectionsController.newInstance())
-                    is ProfileViewModel.ProfileCommand.ProfileWallet -> Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        launchCoroutineUI {
-            viewModel.statusesConnectionsChannel.consumeEach {
-                when (it) {
-                    ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context) {
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
-                    ConnectionStatus.SENT -> dialog.connectionsDialog(view.context) {//todo set later on
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
-                    ConnectionStatus.RECOMMENDED -> dialog.connectionsDialog(view.context) {
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
-                    ConnectionStatus.REQUESTED -> dialog.connectionsDialog(view.context) {
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
+            viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
+                handleFab(connectionStatus, view.fabProfile)
+                adapter.profileModel?.let {
+                    it.connectionStatus = connectionStatus
+                    adapter.notifyItemChanged(0)
                 }
             }
         }
     }
 
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
-        Toast.makeText(activity, connectionStatus.name, Toast.LENGTH_LONG).show()
-        //todo handle here
         when (connectionStatus) {
             ConnectionStatus.CONNECTED -> {
                 fab.visibility = View.VISIBLE
@@ -129,19 +121,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             ConnectionStatus.RECOMMENDED -> {
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
-                fab.setImageResource(R.drawable.ic_recommend)//todo icons
+                fab.setImageResource(R.drawable.ic_new_requests)
             }
             ConnectionStatus.SENT -> {
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
-                fab.setImageResource(R.drawable.ic_camera)//todo icons
-            }
-            ConnectionStatus.REQUESTED -> {
-            }
-            ConnectionStatus.DISCONNECTED -> {
-            }
-            ConnectionStatus.NONE -> {
-                //todo smth
+                fab.setImageResource(R.drawable.ic_pending)
             }
         }
     }
@@ -178,21 +163,25 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    private fun setTitle(profileModel: ProfileModel, view: View) {
-        if (profileModel.profile.accountType == AccountType.PERSONAL) {
-            view.profileName.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
-            view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
-            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
-        } else {
-            view.profileName.text = profileModel.profile.organizationInfo?.organizationName
-            view.profileSubName.text = profileModel.profile.organizationType
-            view.tvTitleCollapsed.text = profileModel.profile.organizationInfo?.organizationName
+        private fun setTitle(profileModel: ProfileModel, view: View) {
+            if (profileModel.profile.accountType == AccountType.PERSONAL) {
+                val userName = "${profileModel.profile.personalInfo?.firstName
+                        ?: EMPTY_SPACE} ${profileModel.profile.personalInfo?.lastName ?: EMPTY_SPACE}"
+                view.profileName.text = userName
+                view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
+                view.tvTitleCollapsed.text = userName
+            } else {
+                val organizationName = profileModel.profile.organizationInfo?.organizationName
+                view.profileName.text = organizationName
+                view.profileSubName.text = profileModel.profile.organizationType
+                view.tvTitleCollapsed.text = organizationName
+            }
         }
-    }
 
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
+        private const val EMPTY_SPACE = ""
         fun newInstance(account: ShortAccountModel): ProfileController {
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, account)

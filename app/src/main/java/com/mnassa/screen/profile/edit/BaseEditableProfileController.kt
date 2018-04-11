@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.EditText
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -18,6 +17,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.header_main.view.*
+import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.text.DateFormatSymbols
 import java.util.*
@@ -61,7 +61,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
                 launchCoroutineUI { thisRef ->
                     thisRef().activity?.let {
                         if (CropActivity.ImageSource.CAMERA == imageSource) {
-                            val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA)
                             if (!permissionsResult.isAllGranted) {
                                 return@launchCoroutineUI
                             }
