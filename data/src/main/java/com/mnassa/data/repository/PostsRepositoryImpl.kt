@@ -80,7 +80,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .map { converter.convert<PostModel>(it!!) }
     }
 
-    override suspend fun loadUserPostById(id: String, accountId: String): Post? {
+    override suspend fun loadUserPostById(id: String, accountId: String): PostModel? {
         val post = db
                 .child(TABLE_NEWS_FEED)
                 .child(accountId)

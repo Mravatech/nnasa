@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.hhmm
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.android.synthetic.main.item_chat_message_my_with_reply.view.*
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_chat_message_my_with_reply.view.*
  * Date: 4/2/2018
  */
 
-class MyMessagesWithReplyViewHolder(itemView: View, private val onLongClickListener: View.OnLongClickListener, private val onReplyClick: (ChatMessageModel?, Post?) -> Unit) : BasePaginationRVAdapter.BaseVH<ChatMessageModel>(itemView) {
+class MyMessagesWithReplyViewHolder(itemView: View, private val onLongClickListener: View.OnLongClickListener, private val onReplyClick: (ChatMessageModel?, PostModel?) -> Unit) : BasePaginationRVAdapter.BaseVH<ChatMessageModel>(itemView) {
     override fun bind(item: ChatMessageModel) {
         itemView.tvMyMessageWithReply.text = item.text//todo add date to message
         itemView.tvMyMessageWithReply.setOnLongClickListener(onLongClickListener)
@@ -31,7 +31,7 @@ class MyMessagesWithReplyViewHolder(itemView: View, private val onLongClickListe
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup, onLongClickListener: View.OnLongClickListener, onReplyClick: (ChatMessageModel?, Post?) -> Unit): MyMessagesWithReplyViewHolder {
+        fun newInstance(parent: ViewGroup, onLongClickListener: View.OnLongClickListener, onReplyClick: (ChatMessageModel?, PostModel?) -> Unit): MyMessagesWithReplyViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat_message_my_with_reply, parent, false)
             return MyMessagesWithReplyViewHolder(view, onLongClickListener, onReplyClick)
         }

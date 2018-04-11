@@ -3,7 +3,6 @@ package com.mnassa.screen.chats
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
@@ -13,6 +12,7 @@ import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**

@@ -11,7 +11,8 @@ import com.mnassa.data.network.bean.retrofit.request.ChatRoomRequest
 import com.mnassa.data.network.bean.retrofit.request.ChatUnreadCountRequest
 import com.mnassa.data.network.bean.retrofit.request.MessageFromChatRequest
 import com.mnassa.data.network.bean.retrofit.request.MessageRequest
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_LIST
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_MESSAGES
@@ -19,7 +20,7 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_TYPE
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -42,10 +43,10 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
 ) : ChatRepository {
 
     override suspend fun getChatIdByUserId(accountId: String): String =
-            chatApi.addChat(ChatRoomRequest(accountId)).await().data.chatID
+            chatApi.addChat(ChatRoomRequest(accountId)).handleException(exceptionHandler).data.chatID
 
     override suspend fun resetChatUnreadCount(chatId: String) {
-        chatApi.resetChatUnreadCount(ChatUnreadCountRequest(chatId))
+        chatApi.resetChatUnreadCount(ChatUnreadCountRequest(chatId)).handleException(exceptionHandler)
     }
 
     override suspend fun sendMessage(message: ChatMessageModel) {
@@ -55,11 +56,11 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 chatID = requireNotNull(message.chatID),
                 linkedMessageId = message.replyMessage?.first,
                 linkedPostId = message.replyPost?.first
-        ))
+        )).handleException(exceptionHandler)
     }
 
     override suspend fun deleteMessage(messageId: String, chatID: String, isDeleteForBoth: Boolean) {
-        chatApi.deleteMessage(MessageFromChatRequest(messageId, chatID, isDeleteForBoth))
+        chatApi.deleteMessage(MessageFromChatRequest(messageId, chatID, isDeleteForBoth)).handleException(exceptionHandler)
     }
 
     override suspend fun listOfMessages(chatId: String, accointId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
@@ -69,7 +70,6 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(TABLE_CHAT_TYPE)
                 .child(myUserId)
                 .child(chatId)
-                .apply { keepSynced(true) }
                 .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = converter.convertFunc(ChatMessageModel::class.java)
@@ -88,9 +88,9 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         }
                     }
                     it.item.replyPost?.first?.let { first ->
-                        val replyPost: Post? = postsRepository.loadUserPostById(accointId, first)
+                        val replyPost: PostModel? = postsRepository.loadUserPostById(accointId, first)
                         replyPost?.let { _ ->
-                            it.item.replyPost = it.item.replyPost?.copy(second = converter.convert(replyPost, Post::class.java))
+                            it.item.replyPost = it.item.replyPost?.copy(second = converter.convert(replyPost, PostModel::class.java))
                         }
                     }
                     it
@@ -103,14 +103,13 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(TABLE_CHAT_LIST)
                 .child(TABLE_CHAT_TYPE)
                 .child(userId)
-                .apply { keepSynced(true) }
                 .toValueChannelWithChangesHandling<ChatDbModel, ChatRoomModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = converter.convertFunc(ChatRoomModel::class.java)
                 )
                 .map {
                     it.item.account = userRepository
-                            .getById(it.item.members?.first { it != userId }
+                            .getProfileByAccountId(it.item.members?.first { it != userId }
                                     ?: "")
                     it
                 }

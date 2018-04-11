@@ -24,5 +24,5 @@ interface ChatMessageModel : Model {
     val type: String
     val chatID: String?
     var replyMessage: Pair<String, ChatMessageModel?>?
-    var replyPost: Pair<String, Post?>?
+    var replyPost: Pair<String, PostModel?>?
 }

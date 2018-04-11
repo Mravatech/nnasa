@@ -69,7 +69,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             } ?: kotlin.run {
                 itemView.tvMessageUnread.visibility = View.GONE
                 itemView.tvUserName.setTypeface(itemView.tvUserName.typeface, Typeface.NORMAL)
-                itemView.tvLastMessage.setTextColor(ContextCompat.getColor(itemView.context, R.color.coolGray))
+                itemView.tvLastMessage.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_cool))
             }
             val ago = requireNotNull(item.chatMessageModel).createdAt.toTimeAgo()
             itemView.tvMessageCame.text = ago

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.extensions.getStartOfDay
 import com.mnassa.extensions.isTheSameDay
@@ -26,7 +26,7 @@ class MessagesAdapter(private val accountId: String) : BaseSortedPaginationRVAda
 
     var onMyMessageLongClick = { item: ChatMessageModel -> }
     var onUserMessageLongClick = { item: ChatMessageModel -> }
-    var onReplyClick = { chatModel: ChatMessageModel?, post: Post? -> }
+    var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * 1

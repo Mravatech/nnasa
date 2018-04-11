@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatRadioButton
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
@@ -22,6 +23,7 @@ import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_company_status.*
+import kotlinx.android.synthetic.main.dialog_delete_chat_message.*
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
@@ -50,6 +52,46 @@ class DialogHelper {
                 fromDictionary(R.string.welcome_dialog_title),
                 fromDictionary(R.string.welcome_dialog_description),
                 onOkClick)
+    }
+
+    fun showDeleteMessageDialog(
+            context: Context,
+            isMyMessageClicked: Boolean,
+            onDeleteForMeClick: () -> Unit,
+            onDeleteForBothClick: () -> Unit,
+            onCopyClick: () -> Unit,
+            onReplyClick: () -> Unit) {
+        val dialog = Dialog(context, R.style.DialogInvite)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_delete_chat_message)
+        if (isMyMessageClicked) {
+            dialog.tvDeleteForBoth.text = fromDictionary(R.string.chats_delete_for_all)
+            dialog.tvDeleteForBoth.setOnClickListener {
+                onDeleteForBothClick()
+                dialog.dismiss()
+            }
+            dialog.tvDeleteForBoth.visibility = View.VISIBLE
+        } else {
+            dialog.tvReply.text = fromDictionary(R.string.chats_reply)
+            dialog.tvReply.setOnClickListener {
+                onReplyClick()
+                dialog.dismiss()
+            }
+            dialog.tvReply.visibility = View.VISIBLE
+        }
+        dialog.tvDeleteForMe.text = fromDictionary(R.string.chats_delete_for_me)
+        dialog.tvCopyChatMessage.text = fromDictionary(R.string.chats_copy)
+        dialog.tvCancel.text = fromDictionary(R.string.chats_cancel)
+        dialog.tvDeleteForMe.setOnClickListener {
+            onDeleteForMeClick()
+            dialog.dismiss()
+        }
+        dialog.tvCopyChatMessage.setOnClickListener {
+            onCopyClick()
+            dialog.dismiss()
+        }
+        dialog.tvCancel.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 
     fun showChooseOccupationDialog(context: Context,
