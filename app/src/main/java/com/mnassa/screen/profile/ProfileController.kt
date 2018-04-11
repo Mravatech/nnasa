@@ -60,13 +60,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
         adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
         view.ivProfileBack.setOnClickListener { close() }
-        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
-            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                view.tvTitleCollapsed.visibility = View.VISIBLE
-            } else {
-                view.tvTitleCollapsed.visibility = View.GONE
-            }
-        })
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter.profileModel = profileModel
@@ -78,6 +71,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                         PhotoPagerActivity.start(view.context, listOf(avatar), 0)
                     }
                 }
+                handleCollapsingToolbar(view, profileModel)
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
                 handleFab(profileModel.connectionStatus, view.fabProfile)
@@ -109,6 +103,22 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
+    }
+
+    private fun handleCollapsingToolbar(view: View, profileModel: ProfileModel) {
+        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
+                view.tvTitleCollapsed.visibility = View.VISIBLE
+                if (!profileModel.isMyProfile) {
+                    view.fabProfile.hide()
+                }
+            } else {
+                view.tvTitleCollapsed.visibility = View.GONE
+                if (!profileModel.isMyProfile) {
+                    view.fabProfile.show()
+                }
+            }
+        })
     }
 
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
@@ -163,20 +173,20 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-        private fun setTitle(profileModel: ProfileModel, view: View) {
-            if (profileModel.profile.accountType == AccountType.PERSONAL) {
-                val userName = "${profileModel.profile.personalInfo?.firstName
-                        ?: EMPTY_SPACE} ${profileModel.profile.personalInfo?.lastName ?: EMPTY_SPACE}"
-                view.profileName.text = userName
-                view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
-                view.tvTitleCollapsed.text = userName
-            } else {
-                val organizationName = profileModel.profile.organizationInfo?.organizationName
-                view.profileName.text = organizationName
-                view.profileSubName.text = profileModel.profile.organizationType
-                view.tvTitleCollapsed.text = organizationName
-            }
+    private fun setTitle(profileModel: ProfileModel, view: View) {
+        if (profileModel.profile.accountType == AccountType.PERSONAL) {
+            val userName = "${profileModel.profile.personalInfo?.firstName
+                    ?: EMPTY_SPACE} ${profileModel.profile.personalInfo?.lastName ?: EMPTY_SPACE}"
+            view.profileName.text = userName
+            view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
+            view.tvTitleCollapsed.text = userName
+        } else {
+            val organizationName = profileModel.profile.organizationInfo?.organizationName
+            view.profileName.text = organizationName
+            view.profileSubName.text = profileModel.profile.organizationType
+            view.tvTitleCollapsed.text = organizationName
         }
+    }
 
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
