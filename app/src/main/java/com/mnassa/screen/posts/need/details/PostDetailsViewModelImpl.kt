@@ -21,6 +21,7 @@ import timber.log.Timber
 /**
  * Created by Peter on 3/19/2018.
  */
+
 class PostDetailsViewModelImpl(
         private val postId: String,
         private val postsInteractor: PostsInteractor,
@@ -145,7 +146,7 @@ class PostDetailsViewModelImpl(
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
                         type = NetworkContract.Complaint.POST_TYPE,
-                        reason = reason//todo back
+                        reason = reason
                 ))
             }
             finishScreenChannel.send(Unit)
