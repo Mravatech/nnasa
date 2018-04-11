@@ -3,11 +3,9 @@ package com.mnassa.domain.interactor.impl
 import android.net.Uri
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.FOLDER_AVATARS
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.PostsRepository
 import kotlinx.coroutines.experimental.Job
@@ -24,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val storageInteractor: StorageInteractor,
+                          private val tagInteractor: TagInteractor,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
@@ -72,12 +71,15 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             uploadedImages: List<String>,
             privacyType: PostPrivacyType,
             toAll: Boolean,
-            privacyConnections: List<String>
+            privacyConnections: List<String>,
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?
     ): PostModel {
         val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
         }.map { it.await() }
-        return postsRepository.createNeed(text, allImages, privacyType, toAll, privacyConnections)
+        return postsRepository.createNeed(text, allImages, privacyType, toAll, privacyConnections, createTags(tags), price, placeId)
     }
 
     override suspend fun updateNeed(
@@ -87,11 +89,14 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             uploadedImages: List<String>,
             privacyType: PostPrivacyType,
             toAll: Boolean,
-            privacyConnections: List<String>) {
+            privacyConnections: List<String>,
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?) {
         val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
         }.map { it.await() }
-        postsRepository.updateNeed(postId, text, allImages, privacyType, toAll, privacyConnections)
+        postsRepository.updateNeed(postId, text, allImages, privacyType, toAll, privacyConnections, createTags(tags), price, placeId)
     }
 
     override suspend fun removePost(postId: String) {
@@ -101,6 +106,19 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel {
         return postsRepository.repostPost(postId, text, privacyConnections)
     }
+
+    private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
+        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
+        val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
+        val tags = arrayListOf<String>()
+        if (customTags.isNotEmpty()) {
+            val newTags = tagInteractor.createCustomTagIds(customTags)
+            tags.addAll(newTags)
+        }
+        tags.addAll(existsTags)
+        return tags
+    }
+
 
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L

@@ -29,6 +29,7 @@ interface PostModel : Model {
 
 interface RecommendedProfilePostModel : PostModel {
     val recommendedProfile: ShortAccountModel
+    var offers: List<TagModel>
 }
 
 interface PostCounters : Serializable {

@@ -9,5 +9,5 @@ import com.mnassa.domain.model.StoragePhotoData
  */
 
 interface StorageInteractor {
-    suspend fun sendAvatar(uploadPhoto: StoragePhotoData): String
+    suspend fun sendImage(uploadPhoto: StoragePhotoData): String
 }

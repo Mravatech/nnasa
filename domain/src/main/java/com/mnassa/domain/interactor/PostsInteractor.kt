@@ -4,6 +4,7 @@ import android.net.Uri
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.domain.model.TagModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -21,7 +22,10 @@ interface PostsInteractor {
             uploadedImages: List<String>,
             privacyType: PostPrivacyType,
             toAll: Boolean,
-            privacyConnections: List<String>): PostModel
+            privacyConnections: List<String>,
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?): PostModel
 
     suspend fun updateNeed(
             postId: String,
@@ -30,7 +34,10 @@ interface PostsInteractor {
             uploadedImages: List<String>,
             privacyType: PostPrivacyType,
             toAll: Boolean,
-            privacyConnections: List<String>)
+            privacyConnections: List<String>,
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?)
 
     suspend fun removePost(postId: String)
 

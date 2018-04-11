@@ -76,12 +76,14 @@ import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
-import com.mnassa.screen.posts.need.details.PostDetailsViewModel
-import com.mnassa.screen.posts.need.details.PostDetailsViewModelImpl
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
 import com.mnassa.screen.posts.need.recommend.RecommendViewModel
 import com.mnassa.screen.posts.need.recommend.RecommendViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
+import com.mnassa.screen.posts.profile.details.RecommendedProfileViewModel
+import com.mnassa.screen.posts.profile.details.RecommendedProfileViewModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.ProfileViewModelImpl
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileViewModel
@@ -141,7 +143,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance()) }
+    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
@@ -151,6 +153,7 @@ private val viewModelsModule = Kodein.Module {
     bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
     bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
     bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
+    bind<RecommendedProfileViewModel>() with provider { RecommendedProfileViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {
@@ -190,7 +193,7 @@ private val repositoryModule = Kodein.Module {
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
@@ -208,7 +211,7 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }

@@ -14,6 +14,7 @@
         android:paddingBottom="@dimen/spacing_vertical">
 
         <RelativeLayout
+            android:id="@+id/rlCreatorRoot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?selectableItemBackground"

@@ -43,7 +43,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
         return converter.convert(post)
     }
 
-    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModel {
+    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
 
         val postType: PostType = converter.convert(input.type)
         return when (postType) {
@@ -69,7 +69,8 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter)
+                    recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter),
+                    offers = emptyList()
             )
             else -> PostModelImpl(
                     id = input.id,

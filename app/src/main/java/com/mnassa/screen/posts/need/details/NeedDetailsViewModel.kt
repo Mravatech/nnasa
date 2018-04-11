@@ -10,7 +10,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 /**
  * Created by Peter on 3/19/2018.
  */
-interface PostDetailsViewModel : MnassaViewModel {
+interface NeedDetailsViewModel : MnassaViewModel {
     val postChannel: BroadcastChannel<PostModel>
     val postTagsChannel: BroadcastChannel<List<TagModel>>
     val finishScreenChannel: BroadcastChannel<Unit>

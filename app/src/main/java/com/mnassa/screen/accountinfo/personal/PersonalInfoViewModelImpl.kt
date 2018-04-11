@@ -45,7 +45,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
         processAccountJob?.cancel()
         processAccountJob = handleException {
             withProgressSuspend {
-                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val personalInfo = PersonalInfoModelImpl(
                         accountModel.id,
                         accountModel.firebaseUserId,

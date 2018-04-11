@@ -21,9 +21,10 @@ import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
-import kotlinx.android.synthetic.main.controller_post_details.view.*
+import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.android.synthetic.main.panel_comment.view.*
 import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
@@ -34,12 +35,12 @@ import timber.log.Timber
 /**
  * Created by Peter on 3/19/2018.
  */
-class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args),
+class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult,
         RecommendController.OnRecommendPostResult {
-    override val layoutId: Int = R.layout.controller_post_details
+    override val layoutId: Int = R.layout.controller_need_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
-    override val viewModel: PostDetailsViewModel by instance(arg = postId)
+    override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
@@ -101,7 +102,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
 
         commentsAdapter.onBindHeader = { headerLayout.value = it }
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
-        commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
+        commentsAdapter.onCommentOptionsClick = this@NeedDetailsController::showCommentMenu
 
         accountsToRecommendAdapter.onDataSourceChangedListener = {
             launchCoroutineUI { thisRef ->
@@ -260,6 +261,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                 ivChat.setOnClickListener {
                     Toast.makeText(context, "Opening chat with ${post.author.formattedName}", Toast.LENGTH_SHORT).show()
                 }
+                rlCreatorRoot.setOnClickListener { open(ProfileController.newInstance(post.author)) }
 
                 //
                 tvNeedDescription.text = post.formattedText
@@ -372,17 +374,11 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         private const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
         private const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
 
-        fun newInstance(postId: String): PostDetailsController {
-            val args = Bundle()
-            args.putString(EXTRA_NEED_ID, postId)
-            return PostDetailsController(args)
-        }
-
-        fun newInstance(post: PostModel): PostDetailsController {
+        fun newInstance(post: PostModel): NeedDetailsController {
             val args = Bundle()
             args.putString(EXTRA_NEED_ID, post.id)
             args.putSerializable(EXTRA_NEED_MODEL, post)
-            return PostDetailsController(args)
+            return NeedDetailsController(args)
         }
     }
 }

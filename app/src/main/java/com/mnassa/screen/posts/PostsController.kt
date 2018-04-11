@@ -2,14 +2,18 @@ package com.mnassa.screen.posts
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.PostType
+import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.PostDetailsController
+import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.profile.details.RecommendedProfileController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -26,7 +30,14 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         super.onViewCreated(view)
 
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
-        adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+        adapter.onItemClickListener = {
+            when (it.type) {
+                PostType.NEED -> open(NeedDetailsController.newInstance(it))
+                PostType.PROFILE -> open(RecommendedProfileController.newInstance(it as RecommendedProfilePostModel))
+                else -> Toast.makeText(view.context, "OnPost click: ${it.type} not impl yet", Toast.LENGTH_SHORT).show()
+            }
+
+        }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
@@ -42,7 +53,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
+                        if (it.item.isNotEmpty()) {
+                            adapter.dataStorage.addAll(it.item)
+                        }
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)

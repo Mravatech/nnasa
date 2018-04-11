@@ -28,10 +28,11 @@ internal data class PostDbEntity(
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
         @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
-        @SerializedName("postedAccount") var postedAccount: Map<String, ShortAccountDbEntity?>?,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("repostAuthor") var repostAuthor: Map<String, ShortAccountDbEntity>?
+        @SerializedName("repostAuthor") var repostAuthor: Map<String, ShortAccountDbEntity>?,
+        //posted account
+        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?
 ) : HasId
 
 internal data class PostCountersDbEntity(

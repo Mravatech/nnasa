@@ -50,7 +50,7 @@ class EditPersonalProfileViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
-                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val profile = ProfilePersonalInfoModelImpl(
                         id = profileAccountModel.id,
                         firebaseUserId = profileAccountModel.firebaseUserId,

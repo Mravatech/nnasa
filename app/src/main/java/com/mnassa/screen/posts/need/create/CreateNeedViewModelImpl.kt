@@ -25,7 +25,14 @@ class CreateNeedViewModelImpl(
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
 
-    override fun createPost(need: String, tags: List<TagModel>, images: List<AttachedImage>, placeId: String?, price: Double?, shareOptions: SharingOptionsController.ShareToOptions) {
+    override fun createPost(
+            need: String,
+            tags: List<TagModel>,
+            images: List<AttachedImage>,
+            placeId: String?,
+            price: Long?,
+            shareOptions: SharingOptionsController.ShareToOptions
+    ) {
         handleException {
             withProgressSuspend {
                 if (postId == null) {
@@ -35,7 +42,10 @@ class CreateNeedViewModelImpl(
                             uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
                             privacyType = shareOptions.privacyType,
                             privacyConnections = shareOptions.selectedConnections,
-                            toAll = shareOptions.isMyNewsFeedSelected
+                            toAll = shareOptions.isMyNewsFeedSelected,
+                            tags = tags,
+                            price = price,
+                            placeId = placeId
                     )
                 } else {
                     postsInteractor.updateNeed(
@@ -45,7 +55,10 @@ class CreateNeedViewModelImpl(
                             uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
                             privacyType = shareOptions.privacyType,
                             privacyConnections = shareOptions.selectedConnections,
-                            toAll = shareOptions.isMyNewsFeedSelected
+                            toAll = shareOptions.isMyNewsFeedSelected,
+                            tags = tags,
+                            price = price,
+                            placeId = placeId
                     )
                 }
 

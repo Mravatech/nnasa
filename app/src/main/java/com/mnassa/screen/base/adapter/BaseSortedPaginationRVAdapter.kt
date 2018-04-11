@@ -61,7 +61,6 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
         override fun removeAll(elements: Collection<ITEM>): Boolean {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
-                wrappedList.clear()
                 elements.forEach {
                     wrappedList.remove(it)
                 }

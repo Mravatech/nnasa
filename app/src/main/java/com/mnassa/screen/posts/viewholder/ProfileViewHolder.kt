@@ -60,7 +60,15 @@ class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClic
             tvRecommendedUserPosition.text = recommended.formattedPosition
             tvRecommendedUserPosition.goneIfEmpty()
 
-
+            if (item.offers.isNotEmpty()) {
+                val prefix = fromDictionary(R.string.posts_recommends_skills_prefix)
+                tvUserTags.text = prefix
+                tvUserTags.append(" ")
+                tvUserTags.append(item.offers.joinToString { it.name })
+            } else {
+                tvUserTags.text = null
+            }
+            tvUserTags.goneIfEmpty()
 
             vDescriptionDivider.visibility = if (tvDescription.visibility == View.VISIBLE && tvUserTags.visibility == View.VISIBLE) View.VISIBLE else View.GONE
         }

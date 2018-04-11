@@ -17,13 +17,13 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 3/19/2018.
  */
-class PostDetailsViewModelImpl(
+class NeedDetailsViewModelImpl(
     private val postId: String,
     private val postsInteractor: PostsInteractor,
     private val tagInteractor: TagInteractor,
     private val commentsInteractor: CommentsInteractor
 )
-    : MnassaViewModelImpl(), PostDetailsViewModel {
+    : MnassaViewModelImpl(), NeedDetailsViewModel {
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)

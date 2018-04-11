@@ -14,8 +14,27 @@ interface PostsRepository {
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
     suspend fun loadById(id: String): ReceiveChannel<PostModel>
     suspend fun sendViewed(ids: List<String>)
-    suspend fun createNeed(text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>): PostModel
-    suspend fun updateNeed(postId: String, text: String, uploadedImagesUrls: List<String>, privacyType: PostPrivacyType, allConnections: Boolean, privacyConnections: List<String>)
+    suspend fun createNeed(
+            text: String,
+            uploadedImagesUrls: List<String>,
+            privacyType: PostPrivacyType,
+            allConnections: Boolean,
+            privacyConnections: List<String>,
+            tags: List<String>,
+            price: Long?,
+            placeId: String?
+    ): PostModel
+    suspend fun updateNeed(
+            postId: String,
+            text: String,
+            uploadedImagesUrls: List<String>,
+            privacyType: PostPrivacyType,
+            allConnections: Boolean,
+            privacyConnections: List<String>,
+            tags: List<String>,
+            price: Long?,
+            placeId: String?
+    )
     suspend fun removePost(postId: String)
     suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel
 }
