@@ -6,7 +6,6 @@ import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.domain.other.LanguageProvider
@@ -35,14 +34,10 @@ class TermsAndConditionsController : MnassaControllerImpl<TermsAndConditionsView
         view.wvTermsAndConditions.loadUrl("${BuildConfig.TERMS_AND_CONDITIONS}$end")
         view.wvTermsAndConditions.webViewClient = object : WebViewClient() {
             @SuppressWarnings("deprecation")
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                return true
-            }
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean = true
 
             @RequiresApi(Build.VERSION_CODES.N)
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                return true
-            }
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = true
         }
     }
 
