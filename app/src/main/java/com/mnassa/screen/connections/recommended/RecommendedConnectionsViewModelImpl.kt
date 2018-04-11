@@ -1,10 +1,14 @@
 package com.mnassa.screen.connections.recommended
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -31,6 +35,16 @@ class RecommendedConnectionsViewModelImpl(private val connectionsInteractor: Con
             withProgressSuspend {
                 connectionsInteractor.actionConnect(listOf(accountModel.id))
             }
+        }
+    }
+
+    private var sendPhoneContactsJob: Job? = null
+    @SuppressLint("MissingPermission")
+    @RequiresPermission(Manifest.permission.READ_CONTACTS)
+    override fun onContactPermissionsGranted() {
+        sendPhoneContactsJob?.cancel()
+        sendPhoneContactsJob = handleException {
+            connectionsInteractor.sendPhoneContacts()
         }
     }
 }
