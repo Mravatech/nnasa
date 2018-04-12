@@ -76,13 +76,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 )
                 .map {
                     it.item.replyMessage?.first?.let { first ->
-                        val replyMessage: ChatMessageDbModel? = db.child(TABLE_CHAT)
-                                .child(TABLE_CHAT_MESSAGES)
-                                .child(TABLE_CHAT_TYPE)
-                                .child(myUserId)
-                                .child(chatId)
-                                .child(first)
-                                .await(exceptionHandler)
+                        val replyMessage: ChatMessageDbModel? = getReplyMessage(myUserId, chatId, first)
                         replyMessage?.let { _ ->
                             it.item.replyMessage = it.item.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
                         }
@@ -109,12 +103,23 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 )
                 .map {
                     it.item.account = userRepository
-                            .getProfileByAccountId(it.item.members?.first { it != userId }
+                            .getAccountById(it.item.members?.first { it != userId }
                                     ?: "")
                     it
                 }
                 .filter {
-                    it.item.account != null
+                    it.item.account != null && it.item.chatMessageModel != null
                 }
     }
+
+    private suspend fun getReplyMessage(myUserId: String, chatId: String, first: String): ChatMessageDbModel? =
+            db.child(TABLE_CHAT)
+                    .child(TABLE_CHAT_MESSAGES)
+                    .child(TABLE_CHAT_TYPE)
+                    .child(myUserId)
+                    .child(chatId)
+                    .child(first)
+                    .await(exceptionHandler)
+
+
 }

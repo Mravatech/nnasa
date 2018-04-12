@@ -13,7 +13,6 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
-import timber.log.Timber
 
 /**
  * Created by Peter on 3/6/2018.
@@ -35,8 +34,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
         adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(it.account))) }
         view.tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
         launchCoroutineUI {
-            viewModel.getMessagesChannel().consumeEach {
-                Timber.i(it.item.toString())
+            viewModel.listMessagesChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
@@ -45,6 +43,10 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
                     is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
                     is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.dataStorage.clear()
+                        adapter.isLoadingEnabled = true
+                    }
                 }
                 if (view.llEmptyMessages.visibility == View.VISIBLE) {
                     view.llEmptyMessages.visibility = View.GONE

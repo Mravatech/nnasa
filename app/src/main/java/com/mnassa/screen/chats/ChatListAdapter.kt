@@ -87,6 +87,14 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     class ChatDataStorage(private val adapter: BaseSortedPaginationRVAdapter<ChatRoomModel>) :
             SortedDataStorage<ChatRoomModel>(ChatRoomModel::class.java, adapter), DataStorage<ChatRoomModel> {
         private val idToModel = HashMap<String, ChatRoomModel>()
+
+        override fun addAll(elements: Collection<ChatRoomModel>): Boolean {
+            elements.forEach {
+                add(it)
+            }
+            return true
+        }
+
         override fun add(element: ChatRoomModel): Boolean {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
