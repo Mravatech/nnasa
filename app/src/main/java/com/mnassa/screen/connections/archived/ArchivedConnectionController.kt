@@ -49,6 +49,7 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvArchivedConnection.adapter = null
         super.onDestroyView(view)
     }
 

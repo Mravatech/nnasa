@@ -47,6 +47,7 @@ class SelectConnectionController : MnassaControllerImpl<SelectConnectionViewMode
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvAllConnections.adapter = null
         super.onDestroyView(view)
     }
 

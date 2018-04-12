@@ -7,6 +7,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formattedPosition
+import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
@@ -65,6 +66,7 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
                     ivRecommendedUserAvatar.setOnClickListener { open(ProfileController.newInstance(post.recommendedProfile)) }
                     tvRecommendedUserName.text = post.recommendedProfile.formattedName
                     tvRecommendedUserPosition.text = post.recommendedProfile.formattedPosition
+                    tvRecommendedUserPosition.goneIfEmpty()
 
                     btnConnectNow.tag = post
                 }

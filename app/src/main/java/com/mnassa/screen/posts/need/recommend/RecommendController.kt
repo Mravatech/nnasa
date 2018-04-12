@@ -84,6 +84,8 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
     override fun onDestroyView(view: View) {
         allAccountsAdapter.destroyCallbacks()
         selectedAccountsAdapter.destroyCallbacks()
+        view.rvAccountsToRecommend.adapter = null
+        view.rvSelectedAccounts.adapter = null
         super.onDestroyView(view)
     }
 

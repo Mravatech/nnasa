@@ -110,9 +110,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         commentsAdapter.onCommentOptionsClick = this@NeedDetailsController::showCommentMenu
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
 
-        accountsToRecommendAdapter.onDataSourceChangedListener = {
-            launchCoroutineUI { thisRef ->
-                thisRef().view?.recommendPanel?.isGone = it.isEmpty()
+        accountsToRecommendAdapter.onDataSourceChangedListener = { accounts ->
+            launchCoroutineUI {
+                getViewSuspend().recommendPanel?.isGone = accounts.isEmpty()
                 updatePostCommentButtonState()
             }
         }
@@ -202,8 +202,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         headerLayout.clear()
         commentsAdapter.destroyCallbacks()
         accountsToRecommendAdapter.destroyCallbacks()
+        view.rvPostDetails.adapter = null
+        view.rvAccountsToRecommend.adapter = null
         super.onDestroyView(view)
-        super.onViewDestroyed(view)
     }
 
     private fun onPostCommentClick() {

@@ -39,7 +39,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
-            rvNewsFeed.layoutManager = LinearLayoutManager(context)
             rvNewsFeed.adapter = adapter
         }
 
@@ -68,6 +67,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvNewsFeed.adapter = null
         super.onDestroyView(view)
     }
 

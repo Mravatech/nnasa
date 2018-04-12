@@ -32,35 +32,39 @@ class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsCont
 
         with(view) {
             tvBalanceLabel.text = fromDictionary(R.string.wallet_balance)
-            tvTransactions.adapter = transactionsAdapter
-
-            val viewRef = view.asReference()
-
-            launchCoroutineUI {
-                viewModel.currentBalanceChannel.consumeEach { viewRef().tvBalance.text = it.toString() }
-            }
-
-            launchCoroutineUI {
-                viewModel.spentPointsChannel.consumeEach { viewRef().tvSpent.text = it.toString() }
-            }
-
-            launchCoroutineUI {
-                viewModel.gainedPointsChannel.consumeEach { viewRef().tvGained.text = it.toString() }
-            }
-
-            transactionsAdapter.isLoadingEnabled = true
-            val adapterRef = transactionsAdapter.asReference()
-            launchCoroutineUI {
-                viewModel.transactionsChannel.consumeEach {
-                    adapterRef().isLoadingEnabled = false
-                    adapterRef().set(it)
-                }
-            }
+            rvTransactions.adapter = transactionsAdapter
 
             btnCreateTransaction.setOnClickListener {
                 open(SendPointsController.newInstance(this@WalletController))
             }
         }
+
+        val viewRef = view.asReference()
+        launchCoroutineUI {
+            viewModel.currentBalanceChannel.consumeEach { viewRef().tvBalance.text = it.toString() }
+        }
+
+        launchCoroutineUI {
+            viewModel.spentPointsChannel.consumeEach { viewRef().tvSpent.text = it.toString() }
+        }
+
+        launchCoroutineUI {
+            viewModel.gainedPointsChannel.consumeEach { viewRef().tvGained.text = it.toString() }
+        }
+
+        transactionsAdapter.isLoadingEnabled = true
+        val adapterRef = transactionsAdapter.asReference()
+        launchCoroutineUI {
+            viewModel.transactionsChannel.consumeEach {
+                adapterRef().isLoadingEnabled = false
+                adapterRef().set(it)
+            }
+        }
+    }
+
+    override fun onDestroyView(view: View) {
+        view.rvTransactions.adapter = null
+        super.onDestroyView(view)
     }
 
     override fun onPointsSent(amount: Long, recipient: ShortAccountModel) {

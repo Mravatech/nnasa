@@ -49,6 +49,7 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvNewConnectionRequests.adapter = null
         super.onDestroyView(view)
     }
 

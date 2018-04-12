@@ -50,6 +50,7 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvAccounts.adapter = null
         super.onDestroyView(view)
     }
 

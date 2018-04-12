@@ -44,6 +44,7 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvRecommendedConnections.adapter = null
         super.onDestroyView(view)
     }
 

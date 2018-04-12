@@ -66,7 +66,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             toolbar.backButtonEnabled = false
             toolbar.title = fromDictionary(R.string.tab_connections_title)
 
-            rvAllConnections.layoutManager = LinearLayoutManager(context)
             rvAllConnections.adapter = allConnectionsAdapter
 
             toolbar.onMoreClickListener = {
@@ -86,6 +85,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         newConnectionRequestsAdapter.destroyCallbacks()
         isHeaderBounded = false
         permissionsSnackbar = null
+        view.rvAllConnections.adapter = null
         super.onDestroyView(view)
     }
 

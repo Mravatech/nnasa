@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge tools:showIn="@layout/item_news_feed_profile"
-    xmlns:tools="http://schemas.android.com/tools">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRecommendedProfileRoot"
+    android:layout_width="match_parent"
+    android:layout_height="168dp"
+    android:visibility="gone"
+    tools:visibility="visible">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/rlRecommendedProfileRoot"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivRecommendedUserAvatar"
         android:layout_width="match_parent"
-        android:layout_height="168dp"
-        android:visibility="gone"
-        tools:visibility="visible">
+        android:layout_height="match_parent"
+        android:foreground="@drawable/avatar_shadow"
+        android:scaleType="centerCrop"
+        tools:src="@color/accent" />
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/ivRecommendedUserAvatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:foreground="@drawable/avatar_shadow"
-            android:scaleType="centerCrop"
-            tools:src="@color/accent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvRecommendedUserName"
             style="@style/MnassaHeader1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/tvRecommendedUserPosition"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
-            android:layout_marginStart="@dimen/spacing_horizontal"
             android:ellipsize="end"
+            android:gravity="bottom"
             android:maxLines="1"
             android:textColor="@color/white"
             tools:text="First name and Second name" />
@@ -37,14 +40,11 @@
             android:id="@+id/tvRecommendedUserPosition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@id/tvRecommendedUserName"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@id/tvRecommendedUserName"
-            android:layout_marginBottom="@dimen/spacing_vertical"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/recommended_profile_position"
             tools:text="User position" />
 
-    </RelativeLayout>
-</merge>
+    </LinearLayout>
+
+</FrameLayout>

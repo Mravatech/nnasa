@@ -147,6 +147,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     override fun onDestroyView(view: View) {
         attachedImagesAdapter.destroyCallbacks()
+        view.rvImages.adapter = null
         super.onDestroyView(view)
     }
 

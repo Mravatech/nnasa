@@ -50,6 +50,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
 
     override fun onDestroyView(view: View) {
         allConnectionsAdapter.destroyCallbacks()
+        view.rvAllConnections.adapter = null
         super.onDestroyView(view)
     }
 

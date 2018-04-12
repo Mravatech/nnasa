@@ -118,6 +118,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
+    override fun onDestroyView(view: View) {
+        view.rvProfile.adapter = null
+        super.onDestroyView(view)
+    }
+
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
         Toast.makeText(activity, connectionStatus.name, Toast.LENGTH_LONG).show()
         //todo handle here

@@ -68,12 +68,12 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                     rbPromotePost.isChecked = !isChecked
                 }
             }
-            rvPromotePostRoot.setOnClickListener {
+            rlPromotePostRoot.setOnClickListener {
                 if (!rbPromotePost.isChecked) {
                     rbPromotePost.isChecked = true
                 }
             }
-            rvMyNewsFeedRoot.setOnClickListener {
+            rlMyNewsFeedRoot.setOnClickListener {
                 if (!rbMyNewsFeed.isChecked) {
                     rbMyNewsFeed.isChecked = true
                 }
@@ -99,6 +99,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvAllConnections.adapter = null
         super.onDestroyView(view)
     }
 
