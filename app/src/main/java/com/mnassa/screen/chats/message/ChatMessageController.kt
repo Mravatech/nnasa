@@ -65,7 +65,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         adapter.onMyMessageLongClick = { callDialog(view, true, it) }
         adapter.onReplyClick = { chatMessageModel, post ->
             if (post != null) {
-                open(NeedDetailsController.newInstance(post))
+                open(PostDetailsController.newInstance(post))
             } else {
                 val position = adapter.dataStorage.indexOf(chatMessageModel)
                 view.rvMessages.scrollToPosition(position)

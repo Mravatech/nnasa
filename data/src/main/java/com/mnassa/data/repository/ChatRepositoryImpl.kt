@@ -64,7 +64,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 )
                 .map {
                     it.item.replyMessage?.first?.let { first ->
-                        val replyMessage: ChatMessageDbModel? = getMessage(myUserId, chatId, first)
+                        val replyMessage: ChatMessageDbModel? = getReplyMessage(myUserId, chatId, first)
                         replyMessage?.let { _ ->
                             it.item.replyMessage = it.item.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
                         }
