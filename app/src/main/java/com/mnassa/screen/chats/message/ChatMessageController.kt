@@ -9,10 +9,7 @@ import android.view.View
 import android.widget.Toast
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.details.PostDetailsController
@@ -56,16 +53,20 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             replyPostModel = postModel
         }
         launchCoroutineUI {
-            viewModel.messageChannel.consumeEach {
+            viewModel.messageChannel.openSubscription().bufferize(this@ChatMessageController).consumeEach {
                 Timber.i(it.item.toString())
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
-                        adapter.dataStorage.add(it.item)
+                        adapter.dataStorage.addAll(it.item)
                     }
-                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.dataStorage.clear()
+                        adapter.isLoadingEnabled = true
+                    }
                 }
                 if (view.llNoMessages.visibility == View.VISIBLE) {
                     view.llNoMessages.visibility = View.GONE
