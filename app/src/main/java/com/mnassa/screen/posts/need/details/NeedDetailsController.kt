@@ -8,7 +8,7 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
-import com.mnassa.core.addons.StateExecutor
+import com.mnassa.core.addons.WeakStateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
@@ -31,35 +31,28 @@ import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
+import java.lang.ref.WeakReference
 
 /**
  * Created by Peter on 3/19/2018.
  */
-class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsViewModel>(args),
+open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult,
         RecommendController.OnRecommendPostResult {
     override val layoutId: Int = R.layout.controller_need_details
-    private val postId by lazy { args.getString(EXTRA_NEED_ID) }
+    protected val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
-    private val commentsAdapter = PostCommentsRVAdapter()
+    private val commentsAdapter = PostCommentsRVAdapter(R.layout.controller_need_details_header)
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
-    private var headerLayout = StateExecutor<View?, View>(null) { it != null }
+    protected var headerLayout = WeakStateExecutor<View?, View>(null) { it != null }
     private var replyTo: CommentModel? = null
         set(value) {
             field = value
-            launchCoroutineUI {
-                with(getViewSuspend()) {
-                    replyPanel.isGone = value == null
-                    if (value == null) return@launchCoroutineUI
-                    replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
-                    replyPanel.tvReplyTo.append(" ")
-                    replyPanel.tvReplyTo.append(value.creator.formattedName)
-                }
-            }
+            bindReplyTo(value)
         }
     private var editedComment: CommentModel? = null
         set(value) {
@@ -97,12 +90,25 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         }
     }
 
+    private fun bindReplyTo(value: CommentModel?) {
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                replyPanel.isGone = value == null
+                if (value == null) return@launchCoroutineUI
+                replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
+                replyPanel.tvReplyTo.append(" ")
+                replyPanel.tvReplyTo.append(value.creator.formattedName)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        commentsAdapter.onBindHeader = { headerLayout.value = it }
+        commentsAdapter.onBindHeader = { headerLayout.value = WeakReference(it) }
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@NeedDetailsController::showCommentMenu
+        commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
 
         accountsToRecommendAdapter.onDataSourceChangedListener = {
             launchCoroutineUI { thisRef ->
@@ -120,7 +126,6 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
             etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
             etCommentText.addTextChangedListener(SimpleTextWatcher { updatePostCommentButtonState() })
-            tvCommentRecommend.setOnClickListener { headerLayout.invoke { it.btnRecommend.performClick() } }
             ivReplyCancel.setOnClickListener { replyTo = null }
 
             editPanel.tvEditTitle.text = fromDictionary(R.string.posts_comment_edit_title)
@@ -159,10 +164,7 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         launchCoroutineUI {
             viewModel.canWriteCommentsChannel.consumeEach { canWriteComments ->
                 view.commentPanel.isGone = !canWriteComments
-                headerLayout.invoke {
-                    it.llOtherPersonPostActions.isGone = !canWriteComments
-                    it.vOtherPersonPostActionsSeparator.isGone = !canWriteComments
-                }
+                if (canWriteComments) makePostActionsVisible() else makePostActionsGone()
             }
         }
 
@@ -192,10 +194,11 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         }
 
         bindEditedComment(editedComment)
+        bindReplyTo(replyTo)
     }
 
     override fun onDestroyView(view: View) {
-        headerLayout.value = null
+        headerLayout.value.clear()
         headerLayout.clear()
         commentsAdapter.destroyCallbacks()
         accountsToRecommendAdapter.destroyCallbacks()
@@ -243,10 +246,13 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         }
     }
 
-    private fun setPost(post: PostModel) {
+    protected open fun setPost(post: PostModel) {
         Timber.d("POST -> setPost $post")
 
-        view?.toolbar?.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
+        view?.apply {
+            toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
+            ivCommentRecommend.setOnClickListener { openRecommendScreen(post)  }
+        }
 
         headerLayout.invoke {
             with(it) {
@@ -310,8 +316,10 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
 
                 btnRecommend.text = recommendWithCount
                 btnRecommend.setOnClickListener { openRecommendScreen(post) }
+
                 tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
             }
+
         }
 
         launchCoroutineUI {
@@ -323,19 +331,15 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
                             onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
                             onDeletePost = { viewModel.delete() })
                 }
-                headerLayout.invoke {
-                    it.llOtherPersonPostActions.visibility = View.GONE
-                }
+                makePostActionsGone()
             } else {
                 view.toolbar.onMoreClickListener = { showPostMenu(it) }
-                headerLayout.invoke {
-                    it.llOtherPersonPostActions.visibility = View.VISIBLE
-                }
+                makePostActionsVisible()
             }
         }
     }
 
-    private fun setTags(tags: List<TagModel>) {
+    protected open fun setTags(tags: List<TagModel>) {
         headerLayout.invoke {
             with(it) {
                 vTagsSeparator.isGone = tags.isEmpty()
@@ -345,12 +349,29 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
         }
     }
 
+    protected open fun makePostActionsGone() {
+        headerLayout.invoke {
+            it.llOtherPersonPostActions.visibility = View.GONE
+            it.vOtherPersonPostActionsSeparator.visibility = View.GONE
+        }
+    }
+
+    protected open fun makePostActionsVisible() {
+        headerLayout.invoke {
+            it.llOtherPersonPostActions.visibility = View.VISIBLE
+            it.vOtherPersonPostActionsSeparator.visibility = View.VISIBLE
+        }
+    }
+
     private fun openSharingOptionsScreen() {
         open(SharingOptionsController.newInstance(listener = this))
     }
 
     private fun openRecommendScreen(post: PostModel) {
-        val controller = RecommendController.newInstance(post.author.formattedName, post.autoSuggest.accountIds, recommendedAccounts.map { it.id })
+        val controller = RecommendController.newInstance(
+                post.author.formattedName,
+                post.autoSuggest.accountIds,
+                recommendedAccounts.map { it.id })
         controller.targetController = this
         open(controller)
     }
@@ -371,14 +392,9 @@ class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsView
     }
 
     companion object {
-        private const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
-        private const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
+        const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
+        const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
 
-        fun newInstance(post: PostModel): NeedDetailsController {
-            val args = Bundle()
-            args.putString(EXTRA_NEED_ID, post.id)
-            args.putSerializable(EXTRA_NEED_MODEL, post)
-            return NeedDetailsController(args)
-        }
+        //to create instance, use PostDetailsFactory
     }
 }

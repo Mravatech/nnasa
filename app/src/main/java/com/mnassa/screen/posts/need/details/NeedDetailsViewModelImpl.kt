@@ -17,7 +17,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 3/19/2018.
  */
-class NeedDetailsViewModelImpl(
+open class NeedDetailsViewModelImpl(
     private val postId: String,
     private val postsInteractor: PostsInteractor,
     private val tagInteractor: TagInteractor,
@@ -37,9 +37,13 @@ class NeedDetailsViewModelImpl(
 
         handleException {
             postsInteractor.loadById(postId).consumeEach {
-                postChannel.send(it)
-                postTagsChannel.send(loadTags(it.tags))
-                loadComments()
+                if (it != null) {
+                    loadComments()
+                    postChannel.send(it)
+                    postTagsChannel.send(loadTags(it.tags))
+                } else {
+                    //TODO: close screen
+                }
             }
         }
     }

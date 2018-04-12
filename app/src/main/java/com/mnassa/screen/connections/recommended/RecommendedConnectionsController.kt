@@ -6,6 +6,7 @@ import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_recommended.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -22,6 +23,7 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
         super.onViewCreated(view)
 
         adapter.onConnectClickListener = { viewModel.connect(it) }
+        adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             toolbar.title = fromDictionary(R.string.recommended_connections_title)

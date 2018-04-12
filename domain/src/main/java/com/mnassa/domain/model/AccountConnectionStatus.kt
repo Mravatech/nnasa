@@ -11,6 +11,9 @@ enum class ConnectionStatus {
     CONNECTED, REQUESTED, SENT, DISCONNECTED, RECOMMENDED, VALUE_CENTER, NONE
 }
 
+val ConnectionStatus.canBeConnected: Boolean get() =
+    this == ConnectionStatus.REQUESTED || this == ConnectionStatus.DISCONNECTED || this == ConnectionStatus.RECOMMENDED
+
 enum class ConnectionAction {
     CONNECT, ACCEPT, DECLINE, DISCONNECT, MUTE, UN_MUTE, REVOKE
 }

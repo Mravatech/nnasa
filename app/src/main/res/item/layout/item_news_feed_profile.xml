@@ -69,7 +69,8 @@
             android:focusable="true"
             android:background="?selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_vertical">
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/ivAvatar"
@@ -120,53 +121,7 @@
                 tools:text="9 min" />
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/flImagesRoot"
-            android:layout_width="match_parent"
-            android:layout_height="168dp"
-            android:layout_marginTop="@dimen/spacing_vertical">
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/ivRecommendedUserAvatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:src="@color/accent" />
-
-            <android.support.v7.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/avatar_shadow" />
-
-            <TextView
-                android:id="@+id/tvRecommendedUserName"
-                style="@style/MnassaHeader1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tvRecommendedUserPosition"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/white"
-                tools:text="First name and Second name" />
-
-            <TextView
-                android:id="@+id/tvRecommendedUserPosition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/tvRecommendedUserName"
-                android:layout_alignParentBottom="true"
-                android:layout_alignStart="@id/tvRecommendedUserName"
-                android:layout_marginBottom="@dimen/spacing_vertical"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/recommended_profile_position"
-                tools:text="User position" />
-
-        </RelativeLayout>
+        <include layout="@layout/recommended_profile"/>
 
         <TextView
             android:id="@+id/tvDescription"

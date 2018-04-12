@@ -72,6 +72,7 @@ import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
+import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
@@ -82,6 +83,8 @@ import com.mnassa.screen.posts.need.recommend.RecommendViewModel
 import com.mnassa.screen.posts.need.recommend.RecommendViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
+import com.mnassa.screen.posts.profile.create.RecommendUserViewModel
+import com.mnassa.screen.posts.profile.create.RecommendUserViewModelImpl
 import com.mnassa.screen.posts.profile.details.RecommendedProfileViewModel
 import com.mnassa.screen.posts.profile.details.RecommendedProfileViewModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
@@ -144,6 +147,7 @@ private val viewModelsModule = Kodein.Module {
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
+    bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
@@ -153,7 +157,7 @@ private val viewModelsModule = Kodein.Module {
     bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
     bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
     bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
-    bind<RecommendedProfileViewModel>() with provider { RecommendedProfileViewModelImpl() }
+    bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -257,4 +261,5 @@ private val otherModule = Kodein.Module {
     bind<IntentHelper>() with singleton { IntentHelper() }
     bind<CountryHelper>() with singleton { CountryHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
+    bind<PostDetailsFactory>() with singleton { PostDetailsFactory() }
 }

@@ -14,8 +14,7 @@ data class CommentModelImpl(
         override val creator: ShortAccountModel,
         override val text: String?,
         override val recommends: List<ShortAccountModel>
-) : CommentModel {
-}
+) : CommentModel
 
 data class CommentReplyModelImpl(
         override var id: String,

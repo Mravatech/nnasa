@@ -1,28 +1,27 @@
 package com.mnassa.extensions
 
 import android.graphics.Typeface
+import android.support.v4.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.LocationPlaceModel
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostType
+import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
 
 /**
  * Created by Peter on 3/19/2018.
  */
 fun Double.formatAsMoneySAR(): String {
-    return formatAsMoney().toString() + " SAR" //TODO: discuss about currency
+    return formatAsMoney().toString() + " SAR"
 }
 
-fun Double.formatAsMoney(): Double {
-    val formatted = (this * 100).toLong() / 100.0
-    return formatted
+fun Double.formatAsMoney(): Long {
+    return this.toLong()
 }
 
 fun LocationPlaceModel?.formatted(): String {
@@ -39,14 +38,32 @@ fun LocationPlaceModel?.formatted(): String {
 
 val PostModel.formattedText: CharSequence?
     get() {
-        if (text.isNullOrBlank()) return text
-        return if (type == PostType.NEED) {
-            val spannable = SpannableStringBuilder(fromDictionary(R.string.need_prefix))
-            spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable.append(" ")
-            spannable.append(text)
-            spannable
-        } else text
+
+        return when (type) {
+            PostType.NEED -> {
+                if (text.isNullOrBlank()) return text
+
+                val spannable = SpannableStringBuilder(fromDictionary(R.string.need_prefix))
+                spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.append(" ")
+                spannable.append(text)
+                spannable
+            }
+            PostType.PROFILE -> {
+                this as RecommendedProfilePostModel
+
+                val spannable = SpannableStringBuilder(fromDictionary(R.string.recommend_prefix))
+                spannable.append(" ")
+                val nameStart = spannable.length
+                spannable.append(this.recommendedProfile.formattedName)
+                spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(App.context, R.color.accent)), nameStart, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.append(if (text.isNullOrBlank()) "" else ", ")
+                spannable.append(text ?: "")
+                spannable
+            }
+            else -> text
+        }
     }
 
 suspend fun PostModel.isMyPost(): Boolean {

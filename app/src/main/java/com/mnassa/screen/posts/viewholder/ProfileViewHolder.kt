@@ -15,6 +15,7 @@ import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_profile.view.*
+import kotlinx.android.synthetic.main.recommended_profile.view.*
 
 /**
  * Created by Peter on 3/14/2018.
@@ -98,6 +99,7 @@ class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClic
     companion object {
         fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): ProfileViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_profile, parent, false)
+            view.rlRecommendedProfileRoot.visibility = View.VISIBLE
             return ProfileViewHolder(view, onClickListener)
         }
     }

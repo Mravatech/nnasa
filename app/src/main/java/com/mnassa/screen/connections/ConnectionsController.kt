@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
@@ -52,13 +51,16 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
         recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
         recommendedConnectionsAdapter.onConnectClickListener = { viewModel.connect(it) }
+        recommendedConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
         newConnectionRequestsAdapter.onDeclineClickListener = { viewModel.decline(it) }
+        newConnectionRequestsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
         newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
 
         allConnectionsAdapter.onBindHeader = { bindHeader(it) }
-        allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+        allConnectionsAdapter.onItemOptionsClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+        allConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             toolbar.backButtonEnabled = false

@@ -19,10 +19,12 @@ import kotlinx.android.synthetic.main.item_connections_recommended_more.view.*
 class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
     private var moreItemsCount: Int = 0
     var onConnectClickListener = { account: ShortAccountModel -> }
+    var onItemClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = {}
 
     fun destoryCallbacks() {
         onConnectClickListener = { }
+        onItemClickListener = { }
         onShowAllClickListener = { }
     }
 
@@ -62,6 +64,12 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
             R.id.btnShowMore -> {
                 onShowAllClickListener()
             }
+            R.id.cvRoot -> {
+                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                if (position >= 0) {
+                    onItemClickListener(getDataItemByAdapterPosition(position))
+                }
+            }
         }
     }
 
@@ -87,6 +95,9 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
                 btnConnect.setOnClickListener(onClickListener)
                 btnConnect.tag = this@UserViewHolder
                 btnConnect.text = fromDictionary(R.string.tab_connections_recommended_connect)
+
+                cvRoot.setOnClickListener(onClickListener)
+                cvRoot.tag = this@UserViewHolder
             }
         }
 

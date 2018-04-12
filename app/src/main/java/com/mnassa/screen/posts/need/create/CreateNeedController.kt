@@ -76,7 +76,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                         images = attachedImagesAdapter.dataStorage.toList(),
                         placeId = placeId,
                         price = etPrice.text.toString().toLongOrNull(),
-                        shareOptions = sharingOptions
+                        postPrivacyOptions = sharingOptions.asPostPrivacy
                 )
             }
             tvShareOptions.setOnClickListener {

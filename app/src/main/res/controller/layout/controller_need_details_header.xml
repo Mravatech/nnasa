@@ -89,6 +89,21 @@
             android:textSize="17sp"
             tools:text="Need description" />
 
+        <include layout="@layout/recommended_profile" />
+
+        <Button
+            android:id="@+id/btnConnectNow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible"
+            style="@style/MnassaButton"
+            tools:text="Connect now"/>
+
         <FrameLayout
             android:id="@+id/flImages"
             android:layout_width="match_parent"
@@ -238,7 +253,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal">
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <Button
                 android:id="@+id/btnComment"
@@ -270,10 +287,10 @@
         style="@style/MnassaHeader2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_vertical"
         android:layout_marginEnd="@dimen/spacing_horizontal"
         android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginTop="@dimen/spacing_vertical"
-        android:layout_marginBottom="@dimen/spacing_vertical"
         tools:text="Comments" />
 
 </LinearLayout>

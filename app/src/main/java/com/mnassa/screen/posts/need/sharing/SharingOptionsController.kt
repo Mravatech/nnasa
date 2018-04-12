@@ -7,6 +7,7 @@ import com.bluelinelabs.conductor.Controller
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
@@ -141,12 +142,29 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         var selectedConnections: List<String>
     ) : Serializable {
 
+        init {
+            when (privacyType) {
+                PostPrivacyType.WORLD -> require(isPromoted && !isMyNewsFeedSelected && selectedConnections.isEmpty())
+                PostPrivacyType.PUBLIC -> require(!isPromoted && selectedConnections.isEmpty())
+                PostPrivacyType.PRIVATE -> require(!isPromoted && !isMyNewsFeedSelected && selectedConnections.isNotEmpty())
+                else -> throw IllegalArgumentException("Invalid privacy type $privacyType")
+            }
+        }
+
         val privacyType: PostPrivacyType get() {
             return when {
                 isPromoted -> PostPrivacyType.WORLD
                 isMyNewsFeedSelected -> PostPrivacyType.PUBLIC
                 else -> PostPrivacyType.PRIVATE
             }
+        }
+
+        val asPostPrivacy: PostPrivacyOptions get() {
+            return PostPrivacyOptions(
+                    newsFeed = isMyNewsFeedSelected,
+                    privacyType = privacyType,
+                    privacyConnections = selectedConnections
+            )
         }
 
         companion object {

@@ -18,6 +18,7 @@ import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
 import com.mnassa.data.repository.DatabaseContract.TABLE_PABLIC_POSTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
@@ -71,7 +72,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                         mapper = { mapPost(it) })
     }
 
-    override suspend fun loadById(id: String): ReceiveChannel<PostModel> {
+    override suspend fun loadById(id: String): ReceiveChannel<PostModel?> {
         val userId = requireNotNull(userRepository.getAccountId())
 
         return db
@@ -79,7 +80,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .child(userId)
                 .child(id)
                 .toValueChannel<PostDbEntity>(exceptionHandler)
-                .map { converter.convert<PostModel>(it!!) }
+                .map { it?.run { mapPost(this) }}
     }
 
     override suspend fun sendViewed(ids: List<String>) {
@@ -89,9 +90,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun createNeed(
             text: String,
             uploadedImagesUrls: List<String>,
-            privacyType: PostPrivacyType,
-            allConnections: Boolean,
-            privacyConnections: List<String>,
+            privacy: PostPrivacyOptions,
             tags: List<String>,
             price: Long?,
             placeId: String?
@@ -100,9 +99,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 type = NetworkContract.PostType.NEED,
                 text = text,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                privacyType = privacyType.stringValue,
-                privacyConnections = privacyConnections.takeIf { it.isNotEmpty() },
-                allConnections = allConnections,
+                privacyType = privacy.privacyType.stringValue,
+                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() },
+                allConnections = privacy.newsFeed,
                 tags = tags,
                 price = price,
                 location = placeId
@@ -114,9 +113,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             postId: String,
             text: String,
             uploadedImagesUrls: List<String>,
-            privacyType: PostPrivacyType,
-            allConnections: Boolean,
-            privacyConnections: List<String>,
             tags: List<String>,
             price: Long?,
             placeId: String?
@@ -126,12 +122,28 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 type = NetworkContract.PostType.NEED,
                 text = text,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                privacyType = privacyType.stringValue,
-                privacyConnections = privacyConnections.takeIf { it.isNotEmpty() },
-                allConnections = allConnections,
                 tags = tags,
                 price = price,
                 location = placeId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {
+        postApi.createPost(CreatePostRequest(
+                type = NetworkContract.PostType.ACCOUNT,
+                accountForRecommendation = accountId,
+                text = text,
+                privacyType = privacy.privacyType.stringValue,
+                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() },
+                allConnections = privacy.newsFeed
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun updateUserRecommendation(postId: String, accountId: String, text: String) {
+        postApi.changePost(CreatePostRequest(
+                type = NetworkContract.PostType.ACCOUNT,
+                accountForRecommendation = accountId,
+                text = text
         )).handleException(exceptionHandler)
     }
 

@@ -52,8 +52,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
         override fun set(elements: List<ITEM>) {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
-                wrappedList.clear()
-                wrappedList.addAll(elements)
+                wrappedList.replaceAll(elements)
                 wrappedList.endBatchedUpdates()
             }
         }

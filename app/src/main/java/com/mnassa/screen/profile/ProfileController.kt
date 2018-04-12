@@ -19,6 +19,7 @@ import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -153,7 +154,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         popup.menu.findItem(R.id.action_complain_about_profile).title = "Complain about Profile" //todo set from dict
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_share_profile -> Toast.makeText(view.context, "Share Profile", Toast.LENGTH_SHORT).show()
+                R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
                 R.id.action_complain_about_profile -> Toast.makeText(view.context, "Complain about Profile", Toast.LENGTH_SHORT).show()
             }
             true

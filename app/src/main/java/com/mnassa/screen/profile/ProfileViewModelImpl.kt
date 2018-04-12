@@ -1,6 +1,5 @@
 package com.mnassa.screen.profile
 
-import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.ConnectionAction
@@ -58,7 +57,7 @@ class ProfileViewModelImpl(
                             tagInteractor.getTagsByIds(it.interests),
                             tagInteractor.getTagsByIds(it.offers),
                             userProfileInteractor.getAccountId() == accountId
-                            , connectionsInteractor.getConnectedStatusById(accountId))
+                            , connectionsInteractor.getConnectionStatusById(accountId))
                     profileChannel.send(profile)
                 }
                 hideProgress()

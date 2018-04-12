@@ -31,12 +31,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
 
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         adapter.onItemClickListener = {
-            when (it.type) {
-                PostType.NEED -> open(NeedDetailsController.newInstance(it))
-                PostType.PROFILE -> open(RecommendedProfileController.newInstance(it as RecommendedProfilePostModel))
-                else -> Toast.makeText(view.context, "OnPost click: ${it.type} not impl yet", Toast.LENGTH_SHORT).show()
-            }
-
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
         }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }

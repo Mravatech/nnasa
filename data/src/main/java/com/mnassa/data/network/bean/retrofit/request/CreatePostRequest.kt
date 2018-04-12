@@ -11,9 +11,9 @@ data class CreatePostRequest(
         @SerializedName("locationId") val location: String? = null,
         @SerializedName("tags") val tags: List<String>? = null,
         @SerializedName("images") val images: List<String>? = null,
-        @SerializedName("privacyType") val privacyType: String,
-        @SerializedName("allConnections") val allConnections: Boolean,
-        @SerializedName("accountForRecommendation") val accountForRecommendation: String? = null,
+        @SerializedName("privacyType") val privacyType: String? = null,
+        @SerializedName("allConnections") val allConnections: Boolean? = null,
+        @SerializedName("postedAccount") val accountForRecommendation: String? = null,
         @SerializedName("privacyConnections") val privacyConnections: List<String>? = null,
         @SerializedName("price") val price: Long? = null,
         @SerializedName("postId") val postId: String? = null //for post updating

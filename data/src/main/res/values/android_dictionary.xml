@@ -108,5 +108,10 @@
     <string name="_android_side_menu_add_account_INFO">Add Account</string>
 
     <string name="_android_post_recommends_INFO">Recommends</string>
+    <string name="_android_post_recommends_prefix_INFO">I recommend</string>
+    <string name="_android_post_recommends_connect_now_INFO">Connect now</string>
+    <string name="_android_post_recommends_open_profile_INFO">Open profile</string>
+    <string name="_android_post_recommends_message_placeholder_INFO">type your message…</string>
+    <string name="_android_post_recommends_publish_INFO">Publish</string>
 
 </resources>
