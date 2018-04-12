@@ -30,6 +30,38 @@ interface InvitedShortAccountModel : ShortAccountModel {
     var invites: Int
 }
 
+interface PersonalInfoModel : ShortAccountModel {
+    val birthdayDate: String?
+    val showContactEmail: Boolean?
+    val birthday: Long?
+    val showContactPhone: Boolean?
+    val contactEmail: String?
+    val gender: Gender
+}
+
+
+interface ProfilePersonalInfoModel : PersonalInfoModel {
+    val locationId: String?
+    val interests: List<String>
+    val offers: List<String>
+}
+
+interface CompanyInfoModel : ShortAccountModel {
+    val showContactEmail: Boolean?
+    val showContactPhone: Boolean?
+    val contactEmail: String?
+    val founded: Long?
+    val foundedDate: String?
+    val organizationType: String?
+    val website: String?
+}
+
+interface ProfileCompanyInfoModel : CompanyInfoModel {
+    val locationId: String?
+    val interests: List<String>
+    val offers: List<String>
+}
+
 interface PersonalAccountDiffModel : Serializable {
     var firstName: String
     var lastName: String
@@ -41,6 +73,10 @@ interface OrganizationAccountDiffModel : Serializable {
 
 enum class AccountType {
     PERSONAL, ORGANIZATION
+}
+
+enum class Gender {
+    MALE, FEMALE
 }
 
 val ShortAccountModel.formattedName: String
@@ -55,3 +91,11 @@ val ShortAccountModel.formattedName: String
             }
         }
     }
+
+fun ShortAccountModel.mainAbility(atPlaceholder: String): String? {
+    val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return null
+    return when {
+        ability.name.isNullOrBlank() && ability.place.isNullOrBlank() -> "${ability.name} $atPlaceholder ${ability.place}"
+        else -> ability.name ?: ability.place
+    }
+}

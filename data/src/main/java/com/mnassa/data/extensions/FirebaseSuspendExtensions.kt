@@ -1,9 +1,10 @@
 package com.mnassa.data.extensions
 
 import com.google.firebase.database.*
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/26/2018.
@@ -20,21 +21,41 @@ internal suspend inline fun <reified T : Any> get(databaseReference: DatabaseRef
 }
 
 internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: ExceptionHandler): List<T> {
-    return suspendCancellableCoroutine { continuation ->
+    val result = suspendCancellableCoroutine<List<T>> { continuation ->
         addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(exceptionHandler.handle(error.toException()))
-            override fun onDataChange(snapshot: DataSnapshot?) = continuation.resume(snapshot.mapList())
+            override fun onCancelled(error: DatabaseError) =
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+            override fun onDataChange(snapshot: DataSnapshot?) {
+                try {
+                    continuation.resume(snapshot.mapList())
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    continuation.resumeWithException(exceptionHandler.handle(e))
+                }
+            }
         })
     }
+    return result
 }
 
+var start = System.currentTimeMillis()
+
 internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: ExceptionHandler): T? {
-    return suspendCancellableCoroutine { continuation ->
+    val result = suspendCancellableCoroutine<T?> { continuation ->
         addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(exceptionHandler.handle(error.toException()))
-            override fun onDataChange(snapshot: DataSnapshot?) = continuation.resume(snapshot.mapSingle())
+            override fun onCancelled(error: DatabaseError) =
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+            override fun onDataChange(snapshot: DataSnapshot?) {
+                try {
+                    continuation.resume(snapshot.mapSingle())
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    continuation.resumeWithException(exceptionHandler.handle(e))
+                }
+            }
         })
     }
+    return result
 }
 
 internal suspend inline fun <reified T : HasId> loadPortion(
@@ -50,15 +71,22 @@ internal suspend inline fun <reified T : HasId> loadPortion(
         databaseReference.orderByKey().startAt(offset).limitToFirst(limit + 1)
     }
 
-    return suspendCancellableCoroutine { continuation ->
+    val result = suspendCancellableCoroutine<List<T>> { continuation ->
         query.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) = continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+            override fun onCancelled(error: DatabaseError) =
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException()))
 
             override fun onDataChange(snapshot: DataSnapshot?) {
-                val result = snapshot.mapList<T>()
-                        .filterIndexed { index, _ -> !(index == 0 && offset != null) }
-                continuation.resume(result)
+                try {
+                    val result = snapshot.mapList<T>()
+                            .filterIndexed { index, _ -> !(index == 0 && offset != null) }
+                    continuation.resume(result)
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    continuation.resumeWithException(exceptionHandler.handle(e))
+                }
             }
         })
     }
+    return result
 }

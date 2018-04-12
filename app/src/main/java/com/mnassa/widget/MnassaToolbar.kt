@@ -8,11 +8,9 @@ import android.widget.FrameLayout
 import com.mnassa.R
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.red_badge.view.*
-import android.content.res.TypedArray
 import android.os.Build
 import android.support.annotation.RequiresApi
 import com.mnassa.translation.fromDictionary
-
 
 /**
  * Created by Peter on 3/13/2018.
@@ -38,6 +36,10 @@ class MnassaToolbar : FrameLayout {
         addView(innerView)
 
         ivToolbarMore.setOnClickListener { onMoreClickListener?.invoke(it) }
+
+//        val headerRootLayoutParams = rlHeader.layoutParams as MarginLayoutParams
+//        headerRootLayoutParams.topMargin = getStatusBarHeight(context, false)
+//        rlHeader.layoutParams = headerRootLayoutParams
     }
 
     private fun processAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) {
@@ -58,11 +60,6 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             if (value) drawerButtonEnabled = false
             ivToolbarBack.visibility = if (value) View.VISIBLE else View.GONE
-
-            val titleMargin = if (value) 0 else horizontalSpacing
-            val layoutParams = tvToolbarScreenHeader.layoutParams as MarginLayoutParams
-            layoutParams.marginStart = titleMargin
-            tvToolbarScreenHeader.layoutParams = layoutParams
         }
 
     var title: String
@@ -82,7 +79,7 @@ class MnassaToolbar : FrameLayout {
             toolbarBadge.visibility = if (value == 0) View.GONE else View.VISIBLE
         }
 
-    var onMoreClickListener : ((View) -> Unit)? = null
+    var onMoreClickListener: ((View) -> Unit)? = null
         set(value) {
             field = value
             ivToolbarMore.visibility = if (value != null) View.VISIBLE else View.GONE
@@ -99,11 +96,6 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             if (value) backButtonEnabled = false
             ivToolbarDrawer.visibility = if (value) View.VISIBLE else View.GONE
-
-            val titleMargin = if (value) 0 else horizontalSpacing
-            val layoutParams = tvToolbarScreenHeader.layoutParams as MarginLayoutParams
-            layoutParams.marginStart = titleMargin
-            tvToolbarScreenHeader.layoutParams = layoutParams
         }
 
     fun withActionButton(actionText: String, listener: (View) -> Unit) {
@@ -121,5 +113,28 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             btnAction.isEnabled = value
         }
+}
 
+/**
+ * helper to calculate the statusBar height
+ *
+ * @param context
+ * @param force   pass true to get the height even if the device has no translucent statusBar
+ * @return
+ */
+private fun getStatusBarHeight(context: Context, force: Boolean): Int {
+    var result = 0
+    val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        result = context.resources.getDimensionPixelSize(resourceId)
+    }
+
+    val dimenResult = context.resources.getDimensionPixelSize(com.mikepenz.materialize.R.dimen.tool_bar_top_padding)
+    //if our dimension is 0 return 0 because on those devices we don't need the height
+    return if (dimenResult == 0 && !force) {
+        0
+    } else {
+        //if our dimens is > 0 && the result == 0 use the dimenResult else the result;
+        if (result == 0) dimenResult else result
+    }
 }

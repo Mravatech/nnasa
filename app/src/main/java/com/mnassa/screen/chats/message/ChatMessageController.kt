@@ -7,20 +7,17 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
-import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.Post
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.need.details.PostDetailsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_message.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**
@@ -33,12 +30,12 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     override val layoutId: Int = R.layout.controller_chat_message
     override val viewModel: ChatMessageViewModel by instance()
     private val accountModel: ShortAccountModel? by lazy { args.getSerializable(CHAT_ACCOUNT) as ShortAccountModel? }
-    private val postModel: Post? by lazy { args.getSerializable(CHAT_POST) as Post? }
+    private val postModel: PostModel? by lazy { args.getSerializable(CHAT_POST) as PostModel? }
     private val dialog: DialogHelper by instance()
 
     val adapter = MessagesAdapter()
     private var replyMessageModel: ChatMessageModel? = null
-    private var replyPostModel: Post? = null
+    private var replyPostModel: PostModel? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -78,22 +75,36 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
 
     private fun consumeMessages(view: View) {
         launchCoroutineUI {
-            viewModel.messageChannel.consumeEach {
+            viewModel.messageChannel.openSubscription().bufferize(this@ChatMessageController).consumeEach {
                 Timber.i(it.item.toString())
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
-                        adapter.dataStorage.add(it.item)
+                        adapter.dataStorage.addAll(it.item)
                     }
-                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.dataStorage.clear()
+                        adapter.isLoadingEnabled = true
+                    }
                 }
                 if (view.llNoMessages.visibility == View.VISIBLE) {
                     view.llNoMessages.visibility = View.GONE
                     viewModel.resetChatUnreadCount()
                 }
                 view.rvMessages.scrollToPosition(adapter.itemCount)//todo handle here doesn't work properly
+            }
+        }
+        adapter.onUserMessageLongClick = { callDialog(view, false, it) }
+        adapter.onMyMessageLongClick = { callDialog(view, true, it) }
+        adapter.onReplyClick = { chatMessageModel, post ->
+            if (post != null) {
+                open(PostDetailsController.newInstance(post))
+            } else {
+                val position = adapter.dataStorage.indexOf(chatMessageModel)
+                view.rvMessages.scrollToPosition(position)
             }
         }
     }
@@ -155,13 +166,12 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             return ChatMessageController(params)
         }
 
-        fun newInstance(post: Post, account: ShortAccountModel): ChatMessageController {
+        fun newInstance(post: PostModel, account: ShortAccountModel): ChatMessageController {
             val params = Bundle()
             params.putSerializable(CHAT_POST, post)
             params.putSerializable(CHAT_ACCOUNT, account)
             return ChatMessageController(params)
         }
-
     }
 
 }

@@ -69,7 +69,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             } ?: kotlin.run {
                 itemView.tvMessageUnread.visibility = View.GONE
                 itemView.tvUserName.setTypeface(itemView.tvUserName.typeface, Typeface.NORMAL)
-                itemView.tvLastMessage.setTextColor(ContextCompat.getColor(itemView.context, R.color.coolGray))
+                itemView.tvLastMessage.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_cool))
             }
             val ago = requireNotNull(item.chatMessageModel).createdAt.toTimeAgo()
             itemView.tvMessageCame.text = ago
@@ -87,6 +87,14 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     class ChatDataStorage(private val adapter: BaseSortedPaginationRVAdapter<ChatRoomModel>) :
             SortedDataStorage<ChatRoomModel>(ChatRoomModel::class.java, adapter), DataStorage<ChatRoomModel> {
         private val idToModel = HashMap<String, ChatRoomModel>()
+
+        override fun addAll(elements: Collection<ChatRoomModel>): Boolean {
+            elements.forEach {
+                add(it)
+            }
+            return true
+        }
+
         override fun add(element: ChatRoomModel): Boolean {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()

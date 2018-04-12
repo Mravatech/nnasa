@@ -3,7 +3,7 @@ package com.mnassa.screen.invite.history
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -50,5 +50,4 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
     companion object {
         fun newInstance() = HistoryController()
     }
-
 }

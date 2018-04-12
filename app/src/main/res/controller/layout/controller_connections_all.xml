@@ -45,6 +45,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         tools:listitem="@layout/item_connections_all"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:visibility="invisible" />
 
 </RelativeLayout>

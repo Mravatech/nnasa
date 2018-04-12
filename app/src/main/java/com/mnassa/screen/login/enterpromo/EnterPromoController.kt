@@ -2,7 +2,7 @@ package com.mnassa.screen.login.enterpromo
 
 import android.os.Bundle
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.login.RegistrationFlowProgress

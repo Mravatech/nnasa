@@ -3,10 +3,11 @@ package com.mnassa.screen.posts.need.sharing
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import com.bluelinelabs.conductor.Controller
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
@@ -25,6 +26,10 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+        require(targetController is OnSharingOptionsResult) {
+            "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
+        }
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.sharing_options_button)) {
@@ -91,13 +96,17 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         }
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     private fun getSelection(): ShareToOptions {
-        with(view!!) {
+        with(requireNotNull(view)) {
             return ShareToOptions(
                     isPromoted = rbPromotePost.isChecked,
                     isMyNewsFeedSelected = rbMyNewsFeed.isChecked,
-                    selectedConnections = adapter.selectedAccounts.toList(),
-                    selectedConnectionAccounts = adapter.selectedAccounts.map { id -> adapter.dataStorage.first { it.id == id } }
+                    selectedConnections = adapter.selectedAccounts.toList()
             )
         }
     }
@@ -113,10 +122,12 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     companion object {
         private const val EXTRA_PREDEFINED_OPTIONS = "EXTRA_PREDEFINED_OPTIONS"
 
-        fun newInstance(options: ShareToOptions = ShareToOptions.EMPTY): SharingOptionsController {
+        fun <T> newInstance(options: ShareToOptions = ShareToOptions.EMPTY, listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
             val args = Bundle()
             args.putSerializable(EXTRA_PREDEFINED_OPTIONS, options)
-            return SharingOptionsController(args)
+            val result = SharingOptionsController(args)
+            result.targetController = listener
+            return result
         }
     }
 
@@ -125,11 +136,18 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     class ShareToOptions(
-            val isPromoted: Boolean,
-            val isMyNewsFeedSelected: Boolean,
-            val selectedConnections: List<String>,
-            val selectedConnectionAccounts: List<ShortAccountModel>? = null
+        var isPromoted: Boolean,
+        var isMyNewsFeedSelected: Boolean,
+        var selectedConnections: List<String>
     ) : Serializable {
+
+        val privacyType: PostPrivacyType get() {
+            return when {
+                isPromoted -> PostPrivacyType.WORLD
+                isMyNewsFeedSelected -> PostPrivacyType.PUBLIC
+                else -> PostPrivacyType.PRIVATE
+            }
+        }
 
         companion object {
             val EMPTY = ShareToOptions(false, true, emptyList())

@@ -1,66 +1,61 @@
 package com.mnassa.activity
 
-import android.app.Activity
-import android.app.FragmentManager
-import android.app.LoaderManager
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
 import com.bluelinelabs.conductor.Conductor
+import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.github.salomonbrys.kodein.*
-import com.github.salomonbrys.kodein.android.*
-import com.github.salomonbrys.kodein.bindings.InstanceBinding
 import com.mnassa.R
+import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
 import kotlinx.android.synthetic.main.activity_main.*
+import org.kodein.di.Copy
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.KodeinContext
+import org.kodein.di.android.closestKodein
+import org.kodein.di.android.retainedKodein
+import org.kodein.di.generic.kcontext
 
-class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope<Activity>>, MnassaRouter by MnassaRouterDelegate() {
-    override val kodeinScope: AndroidScope<Activity> = androidActivityScope
-    override fun initializeInjector() {
-        val activityModule = Kodein.Module {
-            Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MainActivity)
-            Bind<Activity>(erased()) with InstanceBinding(erased(), kodeinComponent)
-            Bind<FragmentManager>(erased()) with InstanceBinding(erased(), kodeinComponent.fragmentManager)
-            Bind<LoaderManager>(erased()) with InstanceBinding(erased(), kodeinComponent.loaderManager)
-            Bind<LayoutInflater>(erased(), tag = ACTIVITY_LAYOUT_INFLATER) with InstanceBinding(erased(), kodeinComponent.layoutInflater)
+open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate() {
 
-            import(provideOverridingModule(), allowOverride = true)
-        }
-
-        val kodein = Kodein {
-            extend(kodeinComponent.appKodein(), allowOverride = true)
-            import(activityModule, allowOverride = true)
-        }
-
-        injector.inject(kodein)
+    @Suppress("LeakingThis")
+    override val kodeinContext: KodeinContext<*> = kcontext(this)
+    private val _parentKodein by closestKodein()
+    override val kodein: Kodein by retainedKodein {
+        extend(_parentKodein, allowOverride = true)
     }
 
-    override val injector = KodeinInjector()
     private lateinit var router: Router
     private lateinit var onLogoutListener: (Unit) -> Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        initializeInjector()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         router = Conductor.attachRouter(this, container, savedInstanceState)
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(SplashController.newInstance()))
+            router.setRoot(RouterTransaction.with(createRootControllerInstance()))
         }
 
-        onLogoutListener = instance<LoginInteractor>().value.onLogoutListener.subscribe {
-            router.popToRoot()
-            router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
+        onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe {
+//            router.popToRoot()
+//            router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
+
+            startActivity(
+                    Intent(this@MainActivity, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
     }
+
+    protected open fun createRootControllerInstance(): Controller = SplashController.newInstance()
 
     override fun onBackPressed() {
         hideKeyboard()
@@ -70,9 +65,7 @@ class MainActivity : AppCompatActivity(), AndroidInjector<Activity, AndroidScope
     }
 
     override fun onDestroy() {
-        instance<LoginInteractor>().value.onLogoutListener.unSubscribe(onLogoutListener)
-        destroyInjector()
+        getInstance<LoginInteractor>().onLogoutListener.unSubscribe(onLogoutListener)
         super.onDestroy()
-
     }
 }

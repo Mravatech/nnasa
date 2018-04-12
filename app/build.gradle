@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
+
 //def getGitHash = { ->
 //    def stdout = new ByteArrayOutputStream()
 //    exec {
@@ -27,9 +28,9 @@ android {
         targetSdkVersion build_versions.target_sdk
         vectorDrawables.useSupportLibrary = true
 
-        def versionMajor = 0
+        def versionMajor = 4
         def versionMinor = 0
-        def versionPatch = 1
+        def versionPatch = 0
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         versionCode 1
 
@@ -107,7 +108,7 @@ android {
     applicationVariants.all { variant ->
         switch (variant.getName()) {
             case 'release':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointRrod']}\""
+                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointProd']}\""
                 break
             case 'stage':
                 variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreProd']}\""
@@ -170,6 +171,7 @@ dependencies {
     implementation deps.glide.glide
     kapt deps.glide.glideCompiler
     implementation deps.glide.glideTransformers
+    implementation deps.glide.glideOkHttp
 
     //ucrop
     implementation deps.ucrop.general
@@ -191,8 +193,11 @@ dependencies {
 
     //other
     implementation deps.other.logger
-    implementation deps.other.leak
+    debugImplementation deps.other.leakDebug
+    stageImplementation deps.other.leakDebug
+    releaseImplementation deps.other.leakRelease
     implementation deps.stetho.runtime
+    implementation deps.stetho.http
 
     //network
     implementation deps.network.retrofit
@@ -207,6 +212,10 @@ dependencies {
     implementation deps.ui.fab
     implementation deps.ui.pagerIndicator
     implementation deps.ui.chipsLayoutManager
+    implementation deps.ui.timeAgo
+    implementation (deps.ui.navigationDrawer) {
+        transitive = true
+    }
 
     //kotlin
     implementation deps.kotlin.stdlib
@@ -214,7 +223,7 @@ dependencies {
 
     //crashlytics
     implementation (deps.other.crashlytics) {
-        transitive = true;
+        transitive = true
     }
 }
 

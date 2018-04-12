@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.extensions.getStartOfDay
 import com.mnassa.extensions.isTheSameDay
@@ -26,7 +26,7 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
     lateinit var accountId: String
     var onMyMessageLongClick = { item: ChatMessageModel -> }
     var onUserMessageLongClick = { item: ChatMessageModel -> }
-    var onReplyClick = { chatModel: ChatMessageModel?, post: Post? -> }
+    var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * 1
@@ -96,6 +96,33 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
     class ChatDataStorage(adapter: BaseSortedPaginationRVAdapter<ChatMessageModel>) :
             SortedDataStorage<ChatMessageModel>(ChatMessageModel::class.java, adapter), DataStorage<ChatMessageModel> {
         private val dateMessages = HashMap<Date, ChatMessageModel>()
+
+        override fun addAll(elements: Collection<ChatMessageModel>): Boolean {
+            for (element in elements){
+                val dateElement = dateMessages[element.createdAt.getStartOfDay()]
+                if (dateElement == null) {
+                    val dateMessage = createDateMessage(element, element.createdAt.time - 1L)//for sorting to display above
+                    dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
+                } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt < element.createdAt) {
+                    super.remove(dateElement)
+                    val dateMessage = createDateMessage(element, element.createdAt.time - 1L)//for sorting to display above
+                    dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
+                }
+            }
+            val dates: List<ChatMessageModel> = dateMessages.map { it.value }
+            super.addAll(dates)
+            return super.addAll(elements)
+        }
+
+
+
+        override fun removeAll(elements: Collection<ChatMessageModel>): Boolean {
+            elements.forEach {
+                remove(it)
+            }
+            return true
+        }
+
         override fun add(element: ChatMessageModel): Boolean {
             val dateElement = dateMessages[element.createdAt.getStartOfDay()]
             if (dateElement == null) {

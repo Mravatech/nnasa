@@ -21,7 +21,4 @@ interface LoginInteractor {
 
     suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<ShortAccountModel>
     suspend fun signOut()
-    suspend fun getAccounts(): List<ShortAccountModel>
-
-    suspend fun selectAccount(account: ShortAccountModel)
 }

@@ -1,8 +1,7 @@
 package com.mnassa.data.extensions
 
-import android.util.Log
 import com.google.firebase.database.*
-import com.mnassa.data.network.exception.ExceptionHandler
+import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.channels.*
@@ -14,9 +13,11 @@ import timber.log.Timber
  */
 ////////////////////////////////// LOAD DATA WITH CHANGES HANDLING /////////////////////////////////
 // Subscribe to list of values changes
-internal inline fun <reified T : Any> getListChannel(databaseReference: DatabaseReference, path: String, exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
-    return databaseReference.child(path).toListChannel(exceptionHandler)
-}
+internal inline fun <reified T : Any> getListChannel(
+        databaseReference: DatabaseReference,
+        path: String,
+        exceptionHandler: ExceptionHandler
+): ReceiveChannel<List<T>> = databaseReference.child(path).toListChannel(exceptionHandler)
 
 internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
     val query = this
@@ -36,6 +37,8 @@ internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: Exce
                     query.removeEventListener(listener)
                 } catch (e: Exception) {
                     Timber.e(e)
+                    query.removeEventListener(listener)
+                    channel.close(exceptionHandler.handle(e))
                 }
             }
         }
@@ -68,6 +71,8 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
                     query.removeEventListener(listener)
                 } catch (e: Exception) {
                     Timber.e(e)
+                    query.removeEventListener(listener)
+                    channel.close(exceptionHandler.handle(e))
                 }
             }
         }
@@ -102,7 +107,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
             //skip this exception
         } catch (e: Exception) {
             Timber.e(e)
-            channel.close(e)
+            channel.close(exceptionHandler.handle(e))
         }
     }
     return channel

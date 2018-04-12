@@ -7,7 +7,6 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.launch
 
@@ -18,7 +17,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
     override val onLogoutListener: SimpleCompositeEventListener<Unit> = SimpleCompositeEventListener()
 
     override suspend fun isLoggedIn(): Boolean {
-        return userRepository.getCurrentUser() != null
+        return userRepository.getCurrentAccount() != null
     }
 
     override suspend fun requestVerificationCode(
@@ -41,17 +40,12 @@ class LoginInteractorImpl(private val userRepository: UserRepository, private va
     }
 
     override suspend fun signOut() {
+        val wasLoggedIn = isLoggedIn()
         loginService.signOut()
-        userRepository.setCurrentUserAccount(null)
+        userRepository.setCurrentAccount(null)
 
-        launch(UI) { onLogoutListener.emit(Unit) }
-    }
-
-    override suspend fun getAccounts(): List<ShortAccountModel> {
-        return userRepository.getAccounts()
-    }
-
-    override suspend fun selectAccount(account: ShortAccountModel) {
-        userRepository.setCurrentUserAccount(account)
+        if (wasLoggedIn) {
+            launch(UI) { onLogoutListener.emit(Unit) }
+        }
     }
 }

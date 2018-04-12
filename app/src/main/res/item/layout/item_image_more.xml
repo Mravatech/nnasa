@@ -51,7 +51,7 @@
                 android:id="@+id/tvCountMore"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/moreImagesBackground"
+                android:background="@color/black_transparent_40"
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="24sp"

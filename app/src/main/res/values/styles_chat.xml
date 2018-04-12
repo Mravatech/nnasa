@@ -18,7 +18,7 @@
     <style name="ChatRoom.UserNameItem">
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">@dimen/chat_room_user_name_size</item>
-        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
     </style>
 
     <style name="ChatRoom.LastMessageItem">
@@ -34,7 +34,7 @@
     <style name="ChatRoom.TimeAgoItem">
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">@dimen/chat_room_message_size</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:textStyle">normal</item>
         <item name="android:gravity">end</item>
     </style>
@@ -53,18 +53,18 @@
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:textSize">@dimen/chat_room_no_content_text_size</item>
     </style>
 
     <style name="ChatMessage.EditText">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">@color/backgroundTransparent</item>
+        <item name="android:background">@color/transparent</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:gravity">center</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColorHint">@color/coolGray</item>
+        <item name="android:textColorHint">@color/gray_cool</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/chat_message_et_sent_text_size</item>
     </style>
@@ -78,7 +78,7 @@
         <item name="android:paddingEnd">@dimen/chat_message_attach_size</item>
         <item name="android:paddingStart">@dimen/chat_message_attach_size</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:textSize">@dimen/chat_message_et_sent_text_size</item>
     </style>
 

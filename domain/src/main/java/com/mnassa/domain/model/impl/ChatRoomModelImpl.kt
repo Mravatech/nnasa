@@ -2,7 +2,7 @@ package com.mnassa.domain.model.impl
 
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ChatRoomModel
-import com.mnassa.domain.model.Post
+import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
 import java.util.*
 
@@ -27,6 +27,6 @@ data class ChatMessageModelImpl(
         override val type: String,
         override val chatID: String?,
         override var replyMessage: Pair<String,ChatMessageModel?>?,
-        override var replyPost: Pair<String,Post?>?,
+        override var replyPost: Pair<String,PostModel?>?,
         override var id: String
 ) : ChatMessageModel

@@ -1,61 +1,43 @@
 package com.mnassa.screen.base
 
 import android.app.Dialog
+import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import com.github.salomonbrys.kodein.*
-import com.github.salomonbrys.kodein.android.AndroidInjector
-import com.github.salomonbrys.kodein.android.AndroidScope
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.bindings.InstanceBinding
-import com.github.salomonbrys.kodein.bindings.ScopeRegistry
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.core.events.awaitFirst
 import com.mnassa.extensions.hideKeyboard
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.channels.consumeEach
-import java.util.*
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.KodeinTrigger
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 2/20/2018.
  */
-abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, AndroidInjector<MnassaController<VM>, AndroidScope<MnassaController<VM>>> {
-    final override val injector = KodeinInjector()
-    final override val kodeinComponent = super.kodeinComponent
-    final override val kodeinScope: AndroidScope<MnassaController<VM>> = object : AndroidScope<MnassaController<VM>> {
-        override fun getRegistry(context: MnassaController<VM>): ScopeRegistry = synchronized(CONTEXT_SCOPES) { CONTEXT_SCOPES.getOrPut(context) { ScopeRegistry() } }
-        override fun removeFromScope(context: MnassaController<VM>): ScopeRegistry? = CONTEXT_SCOPES.remove(context)
+abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, KodeinAware {
+    override val kodeinTrigger = KodeinTrigger()
+    override val kodein: Kodein = Kodein.lazy {
+        val parentKodein by closestKodein(requireNotNull(applicationContext))
+        extend(parentKodein, allowOverride = true)
     }
 
     constructor(params: Bundle) : super(params)
     constructor() : super()
 
-    override fun initializeInjector() {
-        val activityModule = Kodein.Module {
-            Bind<KodeinInjected>(erased()) with InstanceBinding(erased(), this@MnassaControllerImpl)
-            import(provideOverridingModule(), allowOverride = true)
-        }
-
-        val kodein = Kodein {
-            extend(requireNotNull(applicationContext).appKodein(), allowOverride = true)
-            import(activityModule, allowOverride = true)
-        }
-
-        injector.inject(kodein)
-    }
-
-    override fun provideOverridingModule() = Kodein.Module {
-
-    }
 
     override fun onCreated(savedInstanceState: Bundle?) {
-        initializeInjector()
         super.onCreated(savedInstanceState)
+        kodeinTrigger.trigger()
     }
 
     override fun onViewCreated(view: View) {
@@ -100,7 +82,8 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         hideKeyboard()
         if (progressDialog != null) return
         progressDialog?.dismiss()
-        progressDialog = instance<DialogHelper>().value.showProgressDialog(requireNotNull(view).context)
+        val dialogHelper: DialogHelper by instance()
+        progressDialog = dialogHelper.showProgressDialog(requireNotNull(view).context)
     }
 
     protected fun hideProgress() {
@@ -123,8 +106,10 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
             }
         }
 
-    private companion object {
-        private val CONTEXT_SCOPES = WeakHashMap<MnassaController<*>, ScopeRegistry>()
+    protected suspend fun getViewSuspend(): View {
+        val localView = view
+        if (localView != null) return localView
+        lifecycle.awaitFirst { it.ordinal >= Lifecycle.Event.ON_START.ordinal && it.ordinal < Lifecycle.Event.ON_STOP.ordinal }
+        return requireNotNull(view)
     }
 }
-

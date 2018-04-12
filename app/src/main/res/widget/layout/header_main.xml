@@ -10,17 +10,16 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/vShadow"
         android:layout_alignParentTop="true"
-        android:background="@color/colorAccent" />
+        android:background="@color/accent" />
 
     <LinearLayout
         android:id="@+id/rlHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/status_bar_height"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.mnassa.widget.DrawerMenu
+        <com.mnassa.widget.drawer.DrawerMenu
             android:id="@+id/ivToolbarDrawer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,6 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_vertical"
             android:layout_marginTop="@dimen/padding_vertical"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
@@ -73,7 +74,6 @@
             android:id="@+id/ivToolbarMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
@@ -91,7 +91,7 @@
             style="@style/MnassaTransparentButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@drawable/button_text_color"
             android:visibility="gone"
             tools:text="Action"
             tools:visibility="visible" />

@@ -20,5 +20,4 @@ class InviteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.tvInviteContactNumber.text = contact.phoneNumber
         itemView.setOnClickListener { viewModel.selectPhoneContact(contact) }
     }
-
 }

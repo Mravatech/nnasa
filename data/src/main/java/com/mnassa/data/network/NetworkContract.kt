@@ -54,6 +54,16 @@ object NetworkContract {
 
     object ResponseCode {
         const val UNAUTHORIZED = 403
+        const val NO_RIGHTS_TO_COMMENT = 400
+    }
+
+    object ErrorCode {
+        const val NO_RIGHTS_TO_COMMENT = "noRightToCommentPost"
+    }
+
+    object Gender{
+        const val MALE = "male"
+        const val FEMALE = "female"
     }
 }
 

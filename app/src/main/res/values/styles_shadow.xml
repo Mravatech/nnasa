@@ -11,6 +11,10 @@
         <item name="android:layout_height">@dimen/divider_width</item>
         <item name="android:background">@color/divider</item>
     </style>
+    <style name="MnassaDividerVertical" parent="MnassaDivider">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">@dimen/divider_width</item>
+    </style>
 
     <style name="MnassaShadowUpDown">
         <item name="android:layout_width">match_parent</item>
