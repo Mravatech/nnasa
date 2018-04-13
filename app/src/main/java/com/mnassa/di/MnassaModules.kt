@@ -125,7 +125,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
-    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
+    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
@@ -160,6 +160,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(CommentsConverter())
         converter.registerConverter(WalletConverter({ instance() }))
         converter.registerConverter(InvitationConverter())
+        converter.registerConverter(NotificationsConverter())
         converter
     }
 }
@@ -185,7 +186,7 @@ private val repositoryModule = Kodein.Module {
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<NotificationRepository>() with singleton { NotificationRepositoryImpl() }
+    bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -224,6 +225,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseCommentsApi>()
     bindRetrofitApi<FirebaseConnectionsApi>()
     bindRetrofitApi<FirebaseWalletApi>()
+    bindRetrofitApi<FirebaseNotificationsApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }

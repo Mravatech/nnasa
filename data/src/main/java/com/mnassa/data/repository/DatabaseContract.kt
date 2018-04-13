@@ -47,6 +47,9 @@ internal object DatabaseContract {
     const val TABLE_POSTS = "posts"
     const val TABLE_PABLIC_POSTS = "publicPosts"
     //
+    const val TABLE_NOTIFICATIONS = "notifications"
+    const val TABLE_NOTIFICATIONS_OLD = "notificationsOld"
+    //
     const val TABLE_INVITETION = "invitations"
     //
     const val TABLE_NEWS_FEED = "newsfeed"
