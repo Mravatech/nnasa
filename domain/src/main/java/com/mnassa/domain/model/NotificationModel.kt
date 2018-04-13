@@ -7,11 +7,11 @@ import java.util.*
  * User: okli
  * Date: 4/13/2018
  */
-interface NotificationModel {
+interface NotificationModel : Model {
     val createdAt: Date
     val text: String
     val type: String
-    val extra: NotificationExtra
+    val extra: NotificationExtra?
     var isOld: Boolean
 }
 

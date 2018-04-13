@@ -32,4 +32,10 @@ class NotificationsViewModelImpl(
         }
     }
 
+    override fun notificationView(id: String) {
+        handleException {
+            notificationInteractor.notificationView(true, false, listOf(id))
+        }
+    }
+
 }

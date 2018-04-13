@@ -5,6 +5,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
@@ -28,6 +29,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
             rvNotifications.adapter = adapter
         }
         viewModel.retrieveNotifications()
+        adapter.onItemClickListener = { onNotificationClickHandle(it) }
         launchCoroutineUI {
             viewModel.notificationChannel.openSubscription().bufferize(this@NotificationsController).consumeEach {
                 when (it) {
@@ -48,6 +50,10 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
                 }
             }
         }
+    }
+
+    private fun onNotificationClickHandle(item: NotificationModel) {
+        viewModel.notificationView(item.id)
     }
 
     companion object {

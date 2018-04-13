@@ -1,8 +1,10 @@
 package com.mnassa.screen.notifications
 
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.mnassa.R
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.impl.NotificationModelImpl
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
@@ -17,6 +19,7 @@ import java.util.*
  */
 class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), View.OnClickListener {
 
+    var onItemClickListener = { item: NotificationModel -> }
     override val itemsComparator: (item1: NotificationModel, item2: NotificationModel) -> Int = { first, second ->
         when {
             itemsTheSameComparator(first, second) -> 0
@@ -29,15 +32,19 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     override val itemClass: Class<NotificationModel> = NotificationModel::class.java
 
     init {
-        itemsTheSameComparator = { first, second -> first.extra.id == second.extra.id && first.createdAt == second.createdAt }
+        itemsTheSameComparator = { first, second -> first.id == second.id && first.createdAt == second.createdAt }
         contentTheSameComparator = { first, second ->
             first == second
         }
         dataStorage = NotificationsDataStorage(this)
     }
 
-    override fun onClick(v: View?) {
-
+    override fun onClick(view: View) {
+        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        if (position < 0) return
+        when (view.id) {
+            R.id.llNotificationRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<NotificationModel> {
@@ -60,11 +67,13 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
             SortedDataStorage<NotificationModel>(NotificationModel::class.java, adapter), DataStorage<NotificationModel> {
         private var headerOld: NotificationModel? = null
         private var headerNew: NotificationModel? = null
+        private var newCount = 0
 
         override fun addAll(elements: Collection<NotificationModel>): Boolean {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
+                    if (!it.isOld) newCount++
                     if (it.isOld && headerOld == null) {
                         headerOld = getNotificationHeader(it)
                     }
@@ -84,10 +93,23 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
             return true
         }
 
+        override fun removeAll(elements: Collection<NotificationModel>): Boolean {
+            adapter.postUpdate {
+                wrappedList.beginBatchedUpdates()
+                elements.forEach {
+                    if (!it.isOld) newCount--
+                }
+                wrappedList.endBatchedUpdates()
+            }
+            if (newCount == 0 && headerNew != null) super.remove(requireNotNull(headerNew))
+            return super.removeAll(elements)
+        }
+
         private fun getNotificationHeader(model: NotificationModel): NotificationModel {
             val date = Date(model.createdAt.time - 1)
             val type = if (model.isOld) OLD else NEW
             return NotificationModelImpl(
+                    id = model.id,
                     createdAt = date,
                     text = "",
                     type = type,

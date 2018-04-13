@@ -16,7 +16,7 @@ internal data class NotificationDbEntity(
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("text") var text: String,
         @SerializedName("type") var type: String,
-        @SerializedName("extra") var extra: NotificationAuthorDbEntity
+        @SerializedName("extra") var extra: NotificationAuthorDbEntity?
 ) : HasId
 
 internal data class NotificationAuthorDbEntity(

@@ -19,10 +19,12 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
 
     override fun bind(item: NotificationModel) {
         with(itemView) {
-            ivUserIcon.avatarRound(item.extra.avatar)
-            tvUserName.text = item.extra.userName
+            ivUserIcon.avatarRound(item.extra?.avatar)
+            tvUserName.text = item.extra?.userName
             tvNotificationInfo.text = item.text
             tvNotificationCame.text = item.createdAt.toTimeAgo()
+            llNotificationRoot.setOnClickListener(onClickListener)
+            llNotificationRoot.tag = this@NotificationHolder
         }
     }
 

@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.NotificationDbEntity
+import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.impl.NotificationExtraImpl
 import com.mnassa.domain.model.impl.NotificationModelImpl
@@ -23,28 +24,33 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertPostData(input: NotificationDbEntity, token: Any?, converter: ConvertersContext): NotificationModelImpl {
         Timber.i(input.toString())
-        val id = input.extra.author.keys.first()
-        val shortAccountDbEntity = requireNotNull(input.extra.author[id])
+        val userId = input.extra?.author?.keys?.first()
+        val shortAccountDbEntity = input.extra?.author?.get(userId)
         return NotificationModelImpl(
+                id = input.id,
                 createdAt = Date(input.createdAt),
                 text = input.text,
                 type = input.type,
-                extra = NotificationExtraImpl(
-                        id = id,
-                        firebaseUserId = "",
-                        userName = shortAccountDbEntity.userName,
-                        accountType = AccountType.ORGANIZATION,
-                        avatar = shortAccountDbEntity.avatar,
-                        contactPhone = null,
-                        language = null,
-                        personalInfo = null,
-                        organizationInfo = null,
-                        abilities = emptyList()
-                ),
+                extra = convertAuthor(userId, shortAccountDbEntity),
                 isOld = true
 //                extra = null
         )
     }
 
+    private fun convertAuthor(userId:String?, shortAccountDbEntity: ShortAccountDbEntity?): NotificationExtraImpl? {
+        if (shortAccountDbEntity == null || userId == null) return null
+        return NotificationExtraImpl(
+                id = userId,
+                firebaseUserId = "",
+                userName = shortAccountDbEntity.userName,
+                accountType = AccountType.ORGANIZATION,
+                avatar = shortAccountDbEntity.avatar,
+                contactPhone = null,
+                language = null,
+                personalInfo = null,
+                organizationInfo = null,
+                abilities = emptyList()
+        )
+    }
 
 }
