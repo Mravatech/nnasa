@@ -11,8 +11,8 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.activity.CropActivity
-import com.mnassa.dialog.DialogHelper
-import com.mnassa.module.GlideApp
+import com.mnassa.helper.DialogHelper
+import com.mnassa.helper.GlideApp
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.translation.fromDictionary

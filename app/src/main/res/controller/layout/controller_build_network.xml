@@ -30,6 +30,8 @@
             android:layout_above="@id/btnSkipStep"
             android:layout_below="@id/tvInviteUsersToBuildNetwork"
             android:layout_marginTop="@dimen/spacing_vertical"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
             tools:listitem="@layout/item_build_network" />
 
         <Button

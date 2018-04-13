@@ -22,6 +22,14 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickL
     var onCreateNeedClickListener = {}
     var onRepostedByClickListener = { account: ShortAccountModel -> }
 
+    fun destroyCallbacks() {
+        onAttachedToWindow = {}
+        onDetachedFromWindow = {}
+        onItemClickListener = {}
+        onCreateNeedClickListener = {}
+        onRepostedByClickListener = {}
+    }
+
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->
         first.createdAt.compareTo(second.createdAt) * -1
     }

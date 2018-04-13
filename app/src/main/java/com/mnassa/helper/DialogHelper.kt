@@ -1,8 +1,10 @@
-package com.mnassa.dialog
+package com.mnassa.helper
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
+import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.Window
@@ -16,7 +18,6 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
-import com.mnassa.screen.progress.MnassaProgressDialog
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
@@ -30,7 +31,7 @@ class DialogHelper {
                         fromDictionary(R.string.image_source_gallery),
                         fromDictionary(R.string.image_source_camera)
                 )
-                .itemsCallback{ dialog, itemView, which, text ->
+                .itemsCallback{ dialog, _, which, _ ->
                     listener(CropActivity.ImageSource.values()[which])
                     dialog.dismiss()
                 }
@@ -39,16 +40,25 @@ class DialogHelper {
     }
 
     fun showWelcomeDialog(context: Context, onOkClick: () -> Unit) {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_welcome, null)
-        dialogView.tvTitle.text = fromDictionary(R.string.welcome_dialog_title)
-        dialogView.tvDescription.text = fromDictionary(R.string.welcome_dialog_description)
+        showSuccessDialog(
+                context,
+                fromDictionary(R.string.welcome_dialog_title),
+                fromDictionary(R.string.welcome_dialog_description),
+                onOkClick)
+    }
 
-        MaterialDialog.Builder(context)
+    fun showSuccessDialog(context: Context, title: CharSequence, description: CharSequence, onOkClick: () -> Unit = {}) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_welcome, null)
+        dialogView.tvTitle.text = title
+        dialogView.tvDescription.text = description
+
+        val dialog = MaterialDialog.Builder(context)
                 .customView(dialogView, false)
-                .positiveText(android.R.string.ok)
-                .onPositive { _, _ -> onOkClick() }
                 .cancelListener { onOkClick() }
                 .show()
+
+        dialogView.btnOk.setOnClickListener { dialog.cancel() }
+        dialogView.btnOk.setText(android.R.string.ok)
     }
 
     fun showConfirmPostRemovingDialog(context: Context, onOkClick: () -> Unit) {
@@ -147,7 +157,12 @@ class DialogHelper {
     }
 
     fun showProgressDialog(context: Context): Dialog {
-        val dialog = MnassaProgressDialog(context, R.style.MnassaProgressTheme)
+        val dialog = object: ProgressDialog(context, R.style.MnassaProgressTheme) {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.dialog_progress)
+            }
+        }
         dialog.setCancelable(false)
         dialog.show()
         return dialog

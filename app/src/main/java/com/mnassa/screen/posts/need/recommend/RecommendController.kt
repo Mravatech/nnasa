@@ -81,6 +81,12 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         }
     }
 
+    override fun onDestroyView(view: View) {
+        allAccountsAdapter.destroyCallbacks()
+        selectedAccountsAdapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     interface OnRecommendPostResult {
         var recommendedAccounts: List<ShortAccountModel>
     }

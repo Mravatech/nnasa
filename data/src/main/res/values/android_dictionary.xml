@@ -45,6 +45,22 @@
     <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
     <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
     <string name="_android_post_comment_edit_button_INFO">Edit</string>
+    <string name="_android_my_wallet_title_INFO">My wallet</string>
+    <string name="_android_my_wallet_balance_INFO">Balance</string>
+    <string name="_android_my_wallet_spent_INFO">Spent</string>
+    <string name="_android_my_wallet_gained_INFO">Gained</string>
+    <string name="_android_my_wallet_balance_after_INFO">Balance: %d points</string>
+    <string name="_android_my_wallet_send_points_INFO">Send points</string>
+    <string name="_android_my_wallet_send_points_action_INFO">Send</string>
+    <string name="_android_my_wallet_send_points_description_INFO">Select the recipient and\nset the amount</string>
+    <string name="_android_my_wallet_send_points_recipient_hint_INFO">Select recipient</string>
+    <string name="_android_my_wallet_send_points_amount_hint_INFO">points</string>
+    <string name="_android_my_wallet_send_points_comments_hint_INFO">Type some comments…</string>
+    <string name="_android_select_recipient_title_INFO">Select recipient</string>
+    <string name="_android_my_wallet_successfully_sent_title_INFO">Success!</string>
+    <string name="_android_my_wallet_successfully_sent_description_INFO">You have successfully transferred </string>
+    <string name="_android_my_wallet_successfully_sent_description_points_INFO"> points </string>
+    <string name="_android_my_wallet_successfully_sent_description_to_INFO"> to %s</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>

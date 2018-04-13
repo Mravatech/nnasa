@@ -180,6 +180,28 @@
     <string name="reg_person_info_email">_accEdit_cellEmail_placeholder</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
 
+    <!-- ======================================= WALLET ======================================== -->
+    <string name="wallet_title">_android_my_wallet_title</string>
+    <string name="wallet_balance">_android_my_wallet_balance</string>
+    <string name="wallet_spent">_android_my_wallet_spent</string>
+    <string name="wallet_gained">_android_my_wallet_gained</string>
+    <string name="wallet_balance_after">_android_my_wallet_balance_after</string>
+
+    <!-- Send points -->
+    <string name="send_points_title">_android_my_wallet_send_points</string>
+    <string name="send_points_action">_android_my_wallet_send_points_action</string>
+    <string name="send_points_description">_android_my_wallet_send_points_description</string>
+    <string name="send_points_recipient_hint">_android_my_wallet_send_points_recipient_hint</string>
+    <string name="send_points_amount_hint">_android_my_wallet_send_points_amount_hint</string>
+    <string name="send_points_comments_hint">_android_my_wallet_send_points_comments_hint</string>
+    <string name="send_points_success_title">_android_my_wallet_successfully_sent_title</string>
+    <string name="send_points_success_description">_android_my_wallet_successfully_sent_description</string>
+    <string name="send_points_success_description_points">_android_my_wallet_successfully_sent_description_points</string>
+    <string name="send_points_success_description_to">_android_my_wallet_successfully_sent_description_to</string>
+
+    <!-- ================================= SELECT RECIPIENT =================================== -->
+    <string name="select_recipient_title">_android_select_recipient_title</string>
+
     <!-- ========================================= OTHER ====================================== -->
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>

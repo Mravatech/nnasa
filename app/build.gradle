@@ -17,7 +17,6 @@ def globalConfiguration = rootProject.extensions.getByName("ext")
 
 android {
     compileSdkVersion build_versions.compile_sdk
-    buildToolsVersion build_versions.build_tools
 
     testBuildType "debug"
 
@@ -170,6 +169,7 @@ dependencies {
     implementation deps.glide.glide
     kapt deps.glide.glideCompiler
     implementation deps.glide.glideTransformers
+    implementation deps.glide.glideOkHttp
 
     //ucrop
     implementation deps.ucrop.general
@@ -191,8 +191,11 @@ dependencies {
 
     //other
     implementation deps.other.logger
-    implementation deps.other.leak
+    debugImplementation deps.other.leakDebug
+    stageImplementation deps.other.leakDebug
+    releaseImplementation deps.other.leakRelease
     implementation deps.stetho.runtime
+    implementation deps.stetho.http
 
     //network
     implementation deps.network.retrofit

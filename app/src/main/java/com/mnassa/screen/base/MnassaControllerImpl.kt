@@ -16,7 +16,7 @@ import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary

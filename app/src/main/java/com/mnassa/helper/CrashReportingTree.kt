@@ -1,4 +1,4 @@
-package com.mnassa.logging
+package com.mnassa.helper
 
 import android.util.Log
 import timber.log.Timber

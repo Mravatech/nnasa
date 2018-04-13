@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.need.sharing
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.bluelinelabs.conductor.Controller
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -96,6 +97,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         }
     }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
+    }
+
     private fun getSelection(): ShareToOptions {
         with(requireNotNull(view)) {
             return ShareToOptions(
@@ -117,10 +123,12 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     companion object {
         private const val EXTRA_PREDEFINED_OPTIONS = "EXTRA_PREDEFINED_OPTIONS"
 
-        fun newInstance(options: ShareToOptions = ShareToOptions.EMPTY): SharingOptionsController {
+        fun <T> newInstance(options: ShareToOptions = ShareToOptions.EMPTY, listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller{
             val args = Bundle()
             args.putSerializable(EXTRA_PREDEFINED_OPTIONS, options)
-            return SharingOptionsController(args)
+            val result = SharingOptionsController(args)
+            result.targetController = listener
+            return result
         }
     }
 

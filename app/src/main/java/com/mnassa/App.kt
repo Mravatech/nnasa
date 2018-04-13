@@ -10,7 +10,7 @@ import com.google.firebase.FirebaseApp
 import com.mnassa.di.*
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.logging.CrashReportingTree
+import com.mnassa.helper.CrashReportingTree
 import com.squareup.leakcanary.LeakCanary
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber

@@ -31,6 +31,10 @@ class ArchivedConnectionsRVAdapter : BasePaginationRVAdapter<DeclinedShortAccoun
             notifyItemChanged(0)
         }
 
+    fun destroyCallbacks() {
+        onConnectClickListener = {}
+    }
+
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnConnect -> {

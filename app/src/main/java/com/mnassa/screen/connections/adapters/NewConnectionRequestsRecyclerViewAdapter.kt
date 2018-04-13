@@ -25,6 +25,12 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     var onDeclineClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = { }
 
+    fun destroyCallbacks() {
+        onAcceptClickListener = { }
+        onDeclineClickListener = { }
+        onShowAllClickListener = { }
+    }
+
     fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
         val maxItemsCount = maxItemsCount + 1
 

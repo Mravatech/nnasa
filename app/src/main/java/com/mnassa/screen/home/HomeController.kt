@@ -63,8 +63,13 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
                 }
             }
 
+            famHome.setClosedOnTouchOutside(true)
+
             fabCreateNeed.labelText = fromDictionary(R.string.tab_home_button_create_need)
-            fabCreateNeed.setOnClickListener { open(CreateNeedController.newInstance()) }
+            fabCreateNeed.setOnClickListener {
+                famHome.close(false)
+                open(CreateNeedController.newInstance())
+            }
 
             fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
         }

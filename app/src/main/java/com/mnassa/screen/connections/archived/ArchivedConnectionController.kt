@@ -43,7 +43,11 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
                 view.rvArchivedConnection.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
             }
         }
+    }
 
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     companion object {

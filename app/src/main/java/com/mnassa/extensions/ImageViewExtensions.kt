@@ -9,7 +9,7 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
-import com.mnassa.module.GlideApp
+import com.mnassa.helper.GlideApp
 
 
 /**
@@ -41,7 +41,7 @@ fun ImageView.avatarRound(avatarUrl: String?) {
     val requestOptions = RequestOptions().placeholder(R.drawable.empty_ava).error(R.drawable.empty_ava).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)
-            .load(ref ?: "")
+            .load(ref ?: avatarUrl ?: "")
             .apply(requestOptions)
             .apply(RequestOptions.circleCropTransform())
             .into(this)
@@ -56,7 +56,7 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
     GlideApp.with(this)
-            .load(ref ?: "")
+            .load(ref ?: avatarUrl ?: "")
             .apply(requestOptions)
             .apply(RequestOptions.centerCropTransform())
             .into(this)
@@ -69,7 +69,7 @@ fun ImageView.image(url: String?, crop: Boolean = true) {
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
     var builder = GlideApp.with(this)
-            .load(ref ?: "")
+            .load(ref ?: url ?: "")
             .apply(requestOptions)
 
     if (crop) {

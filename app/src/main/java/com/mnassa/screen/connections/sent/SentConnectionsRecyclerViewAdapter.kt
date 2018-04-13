@@ -21,6 +21,10 @@ class SentConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountM
 
     var onCancelClickListener = { account: ShortAccountModel -> }
 
+    fun destoryCallbacks() {
+        onCancelClickListener = { }
+    }
+
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnCancel -> {

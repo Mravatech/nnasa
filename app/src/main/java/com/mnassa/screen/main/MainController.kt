@@ -26,6 +26,7 @@ import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.screen.wallet.WalletController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -129,6 +130,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
 
         when (item.itemId) {
+            R.id.nav_wallet -> open(WalletController.newInstance())
             R.id.nav_all_connections -> open(AllConnectionsController.newInstance())
             R.id.nav_build_network -> open(BuildNetworkController.newInstance())
             R.id.nav_change_account -> open(SelectAccountController.newInstance())

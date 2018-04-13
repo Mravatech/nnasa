@@ -23,6 +23,10 @@ import kotlinx.android.synthetic.main.item_connections_recommended_group.view.*
 class GroupedRecommendedConnectionsRVAdapter : BasePaginationRVAdapter<GroupedConnection>(), View.OnClickListener {
     var onConnectClickListener = { account: ShortAccountModel -> }
 
+    fun destroyCallbacks() {
+        onConnectClickListener = { }
+    }
+
     fun set(input: RecommendedConnections) {
         val result = ArrayList<GroupedConnection>()
         if (input.byPhone.isNotEmpty()) {

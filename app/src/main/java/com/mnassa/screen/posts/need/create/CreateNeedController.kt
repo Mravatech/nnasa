@@ -14,11 +14,11 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
@@ -72,9 +72,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 )
             }
             tvShareOptions.setOnClickListener {
-                val screen = SharingOptionsController.newInstance(sharingOptions)
-                screen.targetController = this@CreateNeedController
-                open(screen)
+                open(SharingOptionsController.newInstance(sharingOptions, this@CreateNeedController))
             }
 
             launchCoroutineUI {
@@ -147,6 +145,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 Timber.e("CropActivity.GET_PHOTO_ERROR")
             }
         }
+    }
+
+    override fun onDestroyView(view: View) {
+        attachedImagesAdapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {

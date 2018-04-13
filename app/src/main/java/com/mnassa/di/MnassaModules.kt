@@ -10,22 +10,23 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.mnassa.AppInfoProviderImpl
-import com.mnassa.country.CountryHelper
+import com.mnassa.helper.CountryHelper
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
 import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.google.PlayServiceHelper
-import com.mnassa.intent.IntentHelper
+import com.mnassa.helper.PlayServiceHelper
+import com.mnassa.helper.PopupMenuHelper
+import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
@@ -44,6 +45,8 @@ import com.mnassa.screen.connections.newrequests.NewRequestsViewModel
 import com.mnassa.screen.connections.newrequests.NewRequestsViewModelImpl
 import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModel
 import com.mnassa.screen.connections.recommended.RecommendedConnectionsViewModelImpl
+import com.mnassa.screen.connections.select.SelectConnectionViewModel
+import com.mnassa.screen.connections.select.SelectConnectionViewModelImpl
 import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
@@ -82,6 +85,10 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
+import com.mnassa.screen.wallet.WalletViewModel
+import com.mnassa.screen.wallet.WalletViewModelImpl
+import com.mnassa.screen.wallet.send.SendPointsViewModel
+import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
 import retrofit2.Retrofit
 
@@ -130,20 +137,23 @@ private val viewModelsModule = Kodein.Module {
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
     bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
-
+    bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
+    bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
+    bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
     bind<ConvertersContext>() with singleton {
         val converter = ConvertersContextImpl()
         converter.registerConverter(UserAccountConverter::class.java)
-        converter.registerConverter(TranslatedWordConverter::class.java)
+        converter.registerConverter(TranslatedWordConverter(instance()))
         converter.registerConverter(ConnectionsConverter::class.java)
         converter.registerConverter(GeoPlaceConverter::class.java)
         converter.registerConverter(TagConverter(instance()))
-        converter.registerConverter(LocationConverter::class.java)
+        converter.registerConverter(LocationConverter(instance()))
         converter.registerConverter(PostConverter::class.java)
         converter.registerConverter(CommentsConverter::class.java)
+        converter.registerConverter(WalletConverter( { instance() } ))
         converter.registerConverter(InvitationConverter::class.java)
         converter
     }
@@ -160,7 +170,7 @@ private val repositoryModule = Kodein.Module {
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
@@ -169,6 +179,7 @@ private val repositoryModule = Kodein.Module {
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
+    bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -184,8 +195,9 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance()) }
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
+    bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
 }
 
@@ -203,6 +215,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseTagsApi>()
     bindRetrofitApi<FirebasePostApi>()
     bindRetrofitApi<FirebaseCommentsApi>()
+    bindRetrofitApi<FirebaseWalletApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
@@ -221,9 +234,10 @@ private inline fun <reified T : Any> Kodein.Builder.bindRetrofitApi() {
 
 private val otherModule = Kodein.Module {
     bind<AppInfoProvider>() with singleton { AppInfoProviderImpl(instance()) }
-    bind<LanguageProvider>() with singleton { LanguageProviderImpl(instance()) }
+    bind<LanguageProvider>() with singleton { LanguageProviderImpl() }
     bind<DialogHelper>() with singleton { DialogHelper() }
+    bind<PopupMenuHelper>() with singleton { PopupMenuHelper(instance()) }
     bind<IntentHelper>() with singleton { IntentHelper() }
-    bind<CountryHelper>() with singleton { CountryHelper() }
+    bind<CountryHelper>() with singleton { CountryHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
 }

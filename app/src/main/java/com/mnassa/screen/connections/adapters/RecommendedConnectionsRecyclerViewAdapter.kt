@@ -21,6 +21,11 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     var onConnectClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = {}
 
+    fun destoryCallbacks() {
+        onConnectClickListener = { }
+        onShowAllClickListener = { }
+    }
+
     fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
         val maxItemsCount = maxItemsCount + 1
 

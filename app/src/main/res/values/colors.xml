@@ -40,4 +40,7 @@
     <color name="blackAlpha">#61000000</color>
     <color name="blackDarkAlpha">#de000000</color>
 
+    <color name="spentMoney">#c40e42</color>
+    <color name="gainedMoney">@color/coolGreen</color>
+
 </resources>

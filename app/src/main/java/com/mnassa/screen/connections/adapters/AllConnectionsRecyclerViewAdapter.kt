@@ -21,6 +21,11 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
     var onItemClickListener = { account: ShortAccountModel, sender: View -> }
     var onBindHeader = { header: View -> }
 
+    fun destroyCallbacks() {
+        onItemClickListener = { _, _ -> }
+        onBindHeader = { }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> =
             UserViewHolder.newInstance(parent, this)
 

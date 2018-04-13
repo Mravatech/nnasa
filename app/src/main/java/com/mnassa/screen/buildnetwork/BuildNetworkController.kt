@@ -9,7 +9,7 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
@@ -82,6 +82,11 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
         }
 
         checkPermissions()
+    }
+
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     private var checkPermissionsJob: Job? = null

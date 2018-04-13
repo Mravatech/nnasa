@@ -11,8 +11,8 @@ import android.widget.ImageView
 import com.google.firebase.storage.StorageReference
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
-import com.mnassa.module.GlideApp
+import com.mnassa.helper.DialogHelper
+import com.mnassa.helper.GlideApp
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
 

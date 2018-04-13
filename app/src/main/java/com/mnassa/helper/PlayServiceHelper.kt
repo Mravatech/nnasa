@@ -1,4 +1,4 @@
-package com.mnassa.google
+package com.mnassa.helper
 
 import android.content.Context
 import com.google.android.gms.common.api.GoogleApiClient

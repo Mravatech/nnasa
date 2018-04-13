@@ -53,19 +53,22 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
+        recommendedConnectionsAdapter.onConnectClickListener = { viewModel.connect(it) }
+
+        newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
+        newConnectionRequestsAdapter.onDeclineClickListener = { viewModel.decline(it) }
+        newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
+
+        allConnectionsAdapter.onBindHeader = { bindHeader(it) }
+        allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+
+
+
+
         with(view) {
             toolbar.backButtonEnabled = false
             toolbar.title = fromDictionary(R.string.tab_connections_title)
-
-            recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
-            recommendedConnectionsAdapter.onConnectClickListener = { viewModel.connect(it) }
-
-            newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
-            newConnectionRequestsAdapter.onDeclineClickListener = { viewModel.decline(it) }
-            newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
-
-            allConnectionsAdapter.onBindHeader = { bindHeader(it, view) }
-            allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
 
             rvAllConnections.layoutManager = LinearLayoutManager(context)
             rvAllConnections.adapter = allConnectionsAdapter
@@ -93,10 +96,13 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
+        allConnectionsAdapter.destroyCallbacks()
+        recommendedConnectionsAdapter.destoryCallbacks()
+        newConnectionRequestsAdapter.destroyCallbacks()
         isHeaderBounded = false
         permissionsSnackbar = null
-        super.onViewDestroyed(view)
+        super.onDestroyView(view)
     }
 
     private var onPageSelectedJob: Job? = null
@@ -126,7 +132,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
     }
 
-    private fun bindHeader(header: View, root: View) {
+    private fun bindHeader(header: View) {
         if (isHeaderBounded) return
         isHeaderBounded = true
 
@@ -171,7 +177,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                 header.rvNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
                 header.vNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
 
-                root.toolbar.counter = it.size
+                view?.toolbar?.counter = it.size
                 header.tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
             }
         }
