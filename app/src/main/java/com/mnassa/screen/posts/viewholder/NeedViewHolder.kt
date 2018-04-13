@@ -94,10 +94,12 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup,
-                        onClickListener: View.OnClickListener,
-                        imagesCount: Int = 0,
-                        isRepost: Boolean = false): NeedViewHolder {
+        fun newInstance(
+            parent: ViewGroup,
+            onClickListener: View.OnClickListener,
+            imagesCount: Int = 0,
+            isRepost: Boolean = false
+        ): NeedViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)

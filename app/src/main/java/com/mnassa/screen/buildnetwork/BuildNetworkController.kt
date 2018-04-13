@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.helper.DialogHelper
@@ -28,7 +28,6 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
     override val viewModel: BuildNetworkViewModel by instance()
     private val dialogHelper: DialogHelper by instance()
     private val adapter = BuildNetworkAdapter()
-
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)

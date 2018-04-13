@@ -40,8 +40,6 @@ val RecyclerView.firstVisibleItemPosition: Int
         }
     }
 
-
-
 val RecyclerView.isReverseLayout: Boolean
     get() {
         val lManager = layoutManager
@@ -59,7 +57,6 @@ val RecyclerView.itemsOnScreen: Int
         return abs(lastVisibleItemPosition - firstVisibleItemPosition)
     }
 
-
 /**
  * This coefficient determines when PaginationTool must start loading of new items
  * 0.1 - start loading at the start of scrolling
@@ -69,9 +66,9 @@ val RecyclerView.itemsOnScreen: Int
 private const val DEFAULT_START_PAGINATION_COEFFICIENT = 0.7f
 
 suspend fun RecyclerView.waitForNewItems(
-        emptyListCount: Int = 0,
-        startPaginationCoefficient: Float = DEFAULT_START_PAGINATION_COEFFICIENT,
-        itemsCount: () -> Int = { adapter.itemCount }
+    emptyListCount: Int = 0,
+    startPaginationCoefficient: Float = DEFAULT_START_PAGINATION_COEFFICIENT,
+    itemsCount: () -> Int = { adapter.itemCount }
 ) {
     suspendCancellableCoroutine<Unit> { continuation ->
 
@@ -96,9 +93,9 @@ suspend fun RecyclerView.waitForNewItems(
 }
 
 fun RecyclerView.isNewItemsNeeded(
-        emptyListCount: Int = 0,
-        startPaginationCoefficient: Float = DEFAULT_START_PAGINATION_COEFFICIENT,
-        itemsCount: () -> Int = { adapter.itemCount }
+    emptyListCount: Int = 0,
+    startPaginationCoefficient: Float = DEFAULT_START_PAGINATION_COEFFICIENT,
+    itemsCount: () -> Int = { adapter.itemCount }
 ): Boolean {
     if (emptyListCount == itemsCount()) {
         return true

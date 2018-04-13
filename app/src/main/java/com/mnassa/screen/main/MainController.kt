@@ -1,9 +1,7 @@
 package com.mnassa.screen.main
 
-import android.support.design.widget.NavigationView
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.view.MenuItem
 import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
@@ -12,34 +10,40 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.github.salomonbrys.kodein.instance
+import com.mikepenz.materialdrawer.*
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.avatarRound
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.connections.ConnectionsController
-import com.mnassa.screen.connections.allconnections.AllConnectionsController
-import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.home.HomeController
-import com.mnassa.screen.login.selectaccount.SelectAccountController
+import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.screen.wallet.WalletController
+import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
-import kotlinx.android.synthetic.main.nav_header.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 2/21/2018.
  */
-class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener, MnassaRouter {
+class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
+    private var drawer: Drawer? = null
+    private var accountHeader: AccountHeader? = null
+    private var activeAccountId: String = ""
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -58,17 +62,84 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
         override fun getCount(): Int = Pages.values().size
     }
 
-    override fun onViewCreated(view: View) {
+    private fun updateActiveProfile(fireOnProfileChanged: Boolean = false) {
+        accountHeader?.apply {
+            profiles.forEach {
+                if ((it as? MnassaProfileDrawerItem)?.account?.id == activeAccountId) {
+                    setActiveProfile(it, fireOnProfileChanged)
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view)
 
         with(view) {
             vpMain.adapter = adapter
 //            vpMain.offscreenPageLimit = adapter.count
 
+            accountHeader = MnassaAccountHeaderBuilder()
+                    .withActivity(requireNotNull(activity))
+                    .withSavedInstance(savedInstanceState)
+                    .withTranslucentStatusBar(true)
+                    .withAccountHeader(R.layout.drawer_header)
+                    .withOnAccountHeaderListener { _, profile, _ ->
+                        when {
+                            profile is MnassaProfileDrawerItem -> {
+                                val account = profile.account
+                                drawer?.closeDrawer()
+                                activeAccountId = account.id
+                                viewModel.selectAccount(account)
+                                true
+                            }
+                            profile.identifier == ACCOUNT_ADD -> {
+                                post { open(RegistrationController.newInstance()) }
+                                false
+                            }
+                            else -> false
+                        }
+                    }
+                    .build()
+
+            val appInfoProvider: AppInfoProvider by instance()
+
+            drawer = DrawerBuilder(requireNotNull(activity))
+                    .withRootView(root)
+                    .withAccountHeader(requireNotNull(accountHeader))
+                    .addDrawerItems(
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_profile).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_wallet).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_invite).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_settings).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_help)).withIcon(R.drawable.ic_support).withIdentifier(HELP.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_terms)).withIcon(R.drawable.ic_terms).withIdentifier(TERMS.ordinal.toLong()).withSelectable(false),
+                            DividerDrawerItem(),
+                            SecondaryDrawerItem().withName(fromDictionary(R.string.side_menu_logout)).withIdentifier(LOGOUT.ordinal.toLong()).withSelectable(false),
+                            SecondaryDrawerItem().withName("${appInfoProvider.appName} ${appInfoProvider.versionName}").withEnabled(false).withSelectable(false)
+                    )
+                    .withSelectedItem(-1)
+                    .withOnDrawerItemClickListener { _, _, item ->
+                        when (values()[item.identifier.toInt()]) {
+                            PROFILE -> open(ProfileController.newInstance(activeAccountId))
+                            WALLET -> open(WalletController.newInstance())
+                            INVITE -> open(InviteController.newInstance())
+                            SETTINGS -> {
+                            } //TODO
+                            HELP -> {
+                            } //TODO
+                            TERMS -> {
+                            } //TODO
+                            LOGOUT -> viewModel.logout()
+                        }
+                        true
+                    }
+                    .withSavedInstance(savedInstanceState)
+                    .buildForFragment()
+
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
             bnMain.accentColor = ContextCompat.getColor(view.context, R.color.accent)
             bnMain.addItems(
-
                     mutableListOf(
                             AHBottomNavigationItem(0, R.drawable.ic_tab_home, R.color.accent),
                             AHBottomNavigationItem(0, R.drawable.ic_tab_connections, R.color.accent),
@@ -86,33 +157,55 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
 
                 true
             }
-            navigationView.setNavigationItemSelectedListener(this@MainController)
         }
 
         launchCoroutineUI {
             viewModel.unreadChatsCountChannel.consumeEach { setCounter(Pages.CHAT.ordinal, it) }
         }
+
         launchCoroutineUI {
             viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS.ordinal, it) }
         }
+
         launchCoroutineUI {
             viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(Pages.CONNECTIONS.ordinal, it) }
         }
+
         launchCoroutineUI {
             viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(Pages.HOME.ordinal, it) }
         }
-        launchCoroutineUI {
-            viewModel.currentAccountChannel.consumeEach {
-                //TODO: design for side menu
-                view.ivUserAvatar?.avatarRound(it.avatar)
-                view.tvUserName?.text = it.formattedName
-                view.tvUserPosition?.text = it.id
-//                    view.tvUserPosition.text = it.mainAbility(fromDictionary(R.string.invite_at_placeholder))
-//                    view.tvUserPosition.goneIfEmpty()
 
+        launchCoroutineUI {
+            viewModel.availableAccountsChannel.consumeEach { accounts ->
+                accountHeader?.apply {
+                    clear()
+                    accounts.forEach { account ->
+                        addProfile(MnassaProfileDrawerItem().withAccount(account), profiles.size)
+                    }
+                    addProfile(ProfileSettingDrawerItem()
+                            .withName(fromDictionary(R.string.side_menu_add_account))
+                            .withIcon(R.drawable.ic_add_black_24dp)
+                            .withIdentifier(ACCOUNT_ADD)
+                            .withSelectable(false), profiles.size)
+                    updateActiveProfile()
+                }
             }
         }
 
+        launchCoroutineUI {
+            viewModel.currentAccountChannel.consumeEach {
+                activeAccountId = it.id
+                accountHeader?.setActiveProfile(activeAccountId.hashCode().toLong())
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        var result = outState
+        drawer?.apply { result = saveInstanceState(result) }
+        accountHeader?.apply { result = saveInstanceState(result) }
+
+        super.onSaveInstanceState(result)
     }
 
     private fun setCounter(pageIndex: Int, counterValue: Int) {
@@ -124,42 +217,24 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
                 .setTextColor(ContextCompat.getColor(view.context, R.color.white))
                 .build() else null
         view.bnMain.setNotification(notification, pageIndex)
-
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-
-        requireNotNull(view).drawerLayout.closeDrawer(GravityCompat.START)
-
-        when (item.itemId) {
-            R.id.nav_wallet -> open(WalletController.newInstance())
-            R.id.nav_all_connections -> open(AllConnectionsController.newInstance())
-            R.id.nav_build_network -> open(BuildNetworkController.newInstance())
-            R.id.nav_change_account -> open(SelectAccountController.newInstance())
-            R.id.nav_create_account -> open(RegistrationController.newInstance())
-            R.id.nav_invite_to_mnassa -> open(InviteController.newInstance())
-            R.id.nav_logout -> viewModel.logout()
-        }
-
-        return true
     }
 
     override fun handleBack(): Boolean {
-        val view = requireNotNull(view)
-        return if (view.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            view.drawerLayout.closeDrawer(GravityCompat.START)
+        return if (drawer?.isDrawerOpen == true) {
+            drawer?.closeDrawer()
             true
         } else {
             super.handleBack()
         }
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
         if (!requireNotNull(activity).isChangingConfigurations) {
             view.vpMain.adapter = null
         }
-        super.onViewDestroyed(view)
+        drawer = null
+        accountHeader = null
+        super.onDestroyView(view)
     }
 
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(self, controller)
@@ -169,10 +244,27 @@ class MainController : MnassaControllerImpl<MainViewModel>(), NavigationView.OnN
     private fun formatTabControllerTag(position: Int): String = "tab_controller_$position"
 
     private enum class Pages {
-        HOME, CONNECTIONS, NOTIFICATIONS, CHAT
+        HOME,
+        CONNECTIONS,
+        NOTIFICATIONS,
+        CHAT
+    }
+
+    enum class DrawerItem {
+        PROFILE,
+        WALLET,
+        INVITE,
+        SETTINGS,
+        HELP,
+        TERMS,
+        LOGOUT
     }
 
     companion object {
+        const val ACCOUNT_ADD = -998L
+
         fun newInstance() = MainController()
     }
+
+
 }

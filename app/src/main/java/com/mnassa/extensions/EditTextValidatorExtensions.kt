@@ -136,7 +136,6 @@ private fun TextInputLayout.findEditText(viewGroup: ViewGroup? = null): EditText
     throw IllegalStateException("TextInputLayout must contain Edit Text!")
 }
 
-
 fun EditText.addTextChangedListener(listener: TextWatcher.(text: String) -> Unit): TextWatcher {
     val textWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable) = Unit

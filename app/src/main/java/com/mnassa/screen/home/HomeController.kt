@@ -5,7 +5,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.MnassaRouter
@@ -77,7 +77,6 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
 
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
     override fun close(self: Controller) = mnassaRouter.close(self)
-
 
     enum class HomePage {
         NEEDS, EVENTS

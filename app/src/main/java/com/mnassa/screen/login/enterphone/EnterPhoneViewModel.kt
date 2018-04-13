@@ -15,9 +15,9 @@ interface EnterPhoneViewModel : MnassaViewModel {
     fun signInByEmail(email: String, password: String)
 
     sealed class OpenScreenCommand {
-        class EnterVerificationCode(val param: PhoneVerificationModel): OpenScreenCommand()
-        class MainScreen: OpenScreenCommand()
-        class Registration: OpenScreenCommand()
-        class SelectAccount(val accounts: List<ShortAccountModel>): OpenScreenCommand()
+        class EnterVerificationCode(val param: PhoneVerificationModel) : OpenScreenCommand()
+        class MainScreen : OpenScreenCommand()
+        class Registration : OpenScreenCommand()
+        class SelectAccount(val accounts: List<ShortAccountModel>) : OpenScreenCommand()
     }
 }

@@ -10,10 +10,8 @@ import com.google.gson.annotations.SerializedName
 data class RegisterSendingAccountInfoRequest(
         @SerializedName("birthdayDate")
         val birthdayDate: String? = null,
-        @SerializedName("locationId")
-        val locationId: String? = null,
         @SerializedName("lastName")
-        val lastName: String,
+        val lastName: String?,
         @SerializedName("userName")
         val userName: String,
         @SerializedName("showContactEmail")
@@ -23,25 +21,23 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("type")
         val type: String,
         @SerializedName("birthday")
-        val birthday: Double? = 0.0,
+        val birthday: Long? = 0,
         @SerializedName("contactPhone")
         val contactPhone: String? = null,
         @SerializedName("abilities")
         val abilities: List<Ability>? = null,
-        @SerializedName("location")
-        val location: Location? = null,
         @SerializedName("id")
         val id: String,
         @SerializedName("avatar")
         val avatar: String? = null,
         @SerializedName("firstName")
-        val firstName: String,
-        @SerializedName("offers")
-        val offers: List<String>,
-        @SerializedName("interests")
-        val interests: List<String>,
+        val firstName: String?,
         @SerializedName("showContactPhone")
-        val showContactPhone: Boolean? = false
+        val showContactPhone: Boolean? = false,
+        @SerializedName("contactEmail")
+        val contactEmail: String?,
+        @SerializedName("gender")
+        val gender: String
 )
 
 data class Ability(
@@ -57,4 +53,43 @@ data class Location(
         @SerializedName("placeId")
         val placeId: String? = null
 
+)
+
+data class ProfilePersonAccountInfoRequest(
+        @SerializedName("birthdayDate")
+        val birthdayDate: String? = null,
+        @SerializedName("lastName")
+        val lastName: String?,
+        @SerializedName("userName")
+        val userName: String,
+        @SerializedName("showContactEmail")
+        val showContactEmail: Boolean? = false,
+        @SerializedName("language")
+        val language: String? = null,
+        @SerializedName("type")
+        val type: String,
+        @SerializedName("birthday")
+        val birthday: Long? = 0,
+        @SerializedName("contactPhone")
+        val contactPhone: String? = null,
+        @SerializedName("abilities")
+        val abilities: List<Ability>? = null,
+        @SerializedName("id")
+        val id: String,
+        @SerializedName("avatar")
+        val avatar: String? = null,
+        @SerializedName("firstName")
+        val firstName: String?,
+        @SerializedName("showContactPhone")
+        val showContactPhone: Boolean? = false,
+        @SerializedName("contactEmail")
+        val contactEmail: String?,
+        @SerializedName("gender")
+        val gender: String,
+        @SerializedName("locationId")
+        val locationId: String?,//todo not null
+        @SerializedName("interests")
+        val interests: List<String>,
+        @SerializedName("offers")
+        val offers: List<String>
 )

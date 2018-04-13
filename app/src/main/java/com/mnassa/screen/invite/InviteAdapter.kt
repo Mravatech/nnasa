@@ -47,5 +47,4 @@ class InviteAdapter : RecyclerView.Adapter<InviteHolder>() {
     fun getNameByNumber(text: String): String? {
         return data.firstOrNull { it.phoneNumber.endsWith(text) }?.fullName
     }
-
 }

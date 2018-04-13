@@ -2,13 +2,15 @@ package com.mnassa.screen.posts
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
-import com.mnassa.core.addons.bind
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.PostDetailsController
+import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -26,7 +28,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
-        adapter.onRepostedByClickListener = { /*TODO*/ }
+        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             rvNewsFeed.layoutManager = LinearLayoutManager(context)
@@ -34,22 +36,25 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         }
 
         adapter.isLoadingEnabled = true
-        viewModel.handleException {
-            viewModel.getNewsFeedChannel().consumeEach {
-                //TODO: bufferization
+        launchCoroutineUI {
+            viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
-                        adapter.dataStorage.add(it.item)
+                        adapter.dataStorage.addAll(it.item)
                     }
-                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
-                    is ListItemEvent.Cleared -> adapter.dataStorage.clear()
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.dataStorage.clear()
+                        adapter.isLoadingEnabled = true
+                    }
                 }
             }
-        }.bind(this)
+        }
     }
+
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()

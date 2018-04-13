@@ -3,9 +3,11 @@ package com.mnassa.data.network.exception.handler
 import android.content.Context
 import com.google.gson.Gson
 import com.mnassa.data.R
+import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.retrofit.MnassaErrorBody
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
+import com.mnassa.domain.exception.NotAuthorizedException
 import kotlinx.coroutines.experimental.JobCancellationException
 import okhttp3.Headers
 import retrofit2.HttpException
@@ -30,6 +32,7 @@ open class NetworkExceptionHandlerImpl(private val gson: Gson, private val conte
             throwable is NetworkException -> throwable
             throwable is JobCancellationException -> throwable
             isNetworkDisabledException(throwable) -> NetworkDisableException(networkDisabledMessage, throwable)
+            getCode(throwable) == NetworkContract.ResponseCode.UNAUTHORIZED -> NotAuthorizedException(getMessage(throwable) ?: "Not authorized!", throwable)
             else -> {
                 val errorBody = transformExceptionTo(throwable, MnassaErrorBody::class.java)
                 NetworkException(

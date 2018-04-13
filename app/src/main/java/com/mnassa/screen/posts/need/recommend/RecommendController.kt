@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
@@ -96,9 +96,11 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         private const val EXTRA_RECOMMEND_TO_PERSON_NAME = "EXTRA_RECOMMEND_TO_PERSON_NAME"
         private const val EXTRA_SELECTED_ACCOUNTS = "EXTRA_SELECTED_ACCOUNTS"
 
-        fun newInstance(recommendToPersonName: String,
-                        bestMatchesAccounts: List<String> = emptyList(),
-                        selectedAccounts: List<String> = emptyList()): RecommendController {
+        fun newInstance(
+            recommendToPersonName: String,
+            bestMatchesAccounts: List<String> = emptyList(),
+            selectedAccounts: List<String> = emptyList()
+        ): RecommendController {
 
             val args = Bundle()
             args.putStringArrayList(EXTRA_BEST_MATCHES, ArrayList(bestMatchesAccounts))

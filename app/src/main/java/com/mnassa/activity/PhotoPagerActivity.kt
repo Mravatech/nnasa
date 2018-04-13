@@ -13,7 +13,6 @@ import com.rd.PageIndicatorView
 import kotlinx.android.synthetic.main.activity_photo_pager.*
 import kotlinx.android.synthetic.main.item_image.view.*
 
-
 /**
  * Created by Peter on 20.03.2018.
  */

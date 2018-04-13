@@ -64,5 +64,4 @@ class InviteHistoryAdapter : RecyclerView.Adapter<InviteHistoryHolder>() {
     companion object {
         const val EMPTY_STRING = ""
     }
-
 }

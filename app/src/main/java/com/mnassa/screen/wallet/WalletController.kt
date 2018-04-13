@@ -5,12 +5,13 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
+import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.wallet.send.SendPointsController
 import com.mnassa.translation.fromDictionary
@@ -33,23 +34,26 @@ class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsCont
             tvBalanceLabel.text = fromDictionary(R.string.wallet_balance)
             tvTransactions.adapter = transactionsAdapter
 
+            val viewRef = view.asReference()
+
             launchCoroutineUI {
-                viewModel.currentBalanceChannel.consumeEach { tvBalance.text = it.toString() }
+                viewModel.currentBalanceChannel.consumeEach { viewRef().tvBalance.text = it.toString() }
             }
 
             launchCoroutineUI {
-                viewModel.spentPointsChannel.consumeEach { tvSpent.text = it.toString() }
+                viewModel.spentPointsChannel.consumeEach { viewRef().tvSpent.text = it.toString() }
             }
 
             launchCoroutineUI {
-                viewModel.gainedPointsChannel.consumeEach { tvGained.text = it.toString() }
+                viewModel.gainedPointsChannel.consumeEach { viewRef().tvGained.text = it.toString() }
             }
 
             transactionsAdapter.isLoadingEnabled = true
+            val adapterRef = transactionsAdapter.asReference()
             launchCoroutineUI {
                 viewModel.transactionsChannel.consumeEach {
-                    transactionsAdapter.isLoadingEnabled = false
-                    transactionsAdapter.set(it)
+                    adapterRef().isLoadingEnabled = false
+                    adapterRef().set(it)
                 }
             }
 

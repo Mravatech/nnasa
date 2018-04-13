@@ -16,6 +16,8 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
+import com.mnassa.data.repository.DatabaseContract.TABLE_PABLIC_POSTS
+import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
@@ -37,6 +39,17 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         val userId = requireNotNull(userRepository.getAccountId())
 
         return db.child(TABLE_NEWS_FEED)
+                .child(userId)
+                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = converter.convertFunc(PostModel::class.java)
+                )
+    }
+
+    override suspend fun loadAllByAccountUd(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
+        val userId = requireNotNull(accountId)
+        val table = if (userId == userRepository.getAccountId()) TABLE_POSTS else TABLE_PABLIC_POSTS
+        return db.child(table)
                 .child(userId)
                 .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
                         exceptionHandler = exceptionHandler,

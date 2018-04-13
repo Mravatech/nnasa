@@ -11,7 +11,6 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleRegistryOwner
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.EmitableCompositeEventListener
 import com.mnassa.core.events.OnActivityResultEvent
@@ -67,13 +66,13 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
             override fun preCreateView(controller: Controller) {
                 if (!isViewModelInitialized) {
                     onCreated(savedInstanceState)
-                    savedInstanceState = null
                     isViewModelInitialized = true
                 }
             }
 
             override fun postCreateView(controller: Controller, view: View) {
                 onViewCreated(view)
+                onViewCreated(view, savedInstanceState)
             }
 
             override fun preDestroyView(controller: Controller, view: View) {
@@ -128,6 +127,9 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
     }
 
     open fun onViewCreated(view: View) {
+    }
+
+    open fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     }
 
     open fun onViewDestroyed(view: View) {

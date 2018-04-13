@@ -15,7 +15,7 @@ import com.mnassa.screen.posts.viewholder.*
 /**
  * Created by Peter on 3/14/2018.
  */
-class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
+open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
     var onAttachedToWindow: (item: PostModel) -> Unit = { }
     var onDetachedFromWindow: (item: PostModel) -> Unit = { }
     var onItemClickListener = { item: PostModel -> }
@@ -36,14 +36,13 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickL
     override val itemClass: Class<PostModel> = PostModel::class.java
 
     init {
-        itemsTheSameComparator = { first, second -> first.id == second.id}
+        itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second -> first == second }
         dataStorage = SortedDataStorage(itemClass, this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
-        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent, this) else
-            super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent, this) else super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PostModel> {
@@ -55,7 +54,7 @@ class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickL
             TYPE_NEED_WITH_IMAGE_3 -> NeedViewHolder.newInstance(parent, this, imagesCount = 3)
             TYPE_NEED_WITH_IMAGE_MORE -> NeedViewHolder.newInstance(parent, this, imagesCount = 4)
 
-            TYPE_NEED_REPOST ->  NeedViewHolder.newInstance(parent, this, isRepost = true)
+            TYPE_NEED_REPOST -> NeedViewHolder.newInstance(parent, this, isRepost = true)
             TYPE_NEED_WITH_IMAGE_1_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 1, isRepost = true)
             TYPE_NEED_WITH_IMAGE_2_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 2, isRepost = true)
             TYPE_NEED_WITH_IMAGE_3_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 3, isRepost = true)

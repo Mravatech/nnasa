@@ -13,15 +13,16 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import timber.log.Timber
 
 /**
  * Created by Peter on 3/19/2018.
  */
-class PostDetailsViewModelImpl(private val postId: String,
-                               private val postsInteractor: PostsInteractor,
-                               private val tagInteractor: TagInteractor,
-                               private val commentsInteractor: CommentsInteractor)
+class PostDetailsViewModelImpl(
+    private val postId: String,
+    private val postsInteractor: PostsInteractor,
+    private val tagInteractor: TagInteractor,
+    private val commentsInteractor: CommentsInteractor
+)
     : MnassaViewModelImpl(), PostDetailsViewModel {
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
@@ -114,6 +115,6 @@ class PostDetailsViewModelImpl(private val postId: String,
     }
 
     private suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { asyncWorker { tagInteractor.get(it) } }.mapNotNull { it.await() }
+        return tags.map { tag -> asyncWorker { tagInteractor.get(tag) } }.mapNotNull { it.await() }
     }
 }

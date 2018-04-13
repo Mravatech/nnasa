@@ -4,10 +4,9 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.App
 import com.mnassa.R
+import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.PostModel
@@ -48,11 +47,10 @@ val PostModel.formattedText: CharSequence?
             spannable.append(text)
             spannable
         } else text
-
     }
 
 suspend fun PostModel.isMyPost(): Boolean {
-    return author.id == App.context.appKodein().instance<UserProfileInteractor>().getAccountId()
+    return author.id == App.context.getInstance<UserProfileInteractor>().getAccountId()
 }
 
 val PostModel.isRepost: Boolean get() = originalId != id

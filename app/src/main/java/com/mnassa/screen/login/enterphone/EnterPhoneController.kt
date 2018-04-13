@@ -8,7 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -90,11 +90,9 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
                 }
             }, 0, termsAndCond.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-
             tvTermsAndConditions.append(" ")
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
-
 
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -119,7 +117,6 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
             showKeyboard(etPhoneNumberTail)
         }
-
 
         addSignInViaEmailAbility()
     }

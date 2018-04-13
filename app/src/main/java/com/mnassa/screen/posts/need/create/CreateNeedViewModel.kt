@@ -7,7 +7,6 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.widget.ChipsAdapter
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 3/19/2018.

@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import com.mnassa.R
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.showKeyboard
-import kotlinx.android.synthetic.main.controller_build_network.view.*
 import kotlinx.android.synthetic.main.item_pin.view.*
 
 /**
@@ -75,7 +74,6 @@ class PinView : LinearLayout {
                         editText.post { editText.setText(source) }
                     } else if (dstart > 0) {
                         editText.post { goNext(index, source) }
-
                     }
                     return charSequence
                 }
@@ -139,7 +137,6 @@ class PinView : LinearLayout {
         }
     }
 
-
     protected fun goNext(index: Int, charSequence: CharSequence?) {
         if (index >= editTexts.size - 1 || editTexts.isEmpty()) {
             //last element
@@ -163,7 +160,6 @@ class PinView : LinearLayout {
         editText.text = null
     }
 
-
     fun getPin(): String? {
         if (!editTexts.isEmpty()) {
             val stringBuilder = StringBuilder(editTexts.size)
@@ -177,7 +173,6 @@ class PinView : LinearLayout {
         }
         return null
     }
-
 
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
@@ -203,5 +198,4 @@ class PinView : LinearLayout {
         val progress = (lastNotEmptyEditTextIndex + 1).toFloat() / editTexts.size.toFloat()
         pinEnteringProgressListener(progress)
     }
-
 }

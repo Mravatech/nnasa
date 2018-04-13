@@ -1,4 +1,4 @@
-package com.mnassa.widget
+package com.mnassa.widget.drawer
 
 import android.content.Context
 import android.os.Build

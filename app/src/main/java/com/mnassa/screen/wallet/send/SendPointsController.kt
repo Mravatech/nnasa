@@ -2,7 +2,6 @@ package com.mnassa.screen.wallet.send
 
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
@@ -13,6 +12,7 @@ import com.mnassa.screen.connections.select.SelectConnectionController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_send_points.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 4/2/2018.

@@ -1,8 +1,6 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.DeclinedShortAccountModel
-import com.mnassa.domain.model.RecommendedConnections
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -17,10 +15,11 @@ interface ConnectionsRepository {
     suspend fun getSentConnections(): ReceiveChannel<List<ShortAccountModel>>
     suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>>
     suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>>
-
+    suspend fun getStatusConnections(userAccountId: String): ReceiveChannel<ConnectionStatus>
     suspend fun getDisconnectTimeoutDays(): Int
+    suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus
 
-
+    suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>)
     suspend fun actionConnect(userAccountIds: List<String>)
     suspend fun actionAccept(userAccountIds: List<String>)
     suspend fun actionDecline(userAccountIds: List<String>)

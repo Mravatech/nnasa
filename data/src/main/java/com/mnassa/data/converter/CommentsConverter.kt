@@ -21,6 +21,7 @@ import java.util.*
  * Created by Peter on 3/23/2018.
  */
 class CommentsConverter : ConvertersContextRegistrationCallback {
+
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertGetCommentsResponse)
         convertersContext.registerConverter(this::convertCommentEntity)

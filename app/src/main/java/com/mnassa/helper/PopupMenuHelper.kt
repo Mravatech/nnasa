@@ -93,4 +93,25 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
 
         popup.show()
     }
+
+    fun showConnectionsTabMenu(view: View, openRecommendedConnectionsScreen: () -> Unit, openSentRequestsScreen: () -> Unit, openArchivedConnectionsScreen: () -> Unit) {
+        //Creating the instance of PopupMenu
+        val popup = PopupMenu(view.context, view)
+        //Inflating the Popup using xml file
+        popup.menuInflater.inflate(R.menu.connections_main, popup.menu)
+        popup.menu.findItem(R.id.action_recommended_connections).title = fromDictionary(R.string.tab_connections_recommended)
+        popup.menu.findItem(R.id.action_sent_requests).title = fromDictionary(R.string.tab_connections_new_requests)
+        popup.menu.findItem(R.id.action_archived).title = fromDictionary(R.string.tab_connections_rejected)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_recommended_connections -> openRecommendedConnectionsScreen()
+                R.id.action_sent_requests -> openSentRequestsScreen()
+                R.id.action_archived -> openArchivedConnectionsScreen()
+            }
+            true
+        }
+
+        popup.show()
+    }
 }

@@ -17,6 +17,7 @@ def build_versions = [:]
 build_versions.min_sdk = 19
 build_versions.target_sdk = 27
 build_versions.compile_sdk = 27
+build_versions.build_tools = "27.0.3"
 ext.build_versions = build_versions
 
 //=============================================== SUPPORT ==========================================
@@ -112,12 +113,12 @@ mapper.core =            'com.androidkotlincore:entityconverter:0.0.5'
 deps.mapper = mapper
 
 //=============================================== DI ===============================================
-versions.kodein = '4.1.0'
+versions.kodein = '5.0.0'
 
 def di = [:]
 
-di.core = "com.github.salomonbrys.kodein:kodein:${versions.kodein}"
-di.android = "com.github.salomonbrys.kodein:kodein-android:${versions.kodein}"
+di.core = "org.kodein.di:kodein-di-generic-jvm:${versions.kodein}"
+di.android = "org.kodein.di:kodein-di-framework-android:${versions.kodein}"
 
 deps.di = di
 
@@ -181,6 +182,7 @@ ui.fab = 'com.github.clans:fab:1.6.4'
 ui.pagerIndicator = 'com.romandanylyk:pageindicatorview:1.0.0@aar'
 ui.chipsLayoutManager = 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
 ui.timeAgo = 'com.github.marlonlom:timeago:3.0.2'
+ui.navigationDrawer = 'com.mikepenz:materialdrawer:6.0.7@aar'
 
 deps.ui = ui
 //============================================== OTHER ============================================
@@ -203,12 +205,12 @@ deps.tests = tests
 static def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
-    handler.maven {
-        url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/"
-        url 'https://jitpack.io'
-        url 'https://maven.fabric.io/public'
-    }
+
+    handler.maven { url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/" }
     handler.maven { url "https://jitpack.io" }
+    handler.maven { url "https://maven.fabric.io/public" }
+    handler.maven { url "https://plugins.gradle.org/m2/" }
+    handler.maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI/' }
 }
 ext.addRepos = this.&addRepos
 

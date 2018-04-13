@@ -30,8 +30,7 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
             UserViewHolder.newInstance(parent, this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<ShortAccountModel> {
-        return if (viewType == TYPE_HEADER && withHeader) HeaderHolder.newInstance(parent) else
-            super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER && withHeader) HeaderHolder.newInstance(parent) else super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseVH<ShortAccountModel>, position: Int) {
