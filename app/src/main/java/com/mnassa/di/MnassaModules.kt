@@ -11,25 +11,17 @@ import com.google.gson.Gson
 import com.mnassa.AppInfoProviderImpl
 import com.mnassa.data.converter.*
 import com.mnassa.data.network.RetrofitConfig
-import com.mnassa.data.network.api.FirebaseAuthApi
-import com.mnassa.data.network.api.FirebaseDictionaryApi
-import com.mnassa.data.network.api.FirebaseInviteApi
-import com.mnassa.data.network.api.FirebaseTagsApi
-import com.mnassa.helper.CountryHelper
 import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
-import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
 import com.mnassa.domain.service.FirebaseLoginService
-import com.mnassa.helper.PlayServiceHelper
-import com.mnassa.helper.PopupMenuHelper
-import com.mnassa.helper.IntentHelper
+import com.mnassa.helper.*
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModelImpl
 import com.mnassa.screen.accountinfo.personal.PersonalInfoViewModel
@@ -193,6 +185,7 @@ private val repositoryModule = Kodein.Module {
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<NotificationRepository>() with singleton { NotificationRepositoryImpl() }
 }
 
 private val serviceModule = Kodein.Module {
@@ -212,6 +205,7 @@ private val interactorModule = Kodein.Module {
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
+    bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"

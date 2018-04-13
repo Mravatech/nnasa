@@ -1,11 +1,8 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.InvitedShortAccountModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import com.mnassa.domain.model.*
 
 /**
  * Created by Peter on 2/21/2018.
@@ -44,7 +41,7 @@ interface UserRepository {
 
     suspend fun getProfileByAccountId(accountId: String) : ProfileAccountModel?
     suspend fun getProfileById(accountId: String) : ReceiveChannel<ProfileAccountModel?>
-
+    suspend fun addPushToken()
     fun getAccountId(): String?
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?

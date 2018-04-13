@@ -290,4 +290,8 @@
     <string name="side_menu_logout">_android_side_menu_logout</string>
     <string name="side_menu_add_account">_android_side_menu_add_account</string>
 
+    <!-- ======================================== NOTIFICATIONS ===================================== -->
+    <string name="notifications_title">_notifications_header_title</string>
+    <string name="notifications_no_notifications">_notifications_empty_state_title</string>
+
 </resources>
