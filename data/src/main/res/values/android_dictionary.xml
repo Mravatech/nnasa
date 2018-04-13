@@ -114,4 +114,6 @@
     <string name="_android_post_recommends_message_placeholder_INFO">type your message…</string>
     <string name="_android_post_recommends_publish_INFO">Publish</string>
 
+    <string name="_android_connected_by_from_INFO">from</string>
+
 </resources>

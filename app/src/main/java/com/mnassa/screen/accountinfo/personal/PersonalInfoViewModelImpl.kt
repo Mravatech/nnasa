@@ -62,7 +62,8 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                         birthday,
                         showContactPhone,
                         contactEmail.takeIf { it.isNotBlank() },
-                        if (isMale) Gender.MALE else Gender.FEMALE
+                        if (isMale) Gender.MALE else Gender.FEMALE,
+                        null
                 )
                 userProfileInteractor.processAccount(personalInfo)
                 openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())

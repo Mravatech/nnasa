@@ -66,7 +66,8 @@ class OrganizationInfoViewModelImpl(
                         founded = founded,
                         organizationType = organizationType,
                         website = website,
-                        foundedDate = foundedDate
+                        foundedDate = foundedDate,
+                        connectedBy = null
                 )
                 userProfileInteractor.processAccount(companyInfo)
                 openScreenChannel.send(OrganizationInfoViewModel.OpenScreenCommand.InviteScreen())

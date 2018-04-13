@@ -1,6 +1,7 @@
 package com.mnassa.data.network.bean.retrofit.response
 
 import com.google.gson.annotations.SerializedName
+import com.mnassa.data.network.bean.firebase.ConnectedByDbEntity
 import java.io.Serializable
 
 /**
@@ -15,21 +16,23 @@ data class RegisterAccountResponse(
 
 data class AccountResponseBean(
         @SerializedName("id")
-        val id: String,                                 ///
+        val id: String,
         @SerializedName("userID")
-        val userId: String,                             //!!!
+        val userId: String,
         @SerializedName("userName")
-        val userName: String,                           //
+        val userName: String,
         @SerializedName("firstName")
         val firstName: String?,
-        @SerializedName("lastName")             //
+        @SerializedName("lastName")
         val lastName: String?,
         @SerializedName("contactPhone")
         val contactPhone: String,
         @SerializedName("language")
         val language: String,
-        @SerializedName("organizationName")     //
+        @SerializedName("organizationName")
         val organizationName: String?,
-        @SerializedName("type")                 //
-        val type: String
-): Serializable
+        @SerializedName("type")
+        val type: String,
+        @SerializedName("connectedBy")
+        val connectedBy: ConnectedByDbEntity?
+) : Serializable

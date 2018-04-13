@@ -20,6 +20,8 @@ interface ShortAccountModel : Model {
     var organizationInfo: OrganizationAccountDiffModel?
     //
     var abilities: List<AccountAbility>
+    //
+    var connectedBy: ConnectedByModel?
 }
 
 interface DeclinedShortAccountModel : ShortAccountModel {
@@ -69,6 +71,12 @@ interface PersonalAccountDiffModel : Serializable {
 
 interface OrganizationAccountDiffModel : Serializable {
     var organizationName: String
+}
+
+interface ConnectedByModel : Serializable {
+    val id: String?
+    val type: String
+    val value: String
 }
 
 enum class AccountType {

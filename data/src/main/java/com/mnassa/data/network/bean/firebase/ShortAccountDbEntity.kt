@@ -6,7 +6,6 @@ import com.mnassa.domain.model.HasId
 /**
  * Created by Peter on 2/22/2018.
  */
-
 internal open class ShortAccountDbEntity(
         override var id: String,
         @SerializedName("avatar") var avatar: String?,
@@ -15,7 +14,8 @@ internal open class ShortAccountDbEntity(
         @SerializedName("organizationName") var organizationName: String?,
         @SerializedName("type") var type: String,
         @SerializedName("userName") var userName: String,
-        @SerializedName("abilities") var abilitiesInternal: List<ShortAccountAbilityDbEntity>?
+        @SerializedName("abilities") var abilitiesInternal: List<ShortAccountAbilityDbEntity>?,
+        @SerializedName("connectedBy") var connectedBy: ConnectedByDbEntity? = null
 ) : HasId {
 
     override fun toString(): String {
@@ -50,10 +50,13 @@ internal open class DeclinedShortAccountDbEntity(
 }
 
 internal data class ShortAccountAbilityDbEntity(
-        @SerializedName("isMain")
-        var isMain: Boolean,
-        @SerializedName("name")
-        var name: String,
-        @SerializedName("place")
-        var place: String?
+        @SerializedName("isMain") var isMain: Boolean,
+        @SerializedName("name") var name: String,
+        @SerializedName("place") var place: String?
+)
+
+data class ConnectedByDbEntity(
+        @SerializedName("id") var id: String,
+        @SerializedName("type") var type: String,
+        @SerializedName("value") var value: String
 )

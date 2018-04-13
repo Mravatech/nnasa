@@ -9,6 +9,7 @@
     <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
     <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
 
+    <string name="connected_by_from">_android_connected_by_from</string>
 
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>

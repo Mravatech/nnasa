@@ -76,7 +76,8 @@ class EditCompanyProfileViewModelImpl(
                         foundedDate = foundedDate,
                         locationId = locationId,
                         interests = interestsWithIds,
-                        offers = offersWithIds)
+                        offers = offersWithIds,
+                        connectedBy = null)
                 userProfileInteractor.updateCompanyAccount(profile)
                 openScreenChannel.send(EditCompanyProfileViewModel.CompanyScreenCommander.CloseCompanyEditScreen())
             }

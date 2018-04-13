@@ -70,7 +70,8 @@ class EditPersonalProfileViewModelImpl(
                         gender = if (isMale) Gender.MALE else Gender.FEMALE,
                         locationId = locationId,
                         interests = interestsWithIds,
-                        offers = offersWithIds
+                        offers = offersWithIds,
+                        connectedBy = null
                 )
                 userProfileInteractor.updatePersonalAccount(profile)
                 openScreenChannel.send(EditPersonalProfileViewModel.PersonalScreenCommander.ClosePersonalEditScreen())
