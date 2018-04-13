@@ -9,14 +9,14 @@
         android:id="@+id/vDivider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_width"
-        android:background="@color/backgroundMain" />
+        android:background="@color/background_main" />
 
     <View
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/btnShowMore"
         android:layout_alignTop="@id/btnShowMore"
-        android:background="@color/backgroundHighlight" />
+        android:background="@color/background_highlighted" />
 
     <Button
         android:id="@+id/btnShowMore"

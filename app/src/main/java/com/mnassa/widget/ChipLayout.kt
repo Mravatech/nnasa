@@ -129,13 +129,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
             animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
         }
-        colorViews(tvChipHeader, vChipBottomLine, R.color.chipDefaultEditTextHintColor)
+        colorViews(tvChipHeader, vChipBottomLine, R.color.chip_edit_text_hint)
     }
 
     private fun focusOnView() {
         val transition = -etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical) * MARGIN_COUNT
         animateViews(ANIMATION_EDIT_TEXT_SCALE_SHOW, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_DURATION, ANIMATION_TEXT_VIEW_SCALE_SMALL)
-        colorViews(tvChipHeader, vChipBottomLine, R.color.colorAccent)
+        colorViews(tvChipHeader, vChipBottomLine, R.color.accent)
     }
 
     private fun addChip(value: TagModel?) {

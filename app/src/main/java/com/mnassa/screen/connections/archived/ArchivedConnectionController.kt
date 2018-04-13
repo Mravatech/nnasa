@@ -21,12 +21,12 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onConnectClickListener = { viewModel.connect(it) }
+
         with(view) {
             toolbar.title = fromDictionary(R.string.archived_connections_title)
             tvEmptyTitle.text = fromDictionary(R.string.archived_connections_empty_title)
             tvEmptyDescription.text = fromDictionary(R.string.archived_connections_empty_description)
-
-            adapter.onConnectClickListener = { viewModel.connect(it) }
 
             rvArchivedConnection.layoutManager = LinearLayoutManager(context)
             rvArchivedConnection.adapter = adapter

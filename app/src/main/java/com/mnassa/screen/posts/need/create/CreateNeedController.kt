@@ -60,6 +60,17 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
 
+        attachedImagesAdapter.onAddImageClickListener = {
+            dialogHelper.showSelectImageSourceDialog(view.context) { launchCoroutineUI { selectImage(it) } }
+        }
+        attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
+            attachedImagesAdapter.dataStorage.remove(item)
+        }
+        attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
+            imageToReplace = item
+            attachedImagesAdapter.onAddImageClickListener()
+        }
+
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
                 viewModel.createPost(
@@ -101,16 +112,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             rvImages.layoutManager = LinearLayoutManager(context)
             rvImages.adapter = attachedImagesAdapter
-            attachedImagesAdapter.onAddImageClickListener = {
-                dialogHelper.showSelectImageSourceDialog(context) { launchCoroutineUI { selectImage(it) } }
-            }
-            attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
-                attachedImagesAdapter.dataStorage.remove(item)
-            }
-            attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
-                imageToReplace = item
-                attachedImagesAdapter.onAddImageClickListener()
-            }
         }
 
         if (args.containsKey(EXTRA_POST_TO_EDIT)) {

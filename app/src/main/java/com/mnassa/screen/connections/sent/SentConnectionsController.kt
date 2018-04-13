@@ -21,12 +21,12 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onCancelClickListener = { viewModel.cancelRequest(it) }
+
         with(view) {
             toolbar.title = fromDictionary(R.string.sent_connection_requests_title)
             rvSentConnections.layoutManager = LinearLayoutManager(context)
             rvSentConnections.adapter = adapter
-
-            adapter.onCancelClickListener = { viewModel.cancelRequest(it) }
         }
 
         adapter.isLoadingEnabled = true

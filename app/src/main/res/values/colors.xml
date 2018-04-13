@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/powderBlue</color>
-    <color name="colorPrimaryDark">@color/coolGray</color>
-    <color name="colorAccent">@color/turquoiseBlue</color>
+    <color name="primary">@color/blue_powder</color>
+    <color name="primary_dark">@color/gray_cool</color>
+    <color name="accent">@color/blue_turquoise</color>
 
-
-    <color name="powderBlue">#bfddff</color>
-    <color name="black">#000000</color>
-    <color name="coolGray">#abafb3</color>
-    <color name="coolGrayAlpha">#82abafb3</color>
-    <color name="coolGreen">#37d45c</color>
+    <!-- =============== COMMON COLORS ================= -->
+    <color name="background_main">#f2f5f7</color>
+    <color name="background_highlighted">@color/white</color>
+    <color name="divider">#e8e8e8</color>
+    <!-- ============= UNIQUE COLORS ============== -->
+    <color name="transparent">@android:color/transparent</color>
     <color name="white">@android:color/white</color>
-    <color name="paleGray">#e4e8eb</color>
-    <color name="cerulean">#0862cb</color>
+    <color name="black">@android:color/black</color>
+    <color name="black_transparent_90">#de000000</color> <!-- 90 - percent of alpha -->
+    <color name="black_transparent_40">#6a000000</color>
+    <color name="black_transparent_20">#32000000</color>
+    <!-- GRAY -->
+    <color name="gray_cool">#abafb3</color>
+    <color name="gray_cool_transparent">#82abafb3</color>
+    <color name="gray_pale">#e4e8eb</color>
+    <color name="gray_charcoal">#282e32</color>
     <color name="silver">#e3e6e8</color>
-    <color name="grapefruit">#ff5252</color>
+    <!-- BLUE -->
+    <color name="blue_powder">#bfddff</color>
+    <color name="blue_pale">#b5e2ec</color>
+    <color name="cerulean">#0862cb</color>
     <color name="tealish">#32bcd7</color>
-    <color name="turquoiseBlue">#00accd</color>
-    <color name="charcoalGrey">#282e32</color>
-    <color name="brightBlue">#0076ff</color>
-
+    <color name="blue_turquoise">#00accd</color>
+    <color name="blue_bright">#0076ff</color>
+    <!-- GREEN -->
+    <color name="green_cool">#37d45c</color>
+    <!-- RED -->
+    <color name="grapefruit">#ff5252</color>
     <color name="red">#e10000</color>
 
-    <color name="paleBlue">#b5e2ec</color>
-    <color name="backgroundMain">#f2f5f7</color>
-    <color name="backgroundHighlight">@color/white</color>
-    <color name="divider">#e8e8e8</color>
-    <color name="backgroundTransparent">#00000000</color>
-    <color name="darkChipShadow">#66000000</color>
-    <color name="chipDefaultEditTextHintColor">#808080</color>
-    <color name="dark_chip_shadow">#66000000</color>
-    <color name="chip_default_edit_text_hint_color">#808080</color>
-    <color name="tabLayoutInActive">#b2ffffff</color>
+    <!-- ========================== OTHER ===================== -->
+    <!-- CHIP layout -->
+    <color name="chip_dark_shadow">#66000000</color>
+    <color name="chip_edit_text_hint">#808080</color>
 
-    <color name="commentRecommendedAccountBackground">#7fe4e8eb</color>
+    <!-- tab home -->
+    <color name="tab_layout_active">#b2ffffff</color>
 
-    <color name="moreImagesBackground">#6a000000</color>
-    <color name="blackAlphaLight">#32000000</color>
-    <color name="blackAlpha">#61000000</color>
-    <color name="blackDarkAlpha">#de000000</color>
+    <!-- comments -->
+    <color name="background_comment_recommended_account">#7fe4e8eb</color>
 
-    <color name="spentMoney">#c40e42</color>
-    <color name="gainedMoney">@color/coolGreen</color>
+    <!-- wallet -->
+    <color name="money_spent">#c40e42</color>
+    <color name="money_gained">@color/green_cool</color>
 
 </resources>

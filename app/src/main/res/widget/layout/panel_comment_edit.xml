@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight">
+    android:background="@color/background_highlighted">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             style="@style/MnassaDividerVertical"
             android:layout_marginBottom="@dimen/spacing_vertical"
             android:layout_marginTop="@dimen/spacing_vertical"
-            android:background="@color/colorAccent" />
+            android:background="@color/accent" />
 
         <LinearLayout
             android:layout_width="0dp"

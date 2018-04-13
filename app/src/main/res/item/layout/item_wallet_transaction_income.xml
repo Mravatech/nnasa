@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/backgroundHighlight"
+    android:background="@color/background_highlighted"
     android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -51,7 +51,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:minWidth="60dp"
-            android:textColor="@color/spentMoney"
+            android:textColor="@color/money_spent"
             android:textSize="18sp"
             tools:text="+1" />
 

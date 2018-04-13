@@ -23,12 +23,12 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onItemClickListener = { viewModel.selectAccount(it) }
+
         with(view) {
             tvScreenHeader.text = fromDictionary(R.string.choose_profile_title)
             rvAccounts.layoutManager = LinearLayoutManager(view.context)
             rvAccounts.adapter = adapter
-
-            adapter.onItemClickListener = { viewModel.selectAccount(it) }
         }
 
         adapter.isLoadingEnabled = true

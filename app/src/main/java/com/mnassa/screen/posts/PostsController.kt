@@ -22,17 +22,18 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+        adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
+        adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+        adapter.onRepostedByClickListener = { /*TODO*/ }
+
         with(view) {
             rvNewsFeed.layoutManager = LinearLayoutManager(context)
             rvNewsFeed.adapter = adapter
-            adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
-            adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
-            adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
-            adapter.onRepostedByClickListener = { /*TODO*/ }
         }
 
         adapter.isLoadingEnabled = true
-
         viewModel.handleException {
             viewModel.getNewsFeedChannel().consumeEach {
                 //TODO: bufferization

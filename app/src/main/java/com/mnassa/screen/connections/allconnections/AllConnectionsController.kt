@@ -1,6 +1,5 @@
 package com.mnassa.screen.connections.allconnections
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.github.salomonbrys.kodein.instance

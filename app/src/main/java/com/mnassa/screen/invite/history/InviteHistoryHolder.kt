@@ -36,10 +36,10 @@ class InviteHistoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.tvInviteContactNumber.text = contact.phoneNumber
         if (contact.used) {
             itemView.tvRegistration.text = fromDictionary(R.string.invite_invite_history_registered)
-            itemView.tvRegistration.setTextColor(ContextCompat.getColor(itemView.context, R.color.coolGreen))
+            itemView.tvRegistration.setTextColor(ContextCompat.getColor(itemView.context, R.color.green_cool))
         } else {
             itemView.tvRegistration.text = fromDictionary(R.string.invite_invite_history_pending)
-            itemView.tvRegistration.setTextColor(ContextCompat.getColor(itemView.context, R.color.coolGray))
+            itemView.tvRegistration.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_cool))
         }
     }
 }

@@ -4,7 +4,7 @@
     android:shape="rectangle">
     <stroke
         android:width="2dp"
-        android:color="@color/spentMoney" />
+        android:color="@color/money_spent" />
     <padding />
     <corners
         android:radius="24dp" />

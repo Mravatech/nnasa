@@ -15,7 +15,7 @@ import com.mnassa.translation.fromDictionary
 fun TextView.setHeaderWithCounter(dictionaryResId: Int, counterValue: Int) {
     val head = "${fromDictionary(dictionaryResId)}  "
     val spannable = SpannableString(head + counterValue.toString())
-    val color = ContextCompat.getColor(context, R.color.coolGray)
+    val color = ContextCompat.getColor(context, R.color.gray_cool)
     spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     text = spannable
 }
