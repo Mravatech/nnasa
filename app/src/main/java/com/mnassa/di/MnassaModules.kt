@@ -75,6 +75,7 @@ import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
+import com.mnassa.screen.posts.general.details.GeneralPostViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
@@ -148,6 +149,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }

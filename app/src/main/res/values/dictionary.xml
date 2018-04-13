@@ -65,6 +65,8 @@
     <string name="recommend_message_placeholder">_android_post_recommends_message_placeholder</string>
     <string name="recommend_publish_button">_android_post_recommends_publish</string>
 
+    <string name="general_post_title">_nav_title_general</string>
+
     <string name="posts_header_need">_posts_header_iNeed</string>
     <string name="posts_header_type">_posts_header_type_your_need</string>
     <string name="posts_recommends">_android_post_recommends</string>

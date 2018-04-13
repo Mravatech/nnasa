@@ -52,13 +52,13 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
 
     }
 
-    override fun setPost(post: PostModel) {
-        super.setPost(post)
+    override fun bindPost(post: PostModel) {
+        super.bindPost(post)
 
         view?.toolbar?.title = fromDictionary(R.string.recommend_title)
 
         if (post is RecommendedProfilePostModel) {
-            super.setTags(post.offers)
+            super.bindTags(post.offers)
             headerLayout.invoke {
                 with(it) {
                     rlRecommendedProfileRoot.visibility = View.VISIBLE
@@ -74,7 +74,7 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
         }
     }
 
-    override fun setTags(tags: List<TagModel>) = Unit
+    override fun bindTags(tags: List<TagModel>) = Unit
     override fun makePostActionsVisible() = makePostActionsGone()
 
     companion object {

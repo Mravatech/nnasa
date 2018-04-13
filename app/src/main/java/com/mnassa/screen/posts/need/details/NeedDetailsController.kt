@@ -40,7 +40,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         SharingOptionsController.OnSharingOptionsResult,
         RecommendController.OnRecommendPostResult {
     override val layoutId: Int = R.layout.controller_need_details
-    protected val postId by lazy { args.getString(EXTRA_NEED_ID) }
+    protected val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
+    protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
@@ -64,43 +65,6 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     override var recommendedAccounts: List<ShortAccountModel>
         set(value) = bindRecommendedAccounts(value)
         get() = accountsToRecommendAdapter.dataStorage.toList()
-
-    private fun bindEditedComment(value: CommentModel?) {
-        launchCoroutineUI {
-            with(getViewSuspend()) {
-                editPanel.isGone = value == null
-                if (value == null) {
-                    hideKeyboard(commentPanel.etCommentText)
-                    return@launchCoroutineUI
-                }
-
-                editPanel.tvEditText.text = value.text
-                editPanel.tvEditText.goneIfEmpty()
-                commentPanel.etCommentText.setText(value.text)
-                commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
-                showKeyboard(commentPanel.etCommentText)
-            }
-        }
-    }
-
-    private fun bindRecommendedAccounts(value: List<ShortAccountModel>) {
-        launchCoroutineUI {
-            getViewSuspend().recommendPanel.isGone = value.isEmpty()
-            accountsToRecommendAdapter.set(value)
-        }
-    }
-
-    private fun bindReplyTo(value: CommentModel?) {
-        launchCoroutineUI {
-            with(getViewSuspend()) {
-                replyPanel.isGone = value == null
-                if (value == null) return@launchCoroutineUI
-                replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
-                replyPanel.tvReplyTo.append(" ")
-                replyPanel.tvReplyTo.append(value.creator.formattedName)
-            }
-        }
-    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -143,9 +107,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             }
         }
 
-        launchCoroutineUI { viewModel.postChannel.consumeEach { setPost(it) } }
+        launchCoroutineUI { viewModel.postChannel.consumeEach { bindPost(it) } }
 
-        launchCoroutineUI { viewModel.postTagsChannel.consumeEach { setTags(it) } }
+        launchCoroutineUI { viewModel.postTagsChannel.consumeEach { bindTags(it) } }
 
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
@@ -189,7 +153,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
 
         (args.getSerializable(EXTRA_NEED_MODEL) as PostModel?)?.apply {
-            setPost(this)
+            bindPost(this)
             args.remove(EXTRA_NEED_MODEL)
         }
 
@@ -228,11 +192,14 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     private fun showPostMenu(view: View) {
-        popupMenuHelper.showPostMenu(
-                view = view,
-                onRepost = { openSharingOptionsScreen() },
-                onReport = { Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show() }
-        )
+        post?.let {
+            popupMenuHelper.showPostMenu(
+                    view = view,
+                    post = it,
+                    onRepost = { openSharingOptionsScreen() },
+                    onReport = { Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show() }
+            )
+        }
     }
 
     private fun showCommentMenu(view: View, commentModel: CommentModel) {
@@ -247,8 +214,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     }
 
-    protected open fun setPost(post: PostModel) {
-        Timber.d("POST -> setPost $post")
+    protected open fun bindPost(post: PostModel) {
+        this.post = post
+        Timber.d("POST -> bindPost $post")
 
         view?.apply {
             toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
@@ -257,7 +225,6 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
         headerLayout.invoke {
             with(it) {
-
                 //author block
                 ivAvatar.avatarRound(post.author.avatar)
                 tvUserName.text = post.author.formattedName
@@ -340,7 +307,44 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     }
 
-    protected open fun setTags(tags: List<TagModel>) {
+    private fun bindEditedComment(value: CommentModel?) {
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                editPanel.isGone = value == null
+                if (value == null) {
+                    hideKeyboard(commentPanel.etCommentText)
+                    return@launchCoroutineUI
+                }
+
+                editPanel.tvEditText.text = value.text
+                editPanel.tvEditText.goneIfEmpty()
+                commentPanel.etCommentText.setText(value.text)
+                commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
+                showKeyboard(commentPanel.etCommentText)
+            }
+        }
+    }
+
+    private fun bindRecommendedAccounts(value: List<ShortAccountModel>) {
+        launchCoroutineUI {
+            getViewSuspend().recommendPanel.isGone = value.isEmpty()
+            accountsToRecommendAdapter.set(value)
+        }
+    }
+
+    private fun bindReplyTo(value: CommentModel?) {
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                replyPanel.isGone = value == null
+                if (value == null) return@launchCoroutineUI
+                replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
+                replyPanel.tvReplyTo.append(" ")
+                replyPanel.tvReplyTo.append(value.creator.formattedName)
+            }
+        }
+    }
+
+    protected open fun bindTags(tags: List<TagModel>) {
         headerLayout.invoke {
             with(it) {
                 vTagsSeparator.isGone = tags.isEmpty()
@@ -365,7 +369,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     private fun openSharingOptionsScreen() {
-        open(SharingOptionsController.newInstance(listener = this))
+        if (post?.canBeShared == true) {
+            open(SharingOptionsController.newInstance(listener = this))
+        }
     }
 
     private fun openRecommendScreen(post: PostModel) {

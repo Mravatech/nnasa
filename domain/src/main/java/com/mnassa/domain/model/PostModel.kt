@@ -72,3 +72,5 @@ sealed class ItemType : Serializable {
     object EVENT: ItemType()
     object POST: ItemType()
 }
+
+val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE

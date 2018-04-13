@@ -7,6 +7,8 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.mnassa.R
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.canBeShared
 import com.mnassa.translation.fromDictionary
 
 /**
@@ -52,11 +54,15 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
         popup.show()
     }
 
-    fun showPostMenu(view: View, onRepost: () -> Unit, onReport: () -> Unit) {
+    fun showPostMenu(view: View, post: PostModel, onRepost: () -> Unit, onReport: () -> Unit) {
         val popup = PopupMenu(view.context, view)
         popup.menuInflater.inflate(R.menu.post_view, popup.menu)
         popup.menu.findItem(R.id.action_post_repost).title = fromDictionary(R.string.need_action_repost)
         popup.menu.findItem(R.id.action_post_report).title = fromDictionary(R.string.need_action_report)
+
+        if (!post.canBeShared) {
+            popup.menu.removeItem(R.id.action_post_repost)
+        }
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {

@@ -49,7 +49,6 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PostModel> {
         return when (viewType) {
-            TYPE_GENERAL -> GeneralViewHolder.newInstance(parent, this)
             TYPE_NEED -> NeedViewHolder.newInstance(parent, this)
             TYPE_NEED_WITH_IMAGE_1 -> NeedViewHolder.newInstance(parent, this, imagesCount = 1)
             TYPE_NEED_WITH_IMAGE_2 -> NeedViewHolder.newInstance(parent, this, imagesCount = 2)
@@ -97,7 +96,13 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
                 else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
             }
             PostType.OFFER -> TYPE_OFFER
-            PostType.GENERAL -> TYPE_GENERAL
+            PostType.GENERAL -> when (item.images.size) {
+                0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
+                1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
+                2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
+                3 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_3_REPOST else TYPE_NEED_WITH_IMAGE_3
+                else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
+            }
             PostType.PROFILE -> TYPE_PROFILE
         }
     }
@@ -114,7 +119,6 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     }
 
     private companion object {
-        private const val TYPE_GENERAL = 1
         private const val TYPE_NEED = 2
         private const val TYPE_NEED_WITH_IMAGE_1 = 3
         private const val TYPE_NEED_WITH_IMAGE_2 = 4
@@ -129,5 +133,6 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
 
         private const val TYPE_OFFER = 12
         private const val TYPE_PROFILE = 13
+        private const val TYPE_PROFILE_REPOST = 14
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
+import com.mnassa.screen.posts.general.details.GeneralPostController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.profile.details.RecommendedProfileController
 
@@ -19,6 +20,7 @@ class PostDetailsFactory {
 
         return when (post.type) {
             PostType.PROFILE -> RecommendedProfileController(args)
+            PostType.GENERAL -> GeneralPostController(args)
             else -> NeedDetailsController(args)
         }
     }
