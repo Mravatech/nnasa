@@ -53,7 +53,9 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
     }
 
     private fun onNotificationClickHandle(item: NotificationModel) {
-        viewModel.notificationView(item.id)
+        if (!item.isOld){
+            viewModel.notificationView(item.id)
+        }
     }
 
     companion object {
