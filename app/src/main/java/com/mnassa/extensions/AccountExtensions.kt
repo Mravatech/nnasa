@@ -19,13 +19,13 @@ val ShortAccountModel.formattedFromEvent: CharSequence
         val connectedBy = connectedBy
         if (connectedBy == null || connectedBy.type.isBlank() || connectedBy.value.isBlank()) return ""
 
-        val head = fromDictionary(R.string.connected_by_from)
+        val prefix = fromDictionary(R.string.connected_by_from)
         val spannable = when (connectedBy.type) {
-            CONNECTED_BY_PHONE -> SpannableString("$head ${connectedBy.type}")
-            else -> SpannableString("$head ${connectedBy.type} ${connectedBy.value}")
+            CONNECTED_BY_PHONE -> SpannableString("$prefix ${connectedBy.type}")
+            else -> SpannableString("$prefix ${connectedBy.type} ${connectedBy.value}")
         }
         val color = ContextCompat.getColor(requireNotNull(App.context), R.color.black)
-        spannable.setSpan(ForegroundColorSpan(color), head.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(ForegroundColorSpan(color), prefix.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannable
     }
 
