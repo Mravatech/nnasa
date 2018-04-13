@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
@@ -38,6 +39,17 @@ class DialogHelper {
                 )
                 .itemsCallback { dialog, _, which, _ ->
                     listener(CropActivity.ImageSource.values()[which])
+                    dialog.dismiss()
+                }
+                .cancelable(true)
+                .show()
+    }
+
+    fun showComplaintDialog(context: Context, reports: List<TranslatedWordModel>,  listener: (TranslatedWordModel) -> Unit)  {
+        MaterialDialog.Builder(context)
+                .items(                        reports                )
+                .itemsCallback { dialog, _, which, _ ->
+                    listener(reports[which])
                     dialog.dismiss()
                 }
                 .cancelable(true)
@@ -125,12 +137,13 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun connectionsDialog(context: Context, onOkClick: () -> Unit) {
+    fun connectionsDialog(context: Context,info: String, onOkClick: () -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_yes_no)
-        dialog.tvYes.text = "Yes"
-        dialog.tvNo.text = "No"
+        dialog.tvConnectionInfo.text = info
+        dialog.tvYes.text = fromDictionary(R.string.user_profile_yes)
+        dialog.tvNo.text = fromDictionary(R.string.user_profile_no)
         dialog.tvNo.setOnClickListener { dialog.dismiss() }
         dialog.tvYes.setOnClickListener {
             onOkClick()

@@ -8,7 +8,6 @@ import com.mnassa.R
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.formatted
-import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_header_another_profile_company_view.view.*
@@ -22,7 +21,7 @@ import kotlinx.android.synthetic.main.sub_header_company.view.*
 
 class AnotherCompanyProfileHolder(
         itemView: View,
-        private val viewModel: ProfileViewModel,
+        private val onClickListener: View.OnClickListener,
         item: ProfileModel) : BaseProfileHolder(itemView) {
     override fun bind(item: PostModel) {
     }
@@ -33,9 +32,8 @@ class AnotherCompanyProfileHolder(
             tvPointsGiven.text = getSpannableText(item.profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given), Color.BLACK)
             handleConnection(tvConnectionStatus, item.connectionStatus)
             if (item.connectionStatus != ConnectionStatus.NONE) {
-                tvConnectionStatus.setOnClickListener {
-                    viewModel.connectionStatusClick(item.connectionStatus)
-                }
+                tvConnectionStatus.tag = this@AnotherCompanyProfileHolder
+                tvConnectionStatus.setOnClickListener(onClickListener)
             }
             item.profile.location?.let {
                 tvProfileLocation.text = it.formatted()
@@ -56,23 +54,14 @@ class AnotherCompanyProfileHolder(
                         areThereTags =  item.offers.isNotEmpty())
             }
             vBottomDivider.visibility = if (item.offers.isEmpty()) View.VISIBLE else View.GONE
-//            item.offers.let {
-//                for (tag in it) {
-//                    llBottomTags.addView(SimpleChipView(llBottomTags.context, tag))
-//                }
-//            }
             llBottomTags.setTags(item.offers)
         }
     }
 
-//    private fun onConnectionsClick(connectionStatus: ConnectionStatus) {
-//
-//    }
-
     companion object {
-        fun newInstance(parent: ViewGroup, viewModel: ProfileViewModel, profileModel: ProfileModel): AnotherCompanyProfileHolder {
+        fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, profileModel: ProfileModel): AnotherCompanyProfileHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_another_profile_company_view, parent, false)
-            return AnotherCompanyProfileHolder(view, viewModel, profileModel)
+            return AnotherCompanyProfileHolder(view, onClickListener, profileModel)
         }
     }
 }

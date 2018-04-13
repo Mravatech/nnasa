@@ -106,5 +106,8 @@
     <string name="_android_side_menu_profile_INFO">My Profile</string>
     <string name="_android_side_menu_logout_INFO">Logout</string>
     <string name="_android_side_menu_add_account_INFO">Add Account</string>
+    <string name="_android_type_your_message_INFO">Type your message…</string>
+    <string name="_android_please_describe_your_reason_INFO">Please describe your reason</string>
+    <string name="_android_send_INFO">SEND</string>
 
 </resources>

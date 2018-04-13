@@ -29,8 +29,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/profile_main_image_height"
                     android:contentDescription="@null"
-                    android:background="@drawable/avatar_shadow"
-                    app:srcCompat="@drawable/ic_empty_avatar_placeholder" />
+                    android:foreground="@drawable/avatar_shadow"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@drawable/ic_empty_avatar_placeholder" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
