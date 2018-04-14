@@ -5,15 +5,16 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**
@@ -36,13 +38,15 @@ import timber.log.Timber
  */
 class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult,
-        RecommendController.OnRecommendPostResult {
+        RecommendController.OnRecommendPostResult,
+        ComplaintOtherController.OnComplaintResult {
     override val layoutId: Int = R.layout.controller_post_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
     override val viewModel: PostDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialog: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -70,6 +74,10 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     override var recommendedAccounts: List<ShortAccountModel>
         set(value) = bindRecommendedAccounts(value)
         get() = accountsToRecommendAdapter.dataStorage.toList()
+    override var onComplaint: String = ""
+        set(value) {
+            viewModel.sendComplaint(postId, value)
+        }
 
     private fun bindEditedComment(value: CommentModel?) {
         launchCoroutineUI {
@@ -202,6 +210,21 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         super.onViewDestroyed(view)
     }
 
+    private fun complainAboutProfile(view: View) {
+        launchCoroutineUI {
+            val reportsList = viewModel.retrieveComplaints()
+            dialog.showComplaintDialog(view.context, reportsList) {
+                if (it.id == OTHER) {
+                    val controller = ComplaintOtherController.newInstance()
+                    controller.targetController = this@PostDetailsController
+                    open(controller)
+                } else {
+                    viewModel.sendComplaint(postId, it.toString())
+                }
+            }
+        }
+    }
+
     private fun onPostCommentClick() {
         with(view ?: return) {
             val editedCommentLocal = editedComment
@@ -226,7 +249,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         popupMenuHelper.showPostMenu(
                 view = view,
                 onRepost = { openSharingOptionsScreen() },
-                onReport = { Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show() }
+                onReport = { complainAboutProfile(view) }
         )
     }
 
@@ -371,7 +394,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     companion object {
         private const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
         private const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
-
+        private const val OTHER = "other"
         fun newInstance(postId: String): PostDetailsController {
             val args = Bundle()
             args.putString(EXTRA_NEED_ID, postId)

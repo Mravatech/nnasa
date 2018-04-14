@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.formatted
-import com.mnassa.screen.profile.ProfileViewModel
 import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_header_profile_company_view.view.*
@@ -21,7 +20,8 @@ import kotlinx.android.synthetic.main.sub_header_company.view.*
 
 class CompanyProfileViewHolder(
         itemView: View,
-        private val viewModel: ProfileViewModel, item: ProfileModel) : BaseProfileHolder(itemView) {
+        private val onClickListener: View.OnClickListener,
+        item: ProfileModel) : BaseProfileHolder(itemView) {
     override fun bind(item: PostModel) {
     }
 
@@ -48,22 +48,19 @@ class CompanyProfileViewHolder(
                         areThereTags =  item.offers.isNotEmpty())
             }
             vBottomDivider.visibility = if (item.offers.isEmpty()) View.VISIBLE else View.GONE
-//            item.offers.let {
-//                for (tag in it) {
-//                    llBottomTags.addView(SimpleChipView(llBottomTags.context, tag))
-//                }
-//            }
             llBottomTags.setTags(item.offers)
-            tvProfileConnections.setOnClickListener { viewModel.connectionClick() }
-            tvPointsGiven.setOnClickListener { viewModel.walletClick() }
+            tvProfileConnections.setOnClickListener(onClickListener)
+            tvProfileConnections.tag = this@CompanyProfileViewHolder
+            tvPointsGiven.setOnClickListener(onClickListener)
+            tvPointsGiven.tag = this@CompanyProfileViewHolder
         }
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup, viewModel: ProfileViewModel, profileModel: ProfileModel): CompanyProfileViewHolder {
+        fun newInstance(parent: ViewGroup,  onClickListener: View.OnClickListener, profileModel: ProfileModel): CompanyProfileViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_profile_company_view, parent, false)
 
-            return CompanyProfileViewHolder(view, viewModel, profileModel)
+            return CompanyProfileViewHolder(view, onClickListener, profileModel)
         }
     }
 }

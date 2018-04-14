@@ -153,7 +153,6 @@ class ConnectionsRepositoryImpl(
 
     private fun getConnectionAction(action: ConnectionAction) =
             when (action) {
-
                 ConnectionAction.CONNECT -> NetworkContract.ConnectionAction.CONNECT
                 ConnectionAction.ACCEPT -> NetworkContract.ConnectionAction.ACCEPT
                 ConnectionAction.DECLINE -> NetworkContract.ConnectionAction.DECLINE

@@ -73,5 +73,7 @@ internal object DatabaseContract {
     const val TABLE_COMMENT_REPLIES = "replyComments"
     //
     const val TABLE_TRANSACTIONS = "transactions"
+    //
+    const val COMPLAINT_REASON = "complaintReason"
 
 }

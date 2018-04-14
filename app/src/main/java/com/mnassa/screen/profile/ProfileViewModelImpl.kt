@@ -1,15 +1,21 @@
 package com.mnassa.screen.profile
 
-import com.google.firebase.storage.FirebaseStorage
+import android.os.Bundle
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
+import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.ComplaintModelImpl
+import com.mnassa.domain.interactor.ConnectionsInteractor
+import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ConnectionAction
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import timber.log.Timber
@@ -23,28 +29,31 @@ class ProfileViewModelImpl(
         private val tagInteractor: TagInteractor,
         private val userProfileInteractor: UserProfileInteractor,
         private val connectionsInteractor: ConnectionsInteractor,
-        private val postsInteractor: PostsInteractor
+        private val postsInteractor: PostsInteractor,
+        private val complaintInteractor: ComplaintInteractor
 ) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
-    override val profileClickChannel: BroadcastChannel<ProfileViewModel.ProfileCommand> = BroadcastChannel(10)
     override val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus> = BroadcastChannel(10)
     override val postChannel: BroadcastChannel<ListItemEvent<PostModel>> = BroadcastChannel(10)
 
-    private var profileClickJob: Job? = null
-    override fun connectionClick() {
-        profileClickJob?.cancel()
-        profileClickJob = launchCoroutineUI {
-            profileClickChannel.send(ProfileViewModel.ProfileCommand.ProfileConnection())
+    private var reportsList = emptyList<TranslatedWordModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        handleException {
+            reportsList = complaintInteractor.getReports()
         }
     }
 
-    private var walletClickJob: Job? = null
-    override fun walletClick() {
-        walletClickJob?.cancel()
-        walletClickJob = launchCoroutineUI {
-            profileClickChannel.send(ProfileViewModel.ProfileCommand.ProfileWallet())
+    override suspend fun retrieveComplaints(): List<TranslatedWordModel> {
+        if (reportsList.isNotEmpty()) return reportsList
+        handleException {
+            withProgressSuspend {
+                reportsList = complaintInteractor.getReports()
+            }
         }
+        return reportsList
     }
 
     override fun getProfileWithAccountId(accountId: String) {
@@ -64,6 +73,11 @@ class ProfileViewModelImpl(
                 hideProgress()
             }
         }
+        handleException {
+            connectionsInteractor.getStatusesConnections(accountId).consumeEach {
+                statusesConnectionsChannel.send(it)
+            }
+        }
     }
 
     override fun getPostsById(accountId: String) {
@@ -74,9 +88,15 @@ class ProfileViewModelImpl(
         }
     }
 
-    override fun connectionStatusClick(connectionStatus: ConnectionStatus) {
-        launchCoroutineUI {
-            statusesConnectionsChannel.send(connectionStatus)
+    override fun sendComplaint(id: String, reason: String) {
+        handleException {
+            withProgressSuspend {
+                complaintInteractor.sendComplaint(ComplaintModelImpl(
+                        id = id,
+                        type = NetworkContract.Complaint.ACCOUNT_TYPE,
+                        reason = reason
+                ))
+            }
         }
     }
 

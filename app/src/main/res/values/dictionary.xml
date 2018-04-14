@@ -218,6 +218,9 @@
     <string name="user_profile_connection_connected">_connections_group_header_connected</string>
     <string name="user_profile_connection_connect">connections_button_connect</string>
     <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>
+    <string name="user_profile_you_want_to_disconnect">_connectionAction_disconnectMessageTitle</string>
+    <string name="user_profile_yes">_pin_cancel_yes</string>
+    <string name="user_profile_no">_pin_cancel_no</string>
 
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
     <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
@@ -294,6 +297,12 @@
     <string name="invite_invite_history_registered">_android_invite_history_registered</string>
     <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
 
+    <!-- ======================================== COMPLAINT ===================================== -->
+    <string name="complaint_other_title">_profile_menu_complaint</string>
+    <string name="complaint_type_message">_android_type_your_message</string>
+    <string name="complaint_describe_reason">_android_please_describe_your_reason</string>
+    <string name="complaint_send">_android_send</string>
+
     <!-- ======================================== SIDE MENU ===================================== -->
     <string name="side_menu_profile">_android_side_menu_profile</string>
     <string name="side_menu_wallet">_sidemenu_wallet</string>
@@ -303,5 +312,7 @@
     <string name="side_menu_terms">_sidemenu_termsandcond</string>
     <string name="side_menu_logout">_android_side_menu_logout</string>
     <string name="side_menu_add_account">_android_side_menu_add_account</string>
+
+
 
 </resources>
