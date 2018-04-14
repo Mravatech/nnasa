@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvDeleteForMe"
+        style="@style/ChatDialog"
+        tools:text="Delete to me" />
+
+    <TextView
+        android:id="@+id/tvDeleteForBoth"
+        style="@style/ChatDialog"
+        android:visibility="gone"
+        tools:text="Delete To Both" />
+
+    <TextView
+        android:id="@+id/tvCopyChatMessage"
+        style="@style/ChatDialog"
+        tools:text="Copy" />
+
+    <TextView
+        android:id="@+id/tvReply"
+        style="@style/ChatDialog"
+        android:visibility="gone"
+        tools:text="Reply" />
+
+    <TextView
+        android:id="@+id/tvCancel"
+        style="@style/ChatDialog"
+        android:textColor="@color/black"
+        tools:text="Cancel" />
+
+</LinearLayout>

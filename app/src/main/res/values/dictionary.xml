@@ -262,6 +262,20 @@
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
 
+    <!-- ========================================= CHAT ====================================== -->
+
+    <string name="chats_no_conversation">_chats_controller_empty_state_title</string>
+    <string name="chats_no_messages">_chat_controller_empty_state_title</string>
+    <string name="chats_send_messages_post">_android_message_chat_post</string>
+    <string name="chats_send_messages_write">_chat_controller_message_placeholder</string>
+    <string name="chats_title">_chats_controller_list_option_chats</string>
+    <string name="chats_today_message">_android_chat_today</string>
+    <string name="chats_delete_for_me">_chatMessage_actionRemoveForMe</string>
+    <string name="chats_delete_for_all">_chatMessage_actionRemoveForAll</string>
+    <string name="chats_copy">_chatMessage_actionCopy</string>
+    <string name="chats_reply">_chatMessage_actionReply</string>
+    <string name="chats_cancel">_android_cancel</string>
+
     <string name="position_not_specified">_android_position_not_specified</string>
 
     <!-- ========================================= INVITE ====================================== -->

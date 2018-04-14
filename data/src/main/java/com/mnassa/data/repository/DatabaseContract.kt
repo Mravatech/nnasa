@@ -47,6 +47,11 @@ internal object DatabaseContract {
     const val TABLE_POSTS = "posts"
     const val TABLE_PABLIC_POSTS = "publicPosts"
     //
+    const val TABLE_CHAT = "chats"
+    const val TABLE_CHAT_LIST = "chatsList"
+    const val TABLE_CHAT_MESSAGES = "chatsMessages"
+    const val TABLE_CHAT_TYPE = "private"
+    //
     const val TABLE_INVITETION = "invitations"
     //
     const val TABLE_NEWS_FEED = "newsfeed"
