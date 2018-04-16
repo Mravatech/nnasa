@@ -5,6 +5,7 @@ import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.domain.repository.InviteRepository
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,8 +22,11 @@ class InviteInteractorImpl(
     }
 
     override suspend fun getInvitedContacts(): List<PhoneContactInvited> {
-        val userId = requireNotNull(userRepository.getAccountId())
+        val userId = requireNotNull(userRepository.getAccountIdOrException())
         return inviteRepository.getInvitedContacts(userId)
     }
 
+    override suspend fun getInvitesCountChannel(): ReceiveChannel<Int> {
+        return inviteRepository.getInvitesCountChannel()
+    }
 }

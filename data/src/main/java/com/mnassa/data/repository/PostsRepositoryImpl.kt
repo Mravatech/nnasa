@@ -41,10 +41,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi) : PostsRepository {
 
     override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
-        val userId = requireNotNull(userRepository.getAccountId())
-
         return db.child(TABLE_NEWS_FEED)
-                .child(userId)
+                .child(userRepository.getAccountIdOrException())
                 .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = { mapPost(it) }
@@ -53,7 +51,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun loadAllByAccountUd(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
         val userId = requireNotNull(accountId)
-        val table = if (userId == userRepository.getAccountId()) TABLE_POSTS else TABLE_PABLIC_POSTS
+        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PABLIC_POSTS
         return db.child(table)
                 .child(userId)
                 .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
@@ -63,7 +61,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> {
-        val userId = requireNotNull(userRepository.getAccountId())
+        val userId = requireNotNull(userRepository.getAccountIdOrException())
 
         return db
                 .child(TABLE_NEWS_FEED)
@@ -74,7 +72,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> {
-        val userId = requireNotNull(userRepository.getAccountId())
+        val userId = requireNotNull(userRepository.getAccountIdOrException())
 
         return db
                 .child(TABLE_NEWS_FEED)

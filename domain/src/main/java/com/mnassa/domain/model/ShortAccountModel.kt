@@ -28,10 +28,6 @@ interface DeclinedShortAccountModel : ShortAccountModel {
     var declinedAt: Date
 }
 
-interface InvitedShortAccountModel : ShortAccountModel {
-    var invites: Int
-}
-
 interface PersonalInfoModel : ShortAccountModel {
     val birthdayDate: String?
     val showContactEmail: Boolean?

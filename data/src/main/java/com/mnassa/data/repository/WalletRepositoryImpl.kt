@@ -28,7 +28,7 @@ class WalletRepositoryImpl(
 
     override suspend fun getBalance(): ReceiveChannel<Long> {
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
-                .child(userRepository.getAccountId())
+                .child(userRepository.getAccountIdOrException())
                 .child(DatabaseContract.TABLE_ACCOUNTS_COL_POINTS)
                 .toValueChannel<Long>(exceptionHandler)
                 .map { it ?: 0 }
@@ -36,7 +36,7 @@ class WalletRepositoryImpl(
 
     override suspend fun getSpentPointsCount(): ReceiveChannel<Long> {
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
-                .child(userRepository.getAccountId())
+                .child(userRepository.getAccountIdOrException())
                 .child(DatabaseContract.TABLE_ACCOUNTS_COL_TOTAL_OUTCOME)
                 .toValueChannel<Long>(exceptionHandler)
                 .map { it ?: 0 }
@@ -44,7 +44,7 @@ class WalletRepositoryImpl(
 
     override suspend fun getGainedPointsCount(): ReceiveChannel<Long> {
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
-                .child(userRepository.getAccountId())
+                .child(userRepository.getAccountIdOrException())
                 .child(DatabaseContract.TABLE_ACCOUNTS_COL_TOTAL_INCOME)
                 .toValueChannel<Long>(exceptionHandler)
                 .map { it ?: 0 }
@@ -52,14 +52,14 @@ class WalletRepositoryImpl(
 
     override suspend fun getTransactions(): ReceiveChannel<List<TransactionModel>> {
         return db.child(DatabaseContract.TABLE_TRANSACTIONS)
-                .child(userRepository.getAccountId())
+                .child(userRepository.getAccountIdOrException())
                 .toListChannel<TransactionDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
     }
 
     override suspend fun sendPoints(amount: Long, recipientId: String, description: String?) {
         walletApi.sendPoints(SendPointsRequest(
-                fromAid = requireNotNull(userRepository.getAccountId()),
+                fromAid = requireNotNull(userRepository.getAccountIdOrException()),
                 toAid = recipientId,
                 amount = amount,
                 userDescription = description

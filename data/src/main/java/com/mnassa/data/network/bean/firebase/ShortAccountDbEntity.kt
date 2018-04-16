@@ -23,15 +23,6 @@ internal open class ShortAccountDbEntity(
     }
 }
 
-internal open class InviteShortAccountDbEntity : ShortAccountDbEntity{
-    @SerializedName("invites")
-    var invites: Int
-
-    constructor(id: String, avatar: String?, firstName: String?, lastName: String?, organizationName: String?, type: String, userName: String, abilitiesInternal: List<ShortAccountAbilityDbEntity>, invites: Int) : super(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
-        this.invites = invites
-    }
-}
-
 internal open class DeclinedShortAccountDbEntity(
         id: String,
         avatar: String?,

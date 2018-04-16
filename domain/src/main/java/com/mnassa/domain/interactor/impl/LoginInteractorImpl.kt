@@ -16,9 +16,7 @@ import kotlinx.coroutines.experimental.launch
 class LoginInteractorImpl(private val userRepository: UserRepository, private val loginService: FirebaseLoginService) : LoginInteractor {
     override val onLogoutListener: SimpleCompositeEventListener<Unit> = SimpleCompositeEventListener()
 
-    override suspend fun isLoggedIn(): Boolean {
-        return userRepository.getCurrentAccount() != null
-    }
+    override suspend fun isLoggedIn(): Boolean = userRepository.getAccountIdOrNull() != null
 
     override suspend fun requestVerificationCode(
             phoneNumber: String,

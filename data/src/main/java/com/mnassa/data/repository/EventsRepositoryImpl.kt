@@ -21,10 +21,9 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val converter: ConvertersContext) : EventsRepository {
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
-        val accountId = requireNotNull(userRepository.getAccountId())
         return firestore
                 .collection("events")
-                .document(accountId)
+                .document(userRepository.getAccountIdOrException())
                 .collection("feed")
                 .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
                         exceptionHandler = exceptionHandler,

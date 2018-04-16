@@ -14,9 +14,9 @@ class EventsViewModelImpl(private val eventsRepository: EventsRepository) : Mnas
         super.onCreate(savedInstanceState)
 
         handleException {
-            eventsRepository.getEventsFeedChannel().consumeEach {
-
-            }
+//            eventsRepository.getEventsFeedChannel().consumeEach {
+//
+//            }
         }
     }
 }

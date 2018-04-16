@@ -16,7 +16,7 @@ class StorageInteractorImpl(private val storageRepository: StorageRepository,
 
     override suspend fun sendImage(uploadPhoto: StoragePhotoData): String {
         val token = requireNotNull(userRepository.getFirebaseUserId())
-        val accountId = requireNotNull(userRepository.getAccountId())
+        val accountId = requireNotNull(userRepository.getAccountIdOrException())
         return storageRepository.uploadPhotoToStorage(uploadPhoto, token, accountId)
     }
 

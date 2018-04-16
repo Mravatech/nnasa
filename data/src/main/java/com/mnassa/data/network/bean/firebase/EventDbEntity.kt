@@ -20,11 +20,20 @@ internal data class EventDbEntity(
         @SerializedName("locationId") val locationId: String,
         @SerializedName("locationType") val locationType: String,
         @SerializedName("originalCreatedAt") val originalCreatedAt: Long,
-        @SerializedName("originalId") val originalId: Long,
+        @SerializedName("originalId") val originalId: String,
         @SerializedName("pictures") val pictures: List<String>,
         @SerializedName("price") val price: Long,
-
-        ) : HasId {
+        @SerializedName("privacyType") val privacyType: String,
+        @SerializedName("status") val status: String,
+        @SerializedName("tags") val tags: List<String>,
+        @SerializedName("text") val text: String,
+        @SerializedName("ticketsPerAccount") val ticketsPerAccount: Long,
+        @SerializedName("ticketsSold") val ticketsSold: Long,
+        @SerializedName("ticketsTotal") val ticketsTotal: Long,
+        @SerializedName("title") val title: String,
+        @SerializedName("type") val type: String,
+        @SerializedName("updatedAt") val updatedAt: String
+) : HasId {
 }
 
 internal data class EventCountersDbEntity(
@@ -33,6 +42,6 @@ internal data class EventCountersDbEntity(
 )
 
 internal data class EventDurationDbEntity(
-    @SerializedName("type") val type: String,
-    @SerializedName("value") val value: Long
+        @SerializedName("type") val type: String,
+        @SerializedName("value") val value: Long
 )

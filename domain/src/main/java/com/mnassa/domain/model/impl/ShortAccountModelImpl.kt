@@ -34,21 +34,6 @@ data class DeclinedShortAccountModelImpl(
         override var connectedBy: ConnectedByModel?
 ) : DeclinedShortAccountModel
 
-data class InvitedShortAccountModelImpl(
-        override var id: String,
-        override var firebaseUserId: String,
-        override var userName: String,
-        override var accountType: AccountType,
-        override var avatar: String?,
-        override var contactPhone: String?,
-        override var language: String?,
-        override var personalInfo: PersonalAccountDiffModel?,
-        override var organizationInfo: OrganizationAccountDiffModel?,
-        override var abilities: List<AccountAbility>,
-        override var invites: Int,
-        override var connectedBy: ConnectedByModel?
-): InvitedShortAccountModel
-
 data class PersonalInfoModelImpl(
         override var id: String,
         override var firebaseUserId: String,

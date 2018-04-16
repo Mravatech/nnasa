@@ -25,7 +25,7 @@ class CountersRepositoryImpl(private val db: DatabaseReference, private val user
     override val numberOfUnreadResponses: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_RESPONSES)
 
     private fun getCounter(key: String): ReceiveChannel<Int> {
-        val accountId = userRepository.getAccountId()
+        val accountId = userRepository.getAccountIdOrException()
 
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)

@@ -51,7 +51,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
 
 
     override suspend fun listOfSupportMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
-        val myUserId = requireNotNull(userRepository.getAccountId())
+        val myUserId = requireNotNull(userRepository.getAccountIdOrException())
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
                 .child(TABLE_CHAT_TYPE)
@@ -92,7 +92,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun listOfMessages(chatId: String, accointId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
-        val myUserId = requireNotNull(userRepository.getAccountId())
+        val myUserId = requireNotNull(userRepository.getAccountIdOrException())
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
                 .child(TABLE_CHAT_TYPE)
@@ -120,7 +120,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>> {
-        val userId = requireNotNull(userRepository.getAccountId())
+        val userId = requireNotNull(userRepository.getAccountIdOrException())
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_LIST)
                 .child(TABLE_CHAT_TYPE)

@@ -31,7 +31,7 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
         val chatPair = linkedMessageId?.let { Pair(it, null) }?:kotlin.run { null }
         chatRepository.sendMessage(ChatMessageModelImpl(
                 createdAt = Date(),
-                creator = requireNotNull(userRepository.getAccountId()),
+                creator = requireNotNull(userRepository.getAccountIdOrException()),
                 text = text,
                 type = type,
                 chatID = chatID,

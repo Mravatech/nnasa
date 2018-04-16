@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:back_button_enabled="false" />
+        app:drawer_button_enabled="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvMessages"

@@ -1,7 +1,6 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.InvitedShortAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -12,8 +11,10 @@ import com.mnassa.domain.model.*
  */
 interface UserRepository {
     suspend fun setCurrentAccount(account: ShortAccountModel?)
-    suspend fun getCurrentAccount(): ShortAccountModel?
-    suspend fun getCurrentAccountChannel(): ReceiveChannel<InvitedShortAccountModel>
+    suspend fun getCurrentAccountOrNull(): ShortAccountModel?
+    suspend fun getCurrentAccountOrException(): ShortAccountModel
+    suspend fun getCurrentAccountChannel(): ReceiveChannel<ShortAccountModel>
+
     suspend fun getAccounts(): List<ShortAccountModel>
     suspend fun getAccountById(id: String): ShortAccountModel?
 
@@ -45,7 +46,8 @@ interface UserRepository {
     suspend fun getProfileByAccountId(accountId: String) : ProfileAccountModel?
     suspend fun getProfileById(accountId: String) : ReceiveChannel<ProfileAccountModel?>
 
-    fun getAccountId(): String?
+    fun getAccountIdOrNull(): String?
+    fun getAccountIdOrException(): String
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?
 }

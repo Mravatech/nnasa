@@ -20,10 +20,6 @@ class UserProfileInteractorImpl(
 
     override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> = userRepository.getAllAccounts()
 
-    override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
-        return userRepository.getCurrentAccountChannel()
-    }
-
     override suspend fun createPersonalAccount(firstName: String,
                                                secondName: String,
                                                userName: String,
@@ -84,5 +80,6 @@ class UserProfileInteractorImpl(
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
-    override suspend fun getAccountId(): String? = userRepository.getAccountId()
+    override suspend fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()
+    override suspend fun getAccountIdOrException(): String = userRepository.getAccountIdOrException()
 }

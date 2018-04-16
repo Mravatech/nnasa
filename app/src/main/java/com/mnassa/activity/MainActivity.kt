@@ -15,7 +15,6 @@ import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
 import kotlinx.android.synthetic.main.activity_main.*
-import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinContext
@@ -45,9 +44,6 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
         }
 
         onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe {
-//            router.popToRoot()
-//            router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
-
             startActivity(
                     Intent(this@MainActivity, MainActivity::class.java)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
