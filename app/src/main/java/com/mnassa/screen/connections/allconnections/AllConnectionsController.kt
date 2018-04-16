@@ -35,7 +35,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
             rvAllConnections.adapter = allConnectionsAdapter
         }
 
-        allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+        allConnectionsAdapter.onItemOptionsClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
 
         allConnectionsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
@@ -51,6 +51,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
 
     override fun onDestroyView(view: View) {
         allConnectionsAdapter.destroyCallbacks()
+        view.rvAllConnections.adapter = null
         super.onDestroyView(view)
     }
 

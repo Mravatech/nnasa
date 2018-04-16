@@ -1,13 +1,14 @@
 package com.mnassa.domain.model
 
 import android.os.Parcelable
+import java.io.Serializable
 
 /**
  * Created by IntelliJ IDEA.
  * User: okli
  * Date: 3/13/2018
  */
-interface TagModel : Parcelable {
+interface TagModel : Parcelable, Serializable {
     var status: String?
     var name: String
     var id: String?

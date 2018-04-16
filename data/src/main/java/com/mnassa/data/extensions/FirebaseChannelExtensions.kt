@@ -87,7 +87,7 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChannelWithPagination(
         databaseReference: DatabaseReference,
         exceptionHandler: ExceptionHandler,
-        crossinline mapper: (input: DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (input: DbType) -> OutType = { it as OutType },
         limit: Int = DEFAULT_LIMIT
 ): Channel<OutType> {
     val channel = ArrayChannel<OutType>(limit)
@@ -115,7 +115,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
 
 internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithPagination(
         exceptionHandler: ExceptionHandler,
-        crossinline mapper: (input: DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (input: DbType) -> OutType = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<OutType> {
     return getValueChannelWithPagination(this, exceptionHandler, mapper, limit)
 }
@@ -129,7 +129,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
 //}
 internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithChangesHandling(
         exceptionHandler: ExceptionHandler,
-        crossinline mapper: (DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (DbType) -> OutType = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 

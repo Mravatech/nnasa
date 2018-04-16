@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="max_need_length">1000</integer>
+    <integer name="max_recommend_length">300</integer>
 </resources>

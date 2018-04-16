@@ -4,6 +4,7 @@ import android.net.Uri
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.domain.model.TagModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -11,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface PostsInteractor {
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
-    suspend fun loadById(id: String): ReceiveChannel<PostModel>
+    suspend fun loadById(id: String): ReceiveChannel<PostModel?>
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
 
@@ -19,20 +20,37 @@ interface PostsInteractor {
             text: String,
             imagesToUpload: List<Uri>,
             uploadedImages: List<String>,
-            privacyType: PostPrivacyType,
-            toAll: Boolean,
-            privacyConnections: List<String>): PostModel
+            privacy: PostPrivacyOptions,
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?): PostModel
 
     suspend fun updateNeed(
             postId: String,
             text: String,
             imagesToUpload: List<Uri>,
             uploadedImages: List<String>,
-            privacyType: PostPrivacyType,
-            toAll: Boolean,
-            privacyConnections: List<String>)
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?)
+
+    suspend fun createUserRecommendation(
+            accountId: String,
+            text: String,
+            privacy: PostPrivacyOptions)
+
+    suspend fun updateUserRecommendation(
+            postId: String,
+            accountId: String,
+            text: String)
 
     suspend fun removePost(postId: String)
 
     suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel
 }
+
+data class PostPrivacyOptions(
+        val newsFeed: Boolean,
+        val privacyType: PostPrivacyType,
+        val privacyConnections: List<String>
+)

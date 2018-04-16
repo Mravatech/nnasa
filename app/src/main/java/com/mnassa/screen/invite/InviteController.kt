@@ -78,6 +78,11 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
         }
     }
 
+    override fun onDestroyView(view: View) {
+        view.rvInviteToMnassa.adapter = null
+        super.onDestroyView(view)
+    }
+
     private fun checkReadContactPermission(view: View) {
         launchCoroutineUI {
             val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)

@@ -10,6 +10,9 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.mikepenz.materialdrawer.*
+import com.mikepenz.materialdrawer.model.*
+import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -89,10 +92,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withSavedInstance(savedInstanceState)
                     .withTranslucentStatusBar(true)
                     .withAccountHeader(R.layout.drawer_header)
-                    .withOnAccountHeaderListener { _, profile, _ ->
+                    .withOnAccountHeaderListener { _: View, profile: IProfile<Any>, _: Boolean ->
+                        val innerProfile = profile as IProfile<ProfileDrawerItem>
                         when {
-                            profile is MnassaProfileDrawerItem -> {
-                                val account = profile.account
+                            innerProfile is MnassaProfileDrawerItem -> {
+                                val account =  innerProfile.account
                                 drawer?.closeDrawer()
                                 activeAccountId = account.id
                                 viewModel.selectAccount(account)

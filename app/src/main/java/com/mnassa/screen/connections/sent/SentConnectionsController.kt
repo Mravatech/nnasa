@@ -43,6 +43,7 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
 
     override fun onDestroyView(view: View) {
         adapter.destoryCallbacks()
+        view.rvSentConnections.adapter = null
         super.onDestroyView(view)
     }
 

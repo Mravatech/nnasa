@@ -14,7 +14,7 @@ import com.mnassa.domain.repository.UserRepository
 class StorageInteractorImpl(private val storageRepository: StorageRepository,
                             private val userRepository: UserRepository) : StorageInteractor {
 
-    override suspend fun sendAvatar(uploadPhoto: StoragePhotoData): String {
+    override suspend fun sendImage(uploadPhoto: StoragePhotoData): String {
         val token = requireNotNull(userRepository.getFirebaseUserId())
         val accountId = requireNotNull(userRepository.getAccountId())
         return storageRepository.uploadPhotoToStorage(uploadPhoto, token, accountId)

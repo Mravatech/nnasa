@@ -67,7 +67,7 @@ class ProfileViewModelImpl(
                             tagInteractor.getTagsByIds(it.interests),
                             tagInteractor.getTagsByIds(it.offers),
                             userProfileInteractor.getAccountId() == accountId
-                            , connectionsInteractor.getConnectedStatusById(accountId))
+                            , connectionsInteractor.getConnectionStatusById(accountId))
                     profileChannel.send(profile)
                 }
                 hideProgress()

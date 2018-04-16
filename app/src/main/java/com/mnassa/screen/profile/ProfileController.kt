@@ -19,8 +19,10 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.posts.PostDetailsFactory
+import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.PostDetailsController
+import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -63,7 +65,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
         adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
         view.ivProfileBack.setOnClickListener { close() }
-        adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it)) }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         launchCoroutineUI {
@@ -133,6 +137,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.sendComplaint(id, value)
         }
 
+    override fun onDestroyView(view: View) {
+        view.rvProfile.adapter = null
+        super.onDestroyView(view)
+    }
+
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
         when (connectionStatus) {
             ConnectionStatus.CONNECTED -> {
@@ -160,7 +169,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         popup.menu.findItem(R.id.action_complain_about_profile).title = "Complain about Profile" //todo set from dict
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_share_profile -> Toast.makeText(view.context, "Share Profile", Toast.LENGTH_SHORT).show()
+                R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
                 R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
             }
             true
@@ -202,16 +211,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun setTitle(profileModel: ProfileModel, view: View) {
         if (profileModel.profile.accountType == AccountType.PERSONAL) {
-            val userName = "${profileModel.profile.personalInfo?.firstName
-                    ?: EMPTY_SPACE} ${profileModel.profile.personalInfo?.lastName ?: EMPTY_SPACE}"
-            view.profileName.text = userName
+            view.profileName.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
             view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
-            view.tvTitleCollapsed.text = userName
+            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
         } else {
-            val organizationName = profileModel.profile.organizationInfo?.organizationName
-            view.profileName.text = organizationName
+            view.profileName.text = profileModel.profile.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.profile.organizationType
-            view.tvTitleCollapsed.text = organizationName
+            view.tvTitleCollapsed.text = profileModel.profile.organizationInfo?.organizationName
         }
     }
 

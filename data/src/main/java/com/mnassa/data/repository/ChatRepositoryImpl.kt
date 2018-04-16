@@ -60,7 +60,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .apply { keepSynced(true) }
                 .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(ChatMessageModel::class.java)
+                        mapper = { converter.convert(it, ChatMessageModel::class.java) }
                 )
                 .map {
                     it.item.replyMessage?.first?.let { first ->
@@ -100,7 +100,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(chatId)
                 .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(ChatMessageModel::class.java)
+                        mapper = { converter.convert(it, ChatMessageModel::class.java) }
                 )
                 .map {
                     it.item.replyMessage?.first?.let { first ->
@@ -127,7 +127,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(userId)
                 .toValueChannelWithChangesHandling<ChatDbModel, ChatRoomModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(ChatRoomModel::class.java)
+                        mapper = { converter.convert(it, ChatRoomModel::class.java) }
                 )
                 .map {
                     it.item.account = userRepository

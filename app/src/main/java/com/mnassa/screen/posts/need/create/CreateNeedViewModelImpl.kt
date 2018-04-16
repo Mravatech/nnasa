@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts.need.create
 
 import com.mnassa.domain.interactor.PlaceFinderInteractor
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.GeoPlaceModel
@@ -25,7 +26,14 @@ class CreateNeedViewModelImpl(
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
 
-    override fun createPost(need: String, tags: List<TagModel>, images: List<AttachedImage>, placeId: String?, price: Double?, shareOptions: SharingOptionsController.ShareToOptions) {
+    override fun createPost(
+            need: String,
+            tags: List<TagModel>,
+            images: List<AttachedImage>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ) {
         handleException {
             withProgressSuspend {
                 if (postId == null) {
@@ -33,9 +41,10 @@ class CreateNeedViewModelImpl(
                             text = need,
                             imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
                             uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                            privacyType = shareOptions.privacyType,
-                            privacyConnections = shareOptions.selectedConnections,
-                            toAll = shareOptions.isMyNewsFeedSelected
+                            privacy = postPrivacyOptions,
+                            tags = tags,
+                            price = price,
+                            placeId = placeId
                     )
                 } else {
                     postsInteractor.updateNeed(
@@ -43,9 +52,9 @@ class CreateNeedViewModelImpl(
                             text = need,
                             imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
                             uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                            privacyType = shareOptions.privacyType,
-                            privacyConnections = shareOptions.selectedConnections,
-                            toAll = shareOptions.isMyNewsFeedSelected
+                            tags = tags,
+                            price = price,
+                            placeId = placeId
                     )
                 }
 
@@ -54,7 +63,7 @@ class CreateNeedViewModelImpl(
         }
     }
 
-    override suspend fun getUser(userId: String): ShortAccountModel? = userRepository.getAccountById(userId)
+    override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountById(userId) }
 
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
 

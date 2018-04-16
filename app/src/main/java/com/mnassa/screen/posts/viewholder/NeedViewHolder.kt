@@ -28,6 +28,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             tvUserName.text = item.author.formattedName
             tvTime.text = item.originalCreatedAt.toTimeAgo()
             tvDescription.text = item.formattedText
+            tvDescription.goneIfEmpty()
 
             tvViewsCount.text = item.counters.views.toString()
             tvCommentsCount.text = item.counters.comments.toString()
@@ -46,6 +47,9 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
 
             btnAction.setOnClickListener(onClickListener)
             btnAction.tag = this@NeedViewHolder
+
+            rlAuthorRoot.setOnClickListener(onClickListener)
+            rlAuthorRoot.tag = this@NeedViewHolder
 
             bindImages(item)
             bindRepost(item)

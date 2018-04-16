@@ -44,9 +44,10 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         super.onCreate(savedInstanceState)
     }
 
-    protected open suspend fun <T> handleExceptionsSuspend(function: suspend () -> T) {
+    protected open suspend fun <T> handleExceptionsSuspend(function: suspend () -> T): T? {
+        var result: T? = null
         try {
-            function()
+            result = function()
         } catch (e: JobCancellationException) {
             //ignore
             Timber.d(e)
@@ -68,6 +69,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             Timber.e(e)
             throw e
         }
+        return result
     }
 
     open fun <T> handleException(function: suspend () -> T): Job {

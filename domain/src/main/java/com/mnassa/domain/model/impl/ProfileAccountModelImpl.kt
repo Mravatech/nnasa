@@ -45,5 +45,6 @@ data class ProfileAccountModelImpl(
         override val location: LocationPlaceModel?,
         override val gender: Gender,
         override val website: String?,
-        override val organizationType: String?
+        override val organizationType: String?,
+        override var connectedBy: ConnectedByModel?
 ) : ProfileAccountModel

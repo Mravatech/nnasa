@@ -85,6 +85,7 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvInvite.adapter = null
         super.onDestroyView(view)
     }
 

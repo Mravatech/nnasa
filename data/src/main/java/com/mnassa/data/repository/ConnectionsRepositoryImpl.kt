@@ -81,7 +81,7 @@ class ConnectionsRepositoryImpl(
                 }
     }
 
-    override suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus {
+    override suspend fun getConnectionStatusById(userAccountId: String): ConnectionStatus {
         val status = databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
                 .child(requireNotNull(userRepository.getAccountId()))
                 .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)

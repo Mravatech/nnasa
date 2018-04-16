@@ -12,7 +12,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.posts.need.details.PostDetailsController
+import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_message.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
@@ -65,7 +65,8 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         adapter.onMyMessageLongClick = { callDialog(view, true, it) }
         adapter.onReplyClick = { chatMessageModel, post ->
             if (post != null) {
-                open(PostDetailsController.newInstance(post))
+                val postDetailsFactory: PostDetailsFactory by instance()
+                open(postDetailsFactory.newInstance(post))
             } else {
                 val position = adapter.dataStorage.indexOf(chatMessageModel)
                 view.rvMessages.scrollToPosition(position)
@@ -101,7 +102,8 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         adapter.onMyMessageLongClick = { callDialog(view, true, it) }
         adapter.onReplyClick = { chatMessageModel, post ->
             if (post != null) {
-                open(PostDetailsController.newInstance(post))
+                val postDetailsFactory: PostDetailsFactory by instance()
+                open(postDetailsFactory.newInstance(post))
             } else {
                 val position = adapter.dataStorage.indexOf(chatMessageModel)
                 view.rvMessages.scrollToPosition(position)

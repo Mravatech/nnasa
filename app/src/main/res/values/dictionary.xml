@@ -9,6 +9,7 @@
     <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
     <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
 
+    <string name="connected_by_from">_android_connected_by_from</string>
 
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
@@ -58,8 +59,19 @@
 
     <!-- ========================================= POSTS ======================================== -->
     <string name="need_prefix">_post_type_need_Info</string>
+    <string name="recommend_prefix">_android_post_recommends_prefix</string>
+    <string name="recommend_title">_profile_menu_recommendUser</string>
+    <string name="recommend_connect_now">_android_post_recommends_connect_now</string>
+    <string name="recommend_open_profile">_android_post_recommends_open_profile</string>
+    <string name="recommend_message_placeholder">_android_post_recommends_message_placeholder</string>
+    <string name="recommend_publish_button">_android_post_recommends_publish</string>
+
+    <string name="general_post_title">_nav_title_general</string>
+
     <string name="posts_header_need">_posts_header_iNeed</string>
     <string name="posts_header_type">_posts_header_type_your_need</string>
+    <string name="posts_recommends">_android_post_recommends</string>
+    <string name="posts_recommends_skills_prefix">_accEdit_cellSkills_placeholder</string>
 
 
     <string name="post_delete_dialog_title">_question_postDeleting_title</string>

@@ -26,6 +26,9 @@ object NetworkContract {
 
     object PostType {
         const val NEED = "need"
+        const val GENERAL = "general"
+        const val OFFER = "offer"
+        const val ACCOUNT = "account"
     }
 
     object PostPrivacyType {

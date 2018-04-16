@@ -52,5 +52,7 @@
     <!-- drawer -->
     <color name="drawer_name">@color/white</color>
     <color name="drawer_position">#ccffffff</color>
+    <color name="recommended_profile_position">#cdffffff</color>
+    <color name="recommended_profile_tags">#657786</color>
 
 </resources>

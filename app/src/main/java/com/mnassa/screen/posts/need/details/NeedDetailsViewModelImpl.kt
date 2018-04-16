@@ -16,19 +16,18 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import timber.log.Timber
 
 /**
  * Created by Peter on 3/19/2018.
  */
-
-class PostDetailsViewModelImpl(
-        private val postId: String,
-        private val postsInteractor: PostsInteractor,
-        private val tagInteractor: TagInteractor,
-        private val commentsInteractor: CommentsInteractor,
-        private val complaintInteractor: ComplaintInteractor
-) : MnassaViewModelImpl(), PostDetailsViewModel {
+open class NeedDetailsViewModelImpl(
+    private val postId: String,
+    private val postsInteractor: PostsInteractor,
+    private val tagInteractor: TagInteractor,
+    private val commentsInteractor: CommentsInteractor,
+    private val complaintInteractor: ComplaintInteractor
+)
+    : MnassaViewModelImpl(), NeedDetailsViewModel {
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -43,16 +42,14 @@ class PostDetailsViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            try {
-
-
-                postsInteractor.loadById(postId).consumeEach {
+            postsInteractor.loadById(postId).consumeEach {
+                if (it != null) {
+                    loadComments()
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
-                    loadComments()
+                } else {
+                    //TODO: close screen
                 }
-            } catch (e: KotlinNullPointerException) {
-                Timber.e(e)// todo for Petya
             }
         }
         handleException {

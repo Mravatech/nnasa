@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_recommended.view.*
 import kotlinx.coroutines.experimental.Job
@@ -28,6 +29,7 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
         super.onViewCreated(view)
 
         adapter.onConnectClickListener = { viewModel.connect(it) }
+        adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             toolbar.title = fromDictionary(R.string.recommended_connections_title)
@@ -48,11 +50,11 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
     }
 
 
-    private var onPageSelectedJob: Job? = null
+    private var sendContactsJob: Job? = null
     @SuppressLint("MissingPermission")
     private fun sendContacts() {
-        onPageSelectedJob?.cancel()
-        onPageSelectedJob = launchCoroutineUI { thisRef ->
+        sendContactsJob?.cancel()
+        sendContactsJob = launchCoroutineUI { thisRef ->
             val permissionsResult = thisRef().permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {
@@ -77,6 +79,7 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvRecommendedConnections.adapter = null
         super.onDestroyView(view)
     }
 
