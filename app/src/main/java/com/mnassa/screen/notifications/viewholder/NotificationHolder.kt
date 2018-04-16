@@ -29,17 +29,17 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
 
     override fun bind(item: NotificationModel) {
 
-        if (item.extra?.author != null) {
-            val name = if (item.extra?.author?.accountType == AccountType.PERSONAL) {
-                "${item.extra?.author?.personalInfo?.firstName} ${item.extra?.author?.personalInfo?.lastName}"
+        if (item.extra.author != null) {
+            val name = if (item.extra.author?.accountType == AccountType.PERSONAL) {
+                "${item.extra.author?.personalInfo?.firstName} ${item.extra.author?.personalInfo?.lastName}"
             } else {
-                item.extra?.author?.organizationInfo?.organizationName
+                item.extra.author?.organizationInfo?.organizationName
             }
             itemView.tvUserName.text = name + " | " + item.type
         }
         Timber.i(item.type)
         with(itemView) {
-            ivUserIcon.avatarRound(item.extra?.author?.avatar)
+            ivUserIcon.avatarRound(item.extra.author?.avatar)
             tvNotificationInfo.text = getTextByType(item)
             tvNotificationCame.text = item.createdAt.toTimeAgo()
             llNotificationRoot.setOnClickListener(onClickListener)
@@ -49,8 +49,8 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
 
     private fun getTextByType(item: NotificationModel): SpannableString {
         val type = item.type
-        val eventName = item.extra?.eventName
-        val totalPrice = item.extra?.totalPrice
+        val eventName = item.extra.eventName
+        val totalPrice = item.extra.totalPrice
         val typeRawValue = type
         var result: SpannableString
         when (type) {
@@ -59,7 +59,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             }
             postComment -> {
                 val commented = fromDictionary("$BASE_KEY$COMMENTED_POST", COMMENTED_POST_DEFAULT_VALUE)
-                val postText = COMMENTED_POST_I_NEED + item.extra?.post?.text
+                val postText = COMMENTED_POST_I_NEED + item.extra.post?.text
                 val text = "$commented $postText"
                 result = getOneSpanText(text, postText, Color.BLACK)
             }
@@ -74,7 +74,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             }
             iWasRecommended -> {
                 val recommented = fromDictionary("$BASE_KEY$RECOMMENDED_YOU_IN_POST", RECOMMENDED_YOU_IN_POST_DEFAULT_VALUE)
-                val postText = COMMENTED_POST_I_NEED + item.extra?.post?.text
+                val postText = COMMENTED_POST_I_NEED + item.extra.post?.text
                 val text = "$recommented $postText"
                 result = getOneSpanText(text, postText, Color.BLACK)
             }
@@ -140,7 +140,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
     }
 
     private fun getRecommendedName(item: NotificationModel): String {
-        val recommended = item.extra?.recommended ?: return ""
+        val recommended = item.extra.recommended ?: return ""
         val name = if (recommended.accountType == AccountType.PERSONAL) {
             "${recommended.personalInfo?.firstName} ${recommended.personalInfo?.lastName}"
         } else {

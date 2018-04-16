@@ -17,7 +17,7 @@ data class NotificationModelImpl(
         override val createdAt: Date,
         override val text: String,
         override val type: String,
-        override val extra: NotificationExtra?,
+        override val extra: NotificationExtra,
         override var isOld: Boolean
 ) : NotificationModel
 

@@ -11,7 +11,7 @@ interface NotificationModel : Model {
     val createdAt: Date
     val text: String
     val type: String
-    val extra: NotificationExtra?
+    val extra: NotificationExtra
     var isOld: Boolean
 }
 

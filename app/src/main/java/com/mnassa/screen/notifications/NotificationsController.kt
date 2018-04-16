@@ -8,6 +8,8 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.posts.need.details.PostDetailsController
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -53,9 +55,22 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
     }
 
     private fun onNotificationClickHandle(item: NotificationModel) {
-        if (!item.isOld){
+        if (!item.isOld) {
             viewModel.notificationView(item.id)
         }
+
+        when (item.type) {
+            postComment, generalPostByAdmin, newEventByAdmin, eventCancelling, userWasRecommendedInEvent -> {
+                open(PostDetailsController.newInstance(requireNotNull(item.extra.post).id))
+            }
+            iWasRecommended, iWasRecommendedInEvent, userWasRecommended, autoSuggestYouCanHelp,
+            newUserJoined, postRepost, connectionRequest, connectionsRequestAccepted,
+            userWasRecommendedToYou, userWasRecommendedByPost, newEventAttendee, privateChatMessage -> {
+                val id = item.extra.author?.id ?: item.extra.recommended?.id
+                open(ProfileController.newInstance(requireNotNull(id)))
+            }
+        }
+
     }
 
     companion object {
