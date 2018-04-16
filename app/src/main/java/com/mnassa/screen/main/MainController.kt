@@ -26,19 +26,16 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.ConnectionsController
-import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.main.MainController.DrawerItem.*
-import com.mnassa.screen.invite.InviteController
-import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
-import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -135,8 +132,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             SETTINGS -> {
                             } //TODO
                             HELP -> open(ChatMessageController.newInstance())
-                            TERMS -> {
-                            } //TODO
+                            TERMS -> open(TermsAndConditionsController.newInstance())
                             LOGOUT -> viewModel.logout()
                         }
                         true

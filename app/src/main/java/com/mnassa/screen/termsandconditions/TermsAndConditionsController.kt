@@ -12,6 +12,7 @@ import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_terms_and_conditions.view.*
+import org.kodein.di.generic.instance
 
 
 /**
