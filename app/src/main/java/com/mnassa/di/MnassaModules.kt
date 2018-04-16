@@ -92,6 +92,8 @@ import com.mnassa.screen.wallet.WalletViewModel
 import com.mnassa.screen.wallet.WalletViewModelImpl
 import com.mnassa.screen.wallet.send.SendPointsViewModel
 import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
+import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModel
+import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
 import org.kodein.di.Kodein
 import org.kodein.di.generic.*
@@ -149,6 +151,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
     bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }
+    bind<TermsAndConditionsViewModel>() with provider { TermsAndConditionsViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

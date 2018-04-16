@@ -32,6 +32,7 @@ import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
@@ -131,8 +132,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             SETTINGS -> {
                             } //TODO
                             HELP -> open(ChatMessageController.newInstance())
-                            TERMS -> {
-                            } //TODO
+                            TERMS -> open(TermsAndConditionsController.newInstance())
                             LOGOUT -> viewModel.logout()
                         }
                         true

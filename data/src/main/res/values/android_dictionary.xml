@@ -116,4 +116,7 @@
     <string name="_android_please_describe_your_reason_INFO">Please describe your reason</string>
     <string name="_android_send_INFO">SEND</string>
 
+
+    <string name="_android_terms_and_conditions_INFO">Terms and conditions</string>
+
 </resources>

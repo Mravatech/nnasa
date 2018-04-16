@@ -262,6 +262,9 @@
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
 
+    <!-- ========================================= TERMS AND CONDITIONS ====================================== -->
+    <string name="terms_and_conditions">_android_terms_and_conditions</string>
+
     <!-- ========================================= CHAT ====================================== -->
 
     <string name="chats_no_conversation">_chats_controller_empty_state_title</string>
