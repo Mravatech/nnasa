@@ -223,4 +223,7 @@ ext {
     endpointProd = 'https://release.com'
     endpointPreProd = 'https://us-central1-mnassa4dev.cloudfunctions.net/'
     endpointDev = 'https://us-central1-fir-test-b7667.cloudfunctions.net/'
+    termsAndConditionsProd = 'https://mnassa.com/'
+    termsAndConditionsPreProd = 'https://mnassa4dev.firebaseapp.com/'
+    termsAndConditionsDev = 'https://fir-test-b7667.firebaseapp.com/'
 }
