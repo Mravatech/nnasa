@@ -68,6 +68,11 @@ object NetworkContract {
         const val MALE = "male"
         const val FEMALE = "female"
     }
+
+    object Complaint{
+        const val ACCOUNT_TYPE = "account"
+        const val POST_TYPE = "post"
+    }
 }
 
 val PostPrivacyType.stringValue: String get() = when (this) {

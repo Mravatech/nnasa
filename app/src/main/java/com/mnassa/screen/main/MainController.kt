@@ -13,12 +13,21 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.mikepenz.materialdrawer.*
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.AccountHeader
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.ConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
@@ -125,8 +134,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             INVITE -> open(InviteController.newInstance())
                             SETTINGS -> {
                             } //TODO
-                            HELP -> {
-                            } //TODO
+                            HELP -> open(ChatMessageController.newInstance())
                             TERMS -> {
                             } //TODO
                             LOGOUT -> viewModel.logout()

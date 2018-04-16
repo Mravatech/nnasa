@@ -58,16 +58,17 @@
                     tools:text="at some company" />
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatImageView
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/ivChat"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:clickable="true"
                 android:focusable="true"
+                app:fab_size="mini"
                 android:foreground="?selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/ic_bnt_chat_43dp" />
+                app:srcCompat="@drawable/ic_chat" />
 
         </RelativeLayout>
 
