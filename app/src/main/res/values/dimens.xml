@@ -39,6 +39,8 @@
 
     <dimen name="drawable_padding">8dp</dimen>
 
+    <dimen name="chat_bottom_line_padding_start">72dp</dimen>
+
 
     <dimen name="connection_recommended_item_height">220dp</dimen>
     <dimen name="connection_recommended_item_width">194dp</dimen>

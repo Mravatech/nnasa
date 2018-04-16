@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import android.widget.Toast
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -18,13 +17,19 @@ import com.mnassa.extensions.avatarSquare
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
+import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.profile.create.RecommendUserController
+import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +37,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Date: 2/26/2018
  */
 
-class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data) {
+class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data), ComplaintOtherController.OnComplaintResult {
 
     override val layoutId: Int = R.layout.controller_profile
     override val viewModel: ProfileViewModel by instance()
@@ -43,20 +48,28 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        adapter.viewModel = viewModel
-        view.ivProfileBack.setOnClickListener { close() }
-        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
-            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                view.tvTitleCollapsed.visibility = View.VISIBLE
-            } else {
-                view.tvTitleCollapsed.visibility = View.GONE
-            }
-        })
         val id = accountModel?.let {
             view.ivCropImage.avatarSquare(it.avatar)
             it.id
         } ?: run { accountId }
         viewModel.getProfileWithAccountId(id)
+        adapter.onConnectionStatusClickListener = {
+            when (it) {
+                ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                    viewModel.sendConnectionStatus(it, id, true)
+                }
+                ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
+                    viewModel.sendConnectionStatus(it, id, true)
+            }
+        }
+        adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
+        adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
+        view.ivProfileBack.setOnClickListener { close() }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it)) }
+        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
                 adapter.profileModel = profileModel
@@ -68,6 +81,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                         PhotoPagerActivity.start(view.context, listOf(avatar), 0)
                     }
                 }
+                handleCollapsingToolbar(view, profileModel)
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
                 handleFab(profileModel.connectionStatus, view.fabProfile)
@@ -91,32 +105,37 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
         launchCoroutineUI {
-            viewModel.profileClickChannel.consumeEach {
-                when (it) {
-                    is ProfileViewModel.ProfileCommand.ProfileConnection -> open(AllConnectionsController.newInstance())
-                    is ProfileViewModel.ProfileCommand.ProfileWallet -> Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        launchCoroutineUI {
-            viewModel.statusesConnectionsChannel.consumeEach {
-                when (it) {
-                    ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context) {
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
-                    ConnectionStatus.SENT -> dialog.connectionsDialog(view.context) {//todo set later on
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
-                    ConnectionStatus.RECOMMENDED -> dialog.connectionsDialog(view.context) {
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
-                    ConnectionStatus.REQUESTED -> dialog.connectionsDialog(view.context) {
-                        viewModel.sendConnectionStatus(it, id, true)
-                    }
+            viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
+                handleFab(connectionStatus, view.fabProfile)
+                adapter.profileModel?.let {
+                    it.connectionStatus = connectionStatus
+                    adapter.notifyItemChanged(0)
                 }
             }
         }
     }
+
+    private fun handleCollapsingToolbar(view: View, profileModel: ProfileModel) {
+        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
+                view.tvTitleCollapsed.visibility = View.VISIBLE
+                if (!profileModel.isMyProfile) {
+                    view.fabProfile.hide()
+                }
+            } else {
+                view.tvTitleCollapsed.visibility = View.GONE
+                if (!profileModel.isMyProfile) {
+                    view.fabProfile.show()
+                }
+            }
+        })
+    }
+
+    override var onComplaint: String = ""
+        set(value) {
+            val id = accountModel?.id ?: accountId
+            viewModel.sendComplaint(id, value)
+        }
 
     override fun onDestroyView(view: View) {
         view.rvProfile.adapter = null
@@ -124,8 +143,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
-        Toast.makeText(activity, connectionStatus.name, Toast.LENGTH_LONG).show()
-        //todo handle here
         when (connectionStatus) {
             ConnectionStatus.CONNECTED -> {
                 fab.visibility = View.VISIBLE
@@ -135,19 +152,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             ConnectionStatus.RECOMMENDED -> {
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
-                fab.setImageResource(R.drawable.ic_recommend)//todo icons
+                fab.setImageResource(R.drawable.ic_new_requests)
             }
             ConnectionStatus.SENT -> {
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
-                fab.setImageResource(R.drawable.ic_camera)//todo icons
-            }
-            ConnectionStatus.REQUESTED -> {
-            }
-            ConnectionStatus.DISCONNECTED -> {
-            }
-            ConnectionStatus.NONE -> {
-                //todo smth
+                fab.setImageResource(R.drawable.ic_pending)
             }
         }
     }
@@ -160,11 +170,26 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
-                R.id.action_complain_about_profile -> Toast.makeText(view.context, "Complain about Profile", Toast.LENGTH_SHORT).show()
+                R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
             }
             true
         }
         popup.show()
+    }
+
+    private fun complainAboutProfile(profileModel: ProfileModel, view: View) {
+        launchCoroutineUI {
+            val reportsList = viewModel.retrieveComplaints()
+            dialog.showComplaintDialog(view.context, reportsList) {
+                if (it.id == OTHER) {
+                    val controller = ComplaintOtherController.newInstance()
+                    controller.targetController = this@ProfileController
+                    open(controller)
+                } else {
+                    viewModel.sendComplaint(profileModel.profile.id, it.toString())
+                }
+            }
+        }
     }
 
     private fun onEditProfile(profileModel: ProfileModel, view: View) {
@@ -199,6 +224,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
+        private const val OTHER = "other"
+        private const val EMPTY_SPACE = ""
         fun newInstance(account: ShortAccountModel): ProfileController {
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, account)

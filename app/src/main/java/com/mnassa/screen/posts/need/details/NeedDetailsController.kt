@@ -5,15 +5,16 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.WeakStateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
@@ -38,7 +40,8 @@ import java.lang.ref.WeakReference
  */
 open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetailsViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult,
-        RecommendController.OnRecommendPostResult {
+        RecommendController.OnRecommendPostResult,
+        ComplaintOtherController.OnComplaintResult{
     override val layoutId: Int = R.layout.controller_need_details
     protected val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
     protected var post: PostModel? = null
@@ -46,6 +49,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialog: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter(R.layout.controller_need_details_header)
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -65,6 +69,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     override var recommendedAccounts: List<ShortAccountModel>
         set(value) = bindRecommendedAccounts(value)
         get() = accountsToRecommendAdapter.dataStorage.toList()
+    override var onComplaint: String = ""
+        set(value) {
+            viewModel.sendComplaint(postId, value)
+        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -171,6 +179,21 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         super.onDestroyView(view)
     }
 
+    private fun complainAboutProfile(view: View) {
+        launchCoroutineUI {
+            val reportsList = viewModel.retrieveComplaints()
+            dialog.showComplaintDialog(view.context, reportsList) {
+                if (it.id == OTHER) {
+                    val controller = ComplaintOtherController.newInstance()
+                    controller.targetController = this@NeedDetailsController
+                    open(controller)
+                } else {
+                    viewModel.sendComplaint(postId, it.toString())
+                }
+            }
+        }
+    }
+
     private fun onPostCommentClick() {
         with(view ?: return) {
             val editedCommentLocal = editedComment
@@ -197,7 +220,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                     view = view,
                     post = it,
                     onRepost = { openSharingOptionsScreen() },
-                    onReport = { Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show() }
+                    onReport = { complainAboutProfile(view) }
             )
         }
     }
@@ -401,6 +424,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     companion object {
         const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
         const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
+        private const val OTHER = "other"
 
         //to create instance, use PostDetailsFactory
     }

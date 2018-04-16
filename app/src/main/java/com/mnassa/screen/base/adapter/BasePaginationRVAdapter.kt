@@ -19,7 +19,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             initState = null,
             executionPredicate = { it != null })
 
-    protected inline fun postUpdate(crossinline update: (() -> Unit)) {
+    inline fun postUpdate(crossinline update: (() -> Unit)) {
         recyclerView.invoke {
             it.post { update() }
         }

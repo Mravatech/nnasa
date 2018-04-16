@@ -13,7 +13,7 @@ data class ProfileModel(
         val interests: List<TagModel>,
         val offers: List<TagModel>,
         val isMyProfile: Boolean,
-        val connectionStatus: ConnectionStatus
+        var connectionStatus: ConnectionStatus
 ) : ShortAccountModel by profile {
     fun getAccountType(): Accounts {
         return if (isMyProfile && profile.accountType == AccountType.ORGANIZATION) {

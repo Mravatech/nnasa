@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatRadioButton
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
@@ -17,11 +18,13 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_company_status.*
+import kotlinx.android.synthetic.main.dialog_delete_chat_message.*
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
@@ -44,12 +47,63 @@ class DialogHelper {
                 .show()
     }
 
+    fun showComplaintDialog(context: Context, reports: List<TranslatedWordModel>,  listener: (TranslatedWordModel) -> Unit)  {
+        MaterialDialog.Builder(context)
+                .items(                        reports                )
+                .itemsCallback { dialog, _, which, _ ->
+                    listener(reports[which])
+                    dialog.dismiss()
+                }
+                .cancelable(true)
+                .show()
+    }
+
     fun showWelcomeDialog(context: Context, onOkClick: () -> Unit) {
         showSuccessDialog(
                 context,
                 fromDictionary(R.string.welcome_dialog_title),
                 fromDictionary(R.string.welcome_dialog_description),
                 onOkClick)
+    }
+
+    fun showDeleteMessageDialog(
+            context: Context,
+            isMyMessageClicked: Boolean,
+            onDeleteForMeClick: () -> Unit,
+            onDeleteForBothClick: () -> Unit,
+            onCopyClick: () -> Unit,
+            onReplyClick: () -> Unit) {
+        val dialog = Dialog(context, R.style.DialogInvite)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_delete_chat_message)
+        if (isMyMessageClicked) {
+            dialog.tvDeleteForBoth.text = fromDictionary(R.string.chats_delete_for_all)
+            dialog.tvDeleteForBoth.setOnClickListener {
+                onDeleteForBothClick()
+                dialog.dismiss()
+            }
+            dialog.tvDeleteForBoth.visibility = View.VISIBLE
+        } else {
+            dialog.tvReply.text = fromDictionary(R.string.chats_reply)
+            dialog.tvReply.setOnClickListener {
+                onReplyClick()
+                dialog.dismiss()
+            }
+            dialog.tvReply.visibility = View.VISIBLE
+        }
+        dialog.tvDeleteForMe.text = fromDictionary(R.string.chats_delete_for_me)
+        dialog.tvCopyChatMessage.text = fromDictionary(R.string.chats_copy)
+        dialog.tvCancel.text = fromDictionary(R.string.chats_cancel)
+        dialog.tvDeleteForMe.setOnClickListener {
+            onDeleteForMeClick()
+            dialog.dismiss()
+        }
+        dialog.tvCopyChatMessage.setOnClickListener {
+            onCopyClick()
+            dialog.dismiss()
+        }
+        dialog.tvCancel.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 
     fun showChooseOccupationDialog(context: Context,
@@ -125,12 +179,13 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun connectionsDialog(context: Context, onOkClick: () -> Unit) {
+    fun connectionsDialog(context: Context,info: String, onOkClick: () -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_yes_no)
-        dialog.tvYes.text = "Yes"
-        dialog.tvNo.text = "No"
+        dialog.tvConnectionInfo.text = info
+        dialog.tvYes.text = fromDictionary(R.string.user_profile_yes)
+        dialog.tvNo.text = fromDictionary(R.string.user_profile_no)
         dialog.tvNo.setOnClickListener { dialog.dismiss() }
         dialog.tvYes.setOnClickListener {
             onOkClick()

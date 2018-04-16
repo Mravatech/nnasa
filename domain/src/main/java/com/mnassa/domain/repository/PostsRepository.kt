@@ -13,6 +13,7 @@ interface PostsRepository {
     suspend fun loadAllByAccountUd(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
     suspend fun loadById(id: String): ReceiveChannel<PostModel?>
+    suspend fun loadUserPostById(id: String, accountId: String): PostModel?
     suspend fun sendViewed(ids: List<String>)
     suspend fun createNeed(
             text: String,
