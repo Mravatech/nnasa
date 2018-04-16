@@ -144,10 +144,9 @@ private val viewModelsModule = Kodein.Module {
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
-    bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance()) }
-    bind<PostDetailsViewModel>() with factory { postId: String -> PostDetailsViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance(), instance()) }
+    bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }

@@ -43,7 +43,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         RecommendController.OnRecommendPostResult,
         ComplaintOtherController.OnComplaintResult{
     override val layoutId: Int = R.layout.controller_need_details
-    private val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
+    protected val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
@@ -185,7 +185,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             dialog.showComplaintDialog(view.context, reportsList) {
                 if (it.id == OTHER) {
                     val controller = ComplaintOtherController.newInstance()
-                    controller.targetController = this@PostDetailsController
+                    controller.targetController = this@NeedDetailsController
                     open(controller)
                 } else {
                     viewModel.sendComplaint(postId, it.toString())

@@ -50,11 +50,11 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
     }
 
 
-    private var onPageSelectedJob: Job? = null
+    private var sendContactsJob: Job? = null
     @SuppressLint("MissingPermission")
     private fun sendContacts() {
-        onPageSelectedJob?.cancel()
-        onPageSelectedJob = launchCoroutineUI { thisRef ->
+        sendContactsJob?.cancel()
+        sendContactsJob = launchCoroutineUI { thisRef ->
             val permissionsResult = thisRef().permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {

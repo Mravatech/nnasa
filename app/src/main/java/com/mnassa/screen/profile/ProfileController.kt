@@ -19,8 +19,10 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -63,7 +65,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
         adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
         view.ivProfileBack.setOnClickListener { close() }
-        adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it)) }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         launchCoroutineUI {

@@ -1,10 +1,7 @@
 package com.mnassa.screen.posts.profile.details
 
 import android.os.Bundle
-import com.mnassa.domain.interactor.CommentsInteractor
-import com.mnassa.domain.interactor.ConnectionsInteractor
-import com.mnassa.domain.interactor.PostsInteractor
-import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -20,11 +17,13 @@ class RecommendedProfileViewModelImpl(postId: String,
                                       postsInteractor: PostsInteractor,
                                       tagInteractor: TagInteractor,
                                       commentsInteractor: CommentsInteractor,
+                                      complaintInteractor: ComplaintInteractor,
                                       private val connectionsInteractor: ConnectionsInteractor) : NeedDetailsViewModelImpl(
         postId,
         postsInteractor,
         tagInteractor,
-        commentsInteractor
+        commentsInteractor,
+        complaintInteractor
 ), RecommendedProfileViewModel {
 
     override val connectionStatusChannel: ConflatedBroadcastChannel<ConnectionStatus> = ConflatedBroadcastChannel()
