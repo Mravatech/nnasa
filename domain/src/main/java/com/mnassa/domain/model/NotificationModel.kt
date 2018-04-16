@@ -18,4 +18,11 @@ interface NotificationModel : Model {
 interface NotificationExtra {
     val author: ShortAccountModel?
     val post: PostModel?
+    var reffered: ShortAccountModel?
+    var recommended: ShortAccountModel?
+    val eventName: String?
+    val ticketsPrice: String?
+    val totalPrice: String?
+    val attendee: String?
+//    val event: Model?
 }

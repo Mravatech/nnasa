@@ -26,12 +26,21 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertPostData(input: NotificationDbEntity, token: Any?, converter: ConvertersContext): NotificationModelImpl {
         Timber.i(input.toString())
+        val extra = NotificationExtraImpl(
+                convertAuthor(input.extra?.author, converter),
+                convertPost(input.extra?.post, converter),
+                convertAuthor(input.extra?.reffered, converter),
+                convertAuthor(input.extra?.recommended, converter),
+                input.extra?.eventName,
+                input.extra?.ticketsPrice,
+                input.extra?.totalPrice,
+                input.extra?.attendee)
         return NotificationModelImpl(
                 id = input.id,
                 createdAt = Date(input.createdAt),
                 text = input.text,
                 type = input.type,
-                extra = NotificationExtraImpl(convertAuthor(input.extra?.author, converter), convertPost(input.extra?.post, converter)),
+                extra = extra,
                 isOld = true
         )
     }

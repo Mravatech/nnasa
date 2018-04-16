@@ -23,5 +23,11 @@ data class NotificationModelImpl(
 
 data class NotificationExtraImpl(
         override val author: ShortAccountModel?,
-        override val post: PostModel?
+        override val post: PostModel?,
+        override var reffered: ShortAccountModel?,
+        override var recommended: ShortAccountModel?,
+        override val eventName: String?,
+        override val ticketsPrice: String?,
+        override val totalPrice: String?,
+        override val attendee: String?
 ) : NotificationExtra

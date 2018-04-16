@@ -21,5 +21,11 @@ internal data class NotificationDbEntity(
 
 internal data class NotificationAuthorDbEntity(
         @SerializedName("author") var author: HashMap<String, ShortAccountDbEntity>,
-        @SerializedName("post") var post: HashMap<String, PostDbEntity>
+        @SerializedName("post") var post: HashMap<String, PostDbEntity>,
+        @SerializedName("reffered") var reffered: HashMap<String, ShortAccountDbEntity>?,
+        @SerializedName("recommended") var recommended: HashMap<String, ShortAccountDbEntity>?,
+        @SerializedName("eventName") val eventName: String?,
+        @SerializedName("ticketsPrice") val ticketsPrice: String?,
+        @SerializedName("totalPrice") val totalPrice: String?,
+        @SerializedName("attendee") val attendee: String?
 )
