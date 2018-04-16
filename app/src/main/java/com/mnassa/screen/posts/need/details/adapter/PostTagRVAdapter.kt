@@ -14,10 +14,10 @@ import kotlinx.android.synthetic.main.item_post_tag.view.*
 class PostTagRVAdapter : BasePaginationRVAdapter<TagModel>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<TagModel> {
-        return TagVH.newInstance(parent)
+        return TagViewHolder.newInstance(parent)
     }
 
-    class TagVH(itemView: View) : BaseVH<TagModel>(itemView) {
+    class TagViewHolder(itemView: View) : BaseVH<TagModel>(itemView) {
 
         override fun bind(item: TagModel) {
             with(itemView) {
@@ -26,9 +26,9 @@ class PostTagRVAdapter : BasePaginationRVAdapter<TagModel>() {
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup): TagVH {
+            fun newInstance(parent: ViewGroup): TagViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_tag, parent, false)
-                return TagVH(view)
+                return TagViewHolder(view)
             }
         }
     }

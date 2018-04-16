@@ -41,5 +41,4 @@ class ArchivedConnectionViewModelImpl(private val connectionsInteractor: Connect
             }
         }
     }
-
 }

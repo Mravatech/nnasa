@@ -8,17 +8,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.with
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
-import com.mnassa.google.PlayServiceHelper
+import com.mnassa.helper.DialogHelper
+import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
@@ -27,8 +25,8 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
-
 
 /**
  * Created by Peter on 3/19/2018.
@@ -37,7 +35,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_need_create
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
-    override val viewModel: CreateNeedViewModel by injector.with(postId).instance()
+    override val viewModel: CreateNeedViewModel by instance(arg = postId)
     private var waitForResumeJob: Job? = null
     override var sharingOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) {
@@ -55,10 +53,20 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private var placeId: String? = null
     private var imageToReplace: AttachedImage? = null
 
-
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
+
+        attachedImagesAdapter.onAddImageClickListener = {
+            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+        }
+        attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
+            attachedImagesAdapter.dataStorage.remove(item)
+        }
+        attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
+            imageToReplace = item
+            attachedImagesAdapter.onAddImageClickListener()
+        }
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
@@ -72,9 +80,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 )
             }
             tvShareOptions.setOnClickListener {
-                val screen = SharingOptionsController.newInstance(sharingOptions)
-                screen.targetController = this@CreateNeedController
-                open(screen)
+                open(SharingOptionsController.newInstance(sharingOptions, this@CreateNeedController))
             }
 
             launchCoroutineUI {
@@ -103,16 +109,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             rvImages.layoutManager = LinearLayoutManager(context)
             rvImages.adapter = attachedImagesAdapter
-            attachedImagesAdapter.onAddImageClickListener = {
-                dialogHelper.showSelectImageSourceDialog(context) { launchCoroutineUI { selectImage(it) } }
-            }
-            attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
-                attachedImagesAdapter.dataStorage.remove(item)
-            }
-            attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
-                imageToReplace = item
-                attachedImagesAdapter.onAddImageClickListener()
-            }
         }
 
         if (args.containsKey(EXTRA_POST_TO_EDIT)) {
@@ -147,6 +143,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 Timber.e("CropActivity.GET_PHOTO_ERROR")
             }
         }
+    }
+
+    override fun onDestroyView(view: View) {
+        attachedImagesAdapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {

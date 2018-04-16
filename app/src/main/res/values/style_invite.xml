@@ -6,20 +6,20 @@
     <style name="Invite.MainContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/backgroundMain</item>
+        <item name="android:background">@color/background_main</item>
     </style>
 
     <style name="Invite.Toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/invite_toolbar_height</item>
-        <item name="android:background">@color/backgroundHighlight</item>
+        <item name="android:background">@color/background_highlighted</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="Invite.BackIcon">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/backgroundHighlight</item>
+        <item name="android:background">@color/background_highlighted</item>
         <item name="android:paddingEnd">@dimen/spacing_horizontal</item>
         <item name="android:paddingStart">@dimen/spacing_horizontal</item>
         <item name="android:paddingBottom">@dimen/spacing_vertical</item>
@@ -47,7 +47,7 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:textSize">@dimen/invite_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -78,7 +78,7 @@
     <style name="Invite.InviteWithNumberEditText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/backgroundTransparent</item>
+        <item name="android:background">@color/transparent</item>
         <item name="android:ellipsize">end</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:maxLines">1</item>
@@ -93,7 +93,7 @@
         <item name="android:background">@drawable/button_invite_to_mnassa_selector_background</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/paleBlue</item>
+        <item name="android:textColor">@color/blue_pale</item>
         <item name="android:textSize">@dimen/invite_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -107,9 +107,9 @@
     <style name="Invite.SearchEditText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/backgroundTransparent</item>
+        <item name="android:background">@color/transparent</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/blackAlpha</item>
+        <item name="android:textColor">@color/black_transparent_40</item>
         <item name="android:textSize">@dimen/invite_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -141,7 +141,7 @@
     </style>
 
     <style name="Invite.ItemViewContactNumber" parent="Invite.ItemViewContactName">
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:textSize">@dimen/invite_item_phone_number_text_size</item>
     </style>
 
@@ -159,7 +159,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_title_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -168,7 +168,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -196,7 +196,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/blackDarkAlpha</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>

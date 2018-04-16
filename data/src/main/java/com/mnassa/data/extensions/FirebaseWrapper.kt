@@ -9,14 +9,15 @@ import kotlinx.coroutines.experimental.suspendCancellableCoroutine
  */
 const val DEFAULT_LIMIT = 100
 
-internal suspend inline fun <reified R> Task<R>.await(exceptionHandler: ExceptionHandler): R {
-    return suspendCancellableCoroutine { continuation ->
+suspend inline fun <reified R> Task<R>.await(exceptionHandler: ExceptionHandler): R {
+    val result = suspendCancellableCoroutine<R> { continuation ->
         addOnCompleteListener {
             if (it.isSuccessful) {
                 continuation.resume(it.result)
             } else {
-                continuation.resumeWithException(exceptionHandler.handle(it.exception!!))
+                continuation.resumeWithException(exceptionHandler.handle(requireNotNull(it.exception)))
             }
         }
     }
+    return result
 }

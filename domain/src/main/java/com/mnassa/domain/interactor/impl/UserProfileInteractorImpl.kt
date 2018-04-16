@@ -1,9 +1,10 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.InvitedShortAccountModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -13,12 +14,14 @@ class UserProfileInteractorImpl(
         private val userRepository: UserRepository
 ) : UserProfileInteractor {
 
-    override suspend fun getProfile(): ShortAccountModel {
-        return requireNotNull(userRepository.getCurrentUser())
-    }
+    override val onAccountChangedListener: SimpleCompositeEventListener<ShortAccountModel> = SimpleCompositeEventListener()
+
+    override val currentProfile: BroadcastChannel<ShortAccountModel> get() = userRepository.currentProfile
+
+    override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> = userRepository.getAllAccounts()
 
     override suspend fun getCurrentUserWithChannel(): ReceiveChannel<InvitedShortAccountModel> {
-        return userRepository.getCurrentUserWithChannel()
+        return userRepository.getCurrentAccountChannel()
     }
 
     override suspend fun createPersonalAccount(firstName: String,
@@ -35,7 +38,7 @@ class UserProfileInteractorImpl(
                 city = city,
                 offers = offers,
                 interests = interests)
-        userRepository.setCurrentUserAccount(account)
+        userRepository.setCurrentAccount(account)
         return account
     }
 
@@ -47,17 +50,37 @@ class UserProfileInteractorImpl(
                 offers = offers,
                 interests = interests
         )
-        userRepository.setCurrentUserAccount(account)
+        userRepository.setCurrentAccount(account)
         return account
     }
 
-    override suspend fun processAccount(account: ShortAccountModel, path: String?) {
-//todo handle response
-        userRepository.processAccount(account, path)
+    override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
+        return userRepository.getProfileByAccountId(accountId)
+    }
+
+    override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> =
+            userRepository.getProfileById(accountId)
+
+    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
+        userRepository.updateCompanyAccount(account)
+    }
+
+    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) {
+        userRepository.updatePersonalAccount(account)
+    }
+
+    override suspend fun processAccount(account: PersonalInfoModel) {
+        userRepository.processAccount(account)
+    }
+
+    override suspend fun processAccount(account: CompanyInfoModel) {
+        userRepository.processAccount(account)
     }
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
-        userRepository.setCurrentUserAccount(account)
+        userRepository.setCurrentAccount(account)
+        currentProfile.send(account)
+        onAccountChangedListener.emit(account)
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()

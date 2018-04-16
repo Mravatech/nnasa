@@ -63,7 +63,7 @@
                 android:layout_height="@dimen/divider_width"
                 android:layout_above="@id/btnConnect"
                 android:layout_marginTop="4dp"
-                android:background="@color/backgroundMain" />
+                android:background="@color/background_main" />
 
             <Button
                 android:id="@+id/btnConnect"

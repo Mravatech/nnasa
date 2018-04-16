@@ -1,29 +1,22 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
-import android.support.v7.widget.PopupMenu
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.with
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.dialog.DialogHelper
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.DialogHelper
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
@@ -32,12 +25,12 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.android.synthetic.main.controller_post_details.view.*
-import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.panel_comment.view.*
 import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**
@@ -45,14 +38,15 @@ import timber.log.Timber
  */
 class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult,
-        RecommendController.OnRecommendPostResult {
+        RecommendController.OnRecommendPostResult,
+        ComplaintOtherController.OnComplaintResult {
     override val layoutId: Int = R.layout.controller_post_details
     private val postId by lazy { args.getString(EXTRA_NEED_ID) }
-    override val viewModel: PostDetailsViewModel by injector.with(postId).instance()
-    override var sharingOptions: SharingOptionsController.ShareToOptions
-            = SharingOptionsController.ShareToOptions.EMPTY
+    override val viewModel: PostDetailsViewModel by instance(arg = postId)
+    override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
-    private val dialogHelper: DialogHelper by instance()
+    private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialog: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
     private val commentsAdapter = PostCommentsRVAdapter()
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -74,31 +68,41 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         set(value) {
             field = value
             updatePostCommentButtonState()
-            launchCoroutineUI {
-                with (getViewSuspend()) {
-                    editPanel.isGone = value == null
-                    if (value == null) {
-                        hideKeyboard(commentPanel.etCommentText)
-                        return@launchCoroutineUI
-                    }
-
-                    editPanel.tvEditText.text = value.text
-                    editPanel.tvEditText.goneIfEmpty()
-                    commentPanel.etCommentText.setText(value.text)
-                    commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
-                    showKeyboard(commentPanel.etCommentText)
-                    recommendedAccounts = value.recommends
-                }
-            }
+            bindEditedComment(value)
+            value?.let { recommendedAccounts = it.recommends }
         }
     override var recommendedAccounts: List<ShortAccountModel>
+        set(value) = bindRecommendedAccounts(value)
+        get() = accountsToRecommendAdapter.dataStorage.toList()
+    override var onComplaint: String = ""
         set(value) {
-            launchCoroutineUI {
-                getViewSuspend().recommendPanel.isGone = value.isEmpty()
-                accountsToRecommendAdapter.set(value)
+            viewModel.sendComplaint(postId, value)
+        }
+
+    private fun bindEditedComment(value: CommentModel?) {
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                editPanel.isGone = value == null
+                if (value == null) {
+                    hideKeyboard(commentPanel.etCommentText)
+                    return@launchCoroutineUI
+                }
+
+                editPanel.tvEditText.text = value.text
+                editPanel.tvEditText.goneIfEmpty()
+                commentPanel.etCommentText.setText(value.text)
+                commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
+                showKeyboard(commentPanel.etCommentText)
             }
         }
-        get() = accountsToRecommendAdapter.dataStorage.toList()
+    }
+
+    private fun bindRecommendedAccounts(value: List<ShortAccountModel>) {
+        launchCoroutineUI {
+            getViewSuspend().recommendPanel.isGone = value.isEmpty()
+            accountsToRecommendAdapter.set(value)
+        }
+    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -107,13 +111,16 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@PostDetailsController::showCommentMenu
 
+        accountsToRecommendAdapter.onDataSourceChangedListener = {
+            launchCoroutineUI { thisRef ->
+                thisRef().view?.recommendPanel?.isGone = it.isEmpty()
+                updatePostCommentButtonState()
+            }
+        }
+
         with(view) {
             rvPostDetails.adapter = commentsAdapter
             rvAccountsToRecommend.adapter = accountsToRecommendAdapter
-            accountsToRecommendAdapter.onDataSourceChangedListener = {
-                recommendPanel.isGone = it.isEmpty()
-                updatePostCommentButtonState()
-            }
 
             btnCommentPost.setOnClickListener { onPostCommentClick() }
             updatePostCommentButtonState()
@@ -191,22 +198,46 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
             args.remove(EXTRA_NEED_MODEL)
         }
 
-        replyTo = replyTo //show reply section if reply available after View destroying
-        editedComment = editedComment
+        bindEditedComment(editedComment)
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
         headerLayout.value = null
         headerLayout.clear()
+        commentsAdapter.destroyCallbacks()
+        accountsToRecommendAdapter.destroyCallbacks()
+        super.onDestroyView(view)
         super.onViewDestroyed(view)
+    }
+
+    private fun complainAboutProfile(view: View) {
+        launchCoroutineUI {
+            val reportsList = viewModel.retrieveComplaints()
+            dialog.showComplaintDialog(view.context, reportsList) {
+                if (it.id == OTHER) {
+                    val controller = ComplaintOtherController.newInstance()
+                    controller.targetController = this@PostDetailsController
+                    open(controller)
+                } else {
+                    viewModel.sendComplaint(postId, it.toString())
+                }
+            }
+        }
     }
 
     private fun onPostCommentClick() {
         with(view ?: return) {
             val editedCommentLocal = editedComment
             if (editedCommentLocal != null) {
-                viewModel.editComment(editedCommentLocal, etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
-            } else viewModel.createComment(etCommentText.text.toString(), recommendedAccounts.map { it.id }, replyTo)
+                viewModel.editComment(
+                        originalComment = editedCommentLocal,
+                        text = etCommentText.text.toString(),
+                        accountsToRecommend = recommendedAccounts.map { it.id },
+                        replyTo = replyTo)
+            } else viewModel.createComment(
+                    text = etCommentText.text.toString(),
+                    accountsToRecommend = recommendedAccounts.map { it.id },
+                    replyTo = replyTo)
             etCommentText.text = null
             replyTo = null
             editedComment = null
@@ -214,62 +245,23 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         }
     }
 
-    private fun showMyPostMenu(view: View, post: PostModel) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.post_edit, popup.menu)
-        popup.menu.findItem(R.id.action_post_edit).title = fromDictionary(R.string.need_action_edit)
-        popup.menu.findItem(R.id.action_post_delete).title = fromDictionary(R.string.need_action_delete)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_post_edit -> open(CreateNeedController.newInstanceEditMode(post))
-                R.id.action_post_delete -> dialogHelper.showConfirmPostRemovingDialog(view.context) { viewModel.delete() }
-            }
-            true
-        }
-
-        popup.show()
-    }
-
     private fun showPostMenu(view: View) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.post_view, popup.menu)
-        popup.menu.findItem(R.id.action_post_repost).title = fromDictionary(R.string.need_action_repost)
-        popup.menu.findItem(R.id.action_post_report).title = fromDictionary(R.string.need_action_report)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_post_repost -> openSharingOptionsScreen()
-                R.id.action_post_report -> Toast.makeText(view.context, "Report post", Toast.LENGTH_SHORT).show()
-            }
-            true
-        }
-
-        popup.show()
+        popupMenuHelper.showPostMenu(
+                view = view,
+                onRepost = { openSharingOptionsScreen() },
+                onReport = { complainAboutProfile(view) }
+        )
     }
 
     private fun showCommentMenu(view: View, commentModel: CommentModel) {
         launchCoroutineUI {
             if (!commentModel.isMyComment()) return@launchCoroutineUI
 
-            val popup = PopupMenu(view.context, view)
-            popup.menuInflater.inflate(R.menu.comment_edit, popup.menu)
-            popup.menu.findItem(R.id.action_comment_edit).title = fromDictionary(R.string.posts_comment_edit)
-
-            val deleteSpan = SpannableString(fromDictionary(R.string.posts_comment_delete))
-            val deleteTextColor = ContextCompat.getColor(view.context, R.color.red)
-            deleteSpan.setSpan(ForegroundColorSpan(deleteTextColor), 0, deleteSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            popup.menu.findItem(R.id.action_comment_delete).title = deleteSpan
-
-            popup.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_comment_edit -> editedComment = commentModel
-                    R.id.action_comment_delete -> viewModel.deleteComment(commentModel)
-                }
-                true
-            }
-
-            popup.show()
+            popupMenuHelper.showMyCommentMenu(
+                    view = view,
+                    onEditComment = { editedComment = commentModel },
+                    onDeleteComment = { viewModel.deleteComment(commentModel) }
+            )
         }
     }
 
@@ -301,7 +293,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
                     pivImages.count = post.images.size
                     pivImages.selection = 0
 
-                    vpImages.adapter = RegistrationAdapter(post.images) {
+                    vpImages.adapter = PhotoPagerAdapter(post.images) {
                         PhotoPagerActivity.start(context, post.images, post.images.indexOf(it))
                     }
                     vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -346,7 +338,12 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         launchCoroutineUI {
             val view = view ?: return@launchCoroutineUI
             if (post.isMyPost()) {
-                view.toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
+                view.toolbar.onMoreClickListener = {
+                    popupMenuHelper.showMyPostMenu(
+                            view = it,
+                            onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
+                            onDeletePost = { viewModel.delete() })
+                }
                 headerLayout.invoke {
                     it.llOtherPersonPostActions.visibility = View.GONE
                 }
@@ -370,9 +367,7 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
     }
 
     private fun openSharingOptionsScreen() {
-        val controller = SharingOptionsController.newInstance()
-        controller.targetController = this
-        open(controller)
+        open(SharingOptionsController.newInstance(listener = this))
     }
 
     private fun openRecommendScreen(post: PostModel) {
@@ -396,27 +391,10 @@ class PostDetailsController(args: Bundle) : MnassaControllerImpl<PostDetailsView
         }
     }
 
-    class RegistrationAdapter(private val images: List<String>, private val onClickListener: (String) -> Unit) : PagerAdapter() {
-        override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val imageUrl = images[position]
-            val view = LayoutInflater.from(container.context).inflate(R.layout.item_image, container, false)
-            view.ivImage.image(imageUrl)
-            view.setOnClickListener { onClickListener(imageUrl) }
-            container.addView(view)
-            return view
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, view: Any) = container.removeView(view as View)
-        override fun getCount(): Int = images.size
-    }
-
-
     companion object {
         private const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
         private const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
-
+        private const val OTHER = "other"
         fun newInstance(postId: String): PostDetailsController {
             val args = Bundle()
             args.putString(EXTRA_NEED_ID, postId)

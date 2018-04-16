@@ -9,7 +9,7 @@ import com.mnassa.domain.exception.NetworkException
 /**
  * Created by Peter on 3/27/2018.
  */
-class CommentsExceptionHandler(gson: Gson, private val context: Context) : NetworkExceptionHandlerImpl(gson, context) {
+class CommentsExceptionHandler(gson: Gson, context: Context) : NetworkExceptionHandlerImpl(gson, context) {
     override fun handle(throwable: Throwable): Throwable {
         val handledException = super.handle(throwable)
         return when {

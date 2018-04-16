@@ -60,6 +60,16 @@ object NetworkContract {
     object ErrorCode {
         const val NO_RIGHTS_TO_COMMENT = "noRightToCommentPost"
     }
+
+    object Gender{
+        const val MALE = "male"
+        const val FEMALE = "female"
+    }
+
+    object Complaint{
+        const val ACCOUNT_TYPE = "account"
+        const val POST_TYPE = "post"
+    }
 }
 
 val PostPrivacyType.stringValue: String get() = when (this) {

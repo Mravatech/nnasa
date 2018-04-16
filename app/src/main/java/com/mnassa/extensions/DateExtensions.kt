@@ -3,12 +3,11 @@ package com.mnassa.extensions
 import android.text.format.Time
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import com.mnassa.App
+import com.mnassa.di.getInstance
 import com.mnassa.domain.other.LanguageProvider
+import java.text.SimpleDateFormat
 import java.util.*
-
 
 /**
  * Created by Peter on 3/15/2018.
@@ -53,7 +52,13 @@ fun Date.getEndOfDay(): Date {
 }
 
 fun Date.toTimeAgo(): String {
-    val locale = App.context.appKodein().instance<LanguageProvider>().locale
+    val locale = App.context.getInstance<LanguageProvider>().locale
     val messages = TimeAgoMessages.Builder().withLocale(locale).build()
     return TimeAgo.using(time, messages)
+}
+
+
+fun Date.hhmm(): String {
+    val localDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return localDateFormat.format(this)
 }

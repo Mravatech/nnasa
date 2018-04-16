@@ -33,7 +33,7 @@
 
     <style name="MnassaTextTiny" parent="MnassaText">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/coolGray</item>
+        <item name="android:textColor">@color/gray_cool</item>
         <item name="android:fontFamily">@font/roboto</item>
     </style>
 

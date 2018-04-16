@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 /**
  * Created by Peter on 2/26/2018.
  */
-interface RegistrationViewModel : MnassaViewModel, ChipsAdapter.ChipSearch ,PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface RegistrationViewModel : MnassaViewModel, ChipsAdapter.ChipSearch , PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: BroadcastChannel<RegistrationViewModel.OpenScreenCommand>
 
     fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>)
@@ -17,6 +17,6 @@ interface RegistrationViewModel : MnassaViewModel, ChipsAdapter.ChipSearch ,Plac
 
     sealed class OpenScreenCommand {
         class PersonalInfoScreen(val shortAccountModel: ShortAccountModel) : OpenScreenCommand()
-        class OrganizationInfoScreen : OpenScreenCommand()
+        class OrganizationInfoScreen(val shortAccountModel: ShortAccountModel) : OpenScreenCommand()
     }
 }

@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import com.mnassa.R
 
-
 /**
  * Created by Peter on 12.03.2018.
  */

@@ -3,6 +3,7 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.extensions.toValueChannelWithPagination
@@ -16,6 +17,8 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
+import com.mnassa.data.repository.DatabaseContract.TABLE_PABLIC_POSTS
+import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
@@ -44,6 +47,17 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
+    override suspend fun loadAllByAccountUd(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
+        val userId = requireNotNull(accountId)
+        val table = if (userId == userRepository.getAccountId()) TABLE_POSTS else TABLE_PABLIC_POSTS
+        return db.child(table)
+                .child(userId)
+                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = converter.convertFunc(PostModel::class.java)
+                )
+    }
+
     override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> {
         val userId = requireNotNull(userRepository.getAccountId())
 
@@ -64,6 +78,18 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .child(id)
                 .toValueChannel<PostDbEntity>(exceptionHandler)
                 .map { converter.convert<PostModel>(it!!) }
+    }
+
+    override suspend fun loadUserPostById(id: String, accountId: String): PostModel? {
+        val post = db
+                .child(TABLE_NEWS_FEED)
+                .child(accountId)
+                .child(id)
+                .await<PostDbEntity>(exceptionHandler)
+        post?.let {
+            return converter.convert(id)
+        }
+        return null
     }
 
     override suspend fun sendViewed(ids: List<String>) {

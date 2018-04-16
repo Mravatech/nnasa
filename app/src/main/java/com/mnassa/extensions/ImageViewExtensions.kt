@@ -5,12 +5,10 @@ import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.request.RequestOptions
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
-import com.mnassa.module.GlideApp
-
+import com.mnassa.di.getInstance
+import com.mnassa.helper.GlideApp
 
 /**
  * Created by Peter on 3/2/2018.
@@ -35,13 +33,13 @@ fun ImageView.enable() {
 fun ImageView.avatarRound(avatarUrl: String?) {
     //todo: add placeholder, error
 
-    val storage = context.appKodein().instance<FirebaseStorage>()
+    val storage = context.getInstance<FirebaseStorage>()
     val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
     val requestOptions = RequestOptions().placeholder(R.drawable.empty_ava).error(R.drawable.empty_ava).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)
-            .load(ref ?: "")
+            .load(ref ?: avatarUrl ?: "")
             .apply(requestOptions)
             .apply(RequestOptions.circleCropTransform())
             .into(this)
@@ -50,26 +48,37 @@ fun ImageView.avatarRound(avatarUrl: String?) {
 fun ImageView.avatarSquare(avatarUrl: String?) {
     //todo: add placeholder, error
 
-    val storage = context.appKodein().instance<FirebaseStorage>()
+    val storage = context.getInstance<FirebaseStorage>()
     val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
-    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_ava).error(R.drawable.ic_empty_ava)
 
     GlideApp.with(this)
-            .load(ref ?: "")
+            .load(ref ?: avatarUrl ?: "")
+            .apply(requestOptions)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
+}
+
+fun ImageView.avatarSquare(avatarUrl: Uri?) {
+    //todo: add placeholder, error
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_ava).error(R.drawable.ic_empty_ava)
+
+    GlideApp.with(this)
+            .load(avatarUrl ?: "")
             .apply(requestOptions)
             .apply(RequestOptions.centerCropTransform())
             .into(this)
 }
 
 fun ImageView.image(url: String?, crop: Boolean = true) {
-    val storage = context.appKodein().instance<FirebaseStorage>()
+    val storage = context.getInstance<FirebaseStorage>()
     val ref = url?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
     var builder = GlideApp.with(this)
-            .load(ref ?: "")
+            .load(ref ?: url ?: "")
             .apply(requestOptions)
 
     if (crop) {
@@ -80,7 +89,7 @@ fun ImageView.image(url: String?, crop: Boolean = true) {
 }
 
 fun ImageView.image(uri: Uri) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
 
     GlideApp.with(this)
             .load(uri)

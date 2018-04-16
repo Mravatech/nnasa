@@ -8,12 +8,12 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.country.CountryHelper
-import com.mnassa.dialog.DialogHelper
+import com.mnassa.helper.CountryHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.onImeActionDone
@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -57,7 +56,6 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
         //open next screen even if current controller in the back stack
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
-                Timber.d("MNSA_LOGIN EnterPhoneController->onCreated ->openScreenChannel->$it")
                 hideProgress()
                 when (it) {
                     is EnterPhoneViewModel.OpenScreenCommand.MainScreen -> open(MainController.newInstance())
@@ -92,11 +90,9 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
                 }
             }, 0, termsAndCond.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-
             tvTermsAndConditions.append(" ")
             tvTermsAndConditions.append(termsAndCondSpan)
             tvTermsAndConditions.movementMethod = LinkMovementMethod.getInstance()
-
 
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -121,7 +117,6 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
             showKeyboard(etPhoneNumberTail)
         }
-
 
         addSignInViaEmailAbility()
     }

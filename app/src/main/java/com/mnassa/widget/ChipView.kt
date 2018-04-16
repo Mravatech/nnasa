@@ -2,12 +2,11 @@ package com.mnassa.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.MotionEvent
+import android.widget.FrameLayout
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import kotlinx.android.synthetic.main.view_chip.view.*
-import android.view.MotionEvent
-import android.widget.FrameLayout
-
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,10 +16,10 @@ import android.widget.FrameLayout
 
 @SuppressLint("ViewConstructor")
 class ChipView(
-        context: Context,
-        tagModel: TagModel,
-        private val key: Long,
-        private val onChipListener: OnChipListener
+    context: Context,
+    tagModel: TagModel,
+    private val key: Long,
+    private val onChipListener: OnChipListener
 ) : FrameLayout(context) {
 
     init {
@@ -49,5 +48,4 @@ class ChipView(
     companion object {
         const val DRAWABLE_RIGHT = 2
     }
-
 }

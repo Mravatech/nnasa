@@ -1,18 +1,18 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="52dp"
-        android:height="43dp"
-        android:viewportWidth="52.0"
-        android:viewportHeight="43.0">
-    <path
-        android:pathData="M20.65,8.67a8.89,8.67 0,1 0,17.77 0a8.89,8.67 0,1 0,-17.77 0z"
-        android:fillType="evenOdd"
-        android:fillColor="#D1D7DC"/>
-    <path
-        android:pathData="M29.04,22.67c1.49,-0.07 2.74,-0.25 3.76,-0.53 1.15,-0.32 2.65,-0.94 4.5,-1.88a2.68,2.68 0,0 1,2.35 -0.03c2.19,1.04 4.55,3.4 7.08,7.08 2.22,3.23 3.66,6.83 4.32,10.79a4.01,4.01 0,0 1,-3.96 4.67L10.99,42.79a4.01,4.01 0,0 1,-3.96 -4.67c0.66,-3.96 2.1,-7.56 4.32,-10.79 2.53,-3.68 4.89,-6.04 7.08,-7.08a2.68,2.68 0,0 1,2.35 0.03c1.85,0.93 3.35,1.56 4.5,1.88 1.01,0.28 2.27,0.46 3.76,0.53z"
-        android:fillType="evenOdd"
-        android:fillColor="#D1D7DC"/>
-    <path
-        android:pathData="M7.62,11.24h5.07v2.19H7.62v5.75H5.29v-5.75H0.22v-2.19h5.07V5.93h2.33z"
-        android:fillType="evenOdd"
-        android:fillColor="#D1D7DC"/>
+    android:width="27dp"
+    android:height="22dp"
+    android:viewportWidth="27"
+    android:viewportHeight="22">
+  <path
+      android:pathData="M11.601,4.7a4.392,4.145 0,1 0,8.784 0a4.392,4.145 0,1 0,-8.784 0z"
+      android:fillColor="#FFF"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M15.748,11.4c0.736,-0.034 1.355,-0.118 1.856,-0.252 0.573,-0.154 1.323,-0.457 2.248,-0.908a1.3,1.3 0,0 1,1.1 -0.019c1.092,0.487 2.27,1.622 3.535,3.403a12.44,12.44 0,0 1,2.126 5.107,1.95 1.95,0 0,1 -1.922,2.29L6.805,21.021a1.95,1.95 0,0 1,-1.921 -2.29,12.44 12.44,0 0,1 2.125,-5.107c1.265,-1.781 2.443,-2.916 3.535,-3.403a1.3,1.3 0,0 1,1.1 0.02c0.925,0.45 1.675,0.753 2.248,0.907 0.501,0.134 1.12,0.218 1.856,0.252z"
+      android:fillColor="#FFF"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M5.358,5.641h3.674V7.24H5.358v4.201H3.674v-4.2H0V5.64h3.674V1.76h1.684z"
+      android:fillColor="#FFF"
+      android:fillType="evenOdd"/>
 </vector>

@@ -19,6 +19,10 @@ class RecommendedAccountsRVAdapter : BasePaginationRVAdapter<ShortAccountModel>(
 
     var onItemClickListener: View.OnClickListener = View.OnClickListener { }
 
+    fun destroyCallbacks() {
+        onItemClickListener = View.OnClickListener { }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return RecommendedAccountViewHolder.newInstance(parent, onItemClickListener)
     }

@@ -2,7 +2,7 @@ package com.mnassa.screen.connections.sent
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -21,12 +21,12 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onCancelClickListener = { viewModel.cancelRequest(it) }
+
         with(view) {
             toolbar.title = fromDictionary(R.string.sent_connection_requests_title)
             rvSentConnections.layoutManager = LinearLayoutManager(context)
             rvSentConnections.adapter = adapter
-
-            adapter.onCancelClickListener = { viewModel.cancelRequest(it) }
         }
 
         adapter.isLoadingEnabled = true
@@ -39,6 +39,11 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
                 adapter.set(it)
             }
         }
+    }
+
+    override fun onDestroyView(view: View) {
+        adapter.destoryCallbacks()
+        super.onDestroyView(view)
     }
 
     companion object {

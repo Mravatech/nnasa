@@ -11,12 +11,3 @@ interface TranslatedWordModel : Model, ReadOnlyProperty<Nothing?, String> {
     val engTranslate: String?
     val arabicTranslate: String?
 }
-
-object EmptyWord : TranslatedWordModel {
-    override var id: String = "EMPTY"
-    override val info: String = ""
-    override val engTranslate: String? = null
-    override fun getValue(thisRef: Nothing?, property: KProperty<*>): String = ""
-    override val arabicTranslate: String? = null
-    override fun toString(): String = ""
-}

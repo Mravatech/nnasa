@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor.impl
 import android.net.Uri
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
@@ -22,10 +23,12 @@ import java.util.concurrent.atomic.AtomicLong
  * Created by Peter on 3/16/2018.
  */
 class PostsInteractorImpl(private val postsRepository: PostsRepository,
-                          private val storageInteractor: StorageInteractor) : PostsInteractor {
+                          private val storageInteractor: StorageInteractor,
+                          private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadById(id: String): ReceiveChannel<PostModel> = postsRepository.loadById(id)
+    override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountUd(accountId)
 
     private val viewedItemIdsBuffer = Collections.synchronizedSet(HashSet<String>())
     private val sentViewedItemIds = Collections.synchronizedSet(HashSet<String>())
@@ -34,7 +37,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun onItemViewed(item: PostModel) {
         val id = item.id
-        if (sentViewedItemIds.contains(id)) {
+        if (item.author.id == userProfileInteractorImpl.getAccountId() || sentViewedItemIds.contains(id)) {
             return
         }
 
@@ -72,7 +75,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             privacyConnections: List<String>
     ): PostModel {
         val allImages = uploadedImages + imagesToUpload.map {
-            async {storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+            async { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
         }.map { it.await() }
         return postsRepository.createNeed(text, allImages, privacyType, toAll, privacyConnections)
     }
@@ -86,7 +89,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             toAll: Boolean,
             privacyConnections: List<String>) {
         val allImages = uploadedImages + imagesToUpload.map {
-            async {storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+            async { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
         }.map { it.await() }
         postsRepository.updateNeed(postId, text, allImages, privacyType, toAll, privacyConnections)
     }

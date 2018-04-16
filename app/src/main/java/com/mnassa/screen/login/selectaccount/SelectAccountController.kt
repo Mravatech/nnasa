@@ -2,7 +2,7 @@ package com.mnassa.screen.login.selectaccount
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.github.salomonbrys.kodein.instance
+import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -23,12 +23,12 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        adapter.onItemClickListener = { viewModel.selectAccount(it) }
+
         with(view) {
             tvScreenHeader.text = fromDictionary(R.string.choose_profile_title)
             rvAccounts.layoutManager = LinearLayoutManager(view.context)
             rvAccounts.adapter = adapter
-
-            adapter.onItemClickListener = { viewModel.selectAccount(it) }
         }
 
         adapter.isLoadingEnabled = true
@@ -46,6 +46,11 @@ class SelectAccountController : MnassaControllerImpl<SelectAccountViewModel>() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        super.onDestroyView(view)
     }
 
     companion object {

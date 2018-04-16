@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
-import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
 
 /**
  * Created by Peter on 2/23/2018.
  */
-internal class DictionaryPreferences(private val context: Context, private val appInfoProvider: AppInfoProvider) {
+internal class DictionaryPreferences(private val context: Context, private val languageProvider: LanguageProvider) {
     private val sharedPreferences by lazy {
         context.getSharedPreferences(DICTIONARY_PREFS, Context.MODE_PRIVATE)
     }
@@ -41,6 +41,7 @@ internal class DictionaryPreferences(private val context: Context, private val a
         if (info.isNullOrBlank()) return null
 
         return TranslatedWordModelImpl(
+                languageProvider = languageProvider,
                 id = id,
                 engTranslate = sharedPreferences.getString(id + "_ENG", null),
                 arabicTranslate = sharedPreferences.getString(id + "_AR", null),

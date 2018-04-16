@@ -4,12 +4,13 @@ import android.content.Context
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
 
 /**
  * Created by Peter on 23.02.2018.
  */
-internal class DictionaryResources(private val context: Context, private val appInfoProvider: AppInfoProvider) {
+internal class DictionaryResources(private val context: Context, private val appInfoProvider: AppInfoProvider, private val languageProvider: LanguageProvider) {
     fun getWord(id: String): TranslatedWordModel? {
         val infoId = context.resources.getIdentifier("${id}_INFO", "string", context.packageName)
         if (infoId == 0) return null
@@ -26,7 +27,7 @@ internal class DictionaryResources(private val context: Context, private val app
         if (arVal.isNullOrBlank() || arVal == "null") {
             arVal = null
         }
-        return TranslatedWordModelImpl(id, infoVal, engVal, arVal)
+        return TranslatedWordModelImpl(languageProvider, id, infoVal, engVal, arVal)
     }
 
     fun print(words: List<TranslatedWordModel>) {

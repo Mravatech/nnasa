@@ -23,4 +23,9 @@ class TagInteractorImpl(
     override suspend fun search(searchKeyword: String): List<TagModel> {
         return tagRepository.search(searchKeyword)
     }
+
+    override suspend fun getTagsByIds(ids: List<String>): List<TagModel> {
+        return tagRepository.getTagsByIds(ids)
+    }
+
 }

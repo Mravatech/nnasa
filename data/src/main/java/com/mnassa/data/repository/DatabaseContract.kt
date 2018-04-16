@@ -16,6 +16,9 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_NUM_UNREAD_NEEDS = "numberOfUnreadNeeds"
     const val TABLE_ACCOUNTS_COL_NUM_UNREAD_NOTIFICATIONS = "numberOfUnreadNotifications"
     const val TABLE_ACCOUNTS_COL_NUM_UNREAD_RESPONSES = "numberOfUnreadResponses"
+    const val TABLE_ACCOUNTS_COL_POINTS = "points"
+    const val TABLE_ACCOUNTS_COL_TOTAL_INCOME = "totalIncome"
+    const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -41,6 +44,14 @@ internal object DatabaseContract {
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_GROUPS = "byRefer" //byRefer
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"//"byEvents" //
     //
+    const val TABLE_POSTS = "posts"
+    const val TABLE_PABLIC_POSTS = "publicPosts"
+    //
+    const val TABLE_CHAT = "chats"
+    const val TABLE_CHAT_LIST = "chatsList"
+    const val TABLE_CHAT_MESSAGES = "chatsMessages"
+    const val TABLE_CHAT_TYPE = "private"
+    //
     const val TABLE_INVITETION = "invitations"
     //
     const val TABLE_NEWS_FEED = "newsfeed"
@@ -60,5 +71,9 @@ internal object DatabaseContract {
     const val TABLE_COMMENTS = "comments"
     //
     const val TABLE_COMMENT_REPLIES = "replyComments"
+    //
+    const val TABLE_TRANSACTIONS = "transactions"
+    //
+    const val COMPLAINT_REASON = "complaintReason"
 
 }

@@ -25,6 +25,13 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
     var onRecommendedAccountClick = { view: View, account: ShortAccountModel -> }
 
+    fun destroyCallbacks() {
+        onBindHeader = { }
+        onReplyClick = { }
+        onCommentOptionsClick = { _: View, _: CommentModel -> }
+        onRecommendedAccountClick = { _: View, _: ShortAccountModel -> }
+    }
+
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
         when {
             itemsTheSameComparator(first, second) -> 0
@@ -58,8 +65,7 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<CommentModel> {
-        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent) else
-            super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent) else super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseVH<CommentModel>, position: Int) {
@@ -154,7 +160,6 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
         }
     }
 
-
     private class HeaderViewHolder(itemView: View) : BaseVH<Any>(itemView) {
         override fun bind(item: Any) = Unit
 
@@ -166,4 +171,3 @@ class PostCommentsRVAdapter : BaseSortedPaginationRVAdapter<CommentModel>(), Vie
         }
     }
 }
-

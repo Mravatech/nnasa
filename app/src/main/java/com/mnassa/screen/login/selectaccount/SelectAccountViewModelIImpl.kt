@@ -1,17 +1,17 @@
 package com.mnassa.screen.login.selectaccount
 
 import android.os.Bundle
-import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 2/27/2018.
  */
-class SelectAccountViewModelIImpl(private val userProfileInteractor: UserProfileInteractor, private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), SelectAccountViewModel {
+class SelectAccountViewModelIImpl(private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), SelectAccountViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<SelectAccountViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
     override val accountsListChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
@@ -20,11 +20,12 @@ class SelectAccountViewModelIImpl(private val userProfileInteractor: UserProfile
         super.onCreate(savedInstanceState)
 
         handleException {
-            val accounts = loginInteractor.getAccounts()
-            accountsListChannel.send(accounts)
+            userProfileInteractor.getAllAccounts().consumeEach { accounts ->
+                accountsListChannel.send(accounts)
 
-            if (accounts.size == 1) {
-                selectAccount(accounts.first())
+                if (accounts.size == 1) {
+                    selectAccount(accounts.first())
+                }
             }
         }
     }

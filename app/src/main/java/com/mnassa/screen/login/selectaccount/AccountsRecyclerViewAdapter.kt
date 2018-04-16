@@ -18,6 +18,10 @@ import kotlinx.android.synthetic.main.item_select_account.view.*
 class AccountsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountModel>() {
     var onItemClickListener: (ShortAccountModel) -> Unit = {}
 
+    fun destroyCallbacks() {
+        onItemClickListener = {}
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_select_account, parent, false)
         val holder = AccountViewHolder(view)

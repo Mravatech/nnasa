@@ -11,17 +11,16 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
 
 /**
  * Created by Peter on 3/19/2018.
  */
 class CreateNeedViewModelImpl(
-        private val postId: String?,
-        private val postsInteractor: PostsInteractor,
-        private val tagInteractor: TagInteractor,
-        private val placeFinderInteractor: PlaceFinderInteractor,
-        private val userRepository: UserRepository
+    private val postId: String?,
+    private val postsInteractor: PostsInteractor,
+    private val tagInteractor: TagInteractor,
+    private val placeFinderInteractor: PlaceFinderInteractor,
+    private val userRepository: UserRepository
 ) : MnassaViewModelImpl(), CreateNeedViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -52,11 +51,10 @@ class CreateNeedViewModelImpl(
 
                 closeScreenChannel.send(Unit)
             }
-
         }
     }
 
-    override suspend fun getUser(userId: String): ShortAccountModel? = userRepository.getById(userId)
+    override suspend fun getUser(userId: String): ShortAccountModel? = userRepository.getAccountById(userId)
 
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
 

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_highlighted"
+    android:orientation="vertical">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <TextView
+            android:id="@+id/tvFrom"
+            style="@style/MnassaHeader2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/tvAmount"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Mnassa" />
+
+        <TextView
+            android:id="@+id/tvType"
+            style="@style/MnassaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvFrom"
+            android:layout_toStartOf="@id/tvAmount"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Completing registration" />
+
+        <TextView
+            android:id="@+id/tvAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tvType"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/tvFrom"
+            android:background="@drawable/transaction_corners_spent"
+            android:gravity="center"
+            android:padding="8dp"
+            android:minWidth="60dp"
+            android:textColor="@color/money_spent"
+            android:textSize="18sp"
+            tools:text="+1" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            style="@style/MnassaTextTiny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvAmount"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:layout_toStartOf="@id/tvBalanceAfter"
+            android:textSize="12sp"
+            tools:text="23 Feb, 13:38" />
+
+        <TextView
+            android:id="@+id/tvBalanceAfter"
+            style="@style/MnassaTextTiny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvAmount"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:textSize="12sp"
+            tools:text="Balance: 350 points" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            style="@style/MnassaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvTime"
+            android:layout_toStartOf="@id/tvBalanceAfter"
+            android:fontFamily="@font/roboto_italic"
+            tools:text="The Idea Of God Is Not\nHenceforth Relevant?" />
+
+    </RelativeLayout>
+
+    <View style="@style/MnassaDivider" />
+</LinearLayout>

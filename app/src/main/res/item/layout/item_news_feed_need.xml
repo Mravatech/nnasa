@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/spacing_vertical"
     android:orientation="vertical"
-    app:cardBackgroundColor="@color/backgroundHighlight">
+    app:cardBackgroundColor="@color/background_highlighted">
 
     <LinearLayout
         android:id="@+id/rlClickableRoot"
@@ -167,7 +167,7 @@
                 android:drawablePadding="@dimen/drawable_padding"
                 android:fontFamily="@font/roboto_medium"
                 android:textAllCaps="true"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/accent"
                 tools:text="You can help" />
 
         </LinearLayout>
