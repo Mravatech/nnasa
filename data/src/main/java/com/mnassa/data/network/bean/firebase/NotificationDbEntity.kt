@@ -20,5 +20,6 @@ internal data class NotificationDbEntity(
 ) : HasId
 
 internal data class NotificationAuthorDbEntity(
-        @SerializedName("author") var author: HashMap<String, ShortAccountDbEntity>
+        @SerializedName("author") var author: HashMap<String, ShortAccountDbEntity>,
+        @SerializedName("post") var post: HashMap<String, PostDbEntity>
 )

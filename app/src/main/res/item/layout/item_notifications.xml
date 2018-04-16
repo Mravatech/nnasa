@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/llNotificationRoot"
@@ -35,6 +35,7 @@
                 android:lineSpacingExtra="8sp"
                 android:textColor="#de000000"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 tools:text="Gordon Baker" />
 
             <TextView
@@ -56,6 +57,7 @@
             android:id="@+id/tvNotificationCame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
@@ -65,7 +67,6 @@
             android:textColor="@color/gray_cool"
             android:textSize="14sp"
             android:textStyle="normal"
-            android:layout_marginBottom="12dp"
             tools:text="9 min" />
 
     </LinearLayout>

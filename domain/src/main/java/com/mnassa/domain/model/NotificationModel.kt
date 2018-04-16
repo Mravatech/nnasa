@@ -15,6 +15,7 @@ interface NotificationModel : Model {
     var isOld: Boolean
 }
 
-interface NotificationExtra : ShortAccountModel {
-
+interface NotificationExtra {
+    val author: ShortAccountModel?
+    val post: PostModel?
 }

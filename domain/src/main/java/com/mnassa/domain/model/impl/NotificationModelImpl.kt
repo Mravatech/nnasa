@@ -1,6 +1,9 @@
 package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.NotificationExtra
+import com.mnassa.domain.model.NotificationModel
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
 import java.util.*
 
 /**
@@ -19,14 +22,6 @@ data class NotificationModelImpl(
 ) : NotificationModel
 
 data class NotificationExtraImpl(
-        override var id: String,
-        override var firebaseUserId: String,
-        override var userName: String,
-        override var accountType: AccountType,
-        override var avatar: String?,
-        override var contactPhone: String?,
-        override var language: String?,
-        override var personalInfo: PersonalAccountDiffModel?,
-        override var organizationInfo: OrganizationAccountDiffModel?,
-        override var abilities: List<AccountAbility>
+        override val author: ShortAccountModel?,
+        override val post: PostModel?
 ) : NotificationExtra

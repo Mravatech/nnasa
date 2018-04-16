@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
@@ -18,9 +19,18 @@ import kotlinx.android.synthetic.main.item_notifications.view.*
 class NotificationHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<NotificationModel>(itemView) {
 
     override fun bind(item: NotificationModel) {
+
+        if (item.extra?.author != null) {
+            val name = if (item.extra?.author?.accountType == AccountType.PERSONAL) {
+                "${item.extra?.author?.personalInfo?.firstName} ${item.extra?.author?.personalInfo?.lastName}"
+            } else {
+                item.extra?.author?.organizationInfo?.organizationName
+            }
+            itemView.tvUserName.text = name
+        }
+
         with(itemView) {
-            ivUserIcon.avatarRound(item.extra?.avatar)
-            tvUserName.text = item.extra?.userName
+            ivUserIcon.avatarRound(item.extra?.author?.avatar)
             tvNotificationInfo.text = item.text
             tvNotificationCame.text = item.createdAt.toTimeAgo()
             llNotificationRoot.setOnClickListener(onClickListener)
