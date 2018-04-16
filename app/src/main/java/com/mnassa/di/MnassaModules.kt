@@ -5,6 +5,8 @@ import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
@@ -137,7 +139,7 @@ private val viewModelsModule = Kodein.Module {
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance()) }
-    bind<EventsViewModel>() with provider { EventsViewModelImpl() }
+    bind<EventsViewModel>() with provider { EventsViewModelImpl(instance()) }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl() }
@@ -177,6 +179,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(CommentsConverter())
         converter.registerConverter(WalletConverter({ instance() }))
         converter.registerConverter(InvitationConverter())
+        converter.registerConverter(EventsConverter())
         converter
     }
 }
@@ -186,6 +189,12 @@ private val repositoryModule = Kodein.Module {
         val result = FirebaseDatabase.getInstance()
         result.setPersistenceEnabled(true)
         result
+    }
+    bind<FirebaseFirestore>() with singleton {
+        val db = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
+        db.firestoreSettings = settings
+        db
     }
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
@@ -202,6 +211,7 @@ private val repositoryModule = Kodein.Module {
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -221,6 +231,7 @@ private val interactorModule = Kodein.Module {
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
+    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"

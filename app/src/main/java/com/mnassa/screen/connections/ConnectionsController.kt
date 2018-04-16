@@ -3,17 +3,19 @@ package com.mnassa.screen.connections
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
-import org.kodein.di.generic.instance
 import com.mnassa.App.Companion.context
 import com.mnassa.R
+import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.isGone
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.extensions.setHeaderWithCounter
 import com.mnassa.helper.PopupMenuHelper
@@ -32,6 +34,7 @@ import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/6/2018.
@@ -46,8 +49,14 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private var isHeaderBounded = false
     private var permissionsSnackbar: Snackbar? = null
 
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+
+        savedInstanceState?.apply {
+            allConnectionsAdapter.restoreState(this)
+            recommendedConnectionsAdapter.restoreState(this)
+            newConnectionRequestsAdapter.restoreState(this)
+        }
 
         recommendedConnectionsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
         recommendedConnectionsAdapter.onConnectClickListener = { viewModel.connect(it) }
@@ -58,9 +67,14 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         newConnectionRequestsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
         newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
 
+        allConnectionsAdapter.isLoadingEnabled = savedInstanceState == null
         allConnectionsAdapter.onBindHeader = { bindHeader(it) }
         allConnectionsAdapter.onItemOptionsClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
         allConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         with(view) {
             toolbar.backButtonEnabled = false
@@ -89,23 +103,32 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         super.onDestroyView(view)
     }
 
-    private var onPageSelectedJob: Job? = null
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        allConnectionsAdapter.saveState(outState)
+        recommendedConnectionsAdapter.saveState(outState)
+        newConnectionRequestsAdapter.saveState(outState)
+    }
+
+    override fun onPageSelected() = askPermissions()
+
+    private var askPermissionsJob: Job? = null
     @SuppressLint("MissingPermission")
-    override fun onPageSelected() {
-        onPageSelectedJob?.cancel()
-        onPageSelectedJob = launchCoroutineUI { thisRef ->
+    private fun askPermissions() {
+        askPermissionsJob?.cancel()
+        askPermissionsJob = launchCoroutineUI { thisRef ->
             val permissionsResult = thisRef().permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {
                 thisRef().permissionsSnackbar?.dismiss()
                 thisRef().viewModel.onContactPermissionsGranted()
             } else {
-                val view = thisRef().view?.clSnackbarParent ?: return@launchCoroutineUI
+                val view = getViewSuspend().clSnackbarParent ?: return@launchCoroutineUI
                 if (thisRef().permissionsSnackbar?.isShown != true) {
                     permissionsSnackbar = Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
                             .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
                                 if (permissionsResult.isShouldShowRequestPermissionRationale) {
-                                    onPageSelected()
+                                    askPermissions()
                                 } else {
                                     view.context.openApplicationSettings()
                                 }
@@ -132,37 +155,44 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             rvNewConnectionRequests.layoutManager = BlockedScrollingLayoutManager(context, RecyclerView.VERTICAL, false)
         }
 
-        allConnectionsAdapter.isLoadingEnabled = true
+        val headerRef = header.asReference()
+
         launchCoroutineUI {
             viewModel.allConnectionsChannel.consumeEach {
                 allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
-                header.tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, it.size)
 
-                header.tvAllConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-                header.vAllConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+                with(headerRef()) {
+                    tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, it.size)
+                    tvAllConnections.isGone = it.isEmpty()
+                    vAllConnections.isGone = it.isEmpty()
+                }
             }
         }
 
         launchCoroutineUI {
             viewModel.recommendedConnectionsChannel.consumeEach {
                 recommendedConnectionsAdapter.setWithMaxRange(it, MAX_RECOMMENDED_ITEMS_COUNT)
-                header.tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
 
-                header.tvRecommendedConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-                header.rvRecommendedConnections.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+                with(headerRef()) {
+                    tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
+                    tvRecommendedConnections.isGone = it.isEmpty()
+                    rvRecommendedConnections.isGone = it.isEmpty()
+                }
             }
         }
 
         launchCoroutineUI {
             viewModel.newConnectionRequestsChannel.consumeEach {
                 newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTED_ITEMS_COUNT)
-                header.tvNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-                header.rvNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-                header.vNewConnectionRequests.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
 
-//                view?.toolbar?.counter = it.size
-                header.tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
+                with(headerRef()) {
+                    tvNewConnectionRequests.isGone = it.isEmpty()
+                    rvNewConnectionRequests.isGone = it.isEmpty()
+                    vNewConnectionRequests.isGone = it.isEmpty()
+
+                    tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
+                }
             }
         }
     }
@@ -178,9 +208,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         Toast.makeText(context, "Opening chat with user ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
     }
 
-    private fun openProfile(accountModel: ShortAccountModel) {
-        open(ProfileController.newInstance(accountModel))
-    }
+    private fun openProfile(accountModel: ShortAccountModel) = open(ProfileController.newInstance(accountModel))
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {
         popupMenuHelper.showConnectedAccountMenu(

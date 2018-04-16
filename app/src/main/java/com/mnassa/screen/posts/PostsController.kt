@@ -1,7 +1,7 @@
 package com.mnassa.screen.posts
 
+import android.os.Bundle
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
@@ -11,6 +11,7 @@ import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/6/2018.
@@ -20,10 +21,15 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
     override val viewModel: PostsViewModel by instance()
     private val adapter = PostsRVAdapter()
 
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
 
-        adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
+        savedInstanceState?.apply {
+            adapter.restoreState(this)
+        }
+
+        //todo: send only when page selected
+        adapter.onAttachedToWindow = { post -> viewModel.onAttachedToWindow(post) }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
@@ -32,11 +38,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
 
-        with(view) {
-            rvNewsFeed.adapter = adapter
-        }
-
-        adapter.isLoadingEnabled = true
+        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {
@@ -58,11 +60,23 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         }
     }
 
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+
+        with(view) {
+            rvNewsFeed.adapter = adapter
+        }
+    }
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
         view.rvNewsFeed.adapter = null
         super.onDestroyView(view)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        adapter.saveState(outState)
     }
 
     companion object {
