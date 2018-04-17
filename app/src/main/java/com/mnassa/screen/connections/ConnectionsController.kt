@@ -94,9 +94,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     }
 
     override fun onDestroyView(view: View) {
-        allConnectionsAdapter.destroyCallbacks()
-        recommendedConnectionsAdapter.destoryCallbacks()
-        newConnectionRequestsAdapter.destroyCallbacks()
         isHeaderBounded = false
         permissionsSnackbar = null
         view.rvAllConnections.adapter = null

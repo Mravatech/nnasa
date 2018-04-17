@@ -78,7 +78,7 @@ firebase.firestore =       "com.google.firebase:firebase-firestore:${versions.fi
 deps.firebase = firebase
 
 //============================================== KOTLIN ============================================
-versions.kotlin = '1.2.30'
+versions.kotlin = '1.2.31'
 def kotlin = [:]
 kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"

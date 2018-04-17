@@ -1,9 +1,11 @@
 package com.mnassa.domain.model
 
+import java.io.Serializable
+
 /**
  * Created by Peter on 3/5/2018.
  */
-interface PhoneContact {
+interface PhoneContact : Serializable {
     val fullName: String
     val phoneNumber: String
     val avatar: String?

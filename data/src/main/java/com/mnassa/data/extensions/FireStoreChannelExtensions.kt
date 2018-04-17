@@ -60,10 +60,11 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
         }
     }
 
-    addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
         if (firebaseFirestoreException != null) {
             channel.close(firebaseFirestoreException)
             listener.remove()
+            return@addSnapshotListener
         }
 
         dataSnapshot.documentChanges.forEach {

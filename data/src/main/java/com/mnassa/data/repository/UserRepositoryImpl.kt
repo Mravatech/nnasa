@@ -14,20 +14,15 @@ import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
-import com.mnassa.data.network.bean.retrofit.request.Ability
-import com.mnassa.data.network.bean.retrofit.request.RegisterOrganizationAccountRequest
-import com.mnassa.data.network.bean.retrofit.request.RegisterPersonalAccountRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.data.network.bean.retrofit.request.RegisterSendingAccountInfoRequest
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.model.*
-import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.produce
 
 /**
  * Created by Peter on 2/21/2018.
@@ -51,21 +46,8 @@ class UserRepositoryImpl(
         }
         set(value) = sharedPrefs.edit().putString(EXTRA_ACCOUNT_ID, value).apply()
 
-    private val innerCurrentProfileChannel = ConflatedBroadcastChannel<ShortAccountModel>()
-    override val currentProfile: BroadcastChannel<ShortAccountModel> get() {
-        if (innerCurrentProfileChannel.valueOrNull == null) {
-            launch {
-//                getCurrentAccount()?.let { innerCurrentProfileChannel.send(it) }
-            }
-        }
-
-        //TODO: update user when model was changed
-
-        return innerCurrentProfileChannel
-    }
-
     override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> {
-        val uid = getFirebaseUserId()  ?: return produce {  }
+        val uid = getFirebaseUserId() ?: return produce { }
         return db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(uid)
                 .toListChannel<ShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, ShortAccountModel::class.java) }
@@ -78,7 +60,6 @@ class UserRepositoryImpl(
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
-            this.innerCurrentProfileChannel.send(account)
         }
     }
 
@@ -92,15 +73,20 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getCurrentAccountOrException(): ShortAccountModel {
-        return getCurrentAccountOrNull() ?: throw NotAuthorizedException("Current account is null!", NullPointerException())
+        return getCurrentAccountOrNull()
+                ?: throw NotAuthorizedException("Current account is null!", NullPointerException())
     }
 
-    override suspend fun getCurrentAccountChannel(): ReceiveChannel<ShortAccountModel>{
-        TODO()
+    override suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?> {
+        return db
+                .child(DatabaseContract.TABLE_ACCOUNTS)
+                .child(accountId)
+                .toValueChannel<ShortAccountDbEntity>(exceptionHandler)
+                .map { it?.let { converter.convert(it, ShortAccountModel::class.java) } }
     }
 
     override suspend fun getAccounts(): List<ShortAccountModel> {
-        val localFirebaseUserId = getFirebaseUserId()?: return emptyList()
+        val localFirebaseUserId = getFirebaseUserId() ?: return emptyList()
         val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(localFirebaseUserId).awaitList<ShortAccountDbEntity>(exceptionHandler)
         return converter.convertCollection(beans, ShortAccountModel::class.java)
     }
@@ -238,7 +224,8 @@ class UserRepositoryImpl(
     override fun getAccountIdOrNull(): String? = accountIdInternal
 
     override fun getAccountIdOrException(): String {
-        return accountIdInternal ?: throw NotAuthorizedException("AccountId is null!", NullPointerException())
+        return accountIdInternal
+                ?: throw NotAuthorizedException("AccountId is null!", NullPointerException())
     }
 
     override suspend fun getAccountById(id: String): ShortAccountModel? {

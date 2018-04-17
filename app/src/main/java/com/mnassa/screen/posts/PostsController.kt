@@ -69,7 +69,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
     }
 
     override fun onDestroyView(view: View) {
-        adapter.destroyCallbacks()
         view.rvNewsFeed.adapter = null
         super.onDestroyView(view)
     }

@@ -1,10 +1,7 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.PersonalInfoModel
-import com.mnassa.domain.model.ShortAccountModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import com.mnassa.domain.model.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -13,12 +10,11 @@ interface UserRepository {
     suspend fun setCurrentAccount(account: ShortAccountModel?)
     suspend fun getCurrentAccountOrNull(): ShortAccountModel?
     suspend fun getCurrentAccountOrException(): ShortAccountModel
-    suspend fun getCurrentAccountChannel(): ReceiveChannel<ShortAccountModel>
 
     suspend fun getAccounts(): List<ShortAccountModel>
     suspend fun getAccountById(id: String): ShortAccountModel?
 
-    val currentProfile: BroadcastChannel<ShortAccountModel>
+    suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?>
     suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>>
 
     suspend fun createPersonAccount(
@@ -43,8 +39,8 @@ interface UserRepository {
     suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel)
     suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel)
 
-    suspend fun getProfileByAccountId(accountId: String) : ProfileAccountModel?
-    suspend fun getProfileById(accountId: String) : ReceiveChannel<ProfileAccountModel?>
+    suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel?
+    suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?>
 
     fun getAccountIdOrNull(): String?
     fun getAccountIdOrException(): String

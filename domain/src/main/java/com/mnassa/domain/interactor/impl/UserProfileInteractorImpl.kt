@@ -4,7 +4,6 @@ import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -15,8 +14,6 @@ class UserProfileInteractorImpl(
 ) : UserProfileInteractor {
 
     override val onAccountChangedListener: SimpleCompositeEventListener<ShortAccountModel> = SimpleCompositeEventListener()
-
-    override val currentProfile: BroadcastChannel<ShortAccountModel> get() = userRepository.currentProfile
 
     override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> = userRepository.getAllAccounts()
 
@@ -50,36 +47,34 @@ class UserProfileInteractorImpl(
         return account
     }
 
-    override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
+    override suspend fun getProfileById(accountId: String): ProfileAccountModel? {
         return userRepository.getProfileByAccountId(accountId)
     }
 
-    override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> =
+    override suspend fun getProfileByIdChannel(accountId: String): ReceiveChannel<ProfileAccountModel?> =
             userRepository.getProfileById(accountId)
 
-    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) {
-        userRepository.updateCompanyAccount(account)
-    }
+    override suspend fun updateCompanyAccount(account: ProfileCompanyInfoModel) =
+            userRepository.updateCompanyAccount(account)
 
-    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) {
-        userRepository.updatePersonalAccount(account)
-    }
 
-    override suspend fun processAccount(account: PersonalInfoModel) {
-        userRepository.processAccount(account)
-    }
+    override suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel) =
+            userRepository.updatePersonalAccount(account)
 
-    override suspend fun processAccount(account: CompanyInfoModel) {
-        userRepository.processAccount(account)
-    }
+
+    override suspend fun processAccount(account: PersonalInfoModel) = userRepository.processAccount(account)
+
+
+    override suspend fun processAccount(account: CompanyInfoModel) = userRepository.processAccount(account)
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
         userRepository.setCurrentAccount(account)
-        currentProfile.send(account)
         onAccountChangedListener.emit(account)
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
     override suspend fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()
     override suspend fun getAccountIdOrException(): String = userRepository.getAccountIdOrException()
+    override suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?> =
+            userRepository.getAccountByIdChannel(accountId)
 }

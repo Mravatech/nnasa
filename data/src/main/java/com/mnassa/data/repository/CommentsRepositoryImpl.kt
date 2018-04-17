@@ -29,7 +29,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
                 postId = postId,
                 text = text,
                 accountIds = accountsToRecommend,
-                entityType = NetworkContract.ItemType.POST,
+                entityType = NetworkContract.EntityType.POST,
                 commentId = null
         )).handleException(exceptionHandler)
         return converter.convert(result, Unit, CommentModel::class.java)
@@ -40,7 +40,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
                 postId = postId,
                 text = text,
                 accountIds = accountsToRecommend,
-                entityType = NetworkContract.ItemType.POST,
+                entityType = NetworkContract.EntityType.POST,
                 commentId = commentId
         )).handleException(exceptionHandler)
         return converter.convert(result, commentId, CommentModel::class.java)
@@ -54,7 +54,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
         commentsApi.editComment(EditCommentRequest(
                 commentId = originalCommentId,
                 text = text,
-                entityType = NetworkContract.ItemType.POST,
+                entityType = NetworkContract.EntityType.POST,
                 accountIds = accountsToRecommend
         )).handleException(exceptionHandler)
     }

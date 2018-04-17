@@ -325,6 +325,19 @@
     <string name="side_menu_logout">_android_side_menu_logout</string>
     <string name="side_menu_add_account">_android_side_menu_add_account</string>
 
+    <!-- ========================================== EVENTS ===================================== -->
+    <string name="sunday_short">_android_sunday_short</string>
+    <string name="monday_short">_android_monday_short</string>
+    <string name="tuesday_short">_android_tuesday_short</string>
+    <string name="wednesday_short">_android_wednesday_short</string>
+    <string name="thursday_short">_android_thursday_short</string>
+    <string name="friday_short">_android_friday_short</string>
+    <string name="saturday_short">_android_saturday_short</string>
 
+    <string name="event_lecture">lecture</string>
+    <string name="event_discussion">discussion</string>
+    <string name="event_workshop">workshop</string>
+    <string name="event_exercise">exercise</string>
+    <string name="event_activity">activity</string>
 
 </resources>

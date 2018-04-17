@@ -206,7 +206,7 @@ private val repositoryModule = Kodein.Module {
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
-    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }

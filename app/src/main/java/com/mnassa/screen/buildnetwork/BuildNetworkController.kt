@@ -65,8 +65,10 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
         adapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.usersToInviteChannel.consumeEach {
-                adapter.isLoadingEnabled = false
-                adapter.set(it)
+                if (it.isNotEmpty()) {
+                    adapter.isLoadingEnabled = false
+                    adapter.set(it)
+                }
             }
         }
 

@@ -125,4 +125,12 @@
 
     <string name="_android_connected_by_from_INFO">from</string>
 
+    <string name="_android_sunday_short_INFO">Sun</string>
+    <string name="_android_monday_short_INFO">Mun</string>
+    <string name="_android_tuesday_short_INFO">Tue</string>
+    <string name="_android_wednesday_short_INFO">Wed</string>
+    <string name="_android_thursday_short_INFO">Thu</string>
+    <string name="_android_friday_short_INFO">Fri</string>
+    <string name="_android_saturday_short_INFO">Sat</string>
+
 </resources>

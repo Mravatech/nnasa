@@ -6,9 +6,8 @@ package com.mnassa.domain.model
  * Date: 4/10/2018
  */
 
-interface ComplaintModel {
-
-    val id: String
+interface ComplaintModel : Model {
+    override var id: String
     val type: String
     val reason: String
 
