@@ -13,14 +13,13 @@ import com.mnassa.domain.model.CommentReplyModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 
 /**
  * Created by Peter on 3/23/2018.
  */
-class PostCommentsRVAdapter(private val headerLayoutId: Int) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
+class PostCommentsRVAdapter(private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
@@ -57,7 +56,7 @@ class PostCommentsRVAdapter(private val headerLayoutId: Int) : BaseSortedPaginat
     init {
         dataStorage = SortedDataStorage(itemClass, this)
         itemsTheSameComparator = { first, second -> first.id == second.id }
-        contentTheSameComparator = { first, second -> first == second}
+        contentTheSameComparator = { first, second -> first == second }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> = when (viewType) {
@@ -68,7 +67,7 @@ class PostCommentsRVAdapter(private val headerLayoutId: Int) : BaseSortedPaginat
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<CommentModel> {
         return when (viewType) {
-            TYPE_HEADER -> HeaderViewHolder.newInstance(parent, headerLayoutId)
+            TYPE_HEADER -> HeaderViewHolder(headerInflater(parent))
             else -> super.onCreateViewHolder(parent, viewType)
         }
     }
@@ -167,12 +166,5 @@ class PostCommentsRVAdapter(private val headerLayoutId: Int) : BaseSortedPaginat
 
     private class HeaderViewHolder(itemView: View) : BaseVH<Any>(itemView) {
         override fun bind(item: Any) = Unit
-
-        companion object {
-            fun newInstance(parent: ViewGroup, layoutId: Int): HeaderViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-                return HeaderViewHolder(view)
-            }
-        }
     }
 }

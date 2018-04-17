@@ -3,6 +3,7 @@ package com.mnassa.di
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
+import com.bluelinelabs.conductor.Controller
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +35,8 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.chats.message.ChatMessageViewModel
 import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
+import com.mnassa.screen.comments.CommentsWrapperViewModel
+import com.mnassa.screen.comments.CommentsWrapperViewModelImpl
 import com.mnassa.screen.complaintother.ComplaintOtherViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
@@ -160,6 +163,11 @@ private val viewModelsModule = Kodein.Module {
     bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }
+    bind<CommentsWrapperViewModel>() with factory { controllerClazz: Class<Controller> ->
+        when (controllerClazz) {
+            else -> CommentsWrapperViewModelImpl()
+        }
+    }
 }
 
 private val convertersModule = Kodein.Module {

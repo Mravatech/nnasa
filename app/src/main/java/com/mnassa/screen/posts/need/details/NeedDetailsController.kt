@@ -2,6 +2,7 @@ package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
@@ -49,9 +50,11 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
-    private val dialog: DialogHelper by instance()
+    private val dialogHelper: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
-    private val commentsAdapter = PostCommentsRVAdapter(R.layout.controller_need_details_header)
+    private val commentsAdapter = PostCommentsRVAdapter {
+        LayoutInflater.from(it.context).inflate(R.layout.controller_need_details_header, it, false)
+    }
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
     protected var headerLayout = WeakStateExecutor<View?, View>(null) { it != null }
     private var replyTo: CommentModel? = null
@@ -184,7 +187,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     private fun complainAboutProfile(view: View) {
         launchCoroutineUI {
             val reportsList = viewModel.retrieveComplaints()
-            dialog.showComplaintDialog(view.context, reportsList) {
+            dialogHelper.showComplaintDialog(view.context, reportsList) {
                 if (it.id == OTHER) {
                     val controller = ComplaintOtherController.newInstance()
                     controller.targetController = this@NeedDetailsController
