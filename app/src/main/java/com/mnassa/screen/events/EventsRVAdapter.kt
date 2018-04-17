@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.formattedName
@@ -20,7 +21,7 @@ import java.text.SimpleDateFormat
 /**
  * Created by Peter on 4/16/2018.
  */
-class EventsRVAdapter(private val languageProvider: LanguageProvider) : BaseSortedPaginationRVAdapter<EventModel>(), View.OnClickListener {
+class EventsRVAdapter(private val languageProvider: LanguageProvider, private val userProfileInteractor: UserProfileInteractor) : BaseSortedPaginationRVAdapter<EventModel>(), View.OnClickListener {
     override val itemsComparator: (item1: EventModel, item2: EventModel) -> Int = { item1, item2 ->
         item1.createdAt.compareTo(item2.createdAt) * -1
     }
@@ -43,6 +44,13 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider) : BaseSort
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<EventModel> {
         return EventViewHolder.newInstance(parent, this, languageProvider)
+    }
+
+    override fun onBindViewHolder(holder: BaseVH<EventModel>, position: Int) {
+        if (holder is EventViewHolder) {
+            holder.currentAccountId = userProfileInteractor.getAccountIdOrNull()
+        }
+        super.onBindViewHolder(holder, position)
     }
 
     override fun onViewAttachedToWindow(holder: BaseVH<EventModel>) {
@@ -85,6 +93,7 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider) : BaseSort
     class EventViewHolder(itemView: View, languageProvider: LanguageProvider) : BaseVH<EventModel>(itemView) {
         private val dateFormatter = SimpleDateFormat("dd MMM", languageProvider.locale)
         private val dayOfWeekFormatter = SimpleDateFormat("EEE", languageProvider.locale)
+        var currentAccountId: String? = null
 
         override fun bind(item: EventModel) {
             with(itemView) {
@@ -110,6 +119,7 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider) : BaseSort
                 }
                 ivEventStatus.setImageResource(imgSrc)
                 tvEventType.text = item.formattedType
+                ivIsTicketsBought.isInvisible = !item.participants.contains(currentAccountId)
             }
 
         }

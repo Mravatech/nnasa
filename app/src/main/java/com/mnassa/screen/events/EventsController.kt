@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.other.LanguageProvider
@@ -20,7 +21,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>() {
     override val layoutId: Int = R.layout.controller_events_list
     override val viewModel: EventsViewModel by instance()
     private val languageProvider: LanguageProvider by instance()
-    private val adapter by lazy { EventsRVAdapter(languageProvider) }
+    private val userInteractor: UserProfileInteractor by instance()
+    private val adapter by lazy { EventsRVAdapter(languageProvider, userInteractor) }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)

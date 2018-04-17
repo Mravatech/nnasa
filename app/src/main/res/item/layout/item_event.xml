@@ -79,18 +79,31 @@
                 android:foreground="@drawable/avatar_shadow"
                 tools:src="@color/colorPrimary" />
 
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivIsTicketsBought"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_member"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_toStartOf="@id/tvEventType"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"/>
+
             <TextView
                 android:id="@+id/tvEventType"
                 style="@style/MnassaButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginBottom="@dimen/spacing_vertical"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                android:padding="6dp"
+                android:layout_alignTop="@id/ivIsTicketsBought"
+                android:layout_alignBottom="@id/ivIsTicketsBought"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:clickable="false"
