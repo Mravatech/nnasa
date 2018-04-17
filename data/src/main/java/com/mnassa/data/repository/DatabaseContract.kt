@@ -76,5 +76,8 @@ internal object DatabaseContract {
     const val TABLE_TRANSACTIONS = "transactions"
     //
     const val COMPLAINT_REASON = "complaintReason"
+    //
+    const val TABLE_EVENTS = "events"
+    const val TABLE_EVENTS_COLLECTION_FEED = "feed"
 
 }
