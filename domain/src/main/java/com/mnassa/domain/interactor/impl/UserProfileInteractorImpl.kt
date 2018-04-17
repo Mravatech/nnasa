@@ -73,8 +73,8 @@ class UserProfileInteractorImpl(
     }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
-    override suspend fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()
-    override suspend fun getAccountIdOrException(): String = userRepository.getAccountIdOrException()
+    override fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()
+    override fun getAccountIdOrException(): String = userRepository.getAccountIdOrException()
     override suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?> =
             userRepository.getAccountByIdChannel(accountId)
 }

@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
+import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
-import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
@@ -33,15 +34,15 @@ import org.kodein.di.generic.instance
  * Created by Peter on 4/17/2018.
  */
 class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWrapperViewModel>(args),
-        RecommendController.OnRecommendPostResult {
+        RecommendController.OnRecommendPostResult, MnassaRouter, CommentsWrapperListener {
     override val layoutId: Int = R.layout.controller_comments_wrapper
-    override val viewModel: CommentsWrapperViewModel by instance(fArg = { wrappedControllerClass })
+    override val viewModel: CommentsWrapperViewModel by instance(fArg = { Pair(wrappedControllerClass, wrappedControllerParams) })
     //
     private val wrappedControllerClass by lazy { args.getSerializable(EXTRA_CONTROLLER_CLASS) as Class<Controller> }
     private val wrappedControllerParams by lazy { args.getBundle(EXTRA_CONTROLLER_ARGS) }
+    private val wrappedController = StateExecutor<Controller?, CommentsWrapperCallback>(null) { it is CommentsWrapperCallback }
     //
     private val popupMenuHelper: PopupMenuHelper by instance()
-    private val dialogHelper: DialogHelper by instance()
     //
     private lateinit var commentsAdapter: PostCommentsRVAdapter
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -86,6 +87,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             rvAccountsToRecommend.adapter = accountsToRecommendAdapter
 
             btnCommentPost.setOnClickListener { onPostCommentClick() }
+            ivCommentRecommend.setOnClickListener { openRecommendScreen() }
             updatePostCommentButtonState()
 
             etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
@@ -137,14 +139,26 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         super.onDestroyView(view)
     }
 
+    override fun openKeyboardOnComment() {
+        view?.etCommentText?.apply { showKeyboard(this) }
+    }
+
     private fun inflateHeader(parent: ViewGroup): View {
         val container = LayoutInflater.from(parent.context).inflate(R.layout.recycler_header_container, parent, false)
         container as ViewGroup
 
         val router = getChildRouter(container)
+
         if (!router.hasRootController()) {
             val controller = createControllerInstance()
             router.setRoot(RouterTransaction.with(controller))
+            wrappedController.value = controller
+            //controller needs to be retained. Otherwise controller will be detached right after creation.
+            controller.retainViewMode = RetainViewMode.RETAIN_DETACH
+        } else {
+            val controller = router.backstack.first().controller()
+            router.rebindIfNeeded()
+            wrappedController.value = controller
         }
 
         return container
@@ -240,7 +254,13 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     private fun bindToolbar(toolbar: MnassaToolbar) {
-        //TODO
+        wrappedController.invoke {
+            it.bindToolbar(toolbar)
+        }
+    }
+
+    private fun openRecommendScreen() {
+        wrappedController.invoke { it.openRecommendScreen(recommendedAccounts.map { it.id }, this) }
     }
 
     private val canPostComment: Boolean
@@ -258,6 +278,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
+    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
+    override fun close(self: Controller) = mnassaRouter.close(self)
 
     companion object {
         private const val EXTRA_CONTROLLER_CLASS = "EXTRA_CONTROLLER_CLASS"
@@ -268,6 +290,16 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             args.putSerializable(EXTRA_CONTROLLER_CLASS, controllerToWrap.javaClass)
             args.putBundle(EXTRA_CONTROLLER_ARGS, controllerToWrap.args)
             return CommentsWrapperController(args)
+        }
+    }
+
+    interface CommentsWrapperCallback {
+        fun bindToolbar(toolbar: MnassaToolbar) {
+            toolbar.isGone = true
+        }
+
+        fun openRecommendScreen(recommendedAccountIds: List<String>, self: CommentsWrapperController) {
+            self.open(RecommendController.newInstance(emptyList(), recommendedAccountIds, self))
         }
     }
 }
