@@ -335,5 +335,11 @@
     <string name="notifications_old">_notifications_recent_section_title</string>
     <string name="notifications_receive">_android_notification_receive</string>
     <string name="notifications_spent">_android_notification_spent</string>
+    <!-- ========================================== EVENTS ===================================== -->
+    <string name="event_lecture">lecture</string>
+    <string name="event_discussion">discussion</string>
+    <string name="event_workshop">workshop</string>
+    <string name="event_exercise">exercise</string>
+    <string name="event_activity">activity</string>
 
 </resources>

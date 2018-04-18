@@ -31,7 +31,7 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
                 usersToInviteChannel.send(it)
 
                 if (it.isEmpty() && isPhonesWereSent) {
-                    openScreenChannel.send(BuildNetworkViewModel.OpenScreenCommand.MainScreen())
+                    finish()
                 }
             }
         }
@@ -44,6 +44,10 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
         sendPhoneContactsJob = handleException {
             connectionsInteractor.sendPhoneContacts()
             isPhonesWereSent = true
+
+            if (connectionsInteractor.getRecommendedConnections().receive().isEmpty()) {
+                finish()
+            }
         }
     }
 
@@ -52,7 +56,11 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
             withProgressSuspend {
                 connectionsInteractor.actionConnect(accountIds)
             }
-            openScreenChannel.send(BuildNetworkViewModel.OpenScreenCommand.MainScreen())
+            finish()
         }
+    }
+
+    private suspend fun finish() {
+        openScreenChannel.send(BuildNetworkViewModel.OpenScreenCommand.MainScreen())
     }
 }

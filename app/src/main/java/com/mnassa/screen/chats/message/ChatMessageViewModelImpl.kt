@@ -24,7 +24,8 @@ class ChatMessageViewModelImpl(
 
     private lateinit var chatID: String
 
-    override suspend fun retrieveMyAccount() = requireNotNull(userProfileInteractor.getAccountId())
+    override suspend fun retrieveMyAccount() = handleExceptionsSuspend { userProfileInteractor.getAccountIdOrException() }
+            ?: ""
 
     override fun retrieveChatId(accointId: String) {
         handleException {

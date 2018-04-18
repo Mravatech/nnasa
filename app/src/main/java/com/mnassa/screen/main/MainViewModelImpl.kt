@@ -2,6 +2,7 @@ package com.mnassa.screen.main
 
 import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.CountersInteractor
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -11,6 +12,7 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -41,7 +43,11 @@ class MainViewModelImpl(
     override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel(0)
 
     override val currentAccountChannel: ConflatedBroadcastChannel<ShortAccountModel> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
-        userProfileInteractor.currentProfile.openSubscription()
+        val accountId = userProfileInteractor.getAccountIdOrException()
+        userProfileInteractor.getAccountByIdChannel(accountId).map {
+            it
+                    ?: throw NotAuthorizedException("User with account $accountId not found!", NullPointerException())
+        }
     }
     override val availableAccountsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
 

@@ -30,7 +30,6 @@ import org.kodein.di.android.closestKodein
 import org.kodein.di.android.retainedKodein
 import org.kodein.di.generic.kcontext
 
-
 open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate() {
 
     @Suppress("LeakingThis")
@@ -46,16 +45,13 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        fromUser
+
         router = Conductor.attachRouter(this, container, savedInstanceState)
         if (!router.hasRootController()) {
             router.setRoot(RouterTransaction.with(createRootControllerInstance()))
         }
 
         onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe {
-            //            router.popToRoot()
-//            router.replaceTopController(RouterTransaction.with(SplashController.newInstance()))
-
             startActivity(
                     Intent(this@MainActivity, MainActivity::class.java)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

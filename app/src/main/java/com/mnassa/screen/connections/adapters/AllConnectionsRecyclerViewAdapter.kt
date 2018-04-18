@@ -1,5 +1,6 @@
 package com.mnassa.screen.connections.adapters
 
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -57,6 +58,15 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
         }
     }
 
+    fun saveState(outState: Bundle) {
+        outState.putSerializable(EXTRA_STATE_ALL_CONNECTIONS, dataStorage.toCollection(ArrayList()))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun restoreState(inState: Bundle) {
+        dataStorage.set(inState.getSerializable(EXTRA_STATE_ALL_CONNECTIONS) as List<ShortAccountModel>)
+    }
+
     private class HeaderHolder(itemView: View) : BaseVH<Any>(itemView) {
         override fun bind(item: Any) = Unit
 
@@ -95,5 +105,9 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
                 return UserViewHolder(view, clickListener)
             }
         }
+    }
+
+    companion object {
+        private const val EXTRA_STATE_ALL_CONNECTIONS = "EXTRA_STATE_ALL_CONNECTIONS"
     }
 }

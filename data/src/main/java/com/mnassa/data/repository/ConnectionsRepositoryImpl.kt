@@ -45,7 +45,7 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getRecommendedConnectionsWithGrouping(): ReceiveChannel<RecommendedConnections> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS_RECOMMENDED)
-                .child(requireNotNull(userRepository.getAccountId()))
+                .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .toValueChannel<DataSnapshot>(exceptionHandler)
                 .map {
                     if (it == null) {
@@ -72,7 +72,7 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getStatusConnections(userAccountId: String): ReceiveChannel<ConnectionStatus> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
-                .child(requireNotNull(userRepository.getAccountId()))
+                .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
                 .child(userAccountId)
                 .toValueChannel<ConnectionDbStatuses>(exceptionHandler)
@@ -83,7 +83,7 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getConnectionStatusById(userAccountId: String): ConnectionStatus {
         val status = databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
-                .child(requireNotNull(userRepository.getAccountId()))
+                .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .child(DatabaseContract.TABLE_CONNECTIONS_COL_STATUSES)
                 .child(userAccountId)
                 .await<ConnectionDbStatuses>(exceptionHandler)
@@ -92,7 +92,7 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
-                .child(requireNotNull(userRepository.getAccountId()))
+                .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .child(DatabaseContract.TABLE_CONNECTIONS_COL_DISCONNECTED)
                 .toListChannel<DeclinedShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, DeclinedShortAccountModel::class.java) }
@@ -143,9 +143,9 @@ class ConnectionsRepositoryImpl(
                 .handleException(exceptionHandler)
     }
 
-    private fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
+    private suspend fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
-                .child(requireNotNull(userRepository.getAccountId()))
+                .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .child(columnName)
                 .toListChannel<ShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, ShortAccountModel::class.java) }

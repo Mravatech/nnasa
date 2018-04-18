@@ -55,7 +55,7 @@ class RetrofitConfig(
                             NetworkContract.Base.AUTHORIZATION_HEADER,
                             NetworkContract.Base.AUTHORIZATION_HEADER_VALUE_MASK.format(it))
                 }
-                userProfileInteractor.getAccountId()?.let { newRequest.addHeader(NetworkContract.Base.ACCOUNT_ID_HEADER, it) }
+                userProfileInteractor.getAccountIdOrNull()?.let { newRequest.addHeader(NetworkContract.Base.ACCOUNT_ID_HEADER, it) }
             }
 
             val response = chain.proceed(newRequest.build())

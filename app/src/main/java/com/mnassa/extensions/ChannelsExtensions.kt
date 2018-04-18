@@ -47,8 +47,10 @@ abstract class ReConsumableBroadcastChannel<T>(
         previousConsumeJob?.cancel()
         previousReceiveChannel?.cancel()
 
+        val wasConsumedBefore = previousConsumeJob != null
+
         previousConsumeJob = thisRef.handleException {
-            beforeReConsume(outputChannel)
+            if (wasConsumedBefore) beforeReConsume(outputChannel)
             val inputChannel = receiveChannelProvider()
             previousReceiveChannel = inputChannel
             inputChannel.consumeEach {

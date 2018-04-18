@@ -170,12 +170,14 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     override fun onDestroyView(view: View) {
+        headerLayout.invoke { it.rvTags.adapter = null }
         headerLayout.value.clear()
         headerLayout.clear()
         commentsAdapter.destroyCallbacks()
         accountsToRecommendAdapter.destroyCallbacks()
         view.rvPostDetails.adapter = null
         view.rvAccountsToRecommend.adapter = null
+
         super.onDestroyView(view)
     }
 

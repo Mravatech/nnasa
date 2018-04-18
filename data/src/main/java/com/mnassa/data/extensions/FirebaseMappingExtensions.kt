@@ -58,8 +58,6 @@ internal inline fun <reified T : Any> DataSnapshot?.mapList(): List<T> = mapList
 internal inline fun <reified T : Any> Iterable<DataSnapshot>.mapList(): List<T> = mapNotNull { mapSingleValue<T>(it) }
 
 internal inline val DatabaseReference.path: String
-    get() {
-        return "[${this.toString().substring(this.root.toString().length)}]"
-    }
+    get() = "[${this.toString().substring(this.root.toString().length)}]"
 
 internal inline val DataSnapshot?.path: String get() = this?.ref?.path ?: "[NULL]"

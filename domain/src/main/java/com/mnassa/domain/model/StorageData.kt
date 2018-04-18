@@ -1,11 +1,13 @@
 package com.mnassa.domain.model
 
+import java.io.Serializable
+
 /**
  * Created by IntelliJ IDEA.
  * User: okli
  * Date: 2/28/2018
  */
-interface StorageData {
+interface StorageData : Serializable {
     val folderType: Int
     fun getFolder(): String
 }

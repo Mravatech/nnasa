@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@null"
             app:srcCompat="@drawable/ic_notifications_disabled" />
+        app:drawer_button_enabled="true" />
 
         <TextView
             android:id="@+id/tvEmptyNotifications"
