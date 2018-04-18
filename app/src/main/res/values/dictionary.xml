@@ -332,4 +332,12 @@
     <string name="event_exercise">exercise</string>
     <string name="event_activity">activity</string>
 
+    <string name="event_details_by">_event_details_by</string>
+
+    <string name="event_tab_info">_android_event_tab_info</string>
+    <string name="event_tab_participants">_android_event_tab_participants</string>
+    <string name="event_location_not_defined">_event_details_location_notDefined</string>
+    <string name="event_location_later">_event_details_location_willBeAnnouncedLater</string>
+    <string name="event_duration">_event_details_duration</string>
+
 </resources>

@@ -20,47 +20,10 @@
         tools:listitem="@layout/item_comment" />
 
     <LinearLayout
-        android:id="@+id/llPanels"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/commentPanel"
-        android:orientation="vertical">
-
-        <View
-            style="@style/MnassaShadow"
-            android:alpha="0.6"
-            android:rotation="180" />
-
-        <include
-            android:id="@+id/editPanel"
-            layout="@layout/panel_comment_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <include
-            android:id="@+id/replyPanel"
-            layout="@layout/panel_reply"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <include
-            android:id="@+id/recommendPanel"
-            layout="@layout/panel_recommend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible" />
-    </LinearLayout>
-
-    <include
         android:id="@+id/commentPanel"
-        layout="@layout/panel_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" />
 
 </RelativeLayout>

@@ -120,7 +120,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>> {
-        val userId = requireNotNull(userRepository.getAccountIdOrException())
+        val userId = userRepository.getAccountIdOrException()
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_LIST)
                 .child(TABLE_CHAT_TYPE)

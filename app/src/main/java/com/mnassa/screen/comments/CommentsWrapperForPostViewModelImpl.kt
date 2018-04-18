@@ -14,7 +14,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 4/17/2018.
  */
-class CommentsWrapperViewModelImpl(
+class CommentsWrapperForPostViewModelImpl(
         private val postId: String,
         private val commentsInteractor: CommentsInteractor,
         private val postsInteractor: PostsInteractor

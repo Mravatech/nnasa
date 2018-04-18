@@ -16,7 +16,6 @@ import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import kotlinx.android.synthetic.main.event_date.view.*
 import kotlinx.android.synthetic.main.item_event.view.*
-import java.text.SimpleDateFormat
 
 /**
  * Created by Peter on 4/16/2018.
@@ -33,6 +32,7 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
 
     init {
         dataStorage = SortedDataStorage(itemClass, this)
+        itemsTheSameComparator = { first, second -> first.id == second.id }
     }
 
     fun destroyCallbacks() {
@@ -91,8 +91,7 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
     }
 
     class EventViewHolder(itemView: View, languageProvider: LanguageProvider) : BaseVH<EventModel>(itemView) {
-        private val dateFormatter = SimpleDateFormat("dd MMM", languageProvider.locale)
-        private val dayOfWeekFormatter = SimpleDateFormat("EEE", languageProvider.locale)
+
         var currentAccountId: String? = null
 
         override fun bind(item: EventModel) {
@@ -106,8 +105,7 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
                 tvEventTitle.text = item.title
                 tvEventDescription.text = item.text
 
-                tvDate.text = dateFormatter.format(item.startAt)
-                tvDayOfWeek.text = dayOfWeekFormatter.format(item.startAt)
+                item.bindDate(llEventDateRoot)
 
                 flEventDisabled.isInvisible = item.isActive
                 if (item.isActive) ivEvent.enable() else ivEvent.disable()

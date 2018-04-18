@@ -59,7 +59,7 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
             rvSelectedAccounts.visibility = if (selectedAccountsAdapter.dataStorage.size == 0) View.GONE else View.VISIBLE
 
             btnRecommend.setOnClickListener {
-                resultListener.recommendedAccounts = allAccountsAdapter.selectedAccounts.toList()
+                resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())
                 close()
             }
 
@@ -91,7 +91,8 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
     }
 
     interface OnRecommendPostResult {
-        var recommendedAccounts: List<ShortAccountModel>
+        fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>)
+        val recommendedAccounts: List<ShortAccountModel>
     }
 
     companion object {

@@ -8,6 +8,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
+import com.mnassa.core.addons.await
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -22,12 +23,14 @@ import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
+import kotlinx.android.synthetic.main.comment_panels.view.*
 import kotlinx.android.synthetic.main.controller_comments_wrapper.view.*
 import kotlinx.android.synthetic.main.panel_comment.view.*
 import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
 
 /**
@@ -58,9 +61,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             bindEditedComment(value)
             value?.let { recommendedAccounts = it.recommends }
         }
-    override var recommendedAccounts: List<ShortAccountModel>
-        set(value) = bindRecommendedAccounts(value)
-        get() = accountsToRecommendAdapter.dataStorage.toList()
+    override var recommendedAccounts: List<ShortAccountModel> = emptyList()
+    override fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>) = bindRecommendedAccounts(recommendedAccounts)
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -72,30 +74,48 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
     }
 
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         accountsToRecommendAdapter.onDataSourceChangedListener = { accounts ->
+            recommendedAccounts = accounts
             launchCoroutineUI {
-                getViewSuspend().recommendPanel?.isGone = accounts.isEmpty()
+                getCommentsContainer().recommendPanel?.isGone = accounts.isEmpty()
                 updatePostCommentButtonState()
             }
         }
 
         with(view) {
             rvContent.adapter = commentsAdapter
-            rvAccountsToRecommend.adapter = accountsToRecommendAdapter
 
-            btnCommentPost.setOnClickListener { onPostCommentClick() }
-            ivCommentRecommend.setOnClickListener { openRecommendScreen() }
-            updatePostCommentButtonState()
+            launchCoroutineUI {
+                val container = getCommentsContainer()
+                container.removeAllViews()
 
-            etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
-            etCommentText.addTextChangedListener(SimpleTextWatcher { updatePostCommentButtonState() })
-            ivReplyCancel.setOnClickListener { replyTo = null }
+                val inflater = LayoutInflater.from(container.context)
+                inflater.inflate(R.layout.comment_panels, container, true)
+                inflater.inflate(R.layout.panel_comment, container, true)
 
-            editPanel.tvEditTitle.text = fromDictionary(R.string.posts_comment_edit_title)
-            editPanel.ivEditCancel.setOnClickListener { editedComment = null }
+                rvAccountsToRecommend.adapter = accountsToRecommendAdapter
+
+                with(container) {
+                    btnCommentPost.setOnClickListener { onPostCommentClick() }
+                    ivCommentRecommend.setOnClickListener { openRecommendScreen() }
+                    updatePostCommentButtonState()
+
+                    etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
+                    etCommentText.addTextChangedListener(SimpleTextWatcher { updatePostCommentButtonState() })
+                    ivReplyCancel.setOnClickListener { replyTo = null }
+
+                    editPanel.tvEditTitle.text = fromDictionary(R.string.posts_comment_edit_title)
+                    editPanel.ivEditCancel.setOnClickListener { editedComment = null }
+                }
+
+                bindEditedComment(editedComment)
+                bindReplyTo(replyTo)
+                bindRecommendedAccounts(recommendedAccounts)
+            }
+
             bindToolbar(toolbar)
         }
 
@@ -126,13 +146,28 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                 }
             }
         }
+    }
 
-        bindEditedComment(editedComment)
-        bindReplyTo(replyTo)
+    override fun onSaveViewState(view: View, outState: Bundle) {
+        super.onSaveViewState(view, outState)
+        runBlocking {
+            outState.putString(EXTRA_COMMENT_TEXT, getCommentsContainer().etCommentText.text.toString())
+        }
+    }
+
+    override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+        super.onRestoreViewState(view, savedViewState)
+        launchCoroutineUI {
+            with(getCommentsContainer()) {
+                etCommentText.setText(savedViewState.getString(EXTRA_COMMENT_TEXT, null))
+                etCommentText.setSelection(etCommentText.text.length)
+            }
+        }
     }
 
     override fun onDestroyView(view: View) {
         accountsToRecommendAdapter.destroyCallbacks()
+        wrappedController.clear()
         view.rvContent.adapter = null
         view.rvAccountsToRecommend.adapter = null
 
@@ -140,7 +175,9 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     override fun openKeyboardOnComment() {
-        view?.etCommentText?.apply { showKeyboard(this) }
+        launchCoroutineUI {
+            getCommentsContainer().etCommentText?.apply { showKeyboard(this) }
+        }
     }
 
     private fun inflateHeader(parent: ViewGroup): View {
@@ -187,7 +224,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             etCommentText.text = null
             replyTo = null
             editedComment = null
-            recommendedAccounts = emptyList()
+            bindRecommendedAccounts(emptyList())
         }
     }
 
@@ -222,15 +259,17 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     private fun bindRecommendedAccounts(value: List<ShortAccountModel>) {
+        this.recommendedAccounts = value
+        accountsToRecommendAdapter.set(value)
+
         launchCoroutineUI {
-            getViewSuspend().recommendPanel.isGone = value.isEmpty()
-            accountsToRecommendAdapter.set(value)
+            getCommentsContainer().recommendPanel?.isGone = value.isEmpty()
         }
     }
 
     private fun bindReplyTo(value: CommentModel?) {
         launchCoroutineUI {
-            with(getViewSuspend()) {
+            with(getCommentsContainer()) {
                 replyPanel.isGone = value == null
                 if (value == null) return@launchCoroutineUI
                 replyPanel.tvReplyTo.text = fromDictionary(R.string.posts_comment_reply_to)
@@ -245,12 +284,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             commentsAdapter.isLoadingEnabled = false
             commentsAdapter.clear()
         }
-        //TODO
+        wrappedController.invoke { it.bindCanReadComments(canReadComments) }
     }
 
     private fun bindCanWriteComments(canWriteComments: Boolean) {
         view?.commentPanel?.isGone = !canWriteComments
-        //TODO
+        wrappedController.invoke { it.bindCanWriteComments(canWriteComments) }
     }
 
     private fun bindToolbar(toolbar: MnassaToolbar) {
@@ -278,12 +317,18 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
+    private suspend fun getCommentsContainer(): ViewGroup {
+        val wrappedController = wrappedController.await()
+        return wrappedController.getCommentInputContainer(this@CommentsWrapperController)
+    }
+
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
     override fun close(self: Controller) = mnassaRouter.close(self)
 
     companion object {
         private const val EXTRA_CONTROLLER_CLASS = "EXTRA_CONTROLLER_CLASS"
         private const val EXTRA_CONTROLLER_ARGS = "EXTRA_CONTROLLER_ARGS"
+        private const val EXTRA_COMMENT_TEXT = "EXTRA_COMMENT_TEXT"
 
         fun newInstance(controllerToWrap: Controller): CommentsWrapperController {
             val args = Bundle()
@@ -293,7 +338,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
-    interface CommentsWrapperCallback {
+    interface CommentsWrapperCallback : CommentInputContainer {
         fun bindToolbar(toolbar: MnassaToolbar) {
             toolbar.isGone = true
         }
@@ -301,5 +346,13 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         fun openRecommendScreen(recommendedAccountIds: List<String>, self: CommentsWrapperController) {
             self.open(RecommendController.newInstance(emptyList(), recommendedAccountIds, self))
         }
+
+        fun bindCanReadComments(canReadComments: Boolean) = Unit
+
+        fun bindCanWriteComments(canWriteComments: Boolean) = Unit
+    }
+
+    interface CommentInputContainer {
+        suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup = self.getViewSuspend().commentPanel
     }
 }

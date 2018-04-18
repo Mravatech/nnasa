@@ -9,5 +9,6 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface EventsRepository {
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>>
-    suspend fun getEventsWallChannel(): ReceiveChannel<ListItemEvent<EventModel>>
+    suspend fun getEventsChannel(eventId: String): ReceiveChannel<EventModel?>
+    suspend fun sendViewed(ids: List<String>)
 }

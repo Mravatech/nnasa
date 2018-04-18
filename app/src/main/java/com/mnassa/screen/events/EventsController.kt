@@ -9,6 +9,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -30,7 +31,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>() {
 
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
-        adapter.onItemClickListener = { /*TODO*/ }
+        adapter.onItemClickListener = { open(EventDetailsController.newInstance(it)) }
 
         adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {

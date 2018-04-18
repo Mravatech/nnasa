@@ -3,7 +3,6 @@ package com.mnassa.screen.posts.need.details
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.View
-import android.widget.Toast
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
@@ -29,8 +28,6 @@ import kotlinx.android.synthetic.main.controller_need_details_header.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
-import org.kodein.di.weakReference
-import timber.log.Timber
 
 /**
  * Created by Peter on 3/19/2018.
@@ -54,11 +51,6 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             viewModel.sendComplaint(postId, value)
         }
     private val commentsWrapper by lazy { parentController as CommentsWrapperListener }
-    override var recommendedAccounts: List<ShortAccountModel>
-        get() = commentsWrapper.recommendedAccounts
-        set(value) {
-            commentsWrapper.recommendedAccounts = value
-        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -88,6 +80,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         view.rvTags.adapter = null
         super.onDestroyView(view)
     }
+
+    override fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>) = commentsWrapper.onRecommendedAccountResult(recommendedAccounts)
+    override val recommendedAccounts: List<ShortAccountModel> get() = commentsWrapper.recommendedAccounts
 
     private fun complainAboutProfile(view: View) {
         launchCoroutineUI {
@@ -214,14 +209,24 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         post?.let {
             open(RecommendController.newInstance(it.autoSuggest.accountIds, recommendedAccountIds, this))
         }
+    }
 
+    override fun bindCanReadComments(canReadComments: Boolean) {
+        //TODO
+    }
+
+    override fun bindCanWriteComments(canWriteComments: Boolean) {
+        launchCoroutineUI {
+            if (!canWriteComments) {
+                makePostActionsGone()
+            }
+        }
     }
 
     protected open suspend fun makePostActionsGone() {
         getViewSuspend().let {
             it.llOtherPersonPostActions.isGone = true
             it.vOtherPersonPostActionsSeparator.isGone = true
-
         }
     }
 

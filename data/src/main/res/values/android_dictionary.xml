@@ -125,4 +125,7 @@
 
     <string name="_android_connected_by_from_INFO">from</string>
 
+    <string name="_android_event_tab_info_INFO">Information</string>
+    <string name="_android_event_tab_participants_INFO">Participants</string>
+
 </resources>

@@ -38,7 +38,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 originalCreatedAt = Date(input.originalCreatedAt),
                 pictures = input.pictures,
                 price = input.price,
-                privacyType = converter.convert(input.privacyType),
+                privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) } ?: PostPrivacyType.PUBLIC,
                 status = converter.convert(input.status),
                 tags = input.tags ?: emptyList(),
                 title = input.title,
@@ -62,10 +62,10 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertLocation(input: EventDbEntity, converter: ConvertersContext): EventLocationType {
         return when (input.locationType) {
-            NetworkContract.EventLocationType.SPECIFY -> EventLocationType.Specified(
-                    location = converter.convert(input.locationDbEntity!!),
+            NetworkContract.EventLocationType.SPECIFY -> if (input.locationDbEntity != null) EventLocationType.Specified(
+                    location = converter.convert(input.locationDbEntity),
                     id = requireNotNull(input.locationId) { "LocationId not specified, but type: ${input.locationType}. Event: $input" }
-            )
+            ) else EventLocationType.Later //server side error
             NetworkContract.EventLocationType.LATER -> EventLocationType.Later
             NetworkContract.EventLocationType.NOT_DEFINED -> EventLocationType.NotDefined
             else -> throw IllegalArgumentException("Invalid location type ${input.locationType}. Event: $input")

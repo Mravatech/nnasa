@@ -79,5 +79,7 @@ internal object DatabaseContract {
     //
     const val TABLE_EVENTS = "events"
     const val TABLE_EVENTS_COLLECTION_FEED = "feed"
+    //
+    const val TABLE_ALL_EVENTS = "allEvents"
 
 }
