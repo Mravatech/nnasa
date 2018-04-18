@@ -30,7 +30,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                                  private val converter: ConvertersContext) : NotificationRepository {
 
     override suspend fun loadNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> {
-        val myUserId = requireNotNull(userRepository.getAccountId())
+        val myUserId = requireNotNull(userRepository.getAccountIdOrNull())
         return db.child(TABLE_NOTIFICATIONS)
                 .child(myUserId)
                 .toValueChannelWithChangesHandling<NotificationDbEntity, NotificationModel>(
@@ -44,7 +44,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadNotificationsOld(): ReceiveChannel<ListItemEvent<NotificationModel>> {
-        val myUserId = requireNotNull(userRepository.getAccountId())
+        val myUserId = requireNotNull(userRepository.getAccountIdOrNull())
         return db.child(TABLE_NOTIFICATIONS_OLD)
                 .child(myUserId)
                 .toValueChannelWithChangesHandling<NotificationDbEntity, NotificationModel>(

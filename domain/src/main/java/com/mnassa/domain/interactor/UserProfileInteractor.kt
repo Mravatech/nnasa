@@ -3,8 +3,6 @@ package com.mnassa.domain.interactor
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import com.mnassa.domain.model.*
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -31,7 +29,5 @@ interface UserProfileInteractor {
 
     suspend fun getProfileById(accountId: String): ProfileAccountModel?
     suspend fun getProfileByIdChannel(accountId: String): ReceiveChannel<ProfileAccountModel?>
-    suspend fun getAccountId(): String?
     suspend fun addPushToken()
-    suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel?
 }
