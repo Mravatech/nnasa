@@ -35,7 +35,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                 .child(myUserId)
                 .toValueChannelWithChangesHandling<NotificationDbEntity, NotificationModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(NotificationModel::class.java)
+                        mapper = { converter.convert(it, NotificationModel::class.java) }
                 )
                 .map {
                     it.item.isOld = false
@@ -49,7 +49,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                 .child(myUserId)
                 .toValueChannelWithChangesHandling<NotificationDbEntity, NotificationModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = converter.convertFunc(NotificationModel::class.java)
+                        mapper = { converter.convert(it, NotificationModel::class.java) }
                 )
     }
 

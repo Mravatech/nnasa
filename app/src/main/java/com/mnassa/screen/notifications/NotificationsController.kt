@@ -8,7 +8,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.posts.need.details.PostDetailsController
+import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
@@ -61,7 +61,8 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
 
         when (item.type) {
             postComment, generalPostByAdmin, newEventByAdmin, eventCancelling, userWasRecommendedInEvent -> {
-                open(PostDetailsController.newInstance(requireNotNull(item.extra.post).id))
+                val postDetailsFactory: PostDetailsFactory by instance()
+                open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
             }
             iWasRecommended, iWasRecommendedInEvent, userWasRecommended, autoSuggestYouCanHelp,
             newUserJoined, postRepost, connectionRequest, connectionsRequestAccepted,

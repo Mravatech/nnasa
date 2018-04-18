@@ -94,12 +94,12 @@ import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
+import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModel
+import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModelImpl
 import com.mnassa.screen.wallet.WalletViewModel
 import com.mnassa.screen.wallet.WalletViewModelImpl
 import com.mnassa.screen.wallet.send.SendPointsViewModel
 import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
-import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModel
-import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
 import org.kodein.di.Kodein
 import org.kodein.di.generic.*
@@ -137,7 +137,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl() }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
-    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl() }
+    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
     bind<ChatMessageViewModel>() with provider { ChatMessageViewModelImpl(instance(), instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
