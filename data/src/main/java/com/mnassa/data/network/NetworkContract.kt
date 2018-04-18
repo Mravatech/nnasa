@@ -20,6 +20,11 @@ object NetworkContract {
     }
 
     object ItemType {
+        const val ORIGINAL = "original"
+        const val REPOST = "repost"
+    }
+
+    object EntityType {
         const val POST = "post"
         const val EVENT = "event"
     }
@@ -64,19 +69,47 @@ object NetworkContract {
         const val NO_RIGHTS_TO_COMMENT = "noRightToCommentPost"
     }
 
-    object Gender{
+    object Gender {
         const val MALE = "male"
         const val FEMALE = "female"
     }
 
-    object Complaint{
+    object Complaint {
         const val ACCOUNT_TYPE = "account"
         const val POST_TYPE = "post"
     }
+
+    object EventStatus {
+        const val ANNULED = "annulled"
+        const val OPENED = "opened"
+        const val CLOSED = "closed"
+        const val SUSPENDED = "suspended"
+    }
+
+    object EventDuration {
+        const val MINUTE = "minute"
+        const val HOUR = "hour"
+        const val DAY = "day"
+    }
+
+    object EventLocationType {
+        const val SPECIFY = "specifyLocation"
+        const val NOT_DEFINED = "notDefined"
+        const val LATER = "willBeAnnouncedLater"
+    }
+
+    object EventType {
+        const val LECTURE = "lecture"
+        const val DISCUSSION = "discussion"
+        const val WORKSHOP = "workshop"
+        const val EXERCISE = "exercise"
+        const val ACTIVITY = "activity"
+    }
 }
 
-val PostPrivacyType.stringValue: String get() = when (this) {
-    is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
-    is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
-    is PostPrivacyType.WORLD -> NetworkContract.PostPrivacyType.WORLD
-}
+val PostPrivacyType.stringValue: String
+    get() = when (this) {
+        is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
+        is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
+        is PostPrivacyType.WORLD -> NetworkContract.PostPrivacyType.WORLD
+    }

@@ -41,13 +41,13 @@ interface PostCounters : Serializable {
     val views: Int
 }
 
-interface PostAutoSuggest: Serializable {
+interface PostAutoSuggest : Serializable {
     val total: Int
     val youCanHelp: Boolean
     val accountIds: List<String>
 
     companion object {
-        val EMPTY = object: PostAutoSuggest {
+        val EMPTY = object : PostAutoSuggest {
             override val total: Int = 0
             override val youCanHelp: Boolean = false
             override val accountIds: List<String> = emptyList()
@@ -55,22 +55,22 @@ interface PostAutoSuggest: Serializable {
     }
 }
 
-sealed class PostType(val ordinal: Int)  : Serializable {
-    object NEED: PostType(1)
-    object OFFER: PostType(2)
-    object GENERAL: PostType(3)
-    object PROFILE: PostType(4)
+sealed class PostType(val ordinal: Int) : Serializable {
+    object NEED : PostType(1)
+    object OFFER : PostType(2)
+    object GENERAL : PostType(3)
+    object PROFILE : PostType(4)
 }
 
 sealed class PostPrivacyType : Serializable {
-    object PUBLIC: PostPrivacyType()
-    object PRIVATE: PostPrivacyType()
-    object WORLD: PostPrivacyType()
+    object PUBLIC : PostPrivacyType()
+    object PRIVATE : PostPrivacyType()
+    object WORLD : PostPrivacyType()
 }
 
-sealed class ItemType : Serializable {
-    object EVENT: ItemType()
-    object POST: ItemType()
+sealed class EntityType : Serializable {
+    object EVENT : EntityType()
+    object POST : EntityType()
 }
 
 val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE

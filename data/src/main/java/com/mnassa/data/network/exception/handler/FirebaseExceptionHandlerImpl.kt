@@ -21,6 +21,7 @@ class FirebaseExceptionHandlerImpl : FirebaseExceptionHandler {
     }
 
     override fun handle(databaseeException: DatabaseException): Throwable {
-        return NotAuthorizedException(databaseeException.message ?: "not authorized", databaseeException)
+        return NotAuthorizedException(databaseeException.message
+                ?: "not authorized (database exception)", databaseeException)
     }
 }

@@ -42,7 +42,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     override suspend fun onItemViewed(item: PostModel) {
-        if (item.author.id == userProfileInteractorImpl.getAccountId()) {
+        if (item.author.id == userProfileInteractorImpl.getAccountIdOrException()) {
             return
         }
         viewItemChannel.send(ListItemEvent.Added(item))

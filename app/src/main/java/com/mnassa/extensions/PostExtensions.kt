@@ -69,7 +69,7 @@ val PostModel.formattedText: CharSequence?
     }
 
 suspend fun PostModel.isMyPost(): Boolean {
-    return author.id == App.context.getInstance<UserProfileInteractor>().getAccountId()
+    return author.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
 }
 
 val PostModel.isRepost: Boolean get() = originalId != id

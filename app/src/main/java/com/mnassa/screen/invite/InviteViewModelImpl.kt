@@ -7,7 +7,6 @@ import android.support.annotation.RequiresPermission
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.InviteInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
@@ -20,9 +19,8 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Date: 3/19/2018
  */
 class InviteViewModelImpl(
-    private val connectionsInteractor: ConnectionsInteractor,
-    private val inviteInteractor: InviteInteractor,
-    private val userProfileInteractor: UserProfileInteractor
+        private val connectionsInteractor: ConnectionsInteractor,
+        private val inviteInteractor: InviteInteractor
 ) : MnassaViewModelImpl(), InviteViewModel {
 
     override val invitesCountChannel: BroadcastChannel<Int> = BroadcastChannel(10)
@@ -69,8 +67,8 @@ class InviteViewModelImpl(
     private fun subscribeToInvites() {
         subscribeToInvitesJob?.cancel()
         subscribeToInvitesJob = handleException {
-            userProfileInteractor.getCurrentUserWithChannel().consumeEach {
-                invitesCountChannel.send(it.invites)
+            inviteInteractor.getInvitesCountChannel().consumeEach {
+                invitesCountChannel.send(it)
             }
         }
     }

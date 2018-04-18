@@ -127,10 +127,10 @@ class PostConverter : ConvertersContextRegistrationCallback {
         }
     }
 
-    private fun convertItemType(input: String): ItemType {
+    private fun convertItemType(input: String): EntityType {
         return when (input) {
-            NetworkContract.ItemType.POST -> ItemType.POST
-            NetworkContract.ItemType.EVENT -> ItemType.EVENT
+            NetworkContract.EntityType.POST -> EntityType.POST
+            NetworkContract.EntityType.EVENT -> EntityType.EVENT
 
             else -> throw IllegalArgumentException("Wrong post item type $input")
         }

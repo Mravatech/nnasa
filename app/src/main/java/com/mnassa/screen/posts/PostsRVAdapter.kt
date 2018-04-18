@@ -1,5 +1,6 @@
 package com.mnassa.screen.posts
 
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -118,7 +119,19 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         }
     }
 
+    fun saveState(outState: Bundle) {
+        outState.putSerializable(EXTRA_POSTS_STATE, dataStorage.toCollection(ArrayList()))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun restoreState(inState: Bundle) {
+        dataStorage.set(inState.getSerializable(EXTRA_POSTS_STATE) as List<PostModel>)
+    }
+
+
     private companion object {
+        private const val EXTRA_POSTS_STATE = "EXTRA_POSTS_STATE"
+
         private const val TYPE_NEED = 2
         private const val TYPE_NEED_WITH_IMAGE_1 = 3
         private const val TYPE_NEED_WITH_IMAGE_2 = 4

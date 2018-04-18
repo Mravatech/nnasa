@@ -1,7 +1,6 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
@@ -59,14 +58,14 @@ class ProfileViewModelImpl(
     override fun getProfileWithAccountId(accountId: String) {
         handleException {
             showProgress()
-            userProfileInteractor.getProfileById(accountId).consumeEach {
+            userProfileInteractor.getProfileByIdChannel(accountId).consumeEach {
                 val profileAccountModel = it
                 Timber.i(profileAccountModel.toString())
                 profileAccountModel?.let {
                     val profile = ProfileModel(it,
                             tagInteractor.getTagsByIds(it.interests),
                             tagInteractor.getTagsByIds(it.offers),
-                            userProfileInteractor.getAccountId() == accountId
+                            userProfileInteractor.getAccountIdOrNull() == accountId
                             , connectionsInteractor.getConnectionStatusById(accountId))
                     profileChannel.send(profile)
                 }

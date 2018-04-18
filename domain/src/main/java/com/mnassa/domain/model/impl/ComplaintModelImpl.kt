@@ -8,7 +8,7 @@ import com.mnassa.domain.model.ComplaintModel
  * Date: 4/10/2018
  */
 data class ComplaintModelImpl(
-        override val id: String,
+        override var id: String,
         override val type: String,
         override val reason: String
 ) : ComplaintModel

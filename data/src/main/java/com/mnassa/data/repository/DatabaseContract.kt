@@ -19,6 +19,7 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_POINTS = "points"
     const val TABLE_ACCOUNTS_COL_TOTAL_INCOME = "totalIncome"
     const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
+    const val TABLE_ACCOUNTS_COL_INVITES_COUNT = "invites"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -75,5 +76,8 @@ internal object DatabaseContract {
     const val TABLE_TRANSACTIONS = "transactions"
     //
     const val COMPLAINT_REASON = "complaintReason"
+    //
+    const val TABLE_EVENTS = "events"
+    const val TABLE_EVENTS_COLLECTION_FEED = "feed"
 
 }
