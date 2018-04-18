@@ -75,8 +75,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                         tags = chipTags.getTags(),
                         images = attachedImagesAdapter.dataStorage.toList(),
                         placeId = placeId,
-                        price = etPrice.text.toString().toDoubleOrNull(),
-                        shareOptions = sharingOptions
+                        price = etPrice.text.toString().toLongOrNull(),
+                        postPrivacyOptions = sharingOptions.asPostPrivacy
                 )
             }
             tvShareOptions.setOnClickListener {
@@ -147,6 +147,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     override fun onDestroyView(view: View) {
         attachedImagesAdapter.destroyCallbacks()
+        view.rvImages.adapter = null
         super.onDestroyView(view)
     }
 

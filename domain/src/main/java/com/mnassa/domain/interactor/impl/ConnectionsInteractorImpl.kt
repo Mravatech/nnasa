@@ -43,8 +43,8 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
     override suspend fun getStatusesConnections(userAccountId: String): ReceiveChannel<ConnectionStatus> =
             connectionsRepository.getStatusConnections(userAccountId)
 
-    override suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus =
-            connectionsRepository.getConnectedStatusById(userAccountId)
+    override suspend fun getConnectionStatusById(userAccountId: String): ConnectionStatus =
+            connectionsRepository.getConnectionStatusById(userAccountId)
 
     override suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>) {
         connectionsRepository.actionConnectionStatus(connectionAction, aids)

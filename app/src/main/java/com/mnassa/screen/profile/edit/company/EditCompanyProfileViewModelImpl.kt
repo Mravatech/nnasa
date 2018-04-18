@@ -54,7 +54,7 @@ class EditCompanyProfileViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
-                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
 
                 val profile = ProfileCompanyInfoModelImpl(
                         id = profileAccountModel.id,
@@ -76,7 +76,8 @@ class EditCompanyProfileViewModelImpl(
                         foundedDate = foundedDate,
                         locationId = locationId,
                         interests = interestsWithIds,
-                        offers = offersWithIds)
+                        offers = offersWithIds,
+                        connectedBy = null)
                 userProfileInteractor.updateCompanyAccount(profile)
                 openScreenChannel.send(EditCompanyProfileViewModel.CompanyScreenCommander.CloseCompanyEditScreen())
             }

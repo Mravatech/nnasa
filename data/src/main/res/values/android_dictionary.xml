@@ -9,6 +9,8 @@
     <string name="_android_country_united_states_INFO">United States</string>
     <string name="_android_country_canada_INFO">Canada</string>
 
+    <string name="_android_cancel_INFO">Cancel</string>
+
     <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
     <string name="_android_enter_validation_code_header_INFO">Validation Code</string>
     <string name="_android_error_dialog_title_something_went_wrong_INFO">Something went wrong</string>
@@ -58,9 +60,9 @@
     <string name="_android_my_wallet_send_points_comments_hint_INFO">Type some comments…</string>
     <string name="_android_select_recipient_title_INFO">Select recipient</string>
     <string name="_android_my_wallet_successfully_sent_title_INFO">Success!</string>
-    <string name="_android_my_wallet_successfully_sent_description_INFO">You have successfully transferred </string>
-    <string name="_android_my_wallet_successfully_sent_description_points_INFO"> points </string>
-    <string name="_android_my_wallet_successfully_sent_description_to_INFO"> to %s</string>
+    <string name="_android_my_wallet_successfully_sent_description_INFO">You have successfully transferred</string>
+    <string name="_android_my_wallet_successfully_sent_description_points_INFO">points</string>
+    <string name="_android_my_wallet_successfully_sent_description_to_INFO">to %s</string>
 
     <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
     <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
@@ -101,10 +103,29 @@
     <string name="_android_invite_history_pending_INFO">PENDING</string>
     <string name="_android_invite_history_invited_in_INFO">Invited in %s</string>
 
+    <string name="_android_chat_today_INFO">Today</string>
+
+    <string name="_android_message_chat_post_INFO">POST</string>
+
     <string name="_android_position_not_specified_INFO">Position not specified</string>
 
     <string name="_android_side_menu_profile_INFO">My Profile</string>
     <string name="_android_side_menu_logout_INFO">Logout</string>
     <string name="_android_side_menu_add_account_INFO">Add Account</string>
+    <string name="_android_type_your_message_INFO">Type your message…</string>
+    <string name="_android_please_describe_your_reason_INFO">Please describe your reason</string>
+    <string name="_android_send_INFO">SEND</string>
+
+
+    <string name="_android_terms_and_conditions_INFO">Terms and conditions</string>
+
+    <string name="_android_post_recommends_INFO">Recommends</string>
+    <string name="_android_post_recommends_prefix_INFO">I recommend</string>
+    <string name="_android_post_recommends_connect_now_INFO">Connect now</string>
+    <string name="_android_post_recommends_open_profile_INFO">Open profile</string>
+    <string name="_android_post_recommends_message_placeholder_INFO">type your message…</string>
+    <string name="_android_post_recommends_publish_INFO">Publish</string>
+
+    <string name="_android_connected_by_from_INFO">from</string>
 
 </resources>

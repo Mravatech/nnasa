@@ -48,7 +48,7 @@ class OrganizationInfoViewModelImpl(
         processAccountJob?.cancel()
         processAccountJob = handleException {
             withProgressSuspend {
-                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val companyInfo = CompanyInfoModelImpl(
                         id = accountModel.id,
                         firebaseUserId = accountModel.firebaseUserId,
@@ -66,7 +66,8 @@ class OrganizationInfoViewModelImpl(
                         founded = founded,
                         organizationType = organizationType,
                         website = website,
-                        foundedDate = foundedDate
+                        foundedDate = foundedDate,
+                        connectedBy = null
                 )
                 userProfileInteractor.processAccount(companyInfo)
                 openScreenChannel.send(OrganizationInfoViewModel.OpenScreenCommand.InviteScreen())

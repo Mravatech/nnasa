@@ -50,7 +50,7 @@ class EditPersonalProfileViewModelImpl(
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)
-                avatarSavedPath = avatarUri?.let { storageInteractor.sendAvatar(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
+                avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val profile = ProfilePersonalInfoModelImpl(
                         id = profileAccountModel.id,
                         firebaseUserId = profileAccountModel.firebaseUserId,
@@ -70,7 +70,8 @@ class EditPersonalProfileViewModelImpl(
                         gender = if (isMale) Gender.MALE else Gender.FEMALE,
                         locationId = locationId,
                         interests = interestsWithIds,
-                        offers = offersWithIds
+                        offers = offersWithIds,
+                        connectedBy = null
                 )
                 userProfileInteractor.updatePersonalAccount(profile)
                 openScreenChannel.send(EditPersonalProfileViewModel.PersonalScreenCommander.ClosePersonalEditScreen())

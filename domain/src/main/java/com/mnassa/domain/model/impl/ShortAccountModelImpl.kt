@@ -15,7 +15,8 @@ data class ShortAccountModelImpl(override var id: String,
                                  override var language: String?,
                                  override var personalInfo: PersonalAccountDiffModel?,
                                  override var organizationInfo: OrganizationAccountDiffModel?,
-                                 override var abilities: List<AccountAbility>) : ShortAccountModel {
+                                 override var abilities: List<AccountAbility>,
+                                 override var connectedBy: ConnectedByModel?) : ShortAccountModel {
 }
 
 data class DeclinedShortAccountModelImpl(
@@ -29,7 +30,8 @@ data class DeclinedShortAccountModelImpl(
         override var personalInfo: PersonalAccountDiffModel?,
         override var organizationInfo: OrganizationAccountDiffModel?,
         override var abilities: List<AccountAbility>,
-        override var declinedAt: Date
+        override var declinedAt: Date,
+        override var connectedBy: ConnectedByModel?
 ) : DeclinedShortAccountModel
 
 data class InvitedShortAccountModelImpl(
@@ -43,7 +45,8 @@ data class InvitedShortAccountModelImpl(
         override var personalInfo: PersonalAccountDiffModel?,
         override var organizationInfo: OrganizationAccountDiffModel?,
         override var abilities: List<AccountAbility>,
-        override var invites: Int
+        override var invites: Int,
+        override var connectedBy: ConnectedByModel?
 ): InvitedShortAccountModel
 
 data class PersonalInfoModelImpl(
@@ -62,7 +65,8 @@ data class PersonalInfoModelImpl(
         override val birthday: Long?,
         override val showContactPhone: Boolean?,
         override val contactEmail: String?,
-        override val gender: Gender
+        override val gender: Gender,
+        override var connectedBy: ConnectedByModel?
 ) : PersonalInfoModel
 
 data class ProfilePersonalInfoModelImpl(
@@ -84,7 +88,8 @@ data class ProfilePersonalInfoModelImpl(
         override val gender: Gender,
         override val locationId: String?,
         override val interests: List<String>,
-        override val offers: List<String>
+        override val offers: List<String>,
+        override var connectedBy: ConnectedByModel?
 ) : ProfilePersonalInfoModel
 
 data class CompanyInfoModelImpl(
@@ -104,7 +109,8 @@ data class CompanyInfoModelImpl(
         override val founded: Long?,
         override val organizationType: String?,
         override val website: String?,
-        override val foundedDate: String?
+        override val foundedDate: String?,
+        override var connectedBy: ConnectedByModel?
 ) : CompanyInfoModel
 
 data class ProfileCompanyInfoModelImpl(
@@ -127,7 +133,8 @@ data class ProfileCompanyInfoModelImpl(
         override val foundedDate: String?,
         override val locationId: String?,
         override val interests: List<String>,
-        override val offers: List<String>
+        override val offers: List<String>,
+        override var connectedBy: ConnectedByModel?
 ) : ProfileCompanyInfoModel
 
 data class PersonalAccountDiffModelImpl(override var firstName: String, override var lastName: String) : PersonalAccountDiffModel

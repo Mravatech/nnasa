@@ -9,6 +9,7 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
@@ -34,7 +35,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
             rvAllConnections.adapter = allConnectionsAdapter
         }
 
-        allConnectionsAdapter.onItemClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+        allConnectionsAdapter.onItemOptionsClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
 
         allConnectionsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
@@ -50,11 +51,12 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
 
     override fun onDestroyView(view: View) {
         allConnectionsAdapter.destroyCallbacks()
+        view.rvAllConnections.adapter = null
         super.onDestroyView(view)
     }
 
     private fun openChat(accountModel: ShortAccountModel) {
-        Toast.makeText(App.context, "Opening chat with user ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
+        open(ChatMessageController.newInstance(accountModel))
     }
 
     private fun openProfile(accountModel: ShortAccountModel) {

@@ -7,6 +7,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_new_requests.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -24,6 +25,7 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
 
         adapter.onAcceptClickListener = { viewModel.accept(it) }
         adapter.onDeclineClickListener = { viewModel.decline(it) }
+        adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             toolbar.title = fromDictionary(R.string.new_requests_title)
@@ -47,6 +49,7 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvNewConnectionRequests.adapter = null
         super.onDestroyView(view)
     }
 

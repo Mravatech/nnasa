@@ -27,6 +27,11 @@ interface PostModel : Model {
     val repostAuthor: ShortAccountModel?
 }
 
+interface RecommendedProfilePostModel : PostModel {
+    val recommendedProfile: ShortAccountModel
+    var offers: List<TagModel>
+}
+
 interface PostCounters : Serializable {
     val comments: Int
     val likes: Int
@@ -67,3 +72,5 @@ sealed class ItemType : Serializable {
     object EVENT: ItemType()
     object POST: ItemType()
 }
+
+val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE

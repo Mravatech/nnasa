@@ -47,6 +47,11 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
         viewModel.retrievePhoneContacts()
     }
 
+    override fun onDestroyView(view: View) {
+        view.rvInviteHistory.adapter = null
+        super.onDestroyView(view)
+    }
+
     companion object {
         fun newInstance() = HistoryController()
     }

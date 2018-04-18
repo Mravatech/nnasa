@@ -22,7 +22,7 @@ interface ConnectionsInteractor {
     suspend fun getDisconnectedConnections(): ReceiveChannel<List<DeclinedShortAccountModel>>
     suspend fun getMutedConnections(): ReceiveChannel<List<ShortAccountModel>>
     suspend fun getStatusesConnections(userAccountId: String): ReceiveChannel<ConnectionStatus>
-    suspend fun getConnectedStatusById(userAccountId: String): ConnectionStatus
+    suspend fun getConnectionStatusById(userAccountId: String): ConnectionStatus
 
     suspend fun getDisconnectTimeoutDays(): Int
     suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>)

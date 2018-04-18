@@ -9,6 +9,7 @@
     <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
     <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
 
+    <string name="connected_by_from">_android_connected_by_from</string>
 
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
@@ -58,8 +59,19 @@
 
     <!-- ========================================= POSTS ======================================== -->
     <string name="need_prefix">_post_type_need_Info</string>
+    <string name="recommend_prefix">_android_post_recommends_prefix</string>
+    <string name="recommend_title">_profile_menu_recommendUser</string>
+    <string name="recommend_connect_now">_android_post_recommends_connect_now</string>
+    <string name="recommend_open_profile">_android_post_recommends_open_profile</string>
+    <string name="recommend_message_placeholder">_android_post_recommends_message_placeholder</string>
+    <string name="recommend_publish_button">_android_post_recommends_publish</string>
+
+    <string name="general_post_title">_nav_title_general</string>
+
     <string name="posts_header_need">_posts_header_iNeed</string>
     <string name="posts_header_type">_posts_header_type_your_need</string>
+    <string name="posts_recommends">_android_post_recommends</string>
+    <string name="posts_recommends_skills_prefix">_accEdit_cellSkills_placeholder</string>
 
 
     <string name="post_delete_dialog_title">_question_postDeleting_title</string>
@@ -218,6 +230,9 @@
     <string name="user_profile_connection_connected">_connections_group_header_connected</string>
     <string name="user_profile_connection_connect">connections_button_connect</string>
     <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>
+    <string name="user_profile_you_want_to_disconnect">_connectionAction_disconnectMessageTitle</string>
+    <string name="user_profile_yes">_pin_cancel_yes</string>
+    <string name="user_profile_no">_pin_cancel_no</string>
 
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
     <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
@@ -259,6 +274,23 @@
     <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
     <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
 
+    <!-- ========================================= TERMS AND CONDITIONS ====================================== -->
+    <string name="terms_and_conditions">_android_terms_and_conditions</string>
+
+    <!-- ========================================= CHAT ====================================== -->
+
+    <string name="chats_no_conversation">_chats_controller_empty_state_title</string>
+    <string name="chats_no_messages">_chat_controller_empty_state_title</string>
+    <string name="chats_send_messages_post">_android_message_chat_post</string>
+    <string name="chats_send_messages_write">_chat_controller_message_placeholder</string>
+    <string name="chats_title">_chats_controller_list_option_chats</string>
+    <string name="chats_today_message">_android_chat_today</string>
+    <string name="chats_delete_for_me">_chatMessage_actionRemoveForMe</string>
+    <string name="chats_delete_for_all">_chatMessage_actionRemoveForAll</string>
+    <string name="chats_copy">_chatMessage_actionCopy</string>
+    <string name="chats_reply">_chatMessage_actionReply</string>
+    <string name="chats_cancel">_android_cancel</string>
+
     <string name="position_not_specified">_android_position_not_specified</string>
 
     <!-- ========================================= INVITE ====================================== -->
@@ -279,6 +311,12 @@
     <string name="invite_invite_history_pending">_android_invite_history_pending</string>
     <string name="invite_invite_history_registered">_android_invite_history_registered</string>
     <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
+
+    <!-- ======================================== COMPLAINT ===================================== -->
+    <string name="complaint_other_title">_profile_menu_complaint</string>
+    <string name="complaint_type_message">_android_type_your_message</string>
+    <string name="complaint_describe_reason">_android_please_describe_your_reason</string>
+    <string name="complaint_send">_android_send</string>
 
     <!-- ======================================== SIDE MENU ===================================== -->
     <string name="side_menu_profile">_android_side_menu_profile</string>

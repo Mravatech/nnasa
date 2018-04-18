@@ -1,9 +1,6 @@
 package com.mnassa.screen.profile.model
 
-import com.mnassa.domain.model.AccountType
-import com.mnassa.domain.model.ConnectionStatus
-import com.mnassa.domain.model.ProfileAccountModel
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,18 +13,18 @@ data class ProfileModel(
         val interests: List<TagModel>,
         val offers: List<TagModel>,
         val isMyProfile: Boolean,
-        val connectionStatus: ConnectionStatus
-) {
+        var connectionStatus: ConnectionStatus
+) : ShortAccountModel by profile {
     fun getAccountType(): Accounts {
         return if (isMyProfile && profile.accountType == AccountType.ORGANIZATION) {
             Accounts.MY_COMPANY
         } else if (isMyProfile && profile.accountType == AccountType.PERSONAL) {
             Accounts.MY_PERSONAL
-        }else if (profile.accountType == AccountType.ORGANIZATION) {
+        } else if (profile.accountType == AccountType.ORGANIZATION) {
             Accounts.USER_COMPANY
-        }else if (profile.accountType == AccountType.PERSONAL) {
+        } else if (profile.accountType == AccountType.PERSONAL) {
             Accounts.USER_PERSONAL
-        }else{
+        } else {
             throw IllegalArgumentException("Wrong ProfileModel")
         }
     }

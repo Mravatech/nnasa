@@ -18,12 +18,14 @@ import kotlinx.android.synthetic.main.item_connections_all.view.*
  * Created by Peter on 3/7/2018.
  */
 class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false) : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
-    var onItemClickListener = { account: ShortAccountModel, sender: View -> }
+    var onItemOptionsClickListener = { account: ShortAccountModel, sender: View -> }
+    var onItemClickListener = { account: ShortAccountModel -> }
     var onBindHeader = { header: View -> }
 
     fun destroyCallbacks() {
-        onItemClickListener = { _, _ -> }
+        onItemOptionsClickListener = { _, _ -> }
         onBindHeader = { }
+        onItemClickListener = { }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> =
@@ -43,7 +45,13 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
             R.id.btnMoreOptions -> {
                 val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
-                    onItemClickListener(getDataItemByAdapterPosition(position), v)
+                    onItemOptionsClickListener(getDataItemByAdapterPosition(position), v)
+                }
+            }
+            R.id.rvConnectionRoot -> {
+                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                if (position >= 0) {
+                    onItemClickListener(getDataItemByAdapterPosition(position))
                 }
             }
         }
@@ -75,6 +83,9 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
 
                 btnMoreOptions.setOnClickListener(clickListener)
                 btnMoreOptions.tag = this@UserViewHolder
+
+                rvConnectionRoot.setOnClickListener(clickListener)
+                rvConnectionRoot.tag = this@UserViewHolder
             }
         }
 

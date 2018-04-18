@@ -52,11 +52,9 @@
     </style>
 
     <style name="Connections.UserPosition" parent="MnassaTextTiny">
+        <item name="android:textSize">12sp</item>
         <item name="android:maxLines">1</item>
-        <item name="autoSizeMaxTextSize">12sp</item>
-        <item name="autoSizeMinTextSize">2sp</item>
-        <item name="autoSizeStepGranularity">1sp</item>
-        <item name="autoSizeTextType">uniform</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
 

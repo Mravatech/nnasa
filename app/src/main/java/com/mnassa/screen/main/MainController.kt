@@ -11,6 +11,12 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.mikepenz.materialdrawer.*
+import com.mikepenz.materialdrawer.model.*
+import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.AccountHeader
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
@@ -21,6 +27,7 @@ import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.ConnectionsController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
@@ -28,6 +35,7 @@ import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
@@ -84,10 +92,11 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withSavedInstance(savedInstanceState)
                     .withTranslucentStatusBar(true)
                     .withAccountHeader(R.layout.drawer_header)
-                    .withOnAccountHeaderListener { _, profile, _ ->
+                    .withOnAccountHeaderListener { _: View, profile: IProfile<Any>, _: Boolean ->
+                        val innerProfile = profile as IProfile<ProfileDrawerItem>
                         when {
-                            profile is MnassaProfileDrawerItem -> {
-                                val account = profile.account
+                            innerProfile is MnassaProfileDrawerItem -> {
+                                val account =  innerProfile.account
                                 drawer?.closeDrawer()
                                 activeAccountId = account.id
                                 viewModel.selectAccount(account)
@@ -126,10 +135,8 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             INVITE -> open(InviteController.newInstance())
                             SETTINGS -> {
                             } //TODO
-                            HELP -> {
-                            } //TODO
-                            TERMS -> {
-                            } //TODO
+                            HELP -> open(ChatMessageController.newInstance())
+                            TERMS -> open(TermsAndConditionsController.newInstance())
                             LOGOUT -> viewModel.logout()
                         }
                         true

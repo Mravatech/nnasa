@@ -109,12 +109,15 @@ android {
         switch (variant.getName()) {
             case 'release':
                 variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointProd']}\""
+                variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsProd']}\""
                 break
             case 'stage':
                 variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreProd']}\""
+                variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsPreProd']}\""
                 break
             case 'debug':
                 variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointDev']}\""
+                variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsDev']}\""
                 break
         }
     }

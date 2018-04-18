@@ -50,6 +50,11 @@ internal object DatabaseContract {
     const val TABLE_NOTIFICATIONS = "notifications"
     const val TABLE_NOTIFICATIONS_OLD = "notificationsOld"
     //
+    const val TABLE_CHAT = "chats"
+    const val TABLE_CHAT_LIST = "chatsList"
+    const val TABLE_CHAT_MESSAGES = "chatsMessages"
+    const val TABLE_CHAT_TYPE = "private"
+    //
     const val TABLE_INVITETION = "invitations"
     //
     const val TABLE_NEWS_FEED = "newsfeed"
@@ -71,5 +76,7 @@ internal object DatabaseContract {
     const val TABLE_COMMENT_REPLIES = "replyComments"
     //
     const val TABLE_TRANSACTIONS = "transactions"
+    //
+    const val COMPLAINT_REASON = "complaintReason"
 
 }

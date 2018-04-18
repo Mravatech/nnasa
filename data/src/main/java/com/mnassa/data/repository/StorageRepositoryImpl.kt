@@ -18,12 +18,12 @@ class StorageRepositoryImpl(private val ref: StorageReference,
 
     override suspend fun uploadPhotoToStorage(uploadPhoto: StoragePhotoData, token: String, accountId: String): String {
         val uri = uploadPhoto.uri
-        val location = "${uploadPhoto.getFolder()}$token/$accountId"
+        val location = "${uploadPhoto.getFolder()}$token/${accountId}_${System.nanoTime()}"
         val uploadRef = ref.child(location)
         val uploadTask = uploadRef.putFile(uri).await(exceptionHandler)
         val bucket: String? = uploadTask.metadata?.bucket
         val path: String? = uploadTask.metadata?.path
-        Timber.i("2 gs://$bucket/$path")
+        Timber.i("STORAGE >>> uploaded file ${uploadPhoto.uri} as >>> gs://$bucket/$path")
         return "$GS$bucket/$path"
     }
 

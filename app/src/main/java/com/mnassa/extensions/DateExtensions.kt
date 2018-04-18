@@ -6,6 +6,7 @@ import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import com.mnassa.App
 import com.mnassa.di.getInstance
 import com.mnassa.domain.other.LanguageProvider
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -54,4 +55,10 @@ fun Date.toTimeAgo(): String {
     val locale = App.context.getInstance<LanguageProvider>().locale
     val messages = TimeAgoMessages.Builder().withLocale(locale).build()
     return TimeAgo.using(time, messages)
+}
+
+
+fun Date.hhmm(): String {
+    val localDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return localDateFormat.format(this)
 }

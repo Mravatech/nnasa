@@ -14,7 +14,7 @@
         app:toolbar_title="@string/sharing_options_title" />
 
     <RelativeLayout
-        android:id="@+id/rvPromotePostRoot"
+        android:id="@+id/rlPromotePostRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -57,7 +57,7 @@
     <View style="@style/MnassaDivider" />
 
     <RelativeLayout
-        android:id="@+id/rvMyNewsFeedRoot"
+        android:id="@+id/rlMyNewsFeedRoot"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="?selectableItemBackground"

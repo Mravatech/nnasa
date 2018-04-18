@@ -22,9 +22,11 @@ import kotlinx.android.synthetic.main.item_connections_recommended_group.view.*
  */
 class GroupedRecommendedConnectionsRVAdapter : BasePaginationRVAdapter<GroupedConnection>(), View.OnClickListener {
     var onConnectClickListener = { account: ShortAccountModel -> }
+    var onItemClickListener = { account: ShortAccountModel -> }
 
     fun destroyCallbacks() {
         onConnectClickListener = { }
+        onItemClickListener = { }
     }
 
     fun set(input: RecommendedConnections) {
@@ -66,6 +68,13 @@ class GroupedRecommendedConnectionsRVAdapter : BasePaginationRVAdapter<GroupedCo
                 if (position >= 0) {
                     val item = getDataItemByAdapterPosition(position) as GroupedConnection.Connection
                     onConnectClickListener(item.account)
+                }
+            }
+            R.id.rlClickableRoot -> {
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+                if (position >= 0) {
+                    val item = getDataItemByAdapterPosition(position) as GroupedConnection.Connection
+                    onItemClickListener(item.account)
                 }
             }
         }
@@ -114,6 +123,9 @@ class GroupedRecommendedConnectionsRVAdapter : BasePaginationRVAdapter<GroupedCo
                 btnConnect.setOnClickListener(clickListener)
                 btnConnect.text = fromDictionary(R.string.recommended_connections_btn_connect)
                 btnConnect.tag = this@UserViewHolder
+
+                rlClickableRoot.setOnClickListener(clickListener)
+                rlClickableRoot.tag = this@UserViewHolder
             }
         }
 

@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.bean.firebase.ConnectedByDbEntity
 import com.mnassa.data.network.bean.firebase.LocationDbEntity
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.domain.model.*
@@ -21,6 +22,7 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertAccountFromDb)
+        convertersContext.registerConverter(this::convertConnectedBy)
     }
 
     private fun convertLocationPlace(input: LocationDbEntity): LocationPlaceModelImpl {
@@ -97,7 +99,16 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 location = location,
                 gender = gender,
                 website = input.website,
-                organizationType = input.organizationType
+                organizationType = input.organizationType,
+                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) }
+        )
+    }
+
+    private fun convertConnectedBy(input: ConnectedByDbEntity): ConnectedByModelImpl {
+        return ConnectedByModelImpl(
+                id = input.id,
+                type = input.type,
+                value = input.value
         )
     }
 }

@@ -23,12 +23,14 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     private var moreItemsCount: Int = 0
     var onAcceptClickListener = { account: ShortAccountModel -> }
     var onDeclineClickListener = { account: ShortAccountModel -> }
+    var onItemClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = { }
 
     fun destroyCallbacks() {
         onAcceptClickListener = { }
         onDeclineClickListener = { }
         onShowAllClickListener = { }
+        onItemClickListener = { }
     }
 
     fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
@@ -70,6 +72,12 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
                     onDeclineClickListener(getDataItemByAdapterPosition(position))
                 }
             }
+            R.id.rlClickableRoot -> {
+                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                if (position >= 0) {
+                    onItemClickListener(getDataItemByAdapterPosition(position))
+                }
+            }
             R.id.btnShowMore -> onShowAllClickListener()
         }
     }
@@ -97,6 +105,8 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
                 btnAccept.tag = this@UserViewHolder
                 btnDecline.setOnClickListener(clickListener)
                 btnDecline.tag = this@UserViewHolder
+                rlClickableRoot.setOnClickListener(clickListener)
+                rlClickableRoot.tag = this@UserViewHolder
             }
         }
 

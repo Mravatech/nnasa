@@ -1,5 +1,7 @@
 package com.mnassa.screen.connections.recommended
 
+import android.Manifest
+import android.support.annotation.RequiresPermission
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
@@ -12,4 +14,6 @@ interface RecommendedConnectionsViewModel : MnassaViewModel {
     val recommendedConnectionsChannel: BroadcastChannel<RecommendedConnections>
 
     fun connect(accountModel: ShortAccountModel)
+    @RequiresPermission(Manifest.permission.READ_CONTACTS)
+    fun onContactPermissionsGranted()
 }

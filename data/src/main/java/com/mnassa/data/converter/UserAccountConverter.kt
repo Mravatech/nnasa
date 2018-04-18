@@ -10,10 +10,7 @@ import com.mnassa.data.network.bean.firebase.InviteShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountAbilityDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.AccountResponseBean
-import com.mnassa.domain.model.AccountAbility
-import com.mnassa.domain.model.AccountType
-import com.mnassa.domain.model.OrganizationAccountDiffModel
-import com.mnassa.domain.model.PersonalAccountDiffModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.*
 import java.util.*
 
@@ -61,7 +58,8 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 language = null,
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
-                abilities = convertersContext.convertCollection(input.abilitiesInternal ?: emptyList(), AccountAbility::class.java)
+                abilities = convertersContext.convertCollection(input.abilitiesInternal ?: emptyList(), AccountAbility::class.java),
+                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) }
         )
     }
 
@@ -96,7 +94,8 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 language = input.language,
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
-                abilities = emptyList()
+                abilities = emptyList(),
+                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) }
         )
     }
 
@@ -140,7 +139,8 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
                 abilities = convertersContext.convertCollection(input.abilitiesInternal ?: emptyList(), AccountAbility::class.java),
-                declinedAt = Date(input.declinedAt)
+                declinedAt = Date(input.declinedAt),
+                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) }
         )
     }
 
@@ -176,7 +176,8 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,
                 abilities = convertersContext.convertCollection(input.abilitiesInternal?: emptyList(), AccountAbility::class.java),
-                invites = input.invites
+                invites = input.invites,
+                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) }
         )
     }
 }

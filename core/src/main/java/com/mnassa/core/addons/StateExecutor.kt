@@ -71,7 +71,7 @@ open class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<
     /**
      * Clear [actionsQueue]
      * */
-    fun clear() = actionsQueue.clear()
+    fun clear() { actionsQueue.clear() }
 }
 
 class WeakStateExecutor<State : Any?, out OutState : Any?> : StateExecutor<WeakReference<State>, OutState> {

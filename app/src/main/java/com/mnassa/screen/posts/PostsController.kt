@@ -1,6 +1,5 @@
 package com.mnassa.screen.posts
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import org.kodein.di.generic.instance
 import com.mnassa.R
@@ -9,7 +8,6 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.PostDetailsController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -26,12 +24,15 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         super.onViewCreated(view)
 
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
-        adapter.onItemClickListener = { open(PostDetailsController.newInstance(it)) }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
+        }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
-            rvNewsFeed.layoutManager = LinearLayoutManager(context)
             rvNewsFeed.adapter = adapter
         }
 
@@ -41,7 +42,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
+                        if (it.item.isNotEmpty()) {
+                            adapter.dataStorage.addAll(it.item)
+                        }
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
@@ -58,6 +61,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
+        view.rvNewsFeed.adapter = null
         super.onDestroyView(view)
     }
 

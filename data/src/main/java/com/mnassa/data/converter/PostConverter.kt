@@ -4,7 +4,6 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
-import com.google.gson.Gson
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
@@ -20,6 +19,7 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.PostCountersImpl
 import com.mnassa.domain.model.impl.PostModelImpl
+import com.mnassa.domain.model.impl.RecommendedProfilePostModelImpl
 import java.util.*
 
 /**
@@ -45,33 +45,62 @@ class PostConverter : ConvertersContextRegistrationCallback {
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
 
-        return PostModelImpl(
-                id = input.id,
-                allConnections = input.allConnections,
-                type = converter.convert(input.type),
-                createdAt = Date(input.createdAt),
-                images = input.images ?: emptyList(),
-                locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
-                    converter.convert<LocationPlaceModel>(it)
-                },
-                originalCreatedAt = Date(input.originalCreatedAt),
-                originalId = input.originalId,
-                privacyConnections = input.privacyConnections ?: emptyList(),
-                privacyType = converter.convert(input.privacyType),
-                tags = input.tags ?: emptyList(),
-                text = input.text,
-                updatedAt = Date(input.updatedAt),
-                counters = converter.convert(input.counters),
-                author = convertAuthor(input.author, converter),
-                copyOwnerId = input.copyOwner,
-                price = input.price ?: 0.0,
-                autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) }
-        )
+        val postType: PostType = converter.convert(input.type)
+        return when (postType) {
+            PostType.PROFILE -> RecommendedProfilePostModelImpl(
+                    id = input.id,
+                    allConnections = input.allConnections,
+                    type = postType,
+                    createdAt = Date(input.createdAt),
+                    images = input.images ?: emptyList(),
+                    locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
+                        converter.convert<LocationPlaceModel>(it)
+                    },
+                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalId = input.originalId,
+                    privacyConnections = input.privacyConnections ?: emptyList(),
+                    privacyType = converter.convert(input.privacyType),
+                    tags = input.tags ?: emptyList(),
+                    text = input.text,
+                    updatedAt = Date(input.updatedAt),
+                    counters = converter.convert(input.counters),
+                    author = convertAuthor(input.author, converter),
+                    copyOwnerId = input.copyOwner,
+                    price = input.price ?: 0.0,
+                    autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
+                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter),
+                    offers = emptyList()
+            )
+            else -> PostModelImpl(
+                    id = input.id,
+                    allConnections = input.allConnections,
+                    type = postType,
+                    createdAt = Date(input.createdAt),
+                    images = input.images ?: emptyList(),
+                    locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
+                        converter.convert<LocationPlaceModel>(it)
+                    },
+                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalId = input.originalId,
+                    privacyConnections = input.privacyConnections ?: emptyList(),
+                    privacyType = converter.convert(input.privacyType),
+                    tags = input.tags ?: emptyList(),
+                    text = input.text,
+                    updatedAt = Date(input.updatedAt),
+                    counters = converter.convert(input.counters),
+                    author = convertAuthor(input.author, converter),
+                    copyOwnerId = input.copyOwner,
+                    price = input.price ?: 0.0,
+                    autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
+                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) }
+            )
+        }
+
     }
 
-    private fun convertAuthor(input: Map<String, ShortAccountDbEntity>, converter: ConvertersContext): ShortAccountModel {
-        val entity = input.values.first()
+    private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {
+        val entity = requireNotNull(input.values.first())
         entity.id = input.keys.first()
 
         return converter.convert(entity, ShortAccountModel::class.java)
