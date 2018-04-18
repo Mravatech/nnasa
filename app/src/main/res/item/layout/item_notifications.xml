@@ -14,41 +14,27 @@
 
         <ImageView
             android:id="@+id/ivUserIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="16dp"
+            android:layout_width="@dimen/user_icon_in_rv_size"
+            android:layout_height="@dimen/user_icon_in_rv_size"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:contentDescription="@null"
             app:srcCompat="@drawable/empty_ava" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:lineSpacingExtra="8sp"
-                android:textColor="#de000000"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                style="@style/Notifications.UserName"
                 tools:text="Gordon Baker" />
 
             <TextView
                 android:id="@+id/tvNotificationInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif"
-                android:lineSpacingExtra="6sp"
-                android:maxLines="2"
-                android:textColor="#657786"
-                android:textSize="14sp"
-                android:textStyle="normal"
+                style="@style/Notifications.Info"
                 tools:text="Recommended you in post." />
 
         </LinearLayout>
@@ -57,13 +43,12 @@
             android:id="@+id/tvNotificationCame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:fontFamily="sans-serif"
             android:gravity="end"
-            android:lineSpacingExtra="10sp"
             android:textColor="@color/gray_cool"
             android:textSize="14sp"
             android:textStyle="normal"

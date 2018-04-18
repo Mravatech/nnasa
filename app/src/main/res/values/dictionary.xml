@@ -333,5 +333,7 @@
     <string name="notifications_no_notifications">_notifications_empty_state_title</string>
     <string name="notifications_new">_notifications_new_section_title</string>
     <string name="notifications_old">_notifications_recent_section_title</string>
+    <string name="notifications_receive">_android_notification_receive</string>
+    <string name="notifications_spent">_android_notification_spent</string>
 
 </resources>

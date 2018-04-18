@@ -1,5 +1,6 @@
 package com.mnassa.service
 
+import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import timber.log.Timber
@@ -37,6 +38,14 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
         // Check if message contains a data payload.
         if (remoteMessage.data.size > 0) {
             Timber.i("Message data payload: " + remoteMessage.data)
+            val data = remoteMessage.data
+            if (data["amount"] != null) {
+                val intent = Intent()
+                intent.putExtra(AMOUNT, data["amount"])
+                intent.putExtra(FROM_USER, data["fromUser"])
+                intent.action = NOTIFICATION
+                sendOrderedBroadcast(intent, null)
+            }
         }
 
         // Check if message contains a notification payload.
@@ -49,5 +58,11 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
         // message, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
+
+    companion object {
+        const val NOTIFICATION = "NOTIFICATION"
+        const val AMOUNT = "AMOUNT"
+        const val FROM_USER = "FROM_USER"
+    }
 
 }

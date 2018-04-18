@@ -127,5 +127,7 @@
     <string name="_android_post_recommends_publish_INFO">Publish</string>
 
     <string name="_android_connected_by_from_INFO">from</string>
+    <string name="_android_notification_receive_INFO">You just receive %i points</string>
+    <string name="_android_notification_spent_INFO">You just spent %i points</string>
 
 </resources>
