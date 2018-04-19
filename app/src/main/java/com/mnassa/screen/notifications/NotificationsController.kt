@@ -8,6 +8,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
@@ -60,15 +61,21 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
         }
 
         when (item.type) {
-            postComment, generalPostByAdmin, newEventByAdmin, eventCancelling, userWasRecommendedInEvent -> {
+            postComment, postRepost, postIsExpired, postPromoted, userWasRecommendedByPost,
+            generalPostByAdmin, iWasRecommended, autoSuggestYouCanHelp, oneDayToExpirationOfPost -> {
                 val postDetailsFactory: PostDetailsFactory by instance()
                 open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
             }
-            iWasRecommended, iWasRecommendedInEvent, userWasRecommended, autoSuggestYouCanHelp,
-            newUserJoined, postRepost, connectionRequest, connectionsRequestAccepted,
-            userWasRecommendedToYou, userWasRecommendedByPost, newEventAttendee, privateChatMessage -> {
+            userWasRecommended, newUserJoined, connectionRequest, connectionsRequestAccepted,
+            userWasRecommendedToYou, privateChatMessage -> {
                 val id = item.extra.author?.id ?: item.extra.recommended?.id
                 open(ProfileController.newInstance(requireNotNull(id)))
+            }
+            iWasRecommendedInEvent, userWasRecommendedInEvent, newEventByAdmin, newEventAttendee, eventCancelling -> {
+                //todo events
+            }
+            invitesNumberChanged -> {
+                open(InviteController.newInstance())
             }
         }
 

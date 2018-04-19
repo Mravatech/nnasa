@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.NotificationModel
+import com.mnassa.domain.model.impl.NotificationExtraImpl
 import com.mnassa.domain.model.impl.NotificationModelImpl
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.notifications.viewholder.NotificationHeaderHolder
 import com.mnassa.screen.notifications.viewholder.NotificationHolder
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -22,9 +24,15 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     var onItemClickListener = { item: NotificationModel -> }
     override val itemsComparator: (item1: NotificationModel, item2: NotificationModel) -> Int = { first, second ->
         when {
-            itemsTheSameComparator(first, second) -> 0
-            first.type == NEW -> -1
-            first.type == OLD -> if (second.isOld) -1 else 1
+//            itemsTheSameComparator(first, second) -> 0
+            first.type == NEW && second.type == NEW -> 0
+            !first.isOld && second.type == OLD -> -1
+            first.type == NEW && second.type == OLD -> -1
+            first.type == OLD && second.type == NEW -> 1
+            first.type == NEW && second.type != NEW && second.type != OLD -> -1
+            first.type == OLD && second.type == OLD -> 0
+            first.type == OLD && !second.isOld -> 1
+            first.type == OLD && second.isOld -> -1
             else -> first.createdAt.compareTo(second.createdAt) * -1
         }
     }
@@ -65,26 +73,25 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
 
     class NotificationsDataStorage(private val adapter: BaseSortedPaginationRVAdapter<NotificationModel>) :
             SortedDataStorage<NotificationModel>(NotificationModel::class.java, adapter), DataStorage<NotificationModel> {
-        private var headerOld: NotificationModel? = null
-        private var headerNew: NotificationModel? = null
+        private var headerOld: NotificationModel = getHeader(true, OLD)
+        private var headerNew: NotificationModel = getHeader(false, NEW)
+        private val newNotificationIds = mutableListOf<String>()
         private var newCount = 0
 
         override fun addAll(elements: Collection<NotificationModel>): Boolean {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
-                    if (!it.isOld) newCount++
-                    if (it.isOld && headerOld == null) {
-                        headerOld = getNotificationHeader(it)
+                    Timber.i(it.toString())
+                    if (!it.isOld) {
+                        newNotificationIds.add(it.id)
+                        Timber.i("NEW ONE " + it.toString())
+                        if (wrappedList.indexOf(headerNew) == -1) {
+                            super.add(headerNew)
+                        }
                     }
-                    if (!it.isOld && headerNew == null) {
-                        headerNew = getNotificationHeader(it)
-                    }
-                    if (headerNew != null && wrappedList.indexOf(headerNew) == -1) {
-                        super.add(requireNotNull(headerNew))
-                    }
-                    if (headerOld != null && wrappedList.indexOf(headerOld) == -1) {
-                        super.add(requireNotNull(headerOld))
+                    if (wrappedList.indexOf(headerOld) == -1) {
+                        super.add(headerOld)
                     }
                 }
                 super.addAll(elements)
@@ -97,26 +104,34 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
-                    if (!it.isOld) newCount--
+                    if (!it.isOld) {
+                        newNotificationIds.remove(it.id)
+                    }
                 }
+                if (newNotificationIds.isEmpty()) super.remove(headerNew)
                 wrappedList.endBatchedUpdates()
             }
-            if (newCount == 0 && headerNew != null) super.remove(requireNotNull(headerNew))
             return super.removeAll(elements)
         }
 
-        private fun getNotificationHeader(model: NotificationModel): NotificationModel {
-            val date = Date(model.createdAt.time - 1)
-            val type = if (model.isOld) OLD else NEW
-            return NotificationModelImpl(
-                    id = model.id,
-                    createdAt = date,
-                    text = "",
-                    type = type,
-                    extra = model.extra,
-                    isOld = model.isOld
-            )
-        }
+        private fun getHeader(isOld: Boolean, type: String) = NotificationModelImpl(
+                id = type,
+                createdAt = Date(),
+                text = type,
+                type = type,
+                extra = NotificationExtraImpl(
+                        author = null,
+                        attendee = null,
+                        eventName = null,
+                        post = null,
+                        recommended = null,
+                        reffered = null,
+                        ticketsPrice = null,
+                        totalPrice = null
+                ),
+                isOld = isOld
+        )
+
     }
 
     companion object {
