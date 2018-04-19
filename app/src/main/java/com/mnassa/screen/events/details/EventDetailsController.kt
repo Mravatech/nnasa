@@ -37,13 +37,19 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     override val layoutId: Int = R.layout.controller_event_details
     override val viewModel: EventDetailsViewModel by instance(arg = eventId)
     private var eventModel: EventModel? = null
+        get() {
+            if (field == null) {
+                field = args[EXTRA_EVENT] as EventModel?
+            }
+            return field
+        }
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId))
-                    EventPages.PARTICIPANTS.ordinal -> EventDetailsParticipantsController.newInstance(eventId)
+                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId, eventModel))
+                    EventPages.PARTICIPANTS.ordinal -> EventDetailsParticipantsController.newInstance(eventId, eventModel)
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
                 router.setRoot(RouterTransaction.with(page))
@@ -70,10 +76,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             appBarLayout.addOnOffsetChangedListener(offsetChangedListener)
         }
 
-        if (args.containsKey(EXTRA_EVENT)) {
-            runBlocking { bindEvent(args[EXTRA_EVENT] as EventModel) }
-            args.remove(EXTRA_EVENT)
-        }
+        runBlocking { eventModel?.apply { bindEvent(this) } }
     }
 
     override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {

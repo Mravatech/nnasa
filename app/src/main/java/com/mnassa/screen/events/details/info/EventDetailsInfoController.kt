@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat
  */
 class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetailsInfoViewModel>(args), CommentsWrapperController.CommentsWrapperCallback {
     private val eventId by lazy { args.getString(EXTRA_EVENT_ID) }
+    private val eventParam by lazy { args[EXTRA_EVENT] as EventModel? }
     override val layoutId: Int = R.layout.controller_event_details_info
     override val viewModel: EventDetailsInfoViewModel by instance(arg = eventId)
     private val languageProvider: LanguageProvider by instance()
@@ -43,13 +44,16 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        showProgress()
         launchCoroutineUI {
+            eventParam?.apply { bindEvent(this) }
             viewModel.eventChannel.consumeEach { bindEvent(it) }
         }
     }
 
     private suspend fun bindEvent(event: EventModel) {
         with(getViewSuspend()) {
+            hideProgress()
             val boughtTicketsCount = event.getBoughtTicketsCount()
             val canBuyTickets = event.canBuyTickets()
 
@@ -166,10 +170,12 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
 
     companion object {
         const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
+        const val EXTRA_EVENT = "EXTRA_EVENT"
 
-        fun newInstance(eventId: String): EventDetailsInfoController {
+        fun newInstance(eventId: String, event: EventModel? = null): EventDetailsInfoController {
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, eventId)
+            args.putSerializable(EXTRA_EVENT, event)
             return EventDetailsInfoController(args)
         }
     }
