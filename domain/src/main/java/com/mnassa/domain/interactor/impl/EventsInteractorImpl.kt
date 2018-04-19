@@ -3,9 +3,7 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.bufferize
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -46,6 +44,35 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
 
     override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> {
         return eventsRepository.getEventsChannel(eventId)
+    }
+
+    override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> {
+        return eventsRepository.getTicketsChannel(eventId)
+    }
+
+    override suspend fun getTickets(eventId: String): List<EventTicketModel> {
+        return eventsRepository.getTickets(eventId)
+    }
+
+    override suspend fun canBuyTicket(eventId: String): Boolean {
+        val event = loadByIdChannel(eventId).receive() ?: return false
+        if (event.ticketsSold >= event.ticketsTotal || event.status != EventStatus.OPENED) return false
+        return getBoughtTicketsCount(eventId) < event.ticketsPerAccount
+    }
+
+    override suspend fun getBoughtTicketsCount(eventId: String): Long {
+        val userId = userProfileInteractor.getAccountIdOrNull() ?: return 0L
+        var counter = 0L
+        getTickets(eventId).forEach {
+            if (it.ownerId == userId) {
+                counter += it.ticketCount
+            }
+        }
+        return counter
+    }
+
+    override suspend fun buyTickets(eventId: String, ticketsCount: Long) {
+        eventsRepository.buyTickets(eventId, ticketsCount)
     }
 
     private companion object {

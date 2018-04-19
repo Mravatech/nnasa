@@ -1,8 +1,10 @@
 package com.mnassa.extensions
 
 import android.view.View
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
+import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.EventDuration
 import com.mnassa.domain.model.EventLocationType
 import com.mnassa.domain.model.EventModel
@@ -47,4 +49,28 @@ val EventLocationType.formatted: CharSequence
         is EventLocationType.Later -> fromDictionary(R.string.event_location_later)
     }
 
-val EventDuration.formatted: CharSequence get() = ""
+val EventDuration.formatted: CharSequence
+    get() = "$value " + when (this) {
+        is EventDuration.Minute -> fromDictionary(R.string.event_duration_minute)
+        is EventDuration.Hour -> fromDictionary(R.string.event_duration_hour)
+        is EventDuration.Day -> fromDictionary(R.string.event_duration_day)
+    }
+
+val EventType.formatted: CharSequence
+    get() = when (this) {
+        EventType.LECTURE -> fromDictionary(R.string.event_lecture)
+        EventType.DISCUSSION -> fromDictionary(R.string.event_discussion)
+        EventType.WORKSHOP -> fromDictionary(R.string.event_workshop)
+        EventType.EXERCISE -> fromDictionary(R.string.event_exercise)
+        EventType.ACTIVITY -> fromDictionary(R.string.event_activity)
+    }
+
+suspend fun EventModel.canBuyTickets(): Boolean {
+    return App.context.getInstance<EventsInteractor>().canBuyTicket(id)
+}
+
+suspend fun EventModel.getBoughtTicketsCount(): Long {
+    return App.context.getInstance<EventsInteractor>().getBoughtTicketsCount(id)
+}
+
+val EventModel.isFree: Boolean get() = price == 0L

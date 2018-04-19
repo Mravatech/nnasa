@@ -9,4 +9,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EventDetailsInfoViewModel : MnassaViewModel {
     val eventChannel: BroadcastChannel<EventModel>
+    fun buyTickets(count: Long)
 }

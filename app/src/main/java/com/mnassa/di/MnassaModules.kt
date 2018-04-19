@@ -248,7 +248,7 @@ private val repositoryModule = Kodein.Module {
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -291,6 +291,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseWalletApi>()
     bindRetrofitApi<FirebaseChatApi>()
     bindRetrofitApi<FirebaseComplaintApi>()
+    bindRetrofitApi<FirebaseEventsApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }

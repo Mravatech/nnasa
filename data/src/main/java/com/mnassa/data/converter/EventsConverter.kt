@@ -6,8 +6,10 @@ import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.EventDbEntity
+import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.EventModelImpl
+import com.mnassa.domain.model.impl.EventTicketModelImpl
 import java.util.*
 
 /**
@@ -20,6 +22,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertStatus)
         convertersContext.registerConverter(this::convertType)
+        convertersContext.registerConverter(this::convertTicket)
     }
 
     private fun convertEvent(input: EventDbEntity, tag: Any?, converter: ConvertersContext): EventModelImpl {
@@ -38,7 +41,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 originalCreatedAt = Date(input.originalCreatedAt),
                 pictures = input.pictures,
                 price = input.price,
-                privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) } ?: PostPrivacyType.PUBLIC,
+                privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) }
+                        ?: PostPrivacyType.PUBLIC,
                 status = converter.convert(input.status),
                 tags = input.tags ?: emptyList(),
                 title = input.title,
@@ -99,5 +103,16 @@ class EventsConverter : ConvertersContextRegistrationCallback {
             NetworkContract.EventType.WORKSHOP -> EventType.WORKSHOP
             else -> throw IllegalArgumentException("Invalid event type $input")
         }
+    }
+
+    private fun convertTicket(input: EventTicketDbEntity): EventTicketModelImpl {
+        return EventTicketModelImpl(
+                id = input.id,
+                ownerId = input.id,
+                eventName = input.eventName,
+                eventOrganizerId = input.eventOrganizer,
+                pricePerTicket = input.pricePerTicket,
+                ticketCount = input.ticketsCount
+        )
     }
 }

@@ -1,187 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/background_highlighted"
+    android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_highlighted"
-        android:orientation="vertical">
+        android:layout_height="@dimen/spacing_vertical"
+        android:background="@color/background_main" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/spacing_vertical"
-            android:background="@color/background_main" />
+    <LinearLayout style="@style/Event.Info.Item">
 
-        <LinearLayout style="@style/Event.Info.Item">
-
-            <android.support.v7.widget.AppCompatImageView
-                style="@style/Event.Info.ItemIcon"
-                app:srcCompat="@drawable/ic_arrow" />
-
-            <TextView
-                android:id="@+id/tvSchedule"
-                style="@style/Event.Info.ItemDescription"
-                tools:text="29-30 of September 2017\n9:00 pm - 1:00 am " />
-
-        </LinearLayout>
-
-        <View style="@style/MnassaDivider" />
-
-        <LinearLayout style="@style/Event.Info.Item">
-
-            <android.support.v7.widget.AppCompatImageView
-                style="@style/Event.Info.ItemIcon"
-                app:srcCompat="@drawable/ic_arrow" />
-
-            <TextView
-                android:id="@+id/tvLocation"
-                style="@style/Event.Info.ItemDescription"
-                android:drawableEnd="@drawable/ic_arrow"
-                android:drawableTint="@color/black"
-                tools:targetApi="m"
-                tools:text="Jeddah Concert Hall \nAl Rawdah, Jeddah 23435, Sau…" />
-
-        </LinearLayout>
-
-        <View style="@style/MnassaDivider" />
-
-
-        <LinearLayout style="@style/Event.Info.Item">
-
-            <android.support.v7.widget.AppCompatImageView
-                style="@style/Event.Info.ItemIcon"
-                app:srcCompat="@drawable/ic_arrow" />
-
-            <TextView
-                android:id="@+id/tvTickets"
-                style="@style/Event.Info.ItemDescription"
-                tools:text="3 000 Points / Person\n10 839 tickets from 12 000 Left\n2 tickets boughted by me " />
-
-        </LinearLayout>
-
-        <View style="@style/MnassaDivider" />
-
-        <LinearLayout style="@style/Event.Info.Item">
-
-            <android.support.v7.widget.AppCompatImageView
-                style="@style/Event.Info.ItemIcon"
-                app:srcCompat="@drawable/ic_arrow" />
-
-            <TextView
-                android:id="@+id/tvType"
-                style="@style/Event.Info.ItemDescription"
-                tools:text="Concert" />
-
-        </LinearLayout>
-
-        <View
-            style="@style/MnassaDivider"
-            android:layout_marginBottom="@dimen/spacing_vertical" />
+        <android.support.v7.widget.AppCompatImageView
+            style="@style/Event.Info.ItemIcon"
+            app:srcCompat="@drawable/ic_date_time" />
 
         <TextView
-            android:id="@+id/tvDescription"
-            style="@style/MnassaText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/spacing_vertical"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal"
-            android:paddingTop="@dimen/spacing_vertical"
-            android:textSize="17sp"
-            tools:text="Long text here\nand here\nand even here" />
-
-        <FrameLayout
-            android:id="@+id/flImages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_vertical">
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vpImages"
-                android:layout_width="match_parent"
-                android:layout_height="240dp"
-                tools:background="#0f0" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="bottom"
-                android:background="@drawable/shadow"
-                android:rotation="180" />
-
-            <com.rd.PageIndicatorView
-                android:id="@+id/pivImages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_marginBottom="@dimen/spacing_vertical"
-                app:piv_animationType="worm"
-                app:piv_dynamicCount="true"
-                app:piv_interactiveAnimation="true"
-                app:piv_radius="4dp" />
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal">
-
-            <TextView
-                android:id="@+id/tvViewsCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:drawableStart="@drawable/ic_eye_18dp"
-                android:focusable="true"
-                tools:text="Views " />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/ivRepost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="?selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/ic_repost" />
-
-            <TextView
-                android:id="@+id/tvRepostsCount"
-                style="@style/MnassaText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                tools:text="200" />
-        </LinearLayout>
-
-        <View style="@style/MnassaShadow" />
-
-        <TextView
-            android:id="@+id/tvCommentsCount"
-            style="@style/MnassaHeader2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background_main"
-            android:paddingBottom="@dimen/spacing_vertical"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal"
-            android:paddingTop="@dimen/spacing_vertical"
-            tools:text="Comments" />
+            android:id="@+id/tvSchedule"
+            style="@style/Event.Info.ItemDescription"
+            tools:text="29-30 of September 2017\n9:00 pm - 1:00 am " />
 
     </LinearLayout>
-</ScrollView>
+
+    <View style="@style/MnassaDivider" />
+
+    <LinearLayout
+        android:id="@+id/llEventLocation"
+        style="@style/Event.Info.Item">
+
+        <android.support.v7.widget.AppCompatImageView
+            style="@style/Event.Info.ItemIcon"
+            app:srcCompat="@drawable/ic_location" />
+
+        <TextView
+            android:id="@+id/tvLocation"
+            style="@style/Event.Info.ItemDescription"
+            android:drawableEnd="@drawable/ic_arrow"
+            android:drawableTint="@color/black"
+            tools:targetApi="m"
+            tools:text="Jeddah Concert Hall \nAl Rawdah, Jeddah 23435, Sau…" />
+
+    </LinearLayout>
+
+    <View style="@style/MnassaDivider" />
+
+
+    <LinearLayout style="@style/Event.Info.Item">
+
+        <android.support.v7.widget.AppCompatImageView
+            style="@style/Event.Info.ItemIcon"
+            app:srcCompat="@drawable/ic_tickets" />
+
+        <TextView
+            android:id="@+id/tvTickets"
+            style="@style/Event.Info.ItemDescription"
+            tools:text="3 000 Points / Person\n10 839 tickets from 12 000 Left\n2 tickets boughted by me " />
+
+    </LinearLayout>
+
+    <View style="@style/MnassaDivider" />
+
+    <LinearLayout style="@style/Event.Info.Item">
+
+        <android.support.v7.widget.AppCompatImageView
+            style="@style/Event.Info.ItemIcon"
+            app:srcCompat="@drawable/ic_category" />
+
+        <TextView
+            android:id="@+id/tvType"
+            style="@style/Event.Info.ItemDescription"
+            tools:text="Concert" />
+
+    </LinearLayout>
+
+    <View
+        style="@style/MnassaDivider"
+        android:layout_marginBottom="@dimen/spacing_vertical" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        style="@style/MnassaText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical"
+        android:textSize="17sp"
+        tools:text="Long text here\nand here\nand even here" />
+
+    <FrameLayout
+        android:id="@+id/flImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_vertical">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vpImages"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            tools:background="#0f0" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/shadow"
+            android:rotation="180" />
+
+        <com.rd.PageIndicatorView
+            android:id="@+id/pivImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            app:piv_animationType="worm"
+            app:piv_dynamicCount="true"
+            app:piv_interactiveAnimation="true"
+            app:piv_radius="4dp" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnBuyTickets"
+        style="@style/MnassaButton"
+        tools:text="Buy tickets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:layout_marginBottom="@dimen/spacing_vertical" />
+
+    <View
+        style="@style/MnassaDivider"
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginTop="@dimen/spacing_vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical"
+        android:paddingBottom="@dimen/spacing_vertical">
+
+        <TextView
+            android:id="@+id/tvViewsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:drawablePadding="@dimen/drawable_padding"
+            android:drawableStart="@drawable/ic_eye_18dp"
+            android:focusable="true"
+            tools:text="Views " />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View style="@style/MnassaShadow" />
+
+    <TextView
+        android:id="@+id/tvCommentsCount"
+        style="@style/MnassaHeader2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_main"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical"
+        android:enabled="false"
+        tools:text="Comments" />
+
+</LinearLayout>

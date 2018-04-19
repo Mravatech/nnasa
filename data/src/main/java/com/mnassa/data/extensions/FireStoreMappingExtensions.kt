@@ -50,3 +50,24 @@ internal inline fun <reified T> mapSingleValue(dataSnapshot: DocumentSnapshot?):
 }
 
 internal inline fun <reified T : Any> DocumentSnapshot?.mapSingle(): T? = mapSingleValue(this)
+
+internal inline fun <reified T> mapListValues(dataSnapshot: DocumentSnapshot?): List<T> {
+    if (dataSnapshot == null) return emptyList()
+    val resultList = ArrayList<T>()
+
+    dataSnapshot.data?.entries?.forEachIndexed { index, entry ->
+        val jsonElement: JsonElement = gson.toJsonTree(entry.value)
+
+        Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} [$index] >>> ${entry.key} >>> $jsonElement")
+
+        val result = gson.fromJson(jsonElement, T::class.java)
+        if (result is HasId) {
+            result.id = entry.key
+        }
+        resultList += result
+    }
+
+    return resultList
+}
+
+internal inline fun <reified T : Any> DocumentSnapshot?.mapList(): List<T> = mapListValues(this)

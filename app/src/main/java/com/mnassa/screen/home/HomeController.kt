@@ -71,7 +71,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
                 open(CreateNeedController.newInstance())
             }
 
-            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
+//            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
         }
     }
 

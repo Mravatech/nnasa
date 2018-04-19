@@ -57,7 +57,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
 
     listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
         if (firebaseFirestoreException != null) {
-            channel.close(firebaseFirestoreException)
+            channel.close(exceptionHandler.handle(firebaseFirestoreException))
             listener.remove()
             return@addSnapshotListener
         }
@@ -78,13 +78,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
 // Subscribe to single value changes
 
 internal inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
-    val query = this
     val channel = RendezvousChannel<T?>()
     lateinit var listener: ListenerRegistration
 
     listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
         if (firebaseFirestoreException != null) {
-            channel.close(firebaseFirestoreException)
+            channel.close(exceptionHandler.handle(firebaseFirestoreException))
             listener.remove()
             return@addSnapshotListener
         }
@@ -92,6 +91,33 @@ internal inline fun <reified T : Any> DocumentReference.toValueChannel(exception
         launch {
             try {
                 channel.send(dataSnapshot.mapSingle())
+            } catch (e: ClosedSendChannelException) {
+                listener.remove()
+            } catch (e: Exception) {
+                Timber.e(e)
+                listener.remove()
+                channel.close(exceptionHandler.handle(e))
+            }
+        }
+    }
+
+    return channel
+}
+
+internal inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    val channel = RendezvousChannel<List<T>>()
+    lateinit var listener: ListenerRegistration
+
+    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+        if (firebaseFirestoreException != null) {
+            channel.close(exceptionHandler.handle(firebaseFirestoreException))
+            listener.remove()
+            return@addSnapshotListener
+        }
+
+        launch {
+            try {
+                channel.send(dataSnapshot.mapList())
             } catch (e: ClosedSendChannelException) {
                 listener.remove()
             } catch (e: Exception) {

@@ -37,6 +37,14 @@ internal data class EventDbEntity(
 ) : HasId {
 }
 
+internal data class EventTicketDbEntity(
+        override var id: String,
+        @SerializedName("eventName") val eventName: String,
+        @SerializedName("eventOrganizer") val eventOrganizer: String,
+        @SerializedName("pricePerTicket") val pricePerTicket: Long,
+        @SerializedName("ticketsCount") val ticketsCount: Long
+) : HasId
+
 internal data class EventCountersDbEntity(
         @SerializedName("comments") val comments: Int,
         @SerializedName("views") val views: Int
