@@ -10,7 +10,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface ChatListViewModel : MnassaViewModel {
 
-//    suspend fun getMessagesChannel(): ReceiveChannel<ListItemEvent<ChatRoomModel>>
-
     val listMessagesChannel: BroadcastChannel<ListItemEvent<ChatRoomModel>>
 }

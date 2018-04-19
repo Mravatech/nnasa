@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.controller_chat_message.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
-import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,25 +76,32 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     private fun consumeMessages(view: View) {
         launchCoroutineUI {
             viewModel.messageChannel.openSubscription().bufferize(this@ChatMessageController).consumeEach {
-                Timber.i(it.item.toString())
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
+                if (it.item.isNotEmpty()) {
+                    when (it) {
+                        is ListItemEvent.Added -> {
+                            adapter.isLoadingEnabled = false
+                            adapter.dataStorage.addAll(it.item)
+                        }
+                        is ListItemEvent.Changed -> {
+                            adapter.dataStorage.addAll(it.item)
+                        }
+                        is ListItemEvent.Moved -> {
+                            adapter.dataStorage.addAll(it.item)
+                        }
+                        is ListItemEvent.Removed -> {
+                            adapter.dataStorage.removeAll(it.item)
+                        }
+                        is ListItemEvent.Cleared -> {
+                            adapter.dataStorage.clear()
+                            adapter.isLoadingEnabled = true
+                        }
                     }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
+                    if (view.llNoMessages.visibility == View.VISIBLE) {
+                        view.llNoMessages.visibility = View.GONE
+                        viewModel.resetChatUnreadCount()
                     }
+                    view.rvMessages.scrollToPosition(adapter.itemCount)
                 }
-                if (view.llNoMessages.visibility == View.VISIBLE) {
-                    view.llNoMessages.visibility = View.GONE
-                    viewModel.resetChatUnreadCount()
-                }
-                view.rvMessages.scrollToPosition(adapter.itemCount)//todo handle here doesn't work properly
             }
         }
         adapter.onUserMessageLongClick = { callDialog(view, false, it) }

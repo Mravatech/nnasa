@@ -21,13 +21,12 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Created by Peter on 3/19/2018.
  */
 open class NeedDetailsViewModelImpl(
-    private val postId: String,
-    private val postsInteractor: PostsInteractor,
-    private val tagInteractor: TagInteractor,
-    private val commentsInteractor: CommentsInteractor,
-    private val complaintInteractor: ComplaintInteractor
-)
-    : MnassaViewModelImpl(), NeedDetailsViewModel {
+        private val postId: String,
+        private val postsInteractor: PostsInteractor,
+        private val tagInteractor: TagInteractor,
+        private val commentsInteractor: CommentsInteractor,
+        private val complaintInteractor: ComplaintInteractor
+) : MnassaViewModelImpl(), NeedDetailsViewModel {
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -59,11 +58,9 @@ open class NeedDetailsViewModelImpl(
 
     override suspend fun retrieveComplaints(): List<TranslatedWordModel> {
         if (reportsList.isNotEmpty()) return reportsList
-        handleException {
-            withProgressSuspend {
-                reportsList = complaintInteractor.getReports()
-            }
-        }
+        showProgress()
+        reportsList = complaintInteractor.getReports()
+        hideProgress()
         return reportsList
     }
 

@@ -12,6 +12,7 @@ import com.mnassa.extensions.getStartOfDay
 import com.mnassa.extensions.isTheSameDay
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.chats.message.viewholder.*
+import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -29,7 +30,19 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
     var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
-        first.createdAt.compareTo(second.createdAt) * 1
+
+        val res = first.createdAt.time.compareTo(second.createdAt.time)
+        Timber.i("$res " + first.toString() + " ${first.createdAt.time} " + second.toString() + " ${second.createdAt.time}")
+        when {
+            first.createdAt == second.createdAt -> 0
+            first.creator == DATE_CREATOR && second.creator == DATE_CREATOR -> {
+                if (first.createdAt == second.createdAt) 0 else first.createdAt.time.compareTo(second.createdAt.time)
+            }
+            first.creator == DATE_CREATOR && second.creator != DATE_CREATOR -> {
+                if (first.createdAt.isTheSameDay(second.createdAt)) -1 else first.createdAt.time.compareTo(second.createdAt.time)
+            }
+            else -> first.createdAt.time.compareTo(second.createdAt.time)
+        }
     }
     override val itemClass: Class<ChatMessageModel> = ChatMessageModel::class.java
 
@@ -98,22 +111,23 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
         private val dateMessages = HashMap<Date, ChatMessageModel>()
 
         override fun addAll(elements: Collection<ChatMessageModel>): Boolean {
-            for (element in elements){
+            for (element in elements) {
                 val dateElement = dateMessages[element.createdAt.getStartOfDay()]
                 if (dateElement == null) {
-                    val dateMessage = createDateMessage(element, element.createdAt.time - 1L)//for sorting to display above
+                    val dateMessage = createDateMessage(element)
                     dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
-                } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt < element.createdAt) {
+                    Timber.i("1")
+                } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt > element.createdAt) {
                     super.remove(dateElement)
-                    val dateMessage = createDateMessage(element, element.createdAt.time - 1L)//for sorting to display above
+                    val dateMessage = createDateMessage(element)
                     dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
+                    Timber.i("2")
                 }
             }
             val dates: List<ChatMessageModel> = dateMessages.map { it.value }
             super.addAll(dates)
             return super.addAll(elements)
         }
-
 
 
         override fun removeAll(elements: Collection<ChatMessageModel>): Boolean {
@@ -127,9 +141,11 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
             val dateElement = dateMessages[element.createdAt.getStartOfDay()]
             if (dateElement == null) {
                 addDateMessage(element)
+                Timber.i("3")
             } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt < element.createdAt) {
                 super.remove(dateElement)
                 addDateMessage(element)
+                Timber.i("4")
             }
             return super.add(element)
         }
@@ -137,7 +153,7 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
         override fun remove(element: ChatMessageModel): Boolean {
             val position = wrappedList.indexOf(element)
             val size = wrappedList.size()
-            if (position < size && position > 0) {
+            if (position == size - 1) {
                 val prev = wrappedList.get(position - 1)
                 if (prev.creator == DATE_CREATOR) {
                     super.remove(prev)
@@ -145,7 +161,7 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
             } else {
                 val next = wrappedList.get(position + 1)
                 val prev = wrappedList.get(position - 1)
-                if (next.creator != DATE_CREATOR && prev.creator == DATE_CREATOR) {
+                if (next.creator == DATE_CREATOR && prev.creator == DATE_CREATOR) {
                     super.remove(prev)
                 }
             }
@@ -153,14 +169,14 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
         }
 
         private fun addDateMessage(element: ChatMessageModel) {
-            val dateMessage = createDateMessage(element, element.createdAt.time - 1L)//for sorting to display above
+            val dateMessage = createDateMessage(element)
             super.add(dateMessage)
             dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
         }
 
-        private fun createDateMessage(element: ChatMessageModel, time: Long): ChatMessageModel =
+        private fun createDateMessage(element: ChatMessageModel): ChatMessageModel =
                 ChatMessageModelImpl(
-                        createdAt = Date(time),
+                        createdAt = Date(element.createdAt.time - 1),
                         creator = DATE_CREATOR,
                         text = "",
                         type = TEXT_TYPE,
