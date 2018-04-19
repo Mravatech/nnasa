@@ -12,7 +12,6 @@ import com.mnassa.extensions.getStartOfDay
 import com.mnassa.extensions.isTheSameDay
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.chats.message.viewholder.*
-import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -113,12 +112,10 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
                 if (dateElement == null) {
                     val dateMessage = createDateMessage(element)
                     dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
-                    Timber.i("1")
                 } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt > element.createdAt) {
                     super.remove(dateElement)
                     val dateMessage = createDateMessage(element)
                     dateMessages[dateMessage.createdAt.getStartOfDay()] = dateMessage
-                    Timber.i("2")
                 }
             }
             val dates: List<ChatMessageModel> = dateMessages.map { it.value }
@@ -138,11 +135,9 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
             val dateElement = dateMessages[element.createdAt.getStartOfDay()]
             if (dateElement == null) {
                 addDateMessage(element)
-                Timber.i("3")
             } else if (!dateElement.createdAt.isTheSameDay(element.createdAt) && dateElement.createdAt < element.createdAt) {
                 super.remove(dateElement)
                 addDateMessage(element)
-                Timber.i("4")
             }
             return super.add(element)
         }
