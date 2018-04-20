@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <shape>
+            <corners android:radius="@dimen/btn_corner_radius" />
+            <solid android:color="@color/button_buy_more_disabled" />
+        </shape>
+    </item>
+    <item android:state_enabled="true" android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/btn_corner_radius" />
+            <solid android:color="@color/button_buy_more_pressed" />
+        </shape>
+    </item>
+    <item android:state_enabled="true" android:state_focused="true">
+        <shape>
+            <corners android:radius="@dimen/btn_corner_radius" />
+            <solid android:color="@color/button_buy_more_pressed" />
+        </shape>
+    </item>
+    <item android:state_enabled="true">
+        <shape>
+            <corners android:radius="@dimen/btn_corner_radius" />
+            <solid android:color="@color/button_buy_more_active" />
+        </shape>
+    </item>
+</selector>

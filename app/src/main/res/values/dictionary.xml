@@ -335,4 +335,35 @@
     <string name="event_exercise">exercise</string>
     <string name="event_activity">activity</string>
 
+    <string name="event_details_by">_event_details_by</string>
+
+    <string name="event_tab_info">_android_event_tab_info</string>
+    <string name="event_tab_participants">_android_event_tab_participants</string>
+    <string name="event_location_not_defined">_event_details_location_notDefined</string>
+    <string name="event_location_later">_event_details_location_willBeAnnouncedLater</string>
+    <string name="event_duration">_event_details_duration</string>
+    <string name="event_duration_minute">_event_details_durationType_minute</string>
+    <string name="event_duration_hour">_event_details_durationType_hour</string>
+    <string name="event_duration_day">_android_event_duration_day</string>
+    <string name="event_price_template">_android_event_points_template</string>
+    <string name="event_tickets">_event_details_tickets_left</string>
+    <string name="event_tickets_from">_event_details_tickets_from</string>
+    <string name="event_buy_button_active">event_buy_now_title</string>
+    <string name="event_buy_button_free_suffix">_event_price_free</string>
+    <string name="event_buy_button_reached_limit">_android_event_buy_reached_limit</string>
+    <string name="event_tickets_bought_by_me">_android_event_bought_by_me</string>
+    <string name="event_tickets_buy_more">_android_event_buy_more</string>
+    <string name="event_tickets_buy_annulled">annulled</string>
+    <string name="event_tickets_buy_closed">_event_tickets_closed</string>
+    <string name="event_tickets_buy_sold_out">_event_tickets_sold_out</string>
+    <string name="event_tickets_buy_suspended">_event_tickets_suspended</string>
+    <string name="event_tickets_buy_dialog_title">_buy_ticket_title</string>
+    <string name="event_tickets_buy_dialog_quantity">_android_event_buy_quantity_of_tickets</string>
+    <string name="event_tickets_buy_dialog_points">_buy_ticket_points</string>
+    <string name="event_tickets_buy_dialog_people">_android_event_buy_dialog_people</string>
+    <string name="event_tickets_buy_dialog_buy_now">_buy_ticket_buy_now</string>
+    <string name="event_tickets_buy_dialog_cancel">_buy_ticket_cancel</string>
+    <string name="event_participant_header_connection">_android_event_participant_header_connection</string>
+    <string name="event_participant_header_other">_android_event_participant_header_other</string>
+
 </resources>

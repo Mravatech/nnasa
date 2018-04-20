@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_highlighted">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/rlClickableRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/avatar_list_item"
+            android:layout_height="@dimen/avatar_list_item"
+            android:layout_centerVertical="true"
+            tools:src="@mipmap/ic_launcher" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tvGuestsCount"
+            android:layout_width="23dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@id/ivAvatar"
+            android:layout_alignEnd="@id/ivAvatar"
+            android:background="@drawable/event_participant_guests_count"
+            android:gravity="center"
+            android:padding="2dp"
+            android:textColor="@color/white"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="5sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
+            android:layout_marginEnd="-4dp"
+            tools:text="+390" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_toEndOf="@id/ivAvatar"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvUserName"
+                style="@style/Connections.UserName"
+                tools:text="User name" />
+
+            <TextView
+                android:id="@+id/tvPosition"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
+
+            <TextView
+                android:id="@+id/tvEventName"
+                style="@style/Connections.UserPosition"
+                tools:text="at some company" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</FrameLayout>

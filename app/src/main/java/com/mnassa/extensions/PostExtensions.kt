@@ -68,7 +68,7 @@ val PostModel.formattedText: CharSequence?
         }
     }
 
-suspend fun PostModel.isMyPost(): Boolean {
+fun PostModel.isMyPost(): Boolean {
     return author.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
 }
 

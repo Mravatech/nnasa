@@ -1,15 +1,10 @@
 package com.mnassa.data.extensions
 
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
-import kotlinx.coroutines.experimental.channels.ArrayChannel
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
@@ -62,7 +57,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
 
     listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
         if (firebaseFirestoreException != null) {
-            channel.close(firebaseFirestoreException)
+            channel.close(exceptionHandler.handle(firebaseFirestoreException))
             listener.remove()
             return@addSnapshotListener
         }
@@ -73,6 +68,62 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
                 DocumentChange.Type.MODIFIED -> emitter(it.document, null, CHANGED)
                 DocumentChange.Type.REMOVED -> emitter(it.document, null, REMOVED)
                 else -> throw IllegalStateException("Illegal change type ${it.type}")
+            }
+        }
+    }
+
+    return channel
+}
+
+// Subscribe to single value changes
+
+internal inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
+    val channel = RendezvousChannel<T?>()
+    lateinit var listener: ListenerRegistration
+
+    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+        if (firebaseFirestoreException != null) {
+            channel.close(exceptionHandler.handle(firebaseFirestoreException))
+            listener.remove()
+            return@addSnapshotListener
+        }
+
+        launch {
+            try {
+                channel.send(dataSnapshot.mapSingle())
+            } catch (e: ClosedSendChannelException) {
+                listener.remove()
+            } catch (e: Exception) {
+                Timber.e(e)
+                listener.remove()
+                channel.close(exceptionHandler.handle(e))
+            }
+        }
+    }
+
+    return channel
+}
+
+internal inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    val channel = RendezvousChannel<List<T>>()
+    lateinit var listener: ListenerRegistration
+
+    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+        if (firebaseFirestoreException != null) {
+            channel.close(exceptionHandler.handle(firebaseFirestoreException))
+            listener.remove()
+            return@addSnapshotListener
+        }
+
+        launch {
+            try {
+                channel.send(dataSnapshot.mapList())
+            } catch (e: ClosedSendChannelException) {
+                listener.remove()
+            } catch (e: Exception) {
+                Timber.e(e)
+                listener.remove()
+                channel.close(exceptionHandler.handle(e))
             }
         }
     }

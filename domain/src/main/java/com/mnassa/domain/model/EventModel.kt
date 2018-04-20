@@ -33,6 +33,14 @@ interface EventModel : Model {
     val participants: List<String>
 }
 
+interface EventTicketModel : Model {
+    val eventName: String
+    val eventOrganizerId: String
+    val pricePerTicket: Long
+    val ticketCount: Long
+    val ownerId: String
+}
+
 val EventModel.isActive: Boolean get() {
     return status == EventStatus.OPENED
 }

@@ -128,4 +128,18 @@
 
     <string name="_android_connected_by_from_INFO">from</string>
 
+    <string name="_android_event_tab_info_INFO">Information</string>
+    <string name="_android_event_tab_participants_INFO">Participants</string>
+    <string name="_android_event_duration_day_INFO">Day</string>
+    <string name="_android_event_points_template_INFO">%d Point(s) / Person</string>
+    <string name="_android_event_bought_by_me_INFO">bought by me</string>
+    <string name="_android_event_buy_more_INFO">Buy More!</string>
+    <string name="_android_event_buy_reached_limit_INFO">You reached the limit!</string>
+    <string name="_android_event_buy_quantity_of_tickets_INFO">Quantity of tickets</string>
+    <string name="_android_event_buy_dialog_people_INFO">people</string>
+
+    <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
+    <string name="_android_event_participant_header_other_INFO">Other Participants</string>
+
+
 </resources>

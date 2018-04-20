@@ -10,7 +10,9 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/23/2018.
  */
-class DictionaryInteractorImpl(private val repository: DictionaryRepository) : DictionaryInteractor {
+class DictionaryInteractorImpl(repositoryLazy: () -> DictionaryRepository) : DictionaryInteractor {
+
+    private val repository: DictionaryRepository by lazy(repositoryLazy)
 
     override suspend fun handleDictionaryUpdates() {
         try {
