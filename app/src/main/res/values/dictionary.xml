@@ -341,5 +341,11 @@
     <string name="event_workshop">workshop</string>
     <string name="event_exercise">exercise</string>
     <string name="event_activity">activity</string>
+    <!-- ========================================== EVENTS ===================================== -->
+    <string name="settings_title">_settings_navTitle</string>
+    <string name="push_settings_title">_settings_row_pushNotifications</string>
+    <string name="settings_push_row">_settings_row_pushNotifications</string>
+    <string name="settings_language_row">_settings_row_language</string>
+
 
 </resources>

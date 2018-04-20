@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/tlbrSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_title="@string/settings_title" />
+
+    <LinearLayout
+        android:id="@+id/llPushSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_notifications" />
+
+        <TextView
+            android:id="@+id/tvPushNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="8sp"
+            android:textColor="#de000000"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:text="Push-notifications" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:layout_marginStart="16dp"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:id="@+id/llLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_language" />
+
+        <TextView
+            android:id="@+id/tvLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="8sp"
+            android:textColor="#de000000"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:text="Language (En)" />
+
+    </LinearLayout>
+</LinearLayout>

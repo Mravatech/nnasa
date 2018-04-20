@@ -94,6 +94,10 @@ import com.mnassa.screen.profile.edit.personal.EditPersonalProfileViewModel
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileViewModelImpl
 import com.mnassa.screen.registration.RegistrationViewModel
 import com.mnassa.screen.registration.RegistrationViewModelImpl
+import com.mnassa.screen.settings.SettingsViewModel
+import com.mnassa.screen.settings.SettingsViewModelImpl
+import com.mnassa.screen.settings.push.PushSettingsViewModel
+import com.mnassa.screen.settings.push.PushSettingsViewModelImpl
 import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModel
@@ -130,7 +134,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
-    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl( instance(), instance()) }
+    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl(instance(), instance()) }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance(), instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
@@ -163,6 +167,8 @@ private val viewModelsModule = Kodein.Module {
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }
     bind<TermsAndConditionsViewModel>() with provider { TermsAndConditionsViewModelImpl() }
+    bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
+    bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -183,6 +189,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(ChatConverter::class.java)
         converter.registerConverter(EventsConverter())
         converter.registerConverter(NotificationsConverter())
+        converter.registerConverter(PushSettingsConverter())
         converter
     }
 }
@@ -215,9 +222,10 @@ private val repositoryModule = Kodein.Module {
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(),instance(), instance()) }
+    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -239,8 +247,9 @@ private val interactorModule = Kodein.Module {
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
     bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance()) }
     bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance()) }
-    bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl( instance()) }
+    bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
+    bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
@@ -262,6 +271,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseChatApi>()
     bindRetrofitApi<FirebaseComplaintApi>()
     bindRetrofitApi<FirebaseNotificationsApi>()
+    bindRetrofitApi<FirebaseSettingsApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }

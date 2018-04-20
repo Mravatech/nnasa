@@ -10,17 +10,12 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.mikepenz.materialdrawer.*
-import com.mikepenz.materialdrawer.model.*
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
-import com.mikepenz.materialdrawer.model.DividerDrawerItem
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
+import com.mikepenz.materialdrawer.model.*
+import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.other.AppInfoProvider
@@ -35,6 +30,7 @@ import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.screen.settings.SettingsController
 import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
@@ -133,8 +129,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                             PROFILE -> open(ProfileController.newInstance(activeAccountId))
                             WALLET -> open(WalletController.newInstance())
                             INVITE -> open(InviteController.newInstance())
-                            SETTINGS -> {
-                            } //TODO
+                            SETTINGS -> open(SettingsController.newInstance())
                             HELP -> open(ChatMessageController.newInstance())
                             TERMS -> open(TermsAndConditionsController.newInstance())
                             LOGOUT -> viewModel.logout()
