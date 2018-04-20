@@ -87,35 +87,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
         with(view) {
             rvContent.adapter = commentsAdapter
-
-            launchCoroutineUI {
-                val container = getCommentsContainer()
-                container.removeAllViews()
-
-                val inflater = LayoutInflater.from(container.context)
-                inflater.inflate(R.layout.comment_panels, container, true)
-                inflater.inflate(R.layout.panel_comment, container, true)
-
-                rvAccountsToRecommend.adapter = accountsToRecommendAdapter
-
-                with(container) {
-                    btnCommentPost.setOnClickListener { onPostCommentClick() }
-                    ivCommentRecommend.setOnClickListener { openRecommendScreen() }
-                    updatePostCommentButtonState()
-
-                    etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
-                    etCommentText.addTextChangedListener(SimpleTextWatcher { updatePostCommentButtonState() })
-                    ivReplyCancel.setOnClickListener { replyTo = null }
-
-                    editPanel.tvEditTitle.text = fromDictionary(R.string.posts_comment_edit_title)
-                    editPanel.ivEditCancel.setOnClickListener { editedComment = null }
-                }
-
-                bindEditedComment(editedComment)
-                bindReplyTo(replyTo)
-                bindRecommendedAccounts(recommendedAccounts)
-            }
-
+            initializeContainer()
             bindToolbar(toolbar)
         }
 
@@ -145,6 +117,36 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                     view.rvContent?.smoothScrollToPosition(holderIndex)
                 }
             }
+        }
+    }
+
+    private fun initializeContainer() {
+        launchCoroutineUI {
+            val container = getCommentsContainer()
+            container.removeAllViews()
+
+            val inflater = LayoutInflater.from(container.context)
+            inflater.inflate(R.layout.comment_panels, container, true)
+            inflater.inflate(R.layout.panel_comment, container, true)
+
+            with(container) {
+                rvAccountsToRecommend.adapter = accountsToRecommendAdapter
+
+                btnCommentPost.setOnClickListener { onPostCommentClick() }
+                ivCommentRecommend.setOnClickListener { openRecommendScreen() }
+                updatePostCommentButtonState()
+
+                etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
+                etCommentText.addTextChangedListener(SimpleTextWatcher { updatePostCommentButtonState() })
+                ivReplyCancel.setOnClickListener { replyTo = null }
+
+                editPanel.tvEditTitle.text = fromDictionary(R.string.posts_comment_edit_title)
+                editPanel.ivEditCancel.setOnClickListener { editedComment = null }
+            }
+
+            bindEditedComment(editedComment)
+            bindReplyTo(replyTo)
+            bindRecommendedAccounts(recommendedAccounts)
         }
     }
 

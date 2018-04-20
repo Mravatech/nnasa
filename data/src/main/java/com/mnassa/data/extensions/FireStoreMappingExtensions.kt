@@ -2,6 +2,7 @@ package com.mnassa.data.extensions
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mnassa.domain.model.HasId
@@ -31,6 +32,13 @@ internal inline fun <reified T> mapSingleValue(dataSnapshot: QueryDocumentSnapsh
 }
 
 internal inline fun <reified T : Any> QueryDocumentSnapshot?.mapSingle(): T? = mapSingleValue(this)
+
+internal inline fun <reified T : Any> mapListValue(dataSnapshot: QuerySnapshot?): List<T> {
+    if (dataSnapshot == null) return emptyList()
+    return dataSnapshot.documents.mapNotNull { it.mapSingle<T>() }
+}
+
+internal inline fun <reified T : Any> QuerySnapshot?.mapList(): List<T> = mapListValue(this)
 
 internal inline fun <reified T> mapSingleValue(dataSnapshot: DocumentSnapshot?): T? {
     if (dataSnapshot == null) return null

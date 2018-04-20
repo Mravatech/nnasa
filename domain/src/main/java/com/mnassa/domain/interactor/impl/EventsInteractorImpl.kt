@@ -75,6 +75,10 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
         eventsRepository.buyTickets(eventId, ticketsCount)
     }
 
+    override suspend fun getAttendedUsers(eventId: String): List<ShortAccountModel> {
+        return eventsRepository.getAttendedUsers(eventId)
+    }
+
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
     }

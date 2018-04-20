@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.ShortAccountModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -20,4 +21,6 @@ interface EventsInteractor {
     suspend fun canBuyTicket(eventId: String): Boolean
     suspend fun getBoughtTicketsCount(eventId: String): Long
     suspend fun buyTickets(eventId: String, ticketsCount: Long)
+
+    suspend fun getAttendedUsers(eventId: String): List<ShortAccountModel>
 }

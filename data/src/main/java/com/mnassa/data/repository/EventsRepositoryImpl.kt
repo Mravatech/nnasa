@@ -12,6 +12,7 @@ import com.mnassa.data.network.api.FirebaseEventsApi
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
+import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.BuyTicketsRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
@@ -19,6 +20,7 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -76,5 +78,13 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
 
     override suspend fun buyTickets(eventId: String, ticketsCount: Long) {
         eventsApi.buyTickets(BuyTicketsRequest(eventId, ticketsCount)).handleException(exceptionHandler)
+    }
+
+    override suspend fun getAttendedUsers(eventId: String): List<ShortAccountModel> {
+        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+                .document(eventId)
+                .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+                .awaitList<ShortAccountDbEntity>()
+                .run { converter.convertCollection(this, ShortAccountModel::class.java) }
     }
 }

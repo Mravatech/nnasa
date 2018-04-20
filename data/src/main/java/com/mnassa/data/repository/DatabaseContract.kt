@@ -83,5 +83,8 @@ internal object DatabaseContract {
     const val TABLE_ALL_EVENTS = "allEvents"
     //
     const val TABLE_EVENT_TICKETS = "eventTicketsData"
+    //
+    const val TABLE_EVENT_ATTENDIES = "attendedUsers"
+    const val TABLE_EVENT_ATTENDIES_COLLECTION = "attendanceList"
 
 }
