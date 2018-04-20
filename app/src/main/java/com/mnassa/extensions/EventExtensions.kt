@@ -20,11 +20,11 @@ import java.text.SimpleDateFormat
  */
 val EventModel.formattedType: CharSequence
     get() = when (type) {
-        EventType.LECTURE -> fromDictionary(R.string.event_lecture)
-        EventType.DISCUSSION -> fromDictionary(R.string.event_discussion)
-        EventType.WORKSHOP -> fromDictionary(R.string.event_workshop)
-        EventType.EXERCISE -> fromDictionary(R.string.event_exercise)
-        EventType.ACTIVITY -> fromDictionary(R.string.event_activity)
+        is EventType.LECTURE -> fromDictionary(R.string.event_lecture)
+        is EventType.DISCUSSION -> fromDictionary(R.string.event_discussion)
+        is EventType.WORKSHOP -> fromDictionary(R.string.event_workshop)
+        is EventType.EXERCISE -> fromDictionary(R.string.event_exercise)
+        is EventType.ACTIVITY -> fromDictionary(R.string.event_activity)
         else -> {
             Timber.e("Illegal event type: $type; EventId: $id")
             ""

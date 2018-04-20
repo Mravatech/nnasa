@@ -323,13 +323,11 @@ class DialogHelper {
 
                 setTotalPoints(event.price)
 
-                class PeoplesCount(val count: Long) {
-                    override fun toString(): String {
-                        return count.toString() + " " + fromDictionary(R.string.event_tickets_buy_dialog_people)
-                    }
+                class PeopleCount(val count: Long) {
+                    override fun toString(): String = "$count ${fromDictionary(R.string.event_tickets_buy_dialog_people)}"
                 }
 
-                val adapterData = (1..maxTicketsCount).map { PeoplesCount(it) }
+                val adapterData = (1..maxTicketsCount).map { PeopleCount(it) }
                 spinnerQuantity.adapter = ArrayAdapter(context,
                         R.layout.support_simple_spinner_dropdown_item,
                         android.R.id.text1,
@@ -343,7 +341,7 @@ class DialogHelper {
                 }
 
                 btnBuyNow.setOnClickListener {
-                    continuation.resume((spinnerQuantity.selectedItem as? PeoplesCount)?.count ?: 0L)
+                    continuation.resume((spinnerQuantity.selectedItem as? PeopleCount)?.count ?: 0L)
                     dialog.dismiss()
                 }
                 btnBuyNow.text = fromDictionary(R.string.event_tickets_buy_dialog_buy_now)
