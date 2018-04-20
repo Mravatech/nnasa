@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -20,7 +22,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>() {
     override val layoutId: Int = R.layout.controller_events_list
     override val viewModel: EventsViewModel by instance()
     private val languageProvider: LanguageProvider by instance()
-    private val adapter by lazy { EventsRVAdapter(languageProvider) }
+    private val userInteractor: UserProfileInteractor by instance()
+    private val adapter by lazy { EventsRVAdapter(languageProvider, userInteractor) }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -28,7 +31,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>() {
 
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
-        adapter.onItemClickListener = { /*TODO*/ }
+        adapter.onItemClickListener = { open(EventDetailsController.newInstance(it)) }
 
         adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {

@@ -11,7 +11,7 @@ import timber.log.Timber
  */
 //////////////////////////////////// LOAD DATA WITHOUT CHANGES HANDLING /////////////////////////////
 // Loading list of values
-internal suspend inline fun <reified T : HasId> get(databaseReference: DatabaseReference, path: String, exceptionHandler: ExceptionHandler): List<T> {
+internal suspend inline fun <reified T : Any> get(databaseReference: DatabaseReference, path: String, exceptionHandler: ExceptionHandler): List<T> {
     return databaseReference.child(path).orderByKey().awaitList(exceptionHandler)
 }
 
@@ -22,9 +22,10 @@ internal suspend inline fun <reified T : Any> get(databaseReference: DatabaseRef
 
 internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: ExceptionHandler): List<T> {
     val result = suspendCancellableCoroutine<List<T>> { continuation ->
-        addListenerForSingleValueEvent(object : ValueEventListener {
+        val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
                     continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+
             override fun onDataChange(snapshot: DataSnapshot?) {
                 try {
                     continuation.resume(snapshot.mapList())
@@ -33,7 +34,9 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
                     continuation.resumeWithException(exceptionHandler.handle(e))
                 }
             }
-        })
+        }
+        addListenerForSingleValueEvent(listener)
+        continuation.invokeOnCompletion { removeEventListener(listener) }
     }
     return result
 }
@@ -42,9 +45,10 @@ var start = System.currentTimeMillis()
 
 internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: ExceptionHandler): T? {
     val result = suspendCancellableCoroutine<T?> { continuation ->
-        addListenerForSingleValueEvent(object : ValueEventListener {
+        val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
                     continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+
             override fun onDataChange(snapshot: DataSnapshot?) {
                 try {
                     continuation.resume(snapshot.mapSingle())
@@ -53,7 +57,9 @@ internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: Exce
                     continuation.resumeWithException(exceptionHandler.handle(e))
                 }
             }
-        })
+        }
+        addListenerForSingleValueEvent(listener)
+        continuation.invokeOnCompletion { removeEventListener(listener) }
     }
     return result
 }
@@ -72,7 +78,7 @@ internal suspend inline fun <reified T : HasId> loadPortion(
     }
 
     val result = suspendCancellableCoroutine<List<T>> { continuation ->
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
+        val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
                     continuation.resumeWithException(exceptionHandler.handle(error.toException()))
 
@@ -86,7 +92,9 @@ internal suspend inline fun <reified T : HasId> loadPortion(
                     continuation.resumeWithException(exceptionHandler.handle(e))
                 }
             }
-        })
+        }
+        query.addListenerForSingleValueEvent(listener)
+        continuation.invokeOnCompletion { query.removeEventListener(listener) }
     }
     return result
 }

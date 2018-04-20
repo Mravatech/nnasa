@@ -8,27 +8,32 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatRadioButton
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
+import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.extensions.getBoughtTicketsCount
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_buy_ticket.view.*
 import kotlinx.android.synthetic.main.dialog_company_status.*
 import kotlinx.android.synthetic.main.dialog_delete_chat_message.*
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 import kotlinx.android.synthetic.main.dialog_yes_no.*
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import java.util.*
 
 class DialogHelper {
@@ -47,9 +52,9 @@ class DialogHelper {
                 .show()
     }
 
-    fun showComplaintDialog(context: Context, reports: List<TranslatedWordModel>,  listener: (TranslatedWordModel) -> Unit)  {
+    fun showComplaintDialog(context: Context, reports: List<TranslatedWordModel>, listener: (TranslatedWordModel) -> Unit) {
         MaterialDialog.Builder(context)
-                .items(                        reports                )
+                .items(reports)
                 .itemsCallback { dialog, _, which, _ ->
                     listener(reports[which])
                     dialog.dismiss()
@@ -179,7 +184,7 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun connectionsDialog(context: Context,info: String, onOkClick: () -> Unit) {
+    fun connectionsDialog(context: Context, info: String, onOkClick: () -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_yes_no)
@@ -289,5 +294,63 @@ class DialogHelper {
         dialog.setCancelable(false)
         dialog.show()
         return dialog
+    }
+
+    /**
+     * Returns tickets count to buy
+     */
+    suspend fun showBuyTicketDialog(context: Context, event: EventModel): Long {
+        val maxTicketsCount = minOf(event.ticketsTotal - event.ticketsSold, event.ticketsPerAccount - event.getBoughtTicketsCount())
+        if (maxTicketsCount <= 0) return 0L
+
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_buy_ticket, null)
+        return suspendCancellableCoroutine { continuation ->
+            val dialog: MaterialDialog = MaterialDialog.Builder(context)
+                    .customView(view, false)
+                    .cancelListener { continuation.resume(0L) }
+                    .build()
+
+            with(view) {
+                val setTotalPoints = { count : Long ->
+                    val priceText = SpannableStringBuilder((count * event.price).toString())
+                    priceText.setSpan(RelativeSizeSpan(1f), 0, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    priceText.append(" ")
+                    val spanStart = priceText.length
+                    priceText.append(fromDictionary(R.string.event_tickets_buy_dialog_points))
+                    priceText.setSpan(RelativeSizeSpan(0.4f), spanStart, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    tvPrice.text = priceText
+                }
+
+                setTotalPoints(event.price)
+
+                class PeopleCount(val count: Long) {
+                    override fun toString(): String = "$count ${fromDictionary(R.string.event_tickets_buy_dialog_people)}"
+                }
+
+                val adapterData = (1..maxTicketsCount).map { PeopleCount(it) }
+                spinnerQuantity.adapter = ArrayAdapter(context,
+                        R.layout.support_simple_spinner_dropdown_item,
+                        android.R.id.text1,
+                        adapterData)
+                spinnerQuantity.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        setTotalPoints(adapterData[position].count)
+                    }
+                }
+
+                btnBuyNow.setOnClickListener {
+                    continuation.resume((spinnerQuantity.selectedItem as? PeopleCount)?.count ?: 0L)
+                    dialog.dismiss()
+                }
+                btnBuyNow.text = fromDictionary(R.string.event_tickets_buy_dialog_buy_now)
+                btnCancel.setOnClickListener { dialog.cancel() }
+                btnCancel.text = fromDictionary(R.string.event_tickets_buy_dialog_cancel)
+            }
+
+            dialog.show()
+            continuation.invokeOnCompletion { dialog.dismiss() }
+        }
     }
 }

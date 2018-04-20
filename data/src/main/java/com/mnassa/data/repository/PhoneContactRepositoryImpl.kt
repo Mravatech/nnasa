@@ -53,10 +53,10 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                     }
                 }
             }
-//            if (appInfoProvider.isDebug) {//todo uncomment to test
-//                result.clear()
-//                result.addAll(getDebugPhoneList())
-//            }
+            if (appInfoProvider.isDebug) {//todo uncomment to test
+                result.clear()
+                result.addAll(getDebugPhoneList())
+            }
 
             result.distinctBy { it.phoneNumber }
         }.await()

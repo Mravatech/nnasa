@@ -19,7 +19,6 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/item_comment" />
 
-
     <LinearLayout
         android:id="@+id/llPanels"
         android:layout_width="match_parent"

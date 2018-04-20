@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/spacing_vertical">
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvBuyTicketTitle"
+            style="@style/MnassaHeader1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/accent"
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            android:text="@string/event_tickets_buy_dialog_title"
+            android:textColor="@color/white" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvQuantityHint"
+            style="@style/MnassaTextTiny"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvBuyTicketTitle"
+            android:layout_marginEnd="25dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="34dp"
+            android:text="@string/event_tickets_buy_dialog_quantity"
+            android:textSize="12sp" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinnerQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/tvQuantityHint"
+            android:layout_alignStart="@id/tvQuantityHint"
+            android:layout_below="@id/tvQuantityHint"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+        <View
+            style="@style/MnassaDivider"
+            android:layout_alignEnd="@id/tvQuantityHint"
+            android:layout_alignStart="@id/tvQuantityHint"
+            android:layout_below="@id/spinnerQuantity" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_below="@id/spinnerQuantity"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginTop="30dp"
+            android:background="@color/gray_pale"
+            android:fontFamily="@font/roboto_light"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            tools:text="1500 points" />
+
+        <Button
+            android:id="@+id/btnBuyNow"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvPrice"
+            tools:text="Buy now" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPrice"
+            android:layout_toStartOf="@id/btnBuyNow"
+            android:textColor="@color/black_transparent_40"
+            tools:text="Cancel" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>
