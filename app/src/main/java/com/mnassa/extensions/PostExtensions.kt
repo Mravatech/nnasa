@@ -58,7 +58,9 @@ val PostModel.formattedText: CharSequence?
                 spannable.append(this.recommendedProfile.formattedName)
                 spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(App.context, R.color.accent)), nameStart, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.append(if (text.isNullOrBlank()) "" else ", ")
+                if (!text.isNullOrBlank()) {
+                    spannable.append(", ")
+                }
                 spannable.append(text ?: "")
                 spannable
             }
