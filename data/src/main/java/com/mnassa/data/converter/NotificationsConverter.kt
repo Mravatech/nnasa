@@ -3,9 +3,11 @@ package com.mnassa.data.converter
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.NotificationDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
+import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.NotificationExtraImpl
@@ -34,7 +36,8 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
                 input.extra?.eventName,
                 input.extra?.ticketsPrice,
                 input.extra?.totalPrice,
-                input.extra?.attendee)
+                input.extra?.attendee,
+                convertEvent(input.extra?.event, converter))
         return NotificationModelImpl(
                 id = input.id,
                 createdAt = Date(input.createdAt),
@@ -43,6 +46,13 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
                 extra = extra,
                 isOld = true
         )
+    }
+
+    private fun convertEvent(input: Map<String, EventDbEntity>?, converter: ConvertersContext): EventModel? {
+        if (input == null) return null
+        val entity = input.values.first()
+        entity.id = input.keys.first()
+        return converter.convert(entity, EventModel::class.java)
     }
 
     private fun convertAuthor(input: Map<String, ShortAccountDbEntity>?, converter: ConvertersContext): ShortAccountModel? {

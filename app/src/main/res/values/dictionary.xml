@@ -335,6 +335,31 @@
     <string name="notifications_old">_notifications_recent_section_title</string>
     <string name="notifications_receive">_android_notification_receive</string>
     <string name="notifications_spent">_android_notification_spent</string>
+    <string name="notifications_i_need">_android_notification_i_need</string>
+    <string name="notifications_commented_your_post">_android_notification_commented_your_post</string>
+    <string name="notification_request_to_connect_with_you">_android_notification_request_to_connect_with_you</string>
+    <string name="notification_repost_your_post">_android_notification_repost_your_post</string>
+    <string name="notification_become_new_mnassa_user">_android_notification_become_new_mnassa_user</string>
+    <string name="notification_recommended_you_in_post">_android_notification_recommended_you_in_post</string>
+    <string name="notification_recommended_you_in_event">_android_notification_recommended_you_in_event</string>
+    <string name="notification_recommended_you">_android_notification_recommended_you</string>
+    <string name="notification_for">_android_notification_for</string>
+    <string name="notification_announced_your_profile">_android_notification_announced_your_profile</string>
+    <string name="notification_put_your_attention_on_post">_android_notification_put_your_attention_on_post</string>
+    <string name="notification_is_going_to_attend">_android_notification_is_going_to_attend</string>
+    <string name="notification_it_seems_you_can_help">_android_notification_it_seems_you_can_help</string>
+    <string name="notification_invited_you_to">_android_notification_invited_you_to</string>
+    <string name="notification_you_can_send">_android_notification_you_can_send</string>
+    <string name="notification_more_invites">_android_notification_more_invites</string>
+    <string name="notification_requested_to_connect_with_you">_android_notification_requested_to_connect_with_you</string>
+    <string name="notification_thinks">_android_notification_thinks</string>
+    <string name="notification_can_help_you_with">_android_notification_can_help_you_with</string>
+    <string name="notification_you_promoted_your_post">_android_notification_you_promoted_your_post</string>
+    <string name="notification_your_post_will_expire_tomorrow">_android_notification_your_post_will_expire_tomorrow</string>
+    <string name="notification_your_post_has_expired">_android_notification_your_post_has_expired</string>
+    <string name="notification_was_cancelled_by_organizer">_android_notification_was_cancelled_by_organizer</string>
+    <string name="notification_points_were_returned">_android_notification_points_were_returned</string>
+
     <!-- ========================================== EVENTS ===================================== -->
     <string name="event_lecture">lecture</string>
     <string name="event_discussion">discussion</string>

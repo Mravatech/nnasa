@@ -37,8 +37,8 @@ import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.chats.message.ChatMessageViewModel
 import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForEventViewModelImpl
-import com.mnassa.screen.comments.CommentsWrapperViewModel
 import com.mnassa.screen.comments.CommentsWrapperForPostViewModelImpl
+import com.mnassa.screen.comments.CommentsWrapperViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
@@ -252,7 +252,7 @@ private val repositoryModule = Kodein.Module {
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(),instance(), instance()) }
-    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
 

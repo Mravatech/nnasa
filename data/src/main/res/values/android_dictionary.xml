@@ -129,6 +129,32 @@
     <string name="_android_connected_by_from_INFO">from</string>
     <string name="_android_notification_receive_INFO">You just receive %i points</string>
     <string name="_android_notification_spent_INFO">You just spent %i points</string>
+    <string name="_android_notification_i_need_INFO">I need </string>
+    <string name="_android_notification_commented_your_post_INFO">Commented your post</string>
+    <string name="_android_notification_request_to_connect_with_you_INFO">Requested to connect with you</string>
+    <string name="_android_notification_repost_your_post_INFO">reposted your post</string>
+    <string name="_android_notification_become_new_mnassa_user_INFO">become new MNASSA user</string>
+    <string name="_android_notification_recommended_you_in_post_INFO">Recommended you in post</string>
+    <string name="_android_notification_recommended_you_in_event_INFO">Recommended you in event</string>
+    <string name="_android_notification_recommended_you_INFO">Recommended you</string>
+    <string name="_android_notification_for_INFO">for</string>
+    <string name="_android_notification_announced_your_profile_INFO">Announced your profile</string>
+    <string name="_android_notification_put_your_attention_on_post_INFO">Put your attention on post </string>
+    <string name="_android_notification_is_going_to_attend_INFO">is going to attend</string>
+    <string name="_android_notification_it_seems_you_can_help_INFO">It seems you can help.</string>
+    <string name="_android_notification_invited_you_to_INFO">invited you to</string>
+    <string name="_android_notification_you_can_send_INFO">You can send</string>
+    <string name="_android_notification_more_invites_INFO">more invites.</string>
+    <string name="_android_notification_requested_to_connect_with_you_INFO">Requested to connect with you</string>
+    <string name="_android_notification_thinks_INFO">Thinks</string>
+    <string name="_android_notification_can_help_you_with_INFO">can help you with</string>
+    <string name="_android_notification_you_promoted_your_post_INFO">You promoted own post:</string>
+    <string name="_android_notification_your_post_will_expire_tomorrow_INFO">Your post will expire tomorrow. Prolong it or it will be closed.</string>
+    <string name="_android_notification_your_post_has_expired_INFO">Your post has expired</string>
+    <string name="_android_notification_was_cancelled_by_organizer_INFO">was cancelled by organizer.</string>
+    <string name="_android_notification_points_were_returned_INFO">point(s) were returned.</string>
+
+
 
     <string name="_android_event_tab_info_INFO">Information</string>
     <string name="_android_event_tab_participants_INFO">Participants</string>
