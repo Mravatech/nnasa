@@ -195,7 +195,7 @@ private val viewModelsModule = Kodein.Module {
     }
     bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance()) }
     bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance()) }
-    bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance()) }
+    bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {

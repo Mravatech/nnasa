@@ -135,5 +135,8 @@
     <string name="_android_event_buy_quantity_of_tickets_INFO">Quantity of tickets</string>
     <string name="_android_event_buy_dialog_people_INFO">people</string>
 
+    <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
+    <string name="_android_event_participant_header_other_INFO">Other Participants</string>
+
 
 </resources>

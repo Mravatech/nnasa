@@ -9,5 +9,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EventDetailsParticipantsViewModel : MnassaViewModel {
     val eventChannel: BroadcastChannel<EventModel>
-    val participantsChannel: BroadcastChannel<List<EventParticipant>>
+    val participantsChannel: BroadcastChannel<List<EventParticipantItem>>
 }

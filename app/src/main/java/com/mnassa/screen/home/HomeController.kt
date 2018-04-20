@@ -54,12 +54,12 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
 
             launchCoroutineUI {
                 viewModel.unreadEventsCountChannel.consumeEach {
-                    tlHome.setBadgeText(HomePage.EVENTS.ordinal, if (it == 0) null else it.toString())
+                    tlHome.setBadgeText(HomePage.EVENTS.ordinal, it.takeIf { it > 0 }?.toString())
                 }
             }
             launchCoroutineUI {
                 viewModel.unreadNeedsCountChannel.consumeEach {
-                    tlHome.setBadgeText(HomePage.NEEDS.ordinal, if (it == 0) null else it.toString())
+                    tlHome.setBadgeText(HomePage.NEEDS.ordinal, it.takeIf { it > 0 }?.toString())
                 }
             }
 

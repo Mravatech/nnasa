@@ -1,10 +1,14 @@
 package com.mnassa.screen.events.details.participants
 
 import android.os.Bundle
+import android.view.View
 import com.mnassa.R
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.EventModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
+import kotlinx.android.synthetic.main.controller_event_details_participants.view.*
+import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -15,8 +19,24 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
     private val eventParam by lazy { args[EventDetailsInfoController.EXTRA_EVENT] as EventModel? }
     override val layoutId: Int = R.layout.controller_event_details_participants
     override val viewModel: EventDetailsParticipantsViewModel by instance(arg = eventId)
+    private val adapter = EventParticipantsRVAdapter()
 
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
 
+        adapter.isLoadingEnabled = true
+        launchCoroutineUI {
+            viewModel.participantsChannel.consumeEach {
+                adapter.isLoadingEnabled = it.isEmpty()
+                adapter.set(it)
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        view.rvParticipants.adapter = adapter
+    }
 
     companion object {
         private const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"

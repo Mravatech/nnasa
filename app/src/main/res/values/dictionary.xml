@@ -360,5 +360,7 @@
     <string name="event_tickets_buy_dialog_people">_android_event_buy_dialog_people</string>
     <string name="event_tickets_buy_dialog_buy_now">_buy_ticket_buy_now</string>
     <string name="event_tickets_buy_dialog_cancel">_buy_ticket_cancel</string>
+    <string name="event_participant_header_connection">_android_event_participant_header_connection</string>
+    <string name="event_participant_header_other">_android_event_participant_header_other</string>
 
 </resources>
