@@ -36,7 +36,7 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.chats.message.ChatMessageViewModel
 import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
-import com.mnassa.screen.comments.CommentsWrapperForEventViewModel
+import com.mnassa.screen.comments.CommentsWrapperForEventViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperViewModel
 import com.mnassa.screen.comments.CommentsWrapperForPostViewModelImpl
 import com.mnassa.screen.complaintother.ComplaintOtherViewModel
@@ -189,7 +189,7 @@ private val viewModelsModule = Kodein.Module {
                         commentsInteractor = instance(),
                         postsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
             EventDetailsInfoController::class.java ->
-                CommentsWrapperForEventViewModel(
+                CommentsWrapperForEventViewModelImpl(
                     eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
                     commentsInteractor = instance(),
                     eventsInteractor = instance()) as CommentsWrapperViewModel //android studio bug

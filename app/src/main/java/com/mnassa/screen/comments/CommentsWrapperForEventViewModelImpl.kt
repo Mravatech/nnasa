@@ -14,9 +14,9 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 4/18/2018.
  */
-class CommentsWrapperForEventViewModel(private val eventId: String,
-                                       private val commentsInteractor: CommentsInteractor,
-                                       private val eventsInteractor: EventsInteractor
+class CommentsWrapperForEventViewModelImpl(private val eventId: String,
+                                           private val commentsInteractor: CommentsInteractor,
+                                           private val eventsInteractor: EventsInteractor
 ) : MnassaViewModelImpl(), CommentsWrapperViewModel {
     override val scrollToChannel: ArrayBroadcastChannel<CommentModel> = ArrayBroadcastChannel(1)
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
