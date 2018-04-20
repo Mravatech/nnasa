@@ -13,6 +13,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.mnassa.R
+import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.bindDate
@@ -86,7 +87,12 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     private suspend fun bindEvent(event: EventModel) {
         eventModel = event
         with(getViewSuspend()) {
-            ivEventImage.image(event.pictures.firstOrNull())
+            val mainImage = event.pictures.firstOrNull()
+            ivEventImage.image(mainImage)
+            ivEventImage.setOnClickListener {
+                if (mainImage != null) PhotoPagerActivity.start(it.context, listOf(mainImage))
+            }
+
             event.bindDate(llEventDateRoot)
             tvEventName.text = event.title
             tvTitleCollapsed.text = event.title
