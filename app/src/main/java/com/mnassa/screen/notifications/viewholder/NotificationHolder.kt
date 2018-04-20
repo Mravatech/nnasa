@@ -81,8 +81,12 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 SpannableString(fromDictionary("$BASE_KEY$RECOMMENDED_YOU_IN_EVENT", fromDictionary(R.string.notification_recommended_you_in_event)))
             }
             USER_WAS_RECOMMENDED -> {
-                SpannableString(fromDictionary("$BASE_KEY$RECOMMENDED_YOU", fromDictionary(R.string.notification_recommended_you)))
-                SpannableString(fromDictionary("$BASE_KEY$FOR", fromDictionary(R.string.notification_for)))
+                val name = getRecommendedName(item)
+                val recomend = fromDictionary("$BASE_KEY$RECOMMENDED_YOU", fromDictionary(R.string.notification_recommended_you))
+                val _for = fromDictionary("$BASE_KEY$FOR", fromDictionary(R.string.notification_for))
+                val eventName = item.extra.post?.text ?: ""
+                val text = "$recomend $name $_for $eventName"
+                getTwoSpanText(text, name, eventName, Color.BLACK)
             }
             USER_WAS_RECOMMENDED_BY_POST -> {
                 SpannableString(fromDictionary("$BASE_KEY$ANNOUNCED_YOU", fromDictionary(R.string.notification_announced_your_profile)))
@@ -100,8 +104,10 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 SpannableString(fromDictionary("$BASE_KEY$INVITE_TO_EVENT", fromDictionary(R.string.notification_invited_you_to)))
             }
             INVITES_NUMBER_CHANGED -> {
-                SpannableString(fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS", fromDictionary(R.string.notification_you_can_send)))
-                SpannableString(fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS_TAIL", fromDictionary(R.string.notification_more_invites)))
+                val youCanSend = fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS", fromDictionary(R.string.notification_you_can_send))
+                val moreInvites = fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS_TAIL", fromDictionary(R.string.notification_more_invites))
+                val text = "$youCanSend ${item.extra.newInviteNumber} $moreInvites"
+                getOneSpanText(text, item.extra.newInviteNumber.toString(), Color.BLACK)
             }
             CONNECTIONS_REQUEST_ACCEPTED -> {
                 SpannableString(fromDictionary("$BASE_KEY$CONNECTION_REQUEST_WAS_ACCEPTED", fromDictionary(R.string.notification_requested_to_connect_with_you)))
@@ -113,8 +119,12 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 getOneSpanText(text, name, Color.BLACK)
             }
             USER_WAS_RECOMMENDED_IN_EVENT -> {
-                SpannableString(fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT", fromDictionary(R.string.notification_thinks)))
-                SpannableString(fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_2", fromDictionary(R.string.notification_can_help_you_with)))
+                val thinks = fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT", fromDictionary(R.string.notification_thinks))
+                val canHelpYouWith = fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_2", fromDictionary(R.string.notification_can_help_you_with))
+                val name = item.extra.event?.author?.userName?:""
+                val event = item.extra.event?.text?:""
+                val text = "$thinks $name $canHelpYouWith $event"
+                getTwoSpanText(text, name, event, Color.BLACK)
             }
             POST_PROMOTED -> {
                 SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", fromDictionary(R.string.notification_you_promoted_your_post)))
@@ -129,7 +139,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 val canceled = fromDictionary("$BASE_KEY$EVENT_WAS_CANCELLED", fromDictionary(R.string.notification_was_cancelled_by_organizer))
                 val pointsReturns = fromDictionary("${BASE_KEY}$EVENT_WAS_CANCELLED_POINTS_RETURNING", fromDictionary(R.string.notification_points_were_returned))
                 val text = "${eventName ?: ""} $canceled ${totalPrice ?: ""} $pointsReturns"
-                getEventCancellingText(text, eventName ?: "", totalPrice
+                getTwoSpanText(text, eventName ?: "", totalPrice
                         ?: "", Color.BLACK)
 
             }
@@ -148,21 +158,22 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         return requireNotNull(name)
     }
 
-    private fun getEventCancellingText(text: String, eventName: String, pointsReturns: String, color: Int): SpannableString {
-        val span = SpannableString(text)
-        span.setSpan(ForegroundColorSpan(color), START_SPAN, eventName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(StyleSpan(Typeface.BOLD), START_SPAN, eventName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val pointsReturnsPosition = text.indexOf(pointsReturns)
-        span.setSpan(ForegroundColorSpan(color), pointsReturnsPosition, pointsReturnsPosition + pointsReturns.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(StyleSpan(Typeface.BOLD), pointsReturnsPosition, pointsReturnsPosition + pointsReturns.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return span
-    }
-
     private fun getOneSpanText(text: String, spanText: String, color: Int): SpannableString {
         val span = SpannableString(text)
         val pointsReturnsPosition = text.indexOf(spanText)
         span.setSpan(ForegroundColorSpan(color), pointsReturnsPosition, pointsReturnsPosition + spanText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         span.setSpan(StyleSpan(Typeface.BOLD), pointsReturnsPosition, pointsReturnsPosition + spanText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return span
+    }
+
+    private fun getTwoSpanText(text: String, spanText1: String, spanText2: String, color: Int): SpannableString {
+        val span = SpannableString(text)
+        val pointsReturnsPosition = text.indexOf(spanText1)
+        val pointsSecondReturnsPosition = text.indexOf(spanText2)
+        span.setSpan(ForegroundColorSpan(color), pointsReturnsPosition, pointsReturnsPosition + spanText1.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(ForegroundColorSpan(color), pointsSecondReturnsPosition, pointsSecondReturnsPosition + spanText2.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(StyleSpan(Typeface.BOLD), pointsReturnsPosition, pointsReturnsPosition + spanText1.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(StyleSpan(Typeface.BOLD), pointsSecondReturnsPosition, pointsSecondReturnsPosition + spanText2.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return span
     }
 

@@ -128,7 +128,8 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
                         reffered = null,
                         ticketsPrice = null,
                         totalPrice = null,
-                        event = null
+                        event = null,
+                        newInviteNumber = null
                 ),
                 isOld = isOld
         )

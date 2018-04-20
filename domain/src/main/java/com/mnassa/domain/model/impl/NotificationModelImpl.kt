@@ -27,5 +27,6 @@ data class NotificationExtraImpl(
         override val ticketsPrice: String?,
         override val totalPrice: String?,
         override val attendee: String?,
-        override val event: EventModel?
+        override val event: EventModel?,
+        override val newInviteNumber: Int?
 ) : NotificationExtra

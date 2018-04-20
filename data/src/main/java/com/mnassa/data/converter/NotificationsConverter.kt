@@ -37,7 +37,9 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
                 input.extra?.ticketsPrice,
                 input.extra?.totalPrice,
                 input.extra?.attendee,
-                convertEvent(input.extra?.event, converter))
+                convertEvent(input.extra?.event, converter),
+                input.extra?.newInviteNumber
+        )
         return NotificationModelImpl(
                 id = input.id,
                 createdAt = Date(input.createdAt),
