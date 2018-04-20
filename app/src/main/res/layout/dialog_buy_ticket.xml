@@ -11,7 +11,7 @@
 
         <com.mnassa.widget.MnassaTextView
             android:id="@+id/tvBuyTicketTitle"
-            style="@style/MnassaHeader2"
+            style="@style/MnassaHeader1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/accent"
@@ -48,7 +48,7 @@
             style="@style/MnassaDivider"
             android:layout_alignEnd="@id/tvQuantityHint"
             android:layout_alignStart="@id/tvQuantityHint"
-            android:layout_below="@id/spinnerQuantity"/>
+            android:layout_below="@id/spinnerQuantity" />
 
         <TextView
             android:id="@+id/tvPrice"

@@ -317,7 +317,7 @@ class DialogHelper {
                     priceText.append(" ")
                     val spanStart = priceText.length
                     priceText.append(fromDictionary(R.string.event_tickets_buy_dialog_points))
-                    priceText.setSpan(RelativeSizeSpan(0.3f), spanStart, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    priceText.setSpan(RelativeSizeSpan(0.4f), spanStart, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     tvPrice.text = priceText
                 }
 

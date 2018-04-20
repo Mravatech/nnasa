@@ -1,6 +1,7 @@
 package com.mnassa.screen.events.details.participants
 
 import android.annotation.SuppressLint
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.item_event_participants_header.view.*
  * Created by Peter on 19.04.2018.
  */
 class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
+    var onParticipantClickListener = { user: EventParticipantItem.User -> }
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         when {
             first is EventParticipantItem.User && second is EventParticipantItem.User -> {
@@ -49,8 +51,12 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         contentTheSameComparator = { first, second -> first == second }
     }
 
-    override fun onClick(v: View?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onClick(view: View) {
+        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        if (position < 0) return
+        when (view.id) {
+            R.id.rlClickableRoot -> onParticipantClickListener(getDataItemByAdapterPosition(position) as EventParticipantItem.User)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<EventParticipantItem> {
@@ -95,8 +101,11 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         companion object {
             fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): UserViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_participants, parent, false)
-
                 val viewHolder = UserViewHolder(view)
+                with(view) {
+                    rlClickableRoot.tag = viewHolder
+                    rlClickableRoot.setOnClickListener(onClickListener)
+                }
                 return viewHolder
             }
         }
@@ -114,8 +123,7 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         companion object {
             fun newInstance(parent: ViewGroup): HeaderViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_participants_header, parent, false)
-                val viewHolder = HeaderViewHolder(view)
-                return viewHolder
+                return HeaderViewHolder(view)
             }
         }
     }

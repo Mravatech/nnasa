@@ -146,7 +146,8 @@
         android:paddingEnd="@dimen/spacing_horizontal"
         android:paddingStart="@dimen/spacing_horizontal"
         android:paddingTop="@dimen/spacing_vertical"
-        android:paddingBottom="@dimen/spacing_vertical">
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:layout_marginBottom="@dimen/spacing_vertical">
 
         <TextView
             android:id="@+id/tvViewsCount"
