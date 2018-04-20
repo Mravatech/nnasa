@@ -1,9 +1,6 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.EventTicketModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -16,5 +13,6 @@ interface EventsRepository {
     suspend fun sendViewed(ids: List<String>)
     suspend fun getTickets(eventId: String): List<EventTicketModel>
     suspend fun buyTickets(eventId: String, ticketsCount: Long)
-    suspend fun getAttendedUsers(eventId: String): List<ShortAccountModel>
+    suspend fun getAttendedUsers(eventId: String): List<EventAttendee>
+    suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>)
 }

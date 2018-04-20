@@ -41,6 +41,7 @@
     <string name="_android_create_post_replace_photo_INFO">Replace</string>
     <string name="_android_create_post_delete_photo_INFO">Delete</string>
     <string name="_android_tab_events_INFO">Events</string>
+    <string name="_android_tab_posts_INFO">Posts</string>
     <string name="_android_post_details_create_comment_post_btn_INFO">Post</string>
     <string name="_android_post_comment_edit_INFO">Edit</string>
     <string name="_android_post_comment_delete_INFO">Delete</string>
@@ -140,6 +141,7 @@
 
     <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
     <string name="_android_event_participant_header_other_INFO">Other Participants</string>
+    <string name="_android_event_participant_guest_INFO">Guest %d</string>
 
 
 </resources>

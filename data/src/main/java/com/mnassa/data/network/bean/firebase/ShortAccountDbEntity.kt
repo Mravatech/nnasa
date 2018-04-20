@@ -23,6 +23,19 @@ internal open class ShortAccountDbEntity(
     }
 }
 
+internal open class EventAttendeeAccountDbEntity(
+        id: String,
+        avatar: String?,
+        firstName: String?,
+        lastName: String?,
+        organizationName: String?,
+        type: String,
+        userName: String,
+        abilitiesInternal: List<ShortAccountAbilityDbEntity>?,
+        connectedBy: ConnectedByDbEntity?,
+        @SerializedName("presence") val presence: Boolean? = null
+): ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal, connectedBy)
+
 internal open class DeclinedShortAccountDbEntity(
         id: String,
         avatar: String?,

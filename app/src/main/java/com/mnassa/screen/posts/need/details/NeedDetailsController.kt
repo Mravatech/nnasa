@@ -25,6 +25,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
@@ -188,7 +189,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
     override fun bindToolbar(toolbar: MnassaToolbar) {
         launchCoroutineUI {
-            val post = viewModel.postChannel.openSubscription().receive()
+            val post = viewModel.postChannel.openSubscription().consume { receive() }
             toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
             if (post.isMyPost()) {
                 toolbar.onMoreClickListener = {
