@@ -5,6 +5,7 @@ import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.CountersInteractor
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.ReConsumeWhenAccountChangedConflatedBroadcastChannel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.experimental.delay
 class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
         private val userProfileInteractor: UserProfileInteractor,
+        private val notificationInteractor: NotificationInteractor,
         private val countersInteractor: CountersInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
@@ -88,6 +90,12 @@ class MainViewModelImpl(
     override fun logout() {
         handleException {
             loginInteractor.signOut()
+        }
+    }
+
+    override fun resetAllNotifications() {
+        handleException {
+            notificationInteractor.notificationView(true, true, emptyList())
         }
     }
 }
