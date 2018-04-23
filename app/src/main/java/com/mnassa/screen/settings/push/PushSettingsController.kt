@@ -9,7 +9,6 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_push_settings.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
-import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +29,6 @@ class PushSettingsController : MnassaControllerImpl<PushSettingsViewModel>() {
             rvPushSettings.adapter = adapter
         }
         adapter.onSettingReceiveClick = { setting ->
-            Timber.i(setting.toString())
             viewModel.changeSetting(PushSettingModelImpl(
                     isActive = !setting.isActive,
                     withSound = setting.withSound,
@@ -38,7 +36,6 @@ class PushSettingsController : MnassaControllerImpl<PushSettingsViewModel>() {
             ))
         }
         adapter.onSettingVolumeClick = { setting ->
-            Timber.i(setting.toString())
             viewModel.changeSetting(PushSettingModelImpl(
                     isActive = setting.isActive,
                     withSound = !setting.withSound,
@@ -47,8 +44,7 @@ class PushSettingsController : MnassaControllerImpl<PushSettingsViewModel>() {
         }
         launchCoroutineUI {
             viewModel.notificationChangeChannel.consumeEach {
-                Timber.i(it.toString())
-                adapter.dataStorage.addAll(it)
+                adapter.dataStorage.set(it)
             }
         }
         launchCoroutineUI {

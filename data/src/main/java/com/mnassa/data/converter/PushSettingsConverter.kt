@@ -19,7 +19,7 @@ class PushSettingsConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertPushSettings)
     }
 
-    private fun convertPushSettings(input: PushSettingDbEntity, token: Any?, converter: ConvertersContext): PushSettingModel {
+    private fun convertPushSettings(input: PushSettingDbEntity): PushSettingModel {
         return PushSettingModelImpl(
                 isActive = input.isActive,
                 withSound = input.withSound,

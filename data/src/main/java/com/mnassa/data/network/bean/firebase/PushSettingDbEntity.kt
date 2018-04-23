@@ -1,6 +1,5 @@
 package com.mnassa.data.network.bean.firebase
 
-import android.support.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
@@ -12,7 +11,6 @@ import com.mnassa.domain.model.HasId
 
 data class PushSettingDbEntity(
         @SerializedName("id")
-        @Nullable
         override var id: String,
         @SerializedName("isActive") var isActive: Boolean,
         @SerializedName("withSound") var withSound: Boolean

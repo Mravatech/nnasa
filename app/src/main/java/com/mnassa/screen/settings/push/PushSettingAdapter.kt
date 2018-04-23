@@ -31,7 +31,7 @@ class PushSettingAdapter : BaseSortedPaginationRVAdapter<PushSettingModel>(), Vi
         contentTheSameComparator = { first, second ->
             first.name == second.name && first.withSound == second.withSound && first.isActive == second.isActive
         }
-        dataStorage = PushSettingDataStorage(this)
+        dataStorage = SortedDataStorage(itemClass,this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PushSettingModel> =
@@ -70,21 +70,5 @@ class PushSettingAdapter : BaseSortedPaginationRVAdapter<PushSettingModel>(), Vi
         }
 
     }
-
-    class PushSettingDataStorage(private val adapter: BaseSortedPaginationRVAdapter<PushSettingModel>) :
-            SortedDataStorage<PushSettingModel>(PushSettingModel::class.java, adapter), DataStorage<PushSettingModel> {
-
-        override fun addAll(elements: Collection<PushSettingModel>): Boolean {
-            adapter.postUpdate {
-                wrappedList.beginBatchedUpdates()
-                wrappedList.addAll(elements)//todo fix
-                wrappedList.endBatchedUpdates()
-            }
-            return true
-        }
-
-
-    }
-
 
 }

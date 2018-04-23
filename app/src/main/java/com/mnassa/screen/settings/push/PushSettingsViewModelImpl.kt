@@ -5,7 +5,6 @@ import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,12 +19,10 @@ class PushSettingsViewModelImpl(private val settingsInteractor: SettingsInteract
 
     private var changePushJob: Job? = null
     override fun changeSetting(setting: PushSettingModel) {
-        Timber.i(setting.toString())
         changePushJob?.cancel()
         changePushJob = handleException {
             withProgressSuspend {
                 val result = settingsInteractor.changeSetting(setting)
-                Timber.i(result.toString())
                 notificationChangeChannel.send(result)
             }
         }

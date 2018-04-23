@@ -7,8 +7,4 @@ import com.mnassa.screen.base.MnassaViewModel
  * User: okli
  * Date: 4/19/2018
  */
-interface SettingsViewModel : MnassaViewModel {
-
-
-
-}
+interface SettingsViewModel : MnassaViewModel

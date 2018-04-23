@@ -12,5 +12,5 @@ import com.mnassa.domain.repository.SettingsRepository
 class SettingsInteractorImpl(private val settingsRepository: SettingsRepository) : SettingsInteractor {
     override suspend fun getUserPushSettings(): List<PushSettingModel> = settingsRepository.getUserPushSettings()
 
-    override suspend fun changeSetting(setting: PushSettingModel) =  settingsRepository.changeSetting(setting)
+    override suspend fun changeSetting(setting: PushSettingModel) = settingsRepository.changeSetting(setting)
 }

@@ -79,11 +79,27 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
             INVITES_NUMBER_CHANGED -> {
                 open(InviteController.newInstance())
             }
+            else ->{
+                when {
+                    item.type.contains(POST) -> {
+                        val postDetailsFactory: PostDetailsFactory by instance()
+                        open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
+                    }
+                    item.type.contains(EVENT) -> open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
+                    else -> {
+                        val id = item.extra.author?.id ?: item.extra.recommended?.id
+                        open(ProfileController.newInstance(requireNotNull(id)))
+                    }
+                }
+
+            }
         }
 
     }
 
     companion object {
+        const val POST = "post"
+        const val EVENT = "event"
         fun newInstance() = NotificationsController()
     }
 }

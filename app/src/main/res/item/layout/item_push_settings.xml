@@ -11,13 +11,10 @@
         android:id="@+id/tvPushName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_toStartOf="@+id/ivPushSound"
-        android:fontFamily="sans-serif"
-        android:lineSpacingExtra="8sp"
-        android:textColor="#de000000"
+        android:textColor="@color/black_transparent_90"
         android:textSize="16sp"
-        android:textStyle="normal"
         tools:text="Mute notification" />
 
     <ImageView
@@ -25,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_toStartOf="@+id/swthPush"
         android:contentDescription="@null"
         app:srcCompat="@drawable/ic_volume" />
@@ -36,6 +33,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginEnd="@dimen/activity_horizontal_margin" />
 
 </RelativeLayout>

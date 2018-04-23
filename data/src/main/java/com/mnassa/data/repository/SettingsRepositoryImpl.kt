@@ -30,7 +30,7 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
 
 
     override suspend fun getUserPushSettings(): List<PushSettingModel> {
-        val userAid = userRepository.getAccountIdOrNull()
+        val userAid = userRepository.getAccountIdOrException()
         val userSettings = db
                 .child(ACCOUNTS_PUSH_SETTINGS)
                 .child(userAid)
@@ -40,12 +40,11 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
                 .awaitList<PushSettingDbEntity>(exceptionHandler)
         val ids = userSettings.map { it.id }.toSet()
         settings = settings.filter { it.id !in ids }
-        var result = settings + userSettings
-        result = result.sortedBy { it.id }
-        Timber.i(ids.toString())
-        Timber.i(userSettings.toString())
-        Timber.i(settings.toString())
-        Timber.i(result.toString())
+        val result = settings + userSettings
+        Timber.i("SettingsRepository1 " + ids.toString())
+        Timber.i("SettingsRepository2 " + userSettings.toString())
+        Timber.i("SettingsRepository3 " + settings.toString())
+        Timber.i("SettingsRepository4 " + result.toString())
         return converter.convertCollection(result, PushSettingModel::class.java)
     }
 

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
-import android.text.SpannableString
 import android.view.View
 import android.widget.Toast
 import com.mnassa.R
@@ -55,7 +54,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         viewModel.getProfileWithAccountId(id)
         adapter.onConnectionStatusClickListener = {
             when (it) {
-                ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, SpannableString(fromDictionary(R.string.user_profile_you_want_to_disconnect))) {
+                ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
                     viewModel.sendConnectionStatus(it, id, true)
                 }
                 ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->

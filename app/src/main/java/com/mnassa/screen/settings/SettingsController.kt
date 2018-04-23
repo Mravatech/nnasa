@@ -41,9 +41,9 @@ class SettingsController : MnassaControllerImpl<SettingsViewModel>() {
                 val text = "$title\n$message"
                 dialog.yesNoDialog(view.context, getOneSpanText(text, title, Color.BLACK)) {
                     languageProvider.changeLocale()
-                    val i = view.context.packageManager.getLaunchIntentForPackage(view.context.packageName)
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
+                    val intent = view.context.packageManager.getLaunchIntentForPackage(view.context.packageName)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
                 }
             }
             llPushSettings.setOnClickListener { open(PushSettingsController.newInstance()) }
