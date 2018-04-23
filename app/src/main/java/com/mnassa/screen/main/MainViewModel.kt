@@ -20,6 +20,7 @@ interface MainViewModel : MnassaViewModel {
 
     fun selectAccount(account: ShortAccountModel)
     fun logout()
+    fun resetAllNotifications()
 
     enum class ScreenType
 }

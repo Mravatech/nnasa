@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.iid.FirebaseInstanceId
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toListChannel
@@ -63,6 +64,7 @@ class UserRepositoryImpl(
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
+            addPushToken()
         }
     }
 
@@ -249,6 +251,14 @@ class UserRepositoryImpl(
                 .let { requireNotNull(it) }
     }
 
+    override suspend fun addPushToken() {//todo add recheck token
+        val token = FirebaseInstanceId.getInstance().token
+        if (getAccountIdOrNull() != null && token != null) {
+            val info = "$ANDROID,${getFirebaseUserId()},${getAccountIdOrNull()}"
+            firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
+        }
+    }
+
     private fun getAccountType(type: AccountType) = when (type) {
         AccountType.PERSONAL -> NetworkContract.AccountType.PERSONAL
         AccountType.ORGANIZATION -> NetworkContract.AccountType.ORGANIZATION
@@ -260,6 +270,7 @@ class UserRepositoryImpl(
     }
 
     companion object {
+        private const val ANDROID = "Android"
         private const val EXTRA_PREFS_NAME = "USER_REPOSITORY_PREFS"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
     }

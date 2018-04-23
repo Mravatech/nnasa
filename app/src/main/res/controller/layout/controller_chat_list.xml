@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar" />
-
     <LinearLayout
         android:id="@+id/llEmptyMessages"
         android:layout_width="match_parent"
@@ -25,7 +24,7 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:orientation="vertical">
-
+        <!--todo move to layout and merge with chat message and notification-->
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

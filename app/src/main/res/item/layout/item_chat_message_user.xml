@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/tvMyMessageSent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvUserMessage"
-        android:layout_marginBottom="@dimen/chat_message_half_base_margin"
-        android:layout_toEndOf="@+id/tvUserMessage"
-        android:gravity="center_vertical" />
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/chat_message_half_base_margin"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tvUserMessage"
@@ -20,4 +13,12 @@
         android:background="@drawable/outcome_chat_message_background"
         android:padding="@dimen/chat_message_base_padding" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/tvMyMessageSent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/chat_message_half_base_margin"
+        android:gravity="center_vertical"
+        android:minWidth="@dimen/chat_message_time_min_width" />
+</LinearLayout>

@@ -39,6 +39,10 @@ class ProfileAdapter() : PostsRVAdapter() , View.OnClickListener {
             R.id.tvProfileConnections -> onConnectionsClickListener()
             R.id.tvPointsGiven -> onWalletClickListener()
             R.id.tvConnectionStatus -> onConnectionStatusClickListener(requireNotNull(profileModel).connectionStatus)
+            R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
+            R.id.flCreateNeed -> onCreateNeedClickListener()
+            R.id.rlRepostRoot -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
+            R.id.rlAuthorRoot -> onPostedByClickListener(getDataItemByAdapterPosition(position).author)
         }
     }
 

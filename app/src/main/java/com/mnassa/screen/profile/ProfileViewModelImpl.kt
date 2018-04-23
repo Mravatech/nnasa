@@ -5,14 +5,6 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
-import com.mnassa.domain.interactor.ConnectionsInteractor
-import com.mnassa.domain.interactor.PostsInteractor
-import com.mnassa.domain.interactor.TagInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.ConnectionAction
-import com.mnassa.domain.model.ConnectionStatus
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -47,11 +39,9 @@ class ProfileViewModelImpl(
 
     override suspend fun retrieveComplaints(): List<TranslatedWordModel> {
         if (reportsList.isNotEmpty()) return reportsList
-        handleException {
-            withProgressSuspend {
-                reportsList = complaintInteractor.getReports()
-            }
-        }
+        showProgress()
+        reportsList = complaintInteractor.getReports()
+        hideProgress()
         return reportsList
     }
 

@@ -55,15 +55,23 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
         }
     }
 
-    protected fun addPhoto(fab: FloatingActionButton){
+    protected fun addPhoto(fab: FloatingActionButton) {
         fab.setOnClickListener {
             dialog.showSelectImageSourceDialog(it.context) { imageSource ->
                 launchCoroutineUI { thisRef ->
                     thisRef().activity?.let {
-                        if (CropActivity.ImageSource.CAMERA == imageSource) {
-                            val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA)
-                            if (!permissionsResult.isAllGranted) {
-                                return@launchCoroutineUI
+                        when (imageSource) {
+                            CropActivity.ImageSource.CAMERA -> {
+                                val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA)
+                                if (!permissionsResult.isAllGranted) {
+                                    return@launchCoroutineUI
+                                }
+                            }
+                            CropActivity.ImageSource.GALLERY -> {
+                                val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                if (!permissionsResult.isAllGranted) {
+                                    return@launchCoroutineUI
+                                }
                             }
                         }
                         val intent = CropActivity.start(imageSource, it)
@@ -74,7 +82,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
         }
     }
 
-    protected fun setCalendarEditText(editText: EditText){
+    protected fun setCalendarEditText(editText: EditText) {
         editText.isLongClickable = false
         editText.isFocusableInTouchMode = false
         editText.setOnClickListener {
@@ -95,7 +103,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
         return "${DateFormatSymbols().months[cal.get(Calendar.MONTH)]} ${cal.get(Calendar.DAY_OF_MONTH)}, ${cal.get(Calendar.YEAR)}"
     }
 
-    protected fun setToolbar(toolbar: MnassaToolbar, view: View){
+    protected fun setToolbar(toolbar: MnassaToolbar, view: View) {
         toolbar.onMoreClickListener = { proccesProfile(view) }
         toolbar.backButtonEnabled = true
         toolbar.ivToolbarMore.setImageResource(R.drawable.ic_check)
@@ -105,6 +113,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
 
     abstract fun proccesProfile(view: View)
     abstract fun photoResult(uri: Uri, view: View)
+
     companion object {
         private const val REQUEST_CODE_CROP = 101
     }

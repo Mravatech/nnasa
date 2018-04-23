@@ -72,6 +72,8 @@ class UserProfileInteractorImpl(
         onAccountChangedListener.emit(account)
     }
 
+    override suspend fun addPushToken() = userRepository.addPushToken()
+
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
     override fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()
     override fun getAccountIdOrException(): String = userRepository.getAccountIdOrException()
