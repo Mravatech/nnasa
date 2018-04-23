@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rvInOutCome"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/vShadowInOutCome"
+        android:layout_width="match_parent"
+        android:background="@drawable/in_out_come_main_background"
+        android:layout_height="@dimen/in_out_come_shadow_height" />
+
+    <Button
+        android:id="@+id/btnInOutCome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/in_out_come_big_margin"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/tvInOutCome"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/btnInOutCome"
+        android:layout_alignTop="@+id/btnInOutCome"
+        android:layout_marginEnd="@dimen/in_out_come_big_margin"
+        android:layout_marginStart="@dimen/in_out_come_margin"
+        android:layout_toEndOf="@id/btnInOutCome"
+        android:gravity="center"
+        android:textColor="@color/white"
+        tools:text="You just receive 50 points from Julia Yats" />
+
+</RelativeLayout>

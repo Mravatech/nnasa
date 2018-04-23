@@ -14,6 +14,7 @@
     <color name="black">@android:color/black</color>
     <color name="black_transparent_90">#de000000</color> <!-- 90 - percent of alpha -->
     <color name="black_transparent_40">#6a000000</color>
+    <color name="black_transparent_35">#52000000</color>
     <color name="black_transparent_20">#32000000</color>
     <!-- GRAY -->
     <color name="gray_cool">#abafb3</color>

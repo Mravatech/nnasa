@@ -10,17 +10,12 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.mikepenz.materialdrawer.*
-import com.mikepenz.materialdrawer.model.*
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
-import com.mikepenz.materialdrawer.model.DividerDrawerItem
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
+import com.mikepenz.materialdrawer.model.*
+import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.other.AppInfoProvider
@@ -52,6 +47,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     private var drawer: Drawer? = null
     private var accountHeader: AccountHeader? = null
     private var activeAccountId: String = ""
+    private var currentPage = 0
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -162,6 +158,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     page.onPageSelected()
                 }
 
+                if (currentPage == NOTIFICATION_PAGE) {
+                    viewModel.resetAllNotifications()
+                }
+                currentPage = position
                 true
             }
         }
@@ -269,6 +269,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
 
     companion object {
         const val ACCOUNT_ADD = -998L
+        const val NOTIFICATION_PAGE = 2
 
         fun newInstance() = MainController()
     }

@@ -29,4 +29,5 @@ interface UserProfileInteractor {
 
     suspend fun getProfileById(accountId: String): ProfileAccountModel?
     suspend fun getProfileByIdChannel(accountId: String): ReceiveChannel<ProfileAccountModel?>
+    suspend fun addPushToken()
 }

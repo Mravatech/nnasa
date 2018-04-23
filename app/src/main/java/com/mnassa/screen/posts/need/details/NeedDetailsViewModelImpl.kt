@@ -53,11 +53,9 @@ open class NeedDetailsViewModelImpl(
 
     override suspend fun retrieveComplaints(): List<TranslatedWordModel> {
         if (reportsList.isNotEmpty()) return reportsList
-        handleException {
-            withProgressSuspend {
-                reportsList = complaintInteractor.getReports()
-            }
-        }
+        showProgress()
+        reportsList = complaintInteractor.getReports()
+        hideProgress()
         return reportsList
     }
 

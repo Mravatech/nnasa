@@ -19,3 +19,15 @@ fun fromDictionary(key: String): String {
     val result: String by dictionaryInteractor.getWord(key)
     return result.replace("%i", "%d")
 }
+
+fun fromDictionary(key: String, defaultValue: String): String {
+    val result = fromDictionary(key)
+    if (key.contains("userComment")){
+        var i = 0
+        i++
+    }
+    if (result.isBlank()){
+        return defaultValue
+    }
+    return result
+}

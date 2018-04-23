@@ -34,4 +34,7 @@ interface FirebaseAuthApi {
     @PUT("/processAccount")
     fun profileUpdatePersonAccountInfo(@Body request: ProfilePersonAccountInfoRequest): Deferred<RegisterAccountInfoResponse>
 
+    @POST("/addPushToken")
+    fun addPushToken(@Body request: PushTokenRequest): Deferred<Any>
+
 }

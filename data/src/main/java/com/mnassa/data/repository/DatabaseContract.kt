@@ -48,6 +48,9 @@ internal object DatabaseContract {
     const val TABLE_POSTS = "posts"
     const val TABLE_PABLIC_POSTS = "publicPosts"
     //
+    const val TABLE_NOTIFICATIONS = "notifications"
+    const val TABLE_NOTIFICATIONS_OLD = "notificationsOld"
+    //
     const val TABLE_CHAT = "chats"
     const val TABLE_CHAT_LIST = "chatsList"
     const val TABLE_CHAT_MESSAGES = "chatsMessages"
