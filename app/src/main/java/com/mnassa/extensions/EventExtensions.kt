@@ -5,6 +5,7 @@ import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.EventsInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventDuration
 import com.mnassa.domain.model.EventLocationType
 import com.mnassa.domain.model.EventModel
@@ -78,3 +79,5 @@ suspend fun EventModel.getBoughtTicketsCount(): Long {
 }
 
 val EventModel.isFree: Boolean get() = price == 0L
+
+fun EventModel.isMyEvent(): Boolean = author.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()

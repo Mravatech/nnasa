@@ -7,9 +7,12 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
+import com.mnassa.extensions.isMyEvent
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -36,19 +39,44 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
             }
         }
 
-        handleException {
+        loadTickets()
+    }
+
+    override suspend fun saveParticipants(participants: List<EventParticipantItem>) {
+
+        handleExceptionsSuspend {
+            withProgressSuspend {
+                val users = participants.mapNotNull { (it as? EventParticipantItem.User) }
+
+                eventsInteractor.saveAttendedUsers(
+                        eventId = eventId,
+                        presentUsers = users.filter { it.isChecked }.map { it.user.id },
+                        notPresentUsers = users.filter { !it.isChecked }.map { it.user.id })
+            }
+        }
+
+        loadTickets()
+    }
+
+    private var loadTicketsJob: Job? = null
+    private fun loadTickets() {
+        loadTicketsJob?.cancel()
+        loadTicketsJob = handleException {
             eventsInteractor.getTicketsChannel(eventId).consumeEach {
                 async {
+                    val attendedUsers = eventsInteractor.getAttendedUsers(eventId).mapNotNullTo(HashSet()) { it.takeIf { it.isPresent }?.user?.id }
+
                     var hasConnections = false
                     var hasOtherUsers = false
                     val participants = it.mapNotNullTo(ArrayList<EventParticipantItem>(it.size)) {
-                        convertTicketToParticipant(it)?.also {
+                        convertTicketToParticipant(it, attendedUsers)?.also {
                             hasConnections = hasConnections || it.isInConnections
                             hasOtherUsers = hasOtherUsers || !it.isInConnections
                         }
                     }
                     if (hasConnections) {
-                        participants += EventParticipantItem.ConnectionsHeader
+                        val event = eventChannel.openSubscription().consume { receive() }
+                        participants += EventParticipantItem.ConnectionsHeader(event.isMyEvent())
                     }
                     if (hasOtherUsers) {
                         participants += EventParticipantItem.OtherHeader
@@ -59,10 +87,10 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
         }
     }
 
-    private suspend fun convertTicketToParticipant(ticket: EventTicketModel): EventParticipantItem.User? {
+    private suspend fun convertTicketToParticipant(ticket: EventTicketModel, attendedUsers: Set<String>): EventParticipantItem.User? {
         val user = userProfileInteractor.getProfileById(ticket.ownerId) ?: return null
         val isConnections = connectionsInteractor.getConnectionStatusById(ticket.ownerId) == ConnectionStatus.CONNECTED
-        return EventParticipantItem.User(user, isConnections, maxOf(ticket.ticketCount.toInt() - 1, 0))
+        return EventParticipantItem.User(user, isConnections, maxOf(ticket.ticketCount.toInt() - 1, 0), isChecked = attendedUsers.contains(user.id))
     }
 
 }

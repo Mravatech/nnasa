@@ -7,6 +7,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
@@ -55,7 +56,7 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
     }
 
     override suspend fun canBuyTicket(eventId: String): Boolean {
-        val event = loadByIdChannel(eventId).receive() ?: return false
+        val event = loadByIdChannel(eventId).consume { receive() } ?: return false
         if (event.ticketsSold >= event.ticketsTotal || event.status != EventStatus.OPENED) return false
         return getBoughtTicketsCount(eventId) < event.ticketsPerAccount
     }
@@ -75,8 +76,12 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
         eventsRepository.buyTickets(eventId, ticketsCount)
     }
 
-    override suspend fun getAttendedUsers(eventId: String): List<ShortAccountModel> {
+    override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> {
         return eventsRepository.getAttendedUsers(eventId)
+    }
+
+    override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
+        eventsRepository.saveAttendedUsers(eventId, presentUsers, notPresentUsers)
     }
 
     private companion object {

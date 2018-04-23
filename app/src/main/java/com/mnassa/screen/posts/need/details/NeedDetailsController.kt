@@ -25,6 +25,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.controller_need_details_header.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
@@ -99,7 +100,14 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     }
 
-    private fun showPostMenu(view: View) {
+    protected open fun showMyPostMenu(view: View, post: PostModel) {
+        popupMenuHelper.showMyPostMenu(
+                view = view,
+                onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
+                onDeletePost = { viewModel.delete() })
+    }
+
+    private fun showOtherUserPostMenu(view: View) {
         post?.let {
             popupMenuHelper.showPostMenu(
                     view = view,
@@ -168,9 +176,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             }
 
             btnRecommend.text = recommendWithCount
-            btnRecommend.setOnClickListener {
-                open(RecommendController.newInstance(post.autoSuggest.accountIds, recommendedAccounts.map { it.id }, this@NeedDetailsController))
-            }
+            btnRecommend.setOnClickListener { openRecommendScreen(post, recommendedAccounts.map { it.id }) }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
         }
@@ -188,27 +194,28 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
     override fun bindToolbar(toolbar: MnassaToolbar) {
         launchCoroutineUI {
-            val post = viewModel.postChannel.openSubscription().receive()
+            val post = viewModel.postChannel.openSubscription().consume { receive() }
             toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
             if (post.isMyPost()) {
-                toolbar.onMoreClickListener = {
-                    popupMenuHelper.showMyPostMenu(
-                            view = it,
-                            onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
-                            onDeletePost = { viewModel.delete() })
-                }
+                toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
                 makePostActionsGone()
             } else {
-                toolbar.onMoreClickListener = { showPostMenu(it) }
+                toolbar.onMoreClickListener = { showOtherUserPostMenu(it) }
                 makePostActionsVisible()
             }
         }
     }
 
     override fun openRecommendScreen(recommendedAccountIds: List<String>, self: CommentsWrapperController) {
-        post?.let {
-            open(RecommendController.newInstance(it.autoSuggest.accountIds, recommendedAccountIds, this))
-        }
+        post?.let { openRecommendScreen(it, recommendedAccountIds) }
+    }
+
+    private fun openRecommendScreen(post: PostModel, recommendedAccountIds: List<String>) {
+        open(RecommendController.newInstance(
+                bestMatchesAccounts = post.autoSuggest.accountIds,
+                selectedAccounts = recommendedAccountIds,
+                excludedAccounts = listOf(post.author.id),
+                listener = this))
     }
 
     override fun bindCanReadComments(canReadComments: Boolean) {

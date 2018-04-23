@@ -9,4 +9,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface RecommendViewModel : MnassaViewModel {
     val connectionsChannel: BroadcastChannel<List<ShortAccountModel>>
+
+    data class RecommendViewModelParams(
+            val excludedAccounts: List<String>
+    )
 }

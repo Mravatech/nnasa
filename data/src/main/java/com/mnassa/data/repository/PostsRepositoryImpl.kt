@@ -153,7 +153,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.changePost(CreatePostRequest(
                 type = NetworkContract.PostType.ACCOUNT,
                 accountForRecommendation = accountId,
-                text = text
+                text = text,
+                postId = postId
         )).handleException(exceptionHandler)
     }
 

@@ -10,15 +10,16 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.item_event_participants.view.*
 import kotlinx.android.synthetic.main.item_event_participants_header.view.*
+import kotlinx.android.synthetic.main.item_event_select_participants.view.*
+import kotlinx.android.synthetic.main.item_event_select_participants_guest.view.*
 
 /**
  * Created by Peter on 19.04.2018.
  */
-class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
-    var onParticipantClickListener = { user: EventParticipantItem.User -> }
+class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
     var onCheckParticipantsClickListener = {}
+    var onSaveClickListener = { dataSet: List<EventParticipantItem> -> }
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         first.compareTo(second)
     }
@@ -38,16 +39,17 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
         when (view.id) {
-            R.id.rlClickableRoot -> onParticipantClickListener(getDataItemByAdapterPosition(position) as EventParticipantItem.User)
+            R.id.btnSave -> onSaveClickListener(dataStorage.toList())
             R.id.ivCheckParticipants -> onCheckParticipantsClickListener()
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<EventParticipantItem> {
         return when (viewType) {
-            TYPE_USER -> UserViewHolder.newInstance(parent, this)
+            TYPE_USER -> UserViewHolder.newInstance(parent)
             TYPE_CONNECTION_HEADER -> HeaderViewHolder.newInstance(parent, this)
             TYPE_OTHER_HEADER -> HeaderViewHolder.newInstance(parent, this)
+            TYPE_GUEST -> GuestViewHolder.newInstance(parent)
             else -> throw IllegalStateException()
         }
     }
@@ -56,13 +58,15 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         is EventParticipantItem.User -> TYPE_USER
         is EventParticipantItem.ConnectionsHeader -> TYPE_CONNECTION_HEADER
         is EventParticipantItem.OtherHeader -> TYPE_OTHER_HEADER
+        is EventParticipantItem.Guest -> TYPE_GUEST
         else -> throw IllegalArgumentException("Invalid type ${dataStorage[position]}")
     }
 
     companion object {
         private const val TYPE_USER = 1
-        private const val TYPE_CONNECTION_HEADER = 2
-        private const val TYPE_OTHER_HEADER = 3
+        private const val TYPE_GUEST = 2
+        private const val TYPE_CONNECTION_HEADER = 3
+        private const val TYPE_OTHER_HEADER = 4
     }
 
     private class UserViewHolder(itemView: View) : BaseVH<EventParticipantItem>(itemView) {
@@ -78,18 +82,42 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                 tvEventName.text = item.user.formattedFromEvent
                 tvEventName.goneIfEmpty()
 
-                tvGuestsCount.text = "+${item.guestsCount}"
-                tvGuestsCount.isInvisible = item.guestsCount <= 0
+                cbParticipant.setOnCheckedChangeListener(null)
+                cbParticipant.isChecked = item.isChecked
+                cbParticipant.setOnCheckedChangeListener { buttonView, isChecked -> item.isChecked = isChecked }
             }
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): UserViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_participants, parent, false)
+            fun newInstance(parent: ViewGroup): UserViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_select_participants, parent, false)
                 val viewHolder = UserViewHolder(view)
                 with(view) {
-                    rlClickableRoot.tag = viewHolder
-                    rlClickableRoot.setOnClickListener(onClickListener)
+                    rlClickableRoot.setOnClickListener { cbParticipant.toggle() }
+                }
+                return viewHolder
+            }
+        }
+    }
+
+    private class GuestViewHolder(itemView: View) : BaseVH<EventParticipantItem>(itemView) {
+        override fun bind(item: EventParticipantItem) {
+            item as EventParticipantItem.Guest
+            with(itemView) {
+                tvGuestName.text = fromDictionary(R.string.event_participant_guest).format(item.position)
+
+                cbParticipantGuest.setOnCheckedChangeListener(null)
+                cbParticipantGuest.isChecked = item.isChecked
+                cbParticipantGuest.setOnCheckedChangeListener { _, isChecked -> item.isChecked = isChecked }
+            }
+        }
+
+        companion object {
+            fun newInstance(parent: ViewGroup): GuestViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_select_participants_guest, parent, false)
+                val viewHolder = GuestViewHolder(view)
+                with(view) {
+                    rlClickableRootGuest.setOnClickListener { cbParticipantGuest.toggle() }
                 }
                 return viewHolder
             }
@@ -104,8 +132,9 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                     is EventParticipantItem.ConnectionsHeader -> fromDictionary(R.string.event_participant_header_connection)
                     else -> throw IllegalStateException()
                 }
-                ivCheckParticipants.isInvisible = !(item is EventParticipantItem.ConnectionsHeader && item.canEdit)
-                ivCheckParticipants.isEnabled = (item is EventParticipantItem.ConnectionsHeader && item.canEdit)
+                btnSave.isInvisible = !(item is EventParticipantItem.ConnectionsHeader && item.canEdit)
+                btnSave.isEnabled = (item is EventParticipantItem.ConnectionsHeader && item.canEdit)
+                btnSave.text = fromDictionary(R.string.event_participant_save)
             }
         }
 
@@ -113,8 +142,15 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
             fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): HeaderViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_participants_header, parent, false)
                 val viewHolder = HeaderViewHolder(view)
-                view.ivCheckParticipants.setOnClickListener(onClickListener)
-                view.ivCheckParticipants.tag = viewHolder
+
+                with(view) {
+                    ivCheckParticipants.setOnClickListener(onClickListener)
+                    ivCheckParticipants.tag = viewHolder
+                    //
+                    btnSave.setOnClickListener(onClickListener)
+                    btnSave.tag = viewHolder
+                }
+
                 return viewHolder
             }
         }

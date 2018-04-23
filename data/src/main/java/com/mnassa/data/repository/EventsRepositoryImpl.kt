@@ -10,17 +10,17 @@ import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseEventsApi
 import com.mnassa.data.network.api.FirebasePostApi
+import com.mnassa.data.network.bean.firebase.EventAttendeeAccountDbEntity
 import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.BuyTicketsRequest
+import com.mnassa.data.network.bean.retrofit.request.EventAttendeeBean
+import com.mnassa.data.network.bean.retrofit.request.EventAttendeeRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.EventTicketModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -80,11 +80,18 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
         eventsApi.buyTickets(BuyTicketsRequest(eventId, ticketsCount)).handleException(exceptionHandler)
     }
 
-    override suspend fun getAttendedUsers(eventId: String): List<ShortAccountModel> {
+    override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> {
         return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
                 .document(eventId)
                 .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
-                .awaitList<ShortAccountDbEntity>()
-                .run { converter.convertCollection(this, ShortAccountModel::class.java) }
+                .awaitList<EventAttendeeAccountDbEntity>()
+                .map { EventAttendee(converter.convert(it), it.presence ?: false) }
+    }
+
+    override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
+        val attendees = ArrayList<EventAttendeeBean>()
+        presentUsers.mapTo(attendees) { EventAttendeeBean(it, true) }
+        notPresentUsers.mapTo(attendees) { EventAttendeeBean(it, false) }
+        eventsApi.saveAttendee(EventAttendeeRequest(eventId, attendees)).handleException(exceptionHandler)
     }
 }
