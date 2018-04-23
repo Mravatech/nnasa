@@ -26,13 +26,4 @@ class PushSettingsConverter : ConvertersContextRegistrationCallback {
                 name = input.id
         )
     }
-
-//    private fun convertRetrofitPushSettings(input: AccountPushSettingData, token: Any?, converter: ConvertersContext): PushSettingModel {
-//
-//        return PushSettingModelImpl(
-//                isActive = input.accountPushSettings,
-//                withSound = input.withSound,
-//                name = input.id
-//        )
-//    }
 }

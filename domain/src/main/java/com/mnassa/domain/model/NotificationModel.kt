@@ -1,5 +1,6 @@
 package com.mnassa.domain.model
 
+import java.io.Serializable
 import java.util.*
 
 /**
@@ -15,7 +16,7 @@ interface NotificationModel : Model {
     var isOld: Boolean
 }
 
-interface NotificationExtra {
+interface NotificationExtra : Serializable {
     val author: ShortAccountModel?
     val post: PostModel?
     var reffered: ShortAccountModel?

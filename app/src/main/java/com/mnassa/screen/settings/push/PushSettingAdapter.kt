@@ -29,7 +29,7 @@ class PushSettingAdapter : BaseSortedPaginationRVAdapter<PushSettingModel>(), Vi
     init {
         itemsTheSameComparator = { first, second -> first.name == second.name }
         contentTheSameComparator = { first, second ->
-            first == second
+            first.name == second.name && first.withSound == second.withSound && first.isActive == second.isActive
         }
         dataStorage = PushSettingDataStorage(this)
     }

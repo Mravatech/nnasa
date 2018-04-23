@@ -92,11 +92,11 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             val layout = layoutInflater.inflate(R.layout.in_out_come_toast, findViewById(R.id.toastRoot))
             layout.iocView.showView(amount, fromName)
             val toast = Toast(applicationContext)
-            toast.setGravity(Gravity.FILL, 0, 0)
+            toast.setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
             toast.duration = Toast.LENGTH_LONG
             toast.view = layout
             val toastCountDown: CountDownTimer
-            toastCountDown = object : CountDownTimer(6000, 1000 /*Tick duration*/) {
+            toastCountDown = object : CountDownTimer(COINS_ANIMATION_TOAST_DURATION, COUNT_DOWN_INTERVAL /*Tick duration*/) {
                 override fun onTick(millisUntilFinished: Long) {
                     toast.show()
                 }
@@ -109,6 +109,12 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             toast.show()
             toastCountDown.start()
         }
+    }
+
+    companion object {
+        const val COINS_ANIMATION_TOAST_DURATION = 6000L
+        const val COUNT_DOWN_INTERVAL = 1000L
+        const val START_OFFSET = 0
     }
 
 }

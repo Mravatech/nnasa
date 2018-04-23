@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatRadioButton
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
@@ -184,7 +185,7 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun connectionsDialog(context: Context, info: String, onOkClick: () -> Unit) {
+    fun yesNoDialog(context: Context, info: SpannableString, onOkClick: () -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_yes_no)

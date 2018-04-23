@@ -15,6 +15,7 @@ import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.domain.model.impl.PushSettingModelImpl
 import com.mnassa.domain.repository.SettingsRepository
 import com.mnassa.domain.repository.UserRepository
+import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,6 +42,10 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
         settings = settings.filter { it.id !in ids }
         var result = settings + userSettings
         result = result.sortedBy { it.id }
+        Timber.i(ids.toString())
+        Timber.i(userSettings.toString())
+        Timber.i(settings.toString())
+        Timber.i(result.toString())
         return converter.convertCollection(result, PushSettingModel::class.java)
     }
 
@@ -53,10 +58,11 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
             val data = requireNotNull(result.data.accountPushSettings[it])
             settings.add(PushSettingModelImpl(
                     isActive = data.isActive,
-                    withSound = data.isActive,
+                    withSound = data.withSound,
                     name = it
             ))
         }
+
         return settings
 
     }

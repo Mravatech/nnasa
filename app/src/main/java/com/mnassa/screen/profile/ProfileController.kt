@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
+import android.text.SpannableString
 import android.view.View
 import android.widget.Toast
 import com.mnassa.R
@@ -20,9 +21,8 @@ import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -55,7 +55,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         viewModel.getProfileWithAccountId(id)
         adapter.onConnectionStatusClickListener = {
             when (it) {
-                ConnectionStatus.CONNECTED -> dialog.connectionsDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, SpannableString(fromDictionary(R.string.user_profile_you_want_to_disconnect))) {
                     viewModel.sendConnectionStatus(it, id, true)
                 }
                 ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
