@@ -9,7 +9,9 @@ import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
@@ -24,6 +26,7 @@ import org.kodein.di.generic.instance
 class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
 
     override val viewModel: RecommendedProfileViewModel by instance(arg = postId)
+    private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -71,6 +74,13 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
     override fun bindToolbar(toolbar: MnassaToolbar) {
         super.bindToolbar(toolbar)
         toolbar.title = fromDictionary(R.string.recommend_title)
+    }
+
+    override fun showMyPostMenu(view: View, post: PostModel) {
+        popupMenuHelper.showMyPostMenu(
+                view = view,
+                onEditPost = { open(RecommendUserController.newInstance(post as RecommendedProfilePostModel)) },
+                onDeletePost = { viewModel.delete() })
     }
 
     override suspend fun bindTags(tags: List<TagModel>) = Unit

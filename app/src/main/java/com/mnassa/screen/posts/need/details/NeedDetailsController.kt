@@ -100,7 +100,14 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     }
 
-    private fun showPostMenu(view: View) {
+    protected open fun showMyPostMenu(view: View, post: PostModel) {
+        popupMenuHelper.showMyPostMenu(
+                view = view,
+                onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
+                onDeletePost = { viewModel.delete() })
+    }
+
+    private fun showOtherUserPostMenu(view: View) {
         post?.let {
             popupMenuHelper.showPostMenu(
                     view = view,
@@ -192,15 +199,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             val post = viewModel.postChannel.openSubscription().consume { receive() }
             toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
             if (post.isMyPost()) {
-                toolbar.onMoreClickListener = {
-                    popupMenuHelper.showMyPostMenu(
-                            view = it,
-                            onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
-                            onDeletePost = { viewModel.delete() })
-                }
+                toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
                 makePostActionsGone()
             } else {
-                toolbar.onMoreClickListener = { showPostMenu(it) }
+                toolbar.onMoreClickListener = { showOtherUserPostMenu(it) }
                 makePostActionsVisible()
             }
         }
