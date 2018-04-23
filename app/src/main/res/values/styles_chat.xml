@@ -102,6 +102,7 @@
     <dimen name="chat_room_margin_time_ago_start">8dp</dimen>
 
     <dimen name="chat_message_base_margin">16dp</dimen>
+    <dimen name="chat_message_time_min_width">70dp</dimen>
     <dimen name="chat_message_half_base_margin">8dp</dimen>
     <dimen name="chat_message_base_padding">16dp</dimen>
     <dimen name="chat_message_half_base_padding">8dp</dimen>
