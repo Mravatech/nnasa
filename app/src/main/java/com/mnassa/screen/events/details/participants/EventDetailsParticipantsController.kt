@@ -20,24 +20,38 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
     private val eventParam by lazy { args[EventDetailsInfoController.EXTRA_EVENT] as EventModel? }
     override val layoutId: Int = R.layout.controller_event_details_participants
     override val viewModel: EventDetailsParticipantsViewModel by instance(arg = eventId)
-    private val adapter = EventParticipantsRVAdapter()
+    private val allParticipantsadAdapter = EventParticipantsRVAdapter()
+    private val selectParticipantAdapter = EventSelectParticipantsRVAdapter()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
 
-        adapter.isLoadingEnabled = true
+        allParticipantsadAdapter.isLoadingEnabled = true
+        selectParticipantAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.participantsChannel.consumeEach {
-                adapter.isLoadingEnabled = it.isEmpty()
-                adapter.set(it)
+                allParticipantsadAdapter.isLoadingEnabled = it.isEmpty()
+                selectParticipantAdapter.isLoadingEnabled = it.isEmpty()
+
+                allParticipantsadAdapter.set(it)
+                selectParticipantAdapter.set(it.flatMap { it.withGuests() })
             }
         }
-        adapter.onParticipantClickListener = { open(ProfileController.newInstance(it.user)) }
+        allParticipantsadAdapter.onParticipantClickListener = { open(ProfileController.newInstance(it.user)) }
+        allParticipantsadAdapter.onCheckParticipantsClickListener = {
+            view?.rvParticipants?.adapter = selectParticipantAdapter
+        }
+        selectParticipantAdapter.onSaveClickListener = { dataSet ->
+            launchCoroutineUI {
+                viewModel.saveParticipants(dataSet)
+                getViewSuspend().rvParticipants.adapter = allParticipantsadAdapter
+            }
+        }
     }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        view.rvParticipants.adapter = adapter
+        view.rvParticipants.adapter = allParticipantsadAdapter
     }
 
     companion object {

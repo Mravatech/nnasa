@@ -10,4 +10,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface EventDetailsParticipantsViewModel : MnassaViewModel {
     val eventChannel: BroadcastChannel<EventModel>
     val participantsChannel: BroadcastChannel<List<EventParticipantItem>>
+
+    suspend fun saveParticipants(participants: List<EventParticipantItem>)
 }

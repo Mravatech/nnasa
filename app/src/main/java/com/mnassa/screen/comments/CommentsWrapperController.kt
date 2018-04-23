@@ -346,7 +346,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
 
         fun openRecommendScreen(recommendedAccountIds: List<String>, self: CommentsWrapperController) {
-            self.open(RecommendController.newInstance(emptyList(), recommendedAccountIds, self))
+            self.open(RecommendController.newInstance(
+                    bestMatchesAccounts = emptyList(),
+                    selectedAccounts = recommendedAccountIds,
+                    excludedAccounts = emptyList(),
+                    listener = self
+            ))
         }
 
         fun bindCanReadComments(canReadComments: Boolean) = Unit

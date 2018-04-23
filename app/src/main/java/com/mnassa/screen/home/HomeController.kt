@@ -39,7 +39,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
         override fun getCount(): Int = HomePage.values().size
 
         override fun getPageTitle(position: Int): CharSequence = when (position) {
-            HomePage.NEEDS.ordinal -> fromDictionary(R.string.tab_home_needs_title)
+            HomePage.NEEDS.ordinal -> fromDictionary(R.string.tab_home_posts_title)
             HomePage.EVENTS.ordinal -> fromDictionary(R.string.tab_home_events_title)
             else -> throw IllegalArgumentException("Invalid page position $position")
         }

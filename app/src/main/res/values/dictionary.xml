@@ -51,7 +51,7 @@
     <string name="invite_skip_step">_android_invites_skip_step</string>
 
     <!-- ===================================== TAB HOME ======================================== -->
-    <string name="tab_home_needs_title">_nav_title_needs</string>
+    <string name="tab_home_posts_title">_android_tab_posts</string>
     <string name="tab_home_events_title">_android_tab_events</string>
     <string name="tab_home_title">_android_news_feed_title</string>
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
@@ -419,5 +419,7 @@
     <string name="event_tickets_buy_dialog_cancel">_buy_ticket_cancel</string>
     <string name="event_participant_header_connection">_android_event_participant_header_connection</string>
     <string name="event_participant_header_other">_android_event_participant_header_other</string>
+    <string name="event_participant_save">_navItem_Save</string>
+    <string name="event_participant_guest">_android_event_participant_guest</string>
 
 </resources>
