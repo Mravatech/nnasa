@@ -16,13 +16,12 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.chats.ChatListController
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
@@ -67,7 +66,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         view.ivProfileBack.setOnClickListener { close() }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
-            open(postDetailsFactory.newInstance(it)) }
+            open(postDetailsFactory.newInstance(it))
+        }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         launchCoroutineUI {
@@ -84,7 +84,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 handleCollapsingToolbar(view, profileModel)
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
-                handleFab(profileModel.connectionStatus, view.fabProfile)
+                if (!profileModel.isMyProfile) {
+                    handleFab(profileModel.connectionStatus, view.fabProfile)
+                }
             }
         }
         viewModel.getPostsById(id)
@@ -106,8 +108,10 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
-                handleFab(connectionStatus, view.fabProfile)
                 adapter.profileModel?.let {
+                    if (!it.isMyProfile){
+                        handleFab(connectionStatus, view.fabProfile)
+                    }
                     it.connectionStatus = connectionStatus
                     adapter.notifyItemChanged(0)
                 }
@@ -146,7 +150,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         when (connectionStatus) {
             ConnectionStatus.CONNECTED -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener { open(ChatListController.newInstance()) }
+                fab.setOnClickListener { open(ChatMessageController.newInstance(requireNotNull(adapter.profileModel).profile)) }
                 fab.setImageResource(R.drawable.ic_chat)
             }
             ConnectionStatus.RECOMMENDED -> {
@@ -211,9 +215,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun setTitle(profileModel: ProfileModel, view: View) {
         if (profileModel.profile.accountType == AccountType.PERSONAL) {
-            view.profileName.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
+            view.profileName.text = "${profileModel.profile.personalInfo?.firstName
+                    ?: ""} ${profileModel.profile.personalInfo?.lastName ?: ""}"
             view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
-            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName?:""} ${profileModel.profile.personalInfo?.lastName?:""}"
+            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName
+                    ?: ""} ${profileModel.profile.personalInfo?.lastName ?: ""}"
         } else {
             view.profileName.text = profileModel.profile.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.profile.organizationType
