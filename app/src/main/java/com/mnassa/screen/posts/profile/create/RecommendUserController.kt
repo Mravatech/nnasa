@@ -6,8 +6,8 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
+import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
@@ -60,6 +60,12 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
             etRecommend.hint = fromDictionary(R.string.recommend_message_placeholder)
             etRecommend.addTextChangedListener(SimpleTextWatcher { onNeedTextUpdated() })
             onNeedTextUpdated()
+
+            if (args.containsKey(EXTRA_POST_TO_EDIT)) {
+                val post = args.getSerializable(EXTRA_POST_TO_EDIT) as RecommendedProfilePostModel
+                etRecommend.setText(post.text)
+                args.remove(EXTRA_POST_TO_EDIT)
+            }
         }
 
         launchCoroutineUI {
@@ -98,10 +104,20 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
         private const val MAX_SHARE_TO_USERNAMES = 2
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
+        private const val EXTRA_POST_TO_EDIT = "EXTRA_POST_TO_EDIT"
 
         fun newInstance(account: ShortAccountModel): RecommendUserController {
             val args = Bundle()
             args.putSerializable(EXTRA_ACCOUNT, account)
+
+            return RecommendUserController(args)
+        }
+
+        fun newInstance(post: RecommendedProfilePostModel): RecommendUserController {
+            val args = Bundle()
+            args.putSerializable(EXTRA_ACCOUNT, post.recommendedProfile)
+            args.putString(EXTRA_POST_ID, post.id)
+            args.putSerializable(EXTRA_POST_TO_EDIT, post)
 
             return RecommendUserController(args)
         }

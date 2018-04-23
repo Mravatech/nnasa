@@ -1,9 +1,6 @@
 package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.model.NotificationExtra
-import com.mnassa.domain.model.NotificationModel
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import java.util.*
 
 /**
@@ -29,5 +26,7 @@ data class NotificationExtraImpl(
         override val eventName: String?,
         override val ticketsPrice: String?,
         override val totalPrice: String?,
-        override val attendee: String?
+        override val attendee: String?,
+        override val event: EventModel?,
+        override val newInviteNumber: Int?
 ) : NotificationExtra

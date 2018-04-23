@@ -24,5 +24,6 @@ interface NotificationExtra {
     val ticketsPrice: String?
     val totalPrice: String?
     val attendee: String?
-//    val event: Model?
+    val event: EventModel?
+    val newInviteNumber: Int?
 }

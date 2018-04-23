@@ -10,6 +10,7 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
@@ -45,7 +46,7 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
             connectionsInteractor.sendPhoneContacts()
             isPhonesWereSent = true
 
-            if (connectionsInteractor.getRecommendedConnections().receive().isEmpty()) {
+            if (connectionsInteractor.getRecommendedConnections().consume { receive() }.isEmpty()) {
                 finish()
             }
         }

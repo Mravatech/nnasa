@@ -51,7 +51,7 @@
     <string name="invite_skip_step">_android_invites_skip_step</string>
 
     <!-- ===================================== TAB HOME ======================================== -->
-    <string name="tab_home_needs_title">_nav_title_needs</string>
+    <string name="tab_home_posts_title">_android_tab_posts</string>
     <string name="tab_home_events_title">_android_tab_events</string>
     <string name="tab_home_title">_android_news_feed_title</string>
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
@@ -335,6 +335,53 @@
     <string name="notifications_old">_notifications_recent_section_title</string>
     <string name="notifications_receive">_android_notification_receive</string>
     <string name="notifications_spent">_android_notification_spent</string>
+    <string name="notifications_i_need">_android_notification_i_need</string>
+    <string name="notifications_commented_your_post">_android_notification_commented_your_post</string>
+    <string name="notification_request_to_connect_with_you">_android_notification_request_to_connect_with_you</string>
+    <string name="notification_repost_your_post">_android_notification_repost_your_post</string>
+    <string name="notification_become_new_mnassa_user">_android_notification_become_new_mnassa_user</string>
+    <string name="notification_recommended_you_in_post">_android_notification_recommended_you_in_post</string>
+    <string name="notification_recommended_you_in_event">_android_notification_recommended_you_in_event</string>
+    <string name="notification_recommended_you">_android_notification_recommended_you</string>
+    <string name="notification_for">_android_notification_for</string>
+    <string name="notification_announced_your_profile">_android_notification_announced_your_profile</string>
+    <string name="notification_put_your_attention_on_post">_android_notification_put_your_attention_on_post</string>
+    <string name="notification_is_going_to_attend">_android_notification_is_going_to_attend</string>
+    <string name="notification_it_seems_you_can_help">_android_notification_it_seems_you_can_help</string>
+    <string name="notification_invited_you_to">_android_notification_invited_you_to</string>
+    <string name="notification_you_can_send">_android_notification_you_can_send</string>
+    <string name="notification_more_invites">_android_notification_more_invites</string>
+    <string name="notification_requested_to_connect_with_you">_android_notification_requested_to_connect_with_you</string>
+    <string name="notification_thinks">_android_notification_thinks</string>
+    <string name="notification_can_help_you_with">_android_notification_can_help_you_with</string>
+    <string name="notification_you_promoted_your_post">_android_notification_you_promoted_your_post</string>
+    <string name="notification_your_post_will_expire_tomorrow">_android_notification_your_post_will_expire_tomorrow</string>
+    <string name="notification_your_post_has_expired">_android_notification_your_post_has_expired</string>
+    <string name="notification_was_cancelled_by_organizer">_android_notification_was_cancelled_by_organizer</string>
+    <string name="notification_points_were_returned">_android_notification_points_were_returned</string>
+    <string name="notification_commented_post">_notification_text_key_commented_post</string>
+    <string name="notification_request_connect">_notification_text_key_requested_connect</string>
+    <string name="notification_reposted_post">_notification_text_key_reposted_post</string>
+    <string name="notification_become_mnassa_user">_notification_text_key_become_mnassa_user</string>
+    <string name="notification_recommend_you_in_post">_notification_text_key_recommended_you_in_post</string>
+    <string name="notification_recommend_you_in_event">_notification_text_key_recommended_you_in_event</string>
+    <string name="notification_recommend_you">_notification_text_key_recommended_you</string>
+    <string name="notification_for_">_notification_text_key_for</string>
+    <string name="notification_announced_you">_notification_text_key_announcedYou</string>
+    <string name="notification_general_post_by_admin">_notification_text_key_generalPostByAdmin</string>
+    <string name="notification_new_event_attendee">_notification_text_key_newEventAttendee</string>
+    <string name="notification_you_can_help">_notification_text_key_youCanHelp</string>
+    <string name="notification_invite_to_event">_notification_text_key_inviteToEvent</string>
+    <string name="notification_number_of_invitations">_notification_text_key_numberOfInvitations</string>
+    <string name="notification_number_of_invitations_tail">_notification_text_key_numberOfInvitationsTail</string>
+    <string name="notification_connection_request_was_accepted">_notification_text_key_connectionRequestWasAccepted</string>
+    <string name="notification_user_was_recommended_to_you">_notification_text_key_userWasRecommendedToYou</string>
+    <string name="notification_user_was_recommended_to_you_in_event">_notification_text_key_userWasRecommendedToYouInEvent</string>
+    <string name="notification_user_was_recommended_to_you_in_event2">_notification_text_key_userWasRecommendedToYouInEvent2</string>
+    <string name="notification_event_was_cancelled">_notification_text_key_eventWasCancelled</string>
+    <string name="notification_event_was_cancelled_points_returning">_notification_text_key_eventWasCancelledPointsReturning</string>
+    <string name="notification_base_key">_notification_text_key</string>
+
     <!-- ========================================== EVENTS ===================================== -->
     <string name="event_lecture">lecture</string>
     <string name="event_discussion">discussion</string>
@@ -347,5 +394,38 @@
     <string name="settings_push_row">_settings_row_pushNotifications</string>
     <string name="settings_language_row">_settings_row_language</string>
 
+
+    <string name="event_details_by">_event_details_by</string>
+
+    <string name="event_tab_info">_android_event_tab_info</string>
+    <string name="event_tab_participants">_android_event_tab_participants</string>
+    <string name="event_location_not_defined">_event_details_location_notDefined</string>
+    <string name="event_location_later">_event_details_location_willBeAnnouncedLater</string>
+    <string name="event_duration">_event_details_duration</string>
+    <string name="event_duration_minute">_event_details_durationType_minute</string>
+    <string name="event_duration_hour">_event_details_durationType_hour</string>
+    <string name="event_duration_day">_android_event_duration_day</string>
+    <string name="event_price_template">_android_event_points_template</string>
+    <string name="event_tickets">_event_details_tickets_left</string>
+    <string name="event_tickets_from">_event_details_tickets_from</string>
+    <string name="event_buy_button_active">event_buy_now_title</string>
+    <string name="event_buy_button_free_suffix">_event_price_free</string>
+    <string name="event_buy_button_reached_limit">_android_event_buy_reached_limit</string>
+    <string name="event_tickets_bought_by_me">_android_event_bought_by_me</string>
+    <string name="event_tickets_buy_more">_android_event_buy_more</string>
+    <string name="event_tickets_buy_annulled">annulled</string>
+    <string name="event_tickets_buy_closed">_event_tickets_closed</string>
+    <string name="event_tickets_buy_sold_out">_event_tickets_sold_out</string>
+    <string name="event_tickets_buy_suspended">_event_tickets_suspended</string>
+    <string name="event_tickets_buy_dialog_title">_buy_ticket_title</string>
+    <string name="event_tickets_buy_dialog_quantity">_android_event_buy_quantity_of_tickets</string>
+    <string name="event_tickets_buy_dialog_points">_buy_ticket_points</string>
+    <string name="event_tickets_buy_dialog_people">_android_event_buy_dialog_people</string>
+    <string name="event_tickets_buy_dialog_buy_now">_buy_ticket_buy_now</string>
+    <string name="event_tickets_buy_dialog_cancel">_buy_ticket_cancel</string>
+    <string name="event_participant_header_connection">_android_event_participant_header_connection</string>
+    <string name="event_participant_header_other">_android_event_participant_header_other</string>
+    <string name="event_participant_save">_navItem_Save</string>
+    <string name="event_participant_guest">_android_event_participant_guest</string>
 
 </resources>

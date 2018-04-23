@@ -39,7 +39,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
         override fun getCount(): Int = HomePage.values().size
 
         override fun getPageTitle(position: Int): CharSequence = when (position) {
-            HomePage.NEEDS.ordinal -> fromDictionary(R.string.tab_home_needs_title)
+            HomePage.NEEDS.ordinal -> fromDictionary(R.string.tab_home_posts_title)
             HomePage.EVENTS.ordinal -> fromDictionary(R.string.tab_home_events_title)
             else -> throw IllegalArgumentException("Invalid page position $position")
         }
@@ -54,12 +54,12 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
 
             launchCoroutineUI {
                 viewModel.unreadEventsCountChannel.consumeEach {
-                    tlHome.setBadgeText(HomePage.EVENTS.ordinal, if (it == 0) null else it.toString())
+                    tlHome.setBadgeText(HomePage.EVENTS.ordinal, it.takeIf { it > 0 }?.toString())
                 }
             }
             launchCoroutineUI {
                 viewModel.unreadNeedsCountChannel.consumeEach {
-                    tlHome.setBadgeText(HomePage.NEEDS.ordinal, if (it == 0) null else it.toString())
+                    tlHome.setBadgeText(HomePage.NEEDS.ordinal, it.takeIf { it > 0 }?.toString())
                 }
             }
 
@@ -71,7 +71,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
                 open(CreateNeedController.newInstance())
             }
 
-            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
+//            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
         }
     }
 

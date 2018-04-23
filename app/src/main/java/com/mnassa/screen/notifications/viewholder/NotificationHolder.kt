@@ -15,7 +15,6 @@ import com.mnassa.domain.model.NotificationModel
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.screen.notifications.*
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_notifications.view.*
 import timber.log.Timber
@@ -52,89 +51,98 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         val eventName = item.extra.eventName
         val totalPrice = item.extra.totalPrice
         val typeRawValue = type
-        var result: SpannableString
-        when (type) {
-            privateChatMessage, responseChatMessage -> {
-                result = SpannableString(fromDictionary("$BASE_KEY-"))
+        val result: SpannableString = when (type) {
+            PRIVATE_CHAT_MESSAGE, RESPONSE_CHAT_MESSAGE -> {
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}-"))
             }
-            postComment -> {
-                val commented = fromDictionary("$BASE_KEY$COMMENTED_POST", COMMENTED_POST_DEFAULT_VALUE)
-                val postText = COMMENTED_POST_I_NEED + item.extra.post?.text
+            POST_COMMENT -> {
+                val commented = fromDictionary(fromDictionary(R.string.notification_commented_post), fromDictionary(R.string.notifications_commented_your_post))
+                val postText = fromDictionary(R.string.notifications_i_need) + item.extra.post?.text
                 val text = "$commented $postText"
-                result = getOneSpanText(text, postText, Color.BLACK)
+                getOneSpanText(text, postText, Color.BLACK)
             }
-            connectionRequest -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$REQUESTED_CONNECT", REQUESTED_CONNECT_DEFAULT_VALUE))
+            CONNECTION_REQUEST -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_request_connect), fromDictionary(R.string.notification_request_to_connect_with_you)))
             }
-            postRepost -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$REPOSTED_POST", REPOSTED_POST_DEFAULT_VALUE))
+            POST_REPOST -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_reposted_post), fromDictionary(R.string.notification_repost_your_post)))
             }
-            newUserJoined -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$BECAME_MNASSA_USER", BECAME_MNASSA_USER_DEFAULT_VALUE))
+            NEW_USER_JOINED -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_become_mnassa_user), fromDictionary(R.string.notification_become_new_mnassa_user)))
             }
-            iWasRecommended -> {
-                val recommented = fromDictionary("$BASE_KEY$RECOMMENDED_YOU_IN_POST", RECOMMENDED_YOU_IN_POST_DEFAULT_VALUE)
-                val postText = COMMENTED_POST_I_NEED + item.extra.post?.text
+            I_WAS_RECOMMENDED -> {
+                val recommented = fromDictionary(fromDictionary(R.string.notification_recommend_you_in_post), fromDictionary(R.string.notification_recommended_you_in_post))
+                val postText = fromDictionary(R.string.notifications_i_need) + item.extra.post?.text
                 val text = "$recommented $postText"
-                result = getOneSpanText(text, postText, Color.BLACK)
+                getOneSpanText(text, postText, Color.BLACK)
             }
-            iWasRecommendedInEvent -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$RECOMMENDED_YOU_IN_EVENT", RECOMMENDED_YOU_IN_EVENT_DEFAULT_VALUE))
+            I_WAS_RECOMMENDED_IN_EVENT -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_recommend_you_in_event), fromDictionary(R.string.notification_recommended_you_in_event)))
             }
-            userWasRecommended -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$RECOMMENDED_YOU", RECOMMENDED_YOU_DEFAULT_VALUE))
-                result = SpannableString(fromDictionary("$BASE_KEY$FOR", FOR_DEFAULT_VALUE))
-            }
-            userWasRecommendedByPost -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$ANNOUNCED_YOU", ANNOUNCED_YOU_DEFAULT_VALUE))
-            }
-            generalPostByAdmin -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$GENERAL_POST_BY_ADMIN", GENERAL_POST_BY_ADMIN_DEFAULT_VALUE))
-            }
-            newEventAttendee -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$NEW_EVENT_ATTENDEE", NEW_EVENT_ATTENDEE_DEFAULT_VALUE))
-            }
-            autoSuggestYouCanHelp -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$YOU_CAN_HELP", YOU_CAN_HELP_DEFAULT_VALUE))
-            }
-            newEventByAdmin -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$INVITE_TO_EVENT", INVITE_TO_EVENT_DEFAULT_VALUE))
-            }
-            invitesNumberChanged -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS", NUMBER_OF_INVITATIONS_DEFAULT_VALUE))
-                result = SpannableString(fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS_TAIL", NUMBER_OF_INVITATIONS_TAIL_DEFAULT_VALUE))
-            }
-            connectionsRequestAccepted -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$CONNECTION_REQUEST_WAS_ACCEPTED", CONNECTION_REQUEST_WAS_ACCEPTED_DEFAULT_VALUE))
-            }
-            userWasRecommendedToYou -> {
+            USER_WAS_RECOMMENDED -> {
                 val name = getRecommendedName(item)
-                val recomend = fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU", USER_WAS_RECOMENDED_TO_YOU_DEFAULT_VALUE)
+                val recomend = fromDictionary(fromDictionary(R.string.notification_recommend_you), fromDictionary(R.string.notification_recommended_you))
+                val _for = fromDictionary(fromDictionary(R.string.notification_for_), fromDictionary(R.string.notification_for))
+                val eventName = item.extra.post?.text ?: ""
+                val text = "$recomend $name $_for $eventName"
+                getTwoSpanText(text, name, eventName, Color.BLACK)
+            }
+            USER_WAS_RECOMMENDED_BY_POST -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_announced_you), fromDictionary(R.string.notification_announced_your_profile)))
+            }
+            GENERAL_POST_BY_ADMIN -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_general_post_by_admin), fromDictionary(R.string.notification_put_your_attention_on_post)))
+            }
+            NEW_EVENT_ATTENDEE -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_new_event_attendee), fromDictionary(R.string.notification_is_going_to_attend)))
+            }
+            AUTO_SUGGEST_YOU_CAN_HELP -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_you_can_help), fromDictionary(R.string.notification_it_seems_you_can_help)))
+            }
+            NEW_EVENT_BY_ADMIN -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_invite_to_event), fromDictionary(R.string.notification_invited_you_to)))
+            }
+            INVITES_NUMBER_CHANGED -> {
+                val youCanSend = fromDictionary(fromDictionary(R.string.notification_number_of_invitations), fromDictionary(R.string.notification_you_can_send))
+                val moreInvites = fromDictionary(fromDictionary(R.string.notification_number_of_invitations_tail), fromDictionary(R.string.notification_more_invites))
+                val text = "$youCanSend ${item.extra.newInviteNumber} $moreInvites"
+                getOneSpanText(text, item.extra.newInviteNumber.toString(), Color.BLACK)
+            }
+            CONNECTIONS_REQUEST_ACCEPTED -> {
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_connection_request_was_accepted), fromDictionary(R.string.notification_requested_to_connect_with_you)))
+            }
+            USER_WAS_RECOMMENDED_TO_YOU -> {
+                val name = getRecommendedName(item)
+                val recomend = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you), fromDictionary(R.string.notification_recommended_you))
                 val text = "$recomend $name"
-                result = getOneSpanText(text, name, Color.BLACK)
+                getOneSpanText(text, name, Color.BLACK)
             }
-            userWasRecommendedInEvent -> {
-                result = SpannableString(fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT", USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_DEFAULT_VALUE))
-                result = SpannableString(fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_2", USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_2_DEFAULT_VALUE))
+            USER_WAS_RECOMMENDED_IN_EVENT -> {
+                val thinks = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you_in_event), fromDictionary(R.string.notification_thinks))
+                val canHelpYouWith = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you_in_event2), fromDictionary(R.string.notification_can_help_you_with))
+                val name = item.extra.event?.author?.userName ?: ""
+                val event = item.extra.event?.text ?: ""
+                val text = "$thinks $name $canHelpYouWith $event"
+                getTwoSpanText(text, name, event, Color.BLACK)
             }
-            postPromoted -> {
-                result = SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", YOU_PROMOTED_YOUR_POST_DEFAULT_VALUE))
+            POST_PROMOTED -> {
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}_$typeRawValue", fromDictionary(R.string.notification_you_promoted_your_post)))
             }
-            oneDayToExpirationOfPost -> {
-                result = SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", YOUR_POST_WILL_EXPIRE_TOMORROW_DEFAULT_VALUE))
+            ONE_DAY_TO_EXPIRATION_OF_POST -> {
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}_$typeRawValue", fromDictionary(R.string.notification_your_post_will_expire_tomorrow)))
             }
-            postIsExpired -> {
-                result = SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", YOUR_POST_WAS_EXPIRED_DEFAULT_VALUE))
+            POST_IS_EXPIRED -> {
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}_$typeRawValue", fromDictionary(R.string.notification_your_post_has_expired)))
             }
-            eventCancelling -> {
-                val canceled = fromDictionary("$BASE_KEY$EVENT_WAS_CANCELLED", EVENT_WAS_CANCELLED_DEFAULT_VALUE)
-                val pointsReturns = fromDictionary("${BASE_KEY}$EVENT_WAS_CANCELLED_POINTS_RETURNING", EVENT_WAS_CANCELLED_POINTS_RETURNING_DEFAULT_VALUE)
+            EVENT_CANCELLING -> {
+                val canceled = fromDictionary(fromDictionary(R.string.notification_event_was_cancelled), fromDictionary(R.string.notification_was_cancelled_by_organizer))
+                val pointsReturns = fromDictionary(fromDictionary(R.string.notification_event_was_cancelled_points_returning), fromDictionary(R.string.notification_points_were_returned))
                 val text = "${eventName ?: ""} $canceled ${totalPrice ?: ""} $pointsReturns"
-                result = getEventCancellingText(text, eventName ?: "", totalPrice
+                getTwoSpanText(text, eventName ?: "", totalPrice
                         ?: "", Color.BLACK)
 
             }
-            else -> result = SpannableString(item.text)
+            else -> SpannableString(item.text)
         }
         return result
     }
@@ -149,16 +157,6 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         return requireNotNull(name)
     }
 
-    private fun getEventCancellingText(text: String, eventName: String, pointsReturns: String, color: Int): SpannableString {
-        val span = SpannableString(text)
-        span.setSpan(ForegroundColorSpan(color), START_SPAN, eventName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(StyleSpan(Typeface.BOLD), START_SPAN, eventName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val pointsReturnsPosition = text.indexOf(pointsReturns)
-        span.setSpan(ForegroundColorSpan(color), pointsReturnsPosition, pointsReturnsPosition + pointsReturns.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(StyleSpan(Typeface.BOLD), pointsReturnsPosition, pointsReturnsPosition + pointsReturns.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return span
-    }
-
     private fun getOneSpanText(text: String, spanText: String, color: Int): SpannableString {
         val span = SpannableString(text)
         val pointsReturnsPosition = text.indexOf(spanText)
@@ -167,7 +165,19 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         return span
     }
 
+    private fun getTwoSpanText(text: String, spanText1: String, spanText2: String, color: Int): SpannableString {
+        val span = SpannableString(text)
+        val pointsReturnsPosition = text.indexOf(spanText1)
+        val pointsSecondReturnsPosition = text.indexOf(spanText2)
+        span.setSpan(ForegroundColorSpan(color), pointsReturnsPosition, pointsReturnsPosition + spanText1.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(ForegroundColorSpan(color), pointsSecondReturnsPosition, pointsSecondReturnsPosition + spanText2.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(StyleSpan(Typeface.BOLD), pointsReturnsPosition, pointsReturnsPosition + spanText1.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(StyleSpan(Typeface.BOLD), pointsSecondReturnsPosition, pointsSecondReturnsPosition + spanText2.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return span
+    }
+
     companion object {
+
         const val START_SPAN = 0
         fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): NotificationHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_notifications, parent, false)
@@ -175,3 +185,26 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         }
     }
 }
+
+const val PRIVATE_CHAT_MESSAGE = "privateChatMessage"
+const val RESPONSE_CHAT_MESSAGE = "responseChatMessage"
+const val POST_COMMENT = "postComment"
+const val CONNECTION_REQUEST = "connectionRequest"
+const val POST_REPOST = "postRepost"
+const val NEW_USER_JOINED = "newUserJoined"
+const val I_WAS_RECOMMENDED = "iWasRecommended"
+const val I_WAS_RECOMMENDED_IN_EVENT = "iWasRecommendedInEvent"
+const val USER_WAS_RECOMMENDED = "userWasRecommended"
+const val USER_WAS_RECOMMENDED_BY_POST = "userWasRecommendedByPost"
+const val GENERAL_POST_BY_ADMIN = "generalPostByAdmin"
+const val NEW_EVENT_ATTENDEE = "newEventAttendee"
+const val EVENT_CANCELLING = "eventCancelling"
+const val AUTO_SUGGEST_YOU_CAN_HELP = "autoSuggestYouCanHelp"
+const val NEW_EVENT_BY_ADMIN = "newEventByAdmin"
+const val INVITES_NUMBER_CHANGED = "invitesNumberChanged"
+const val CONNECTIONS_REQUEST_ACCEPTED = "connectionsRequestAccepted"
+const val USER_WAS_RECOMMENDED_TO_YOU = "userWasRecommendedToYou"
+const val USER_WAS_RECOMMENDED_IN_EVENT = "userWasRecommendedInEvent"
+const val POST_PROMOTED = "postPromoted"
+const val ONE_DAY_TO_EXPIRATION_OF_POST = "oneDayToExpirationOfPost"
+const val POST_IS_EXPIRED = "postIsExpired"

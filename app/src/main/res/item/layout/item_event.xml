@@ -79,22 +79,36 @@
                 android:foreground="@drawable/avatar_shadow"
                 tools:src="@color/colorPrimary" />
 
-            <TextView
-                android:id="@+id/tvEventType"
-                style="@style/MnassaButton"
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivIsTicketsBought"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginBottom="@dimen/spacing_vertical"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:padding="6dp"
-                android:textAllCaps="false"
-                android:textSize="16sp"
+                android:layout_toStartOf="@id/tvEventType"
+                app:srcCompat="@drawable/ic_member" />
+
+            <TextView
+                android:id="@+id/tvEventType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ivIsTicketsBought"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/ivIsTicketsBought"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/event_type_background"
                 android:clickable="false"
                 android:focusable="false"
+                android:gravity="center"
+                android:paddingEnd="6dp"
+                android:paddingStart="6dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
                 tools:text="Lecture" />
 
             <FrameLayout

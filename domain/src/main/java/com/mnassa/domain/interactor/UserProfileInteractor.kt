@@ -23,8 +23,8 @@ interface UserProfileInteractor {
     suspend fun updatePersonalAccount(account: ProfilePersonalInfoModel)
 
     suspend fun getToken(): String?
-    suspend fun getAccountIdOrNull(): String?
-    suspend fun getAccountIdOrException(): String
+    fun getAccountIdOrNull(): String?
+    fun getAccountIdOrException(): String
     suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?>
 
     suspend fun getProfileById(accountId: String): ProfileAccountModel?

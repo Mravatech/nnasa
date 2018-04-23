@@ -23,7 +23,7 @@ internal data class EventDbEntity(
         @SerializedName("originalId") val originalId: String,
         @SerializedName("pictures") val pictures: List<String>,
         @SerializedName("price") val price: Long,
-        @SerializedName("privacyType") val privacyType: String,
+        @SerializedName("privacyType") val privacyType: String?,
         @SerializedName("status") val status: String,
         @SerializedName("tags") val tags: List<String>?,
         @SerializedName("text") val text: String,
@@ -36,6 +36,14 @@ internal data class EventDbEntity(
         @SerializedName("participants") val participants: List<String>?
 ) : HasId {
 }
+
+internal data class EventTicketDbEntity(
+        override var id: String,
+        @SerializedName("eventName") val eventName: String,
+        @SerializedName("eventOrganizer") val eventOrganizer: String,
+        @SerializedName("pricePerTicket") val pricePerTicket: Long,
+        @SerializedName("ticketsCount") val ticketsCount: Long
+) : HasId
 
 internal data class EventCountersDbEntity(
         @SerializedName("comments") val comments: Int,

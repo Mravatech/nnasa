@@ -1,7 +1,10 @@
 package com.mnassa.screen.posts.profile.details
 
 import android.os.Bundle
-import com.mnassa.domain.interactor.*
+import com.mnassa.domain.interactor.ComplaintInteractor
+import com.mnassa.domain.interactor.ConnectionsInteractor
+import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -16,13 +19,11 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class RecommendedProfileViewModelImpl(postId: String,
                                       postsInteractor: PostsInteractor,
                                       tagInteractor: TagInteractor,
-                                      commentsInteractor: CommentsInteractor,
                                       complaintInteractor: ComplaintInteractor,
                                       private val connectionsInteractor: ConnectionsInteractor) : NeedDetailsViewModelImpl(
         postId,
         postsInteractor,
         tagInteractor,
-        commentsInteractor,
         complaintInteractor
 ), RecommendedProfileViewModel {
 

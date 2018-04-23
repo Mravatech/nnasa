@@ -1,5 +1,6 @@
 package com.mnassa.core.addons
 
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.properties.ReadWriteProperty
@@ -95,4 +96,10 @@ class WeakStateExecutor<State : Any?, out OutState : Any?> : StateExecutor<WeakR
                     },
                     transformer = { transformer(it.get()!!) })
 
+}
+
+suspend fun <State : Any?, OutState : Any?> StateExecutor<State, OutState>.await(): OutState {
+    return suspendCancellableCoroutine { continuation ->
+        invoke { continuation.resume(it) }
+    }
 }

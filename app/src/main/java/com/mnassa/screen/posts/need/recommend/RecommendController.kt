@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.bluelinelabs.conductor.Controller
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -21,7 +22,8 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewModel>(args) {
     override val layoutId: Int = R.layout.controller_post_recommend
     private val bestMatchesAccounts: List<String> by lazy { args.getStringArrayList(EXTRA_BEST_MATCHES) }
-    override val viewModel: RecommendViewModel by instance()
+    private val excludedAccounts: List<String> by lazy { args.getStringArrayList(EXTRA_EXCLUDED_ACCOUNTS) }
+    override val viewModel: RecommendViewModel by instance(arg = RecommendViewModel.RecommendViewModelParams(excludedAccounts))
     private val allAccountsAdapter = AccountsToRecommendRVAdapter(bestMatchesAccounts)
     private val selectedAccountsAdapter = SelectedAccountRVAdapter()
     private val resultListener by lazy { targetController as OnRecommendPostResult }
@@ -58,7 +60,7 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
             rvSelectedAccounts.visibility = if (selectedAccountsAdapter.dataStorage.size == 0) View.GONE else View.VISIBLE
 
             btnRecommend.setOnClickListener {
-                resultListener.recommendedAccounts = allAccountsAdapter.selectedAccounts.toList()
+                resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())
                 close()
             }
 
@@ -90,25 +92,29 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
     }
 
     interface OnRecommendPostResult {
-        var recommendedAccounts: List<ShortAccountModel>
+        fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>)
+        val recommendedAccounts: List<ShortAccountModel>
     }
 
     companion object {
         private const val EXTRA_BEST_MATCHES = "EXTRA_BEST_MATCHES"
-        private const val EXTRA_RECOMMEND_TO_PERSON_NAME = "EXTRA_RECOMMEND_TO_PERSON_NAME"
         private const val EXTRA_SELECTED_ACCOUNTS = "EXTRA_SELECTED_ACCOUNTS"
+        private const val EXTRA_EXCLUDED_ACCOUNTS = "EXTRA_EXCLUDED_ACCOUNTS"
 
-        fun newInstance(
-            recommendToPersonName: String,
+        fun <T> newInstance(
             bestMatchesAccounts: List<String> = emptyList(),
-            selectedAccounts: List<String> = emptyList()
-        ): RecommendController {
+            selectedAccounts: List<String> = emptyList(),
+            excludedAccounts: List<String> = emptyList(),
+            listener: T
+        ): RecommendController where T : OnRecommendPostResult, T : Controller {
 
             val args = Bundle()
             args.putStringArrayList(EXTRA_BEST_MATCHES, ArrayList(bestMatchesAccounts))
-            args.putString(EXTRA_RECOMMEND_TO_PERSON_NAME, recommendToPersonName)
             args.putStringArrayList(EXTRA_SELECTED_ACCOUNTS, ArrayList(selectedAccounts))
-            return RecommendController(args)
+            args.putStringArrayList(EXTRA_EXCLUDED_ACCOUNTS, ArrayList(excludedAccounts))
+            val controller = RecommendController(args)
+            controller.targetController = listener
+            return controller
         }
     }
 }

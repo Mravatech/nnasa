@@ -33,6 +33,13 @@ data class EventModelImpl(
         override val updatedAt: Date,
         override val participants: List<String>
 
-) : EventModel {
+) : EventModel
 
-}
+data class EventTicketModelImpl(
+        override val eventName: String,
+        override val eventOrganizerId: String,
+        override val pricePerTicket: Long,
+        override val ticketCount: Long,
+        override var id: String,
+        override val ownerId: String //similar to id
+) : EventTicketModel

@@ -8,7 +8,9 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.notifications.viewholder.*
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
@@ -61,20 +63,20 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
         }
 
         when (item.type) {
-            postComment, postRepost, postIsExpired, postPromoted, userWasRecommendedByPost,
-            generalPostByAdmin, iWasRecommended, autoSuggestYouCanHelp, oneDayToExpirationOfPost -> {
+            POST_COMMENT, POST_REPOST, POST_IS_EXPIRED, POST_PROMOTED, USER_WAS_RECOMMENDED_BY_POST, USER_WAS_RECOMMENDED,
+            GENERAL_POST_BY_ADMIN, I_WAS_RECOMMENDED, AUTO_SUGGEST_YOU_CAN_HELP, ONE_DAY_TO_EXPIRATION_OF_POST -> {
                 val postDetailsFactory: PostDetailsFactory by instance()
                 open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
             }
-            userWasRecommended, newUserJoined, connectionRequest, connectionsRequestAccepted,
-            userWasRecommendedToYou, privateChatMessage -> {
+            NEW_USER_JOINED, CONNECTION_REQUEST, CONNECTIONS_REQUEST_ACCEPTED,
+            USER_WAS_RECOMMENDED_TO_YOU, PRIVATE_CHAT_MESSAGE, RESPONSE_CHAT_MESSAGE -> {
                 val id = item.extra.author?.id ?: item.extra.recommended?.id
                 open(ProfileController.newInstance(requireNotNull(id)))
             }
-            iWasRecommendedInEvent, userWasRecommendedInEvent, newEventByAdmin, newEventAttendee, eventCancelling -> {
-                //todo events
+            I_WAS_RECOMMENDED_IN_EVENT, USER_WAS_RECOMMENDED_IN_EVENT, NEW_EVENT_BY_ADMIN, NEW_EVENT_ATTENDEE, EVENT_CANCELLING -> {
+                open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
             }
-            invitesNumberChanged -> {
+            INVITES_NUMBER_CHANGED -> {
                 open(InviteController.newInstance())
             }
         }

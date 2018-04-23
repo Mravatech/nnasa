@@ -27,5 +27,7 @@ internal data class NotificationAuthorDbEntity(
         @SerializedName("eventName") val eventName: String?,
         @SerializedName("ticketsPrice") val ticketsPrice: String?,
         @SerializedName("totalPrice") val totalPrice: String?,
-        @SerializedName("attendee") val attendee: String?
+        @SerializedName("attendee") val attendee: String?,
+        @SerializedName("event") val event: HashMap<String, EventDbEntity>?,
+        @SerializedName("newInviteNumber") val newInviteNumber: Int?
 )

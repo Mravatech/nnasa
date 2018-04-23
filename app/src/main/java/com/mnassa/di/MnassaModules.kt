@@ -1,8 +1,10 @@
 package com.mnassa.di
 
+import android.os.Bundle
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextImpl
 import com.androidkotlincore.entityconverter.registerConverter
+import com.bluelinelabs.conductor.Controller
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +36,9 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.chats.message.ChatMessageViewModel
 import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
+import com.mnassa.screen.comments.CommentsWrapperForEventViewModelImpl
+import com.mnassa.screen.comments.CommentsWrapperForPostViewModelImpl
+import com.mnassa.screen.comments.CommentsWrapperViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
@@ -52,6 +57,14 @@ import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
+import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.events.details.EventDetailsViewModel
+import com.mnassa.screen.events.details.EventDetailsViewModelImpl
+import com.mnassa.screen.events.details.info.EventDetailsInfoController
+import com.mnassa.screen.events.details.info.EventDetailsInfoViewModel
+import com.mnassa.screen.events.details.info.EventDetailsInfoViewModelImpl
+import com.mnassa.screen.events.details.participants.EventDetailsParticipantsViewModel
+import com.mnassa.screen.events.details.participants.EventDetailsParticipantsViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.invite.InviteViewModel
@@ -73,9 +86,11 @@ import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
+import com.mnassa.screen.posts.general.details.GeneralPostController
 import com.mnassa.screen.posts.general.details.GeneralPostViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
 import com.mnassa.screen.posts.need.create.CreateNeedViewModelImpl
+import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
 import com.mnassa.screen.posts.need.recommend.RecommendViewModel
@@ -84,6 +99,7 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
 import com.mnassa.screen.posts.profile.create.RecommendUserViewModel
 import com.mnassa.screen.posts.profile.create.RecommendUserViewModelImpl
+import com.mnassa.screen.posts.profile.details.RecommendedProfileController
 import com.mnassa.screen.posts.profile.details.RecommendedProfileViewModel
 import com.mnassa.screen.posts.profile.details.RecommendedProfileViewModelImpl
 import com.mnassa.screen.profile.ProfileViewModel
@@ -130,7 +146,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
@@ -152,13 +168,13 @@ private val viewModelsModule = Kodein.Module {
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance(), instance()) }
-    bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
+    bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
-    bind<RecommendViewModel>() with provider { RecommendViewModelImpl(instance()) }
+    bind<RecommendViewModel>() with factory { args: RecommendViewModel.RecommendViewModelParams -> RecommendViewModelImpl(args, instance()) }
     bind<EditPersonalProfileViewModel>() with provider { EditPersonalProfileViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EditCompanyProfileViewModel>() with provider { EditCompanyProfileViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
@@ -167,6 +183,26 @@ private val viewModelsModule = Kodein.Module {
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }
     bind<TermsAndConditionsViewModel>() with provider { TermsAndConditionsViewModelImpl() }
+    bind<CommentsWrapperViewModel>() with factory { pair: Pair<Class<Controller>, Bundle> ->
+        when (pair.first) {
+            NeedDetailsController::class.java,
+            RecommendedProfileController::class.java,
+            GeneralPostController::class.java ->
+                CommentsWrapperForPostViewModelImpl(
+                        postId = pair.second.getString(NeedDetailsController.EXTRA_NEED_ID),
+                        commentsInteractor = instance(),
+                        postsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+            EventDetailsInfoController::class.java ->
+                CommentsWrapperForEventViewModelImpl(
+                    eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
+                    commentsInteractor = instance(),
+                    eventsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+            else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
+        }
+    }
+    bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance()) }
+    bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance()) }
+    bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
 }
@@ -222,8 +258,8 @@ private val repositoryModule = Kodein.Module {
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(),instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }
@@ -235,7 +271,7 @@ private val serviceModule = Kodein.Module {
 private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
-    bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl(instance()) }
+    bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
@@ -245,7 +281,7 @@ private val interactorModule = Kodein.Module {
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
-    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance()) }
+    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance()) }
     bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance()) }
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
@@ -270,6 +306,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseWalletApi>()
     bindRetrofitApi<FirebaseChatApi>()
     bindRetrofitApi<FirebaseComplaintApi>()
+    bindRetrofitApi<FirebaseEventsApi>()
     bindRetrofitApi<FirebaseNotificationsApi>()
     bindRetrofitApi<FirebaseSettingsApi>()
 

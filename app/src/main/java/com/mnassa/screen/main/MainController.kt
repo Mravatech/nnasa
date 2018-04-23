@@ -48,6 +48,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     private var drawer: Drawer? = null
     private var accountHeader: AccountHeader? = null
     private var activeAccountId: String = ""
+    private var currentPage = 0
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -157,6 +158,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     page.onPageSelected()
                 }
 
+                if (currentPage == NOTIFICATION_PAGE) {
+                    viewModel.resetAllNotifications()
+                }
+                currentPage = position
                 true
             }
         }
@@ -264,6 +269,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
 
     companion object {
         const val ACCOUNT_ADD = -998L
+        const val NOTIFICATION_PAGE = 2
 
         fun newInstance() = MainController()
     }

@@ -11,4 +11,10 @@ interface CommentsRepository {
     suspend fun replyToPostComment(postId: String, commentId: String, text: String, accountsToRecommend: List<String>): CommentModel
     suspend fun deleteComment(commentId: String)
     suspend fun editPostComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>)
+
+    //events
+    suspend fun getCommentsByEvent(eventId: String): List<CommentModel>
+    suspend fun writeEventComment(eventId: String, text: String?, accountsToRecommend: List<String>): CommentModel
+    suspend fun replyToEventComment(eventId: String, commentId: String, text: String, accountsToRecommend: List<String>): CommentModel
+    suspend fun editEventComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>)
 }
