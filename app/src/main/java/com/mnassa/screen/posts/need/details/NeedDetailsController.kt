@@ -176,9 +176,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             }
 
             btnRecommend.text = recommendWithCount
-            btnRecommend.setOnClickListener {
-                open(RecommendController.newInstance(post.autoSuggest.accountIds, recommendedAccounts.map { it.id }, this@NeedDetailsController))
-            }
+            btnRecommend.setOnClickListener { openRecommendScreen(post, recommendedAccounts.map { it.id }) }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
         }
@@ -209,9 +207,15 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     override fun openRecommendScreen(recommendedAccountIds: List<String>, self: CommentsWrapperController) {
-        post?.let {
-            open(RecommendController.newInstance(it.autoSuggest.accountIds, recommendedAccountIds, this))
-        }
+        post?.let { openRecommendScreen(it, recommendedAccountIds) }
+    }
+
+    private fun openRecommendScreen(post: PostModel, recommendedAccountIds: List<String>) {
+        open(RecommendController.newInstance(
+                bestMatchesAccounts = post.autoSuggest.accountIds,
+                selectedAccounts = recommendedAccountIds,
+                excludedAccounts = listOf(post.author.id),
+                listener = this))
     }
 
     override fun bindCanReadComments(canReadComments: Boolean) {
