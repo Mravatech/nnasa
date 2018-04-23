@@ -57,10 +57,11 @@ playServices.playServicesGradlePlugin = "com.google.gms:google-services:$version
 deps.playServices = playServices
 
 //========================================== Crashlytics ===========================================
-versions.fabricVersion = "1.+"
+versions.fabricVersion = "1.25.1"
 
 def fabric = [:]
 fabric.fabricPlugin = "io.fabric.tools:gradle:${versions.fabricVersion}"
+
 deps.fabric = fabric
 
 //========================================== FIREBASE ==============================================
@@ -78,7 +79,7 @@ firebase.firestore =       "com.google.firebase:firebase-firestore:${versions.fi
 deps.firebase = firebase
 
 //============================================== KOTLIN ============================================
-versions.kotlin = '1.2.40'
+versions.kotlin = '1.2.31'
 def kotlin = [:]
 kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"

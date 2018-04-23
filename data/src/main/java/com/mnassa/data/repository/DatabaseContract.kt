@@ -20,6 +20,7 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_TOTAL_INCOME = "totalIncome"
     const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
     const val TABLE_ACCOUNTS_COL_INVITES_COUNT = "invites"
+    const val TABLE_ACCOUNTS_COL_PERMISSIONS = "permissions"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
