@@ -46,98 +46,97 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         }
     }
 
-
     private fun getTextByType(item: NotificationModel): SpannableString {
         val type = item.type
         val eventName = item.extra.eventName
         val totalPrice = item.extra.totalPrice
         val typeRawValue = type
-        var result: SpannableString = when (type) {
+        val result: SpannableString = when (type) {
             PRIVATE_CHAT_MESSAGE, RESPONSE_CHAT_MESSAGE -> {
-                SpannableString(fromDictionary("$BASE_KEY-"))
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}-"))
             }
             POST_COMMENT -> {
-                val commented = fromDictionary("$BASE_KEY$COMMENTED_POST", fromDictionary(R.string.notifications_commented_your_post))
+                val commented = fromDictionary(fromDictionary(R.string.notification_commented_post), fromDictionary(R.string.notifications_commented_your_post))
                 val postText = fromDictionary(R.string.notifications_i_need) + item.extra.post?.text
                 val text = "$commented $postText"
                 getOneSpanText(text, postText, Color.BLACK)
             }
             CONNECTION_REQUEST -> {
-                SpannableString(fromDictionary("$BASE_KEY$REQUESTED_CONNECT", fromDictionary(R.string.notification_request_to_connect_with_you)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_request_connect), fromDictionary(R.string.notification_request_to_connect_with_you)))
             }
             POST_REPOST -> {
-                SpannableString(fromDictionary("$BASE_KEY$REPOSTED_POST", fromDictionary(R.string.notification_repost_your_post)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_reposted_post), fromDictionary(R.string.notification_repost_your_post)))
             }
             NEW_USER_JOINED -> {
-                SpannableString(fromDictionary("$BASE_KEY$BECAME_MNASSA_USER", fromDictionary(R.string.notification_become_new_mnassa_user)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_become_mnassa_user), fromDictionary(R.string.notification_become_new_mnassa_user)))
             }
             I_WAS_RECOMMENDED -> {
-                val recommented = fromDictionary("$BASE_KEY$RECOMMENDED_YOU_IN_POST", fromDictionary(R.string.notification_recommended_you_in_post))
+                val recommented = fromDictionary(fromDictionary(R.string.notification_recommend_you_in_post), fromDictionary(R.string.notification_recommended_you_in_post))
                 val postText = fromDictionary(R.string.notifications_i_need) + item.extra.post?.text
                 val text = "$recommented $postText"
                 getOneSpanText(text, postText, Color.BLACK)
             }
             I_WAS_RECOMMENDED_IN_EVENT -> {
-                SpannableString(fromDictionary("$BASE_KEY$RECOMMENDED_YOU_IN_EVENT", fromDictionary(R.string.notification_recommended_you_in_event)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_recommend_you_in_event), fromDictionary(R.string.notification_recommended_you_in_event)))
             }
             USER_WAS_RECOMMENDED -> {
                 val name = getRecommendedName(item)
-                val recomend = fromDictionary("$BASE_KEY$RECOMMENDED_YOU", fromDictionary(R.string.notification_recommended_you))
-                val _for = fromDictionary("$BASE_KEY$FOR", fromDictionary(R.string.notification_for))
+                val recomend = fromDictionary(fromDictionary(R.string.notification_recommend_you), fromDictionary(R.string.notification_recommended_you))
+                val _for = fromDictionary(fromDictionary(R.string.notification_for_), fromDictionary(R.string.notification_for))
                 val eventName = item.extra.post?.text ?: ""
                 val text = "$recomend $name $_for $eventName"
                 getTwoSpanText(text, name, eventName, Color.BLACK)
             }
             USER_WAS_RECOMMENDED_BY_POST -> {
-                SpannableString(fromDictionary("$BASE_KEY$ANNOUNCED_YOU", fromDictionary(R.string.notification_announced_your_profile)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_announced_you), fromDictionary(R.string.notification_announced_your_profile)))
             }
             GENERAL_POST_BY_ADMIN -> {
-                SpannableString(fromDictionary("$BASE_KEY$_GENERAL_POST_BY_ADMIN", fromDictionary(R.string.notification_put_your_attention_on_post)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_general_post_by_admin), fromDictionary(R.string.notification_put_your_attention_on_post)))
             }
             NEW_EVENT_ATTENDEE -> {
-                SpannableString(fromDictionary("$BASE_KEY$_NEW_EVENT_ATTENDEE", fromDictionary(R.string.notification_is_going_to_attend)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_new_event_attendee), fromDictionary(R.string.notification_is_going_to_attend)))
             }
             AUTO_SUGGEST_YOU_CAN_HELP -> {
-                SpannableString(fromDictionary("$BASE_KEY$YOU_CAN_HELP", fromDictionary(R.string.notification_it_seems_you_can_help)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_you_can_help), fromDictionary(R.string.notification_it_seems_you_can_help)))
             }
             NEW_EVENT_BY_ADMIN -> {
-                SpannableString(fromDictionary("$BASE_KEY$INVITE_TO_EVENT", fromDictionary(R.string.notification_invited_you_to)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_invite_to_event), fromDictionary(R.string.notification_invited_you_to)))
             }
             INVITES_NUMBER_CHANGED -> {
-                val youCanSend = fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS", fromDictionary(R.string.notification_you_can_send))
-                val moreInvites = fromDictionary("$BASE_KEY$NUMBER_OF_INVITATIONS_TAIL", fromDictionary(R.string.notification_more_invites))
+                val youCanSend = fromDictionary(fromDictionary(R.string.notification_number_of_invitations), fromDictionary(R.string.notification_you_can_send))
+                val moreInvites = fromDictionary(fromDictionary(R.string.notification_number_of_invitations_tail), fromDictionary(R.string.notification_more_invites))
                 val text = "$youCanSend ${item.extra.newInviteNumber} $moreInvites"
                 getOneSpanText(text, item.extra.newInviteNumber.toString(), Color.BLACK)
             }
             CONNECTIONS_REQUEST_ACCEPTED -> {
-                SpannableString(fromDictionary("$BASE_KEY$CONNECTION_REQUEST_WAS_ACCEPTED", fromDictionary(R.string.notification_requested_to_connect_with_you)))
+                SpannableString(fromDictionary(fromDictionary(R.string.notification_connection_request_was_accepted), fromDictionary(R.string.notification_requested_to_connect_with_you)))
             }
             USER_WAS_RECOMMENDED_TO_YOU -> {
                 val name = getRecommendedName(item)
-                val recomend = fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU", fromDictionary(R.string.notification_recommended_you))
+                val recomend = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you), fromDictionary(R.string.notification_recommended_you))
                 val text = "$recomend $name"
                 getOneSpanText(text, name, Color.BLACK)
             }
             USER_WAS_RECOMMENDED_IN_EVENT -> {
-                val thinks = fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT", fromDictionary(R.string.notification_thinks))
-                val canHelpYouWith = fromDictionary("$BASE_KEY$USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_2", fromDictionary(R.string.notification_can_help_you_with))
-                val name = item.extra.event?.author?.userName?:""
-                val event = item.extra.event?.text?:""
+                val thinks = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you_in_event), fromDictionary(R.string.notification_thinks))
+                val canHelpYouWith = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you_in_event2), fromDictionary(R.string.notification_can_help_you_with))
+                val name = item.extra.event?.author?.userName ?: ""
+                val event = item.extra.event?.text ?: ""
                 val text = "$thinks $name $canHelpYouWith $event"
                 getTwoSpanText(text, name, event, Color.BLACK)
             }
             POST_PROMOTED -> {
-                SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", fromDictionary(R.string.notification_you_promoted_your_post)))
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}_$typeRawValue", fromDictionary(R.string.notification_you_promoted_your_post)))
             }
             ONE_DAY_TO_EXPIRATION_OF_POST -> {
-                SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", fromDictionary(R.string.notification_your_post_will_expire_tomorrow)))
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}_$typeRawValue", fromDictionary(R.string.notification_your_post_will_expire_tomorrow)))
             }
             POST_IS_EXPIRED -> {
-                SpannableString(fromDictionary("${BASE_KEY}_$typeRawValue", fromDictionary(R.string.notification_your_post_has_expired)))
+                SpannableString(fromDictionary("${fromDictionary(R.string.notification_base_key)}_$typeRawValue", fromDictionary(R.string.notification_your_post_has_expired)))
             }
             EVENT_CANCELLING -> {
-                val canceled = fromDictionary("$BASE_KEY$EVENT_WAS_CANCELLED", fromDictionary(R.string.notification_was_cancelled_by_organizer))
-                val pointsReturns = fromDictionary("${BASE_KEY}$EVENT_WAS_CANCELLED_POINTS_RETURNING", fromDictionary(R.string.notification_points_were_returned))
+                val canceled = fromDictionary(fromDictionary(R.string.notification_event_was_cancelled), fromDictionary(R.string.notification_was_cancelled_by_organizer))
+                val pointsReturns = fromDictionary(fromDictionary(R.string.notification_event_was_cancelled_points_returning), fromDictionary(R.string.notification_points_were_returned))
                 val text = "${eventName ?: ""} $canceled ${totalPrice ?: ""} $pointsReturns"
                 getTwoSpanText(text, eventName ?: "", totalPrice
                         ?: "", Color.BLACK)
@@ -186,31 +185,6 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         }
     }
 }
-
-
-const val BASE_KEY = "_notification_text_key"
-
-const val COMMENTED_POST = "_commented_post"
-const val REQUESTED_CONNECT = "_requested_connect"
-const val REPOSTED_POST = "_reposted_post"
-const val BECAME_MNASSA_USER = "_become_mnassa_user"
-const val RECOMMENDED_YOU_IN_POST = "_recommended_you_in_post"
-const val RECOMMENDED_YOU_IN_EVENT = "_recommended_you_in_event"
-const val RECOMMENDED_YOU = "_recommended_you"
-const val FOR = "_for"
-const val ANNOUNCED_YOU = "_announcedYou"
-const val _GENERAL_POST_BY_ADMIN = "_generalPostByAdmin"
-const val _NEW_EVENT_ATTENDEE = "_newEventAttendee"
-const val YOU_CAN_HELP = "_youCanHelp"
-const val INVITE_TO_EVENT = "_inviteToEvent"
-const val NUMBER_OF_INVITATIONS = "_numberOfInvitations"
-const val NUMBER_OF_INVITATIONS_TAIL = "_numberOfInvitationsTail"
-const val CONNECTION_REQUEST_WAS_ACCEPTED = "_connectionRequestWasAccepted"
-const val USER_WAS_RECOMENDED_TO_YOU = "_userWasRecommendedToYou"
-const val USER_WAS_RECOMENDED_TO_YOU_IN_EVENT = "_userWasRecommendedToYouInEvent"
-const val USER_WAS_RECOMENDED_TO_YOU_IN_EVENT_2 = "_userWasRecommendedToYouInEvent2"
-const val EVENT_WAS_CANCELLED = "_eventWasCancelled"
-const val EVENT_WAS_CANCELLED_POINTS_RETURNING = "_eventWasCancelledPointsReturning"
 
 const val PRIVATE_CHAT_MESSAGE = "privateChatMessage"
 const val RESPONSE_CHAT_MESSAGE = "responseChatMessage"
