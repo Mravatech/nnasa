@@ -28,7 +28,6 @@ class LanguageProviderImpl : LanguageProvider {
         }
         set(value) {
             Locale.setDefault(value)
-            val lang = if (isEnglish) "ar" else "en"
             prefs.edit().putString(LANGUAGE_SETTINGS, value.language).apply()
         }
     override val language: String
