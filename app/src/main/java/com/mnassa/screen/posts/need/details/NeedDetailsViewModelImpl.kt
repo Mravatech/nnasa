@@ -3,7 +3,6 @@ package com.mnassa.screen.posts.need.details
 import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
 import com.mnassa.data.network.NetworkContract
-import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
@@ -77,13 +76,14 @@ open class NeedDetailsViewModelImpl(
         }
     }
 
-    override fun sendComplaint(id: String, reason: String) {
+    override fun sendComplaint(id: String, reason: String, authorText: String?) {
         handleException {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
                         type = NetworkContract.Complaint.POST_TYPE,
-                        reason = reason
+                        reason = reason,
+                        authorText = authorText
                 ))
             }
             finishScreenChannel.send(Unit)

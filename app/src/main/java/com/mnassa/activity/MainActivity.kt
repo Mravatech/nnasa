@@ -13,14 +13,17 @@ import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
 import com.mnassa.service.MnassaFirebaseMessagingService
+import com.mnassa.translation.LanguageProviderImpl
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.in_out_come_toast.view.*
 import org.kodein.di.Kodein
@@ -28,7 +31,9 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinContext
 import org.kodein.di.android.closestKodein
 import org.kodein.di.android.retainedKodein
+import org.kodein.di.generic.instance
 import org.kodein.di.generic.kcontext
+import java.util.*
 
 open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate() {
 
@@ -42,6 +47,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
     private lateinit var router: Router
     private lateinit var onLogoutListener: (Unit) -> Unit
 
+    private val languageProvider: LanguageProvider by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,6 +62,11 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
                     Intent(this@MainActivity, MainActivity::class.java)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
+        }
+        val prefs = App.context.getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
+        val lang = prefs.getString(LanguageProviderImpl.LANGUAGE_SETTINGS, null)
+        lang?.let {
+            languageProvider.locale = Locale(it)
         }
     }
 
@@ -92,11 +103,11 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             val layout = layoutInflater.inflate(R.layout.in_out_come_toast, findViewById(R.id.toastRoot))
             layout.iocView.showView(amount, fromName)
             val toast = Toast(applicationContext)
-            toast.setGravity(Gravity.FILL, 0, 0)
+            toast.setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
             toast.duration = Toast.LENGTH_LONG
             toast.view = layout
             val toastCountDown: CountDownTimer
-            toastCountDown = object : CountDownTimer(6000, 1000 /*Tick duration*/) {
+            toastCountDown = object : CountDownTimer(COINS_ANIMATION_TOAST_DURATION, COUNT_DOWN_INTERVAL /*Tick duration*/) {
                 override fun onTick(millisUntilFinished: Long) {
                     toast.show()
                 }
@@ -109,6 +120,12 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             toast.show()
             toastCountDown.start()
         }
+    }
+
+    companion object {
+        const val COINS_ANIMATION_TOAST_DURATION = 6000L
+        const val COUNT_DOWN_INTERVAL = 1000L
+        const val START_OFFSET = 0
     }
 
 }

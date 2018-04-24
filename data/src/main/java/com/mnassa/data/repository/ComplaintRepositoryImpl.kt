@@ -29,7 +29,7 @@ class ComplaintRepositoryImpl(
 
     override suspend fun sendComplaint(complaintModel: ComplaintModel) {
         complaintApi.inappropriate(
-                ComplaintRequest(complaintModel.id, complaintModel.type, complaintModel.reason)
+                ComplaintRequest(complaintModel.id, complaintModel.type, complaintModel.reason, complaintModel.authorText)
         ).handleException(exceptionHandler)
     }
 

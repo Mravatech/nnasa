@@ -49,7 +49,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     private val tagsAdapter = PostTagRVAdapter()
     override var onComplaint: String = ""
         set(value) {
-            viewModel.sendComplaint(postId, value)
+            viewModel.sendComplaint(postId, OTHER, value)
         }
     private val commentsWrapper by lazy { parentController as CommentsWrapperListener }
 
@@ -94,7 +94,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                     controller.targetController = this@NeedDetailsController
                     open(controller)
                 } else {
-                    viewModel.sendComplaint(postId, it.toString())
+                    viewModel.sendComplaint(postId, it.id, null)
                 }
             }
         }

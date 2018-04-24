@@ -184,7 +184,7 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun connectionsDialog(context: Context, info: String, onOkClick: () -> Unit) {
+    fun yesNoDialog(context: Context, info: CharSequence, onOkClick: () -> Unit) {
         val dialog = Dialog(context, R.style.OccupationDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_yes_no)

@@ -27,6 +27,7 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA = "clientData"
     const val TABLE_CLIENT_DATA_COL_UI_VERSION = "mobileUiVersion"
     const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"
+    const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
@@ -58,6 +59,8 @@ internal object DatabaseContract {
     const val TABLE_CHAT_TYPE = "private"
     //
     const val TABLE_INVITETION = "invitations"
+    //
+    const val ACCOUNTS_PUSH_SETTINGS = "accountsPushSettings"
     //
     const val TABLE_NEWS_FEED = "newsfeed"
     const val NEWS_FEED_TYPE_NEED = "need"
