@@ -1,8 +1,5 @@
 package com.mnassa.translation
 
-import android.content.Context
-import android.content.SharedPreferences
-import com.mnassa.App.Companion.context
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
 import java.util.*
@@ -12,32 +9,22 @@ import java.util.*
  */
 class LanguageProviderImpl : LanguageProvider {
 
-    @Transient
-    private var prefs: SharedPreferences
-
-    init {
-        prefs = context.getSharedPreferences(LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
-    }
-
     private val arabian = Locale("ar")
     private val english = Locale.ENGLISH
     override var locale: Locale
-        get() {
-            val lang = prefs.getString(LANGUAGE_SETTINGS, null) ?: return Locale.getDefault()
-            return Locale(lang)
-        }
+        get() = Locale.getDefault()
         set(value) {
             Locale.setDefault(value)
-            prefs.edit().putString(LANGUAGE_SETTINGS, value.language).apply()
         }
     override val language: String
         get() = locale.language
 
-    override fun changeLocale() {
+    override fun changeLocale(): String {
         locale = when {
             isEnglish -> arabian
             else -> english
         }
+        return language
     }
 
     override fun chooseTranslate(word: TranslatedWordModel): String {

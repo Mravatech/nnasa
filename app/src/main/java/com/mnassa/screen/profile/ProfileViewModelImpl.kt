@@ -77,13 +77,14 @@ class ProfileViewModelImpl(
         }
     }
 
-    override fun sendComplaint(id: String, reason: String) {
+    override fun sendComplaint(id: String, reason: String, authorText: String?) {
         handleException {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
                         type = NetworkContract.Complaint.ACCOUNT_TYPE,
-                        reason = reason
+                        reason = reason,
+                        authorText = authorText
                 ))
             }
         }

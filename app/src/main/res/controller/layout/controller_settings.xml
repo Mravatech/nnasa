@@ -21,25 +21,22 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_margin="@dimen/activity_margin_size"
             android:contentDescription="@null"
             app:srcCompat="@drawable/ic_notifications" />
 
         <TextView
             android:id="@+id/tvPushNotifications"
             style="@style/Settings.Info"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_margin="@dimen/activity_margin_size"
             android:textColor="@color/black_transparent_90"
-            android:textStyle="normal"
             tools:text="Push-notifications" />
 
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:background="@color/divider" />
+        style="@style/MnassaDivider"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"/>
 
     <LinearLayout
         android:id="@+id/llLanguage"
@@ -50,16 +47,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_margin="@dimen/activity_margin_size"
             android:contentDescription="@null"
             app:srcCompat="@drawable/ic_language" />
 
         <TextView
             android:id="@+id/tvLanguage"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_margin="@dimen/activity_margin_size"
             android:textColor="@color/black_transparent_90"
             style="@style/Settings.Info"
-            android:textStyle="normal"
             tools:text="Language (En)" />
 
     </LinearLayout>

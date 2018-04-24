@@ -109,7 +109,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
                 adapter.profileModel?.let {
-                    if (!it.isMyProfile){
+                    if (!it.isMyProfile) {
                         handleFab(connectionStatus, view.fabProfile)
                     }
                     it.connectionStatus = connectionStatus
@@ -138,7 +138,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override var onComplaint: String = ""
         set(value) {
             val id = accountModel?.id ?: accountId
-            viewModel.sendComplaint(id, value)
+            viewModel.sendComplaint(id, OTHER, value)
         }
 
     override fun onDestroyView(view: View) {
@@ -190,7 +190,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     controller.targetController = this@ProfileController
                     open(controller)
                 } else {
-                    viewModel.sendComplaint(profileModel.profile.id, it.toString())
+                    viewModel.sendComplaint(profileModel.profile.id, it.id, null)
                 }
             }
         }

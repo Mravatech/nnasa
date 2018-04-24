@@ -8,18 +8,16 @@ import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.Toast
-import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.isGone
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.extensions.setHeaderWithCounter
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
 import com.mnassa.screen.connections.adapters.RecommendedConnectionsRecyclerViewAdapter
@@ -201,9 +199,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private fun openArchivedConnectionsScreen() = open(ArchivedConnectionController.newInstance())
     private fun openNewRequestsScreen() = open(NewRequestsController.newInstance())
 
-    private fun openChat(accountModel: ShortAccountModel) {
-        Toast.makeText(context, "Opening chat with user ${accountModel.formattedName}", Toast.LENGTH_SHORT).show()
-    }
+    private fun openChat(accountModel: ShortAccountModel) = open(ChatMessageController.newInstance(accountModel))
 
     private fun openProfile(accountModel: ShortAccountModel) = open(ProfileController.newInstance(accountModel))
 

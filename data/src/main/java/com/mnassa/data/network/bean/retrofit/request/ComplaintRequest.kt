@@ -14,5 +14,7 @@ data class ComplaintRequest(
         @SerializedName("type")
         private val type: String,
         @SerializedName("reason")
-        private val reason: String
+        private val reason: String,
+        @SerializedName("authorText")
+        private val authorText: String?
 )

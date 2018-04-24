@@ -14,7 +14,7 @@ interface LanguageProvider : Serializable {
     val isArabian: Boolean get() = (language == "ara" || language == "ar")
     val isEnglish: Boolean get() = !isArabian
 
-    fun changeLocale()
+    fun changeLocale():String
 
     fun chooseTranslate(word: TranslatedWordModel): String
 

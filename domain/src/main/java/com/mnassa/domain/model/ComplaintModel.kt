@@ -10,5 +10,5 @@ interface ComplaintModel : Model {
     override var id: String
     val type: String
     val reason: String
-
+    val authorText: String?
 }

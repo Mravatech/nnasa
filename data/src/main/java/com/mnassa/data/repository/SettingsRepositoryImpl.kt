@@ -15,7 +15,6 @@ import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.domain.model.impl.PushSettingModelImpl
 import com.mnassa.domain.repository.SettingsRepository
 import com.mnassa.domain.repository.UserRepository
-import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,6 +33,7 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
         val userSettings = db
                 .child(ACCOUNTS_PUSH_SETTINGS)
                 .child(userAid)
+                .apply { keepSynced(true) } //todo think smth to remove this
                 .awaitList<PushSettingDbEntity>(exceptionHandler)
         var settings = db.child(TABLE_CLIENT_DATA)
                 .child(TABLE_CLIENT_DATA_PUSH_TYPES)
@@ -41,10 +41,6 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
         val ids = userSettings.map { it.id }.toSet()
         settings = settings.filter { it.id !in ids }
         val result = settings + userSettings
-        Timber.i("SettingsRepository1 " + ids.toString())
-        Timber.i("SettingsRepository2 " + userSettings.toString())
-        Timber.i("SettingsRepository3 " + settings.toString())
-        Timber.i("SettingsRepository4 " + result.toString())
         return converter.convertCollection(result, PushSettingModel::class.java)
     }
 
@@ -52,17 +48,13 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
         val notification = mapOf(setting.name to PushSettingsRequest(setting.isActive, setting.withSound))
         val result = firebaseSettingsApi.accountNotifications(notification).handleException(exceptionHandler)
         val keys = result.data.accountPushSettings.keys
-        val settings = mutableListOf<PushSettingModel>()
-        keys.forEach {
+        return keys.mapTo(mutableListOf<PushSettingModel>()){
             val data = requireNotNull(result.data.accountPushSettings[it])
-            settings.add(PushSettingModelImpl(
+            PushSettingModelImpl(
                     isActive = data.isActive,
                     withSound = data.withSound,
                     name = it
-            ))
+            )
         }
-
-        return settings
-
     }
 }

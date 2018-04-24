@@ -1,5 +1,6 @@
 package com.mnassa.screen.settings
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -13,6 +14,7 @@ import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.settings.push.PushSettingsController
+import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_settings.view.*
 import org.kodein.di.generic.instance
@@ -40,7 +42,9 @@ class SettingsController : MnassaControllerImpl<SettingsViewModel>() {
                 val message = fromDictionary(R.string.settings_language_change_message)
                 val text = "$title\n$message"
                 dialog.yesNoDialog(view.context, getOneSpanText(text, title, Color.BLACK)) {
-                    languageProvider.changeLocale()
+                    val lang = languageProvider.changeLocale()
+                    val prefs = view.context.getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
+                    prefs.edit().putString(LanguageProviderImpl.LANGUAGE_SETTINGS, lang).apply()
                     val intent = view.context.packageManager.getLaunchIntentForPackage(view.context.packageName)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(intent)
