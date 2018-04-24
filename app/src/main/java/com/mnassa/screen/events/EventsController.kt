@@ -54,8 +54,6 @@ class EventsController : MnassaControllerImpl<EventsViewModel>() {
             }
         }
 
-
-
     }
 
     override fun onViewCreated(view: View) {
