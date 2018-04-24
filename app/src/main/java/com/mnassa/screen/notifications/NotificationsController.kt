@@ -33,6 +33,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
         savedInstanceState?.apply {
             adapter.restoreState(this)
         }
+        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             val view = getViewSuspend()
             viewModel.notificationChannel.openSubscription().bufferize(this@NotificationsController).consumeEach {

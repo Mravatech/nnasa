@@ -12,7 +12,6 @@ import com.mnassa.domain.model.impl.NotificationModelImpl
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.notifications.viewholder.NotificationHeaderHolder
 import com.mnassa.screen.notifications.viewholder.NotificationHolder
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -25,13 +24,11 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     var onItemClickListener = { item: NotificationModel -> }
     override val itemsComparator: (item1: NotificationModel, item2: NotificationModel) -> Int = { first, second ->
         when {
-//            itemsTheSameComparator(first, second) -> 0
-            first.type == NEW && second.type == NEW -> 0
+            itemsTheSameComparator(first, second) -> 0
             !first.isOld && second.type == OLD -> -1
             first.type == NEW && second.type == OLD -> -1
             first.type == OLD && second.type == NEW -> 1
             first.type == NEW && second.type != NEW && second.type != OLD -> -1
-            first.type == OLD && second.type == OLD -> 0
             first.type == OLD && !second.isOld -> 1
             first.type == OLD && second.isOld -> -1
             else -> first.createdAt.compareTo(second.createdAt) * -1
@@ -41,7 +38,7 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     override val itemClass: Class<NotificationModel> = NotificationModel::class.java
 
     init {
-        itemsTheSameComparator = { first, second -> first.id == second.id  }
+        itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second ->
             first == second
         }
@@ -91,10 +88,8 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
-                    Timber.i(it.toString())
                     if (!it.isOld) {
                         newNotificationIds.add(it.id)
-                        Timber.i("NEW ONE " + it.toString())
                         if (wrappedList.indexOf(headerNew) == -1) {
                             super.add(headerNew)
                         }

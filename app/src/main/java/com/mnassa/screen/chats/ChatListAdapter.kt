@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
@@ -69,7 +70,13 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             itemView.llCharRoom.setOnClickListener(onClickListener)
             itemView.ivChatUserIcon.avatarRound(item.account?.avatar)
             itemView.tvLastMessage.text = item.chatMessageModel?.text
-            itemView.tvUserName.text = item.account?.userName
+            item.account?.let {
+                itemView.tvUserName.text = if (it.accountType == AccountType.PERSONAL) {
+                    "${it.personalInfo?.firstName} ${it.personalInfo?.lastName}"
+                } else {
+                    it.organizationInfo?.organizationName
+                }
+            }
             item.takeIf { it.unreadCount > 0 }?.let {
                 itemView.tvMessageUnread.visibility = View.VISIBLE
                 itemView.tvMessageUnread.text = it.unreadCount.toString()
@@ -121,6 +128,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         }
 
     }
+
     companion object {
         const val EXTRA_STATE_MESSAGES = "EXTRA_STATE_MESSAGES"
     }
