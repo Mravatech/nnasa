@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ChatRoomModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
@@ -68,14 +68,10 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         override fun bind(item: ChatRoomModel) {
             itemView.llCharRoom.tag = this@ChatRoomViewHolder
             itemView.llCharRoom.setOnClickListener(onClickListener)
-            itemView.ivChatUserIcon.avatarRound(item.account?.avatar)
             itemView.tvLastMessage.text = item.chatMessageModel?.text
             item.account?.let {
-                itemView.tvUserName.text = if (it.accountType == AccountType.PERSONAL) {
-                    "${it.personalInfo?.firstName} ${it.personalInfo?.lastName}"
-                } else {
-                    it.organizationInfo?.organizationName
-                }
+                itemView.ivChatUserIcon.avatarRound(it.avatar)
+                itemView.tvUserName.text =  it.formattedName
             }
             item.takeIf { it.unreadCount > 0 }?.let {
                 itemView.tvMessageUnread.visibility = View.VISIBLE
