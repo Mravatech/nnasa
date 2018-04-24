@@ -22,10 +22,6 @@ fun fromDictionary(key: String): String {
 
 fun fromDictionary(key: String, defaultValue: String): String {
     val result = fromDictionary(key)
-    if (key.contains("userComment")){
-        var i = 0
-        i++
-    }
     if (result.isBlank()){
         return defaultValue
     }

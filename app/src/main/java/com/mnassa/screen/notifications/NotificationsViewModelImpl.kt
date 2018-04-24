@@ -1,5 +1,6 @@
 package com.mnassa.screen.notifications
 
+import android.os.Bundle
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
@@ -23,7 +24,12 @@ class NotificationsViewModelImpl(
     private val notificationNewChannel: BroadcastChannel<ListItemEvent<NotificationModel>> by ReConsumeWhenAccountChangedArrayBroadcastChannel(
             receiveChannelProvider = { notificationInteractor.loadNotifications() })
 
-    override fun retrieveNotifications() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retrieveNotifications()
+    }
+
+    private fun retrieveNotifications() {
         handleException {
             notificationOldChannel.consumeEach {
                 notificationChannel.send(it)

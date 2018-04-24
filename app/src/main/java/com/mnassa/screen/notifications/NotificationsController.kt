@@ -1,5 +1,6 @@
 package com.mnassa.screen.notifications
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
@@ -26,6 +27,35 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
     override val viewModel: NotificationsViewModel by instance()
 
     private val adapter = NotificationAdapter()
+
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+        savedInstanceState?.apply {
+            adapter.restoreState(this)
+        }
+        launchCoroutineUI {
+            val view = getViewSuspend()
+            viewModel.notificationChannel.openSubscription().bufferize(this@NotificationsController).consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
+                        view.llEmptyNotifications.visibility = View.GONE
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.dataStorage.clear()
+                        adapter.isLoadingEnabled = false
+                        view.llEmptyNotifications.visibility = View.VISIBLE
+                    }
+                }
+
+            }
+        }
+    }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         with(view) {
@@ -33,28 +63,13 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
             rvNotifications.layoutManager = LinearLayoutManager(view.context)
             rvNotifications.adapter = adapter
         }
-        viewModel.retrieveNotifications()
         adapter.onItemClickListener = { onNotificationClickHandle(it) }
-        launchCoroutineUI {
-            viewModel.notificationChannel.openSubscription().bufferize(this@NotificationsController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
-                    }
-                }
-                if (view.llEmptyNotifications.visibility == View.VISIBLE) {
-                    view.llEmptyNotifications.visibility = View.GONE
-                }
-            }
-        }
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        adapter.saveState(outState)
     }
 
     private fun onNotificationClickHandle(item: NotificationModel) {
