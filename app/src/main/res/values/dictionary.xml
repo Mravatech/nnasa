@@ -56,6 +56,8 @@
     <string name="tab_home_title">_android_news_feed_title</string>
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
     <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
+    <string name="tab_home_button_create_event">_android_home_button_create_event</string>
+    <string name="tab_home_button_create_general_post">_android_home_button_create_general</string>
 
     <!-- ========================================= POSTS ======================================== -->
     <string name="need_prefix">_post_type_need_Info</string>

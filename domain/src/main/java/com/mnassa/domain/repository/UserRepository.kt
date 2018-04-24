@@ -49,5 +49,5 @@ interface UserRepository {
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?
 
-    suspend fun getPermissions(): PermissionsModel
+    suspend fun getPermissions(): ReceiveChannel<PermissionsModel>
 }

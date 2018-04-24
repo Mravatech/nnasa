@@ -171,5 +171,8 @@
     <string name="_android_event_participant_header_other_INFO">Other Participants</string>
     <string name="_android_event_participant_guest_INFO">Guest %d</string>
 
+    <string name="_android_home_button_create_event_INFO">Event</string>
+    <string name="_android_home_button_create_general_INFO">General Post</string>
+
 
 </resources>

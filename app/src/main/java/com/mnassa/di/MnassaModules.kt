@@ -57,6 +57,8 @@ import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
+import com.mnassa.screen.events.create.CreateEventViewModel
+import com.mnassa.screen.events.create.CreateEventViewModelImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.events.details.EventDetailsViewModel
 import com.mnassa.screen.events.details.EventDetailsViewModelImpl
@@ -151,8 +153,8 @@ private val viewModelsModule = Kodein.Module {
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
     bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
-    bind<HomeViewModel>() with provider { HomeViewModelImpl(instance()) }
-    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance()) }
+    bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance()) }
+    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl(instance()) }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
@@ -199,6 +201,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance()) }
     bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance()) }
     bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
+    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -264,7 +267,7 @@ private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
-    bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance()) }
+    bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }

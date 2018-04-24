@@ -64,7 +64,6 @@ class UserProfileInteractorImpl(
 
     override suspend fun processAccount(account: PersonalInfoModel) = userRepository.processAccount(account)
 
-
     override suspend fun processAccount(account: CompanyInfoModel) = userRepository.processAccount(account)
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
@@ -79,4 +78,6 @@ class UserProfileInteractorImpl(
     override fun getAccountIdOrException(): String = userRepository.getAccountIdOrException()
     override suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?> =
             userRepository.getAccountByIdChannel(accountId)
+
+    override suspend fun getPermissions(): ReceiveChannel<PermissionsModel> = userRepository.getPermissions()
 }

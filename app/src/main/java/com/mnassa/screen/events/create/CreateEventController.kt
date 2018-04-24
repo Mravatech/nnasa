@@ -13,6 +13,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     override val layoutId: Int = R.layout.controller_event_create
     override val viewModel: CreateEventViewModel by instance()
 
+
+
     companion object {
         private const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         private const val EXTRA_EVENT = "EXTRA_EVENT"

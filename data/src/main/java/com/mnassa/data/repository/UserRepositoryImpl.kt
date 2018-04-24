@@ -242,13 +242,13 @@ class UserRepositoryImpl(
 
     }
 
-    override suspend fun getPermissions(): PermissionsModel {
+    override suspend fun getPermissions(): ReceiveChannel<PermissionsModel> {
         return db
                 .child(TABLE_ACCOUNTS)
                 .child(getAccountIdOrException())
                 .child(TABLE_ACCOUNTS_COL_PERMISSIONS)
-                .await<PermissionsDbEntity>(exceptionHandler)
-                .let { requireNotNull(it) }
+                .toValueChannel<PermissionsDbEntity>(exceptionHandler)
+                .map { it ?: PermissionsDbEntity.EMPTY  }
     }
 
     override suspend fun addPushToken() {//todo add recheck token

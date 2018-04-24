@@ -62,8 +62,10 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
             TYPE_NEED_WITH_IMAGE_3_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 3, isRepost = true)
             TYPE_NEED_WITH_IMAGE_MORE_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 4, isRepost = true)
 
-            TYPE_OFFER -> OfferViewHolder.newInstance(parent, this)
+            TYPE_OFFER -> UnsupportedTypeViewHolder.newInstance(parent, this)
             TYPE_PROFILE -> ProfileViewHolder.newInstance(parent, this)
+            TYPE_INFO -> UnsupportedTypeViewHolder.newInstance(parent, this)
+            TYPE_OTHER -> UnsupportedTypeViewHolder.newInstance(parent, this)
             else -> throw IllegalStateException("Illegal view type $viewType")
         }
     }
@@ -105,6 +107,8 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
                 else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
             }
             PostType.PROFILE -> TYPE_PROFILE
+            PostType.INFO -> TYPE_INFO
+            PostType.OTHER -> TYPE_OTHER
         }
     }
 
@@ -147,5 +151,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         private const val TYPE_OFFER = 12
         private const val TYPE_PROFILE = 13
         private const val TYPE_PROFILE_REPOST = 14
+        private const val TYPE_INFO = 15
+        private const val TYPE_OTHER = 16
     }
 }

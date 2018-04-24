@@ -64,6 +64,7 @@ internal object DatabaseContract {
     const val NEWS_FEED_TYPE_ACCOUNT = "account"
     const val NEWS_FEED_TYPE_OFFER = "offer"
     const val NEWS_FEED_TYPE_GENERAL = "general"
+    const val NEWS_FEED_TYPE_INFO = "info"
 
     const val NEWS_FEED_PRIVACY_TYPE_PUBLIC = "public"
     const val NEWS_FEED_PRIVACY_TYPE_PRIVATE = "private"
