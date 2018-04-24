@@ -2,6 +2,7 @@ package com.mnassa.screen.base
 
 import android.os.Bundle
 import android.support.annotation.CallSuper
+import android.util.Log
 import com.google.firebase.FirebaseException
 import com.mnassa.App
 import com.mnassa.R
@@ -12,6 +13,7 @@ import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
@@ -33,6 +35,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         val parentKodein by closestKodein(requireNotNull(App.context))
         extend(parentKodein, allowOverride = true)
     }
+    private val appInfoProvider: AppInfoProvider by instance()
 
     override val errorMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
     override val isProgressEnabledChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel()
@@ -60,7 +63,10 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             loginInteractor.signOut()
         } catch (e: NetworkException) {
             Timber.d(e)
-            errorMessageChannel.send(e.message)
+            if (appInfoProvider.isDebug) {
+                val message = "${e.message}\n${Log.getStackTraceString(e.cause)}"
+                errorMessageChannel.send(message)
+            }
         } catch (e: FirebaseException) {
             Timber.e(e)
             val message = e.localizedMessage ?: e.message

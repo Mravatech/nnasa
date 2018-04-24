@@ -175,7 +175,7 @@ private val viewModelsModule = Kodein.Module {
     bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
-    bind<SharingOptionsViewModel>() with provider { SharingOptionsViewModelImpl(instance()) }
+    bind<SharingOptionsViewModel>() with factory { params: SharingOptionsViewModel.SharingOptionsParams -> SharingOptionsViewModelImpl(params, instance(), instance()) }
     bind<RecommendViewModel>() with factory { args: RecommendViewModel.RecommendViewModelParams -> RecommendViewModelImpl(args, instance(), instance()) }
     bind<EditPersonalProfileViewModel>() with provider { EditPersonalProfileViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EditCompanyProfileViewModel>() with provider { EditCompanyProfileViewModelImpl(instance(), instance(), instance(), instance()) }

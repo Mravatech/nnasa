@@ -82,15 +82,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadUserPostById(id: String, accountId: String): PostModel? {
-        val post = db
+        return db
                 .child(TABLE_NEWS_FEED)
                 .child(accountId)
                 .child(id)
                 .await<PostDbEntity>(exceptionHandler)
-        post?.let {
-            return converter.convert(id)
-        }
-        return null
+                ?.run { converter.convert(this, PostModel::class.java) }
     }
 
     override suspend fun sendViewed(ids: List<String>) {

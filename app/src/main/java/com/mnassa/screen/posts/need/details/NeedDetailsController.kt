@@ -245,8 +245,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     private fun openSharingOptionsScreen() {
-        if (post?.canBeShared == true) {
-            open(SharingOptionsController.newInstance(listener = this))
+        post?.takeIf { it.canBeShared }?.let {
+            open(SharingOptionsController.newInstance(
+                    listener = this,
+                    accountsToExclude = listOf(it.author.id)))
         }
     }
 

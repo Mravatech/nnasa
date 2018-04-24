@@ -24,9 +24,9 @@ interface DataSource : Iterable<AdapterItem> {
     }
 }
 
-interface PersistanceDataStorage: DataSource {
-    fun saveState(): Bundle
-    fun restoreState(state: Bundle)
+interface PersistanceAdapter {
+    fun saveState(outState: Bundle)
+    fun restoreState(inState: Bundle)
 }
 
 val DataSource.isEmpty: Boolean get() = size == 0

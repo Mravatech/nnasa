@@ -50,7 +50,10 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
                 )
             }
             tvShareOptions.setOnClickListener {
-                open(SharingOptionsController.newInstance(sharingOptions, this@RecommendUserController))
+                open(SharingOptionsController.newInstance(
+                        options = sharingOptions,
+                        listener = this@RecommendUserController,
+                        accountsToExclude = listOf(recommendedUser.id)))
             }
 
             launchCoroutineUI {

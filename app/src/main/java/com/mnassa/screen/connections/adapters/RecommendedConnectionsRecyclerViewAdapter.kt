@@ -1,6 +1,5 @@
 package com.mnassa.screen.connections.adapters
 
-import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,10 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.*
+import com.mnassa.extensions.avatarSquare
+import com.mnassa.extensions.formattedFromEvent
+import com.mnassa.extensions.formattedPosition
+import com.mnassa.extensions.invisibleIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connections_recommended.view.*
@@ -131,18 +133,7 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
         }
     }
 
-    fun saveState(outState: Bundle) {
-        outState.putSerializable(EXTRA_STATE_RECOMMENDED_CONNECTIONS, dataStorage.toCollection(ArrayList()))
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun restoreState(inState: Bundle) {
-        dataStorage.set(inState.getSerializable(EXTRA_STATE_RECOMMENDED_CONNECTIONS) as List<ShortAccountModel>)
-    }
-
     private companion object {
-        private const val EXTRA_STATE_RECOMMENDED_CONNECTIONS = "EXTRA_STATE_RECOMMENDED_CONNECTIONS"
-
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
     }
