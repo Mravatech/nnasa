@@ -88,7 +88,7 @@ kotlin.gradlePlugin =   "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kot
 kotlin.androidExtensions = 'androidx.core:core-ktx:0.1'
 deps.kotlin = kotlin
 
-versions.coroutines = '0.22.3'
+versions.coroutines = '0.22.5'
 def coroutines = [:]
 coroutines.core =       "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
 coroutines.android =    "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
