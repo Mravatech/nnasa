@@ -22,8 +22,8 @@ interface ProfileViewModel : MnassaViewModel {
     fun getProfileWithAccountId(accountId: String)
     fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String, isAcceptConnect: Boolean)
 
-    fun sendComplaint(id: String, reason: String)
-    suspend fun retrieveComplaints():List<TranslatedWordModel>
+    fun sendComplaint(id: String, reason: String, authorText: String?)
+    suspend fun retrieveComplaints(): List<TranslatedWordModel>
     sealed class ProfileCommand {
         class ProfileConnection : ProfileCommand()
         class ProfileWallet : ProfileCommand()

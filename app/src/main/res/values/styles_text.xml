@@ -72,5 +72,10 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/recommended_profile_tags</item>
     </style>
+    <style name="Settings.Info" parent="MnassaHeader2">
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
 
 </resources>

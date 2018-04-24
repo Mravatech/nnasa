@@ -10,5 +10,6 @@ import com.mnassa.domain.model.ComplaintModel
 data class ComplaintModelImpl(
         override var id: String,
         override val type: String,
-        override val reason: String
+        override val reason: String,
+        override val authorText: String?
 ) : ComplaintModel

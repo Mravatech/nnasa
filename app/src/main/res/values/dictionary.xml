@@ -388,6 +388,13 @@
     <string name="event_workshop">workshop</string>
     <string name="event_exercise">exercise</string>
     <string name="event_activity">activity</string>
+    <!-- ========================================== SETTINGS ===================================== -->
+    <string name="settings_title">_settings_navTitle</string>
+    <string name="push_settings_title">_settings_row_pushNotifications</string>
+    <string name="settings_push_row">_settings_row_pushNotifications</string>
+    <string name="settings_language_row">_settings_row_language</string>
+    <string name="settings_language_change_title">_question_languageChanging_title</string>
+    <string name="settings_language_change_message">_question_languageChanging_message</string>
 
     <string name="event_details_by">_event_details_by</string>
 
