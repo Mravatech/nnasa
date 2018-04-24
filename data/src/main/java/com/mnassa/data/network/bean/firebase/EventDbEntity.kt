@@ -13,7 +13,7 @@ internal data class EventDbEntity(
         @SerializedName("copyOwner") val copyOwner: String,
         @SerializedName("counters") val counters: EventCountersDbEntity,
         @SerializedName("createdAt") val createdAt: Long,
-        @SerializedName("duration") val duration: EventDurationDbEntity,
+        @SerializedName("duration") val duration: EventDurationDbEntity?,
         @SerializedName("eventStartAt") val eventStartAt: Long,
         @SerializedName("itemType") val itemType: String,
         @SerializedName("location") val locationDbEntity: LocationDbEntity?,
