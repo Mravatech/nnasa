@@ -52,15 +52,6 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         }
     }
 
-    fun saveState(outState: Bundle) {
-        outState.putSerializable(EXTRA_STATE_MESSAGES, dataStorage.toCollection(ArrayList()))
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun restoreState(inState: Bundle) {
-        dataStorage.set(inState.getSerializable(EXTRA_STATE_MESSAGES) as List<ChatRoomModel>)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ChatRoomModel> =
             ChatRoomViewHolder.newInstance(parent, this)
 
@@ -127,10 +118,6 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             return true
         }
 
-    }
-
-    companion object {
-        const val EXTRA_STATE_MESSAGES = "EXTRA_STATE_MESSAGES"
     }
 
 }
