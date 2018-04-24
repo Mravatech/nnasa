@@ -13,7 +13,6 @@ import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
@@ -63,7 +62,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
         }
-        val prefs = App.context.getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
         val lang = prefs.getString(LanguageProviderImpl.LANGUAGE_SETTINGS, null)
         lang?.let {
             languageProvider.locale = Locale(it)

@@ -1,5 +1,6 @@
 package com.mnassa.screen.notifications
 
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,6 @@ import com.mnassa.domain.model.impl.NotificationModelImpl
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.notifications.viewholder.NotificationHeaderHolder
 import com.mnassa.screen.notifications.viewholder.NotificationHolder
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -24,13 +24,11 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     var onItemClickListener = { item: NotificationModel -> }
     override val itemsComparator: (item1: NotificationModel, item2: NotificationModel) -> Int = { first, second ->
         when {
-//            itemsTheSameComparator(first, second) -> 0
-            first.type == NEW && second.type == NEW -> 0
+            itemsTheSameComparator(first, second) -> 0
             !first.isOld && second.type == OLD -> -1
             first.type == NEW && second.type == OLD -> -1
             first.type == OLD && second.type == NEW -> 1
             first.type == NEW && second.type != NEW && second.type != OLD -> -1
-            first.type == OLD && second.type == OLD -> 0
             first.type == OLD && !second.isOld -> 1
             first.type == OLD && second.isOld -> -1
             else -> first.createdAt.compareTo(second.createdAt) * -1
@@ -40,7 +38,7 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     override val itemClass: Class<NotificationModel> = NotificationModel::class.java
 
     init {
-        itemsTheSameComparator = { first, second -> first.id == second.id && first.createdAt == second.createdAt }
+        itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second ->
             first == second
         }
@@ -71,21 +69,27 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
         }
     }
 
+    fun saveState(outState: Bundle) {
+        outState.putSerializable(EXTRA_STATE_NOTIFICATION, dataStorage.toCollection(ArrayList()))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun restoreState(inState: Bundle) {
+        dataStorage.set(inState.getSerializable(EXTRA_STATE_NOTIFICATION) as List<NotificationModel>)
+    }
+
     class NotificationsDataStorage(private val adapter: BaseSortedPaginationRVAdapter<NotificationModel>) :
             SortedDataStorage<NotificationModel>(NotificationModel::class.java, adapter), DataStorage<NotificationModel> {
         private var headerOld: NotificationModel = getHeader(true, OLD)
         private var headerNew: NotificationModel = getHeader(false, NEW)
         private val newNotificationIds = mutableListOf<String>()
-        private var newCount = 0
 
         override fun addAll(elements: Collection<NotificationModel>): Boolean {
             adapter.postUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
-                    Timber.i(it.toString())
                     if (!it.isOld) {
                         newNotificationIds.add(it.id)
-                        Timber.i("NEW ONE " + it.toString())
                         if (wrappedList.indexOf(headerNew) == -1) {
                             super.add(headerNew)
                         }
@@ -139,6 +143,7 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     companion object {
         private const val HEADER = 1
         private const val CONTENT = 2
+        private const val EXTRA_STATE_NOTIFICATION = "EXTRA_STATE_NOTIFICATION"
 
         private const val NEW = "NEW"
         private const val OLD = "OLD"

@@ -48,7 +48,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
-    override suspend fun loadAllByAccountUd(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
+    override suspend fun loadAllByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
         val userId = requireNotNull(accountId)
         val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PABLIC_POSTS
         return db.child(table)
@@ -78,7 +78,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .child(userId)
                 .child(id)
                 .toValueChannel<PostDbEntity>(exceptionHandler)
-                .map { it?.run { mapPost(this) }}
+                .map { it?.run { mapPost(this) } }
     }
 
     override suspend fun loadUserPostById(id: String, accountId: String): PostModel? {

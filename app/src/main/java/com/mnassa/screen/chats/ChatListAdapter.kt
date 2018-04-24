@@ -1,12 +1,14 @@
 package com.mnassa.screen.chats
 
 import android.graphics.Typeface
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
@@ -50,6 +52,14 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         }
     }
 
+    fun saveState(outState: Bundle) {
+        outState.putSerializable(EXTRA_STATE_MESSAGES, dataStorage.toCollection(ArrayList()))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun restoreState(inState: Bundle) {
+        dataStorage.set(inState.getSerializable(EXTRA_STATE_MESSAGES) as List<ChatRoomModel>)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ChatRoomModel> =
             ChatRoomViewHolder.newInstance(parent, this)
@@ -60,7 +70,13 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             itemView.llCharRoom.setOnClickListener(onClickListener)
             itemView.ivChatUserIcon.avatarRound(item.account?.avatar)
             itemView.tvLastMessage.text = item.chatMessageModel?.text
-            itemView.tvUserName.text = item.account?.userName
+            item.account?.let {
+                itemView.tvUserName.text = if (it.accountType == AccountType.PERSONAL) {
+                    "${it.personalInfo?.firstName} ${it.personalInfo?.lastName}"
+                } else {
+                    it.organizationInfo?.organizationName
+                }
+            }
             item.takeIf { it.unreadCount > 0 }?.let {
                 itemView.tvMessageUnread.visibility = View.VISIBLE
                 itemView.tvMessageUnread.text = it.unreadCount.toString()
@@ -111,6 +127,10 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             return true
         }
 
+    }
+
+    companion object {
+        const val EXTRA_STATE_MESSAGES = "EXTRA_STATE_MESSAGES"
     }
 
 }
