@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.Controller
+import com.mnassa.App
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
@@ -174,7 +177,29 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             )
         }
 
+        suspend fun format(): CharSequence {
+                return fromDictionary(R.string.need_create_share_to_prefix).format(
+                        when {
+                            isPromoted -> fromDictionary(R.string.need_create_to_all_mnassa)
+                            isMyNewsFeedSelected -> fromDictionary(R.string.need_create_to_newsfeed)
+                            selectedConnections.isNotEmpty() -> {
+                                val userInteractor: UserProfileInteractor = App.context.getInstance()
+                                val usernames = selectedConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.userName }
+                                if (selectedConnections.size <= 2) {
+                                    usernames
+                                } else {
+                                    val tail = fromDictionary(R.string.need_create_to_connections_other).format(selectedConnections.size - 2)
+                                    "$usernames $tail"
+                                }
+                            }
+                            else -> throw IllegalStateException()
+                        }
+                )
+        }
+
         companion object {
+            private const val MAX_SHARE_TO_USERNAMES = 2
+
             val EMPTY = ShareToOptions(false, true, emptyList())
         }
     }

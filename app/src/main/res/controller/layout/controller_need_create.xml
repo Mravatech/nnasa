@@ -25,17 +25,8 @@
 
             <TextView
                 android:id="@+id/tvShareOptions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/ShareToButton"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:background="@drawable/btn_share_to"
-                android:drawableEnd="@drawable/ic_post_share_to_arrow_white"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:fontFamily="@font/roboto"
-                android:padding="8dp"
-                android:textColor="@color/white"
-                android:textSize="14sp"
                 tools:text="Share to" />
 
             <android.support.design.widget.TextInputLayout

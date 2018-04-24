@@ -44,7 +44,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             waitForResumeJob?.cancel()
             waitForResumeJob = launchCoroutineUI {
                 lifecycle.awaitFirst { it == Lifecycle.Event.ON_RESUME }
-                view?.tvShareOptions?.text = formatShareToOptions(value)
+                view?.tvShareOptions?.text = value.format()
             }
         }
     private val playServiceHelper: PlayServiceHelper by instance()
@@ -89,7 +89,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             }
 
             launchCoroutineUI {
-                tvShareOptions.text = formatShareToOptions(sharingOptions)
+                tvShareOptions.text = sharingOptions.format()
             }
             etNeed.prefix = fromDictionary(R.string.need_create_prefix) + " "
             etNeed.hint = fromDictionary(R.string.need_create_need_placeholder)
@@ -185,31 +185,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             sharingOptions.isMyNewsFeedSelected = post.allConnections
             sharingOptions.selectedConnections = post.privacyConnections
             launchCoroutineUI {
-                tvShareOptions.text = formatShareToOptions(sharingOptions)
+                tvShareOptions.text = sharingOptions.format()
             }
             //no ability to change sharing options while post changing
             tvShareOptions.visibility = View.GONE
-        }
-    }
-
-    private suspend fun formatShareToOptions(options: SharingOptionsController.ShareToOptions): String {
-        with(options) {
-            return fromDictionary(R.string.need_create_share_to_prefix).format(
-                    when {
-                        isPromoted -> fromDictionary(R.string.need_create_to_all_mnassa)
-                        isMyNewsFeedSelected -> fromDictionary(R.string.need_create_to_newsfeed)
-                        selectedConnections.isNotEmpty() -> {
-                            val usernames = options.selectedConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { viewModel.getUser(it) }.joinToString { it.userName }
-                            if (selectedConnections.size <= 2) {
-                                usernames
-                            } else {
-                                val tail = fromDictionary(R.string.need_create_to_connections_other).format(options.selectedConnections.size - 2)
-                                "$usernames $tail"
-                            }
-                        }
-                        else -> throw IllegalStateException()
-                    }
-            )
         }
     }
 
@@ -227,7 +206,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     companion object {
         private const val MIN_NEED_TEXT_LENGTH = 3
-        private const val MAX_SHARE_TO_USERNAMES = 2
+
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_POST_TO_EDIT = "EXTRA_POST_TO_EDIT"
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
