@@ -23,6 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:orientation="vertical">
         <!--todo move to layout and merge with chat message and notification-->
         <ImageView

@@ -1,5 +1,6 @@
 package com.mnassa.screen.chats
 
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -23,22 +24,21 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
 
     val adapter = ChatListAdapter()
 
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
-        view.fabAddChat.setOnClickListener { open(AllConnectionsController.newInstance()) }
-        view.rvMessages.layoutManager = LinearLayoutManager(view.context)
-        view.rvMessages.addItemDecoration(ChatRoomItemDecoration(ContextCompat.getDrawable(view.context, R.drawable.chat_decorator)!!))
-        view.rvMessages.adapter = adapter
-        view.toolbar.title = fromDictionary(R.string.chats_title)
-        view.toolbar.title = fromDictionary(R.string.chats_title)
-        adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(it.account))) }
-        view.tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+
+        savedInstanceState?.apply {
+            adapter.restoreState(this)
+        }
+        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
+            val view = getViewSuspend()
             viewModel.listMessagesChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
                         adapter.dataStorage.add(it.item)
+                        view.llEmptyMessages.visibility = View.GONE
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
@@ -46,14 +46,31 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
                     is ListItemEvent.Cleared -> {
                         adapter.dataStorage.clear()
                         adapter.isLoadingEnabled = true
+                        view.llEmptyMessages.visibility = View.VISIBLE
                     }
-                }
-                if (view.llEmptyMessages.visibility == View.VISIBLE) {
-                    view.llEmptyMessages.visibility = View.GONE
                 }
             }
         }
+    }
 
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        with(view) {
+            fabAddChat.setOnClickListener { open(AllConnectionsController.newInstance()) }
+            rvMessages.layoutManager = LinearLayoutManager(view.context)
+            rvMessages.addItemDecoration(ChatRoomItemDecoration(ContextCompat.getDrawable(view.context, R.drawable.chat_decorator)!!))
+            rvMessages.adapter = adapter
+            toolbar.title = fromDictionary(R.string.chats_title)
+            toolbar.title = fromDictionary(R.string.chats_title)
+
+            tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
+        }
+        adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(it.account))) }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        adapter.saveState(outState)
     }
 
     companion object {
