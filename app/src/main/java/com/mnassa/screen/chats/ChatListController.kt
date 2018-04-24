@@ -45,7 +45,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
                     is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
                     is ListItemEvent.Cleared -> {
                         adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
+                        adapter.isLoadingEnabled = false
                         view.llEmptyMessages.visibility = View.VISIBLE
                     }
                 }
