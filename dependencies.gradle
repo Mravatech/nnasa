@@ -10,7 +10,7 @@ deps.data = project(":data")
 deps.domain = project(":domain")
 
 //============================================== BUILD =============================================
-versions.androidGradlePluginVersion = '3.0.1'
+versions.androidGradlePluginVersion = '3.1.2'
 deps.androidGradlePlugin = "com.android.tools.build:gradle:$versions.androidGradlePluginVersion"
 
 def build_versions = [:]
@@ -41,7 +41,7 @@ archComponents.paging = "android.arch.paging:runtime:1.0.0-alpha5"
 deps.archComponents = archComponents
 
 //============================================= PLAY SERVICES ======================================
-versions.playServices = "12.0.1"
+versions.playServices = "15.0.0"
 versions.playServicesGradlePluginVersion = '3.2.1'
 
 def playServices = [:]
@@ -57,16 +57,15 @@ playServices.playServicesGradlePlugin = "com.google.gms:google-services:$version
 deps.playServices = playServices
 
 //========================================== Crashlytics ===========================================
-versions.fabricVersion = "1.25.1"
+versions.fabricVersion = "1.+"
 
 def fabric = [:]
 fabric.fabricPlugin = "io.fabric.tools:gradle:${versions.fabricVersion}"
-
 deps.fabric = fabric
 
 //========================================== FIREBASE ==============================================
-versions.firebase = '12.0.1'
-versions.ui = '3.2.1'
+versions.firebase = versions.playServices
+versions.ui = '3.3.1'
 def firebase = [:]
 firebase.core =            "com.google.firebase:firebase-core:$versions.firebase"
 firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
@@ -80,7 +79,7 @@ firebase.fcm =             "com.google.firebase:firebase-messaging:$versions.fir
 deps.firebase = firebase
 
 //============================================== KOTLIN ============================================
-versions.kotlin = '1.2.31'
+versions.kotlin = '1.2.40'
 def kotlin = [:]
 kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"

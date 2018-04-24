@@ -12,6 +12,6 @@ class CrashReportingTree : Timber.Tree() {
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }
-        Crashlytics.log(priority, tag, message + "; TRACE = ${Log.getStackTraceString(t)}")
+        Crashlytics.log(priority, tag, "$message; TRACE = ${Log.getStackTraceString(t)}")
     }
 }

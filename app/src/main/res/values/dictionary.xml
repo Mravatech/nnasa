@@ -430,5 +430,6 @@
     <string name="event_participant_header_other">_android_event_participant_header_other</string>
     <string name="event_participant_save">_navItem_Save</string>
     <string name="event_participant_guest">_android_event_participant_guest</string>
+    <string name="event_duration_not_specified">_android_event_duration_not_specified</string>
 
 </resources>

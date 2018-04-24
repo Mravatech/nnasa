@@ -106,7 +106,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         scheduleText.append("\n")
         scheduleText.append(fromDictionary(R.string.event_duration))
         scheduleText.append(": ")
-        scheduleText.append(event.duration.formatted)
+        scheduleText.append(event.duration?.formatted ?: fromDictionary(R.string.event_duration_not_specified))
         return scheduleText
     }
 

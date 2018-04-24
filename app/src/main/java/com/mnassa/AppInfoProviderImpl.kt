@@ -9,7 +9,7 @@ import com.mnassa.domain.other.AppInfoProvider
 /**
  * Created by Peter on 2/21/2018.
  */
-class AppInfoProviderImpl(private val context: Context) : AppInfoProvider {
+class AppInfoProviderImpl(context: Context) : AppInfoProvider {
     @SuppressLint("HardwareIds")
     private val androidIdVal = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     private val manufacturer = Build.MANUFACTURER
