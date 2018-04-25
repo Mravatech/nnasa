@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.core.BaseViewModelImpl
 import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.exception.NotAuthorizedException
@@ -54,6 +55,12 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         } catch (e: JobCancellationException) {
             //ignore
             Timber.d(e)
+        } catch (e: FirebaseMappingException) {
+            Timber.e(e)
+            if (appInfoProvider.isDebug) {
+                val message = "Mapping exception at\n${e.path}\n${Log.getStackTraceString(e.cause)}"
+                errorMessageChannel.send(message)
+            } else e.message.takeIf { !it.isNullOrBlank() }?.apply { errorMessageChannel.send(this) }
         } catch (e: NetworkDisableException) {
             Timber.d(e)
             errorMessageChannel.send(fromDictionary(R.string.error_no_internet))
@@ -66,7 +73,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             if (appInfoProvider.isDebug) {
                 val message = "${e.message}\n${Log.getStackTraceString(e.cause)}"
                 errorMessageChannel.send(message)
-            }
+            } else e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }
         } catch (e: FirebaseException) {
             Timber.e(e)
             val message = e.localizedMessage ?: e.message

@@ -2,6 +2,7 @@ package com.mnassa.data.network.exception.handler
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.database.DatabaseException
+import com.mnassa.domain.exception.FirebaseMappingException
 
 /**
  * Created by Peter on 3/5/2018.
@@ -17,6 +18,7 @@ class ExceptionHandlerImpl(
         return when (throwable) {
             is FirebaseException -> firebaseExceptionHandler.handle(throwable)
             is DatabaseException -> firebaseExceptionHandler.handle(throwable)
+            is FirebaseMappingException -> firebaseExceptionHandler.handle(throwable)
             else -> networkExceptionHandler.handle(throwable)
         }
     }
