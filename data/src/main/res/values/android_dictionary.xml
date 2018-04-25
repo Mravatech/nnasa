@@ -175,8 +175,10 @@
     <string name="_android_home_button_create_event_INFO">Create Event</string>
     <string name="_android_home_button_create_general_INFO">Create General Post</string>
     
-    <string name="_android_event_create_date_time_placeholder_INFO">Date &amp; time</string>
     <string name="_android_event_create_location_placeholder_INFO">Event location</string>
+    <string name="_android_event_date_time_title_INFO">Event date &amp; time</string>
+    <string name="_android_event_date_time_done_INFO">Done</string>
+    <string name="_android_event_time_placeholder_INFO">Select event start time</string>
 
 
 

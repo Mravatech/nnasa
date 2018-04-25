@@ -11,6 +11,7 @@ import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.model.EventModel
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.create.date.DateTimePickerController
 import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.posts.need.create.AttachedImagesRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
@@ -23,7 +24,8 @@ import org.kodein.di.generic.instance
  * Created by Peter on 4/23/2018.
  */
 class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventViewModel>(args),
-        SharingOptionsController.OnSharingOptionsResult {
+        SharingOptionsController.OnSharingOptionsResult,
+        DateTimePickerController.OnDatePickerResultListener {
     override val layoutId: Int = R.layout.controller_event_create
     private val eventId by lazy { args.getString(EXTRA_EVENT_ID, null) }
     override val viewModel: CreateEventViewModel by instance(arg = eventId)
@@ -42,6 +44,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val attachedImagesAdapter = AttachedImagesRVAdapter()
     private var imageToReplace: AttachedImage? = null
     private var event: EventModel? = null
+    private var dateTime: DateTimePickerController.DatePickerResult? = null
 
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -64,7 +67,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         }
 
         with(view) {
-            toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
+            toolbar.withActionButton(fromDictionary(R.string.tab_home_button_create_event)) {
                 //                viewModel.createPost(
 //                        need = etNeed.text.toString(),
 //                        tags = chipTags.getTags(),
@@ -85,6 +88,10 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
+
+            etEventDateTime.setOnClickListener {
+                open(DateTimePickerController.newInstance(this@CreateEventController, dateTime))
+            }
         }
     }
 
@@ -92,6 +99,11 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         attachedImagesAdapter.destroyCallbacks()
         view.rvImages.adapter = null
         super.onDestroyView(view)
+    }
+
+    override fun onResult(result: DateTimePickerController.DatePickerResult) {
+        this.dateTime = result
+
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {

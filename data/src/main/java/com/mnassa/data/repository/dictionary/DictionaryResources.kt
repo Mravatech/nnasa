@@ -1,6 +1,7 @@
 package com.mnassa.data.repository.dictionary
 
 import android.content.Context
+import android.os.Looper
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider

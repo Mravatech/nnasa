@@ -50,6 +50,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <FrameLayout
+                android:id="@+id/flDateTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
@@ -84,11 +85,10 @@
             <com.mnassa.widget.MnassaTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:text="@string/event_create_location_placeholder"
-                />
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:text="@string/event_create_location_placeholder" />
 
 
             <com.mnassa.widget.ChipLayout

@@ -46,10 +46,10 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         subscribeToErrorEvents()
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
         hideProgress() //prevent showing progress after screen change
-        hideKeyboard()
-        super.onViewDestroyed(view)
+//        hideKeyboard()
+        super.onDestroyView(view)
     }
 
     protected open fun subscribeToErrorEvents() {
@@ -79,7 +79,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
 
     private var progressDialog: Dialog? = null
     protected fun showProgress() {
-        hideKeyboard()
+//        hideKeyboard()
         if (progressDialog != null) return
         progressDialog?.dismiss()
         val dialogHelper: DialogHelper by instance()

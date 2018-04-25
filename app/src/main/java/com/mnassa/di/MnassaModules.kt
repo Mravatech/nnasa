@@ -59,6 +59,8 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.events.create.CreateEventViewModel
 import com.mnassa.screen.events.create.CreateEventViewModelImpl
+import com.mnassa.screen.events.create.date.DateTimePickerViewModel
+import com.mnassa.screen.events.create.date.DateTimePickerViewModelImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.events.details.EventDetailsViewModel
 import com.mnassa.screen.events.details.EventDetailsViewModelImpl
@@ -208,6 +210,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance()) }
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
+    bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

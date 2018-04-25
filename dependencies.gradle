@@ -140,9 +140,9 @@ network.gsonconverter = "com.squareup.retrofit2:converter-gson:$versions.retrofi
 deps.network = network
 
 //=============================================== GLIDE ============================================
-versions.glideVersion = '4.3.1'
-versions.glideAnnoVersion = '4.3.1'
-versions.glideTransformersVersion = '3.1.1'
+versions.glideVersion = '4.7.1'
+versions.glideAnnoVersion = '4.7.1'
+versions.glideTransformersVersion = '3.3.0'
 
 def glide = [:]
 glide.glide            = "com.github.bumptech.glide:glide:$versions.glideVersion"

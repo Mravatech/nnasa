@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.ProgressDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -132,10 +133,24 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener) {
-        val calendar = Calendar.getInstance()
-        DatePickerDialog(context, listener, calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+        DatePickerDialog(
+                context,
+                listener,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    fun timeDialog(context: Context, listener: TimePickerDialog.OnTimeSetListener, calendar: Calendar = Calendar.getInstance()) {
+        TimePickerDialog(
+                context,
+                listener,
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        ).show()
     }
 
 
