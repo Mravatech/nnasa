@@ -360,7 +360,7 @@
     <string name="notification_thinks">_android_notification_thinks</string>
     <string name="notification_can_help_you_with">_android_notification_can_help_you_with</string>
     <string name="notification_you_promoted_your_post">_android_notification_you_promoted_your_post</string>
-    <string name="notification_your_post_will_expire_tomorrow">_android_notification_your_post_will_expire_tomorrow</string>
+    <string name="notification_your_post_will_expire_tomorrow">_notification_text_key_oneDayToExpirationOfPost</string>
     <string name="notification_your_post_has_expired">_android_notification_your_post_has_expired</string>
     <string name="notification_was_cancelled_by_organizer">_android_notification_was_cancelled_by_organizer</string>
     <string name="notification_points_were_returned">_android_notification_points_were_returned</string>

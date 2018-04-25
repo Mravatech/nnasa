@@ -826,6 +826,9 @@
     <string name="_notification_text_keybecome_mnassa_user_ENG">null</string>
     <string name="_notification_text_keybecome_mnassa_user_AR">null</string>
     <string name="_notification_text_keybecome_mnassa_user_INFO">become new MNASSA user</string>
+    <string name="_notification_text_key_oneDayToExpirationOfPost_ENG">null</string>
+    <string name="_notification_text_key_oneDayToExpirationOfPost_AR">null</string>
+    <string name="_notification_text_key_oneDayToExpirationOfPost_INFO">Your post will expire tomorrow. Prolong it or it will be closed.</string>
     <string name="_notification_text_keypostPromoted_ENG">null</string>
     <string name="_notification_text_keypostPromoted_AR">null</string>
     <string name="_notification_text_keypostPromoted_INFO">You promoted you post: </string>
