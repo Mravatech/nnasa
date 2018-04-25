@@ -44,10 +44,10 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
-
+    private lateinit var id: String
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        val id = accountModel?.let {
+        id = accountModel?.let {
             view.ivCropImage.avatarSquare(it.avatar)
             it.id
         } ?: run { accountId }
@@ -55,10 +55,10 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.onConnectionStatusClickListener = {
             when (it) {
                 ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
-                    viewModel.sendConnectionStatus(it, id, true)
+                    viewModel.sendConnectionStatus(it, id)
                 }
                 ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
-                    viewModel.sendConnectionStatus(it, id, true)
+                    viewModel.sendConnectionStatus(it, id)
             }
         }
         adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
@@ -141,7 +141,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     override var onComplaint: String = ""
         set(value) {
-            val id = accountModel?.id ?: accountId
             viewModel.sendComplaint(id, OTHER, value)
         }
 
@@ -159,12 +158,16 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
             ConnectionStatus.RECOMMENDED -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener { }
+                fab.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, id)
+                }
                 fab.setImageResource(R.drawable.ic_new_requests)
             }
             ConnectionStatus.SENT -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener { }
+                fab.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, id)
+                }
                 fab.setImageResource(R.drawable.ic_pending)
             }
             else -> {
