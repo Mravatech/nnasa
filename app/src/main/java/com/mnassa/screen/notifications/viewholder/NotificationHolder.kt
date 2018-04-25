@@ -33,7 +33,6 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         }
         setViewsByType(item)
         with(itemView) {
-            //            tvNotificationInfo.text = getTextByType(item)
             itemView.ivUserIcon.avatarRound(item.extra.author?.avatar)
             tvNotificationCame.text = item.createdAt.toTimeAgo()
             llNotificationRoot.setOnClickListener(onClickListener)
