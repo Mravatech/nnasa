@@ -23,13 +23,7 @@ class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInt
         }
     }
 
-    override suspend fun getDisconnectTimeoutDays(): Int {
-        var result = 0
-        handleExceptionsSuspend {
-            result = connectionsInteractor.getDisconnectTimeoutDays()
-        }
-        return result
-    }
+    override suspend fun getDisconnectTimeoutDays(): Int = handleExceptionsSuspend { connectionsInteractor.getDisconnectTimeoutDays() } ?: 0
 
     override fun accept(account: ShortAccountModel) {
         handleException {

@@ -14,13 +14,7 @@ class ArchivedConnectionViewModelImpl(private val connectionsInteractor: Connect
 
     override val declinedConnectionsChannel: ConflatedBroadcastChannel<List<DeclinedShortAccountModel>> = ConflatedBroadcastChannel()
 
-    override suspend fun getDisconnectTimeoutDays(): Int {
-        var result = 0
-        handleExceptionsSuspend {
-            result = connectionsInteractor.getDisconnectTimeoutDays()
-        }
-        return result
-    }
+    override suspend fun getDisconnectTimeoutDays(): Int = handleExceptionsSuspend { connectionsInteractor.getDisconnectTimeoutDays() } ?: 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
