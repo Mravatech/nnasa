@@ -18,7 +18,7 @@ fun Activity.hideKeyboard(view: View? = null) {
     viewInner.postDelayed({
         try {
             viewInner.clearFocus()
-            val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(viewInner.windowToken, 0)
         } catch (e: Exception) {
             Timber.e(e)
@@ -28,13 +28,13 @@ fun Activity.hideKeyboard(view: View? = null) {
 }
 
 fun showKeyboard(view: View) {
-//    view.postDelayed({
+    view.postDelayed({
         try {
-//            view.requestFocus()
-//            val keyboard = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//            keyboard.showSoftInput(view, 0)
+            view.requestFocus()
+            val keyboard = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            keyboard.showSoftInput(view, 0)
         } catch (e: Exception) {
             Timber.e(e)
         }
-//    }, 200)
+    }, 200)
 }

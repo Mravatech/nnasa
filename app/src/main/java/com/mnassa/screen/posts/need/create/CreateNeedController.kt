@@ -151,6 +151,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     }
 
     override fun onDestroyView(view: View) {
+        if (playServiceHelper.googleApiClient.isConnected) {
+            playServiceHelper.googleApiClient.disconnect()
+        }
         attachedImagesAdapter.destroyCallbacks()
         view.rvImages.adapter = null
         super.onDestroyView(view)
@@ -195,13 +198,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private fun onNeedTextUpdated() {
         val view = view ?: return
         view.toolbar.actionButtonEnabled = view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
-    }
-
-    override fun onViewDestroyed(view: View) {
-        if (playServiceHelper.googleApiClient.isConnected) {
-            playServiceHelper.googleApiClient.disconnect()
-        }
-        super.onViewDestroyed(view)
     }
 
     companion object {

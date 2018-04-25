@@ -9,28 +9,29 @@ import android.widget.TimePicker
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.extensions.formatAsDate
+import com.mnassa.extensions.formatAsDateTime
+import com.mnassa.extensions.formatAsDuration
+import com.mnassa.extensions.formatAsTime
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_date_time.view.*
+import mobi.upod.timedurationpicker.TimeDurationPicker
+import mobi.upod.timedurationpicker.TimeDurationPickerDialog
 import org.kodein.di.generic.instance
 import java.io.Serializable
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * Created by Peter on 4/25/2018.
  */
-class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePickerViewModel>(args), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePickerViewModel>(args), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, TimeDurationPickerDialog.OnDurationSetListener {
     override val layoutId: Int = R.layout.controller_event_date_time
     override val viewModel: DateTimePickerViewModel by instance()
     private val dialogHelper: DialogHelper by instance()
-    private val languageProvider: LanguageProvider by instance()
     private val startDateTime = Calendar.getInstance()
     private var durationMillis: Long = 0L
-    private val dateFormatter by lazy { SimpleDateFormat("dd MMM yyyy", languageProvider.locale) }
-    private val timeFormatter by lazy { SimpleDateFormat("hh:mm a", languageProvider.locale) }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -39,7 +40,8 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.event_date_time_button)) {
-                resultListener.onResult(DatePickerResult(startDateTime.time, durationMillis))
+                resultListener.onDateTimeResult(DatePickerResult(startDateTime.time, durationMillis))
+                close()
             }
             tilDate.hint = fromDictionary(R.string.event_date_placeholder)
             tilTime.hint = fromDictionary(R.string.event_time_placeholder)
@@ -51,16 +53,29 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
             etTime.setOnClickListener {
                 dialogHelper.timeDialog(it.context, this@DateTimePickerController, startDateTime)
             }
+            etDuration.setOnClickListener {
+                dialogHelper.durationDialog(it.context, this@DateTimePickerController, durationMillis)
+            }
+
+            if (args.containsKey(EXTRA_INIT_DATA)) {
+                val initData = args[EXTRA_INIT_DATA] as DatePickerResult
+                args.remove(EXTRA_INIT_DATA)
+                val calendar = Calendar.getInstance()
+                calendar.time = initData.startDateTime
+                onDateSet(null, calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
+                onTimeSet(null, calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE])
+                onDurationSet(null, initData.durationMillis)
+            }
         }
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         startDateTime.set(Calendar.YEAR, year)
         startDateTime.set(Calendar.MONTH, month)
-        startDateTime.set(Calendar.DAY_OF_MONTH, month)
+        startDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         launchCoroutineUI {
             with(getViewSuspend()) {
-                etDate.setText(dateFormatter.format(startDateTime.timeInMillis))
+                etDate.setText(startDateTime.time.formatAsDate())
             }
         }
     }
@@ -70,19 +85,30 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
         startDateTime.set(Calendar.MINUTE, minute)
         launchCoroutineUI {
             with(getViewSuspend()) {
-                etTime.setText(timeFormatter.format(startDateTime.timeInMillis))
+                etTime.setText(startDateTime.time.formatAsTime())
+            }
+        }
+    }
+
+    override fun onDurationSet(view: TimeDurationPicker?, duration: Long) {
+        durationMillis = duration
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                etDuration.setText(duration.formatAsDuration())
             }
         }
     }
 
     interface OnDatePickerResultListener {
-        fun onResult(result: DatePickerResult)
+        fun onDateTimeResult(result: DatePickerResult)
     }
 
     data class DatePickerResult(
             val startDateTime: Date,
             val durationMillis: Long
-    ) : Serializable
+    ) : Serializable {
+        fun format(): CharSequence = "${startDateTime.formatAsDateTime()} | ${durationMillis.formatAsDuration()}"
+    }
 
     companion object {
         private const val EXTRA_INIT_DATA = "EXTRA_INIT_DATA"

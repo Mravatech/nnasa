@@ -179,6 +179,12 @@
     <string name="_android_event_date_time_title_INFO">Event date &amp; time</string>
     <string name="_android_event_date_time_done_INFO">Done</string>
     <string name="_android_event_time_placeholder_INFO">Select event start time</string>
+    <string name="_android_event_address_INFO">Address</string>
+
+    <string name="_android_days_INFO">%d days</string>
+    <string name="_android_hours_INFO">%d hours</string>
+    <string name="_android_minutes_INFO">%d minutes</string>
+    <string name="_android_seconds_INFO">%d seconds</string>
 
 
 

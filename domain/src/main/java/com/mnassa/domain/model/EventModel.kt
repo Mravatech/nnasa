@@ -70,4 +70,8 @@ sealed class EventType : Serializable {
     object WORKSHOP : EventType()
     object EXERCISE : EventType()
     object ACTIVITY : EventType()
+
+    companion object {
+        val ALL = listOf(LECTURE, DISCUSSION, WORKSHOP, EXERCISE, ACTIVITY)
+    }
 }

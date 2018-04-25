@@ -83,12 +83,82 @@
             </FrameLayout>
 
             <com.mnassa.widget.MnassaTextView
+                style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
                 android:text="@string/event_create_location_placeholder" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/sLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilCity"
+                style="@style/Registration.TextInputLayout"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                app:errorEnabled="false"
+                tools:hint="City">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvCity"
+                    style="@style/Registration.EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                tools:hint="Address">
+
+                <com.mnassa.widget.PrefixEditText
+                    android:id="@+id/etAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="text" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="240dp" />
+
+
+            <com.mnassa.widget.MnassaTextView
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:text="@string/event_create_type" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/sEventType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+
+
 
 
             <com.mnassa.widget.ChipLayout
@@ -111,7 +181,6 @@
                     android:layout_height="wrap_content" />
             </FrameLayout>
 
-
             <TextView
                 android:id="@+id/tvExtraDetails"
                 style="@style/MnassaTextTiny"
@@ -124,20 +193,6 @@
                 android:paddingStart="4dp"
                 android:textSize="14sp"
                 tools:text="Extra details" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPlace"
-                style="@style/Registration.TextInputLayout"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                app:errorEnabled="false"
-                tools:hint="City">
-
-                <AutoCompleteTextView
-                    android:id="@+id/actvPlace"
-                    style="@style/Registration.EditText" />
-            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilPrice"

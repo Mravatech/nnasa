@@ -35,6 +35,8 @@ import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 import kotlinx.android.synthetic.main.dialog_yes_no.*
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import mobi.upod.timedurationpicker.TimeDurationPicker
+import mobi.upod.timedurationpicker.TimeDurationPickerDialog
 import java.util.*
 
 class DialogHelper {
@@ -151,6 +153,10 @@ class DialogHelper {
                 calendar.get(Calendar.MINUTE),
                 true
         ).show()
+    }
+
+    fun durationDialog(context: Context, listener: TimeDurationPickerDialog.OnDurationSetListener, durationMillis: Long = 0) {
+        TimeDurationPickerDialog(context, listener, durationMillis, TimeDurationPicker.HH_MM).show()
     }
 
 

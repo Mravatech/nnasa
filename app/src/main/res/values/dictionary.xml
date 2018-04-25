@@ -404,6 +404,7 @@
     <string name="event_tab_participants">_android_event_tab_participants</string>
     <string name="event_location_not_defined">_event_details_location_notDefined</string>
     <string name="event_location_later">_event_details_location_willBeAnnouncedLater</string>
+    <string name="event_location_specify">_new_event_specify_location</string>
     <string name="event_duration">_event_details_duration</string>
     <string name="event_duration_minute">_event_details_durationType_minute</string>
     <string name="event_duration_hour">_event_details_durationType_hour</string>
@@ -441,5 +442,12 @@
     <string name="event_date_placeholder">_new_event_date_select</string>
     <string name="event_time_placeholder">_android_event_time_placeholder</string>
     <string name="event_duration_placeholder">_date_selection_duration</string>
+    <string name="event_create_address">_android_event_address</string>
+    <string name="event_create_type">create_event_type</string>
+
+    <string name="days_count">_android_days</string>
+    <string name="hours_count">_android_hours</string>
+    <string name="minutes_count">_android_minutes</string>
+    <string name="seconds_count">_android_seconds</string>
 
 </resources>
