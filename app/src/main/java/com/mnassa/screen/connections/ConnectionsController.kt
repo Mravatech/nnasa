@@ -15,6 +15,7 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.isGone
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.extensions.setHeaderWithCounter
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -46,6 +47,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private val newConnectionRequestsAdapter = NewConnectionRequestsRecyclerViewAdapter()
     private var isHeaderBounded = false
     private var permissionsSnackbar: Snackbar? = null
+    private val dialog: DialogHelper by instance()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -61,7 +63,16 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         recommendedConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
-        newConnectionRequestsAdapter.onDeclineClickListener = { viewModel.decline(it) }
+        newConnectionRequestsAdapter.onDeclineClickListener = {
+            view?.let { view ->
+                launchCoroutineUI { thisRef ->
+                    val disconnectDays = thisRef().viewModel.getDisconnectTimeoutDays()
+                    dialog.showDeclineConnectionDialog(view.context, disconnectDays) {
+                        viewModel.decline(it)
+                    }
+                }
+            }
+        }
         newConnectionRequestsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
         newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
 

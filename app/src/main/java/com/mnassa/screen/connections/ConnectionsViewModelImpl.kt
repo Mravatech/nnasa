@@ -25,6 +25,15 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
         connectionsInteractor.getConnectedConnections()
     }
 
+    override suspend fun getDisconnectTimeoutDays(): Int {
+        var result = 0
+        handleExceptionsSuspend {
+            result = connectionsInteractor.getDisconnectTimeoutDays()
+        }
+        return result
+    }
+
+
     override fun connect(account: ShortAccountModel) {
         handleException {
             withProgressSuspend {

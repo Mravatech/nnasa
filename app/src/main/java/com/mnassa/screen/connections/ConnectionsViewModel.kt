@@ -18,6 +18,7 @@ interface ConnectionsViewModel : MnassaViewModel {
     fun disconnect(account: ShortAccountModel)
     fun accept(account: ShortAccountModel)
     fun decline(account: ShortAccountModel)
+    suspend fun getDisconnectTimeoutDays(): Int
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     fun onContactPermissionsGranted()

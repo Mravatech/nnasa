@@ -163,6 +163,16 @@ class DialogHelper {
                 .show()
     }
 
+    fun showDeclineConnectionDialog(context: Context, disconnectDays: Int, onOkClick: () -> Unit) {
+        MaterialDialog.Builder(context)
+                .title(fromDictionary(R.string.new_requests_decline))
+                .content(fromDictionary(R.string.new_requests_decline_available).format(disconnectDays))
+                .positiveText(fromDictionary(R.string.general_yes))
+                .negativeText(fromDictionary(R.string.general_no))
+                .onPositive { _, _ -> onOkClick() }
+                .show()
+    }
+
     fun showChooseCompanyStatusDialog(context: Context,
                                       statuses: List<String>,
                                       position: Int,
@@ -189,8 +199,8 @@ class DialogHelper {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_yes_no)
         dialog.tvConnectionInfo.text = info
-        dialog.tvYes.text = fromDictionary(R.string.user_profile_yes)
-        dialog.tvNo.text = fromDictionary(R.string.user_profile_no)
+        dialog.tvYes.text = fromDictionary(R.string.general_yes)
+        dialog.tvNo.text = fromDictionary(R.string.general_no)
         dialog.tvNo.setOnClickListener { dialog.dismiss() }
         dialog.tvYes.setOnClickListener {
             onOkClick()
@@ -311,7 +321,7 @@ class DialogHelper {
                     .build()
 
             with(view) {
-                val setTotalPoints = { count : Long ->
+                val setTotalPoints = { count: Long ->
                     val priceText = SpannableStringBuilder((count * event.price).toString())
                     priceText.setSpan(RelativeSizeSpan(1f), 0, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     priceText.append(" ")
