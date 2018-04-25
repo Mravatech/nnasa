@@ -23,7 +23,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
-    override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountUd(accountId)
+    override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
 
     private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(10)
 

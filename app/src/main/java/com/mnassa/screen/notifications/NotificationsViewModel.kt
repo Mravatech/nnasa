@@ -11,6 +11,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface NotificationsViewModel : MnassaViewModel {
     val notificationChannel: BroadcastChannel<ListItemEvent<NotificationModel>>
 
-    fun retrieveNotifications()
     fun notificationView(id: String)
 }

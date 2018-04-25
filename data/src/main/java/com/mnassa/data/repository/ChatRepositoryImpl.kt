@@ -110,9 +110,9 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         }
                     }
                     it.item.replyPost?.first?.let { first ->
-                        val replyPost: PostModel? = postsRepository.loadUserPostById(accointId, first)
-                        replyPost?.let { _ ->
-                            it.item.replyPost = it.item.replyPost?.copy(second = converter.convert(replyPost, PostModel::class.java))
+                        val replyPost: PostModel? = postsRepository.loadUserPostById(first, accointId)
+                        replyPost?.let { post ->
+                            it.item.replyPost = it.item.replyPost?.copy(second = post)
                         }
                     }
                     it
