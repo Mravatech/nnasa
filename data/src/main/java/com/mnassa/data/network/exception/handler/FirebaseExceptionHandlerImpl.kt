@@ -4,6 +4,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseException
+import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.exception.NotAuthorizedException
 
 /**
@@ -23,5 +24,9 @@ class FirebaseExceptionHandlerImpl : FirebaseExceptionHandler {
     override fun handle(databaseeException: DatabaseException): Throwable {
         return NotAuthorizedException(databaseeException.message
                 ?: "not authorized (database exception)", databaseeException)
+    }
+
+    override fun handle(mappingException: FirebaseMappingException): Throwable {
+        return mappingException
     }
 }
