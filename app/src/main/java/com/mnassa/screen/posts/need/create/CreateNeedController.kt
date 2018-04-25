@@ -52,6 +52,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private val attachedImagesAdapter = AttachedImagesRVAdapter()
     private var placeId: String? = null
     private var imageToReplace: AttachedImage? = null
+    private var post: PostModel? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -80,7 +81,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 )
             }
             tvShareOptions.setOnClickListener {
-                open(SharingOptionsController.newInstance(sharingOptions, this@CreateNeedController))
+                val post = post
+                open(SharingOptionsController.newInstance(
+                        options = sharingOptions,
+                        listener = this@CreateNeedController,
+                        accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
             }
 
             launchCoroutineUI {
@@ -166,6 +171,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     }
 
     private fun setData(post: PostModel) {
+        this.post = post
         with(view ?: return) {
             etNeed.setText(post.text)
             launchCoroutineUI {

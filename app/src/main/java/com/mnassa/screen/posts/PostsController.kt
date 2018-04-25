@@ -10,6 +10,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -34,7 +35,13 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
         }
-        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+        adapter.onCreateNeedClickListener = {
+            launchCoroutineUI {
+                if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
+                    open(CreateNeedController.newInstance())
+                }
+            }
+        }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
 

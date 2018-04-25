@@ -3,6 +3,7 @@ package com.mnassa.screen.base.adapter
 /**
  * Created by Peter on 3/7/2018.
  */
+import android.os.Bundle
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.core.addons.WeakStateExecutor
+import com.mnassa.screen.base.adapter.new.PersistanceAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
@@ -64,6 +66,22 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             else -> onCreateViewHolder(parent, viewType, inflater)
         }
     }
+
+    /////////////////////////////////////// SAVING STATE LOGIC /////////////////////////////////////
+
+    fun saveState(outState: Bundle) {
+        if (dataStorage.size < MAX_STATE_SIZE) {
+            outState.putSerializable(stateId, dataStorage.toCollection(ArrayList()))
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun restoreState(inState: Bundle) {
+        val data = inState.getSerializable(stateId) as List<ITEM>?
+        data?.apply { dataStorage.set(this) }
+    }
+
+    private val stateId: String get() = EXTRA_STATE_PREFIX + this::class.java.name
 
     //////////////////////////////////// VIEW HOLDER CREATION //////////////////////////////////////
 
@@ -302,6 +320,9 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     companion object {
+        const val EXTRA_STATE_PREFIX = "EXTRA_STATE_PREFIX"
+        const val MAX_STATE_SIZE = 75
+
         const val TYPE_UNDEFINED = -1
         const val TYPE_HEADER = 7778881
         const val TYPE_LOADING_ENABLED = 777888

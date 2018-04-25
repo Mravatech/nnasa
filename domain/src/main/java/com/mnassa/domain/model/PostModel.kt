@@ -60,6 +60,8 @@ sealed class PostType(val ordinal: Int) : Serializable {
     object OFFER : PostType(2)
     object GENERAL : PostType(3)
     object PROFILE : PostType(4)
+    object INFO : PostType(5)
+    object OTHER : PostType(6)
 }
 
 sealed class PostPrivacyType : Serializable {

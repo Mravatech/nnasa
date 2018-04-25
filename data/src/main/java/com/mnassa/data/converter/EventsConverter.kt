@@ -55,8 +55,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 participants = input.participants ?: emptyList())
     }
 
-    private fun convertDuration(input: EventDbEntity): EventDuration {
-        return when (input.duration.type) {
+    private fun convertDuration(input: EventDbEntity?): EventDuration? {
+        return when (input?.duration?.type ?: return null) {
             NetworkContract.EventDuration.DAY -> EventDuration.Day(input.duration.value)
             NetworkContract.EventDuration.MINUTE -> EventDuration.Minute(input.duration.value)
             NetworkContract.EventDuration.HOUR -> EventDuration.Hour(input.duration.value)

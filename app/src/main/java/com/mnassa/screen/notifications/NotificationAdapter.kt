@@ -1,6 +1,5 @@
 package com.mnassa.screen.notifications
 
-import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -69,15 +68,6 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
         }
     }
 
-    fun saveState(outState: Bundle) {
-        outState.putSerializable(EXTRA_STATE_NOTIFICATION, dataStorage.toCollection(ArrayList()))
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun restoreState(inState: Bundle) {
-        dataStorage.set(inState.getSerializable(EXTRA_STATE_NOTIFICATION) as List<NotificationModel>)
-    }
-
     class NotificationsDataStorage(private val adapter: BaseSortedPaginationRVAdapter<NotificationModel>) :
             SortedDataStorage<NotificationModel>(NotificationModel::class.java, adapter), DataStorage<NotificationModel> {
         private var headerOld: NotificationModel = getHeader(true, OLD)
@@ -143,7 +133,6 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     companion object {
         private const val HEADER = 1
         private const val CONTENT = 2
-        private const val EXTRA_STATE_NOTIFICATION = "EXTRA_STATE_NOTIFICATION"
 
         private const val NEW = "NEW"
         private const val OLD = "OLD"

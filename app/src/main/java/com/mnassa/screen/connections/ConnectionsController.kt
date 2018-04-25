@@ -198,9 +198,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private fun openSentRequestsScreen() = open(SentConnectionsController.newInstance())
     private fun openArchivedConnectionsScreen() = open(ArchivedConnectionController.newInstance())
     private fun openNewRequestsScreen() = open(NewRequestsController.newInstance())
-
     private fun openChat(accountModel: ShortAccountModel) = open(ChatMessageController.newInstance(accountModel))
-
     private fun openProfile(accountModel: ShortAccountModel) = open(ProfileController.newInstance(accountModel))
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {

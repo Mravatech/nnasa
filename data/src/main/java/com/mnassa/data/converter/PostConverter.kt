@@ -14,12 +14,14 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_WORLD
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_ACCOUNT
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_GENERAL
+import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_INFO
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.PostCountersImpl
 import com.mnassa.domain.model.impl.PostModelImpl
 import com.mnassa.domain.model.impl.RecommendedProfilePostModelImpl
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -112,8 +114,11 @@ class PostConverter : ConvertersContextRegistrationCallback {
             NEWS_FEED_TYPE_ACCOUNT -> PostType.PROFILE
             NEWS_FEED_TYPE_OFFER -> PostType.OFFER
             NEWS_FEED_TYPE_GENERAL -> PostType.GENERAL
-
-            else -> throw IllegalArgumentException("Wrong post item type $input")
+            NEWS_FEED_TYPE_INFO -> PostType.INFO
+            else -> {
+                Timber.e(IllegalArgumentException("Wrong post item type $input"))
+                PostType.OTHER
+            }
         }
     }
 

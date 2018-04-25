@@ -160,6 +160,7 @@
     <string name="_android_event_tab_info_INFO">Information</string>
     <string name="_android_event_tab_participants_INFO">Participants</string>
     <string name="_android_event_duration_day_INFO">Day</string>
+    <string name="_android_event_duration_not_specified_INFO">Not specified</string>
     <string name="_android_event_points_template_INFO">%d Point(s) / Person</string>
     <string name="_android_event_bought_by_me_INFO">bought by me</string>
     <string name="_android_event_buy_more_INFO">Buy More!</string>
@@ -170,6 +171,9 @@
     <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
     <string name="_android_event_participant_header_other_INFO">Other Participants</string>
     <string name="_android_event_participant_guest_INFO">Guest %d</string>
+
+    <string name="_android_home_button_create_event_INFO">Event</string>
+    <string name="_android_home_button_create_general_INFO">General Post</string>
 
 
 </resources>

@@ -12,7 +12,7 @@ interface EventModel : Model {
     val viewsCount: Int
     val createdAt: Date
     val startAt: Date
-    val duration: EventDuration
+    val duration: EventDuration?
     val locationType: EventLocationType
     val allConnections: Boolean
     val itemType: ItemType

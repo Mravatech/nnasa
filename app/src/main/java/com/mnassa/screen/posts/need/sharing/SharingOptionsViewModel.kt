@@ -9,4 +9,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface SharingOptionsViewModel : MnassaViewModel {
     val allConnections: ReceiveChannel<List<ShortAccountModel>>
+
+    data class SharingOptionsParams(
+            val excludedAccounts: Set<String>
+    )
 }

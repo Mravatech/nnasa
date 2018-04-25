@@ -12,11 +12,14 @@ import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseAuthApi
+import com.mnassa.data.network.bean.firebase.PermissionsDbEntity
 import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
+import com.mnassa.data.repository.DatabaseContract.TABLE_ACCOUNTS
+import com.mnassa.data.repository.DatabaseContract.TABLE_ACCOUNTS_COL_PERMISSIONS
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.model.*
@@ -237,6 +240,15 @@ class UserRepositoryImpl(
                 .await<ShortAccountDbEntity>(exceptionHandler)
                 ?.run { converter.convert(this) }
 
+    }
+
+    override suspend fun getPermissions(): ReceiveChannel<PermissionsModel> {
+        return db
+                .child(TABLE_ACCOUNTS)
+                .child(getAccountIdOrException())
+                .child(TABLE_ACCOUNTS_COL_PERMISSIONS)
+                .toValueChannel<PermissionsDbEntity>(exceptionHandler)
+                .map { it ?: PermissionsDbEntity.EMPTY  }
     }
 
     override suspend fun addPushToken() {//todo add recheck token

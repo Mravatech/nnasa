@@ -1,5 +1,6 @@
 package com.mnassa.screen.home
 
+import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -9,4 +10,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface HomeViewModel : MnassaViewModel {
     val unreadEventsCountChannel: BroadcastChannel<Int>
     val unreadNeedsCountChannel: BroadcastChannel<Int>
+    val permissionsChannel: BroadcastChannel<PermissionsModel>
 }

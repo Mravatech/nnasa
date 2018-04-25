@@ -8,9 +8,11 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.isGone
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
+import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
@@ -71,7 +73,37 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
                 open(CreateNeedController.newInstance())
             }
 
-//            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
+            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
+            fabCreateOffer.setOnClickListener {
+                famHome.close(false)
+            }
+
+            fabCreateEvent.labelText = fromDictionary(R.string.tab_home_button_create_event)
+            fabCreateEvent.setOnClickListener {
+                famHome.close(false)
+                open(CreateEventController.newInstance())
+            }
+
+            fabCreateGeneralPost.labelText = fromDictionary(R.string.tab_home_button_create_general_post)
+            fabCreateGeneralPost.setOnClickListener {
+                famHome.close(false)
+            }
+
+            launchCoroutineUI {
+                viewModel.permissionsChannel.consumeEach { permission ->
+                    with(getViewSuspend()) {
+                        fabCreateNeed.isEnabled = permission.canCreateNeedPost
+                        fabCreateOffer.isEnabled = permission.canCreateOfferPost
+                        fabCreateEvent.isEnabled = permission.canCreateEvent
+                        fabCreateGeneralPost.isEnabled = permission.canCreateGeneralPost
+                        famHome.isEnabled = (
+                                permission.canCreateNeedPost ||
+                                        permission.canCreateOfferPost ||
+                                        permission.canCreateEvent ||
+                                        permission.canCreateGeneralPost)
+                    }
+                }
+            }
         }
     }
 

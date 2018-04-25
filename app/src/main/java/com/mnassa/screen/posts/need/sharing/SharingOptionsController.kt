@@ -21,7 +21,8 @@ import java.io.Serializable
  */
 class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptionsViewModel>(args) {
     override val layoutId: Int = R.layout.controller_sharing_options
-    override val viewModel: SharingOptionsViewModel by instance()
+    private val excludedAccounts by lazy { args.getStringArrayList(EXTRA_EXCLUDED_ACCOUNTS).toHashSet() }
+    override val viewModel: SharingOptionsViewModel by instance(arg = SharingOptionsViewModel.SharingOptionsParams(excludedAccounts))
     private val resultListener by lazy { targetController as OnSharingOptionsResult }
     private val adapter = BuildNetworkAdapter()
 
@@ -123,10 +124,15 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
     companion object {
         private const val EXTRA_PREDEFINED_OPTIONS = "EXTRA_PREDEFINED_OPTIONS"
+        private const val EXTRA_EXCLUDED_ACCOUNTS = "EXTRA_EXCLUDED_ACCOUNTS"
 
-        fun <T> newInstance(options: ShareToOptions = ShareToOptions.EMPTY, listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
+        fun <T> newInstance(
+                accountsToExclude: List<String>,
+                options: ShareToOptions = ShareToOptions.EMPTY,
+                listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
             val args = Bundle()
             args.putSerializable(EXTRA_PREDEFINED_OPTIONS, options)
+            args.putStringArrayList(EXTRA_EXCLUDED_ACCOUNTS, accountsToExclude.toCollection(ArrayList()))
             val result = SharingOptionsController(args)
             result.targetController = listener
             return result

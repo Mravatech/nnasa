@@ -20,6 +20,7 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_TOTAL_INCOME = "totalIncome"
     const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
     const val TABLE_ACCOUNTS_COL_INVITES_COUNT = "invites"
+    const val TABLE_ACCOUNTS_COL_PERMISSIONS = "permissions"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -66,6 +67,7 @@ internal object DatabaseContract {
     const val NEWS_FEED_TYPE_ACCOUNT = "account"
     const val NEWS_FEED_TYPE_OFFER = "offer"
     const val NEWS_FEED_TYPE_GENERAL = "general"
+    const val NEWS_FEED_TYPE_INFO = "info"
 
     const val NEWS_FEED_PRIVACY_TYPE_PUBLIC = "public"
     const val NEWS_FEED_PRIVACY_TYPE_PRIVATE = "private"

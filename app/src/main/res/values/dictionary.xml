@@ -56,6 +56,8 @@
     <string name="tab_home_title">_android_news_feed_title</string>
     <string name="tab_home_button_create_need">_post_type_need_Info</string>
     <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
+    <string name="tab_home_button_create_event">_android_home_button_create_event</string>
+    <string name="tab_home_button_create_general_post">_android_home_button_create_general</string>
 
     <!-- ========================================= POSTS ======================================== -->
     <string name="need_prefix">_post_type_need_Info</string>
@@ -428,5 +430,6 @@
     <string name="event_participant_header_other">_android_event_participant_header_other</string>
     <string name="event_participant_save">_navItem_Save</string>
     <string name="event_participant_guest">_android_event_participant_guest</string>
+    <string name="event_duration_not_specified">_android_event_duration_not_specified</string>
 
 </resources>

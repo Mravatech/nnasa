@@ -2,8 +2,6 @@ package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import com.mnassa.domain.model.*
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -48,4 +46,6 @@ interface UserRepository {
     fun getAccountIdOrException(): String
     suspend fun getFirebaseToken(): String?
     suspend fun getFirebaseUserId(): String?
+
+    suspend fun getPermissions(): ReceiveChannel<PermissionsModel>
 }

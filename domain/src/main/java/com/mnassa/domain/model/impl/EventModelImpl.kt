@@ -12,7 +12,7 @@ data class EventModelImpl(
         override val commentsCount: Int,
         override val viewsCount: Int,
         override val createdAt: Date,
-        override val duration: EventDuration,
+        override val duration: EventDuration?,
         override val startAt: Date,
         override val locationType: EventLocationType,
         override val allConnections: Boolean,

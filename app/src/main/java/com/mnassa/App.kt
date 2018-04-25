@@ -44,8 +44,8 @@ class App : MultiDexApplication(), KodeinAware {
             Stetho.initializeWithDefaults(this)
         } else {
             Timber.plant(CrashReportingTree())
-            Fabric.with(this, Crashlytics())
         }
+        Fabric.with(this, Crashlytics())
 
         launch {
             getInstance<DictionaryInteractor>().handleDictionaryUpdates()

@@ -1,6 +1,5 @@
 package com.mnassa.screen.events
 
-import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -79,15 +78,6 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
             R.id.rlAuthorRoot -> onAuthorClickListener(getDataItemByAdapterPosition(position))
             R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
         }
-    }
-
-    fun saveState(outState: Bundle) {
-        outState.putSerializable(EXTRA_STATE_EVENTS, dataStorage.toCollection(ArrayList()))
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun restoreState(inState: Bundle) {
-        dataStorage.set(inState.getSerializable(EXTRA_STATE_EVENTS) as List<EventModel>)
     }
 
     class EventViewHolder(itemView: View, languageProvider: LanguageProvider) : BaseVH<EventModel>(itemView) {
