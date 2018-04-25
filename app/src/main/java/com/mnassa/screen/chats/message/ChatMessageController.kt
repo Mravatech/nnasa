@@ -40,7 +40,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         super.onViewCreated(view)
         setupView(view)
         setupOnClickListeners(view)
-        view.toolbarChatMessage.title = accountModel?.userName ?: "admin"//todo get known what should be here
+        view.toolbarChatMessage.title = accountModel?.formattedName ?: "admin"//todo get known what should be here
         view.toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
         view.toolbarChatMessage.onMoreClickListener = { Toast.makeText(view.context, "Set profile after merge", Toast.LENGTH_SHORT).show() }
         view.rvMessages.layoutManager = LinearLayoutManager(view.context)

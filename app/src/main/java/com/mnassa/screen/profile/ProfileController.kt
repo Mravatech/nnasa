@@ -120,15 +120,19 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleCollapsingToolbar(view: View, profileModel: ProfileModel) {
+
         view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+            val shouldShowFab = (profileModel.connectionStatus == ConnectionStatus.CONNECTED ||
+                    profileModel.connectionStatus == ConnectionStatus.CONNECTED ||
+                    profileModel.connectionStatus == ConnectionStatus.CONNECTED)
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
                 view.tvTitleCollapsed.visibility = View.VISIBLE
-                if (!profileModel.isMyProfile) {
+                if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.hide()
                 }
             } else {
                 view.tvTitleCollapsed.visibility = View.GONE
-                if (!profileModel.isMyProfile) {
+                if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.show()
                 }
             }
@@ -162,6 +166,10 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 fab.visibility = View.VISIBLE
                 fab.setOnClickListener { }
                 fab.setImageResource(R.drawable.ic_pending)
+            }
+            else -> {
+                fab.visibility = View.GONE
+                fab.setOnClickListener { }
             }
         }
     }
