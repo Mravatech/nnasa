@@ -7,10 +7,13 @@ import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
+import com.mnassa.data.network.bean.retrofit.request.CreateOrEditEventRequest
+import com.mnassa.data.network.stringValue
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.EventModelImpl
 import com.mnassa.domain.model.impl.EventTicketModelImpl
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 4/13/2018.
@@ -22,7 +25,9 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertStatus)
         convertersContext.registerConverter(this::convertType)
+        convertersContext.registerConverter(this::convertFromType)
         convertersContext.registerConverter(this::convertTicket)
+        convertersContext.registerConverter(this::convertCreateEvent)
     }
 
     private fun convertEvent(input: EventDbEntity, tag: Any?, converter: ConvertersContext): EventModelImpl {
@@ -36,6 +41,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 startAt = Date(input.eventStartAt),
                 locationType = convertLocation(input, converter),
                 allConnections = input.allConnections,
+                privacyConnections = input.privacyConnections ?: emptyList(),
                 itemType = converter.convert(input.itemType),
                 originalId = input.originalId,
                 originalCreatedAt = Date(input.originalCreatedAt),
@@ -76,6 +82,14 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         }
     }
 
+    private fun convertFromLocation(input: EventLocationType): String {
+        return when(input) {
+            is EventLocationType.Specified -> NetworkContract.EventLocationType.SPECIFY
+            EventLocationType.NotDefined -> NetworkContract.EventLocationType.NOT_DEFINED
+            EventLocationType.Later -> NetworkContract.EventLocationType.LATER
+        }
+    }
+
     private fun convertItemType(input: String): ItemType {
         return when (input) {
             NetworkContract.ItemType.ORIGINAL -> ItemType.ORIGINAL
@@ -105,6 +119,17 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         }
     }
 
+    private fun convertFromType(input: EventType): String {
+        return when (input) {
+            EventType.ACTIVITY -> NetworkContract.EventType.ACTIVITY
+            EventType.DISCUSSION -> NetworkContract.EventType.DISCUSSION
+            EventType.EXERCISE -> NetworkContract.EventType.EXERCISE
+            EventType.LECTURE -> NetworkContract.EventType.LECTURE
+            EventType.WORKSHOP -> NetworkContract.EventType.WORKSHOP
+            else -> throw IllegalArgumentException("Invalid event type $input")
+        }
+    }
+
     private fun convertTicket(input: EventTicketDbEntity): EventTicketModelImpl {
         return EventTicketModelImpl(
                 id = input.id,
@@ -113,6 +138,29 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 eventOrganizerId = input.eventOrganizer,
                 pricePerTicket = input.pricePerTicket,
                 ticketCount = input.ticketsCount
+        )
+    }
+
+    private fun convertCreateEvent(input: CreateOrEditEventModel): CreateOrEditEventRequest {
+        val locationType = input.locationType
+
+        return CreateOrEditEventRequest(
+                id = input.id,
+                title = input.title,
+                text = input.description,
+                locationDescription = input.locationDescription,
+                locationId = (locationType as? EventLocationType.Specified)?.location?.placeId,
+                price = input.price ?: 0L,
+                ticketsTotal = input.ticketsTotal,
+                ticketsPerAccount = input.ticketsPerAccount,
+                isPromoted = false,
+                eventStartAt = input.startDateTime.time,
+                duration = com.mnassa.data.network.bean.retrofit.request.EventDuration("minute", TimeUnit.MILLISECONDS.toMinutes(input.durationMillis)),
+                pictures = input.uploadedImages.toList().takeIf { it.isNotEmpty() },
+                type = convertFromType(input.type),
+                locationType = convertFromLocation(input.locationType),
+                privacyType = input.privacy.privacyType.stringValue,
+                tags = input.tagIds.takeIf { it.isNotEmpty() }?.toList()
         )
     }
 }

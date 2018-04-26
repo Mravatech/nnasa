@@ -444,6 +444,16 @@
     <string name="event_duration_placeholder">_date_selection_duration</string>
     <string name="event_create_address">_android_event_address</string>
     <string name="event_create_type">create_event_type</string>
+    <string name="event_paid_text">_new_event_paid_event_switch</string>
+    <string name="event_points_placeholder">_buy_ticket_points</string>
+    <string name="event_limit_tickets_per_person_placeholder">_new_event_quantity_tickets_per_account</string>
+    <string name="event_tickets_quantity_placeholder">_new_event_quantity_ticket_placeholder</string>
+    <string name="event_ticket_price_placeholder">_new_event_price_placeholder</string>
+    <string name="event_description_placeholder">_android_event_description_placeholder</string>
+    <string name="event_post_button">_new_post_navbar_title_newPost</string>
+    <string name="event_edit_title">_new_event_navbar_title_edit</string>
+    <string name="event_menu_edit">_event_details_edit_event</string>
+    <string name="event_menu_change_status">_event_details_change_status_of_event</string>
 
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>

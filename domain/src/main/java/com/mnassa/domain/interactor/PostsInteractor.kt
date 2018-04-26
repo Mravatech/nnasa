@@ -50,7 +50,6 @@ interface PostsInteractor {
 }
 
 data class PostPrivacyOptions(
-        val newsFeed: Boolean,
         val privacyType: PostPrivacyType,
         val privacyConnections: List<String>
 )

@@ -19,9 +19,12 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.bindDate
 import com.mnassa.extensions.image
 import com.mnassa.extensions.isInvisible
+import com.mnassa.extensions.isMyEvent
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.CommentsWrapperController
+import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsController
 import com.mnassa.translation.fromDictionary
@@ -37,6 +40,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     private val eventId by lazy { args.getString(EXTRA_EVENT_ID) }
     override val layoutId: Int = R.layout.controller_event_details
     override val viewModel: EventDetailsViewModel by instance(arg = eventId)
+    private val popupMenuHelper: PopupMenuHelper by instance()
     private var eventModel: EventModel? = null
         get() {
             if (field == null) {
@@ -74,6 +78,14 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             vpEvents.adapter = adapter
 
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+            toolbar.inflateMenu(R.menu.event_menu)
+            toolbar.setOnMenuItemClickListener {
+                if (it.itemId == R.id.actionShowMenu) {
+                    onMenuClick(toolbar)
+                }
+                true
+            }
+
             appBarLayout.addOnOffsetChangedListener(offsetChangedListener)
         }
 
@@ -82,6 +94,16 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
 
     override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {
         return getViewSuspend().commentInputContainer
+    }
+
+    private fun onMenuClick(view: View) {
+        val event = eventModel ?: return
+        if (event.isMyEvent()) {
+            popupMenuHelper.showMyEventMenu(
+                    view,
+                    onChangeStatusClick = {},
+                    onEditClick = { open(CreateEventController.newInstance(event)) })
+        }
     }
 
     private suspend fun bindEvent(event: EventModel) {

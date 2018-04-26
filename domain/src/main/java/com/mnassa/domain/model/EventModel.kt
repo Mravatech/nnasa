@@ -2,6 +2,7 @@ package com.mnassa.domain.model
 
 import java.io.Serializable
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 4/13/2018.
@@ -15,6 +16,7 @@ interface EventModel : Model {
     val duration: EventDuration?
     val locationType: EventLocationType
     val allConnections: Boolean
+    val privacyConnections: List<String>
     val itemType: ItemType
     val originalId: String
     val originalCreatedAt: Date
@@ -41,14 +43,25 @@ interface EventTicketModel : Model {
     val ownerId: String
 }
 
-val EventModel.isActive: Boolean get() {
-    return status == EventStatus.OPENED
-}
+val EventModel.isActive: Boolean
+    get() {
+        return status == EventStatus.OPENED
+    }
 
 sealed class EventDuration(val value: Long) : Serializable {
-    class Minute(value: Long) : EventDuration(value)
-    class Hour(value: Long) : EventDuration(value)
-    class Day(value: Long) : EventDuration(value)
+    class Minute(value: Long) : EventDuration(value) {
+        override fun toMillis(): Long = TimeUnit.MINUTES.toMillis(value)
+    }
+
+    class Hour(value: Long) : EventDuration(value) {
+        override fun toMillis(): Long = TimeUnit.HOURS.toMillis(value)
+    }
+
+    class Day(value: Long) : EventDuration(value) {
+        override fun toMillis(): Long = TimeUnit.DAYS.toMillis(value)
+    }
+
+    abstract fun toMillis(): Long
 }
 
 sealed class EventLocationType : Serializable {
@@ -64,14 +77,10 @@ sealed class EventStatus : Serializable {
     object SUSPENDED : EventStatus()
 }
 
-sealed class EventType : Serializable {
-    object LECTURE : EventType()
-    object DISCUSSION : EventType()
-    object WORKSHOP : EventType()
-    object EXERCISE : EventType()
-    object ACTIVITY : EventType()
-
-    companion object {
-        val ALL = listOf(LECTURE, DISCUSSION, WORKSHOP, EXERCISE, ACTIVITY)
-    }
+sealed class EventType(val position: Int) : Serializable {
+    object LECTURE : EventType(0)
+    object DISCUSSION : EventType(1)
+    object WORKSHOP : EventType(2)
+    object EXERCISE : EventType(3)
+    object ACTIVITY : EventType(4)
 }

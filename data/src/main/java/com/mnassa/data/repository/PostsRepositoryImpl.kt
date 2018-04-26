@@ -22,6 +22,7 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
@@ -108,7 +109,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() },
-                allConnections = privacy.newsFeed,
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
                 tags = tags,
                 price = price,
                 location = placeId
@@ -142,7 +143,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 text = text,
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() },
-                allConnections = privacy.newsFeed
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
     }
 

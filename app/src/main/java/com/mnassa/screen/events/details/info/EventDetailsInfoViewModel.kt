@@ -1,6 +1,7 @@
 package com.mnassa.screen.events.details.info
 
 import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -9,5 +10,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EventDetailsInfoViewModel : MnassaViewModel {
     val eventChannel: BroadcastChannel<EventModel>
+    suspend fun loadTags(tags: List<String>): List<TagModel>
     fun buyTickets(count: Long)
 }

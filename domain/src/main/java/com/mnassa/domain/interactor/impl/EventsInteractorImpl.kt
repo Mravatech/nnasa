@@ -2,9 +2,13 @@ package com.mnassa.domain.interactor.impl
 
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.EventsInteractor
+import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.EventsRepository
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
@@ -15,7 +19,11 @@ import timber.log.Timber
 /**
  * Created by Peter on 4/13/2018.
  */
-class EventsInteractorImpl(private val eventsRepository: EventsRepository, private val userProfileInteractor: UserProfileInteractor) : EventsInteractor {
+class EventsInteractorImpl(
+        private val eventsRepository: EventsRepository,
+        private val userProfileInteractor: UserProfileInteractor,
+        private val storageInteractor: StorageInteractor,
+        private val tagInteractor: TagInteractor) : EventsInteractor {
     private val viewItemChannel = ArrayChannel<ListItemEvent<EventModel>>(10)
 
     init {
@@ -37,6 +45,42 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
             return
         }
         viewItemChannel.send(ListItemEvent.Added(item))
+    }
+
+    override suspend fun createEvent(model: CreateOrEditEventModel) {
+        val allImages = model.uploadedImages + model.imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
+        }.map { it.await() }
+        model.uploadedImages.clear()
+        model.uploadedImages.addAll(allImages)
+        model.tagIds.clear()
+        model.tagIds.addAll(createTags(model.tagModels))
+
+        return eventsRepository.createEvent(model)
+    }
+
+    override suspend fun editEvent(model: CreateOrEditEventModel) {
+        val allImages = model.uploadedImages + model.imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
+        }.map { it.await() }
+        model.uploadedImages.clear()
+        model.uploadedImages.addAll(allImages)
+        model.tagIds.clear()
+        model.tagIds.addAll(createTags(model.tagModels))
+
+        return eventsRepository.editEvent(model)
+    }
+
+    private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
+        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
+        val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
+        val tags = arrayListOf<String>()
+        if (customTags.isNotEmpty()) {
+            val newTags = tagInteractor.createCustomTagIds(customTags)
+            tags.addAll(newTags)
+        }
+        tags.addAll(existsTags)
+        return tags
     }
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {

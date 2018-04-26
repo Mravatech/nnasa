@@ -205,9 +205,9 @@ private val viewModelsModule = Kodein.Module {
         }
     }
     bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance()) }
-    bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance()) }
+    bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance(), instance()) }
     bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
-    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance(), instance()) }
+    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance(), instance(), instance()) }
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
@@ -287,7 +287,7 @@ private val interactorModule = Kodein.Module {
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
-    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance()) }
+    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance()) }
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }

@@ -42,7 +42,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     protected val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
-    override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.EMPTY
+    override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()

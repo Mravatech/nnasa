@@ -45,7 +45,19 @@ fun EventModel.bindDate(dateContainer: View) {
 
 val EventLocationType.formatted: CharSequence
     get() = when (this) {
-        is EventLocationType.Specified -> location.placeName.toString()
+        is EventLocationType.Specified -> {
+            val result = StringBuilder()
+            val placeName = location.placeName?.toString()
+            val city = location.city?.toString()
+            if (placeName != null) {
+                result.append(placeName)
+            }
+            if (placeName != city && city != null) {
+                if (result.isNotEmpty()) result.append("\n")
+                result.append(city)
+            }
+            result.toString()
+        }
         is EventLocationType.NotDefined -> fromDictionary(R.string.event_location_not_defined)
         is EventLocationType.Later -> fromDictionary(R.string.event_location_later)
     }

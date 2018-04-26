@@ -76,9 +76,7 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
     }
 
     fun showConnectedAccountMenu(view: View, onChat: () -> Unit, onProfile: () -> Unit, onDisconnect: () -> Unit) {
-        //Creating the instance of PopupMenu
         val popup = PopupMenu(view.context, view)
-        //Inflating the Popup using xml file
         popup.menuInflater.inflate(R.menu.connections_item, popup.menu)
         popup.menu.findItem(R.id.action_connections_send_message).title = fromDictionary(R.string.tab_connections_all_item_send_message)
         popup.menu.findItem(R.id.action_connections_view_profile).title = fromDictionary(R.string.tab_connections_all_item_view_profile)
@@ -101,9 +99,7 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
     }
 
     fun showConnectionsTabMenu(view: View, openRecommendedConnectionsScreen: () -> Unit, openSentRequestsScreen: () -> Unit, openArchivedConnectionsScreen: () -> Unit) {
-        //Creating the instance of PopupMenu
         val popup = PopupMenu(view.context, view)
-        //Inflating the Popup using xml file
         popup.menuInflater.inflate(R.menu.connections_main, popup.menu)
         popup.menu.findItem(R.id.action_recommended_connections).title = fromDictionary(R.string.tab_connections_recommended)
         popup.menu.findItem(R.id.action_sent_requests).title = fromDictionary(R.string.tab_connections_new_requests)
@@ -114,6 +110,23 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
                 R.id.action_recommended_connections -> openRecommendedConnectionsScreen()
                 R.id.action_sent_requests -> openSentRequestsScreen()
                 R.id.action_archived -> openArchivedConnectionsScreen()
+            }
+            true
+        }
+
+        popup.show()
+    }
+
+    fun showMyEventMenu(view: View, onEditClick: () -> Unit, onChangeStatusClick: () -> Unit) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.event_edit, popup.menu)
+        popup.menu.findItem(R.id.action_event_edit).title = fromDictionary(R.string.event_menu_edit)
+        popup.menu.findItem(R.id.action_event_change_status).title = fromDictionary(R.string.event_menu_change_status)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_event_edit -> onEditClick()
+                R.id.action_event_change_status -> onChangeStatusClick()
             }
             true
         }

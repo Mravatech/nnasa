@@ -16,6 +16,7 @@ data class EventModelImpl(
         override val startAt: Date,
         override val locationType: EventLocationType,
         override val allConnections: Boolean,
+        override val privacyConnections: List<String>,
         override val itemType: ItemType,
         override val originalId: String,
         override val originalCreatedAt: Date,

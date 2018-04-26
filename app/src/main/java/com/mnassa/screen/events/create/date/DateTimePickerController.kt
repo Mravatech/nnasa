@@ -76,6 +76,7 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
         launchCoroutineUI {
             with(getViewSuspend()) {
                 etDate.setText(startDateTime.time.formatAsDate())
+                validateInput()
             }
         }
     }
@@ -86,6 +87,7 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
         launchCoroutineUI {
             with(getViewSuspend()) {
                 etTime.setText(startDateTime.time.formatAsTime())
+                validateInput()
             }
         }
     }
@@ -95,7 +97,15 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
         launchCoroutineUI {
             with(getViewSuspend()) {
                 etDuration.setText(duration.formatAsDuration())
+                validateInput()
             }
+        }
+    }
+
+    private fun validateInput() {
+        launchCoroutineUI {
+            getViewSuspend().toolbar.actionButtonClickable = durationMillis > 0L &&
+                    startDateTime.timeInMillis > System.currentTimeMillis()
         }
     }
 

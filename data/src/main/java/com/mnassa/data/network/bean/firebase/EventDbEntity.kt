@@ -33,7 +33,8 @@ internal data class EventDbEntity(
         @SerializedName("title") val title: String,
         @SerializedName("type") val type: String,
         @SerializedName("updatedAt") val updatedAt: Long,
-        @SerializedName("participants") val participants: List<String>?
+        @SerializedName("participants") val participants: List<String>?,
+        @SerializedName("privacyConnections") val privacyConnections: List<String>?
 ) : HasId {
 }
 

@@ -15,4 +15,6 @@ interface EventsRepository {
     suspend fun buyTickets(eventId: String, ticketsCount: Long)
     suspend fun getAttendedUsers(eventId: String): List<EventAttendee>
     suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>)
+    suspend fun createEvent(model: CreateOrEditEventModel)
+    suspend fun editEvent(model: CreateOrEditEventModel)
 }

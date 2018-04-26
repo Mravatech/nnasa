@@ -25,6 +25,7 @@ import com.mnassa.extensions.SimpleTextWatcher
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import timber.log.Timber
 import androidx.view.get
+import com.mnassa.translation.fromDictionary
 
 /**
  * Created by IntelliJ IDEA.
@@ -73,6 +74,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.showSoftInput(etChipInput, InputMethodManager.SHOW_IMPLICIT)
         }
+        etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
     }
 
     override fun onChipClick(tagModel: TagModel) {

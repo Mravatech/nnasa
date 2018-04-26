@@ -11,18 +11,21 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
+import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.EventLocationType
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details_info.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -40,6 +43,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
     override val viewModel: EventDetailsInfoViewModel by instance(arg = eventId)
     private val languageProvider: LanguageProvider by instance()
     private val dialogHelper: DialogHelper by instance()
+    private val tagsAdapter = PostTagRVAdapter()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -49,6 +53,20 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             eventParam?.apply { bindEvent(this) }
             viewModel.eventChannel.consumeEach { bindEvent(it) }
         }
+
+        with(view) {
+            rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
+                    .setScrollingEnabled(false)
+                    .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+                    .setOrientation(ChipsLayoutManager.HORIZONTAL)
+                    .build()
+            rvTags.adapter = tagsAdapter
+        }
+    }
+
+    override fun onDestroyView(view: View) {
+        view.rvTags.adapter = null
+        super.onDestroyView(view)
     }
 
     private suspend fun bindEvent(event: EventModel) {
@@ -96,6 +114,17 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
                 launchCoroutineUI {
                     viewModel.buyTickets(dialogHelper.showBuyTicketDialog(view.context, event))
                 }
+            }
+            bindTags(viewModel.loadTags(event.tags))
+        }
+    }
+
+    private suspend fun bindTags(tags: List<TagModel>) {
+        getViewSuspend().let {
+            with(it) {
+                vTagsSeparator.isGone = tags.isEmpty()
+                rvTags.isGone = tags.isEmpty()
+                tagsAdapter.set(tags)
             }
         }
     }

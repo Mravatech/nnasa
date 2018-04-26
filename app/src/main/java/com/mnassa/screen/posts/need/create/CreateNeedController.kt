@@ -6,7 +6,6 @@ import android.arch.lifecycle.Lifecycle
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
@@ -37,7 +36,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
     override val viewModel: CreateNeedViewModel by instance(arg = postId)
     private var waitForResumeJob: Job? = null
-    override var sharingOptions = SharingOptionsController.ShareToOptions.EMPTY
+    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
 
@@ -112,7 +111,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             tvExtraDetails.text = fromDictionary(R.string.need_create_extra)
             tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
 
-            rvImages.layoutManager = LinearLayoutManager(context)
             rvImages.adapter = attachedImagesAdapter
         }
 
@@ -185,7 +183,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             placeId = post.locationPlace?.placeId
             actvPlace.setText(post.locationPlace?.placeName?.toString())
             etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-            sharingOptions.isMyNewsFeedSelected = post.allConnections
             sharingOptions.selectedConnections = post.privacyConnections
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()

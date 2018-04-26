@@ -9,6 +9,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface EventsInteractor {
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>>
 
+    suspend fun createEvent(model: CreateOrEditEventModel)
+    suspend fun editEvent(model: CreateOrEditEventModel)
 
     suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?>
     suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>
