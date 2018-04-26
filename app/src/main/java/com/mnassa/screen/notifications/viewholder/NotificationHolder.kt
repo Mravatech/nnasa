@@ -31,13 +31,13 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         if (item.extra.author != null) {
             itemView.tvUserName.text = item.extra.author?.formattedName
         }
-        setViewsByType(item)
         with(itemView) {
             itemView.ivUserIcon.avatarRound(item.extra.author?.avatar)
             tvNotificationCame.text = item.createdAt.toTimeAgo()
             llNotificationRoot.setOnClickListener(onClickListener)
             llNotificationRoot.tag = this@NotificationHolder
         }
+        setViewsByType(item)
     }
 
     private fun setViewsByType(item: NotificationModel) {
@@ -59,10 +59,10 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             }
             USER_WAS_RECOMMENDED -> {
                 val name = getRecommendedName(item)
-                val recomend = fromDictionary(fromDictionary(R.string.notification_recommend_you), fromDictionary(R.string.notification_recommended_you))
+                val recommend = fromDictionary(fromDictionary(R.string.notification_recommend_you), fromDictionary(R.string.notification_recommended_you))
                 val _for = fromDictionary(fromDictionary(R.string.notification_for_), fromDictionary(R.string.notification_for))
                 val eventName = item.extra.post?.text ?: ""
-                val text = "$recomend $name $_for $eventName"
+                val text = "$recommend $name $_for $eventName"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, name, eventName, Color.BLACK)
             }
             CONNECTION_REQUEST -> {

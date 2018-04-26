@@ -3,7 +3,6 @@ package com.mnassa.service
 import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import timber.log.Timber
 
 
 /**
@@ -20,7 +19,7 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
     // [START receive_message]
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // [START_EXCLUDE]
         // There are two types of messages data messages and notification messages. Data messages are handled
         // here in onMessageReceived whether the app is in the foreground or background. Data messages are the type
@@ -33,11 +32,9 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
 
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Timber.i("From: " + remoteMessage!!.from!!)
 
         // Check if message contains a data payload.
-        if (remoteMessage.data.size > 0) {
-            Timber.i("Message data payload: " + remoteMessage.data)
+        if (remoteMessage.data.isNotEmpty()) {
             val data = remoteMessage.data
             if (data["amount"] != null) {
                 val intent = Intent()
@@ -49,9 +46,8 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         // Check if message contains a notification payload.
-        if (remoteMessage.notification != null) {
-            Timber.i("Message Notification Body: " + remoteMessage.notification!!.body!!)
-        }
+        //if (remoteMessage.notification != null) {
+        //}
 
 
         // Also if you intend on generating your own notifications as a result of a received FCM
