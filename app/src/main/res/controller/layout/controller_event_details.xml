@@ -90,6 +90,7 @@
                     app:layout_collapseMode="pin"
                     app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ToolbarColoredBackArrow"
                     app:title="">
 
                     <TextView

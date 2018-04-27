@@ -91,11 +91,6 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             attachedImagesAdapter.onAddImageClickListener()
         }
 
-        if (args.containsKey(EXTRA_EVENT)) {
-            setData(args[EXTRA_EVENT] as EventModel)
-            args.remove(EXTRA_EVENT)
-        }
-
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
                 val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
@@ -227,6 +222,11 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         }
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
+
+        if (args.containsKey(EXTRA_EVENT)) {
+            setData(args[EXTRA_EVENT] as EventModel)
+            args.remove(EXTRA_EVENT)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

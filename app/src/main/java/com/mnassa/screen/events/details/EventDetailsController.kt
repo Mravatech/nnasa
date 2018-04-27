@@ -78,10 +78,16 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             vpEvents.adapter = adapter
 
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-            toolbar.inflateMenu(R.menu.event_menu)
+            toolbar.inflateMenu(R.menu.event_edit)
+            toolbar.menu.apply {
+                findItem(R.id.action_event_edit)?.title = fromDictionary(R.string.event_menu_edit)
+                findItem(R.id.action_event_change_status)?.title = fromDictionary(R.string.event_menu_change_status)
+            }
+
             toolbar.setOnMenuItemClickListener {
-                if (it.itemId == R.id.actionShowMenu) {
-                    onMenuClick(toolbar)
+                when(it.itemId) {
+                    R.id.action_event_edit -> eventModel?.let{ open(CreateEventController.newInstance(it)) }
+                    R.id.action_event_change_status -> { }
                 }
                 true
             }
@@ -94,16 +100,6 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
 
     override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {
         return getViewSuspend().commentInputContainer
-    }
-
-    private fun onMenuClick(view: View) {
-        val event = eventModel ?: return
-        if (event.isMyEvent()) {
-            popupMenuHelper.showMyEventMenu(
-                    view,
-                    onChangeStatusClick = {},
-                    onEditClick = { open(CreateEventController.newInstance(event)) })
-        }
     }
 
     private suspend fun bindEvent(event: EventModel) {
