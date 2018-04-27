@@ -144,6 +144,10 @@ class EventsInteractorImpl(
         return eventsRepository.getAttendedUsers(eventId)
     }
 
+    override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
+        return eventsRepository.getAttendedUsersChannel(eventId)
+    }
+
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
         eventsRepository.saveAttendedUsers(eventId, presentUsers, notPresentUsers)
     }

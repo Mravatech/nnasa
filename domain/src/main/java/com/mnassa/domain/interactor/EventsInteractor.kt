@@ -23,5 +23,6 @@ interface EventsInteractor {
     suspend fun buyTickets(eventId: String, ticketsCount: Long)
 
     suspend fun getAttendedUsers(eventId: String): List<EventAttendee>
+    suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>>
     suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>)
 }

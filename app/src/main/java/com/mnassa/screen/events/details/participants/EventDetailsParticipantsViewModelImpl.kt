@@ -14,6 +14,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
+import java.util.concurrent.ConcurrentSkipListSet
 
 /**
  * Created by Peter on 4/18/2018.
@@ -25,6 +26,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
 
     override val eventChannel: ConflatedBroadcastChannel<EventModel> = ConflatedBroadcastChannel()
     override val participantsChannel: ConflatedBroadcastChannel<List<EventParticipantItem>> = ConflatedBroadcastChannel()
+    private val attendedUserIds = ConcurrentSkipListSet<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,13 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
             }
         }
 
-        loadTickets()
+        handleException {
+            eventsInteractor.getAttendedUsersChannel(eventId).consumeEach {
+                attendedUserIds.clear()
+                attendedUserIds.addAll(it.mapNotNull { it.takeIf { it.isPresent }?.user?.id })
+                loadTickets()
+            }
+        }
     }
 
     override suspend fun saveParticipants(participants: List<EventParticipantItem>) {
@@ -69,7 +77,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                     var hasConnections = false
                     var hasOtherUsers = false
                     val participants = it.mapNotNullTo(ArrayList<EventParticipantItem>(it.size)) {
-                        convertTicketToParticipant(it, attendedUsers)?.also {
+                        convertTicketToParticipant(it)?.also {
                             hasConnections = hasConnections || it.isInConnections
                             hasOtherUsers = hasOtherUsers || !it.isInConnections
                         }
@@ -87,10 +95,10 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
         }
     }
 
-    private suspend fun convertTicketToParticipant(ticket: EventTicketModel, attendedUsers: Set<String>): EventParticipantItem.User? {
+    private suspend fun convertTicketToParticipant(ticket: EventTicketModel): EventParticipantItem.User? {
         val user = userProfileInteractor.getProfileById(ticket.ownerId) ?: return null
         val isConnections = connectionsInteractor.getConnectionStatusById(ticket.ownerId) == ConnectionStatus.CONNECTED
-        return EventParticipantItem.User(user, isConnections, maxOf(ticket.ticketCount.toInt() - 1, 0), isChecked = attendedUsers.contains(user.id))
+        return EventParticipantItem.User(user, isConnections, maxOf(ticket.ticketCount.toInt() - 1, 0), isChecked = attendedUserIds.contains(user.id))
     }
 
 }

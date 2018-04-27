@@ -16,7 +16,6 @@ import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.data.network.stringValue
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -83,6 +82,14 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                 .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
                 .awaitList<EventAttendeeAccountDbEntity>()
                 .map { EventAttendee(converter.convert(it), it.presence ?: false) }
+    }
+
+    override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
+        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+                .document(eventId)
+                .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+                .toListChannel<EventAttendeeAccountDbEntity>(exceptionHandler)
+                .map { it.map { EventAttendee(converter.convert(it), it.presence ?: false) } }
     }
 
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
