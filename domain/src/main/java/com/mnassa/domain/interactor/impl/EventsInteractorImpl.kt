@@ -1,10 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
-import com.mnassa.domain.interactor.EventsInteractor
-import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.interactor.TagInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.EventsRepository
@@ -67,6 +64,30 @@ class EventsInteractorImpl(
         model.uploadedImages.addAll(allImages)
         model.tagIds.clear()
         model.tagIds.addAll(createTags(model.tagModels))
+
+        return eventsRepository.editEvent(model)
+    }
+
+    override suspend fun changeStatus(event: EventModel, status: EventStatus) {
+        val model = CreateOrEditEventModel(
+                id = event.id,
+                status = status,
+                tagModels = emptyList(),
+                tagIds = event.tags.toMutableSet(),
+                locationType = event.locationType,
+                type = event.type,
+                ticketsPerAccount = event.ticketsPerAccount.toInt(),
+                ticketsTotal = event.ticketsTotal.toInt(),
+                price = event.price.takeIf { it > 0 },
+                locationDescription = "",
+                title = event.title,
+                privacy = PostPrivacyOptions(event.privacyType, event.privacyConnections),
+                uploadedImages = event.pictures.toMutableSet(),
+                imagesToUpload = emptyList(),
+                durationMillis = event.duration?.toMillis() ?: 0L,
+                startDateTime = event.startAt,
+                description = event.text
+        )
 
         return eventsRepository.editEvent(model)
     }

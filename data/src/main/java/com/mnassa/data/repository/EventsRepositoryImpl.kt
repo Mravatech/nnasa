@@ -16,6 +16,7 @@ import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
+import com.mnassa.data.network.stringValue
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.UserRepository

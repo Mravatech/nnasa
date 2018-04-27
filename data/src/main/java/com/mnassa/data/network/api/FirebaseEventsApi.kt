@@ -24,4 +24,7 @@ interface FirebaseEventsApi {
 
     @PUT("/event")
     fun editEvent(@Body request: CreateOrEditEventRequest): Deferred<MnassaResponse>
+
+    @PUT("/event")
+    fun editEventStatus(@Body request: CreateOrEditEventRequest): Deferred<MnassaResponse>
 }

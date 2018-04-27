@@ -41,7 +41,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 startAt = Date(input.eventStartAt),
                 locationType = convertLocation(input, converter),
                 allConnections = input.allConnections,
-                privacyConnections = input.privacyConnections ?: emptyList(),
+                privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                 itemType = converter.convert(input.itemType),
                 originalId = input.originalId,
                 originalCreatedAt = Date(input.originalCreatedAt),
@@ -85,8 +85,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
     private fun convertFromLocation(input: EventLocationType): String {
         return when(input) {
             is EventLocationType.Specified -> NetworkContract.EventLocationType.SPECIFY
-            EventLocationType.NotDefined -> NetworkContract.EventLocationType.NOT_DEFINED
-            EventLocationType.Later -> NetworkContract.EventLocationType.LATER
+            is EventLocationType.NotDefined -> NetworkContract.EventLocationType.NOT_DEFINED
+            is EventLocationType.Later -> NetworkContract.EventLocationType.LATER
         }
     }
 
@@ -121,11 +121,11 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertFromType(input: EventType): String {
         return when (input) {
-            EventType.ACTIVITY -> NetworkContract.EventType.ACTIVITY
-            EventType.DISCUSSION -> NetworkContract.EventType.DISCUSSION
-            EventType.EXERCISE -> NetworkContract.EventType.EXERCISE
-            EventType.LECTURE -> NetworkContract.EventType.LECTURE
-            EventType.WORKSHOP -> NetworkContract.EventType.WORKSHOP
+            is EventType.ACTIVITY -> NetworkContract.EventType.ACTIVITY
+            is EventType.DISCUSSION -> NetworkContract.EventType.DISCUSSION
+            is EventType.EXERCISE -> NetworkContract.EventType.EXERCISE
+            is EventType.LECTURE -> NetworkContract.EventType.LECTURE
+            is EventType.WORKSHOP -> NetworkContract.EventType.WORKSHOP
             else -> throw IllegalArgumentException("Invalid event type $input")
         }
     }
@@ -160,7 +160,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 type = convertFromType(input.type),
                 locationType = convertFromLocation(input.locationType),
                 privacyType = input.privacy.privacyType.stringValue,
-                tags = input.tagIds.takeIf { it.isNotEmpty() }?.toList()
+                tags = input.tagIds.takeIf { it.isNotEmpty() }?.toList(),
+                status = input.status.stringValue
         )
     }
 }

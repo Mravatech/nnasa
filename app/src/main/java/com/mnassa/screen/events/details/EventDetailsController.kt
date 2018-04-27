@@ -20,6 +20,7 @@ import com.mnassa.extensions.bindDate
 import com.mnassa.extensions.image
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.isMyEvent
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -41,6 +42,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     override val layoutId: Int = R.layout.controller_event_details
     override val viewModel: EventDetailsViewModel by instance(arg = eventId)
     private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialogHelper: DialogHelper by instance()
     private var eventModel: EventModel? = null
         get() {
             if (field == null) {
@@ -78,16 +80,24 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             vpEvents.adapter = adapter
 
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-            toolbar.inflateMenu(R.menu.event_edit)
+            if (eventModel?.isMyEvent() == true) {
+                toolbar.inflateMenu(R.menu.event_edit)
+            } else {
+                toolbar.inflateMenu(R.menu.event_view)
+            }
             toolbar.menu.apply {
                 findItem(R.id.action_event_edit)?.title = fromDictionary(R.string.event_menu_edit)
                 findItem(R.id.action_event_change_status)?.title = fromDictionary(R.string.event_menu_change_status)
             }
 
             toolbar.setOnMenuItemClickListener {
-                when(it.itemId) {
-                    R.id.action_event_edit -> eventModel?.let{ open(CreateEventController.newInstance(it)) }
-                    R.id.action_event_change_status -> { }
+                when (it.itemId) {
+                    R.id.action_event_edit -> eventModel?.let { open(CreateEventController.newInstance(it)) }
+                    R.id.action_event_change_status -> {
+                        dialogHelper.selectEventStatusDialog(context, eventModel?.status) { status ->
+                            eventModel?.let { event -> viewModel.changeStatus(event, status) }
+                        }
+                    }
                 }
                 true
             }

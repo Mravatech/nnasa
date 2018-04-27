@@ -16,7 +16,7 @@ interface EventModel : Model {
     val duration: EventDuration?
     val locationType: EventLocationType
     val allConnections: Boolean
-    val privacyConnections: List<String>
+    val privacyConnections: Set<String>
     val itemType: ItemType
     val originalId: String
     val originalCreatedAt: Date

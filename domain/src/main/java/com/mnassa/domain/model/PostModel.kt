@@ -14,7 +14,7 @@ interface PostModel : Model {
     val locationPlace: LocationPlaceModel?
     val originalCreatedAt: Date
     val originalId: String
-    val privacyConnections: List<String>
+    val privacyConnections: Set<String>
     val privacyType: PostPrivacyType
     val tags: List<String>
     val text: String?

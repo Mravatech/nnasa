@@ -11,6 +11,7 @@ import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
@@ -25,6 +26,8 @@ import java.io.Serializable
 class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptionsViewModel>(args) {
     override val layoutId: Int = R.layout.controller_sharing_options
     private val excludedAccounts by lazy { args.getStringArrayList(EXTRA_EXCLUDED_ACCOUNTS).toHashSet() }
+    private val restrictShareReduction by lazy { args.getBoolean(EXTRA_RESTRICT_SHARE_REDUCTION) }
+    private val notUnselectableAccounts by lazy { args.getStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS).toSortedSet() }
     override val viewModel: SharingOptionsViewModel by instance(arg = SharingOptionsViewModel.SharingOptionsParams(excludedAccounts))
     private val resultListener by lazy { targetController as OnSharingOptionsResult }
     private val adapter = BuildNetworkAdapter()
@@ -96,10 +99,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         launchCoroutineUI {
             viewModel.allConnections.consumeEach {
                 adapter.isLoadingEnabled = false
-                adapter.set(it)
+                adapter.set(it.filter { !notUnselectableAccounts.contains(it.id) })
             }
         }
     }
+
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
@@ -115,7 +119,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                         rbMyNewsFeed.isChecked -> PostPrivacyType.PUBLIC
                         else -> PostPrivacyType.PRIVATE
                     },
-                    selectedConnections = adapter.selectedAccounts.toList()
+                    selectedConnections = notUnselectableAccounts + adapter.selectedAccounts
             )
         }
     }
@@ -125,20 +129,40 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             rbPromotePost.isChecked = options.privacyType == PostPrivacyType.WORLD
             rbMyNewsFeed.isChecked = options.privacyType == PostPrivacyType.PUBLIC
             adapter.selectedAccounts = options.selectedConnections.toSet()
+
+            if (restrictShareReduction) {
+                if (options.privacyType == PostPrivacyType.PUBLIC) {
+                    rvAllConnections.isGone = true
+                }
+                if (options.privacyType == PostPrivacyType.WORLD) {
+                    rvAllConnections.isGone = true
+                    rbMyNewsFeed.isGone = true
+                }
+            }
         }
     }
 
     companion object {
         private const val EXTRA_PREDEFINED_OPTIONS = "EXTRA_PREDEFINED_OPTIONS"
         private const val EXTRA_EXCLUDED_ACCOUNTS = "EXTRA_EXCLUDED_ACCOUNTS"
+        private const val EXTRA_RESTRICT_SHARE_REDUCTION = "EXTRA_RESTRICT_SHARE_REDUCTION"
+        private const val EXTRA_NOT_UNSELECTEBLE_ACCOUNTS = "EXTRA_NOT_UNSELECTEBLE_ACCOUNTS"
 
         fun <T> newInstance(
                 accountsToExclude: List<String>,
                 options: ShareToOptions = ShareToOptions.DEFAULT,
-                listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
+                listener: T,
+                restrictShareReduction: Boolean = false): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
             val args = Bundle()
             args.putSerializable(EXTRA_PREDEFINED_OPTIONS, options)
             args.putStringArrayList(EXTRA_EXCLUDED_ACCOUNTS, accountsToExclude.toCollection(ArrayList()))
+            args.putBoolean(EXTRA_RESTRICT_SHARE_REDUCTION, restrictShareReduction)
+            if (restrictShareReduction) {
+                args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, options.selectedConnections.toCollection(ArrayList()))
+            } else {
+                args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, ArrayList())
+            }
+
             val result = SharingOptionsController(args)
             result.targetController = listener
             return result
@@ -151,7 +175,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
     class ShareToOptions(
             var privacyType: PostPrivacyType,
-            var selectedConnections: List<String>
+            var selectedConnections: Set<String>
     ) : Serializable {
 
 
@@ -186,7 +210,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         companion object {
             private const val MAX_SHARE_TO_USERNAMES = 2
 
-            val DEFAULT = ShareToOptions(PostPrivacyType.PUBLIC, emptyList())
+            val DEFAULT = ShareToOptions(PostPrivacyType.PUBLIC, emptySet())
         }
     }
 }

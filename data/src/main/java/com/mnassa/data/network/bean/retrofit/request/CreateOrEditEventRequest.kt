@@ -21,7 +21,8 @@ data class CreateOrEditEventRequest (
         @SerializedName("isPromoted") val isPromoted: Boolean,
         @SerializedName("duration") val duration: EventDuration,
         @SerializedName("pictures") val pictures: List<String>?,
-        @SerializedName("tags") val tags: List<String>?
+        @SerializedName("tags") val tags: List<String>?,
+        @SerializedName("status") val status: String
 )
 
 data class EventDuration(

@@ -7,8 +7,8 @@ import java.io.Serializable
  */
 interface LocationPlaceModel : Serializable {
     val city: TranslatedWordModel?
-    val lat: Double
-    val lng: Double
-    val placeId: String
+    val lat: Double?
+    val lng: Double?
+    val placeId: String?
     val placeName: TranslatedWordModel?
 }

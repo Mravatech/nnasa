@@ -21,7 +21,9 @@ import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.extensions.formatted
 import com.mnassa.extensions.getBoughtTicketsCount
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
@@ -332,7 +334,7 @@ class DialogHelper {
                     .build()
 
             with(view) {
-                val setTotalPoints = { count : Long ->
+                val setTotalPoints = { count: Long ->
                     val priceText = SpannableStringBuilder((count * event.price).toString())
                     priceText.setSpan(RelativeSizeSpan(1f), 0, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     priceText.append(" ")
@@ -373,5 +375,19 @@ class DialogHelper {
             dialog.show()
             continuation.invokeOnCompletion { dialog.dismiss() }
         }
+    }
+
+    fun selectEventStatusDialog(context: Context, initStatus: EventStatus? = null, onStatusSelected: (EventStatus) -> Unit) {
+        val statuses = listOf(EventStatus.ANNULED, EventStatus.OPENED, EventStatus.CLOSED, EventStatus.SUSPENDED)
+
+        val index = if (initStatus == null) -1 else statuses.indexOfFirst { it::class.java == initStatus::class.java }
+
+        MaterialDialog.Builder(context)
+                .items(statuses.map { it.formatted })
+                .itemsCallbackSingleChoice(index, { _, _, which, _ ->
+                    onStatusSelected(statuses[which])
+                    true
+                })
+                .show()
     }
 }

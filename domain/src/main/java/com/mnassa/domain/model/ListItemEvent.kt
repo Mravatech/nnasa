@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T

@@ -31,7 +31,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
             adapter.restoreState(this)
         }
         adapter.isLoadingEnabled = savedInstanceState == null
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             val view = getViewSuspend()
             viewModel.listMessagesChannel.consumeEach {
                 when (it) {

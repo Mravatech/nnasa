@@ -19,10 +19,7 @@ import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.await
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.domain.model.CreateOrEditEventModel
-import com.mnassa.domain.model.EventLocationType
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.EventType
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.LocationPlaceModelImpl
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
@@ -65,6 +62,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val attachedImagesAdapter = AttachedImagesRVAdapter()
     private var imageToReplace: AttachedImage? = null
     private var dateTime: DateTimePickerController.DatePickerResult? = null
+    private var eventStatus: EventStatus = EventStatus.OPENED
     private var placeId: String? = null
         set(value) {
             field = value
@@ -111,7 +109,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
                         locationType = getLocationType(),
                         locationDescription = getLocationDescription(),
-                        tagModels = chipTags.getTags()
+                        tagModels = chipTags.getTags(),
+                        status = eventStatus
                 )
                 viewModel.publish(model)
             }
@@ -120,7 +119,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 open(SharingOptionsController.newInstance(
                         options = sharingOptions,
                         listener = this@CreateEventController,
-                        accountsToExclude = if (event != null) listOf(event.author.id) else emptyList()))
+                        accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
+                        restrictShareReduction = eventId != null))
             }
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
@@ -136,7 +136,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                     context,
                     R.layout.support_simple_spinner_dropdown_item,
                     android.R.id.text1,
-                    mutableListOf(
+                    listOf(
                             fromDictionary(R.string.event_location_specify),
                             fromDictionary(R.string.event_location_not_defined),
                             fromDictionary(R.string.event_location_later)))
@@ -314,23 +314,32 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
     private fun setData(event: EventModel) {
         this.event = event
+        this.eventStatus = event.status
         with(view ?: return) {
             toolbar.title = fromDictionary(R.string.event_edit_title)
 
             dateTime = DateTimePickerController.DatePickerResult(event.startAt, event.duration?.toMillis()
                     ?: 0L)
-            etEventDateTime.setText(dateTime!!.format())
+            etEventDateTime.setText(requireNotNull(dateTime).format())
             val locationType = event.locationType
             when (locationType) {
                 is EventLocationType.Specified -> {
                     sLocation.setSelection(EVENT_LOCATION_SPECIFY)
                     placeId = locationType.location.placeId
-                    placeLatLng = LatLng(locationType.location.lat, locationType.location.lng)
-                    actvCity.setText(locationType.location.city?.toString())
-                    etAddress.setText(locationType.location.placeName?.toString())
+                    val lat = locationType.location.lat
+                    val lng = locationType.location.lng
+                    if (lat != null && lng != null) {
+                        placeLatLng = LatLng(lat, lng)
+                    }
+                    etAddress.setText(locationType.location.city?.toString())
+                    actvCity.setText(locationType.location.placeName?.toString())
                 }
-                EventLocationType.NotDefined -> sLocation.setSelection(EVENT_LOCATION_NOT_DEFINED)
-                EventLocationType.Later -> sLocation.setSelection(EVENT_LOCATION_LATER)
+                is EventLocationType.NotDefined -> {
+                    sLocation.setSelection(EVENT_LOCATION_NOT_DEFINED)
+                }
+                is EventLocationType.Later -> {
+                    sLocation.setSelection(EVENT_LOCATION_LATER)
+                }
             }
 
             sharingOptions.selectedConnections = event.privacyConnections

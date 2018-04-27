@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : MnassaViewModelImpl(), EventsViewModel {
 
-    override val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>>by ReConsumeWhenAccountChangedArrayBroadcastChannel(
+    override val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>> by ReConsumeWhenAccountChangedArrayBroadcastChannel(
             beforeReConsume = { it.send(ListItemEvent.Cleared()) },
             receiveChannelProvider = { eventsInteractor.getEventsFeedChannel() })
 

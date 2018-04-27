@@ -454,6 +454,10 @@
     <string name="event_edit_title">_new_event_navbar_title_edit</string>
     <string name="event_menu_edit">_event_details_edit_event</string>
     <string name="event_menu_change_status">_event_details_change_status_of_event</string>
+    <string name="event_status_annulled">annulled</string>
+    <string name="event_status_opened">_android_event_status_opened</string>
+    <string name="event_status_closed">closed</string>
+    <string name="event_status_suspended">suspended</string>
 
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>

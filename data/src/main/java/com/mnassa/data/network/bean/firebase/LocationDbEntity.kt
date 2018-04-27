@@ -11,18 +11,18 @@ internal data class LocationDbEntity(
         @SerializedName("en")
         val en: LocationTranslateDbEntity?,
         @SerializedName("placeId")
-        var placeId: String
+        var placeId: String?
 )
 
 internal data class LocationTranslateDbEntity(
         @SerializedName("city")
         val city: String?,
         @SerializedName("lat")
-        val lat: Double,
+        val lat: Double?,
         @SerializedName("lng")
-        val lng: Double,
+        val lng: Double?,
         @SerializedName("placeId")
-        val placeId: String,
+        val placeId: String?,
         @SerializedName("placeName")
         val placeName: String?
 )

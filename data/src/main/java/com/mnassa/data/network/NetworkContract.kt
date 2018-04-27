@@ -1,5 +1,6 @@
 package com.mnassa.data.network
 
+import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.PostPrivacyType
 
 /**
@@ -112,4 +113,11 @@ val PostPrivacyType.stringValue: String
         is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
         is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
         is PostPrivacyType.WORLD -> NetworkContract.PostPrivacyType.WORLD
+    }
+val EventStatus.stringValue: String
+    get() = when (this) {
+        is EventStatus.SUSPENDED -> NetworkContract.EventStatus.SUSPENDED
+        is EventStatus.ANNULED -> NetworkContract.EventStatus.ANNULED
+        is EventStatus.OPENED -> NetworkContract.EventStatus.OPENED
+        is EventStatus.CLOSED -> NetworkContract.EventStatus.CLOSED
     }

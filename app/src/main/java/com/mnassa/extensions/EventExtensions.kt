@@ -6,10 +6,7 @@ import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.EventDuration
-import com.mnassa.domain.model.EventLocationType
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.EventType
+import com.mnassa.domain.model.*
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.event_date.view.*
@@ -78,6 +75,18 @@ val EventType.formatted: CharSequence
         is EventType.ACTIVITY -> fromDictionary(R.string.event_activity)
         else -> {
             Timber.e("Illegal event type $this")
+            ""
+        }
+    }
+
+val EventStatus.formatted: CharSequence
+    get() = when(this) {
+        is EventStatus.ANNULED -> fromDictionary(R.string.event_status_annulled)
+        is EventStatus.OPENED -> fromDictionary(R.string.event_status_opened)
+        is EventStatus.CLOSED -> fromDictionary(R.string.event_status_closed)
+        is EventStatus.SUSPENDED -> fromDictionary(R.string.event_status_suspended)
+        else -> {
+            Timber.e("Illegal event status $this")
             ""
         }
     }

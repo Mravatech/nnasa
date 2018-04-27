@@ -3,6 +3,7 @@ package com.mnassa.screen.events.details
 import android.os.Bundle
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.EventStatus
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -24,6 +25,14 @@ class EventDetailsViewModelImpl(private val eventId: String,
                 } else {
                     //TODO
                 }
+            }
+        }
+    }
+
+    override fun changeStatus(event: EventModel, status: EventStatus) {
+        handleException {
+            withProgressSuspend {
+                eventsInteractor.changeStatus(event, status)
             }
         }
     }
