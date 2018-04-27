@@ -95,6 +95,14 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
         super.onDestroy()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+//        SavedInstanceFragment.getInstance(fragmentManager).pushData(outState.clone() as Bundle)
+        // advise was taken from here = https://www.devsbedevin.com/avoiding-transactiontoolargeexception-on-android-nougat-and-up/
+        outState.clear() // We don't want a TransactionTooLargeException, so we handle things via the SavedInstanceFragment
+    }
+
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val fromName = intent.getStringExtra(MnassaFirebaseMessagingService.FROM_USER)
