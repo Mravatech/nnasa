@@ -78,6 +78,7 @@ object NetworkContract {
     object Complaint {
         const val ACCOUNT_TYPE = "account"
         const val POST_TYPE = "post"
+        const val EVENT_TYPE = "event"
     }
 
     object EventStatus {

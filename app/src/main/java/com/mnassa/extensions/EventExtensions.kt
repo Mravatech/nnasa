@@ -44,14 +44,14 @@ val EventLocationType.formatted: CharSequence
     get() = when (this) {
         is EventLocationType.Specified -> {
             val result = StringBuilder()
+            val description = this.description
             val placeName = location.placeName?.toString()
-            val city = location.city?.toString()
-            if (placeName != null) {
-                result.append(placeName)
+            if (description != null) {
+                result.append(description)
             }
-            if (placeName != city && city != null) {
+            if (description != placeName && placeName != null) {
                 if (result.isNotEmpty()) result.append("\n")
-                result.append(city)
+                result.append(placeName)
             }
             result.toString()
         }

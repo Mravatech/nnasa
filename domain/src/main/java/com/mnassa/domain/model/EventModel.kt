@@ -65,7 +65,7 @@ sealed class EventDuration(val value: Long) : Serializable {
 }
 
 sealed class EventLocationType : Serializable {
-    class Specified(val location: LocationPlaceModel, val id: String) : EventLocationType()
+    class Specified(val location: LocationPlaceModel, val id: String, val description: String?) : EventLocationType()
     object NotDefined : EventLocationType()
     object Later : EventLocationType()
 }

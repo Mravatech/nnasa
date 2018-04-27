@@ -74,7 +74,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         return when (input.locationType) {
             NetworkContract.EventLocationType.SPECIFY -> if (input.locationDbEntity != null) EventLocationType.Specified(
                     location = converter.convert(input.locationDbEntity),
-                    id = requireNotNull(input.locationId) { "LocationId not specified, but type: ${input.locationType}. Event: $input" }
+                    id = requireNotNull(input.locationId) { "LocationId not specified, but type: ${input.locationType}. Event: $input" },
+                    description = input.locationDescription
             ) else EventLocationType.Later //server side error
             NetworkContract.EventLocationType.LATER -> EventLocationType.Later
             NetworkContract.EventLocationType.NOT_DEFINED -> EventLocationType.NotDefined
@@ -148,7 +149,6 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 id = input.id,
                 title = input.title,
                 text = input.description,
-                locationDescription = input.locationDescription,
                 locationId = (locationType as? EventLocationType.Specified)?.location?.placeId,
                 price = input.price ?: 0L,
                 ticketsTotal = input.ticketsTotal,
@@ -161,7 +161,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 locationType = convertFromLocation(input.locationType),
                 privacyType = input.privacy.privacyType.stringValue,
                 tags = input.tagIds.takeIf { it.isNotEmpty() }?.toList(),
-                status = input.status.stringValue
+                status = input.status.stringValue,
+                locationDescription = (locationType as? EventLocationType.Specified)?.description
         )
     }
 }

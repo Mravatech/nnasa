@@ -21,7 +21,6 @@ data class CreateOrEditEventModel(
         val ticketsPerAccount: Int,
         val price: Long?,
         val locationType: EventLocationType,
-        val locationDescription: String?,
         val tagModels: List<TagModel>,
         val tagIds: MutableSet<String> = mutableSetOf(),
         val status: EventStatus

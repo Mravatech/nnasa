@@ -1,10 +1,16 @@
 package com.mnassa.screen.events.details
 
 import android.os.Bundle
+import com.mnassa.data.network.NetworkContract
+import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
+import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -12,8 +18,11 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  * Created by Peter on 4/17/2018.
  */
 class EventDetailsViewModelImpl(private val eventId: String,
-                                private val eventsInteractor: EventsInteractor) : MnassaViewModelImpl(), EventDetailsViewModel {
+                                private val eventsInteractor: EventsInteractor,
+                                private val complaintInteractor: ComplaintInteractor) : MnassaViewModelImpl(), EventDetailsViewModel {
     override val eventChannel: ConflatedBroadcastChannel<EventModel> = ConflatedBroadcastChannel()
+    override val finishScreenChannel: ArrayBroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +36,9 @@ class EventDetailsViewModelImpl(private val eventId: String,
                 }
             }
         }
+        handleException {
+            reportsList = complaintInteractor.getReports()
+        }
     }
 
     override fun changeStatus(event: EventModel, status: EventStatus) {
@@ -35,5 +47,27 @@ class EventDetailsViewModelImpl(private val eventId: String,
                 eventsInteractor.changeStatus(event, status)
             }
         }
+    }
+
+    override fun sendComplaint(eventId: String, reason: String, authorText: String?) {
+        handleException {
+            withProgressSuspend {
+                complaintInteractor.sendComplaint(ComplaintModelImpl(
+                        id = eventId,
+                        type = NetworkContract.Complaint.EVENT_TYPE,
+                        reason = reason,
+                        authorText = authorText
+                ))
+            }
+            finishScreenChannel.send(Unit)
+        }
+    }
+
+    override suspend fun retrieveComplaints(): List<TranslatedWordModel> {
+        if (reportsList.isNotEmpty()) return reportsList
+        showProgress()
+        reportsList = complaintInteractor.getReports()
+        hideProgress()
+        return reportsList
     }
 }

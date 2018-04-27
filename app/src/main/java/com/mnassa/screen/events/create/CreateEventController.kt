@@ -108,7 +108,6 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
                         price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
                         locationType = getLocationType(),
-                        locationDescription = getLocationDescription(),
                         tagModels = chipTags.getTags(),
                         status = eventStatus
                 )
@@ -146,7 +145,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     tilCity.isGone = position != EVENT_LOCATION_SPECIFY
-                    tilAddress.isGone = position != EVENT_LOCATION_SPECIFY
+                    tilLocationDescription.isGone = position != EVENT_LOCATION_SPECIFY
                     mapView.isGone = position != EVENT_LOCATION_SPECIFY
                     if (position != EVENT_LOCATION_SPECIFY) {
                         placeId = null
@@ -164,7 +163,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 actvCity.setText(placeName)
             }
             tilCity.hint = fromDictionary(R.string.need_create_city_hint)
-            tilAddress.hint = fromDictionary(R.string.event_create_address)
+            tilLocationDescription.hint = fromDictionary(R.string.event_create_address)
             //
             mapView.onCreate(savedInstanceState)
             mapView.getMapAsync {
@@ -212,7 +211,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             tilTicketsPerAccountLimit.hint = fromDictionary(R.string.event_limit_tickets_per_person_placeholder)
             //
             etEventTitle.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
-            etAddress.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
+            etLocationDescription.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             etEventDescription.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             etTicketPrice.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             etTicketsQuantity.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
@@ -266,7 +265,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             when (sLocation.selectedItemPosition) {
                 EVENT_LOCATION_SPECIFY -> {
                     if (placeId == null) return false
-                    if (etAddress.text.isBlank()) return false
+//                    if (etLocationDescription.text.isBlank()) return false
                 }
             }
             if (etEventDescription.text.isBlank()) return false
@@ -299,7 +298,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         placeId,
                         null
                 )
-                EventLocationType.Specified(place, placeId)
+                EventLocationType.Specified(place, placeId, getLocationDescription())
             }
             EVENT_LOCATION_NOT_DEFINED -> EventLocationType.NotDefined
             EVENT_LOCATION_LATER -> EventLocationType.Later
@@ -309,7 +308,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
     private fun getLocationDescription(): String? {
         val view = requireNotNull(view)
-        return view.etAddress.text.toString().takeIf { view.sLocation.selectedItemPosition == EVENT_LOCATION_SPECIFY }
+        return view.etLocationDescription.text.toString().takeIf { view.sLocation.selectedItemPosition == EVENT_LOCATION_SPECIFY }
     }
 
     private fun setData(event: EventModel) {
@@ -331,7 +330,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                     if (lat != null && lng != null) {
                         placeLatLng = LatLng(lat, lng)
                     }
-                    etAddress.setText(locationType.location.city?.toString())
+                    etLocationDescription.setText(locationType.description)
                     actvCity.setText(locationType.location.placeName?.toString())
                 }
                 is EventLocationType.NotDefined -> {

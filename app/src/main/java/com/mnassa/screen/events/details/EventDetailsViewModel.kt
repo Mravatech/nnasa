@@ -2,6 +2,7 @@ package com.mnassa.screen.events.details
 
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
+import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -10,5 +11,9 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface EventDetailsViewModel : MnassaViewModel {
     val eventChannel: BroadcastChannel<EventModel>
+    val finishScreenChannel: BroadcastChannel<Unit>
+
     fun changeStatus(event: EventModel, status: EventStatus)
+    fun sendComplaint(eventId: String, reason: String, authorText: String?)
+    suspend fun retrieveComplaints(): List<TranslatedWordModel>
 }

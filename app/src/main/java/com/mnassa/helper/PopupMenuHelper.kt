@@ -116,21 +116,4 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
 
         popup.show()
     }
-
-    fun showMyEventMenu(view: View, onEditClick: () -> Unit, onChangeStatusClick: () -> Unit) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.event_edit, popup.menu)
-        popup.menu.findItem(R.id.action_event_edit).title = fromDictionary(R.string.event_menu_edit)
-        popup.menu.findItem(R.id.action_event_change_status).title = fromDictionary(R.string.event_menu_change_status)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_event_edit -> onEditClick()
-                R.id.action_event_change_status -> onChangeStatusClick()
-            }
-            true
-        }
-
-        popup.show()
-    }
 }

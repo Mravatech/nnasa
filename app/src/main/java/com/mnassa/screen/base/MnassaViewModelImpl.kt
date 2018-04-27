@@ -71,10 +71,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             loginInteractor.signOut()
         } catch (e: NetworkException) {
             Timber.d(e)
-            if (appInfoProvider.isDebug) {
-                val message = "${e.message}\n${Log.getStackTraceString(e.cause)}"
-                errorMessageChannel.send(message)
-            } else e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }
+            e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }
         } catch (e: FirebaseException) {
             Timber.e(e)
             val message = e.localizedMessage ?: e.message

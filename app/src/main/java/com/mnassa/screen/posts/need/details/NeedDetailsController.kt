@@ -92,9 +92,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 if (it.id == OTHER) {
                     val controller = ComplaintOtherController.newInstance()
                     controller.targetController = this@NeedDetailsController
-                    open(controller)
+                            open(controller)
                 } else {
-                    viewModel.sendComplaint(postId, it.id, null)
+                viewModel.sendComplaint(postId, it.id, null)
                 }
             }
         }

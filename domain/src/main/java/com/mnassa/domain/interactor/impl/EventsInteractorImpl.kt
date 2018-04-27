@@ -79,7 +79,6 @@ class EventsInteractorImpl(
                 ticketsPerAccount = event.ticketsPerAccount.toInt(),
                 ticketsTotal = event.ticketsTotal.toInt(),
                 price = event.price.takeIf { it > 0 },
-                locationDescription = "",
                 title = event.title,
                 privacy = PostPrivacyOptions(event.privacyType, event.privacyConnections),
                 uploadedImages = event.pictures.toMutableSet(),
