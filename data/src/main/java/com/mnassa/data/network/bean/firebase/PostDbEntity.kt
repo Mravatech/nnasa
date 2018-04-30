@@ -16,6 +16,7 @@ internal data class PostDbEntity(
         @SerializedName("counters") var counters: PostCountersDbEntity,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("images") var images: List<String>?,
+        @SerializedName("videos") var videos: List<String>?,
         @SerializedName("itemType") var itemType: String,
         @SerializedName("type") var type: String,
         @SerializedName("originalCreatedAt") var originalCreatedAt: Long,

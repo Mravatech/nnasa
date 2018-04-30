@@ -171,7 +171,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             launchCoroutineUI {
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
             }
-            attachedImagesAdapter.set(post.images.map { AttachedImage.UploadedImage(it) })
+            attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
             placeId = post.locationPlace?.placeId
             actvPlace.setText(post.locationPlace?.placeName?.toString())

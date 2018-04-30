@@ -47,6 +47,12 @@ class PostConverter : ConvertersContextRegistrationCallback {
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
 
+        val attachments =  input.images.orEmpty().mapIndexed { index, image ->
+            val videoUrl = input.videos.orEmpty().getOrNull(index)
+            if (videoUrl != null) PostAttachment.PostVideoAttachment(previewUrl = image, videoUrl = videoUrl)
+            else PostAttachment.PostPhotoAttachment(image)
+        }
+
         val postType: PostType = converter.convert(input.type)
         return when (postType) {
             PostType.PROFILE -> RecommendedProfilePostModelImpl(
@@ -54,7 +60,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     allConnections = input.allConnections,
                     type = postType,
                     createdAt = Date(input.createdAt),
-                    images = input.images ?: emptyList(),
+                    attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
@@ -79,7 +85,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     allConnections = input.allConnections,
                     type = postType,
                     createdAt = Date(input.createdAt),
-                    images = input.images ?: emptyList(),
+                    attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },

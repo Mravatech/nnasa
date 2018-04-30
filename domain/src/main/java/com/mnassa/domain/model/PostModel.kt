@@ -10,7 +10,7 @@ interface PostModel : Model {
     val allConnections: Boolean
     val type: PostType
     val createdAt: Date
-    val images: List<String>
+    val attachments: List<PostAttachment>
     val locationPlace: LocationPlaceModel?
     val originalCreatedAt: Date
     val originalId: String
@@ -25,6 +25,11 @@ interface PostModel : Model {
     val price: Double
     val autoSuggest: PostAutoSuggest
     val repostAuthor: ShortAccountModel?
+}
+
+sealed class PostAttachment : Serializable {
+    data class PostPhotoAttachment(val photoUrl: String) : PostAttachment()
+    data class PostVideoAttachment(val previewUrl: String, val videoUrl: String) : PostAttachment()
 }
 
 interface RecommendedProfilePostModel : PostModel {

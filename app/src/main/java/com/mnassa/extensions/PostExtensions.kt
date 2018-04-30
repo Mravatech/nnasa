@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.widget.ImageView
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
@@ -71,3 +72,11 @@ val PostModel.formattedText: CharSequence?
 fun PostModel.isMyPost(): Boolean = author.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
 
 val PostModel.isRepost: Boolean get() = originalId != id
+
+fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
+    when (postAttachment) {
+        is PostAttachment.PostPhotoAttachment -> image(postAttachment.photoUrl, crop)
+        is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)
+    }
+
+}

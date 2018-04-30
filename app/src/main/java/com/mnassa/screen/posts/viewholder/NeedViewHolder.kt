@@ -58,20 +58,20 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
 
     private fun bindImages(item: PostModel) {
         with(itemView) {
-            if (item.images.isNotEmpty()) {
-                itemView.findViewById<ImageView>(R.id.ivOne).image(item.images[0])
+            if (item.attachments.isNotEmpty()) {
+                itemView.findViewById<ImageView>(R.id.ivOne).image(item.attachments[0])
             }
 
-            if (item.images.size >= 2) {
-                itemView.findViewById<ImageView>(R.id.ivTwo).image(item.images[1])
+            if (item.attachments.size >= 2) {
+                itemView.findViewById<ImageView>(R.id.ivTwo).image(item.attachments[1])
             }
 
-            if (item.images.size >= 3) {
-                itemView.findViewById<ImageView>(R.id.ivThree).image(item.images[2])
+            if (item.attachments.size >= 3) {
+                itemView.findViewById<ImageView>(R.id.ivThree).image(item.attachments[2])
             }
 
-            if (item.images.size > 3) {
-                itemView.findViewById<TextView>(R.id.tvCountMore).text = "+${item.images.size - 2}"
+            if (item.attachments.size > 3) {
+                itemView.findViewById<TextView>(R.id.tvCountMore).text = "+${item.attachments.size - 2}"
             }
         }
     }

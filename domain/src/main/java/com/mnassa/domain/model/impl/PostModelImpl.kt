@@ -11,7 +11,7 @@ open class PostModelImpl(
         override val allConnections: Boolean,
         override val type: PostType,
         override val createdAt: Date,
-        override val images: List<String>,
+        override val attachments: List<PostAttachment>,
         override val locationPlace: LocationPlaceModel?,
         override val originalCreatedAt: Date,
         override val originalId: String,
@@ -37,7 +37,7 @@ open class PostModelImpl(
         if (allConnections != other.allConnections) return false
         if (type != other.type) return false
         if (createdAt != other.createdAt) return false
-        if (images != other.images) return false
+        if (attachments != other.attachments) return false
         if (locationPlace != other.locationPlace) return false
         if (originalCreatedAt != other.originalCreatedAt) return false
         if (originalId != other.originalId) return false
@@ -61,7 +61,7 @@ open class PostModelImpl(
         result = 31 * result + allConnections.hashCode()
         result = 31 * result + type.hashCode()
         result = 31 * result + createdAt.hashCode()
-        result = 31 * result + images.hashCode()
+        result = 31 * result + attachments.hashCode()
         result = 31 * result + (locationPlace?.hashCode() ?: 0)
         result = 31 * result + originalCreatedAt.hashCode()
         result = 31 * result + originalId.hashCode()
@@ -80,7 +80,7 @@ open class PostModelImpl(
     }
 
     override fun toString(): String {
-        return "PostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, images=$images, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor)"
+        return "PostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor)"
     }
 
 
@@ -91,7 +91,7 @@ class RecommendedProfilePostModelImpl(
         override val allConnections: Boolean,
         override val type: PostType,
         override val createdAt: Date,
-        override val images: List<String>,
+        override val attachments: List<PostAttachment>,
         override val locationPlace: LocationPlaceModel?,
         override val originalCreatedAt: Date,
         override val originalId: String,
@@ -113,7 +113,7 @@ class RecommendedProfilePostModelImpl(
         allConnections,
         type,
         createdAt,
-        images,
+        attachments,
         locationPlace,
         originalCreatedAt,
         originalId,
@@ -140,7 +140,7 @@ class RecommendedProfilePostModelImpl(
         if (allConnections != other.allConnections) return false
         if (type != other.type) return false
         if (createdAt != other.createdAt) return false
-        if (images != other.images) return false
+        if (attachments != other.attachments) return false
         if (locationPlace != other.locationPlace) return false
         if (originalCreatedAt != other.originalCreatedAt) return false
         if (originalId != other.originalId) return false
@@ -167,7 +167,7 @@ class RecommendedProfilePostModelImpl(
         result = 31 * result + allConnections.hashCode()
         result = 31 * result + type.hashCode()
         result = 31 * result + createdAt.hashCode()
-        result = 31 * result + images.hashCode()
+        result = 31 * result + attachments.hashCode()
         result = 31 * result + (locationPlace?.hashCode() ?: 0)
         result = 31 * result + originalCreatedAt.hashCode()
         result = 31 * result + originalId.hashCode()
@@ -188,7 +188,7 @@ class RecommendedProfilePostModelImpl(
     }
 
     override fun toString(): String {
-        return "RecommendedProfilePostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, images=$images, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, recommendedProfile=$recommendedProfile, offers=$offers)"
+        return "RecommendedProfilePostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, recommendedProfile=$recommendedProfile, offers=$offers)"
     }
 
 }

@@ -90,7 +90,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     override fun getViewType(position: Int): Int {
         val item = dataStorage[position]
         return when (item.type) {
-            PostType.NEED -> when (item.images.size) {
+            PostType.NEED -> when (item.attachments.size) {
                 0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
                 1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
                 2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
@@ -98,7 +98,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
                 else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
             }
             PostType.OFFER -> TYPE_OFFER
-            PostType.GENERAL -> when (item.images.size) {
+            PostType.GENERAL -> when (item.attachments.size) {
                 0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
                 1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
                 2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
