@@ -188,6 +188,7 @@
     <string name="_android_minutes_INFO">%d minutes</string>
     <string name="_android_seconds_INFO">%d seconds</string>
 
+    <string name="_android_general_text_placeholder_INFO">Type your general here</string>
 
 
 </resources>

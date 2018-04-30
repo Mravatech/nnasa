@@ -136,6 +136,43 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         )).handleException(exceptionHandler)
     }
 
+    override suspend fun createGeneralPost(
+            text: String,
+            uploadedImagesUrls: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<String>,
+            placeId: String?
+    ): PostModel {
+        val result = postApi.createPost(CreatePostRequest(
+                type = NetworkContract.PostType.GENERAL,
+                text = text,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
+                privacyType = privacy.privacyType.stringValue,
+                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
+                tags = tags,
+                location = placeId
+        )).handleException(exceptionHandler)
+        return result.data.run { converter.convert(this) }
+    }
+
+    override suspend fun updateGeneralPost(
+            postId: String,
+            text: String,
+            uploadedImagesUrls: List<String>,
+            tags: List<String>,
+            placeId: String?
+    ) {
+        postApi.changePost(CreatePostRequest(
+                postId = postId,
+                type = NetworkContract.PostType.GENERAL,
+                text = text,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
+                tags = tags,
+                location = placeId
+        )).handleException(exceptionHandler)
+    }
+
     override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {
         postApi.createPost(CreatePostRequest(
                 type = NetworkContract.PostType.ACCOUNT,

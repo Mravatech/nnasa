@@ -34,6 +34,23 @@ interface PostsInteractor {
             price: Long?,
             placeId: String?)
 
+    suspend fun createGeneralPost(
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<TagModel>,
+            placeId: String?): PostModel
+
+    suspend fun updateGeneralPost(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            tags: List<TagModel>,
+            placeId: String?)
+
+
     suspend fun createUserRecommendation(
             accountId: String,
             text: String,

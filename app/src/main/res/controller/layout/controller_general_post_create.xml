@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:toolbar_title="@string/need_create_title" />
+        app:toolbar_title="@string/general_create_title" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -30,23 +30,23 @@
                 tools:text="Share to" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilNeed"
+                android:id="@+id/tilGeneralPost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
                 app:counterEnabled="true"
-                app:counterMaxLength="@integer/max_need_length"
-                tools:hint="I need something new">
+                app:counterMaxLength="@integer/max_general_post_length"
+                tools:hint="General post here">
 
-                <com.mnassa.widget.PrefixEditText
-                    android:id="@+id/etNeed"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etGeneralPost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="@integer/max_need_length"
                     android:imeOptions="actionDone"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:maxLength="@integer/max_general_post_length" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -70,22 +70,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_post_add_image"/>
+                    tools:listitem="@layout/item_post_add_image" />
             </FrameLayout>
-
-
-            <TextView
-                android:id="@+id/tvExtraDetails"
-                style="@style/MnassaTextTiny"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                android:paddingEnd="4dp"
-                android:paddingStart="4dp"
-                android:textSize="14sp"
-                tools:text="Extra details" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilPlace"
@@ -94,30 +80,12 @@
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
                 app:errorEnabled="false"
-                tools:hint="City">
+                tools:hint="Place of Activity">
 
                 <AutoCompleteTextView
                     android:id="@+id/actvPlace"
                     style="@style/Registration.EditText" />
             </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/etPrice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    tools:text="Price" />
-
-            </android.support.design.widget.TextInputLayout>
-
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

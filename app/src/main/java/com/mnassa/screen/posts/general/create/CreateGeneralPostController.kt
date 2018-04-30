@@ -1,4 +1,4 @@
-package com.mnassa.screen.posts.need.create
+package com.mnassa.screen.posts.general.create
 
 import android.Manifest
 import android.app.Activity
@@ -11,27 +11,28 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.extensions.formatAsMoney
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.posts.need.create.AttachedImage
+import com.mnassa.screen.posts.need.create.AttachedImagesRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
-import kotlinx.android.synthetic.main.controller_need_create.view.*
+import kotlinx.android.synthetic.main.controller_general_post_create.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
 /**
- * Created by Peter on 3/19/2018.
+ * Created by Peter on 4/30/2018.
  */
-class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewModel>(args),
+class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGeneralPostViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult {
-    override val layoutId: Int = R.layout.controller_need_create
-    private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
-    override val viewModel: CreateNeedViewModel by instance(arg = postId)
+    override val layoutId: Int = R.layout.controller_general_post_create
+    private val postId by lazy { args.getString(EXTRA_POST_ID, null) }
+    override val viewModel: CreateGeneralPostViewModel by instance(arg = postId)
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
@@ -45,6 +46,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private var placeId: String? = null
     private var imageToReplace: AttachedImage? = null
     private var post: PostModel? = null
+
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -62,13 +64,12 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
 
         with(view) {
-            toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
+            toolbar.withActionButton(fromDictionary(R.string.general_publish)) {
                 viewModel.createPost(
-                        need = etNeed.text.toString(),
+                        text = etGeneralPost.text.toString(),
                         tags = chipTags.getTags(),
                         images = attachedImagesAdapter.dataStorage.toList(),
                         placeId = placeId,
-                        price = etPrice.text.toString().toLongOrNull(),
                         postPrivacyOptions = sharingOptions.asPostPrivacy
                 )
             }
@@ -76,17 +77,16 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 val post = post
                 open(SharingOptionsController.newInstance(
                         options = sharingOptions,
-                        listener = this@CreateNeedController,
+                        listener = this@CreateGeneralPostController,
                         accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
             }
 
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
-            etNeed.prefix = fromDictionary(R.string.need_create_prefix) + " "
-            etNeed.hint = fromDictionary(R.string.need_create_need_placeholder)
-            etNeed.addTextChangedListener(SimpleTextWatcher { onNeedTextUpdated() })
-            onNeedTextUpdated()
+            etGeneralPost.hint = fromDictionary(R.string.general_text_placeholder)
+            etGeneralPost.addTextChangedListener(SimpleTextWatcher { onGeneralTextUpdated() })
+            onGeneralTextUpdated()
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
             chipTags.chipSearch = viewModel
@@ -101,15 +101,12 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             }
             tilPlace.hint = fromDictionary(R.string.need_create_city_hint)
 
-            tvExtraDetails.text = fromDictionary(R.string.need_create_extra)
-            tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
-
             rvImages.adapter = attachedImagesAdapter
         }
 
-        if (args.containsKey(EXTRA_POST_TO_EDIT)) {
-            setData(args.getSerializable(EXTRA_POST_TO_EDIT) as PostModel)
-            args.remove(EXTRA_POST_TO_EDIT)
+        if (args.containsKey(EXTRA_POST)) {
+            setData(args.getSerializable(EXTRA_POST) as PostModel)
+            args.remove(EXTRA_POST)
         }
 
         launchCoroutineUI {
@@ -167,7 +164,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private fun setData(post: PostModel) {
         this.post = post
         with(view ?: return) {
-            etNeed.setText(post.text)
+            toolbar.title = fromDictionary(R.string.general_edit_title)
+
+            etGeneralPost.setText(post.text)
             launchCoroutineUI {
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
             }
@@ -175,7 +174,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             placeId = post.locationPlace?.placeId
             actvPlace.setText(post.locationPlace?.placeName?.toString())
-            etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
             sharingOptions.selectedConnections = post.privacyConnections
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
@@ -185,24 +183,27 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
     }
 
-    private fun onNeedTextUpdated() {
+    private fun onGeneralTextUpdated() {
         val view = view ?: return
-        view.toolbar.actionButtonEnabled = view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
+        view.toolbar.actionButtonEnabled = view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
     }
+
 
     companion object {
-        private const val MIN_NEED_TEXT_LENGTH = 3
+        private const val MIN_GENERAL_POST_TEXT_LENGTH = 3
 
         private const val REQUEST_CODE_CROP = 101
-        private const val EXTRA_POST_TO_EDIT = "EXTRA_POST_TO_EDIT"
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
+        private const val EXTRA_POST = "EXTRA_POST"
 
-        fun newInstance() = CreateNeedController(Bundle())
-        fun newInstanceEditMode(post: PostModel): CreateNeedController {
+        fun newInstance() = CreateGeneralPostController(Bundle())
+        fun newInstance(post: PostModel): CreateGeneralPostController {
             val args = Bundle()
-            args.putSerializable(EXTRA_POST_TO_EDIT, post)
             args.putString(EXTRA_POST_ID, post.id)
-            return CreateNeedController(args)
+            args.putSerializable(EXTRA_POST, post)
+            return CreateGeneralPostController(args)
         }
+
     }
+
 }

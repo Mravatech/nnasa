@@ -47,15 +47,11 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val eventId: String? by lazy { args.getString(EXTRA_EVENT_ID, null) }
     private var event: EventModel? = null
     override val viewModel: CreateEventViewModel by instance(arg = eventId)
-    private var waitForResumeJob: Job? = null
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
-
-            waitForResumeJob?.cancel()
-            waitForResumeJob = launchCoroutineUI {
-                lifecycle.awaitFirst { it == Lifecycle.Event.ON_RESUME }
-                view?.tvShareOptions?.text = value.format()
+            launchCoroutineUI {
+                getViewSuspend().tvShareOptions?.text = value.format()
             }
         }
     private val dialogHelper: DialogHelper by instance()
