@@ -1,10 +1,11 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
-import com.mnassa.domain.interactor.EventsInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.EventsRepository
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
@@ -15,7 +16,11 @@ import timber.log.Timber
 /**
  * Created by Peter on 4/13/2018.
  */
-class EventsInteractorImpl(private val eventsRepository: EventsRepository, private val userProfileInteractor: UserProfileInteractor) : EventsInteractor {
+class EventsInteractorImpl(
+        private val eventsRepository: EventsRepository,
+        private val userProfileInteractor: UserProfileInteractor,
+        private val storageInteractor: StorageInteractor,
+        private val tagInteractor: TagInteractor) : EventsInteractor {
     private val viewItemChannel = ArrayChannel<ListItemEvent<EventModel>>(10)
 
     init {
@@ -37,6 +42,65 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
             return
         }
         viewItemChannel.send(ListItemEvent.Added(item))
+    }
+
+    override suspend fun createEvent(model: CreateOrEditEventModel) {
+        val allImages = model.uploadedImages + model.imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
+        }.map { it.await() }
+        model.uploadedImages.clear()
+        model.uploadedImages.addAll(allImages)
+        model.tagIds.clear()
+        model.tagIds.addAll(createTags(model.tagModels))
+
+        return eventsRepository.createEvent(model)
+    }
+
+    override suspend fun editEvent(model: CreateOrEditEventModel) {
+        val allImages = model.uploadedImages + model.imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
+        }.map { it.await() }
+        model.uploadedImages.clear()
+        model.uploadedImages.addAll(allImages)
+        model.tagIds.clear()
+        model.tagIds.addAll(createTags(model.tagModels))
+
+        return eventsRepository.editEvent(model)
+    }
+
+    override suspend fun changeStatus(event: EventModel, status: EventStatus) {
+        val model = CreateOrEditEventModel(
+                id = event.id,
+                status = status,
+                tagModels = emptyList(),
+                tagIds = event.tags.toMutableSet(),
+                locationType = event.locationType,
+                type = event.type,
+                ticketsPerAccount = event.ticketsPerAccount.toInt(),
+                ticketsTotal = event.ticketsTotal.toInt(),
+                price = event.price.takeIf { it > 0 },
+                title = event.title,
+                privacy = PostPrivacyOptions(event.privacyType, event.privacyConnections),
+                uploadedImages = event.pictures.toMutableSet(),
+                imagesToUpload = emptyList(),
+                durationMillis = event.duration?.toMillis() ?: 0L,
+                startDateTime = event.startAt,
+                description = event.text
+        )
+
+        return eventsRepository.editEvent(model)
+    }
+
+    private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
+        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
+        val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
+        val tags = arrayListOf<String>()
+        if (customTags.isNotEmpty()) {
+            val newTags = tagInteractor.createCustomTagIds(customTags)
+            tags.addAll(newTags)
+        }
+        tags.addAll(existsTags)
+        return tags
     }
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
@@ -78,6 +142,10 @@ class EventsInteractorImpl(private val eventsRepository: EventsRepository, priva
 
     override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> {
         return eventsRepository.getAttendedUsers(eventId)
+    }
+
+    override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
+        return eventsRepository.getAttendedUsersChannel(eventId)
     }
 
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {

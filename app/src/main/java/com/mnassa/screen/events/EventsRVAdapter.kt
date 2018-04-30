@@ -32,6 +32,7 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
     init {
         dataStorage = SortedDataStorage(itemClass, this)
         itemsTheSameComparator = { first, second -> first.id == second.id }
+        contentTheSameComparator = { first, second -> first == second }
     }
 
     fun destroyCallbacks() {

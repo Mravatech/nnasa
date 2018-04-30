@@ -16,6 +16,7 @@ data class StoragePhotoDataImpl(override val uri: Uri, override val folderType: 
             FOLDER_AVATARS -> AVATARS
             FOLDER_PERSONAL -> PERSONAL
             FOLDER_POSTS -> POSTS
+            FOLDER_EVENTS -> EVENTS
             else -> ""
         }
     }

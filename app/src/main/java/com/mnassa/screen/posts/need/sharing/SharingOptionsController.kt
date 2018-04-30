@@ -4,16 +4,20 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import org.kodein.di.generic.instance
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_sharing_options.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import java.io.Serializable
 
 /**
@@ -22,6 +26,8 @@ import java.io.Serializable
 class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptionsViewModel>(args) {
     override val layoutId: Int = R.layout.controller_sharing_options
     private val excludedAccounts by lazy { args.getStringArrayList(EXTRA_EXCLUDED_ACCOUNTS).toHashSet() }
+    private val restrictShareReduction by lazy { args.getBoolean(EXTRA_RESTRICT_SHARE_REDUCTION) }
+    private val notUnselectableAccounts by lazy { args.getStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS).toSortedSet() }
     override val viewModel: SharingOptionsViewModel by instance(arg = SharingOptionsViewModel.SharingOptionsParams(excludedAccounts))
     private val resultListener by lazy { targetController as OnSharingOptionsResult }
     private val adapter = BuildNetworkAdapter()
@@ -93,10 +99,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         launchCoroutineUI {
             viewModel.allConnections.consumeEach {
                 adapter.isLoadingEnabled = false
-                adapter.set(it)
+                adapter.set(it.filter { !notUnselectableAccounts.contains(it.id) })
             }
         }
     }
+
 
     override fun onDestroyView(view: View) {
         adapter.destroyCallbacks()
@@ -107,32 +114,55 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     private fun getSelection(): ShareToOptions {
         with(requireNotNull(view)) {
             return ShareToOptions(
-                    isPromoted = rbPromotePost.isChecked,
-                    isMyNewsFeedSelected = rbMyNewsFeed.isChecked,
-                    selectedConnections = adapter.selectedAccounts.toList()
+                    privacyType = when {
+                        rbPromotePost.isChecked -> PostPrivacyType.WORLD
+                        rbMyNewsFeed.isChecked -> PostPrivacyType.PUBLIC
+                        else -> PostPrivacyType.PRIVATE
+                    },
+                    selectedConnections = notUnselectableAccounts + adapter.selectedAccounts
             )
         }
     }
 
     private fun setSelection(options: ShareToOptions) {
         with(view ?: return) {
-            rbPromotePost.isChecked = options.isPromoted
-            rbMyNewsFeed.isChecked = options.isMyNewsFeedSelected
+            rbPromotePost.isChecked = options.privacyType == PostPrivacyType.WORLD
+            rbMyNewsFeed.isChecked = options.privacyType == PostPrivacyType.PUBLIC
             adapter.selectedAccounts = options.selectedConnections.toSet()
+
+            if (restrictShareReduction) {
+                if (options.privacyType == PostPrivacyType.PUBLIC) {
+                    rvAllConnections.isGone = true
+                }
+                if (options.privacyType == PostPrivacyType.WORLD) {
+                    rvAllConnections.isGone = true
+                    rbMyNewsFeed.isGone = true
+                }
+            }
         }
     }
 
     companion object {
         private const val EXTRA_PREDEFINED_OPTIONS = "EXTRA_PREDEFINED_OPTIONS"
         private const val EXTRA_EXCLUDED_ACCOUNTS = "EXTRA_EXCLUDED_ACCOUNTS"
+        private const val EXTRA_RESTRICT_SHARE_REDUCTION = "EXTRA_RESTRICT_SHARE_REDUCTION"
+        private const val EXTRA_NOT_UNSELECTEBLE_ACCOUNTS = "EXTRA_NOT_UNSELECTEBLE_ACCOUNTS"
 
         fun <T> newInstance(
                 accountsToExclude: List<String>,
-                options: ShareToOptions = ShareToOptions.EMPTY,
-                listener: T): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
+                options: ShareToOptions = ShareToOptions.DEFAULT,
+                listener: T,
+                restrictShareReduction: Boolean = false): SharingOptionsController where T : OnSharingOptionsResult, T : Controller {
             val args = Bundle()
             args.putSerializable(EXTRA_PREDEFINED_OPTIONS, options)
             args.putStringArrayList(EXTRA_EXCLUDED_ACCOUNTS, accountsToExclude.toCollection(ArrayList()))
+            args.putBoolean(EXTRA_RESTRICT_SHARE_REDUCTION, restrictShareReduction)
+            if (restrictShareReduction) {
+                args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, options.selectedConnections.toCollection(ArrayList()))
+            } else {
+                args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, ArrayList())
+            }
+
             val result = SharingOptionsController(args)
             result.targetController = listener
             return result
@@ -144,38 +174,43 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     class ShareToOptions(
-        var isPromoted: Boolean,
-        var isMyNewsFeedSelected: Boolean,
-        var selectedConnections: List<String>
+            var privacyType: PostPrivacyType,
+            var selectedConnections: Set<String>
     ) : Serializable {
 
-        init {
-            when (privacyType) {
-                PostPrivacyType.WORLD -> require(isPromoted && !isMyNewsFeedSelected && selectedConnections.isEmpty())
-                PostPrivacyType.PUBLIC -> require(!isPromoted && selectedConnections.isEmpty())
-                PostPrivacyType.PRIVATE -> require(!isPromoted && !isMyNewsFeedSelected && selectedConnections.isNotEmpty())
-                else -> throw IllegalArgumentException("Invalid privacy type $privacyType")
-            }
-        }
 
-        val privacyType: PostPrivacyType get() {
-            return when {
-                isPromoted -> PostPrivacyType.WORLD
-                isMyNewsFeedSelected -> PostPrivacyType.PUBLIC
-                else -> PostPrivacyType.PRIVATE
+        val asPostPrivacy: PostPrivacyOptions
+            get() {
+                return PostPrivacyOptions(
+                        privacyType = privacyType,
+                        privacyConnections = selectedConnections
+                )
             }
-        }
 
-        val asPostPrivacy: PostPrivacyOptions get() {
-            return PostPrivacyOptions(
-                    newsFeed = isMyNewsFeedSelected,
-                    privacyType = privacyType,
-                    privacyConnections = selectedConnections
+        suspend fun format(): CharSequence {
+            return fromDictionary(R.string.need_create_share_to_prefix).format(
+                    when {
+                        privacyType == PostPrivacyType.WORLD -> fromDictionary(R.string.need_create_to_all_mnassa)
+                        privacyType == PostPrivacyType.PUBLIC -> fromDictionary(R.string.need_create_to_newsfeed)
+                        selectedConnections.isNotEmpty() -> {
+                            val userInteractor: UserProfileInteractor = App.context.getInstance()
+                            val usernames = selectedConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.userName }
+                            if (selectedConnections.size <= 2) {
+                                usernames
+                            } else {
+                                val tail = fromDictionary(R.string.need_create_to_connections_other).format(selectedConnections.size - 2)
+                                "$usernames $tail"
+                            }
+                        }
+                        else -> throw IllegalStateException()
+                    }
             )
         }
 
         companion object {
-            val EMPTY = ShareToOptions(false, true, emptyList())
+            private const val MAX_SHARE_TO_USERNAMES = 2
+
+            val DEFAULT = ShareToOptions(PostPrivacyType.PUBLIC, emptySet())
         }
     }
 }

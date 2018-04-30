@@ -34,8 +34,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>() {
         adapter.onItemClickListener = { open(EventDetailsController.newInstance(it)) }
 
         adapter.isLoadingEnabled = savedInstanceState == null
-        launchCoroutineUI {
-            viewModel.eventsFeedChannel.openSubscription().bufferize(this@EventsController).consumeEach {
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.eventsFeedChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false

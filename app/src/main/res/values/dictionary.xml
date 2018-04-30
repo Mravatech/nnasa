@@ -404,6 +404,7 @@
     <string name="event_tab_participants">_android_event_tab_participants</string>
     <string name="event_location_not_defined">_event_details_location_notDefined</string>
     <string name="event_location_later">_event_details_location_willBeAnnouncedLater</string>
+    <string name="event_location_specify">_new_event_specify_location</string>
     <string name="event_duration">_event_details_duration</string>
     <string name="event_duration_minute">_event_details_durationType_minute</string>
     <string name="event_duration_hour">_event_details_durationType_hour</string>
@@ -431,5 +432,36 @@
     <string name="event_participant_save">_navItem_Save</string>
     <string name="event_participant_guest">_android_event_participant_guest</string>
     <string name="event_duration_not_specified">_android_event_duration_not_specified</string>
+    
+    <!-- ======================================= CREATE EVENT ================================== -->
+    <string name="event_create_title_placeholder">create_event_your_title</string>
+    <string name="event_create_date_placeholder">_date_selection_date_time</string>
+    <string name="event_create_location_placeholder">_android_event_create_location_placeholder</string>
+    <string name="event_date_time_title">_android_event_date_time_title</string>
+    <string name="event_date_time_button">_android_event_date_time_done</string>
+    <string name="event_date_placeholder">_new_event_date_select</string>
+    <string name="event_time_placeholder">_android_event_time_placeholder</string>
+    <string name="event_duration_placeholder">_date_selection_duration</string>
+    <string name="event_create_address">_android_event_address</string>
+    <string name="event_create_type">create_event_type</string>
+    <string name="event_paid_text">_new_event_paid_event_switch</string>
+    <string name="event_points_placeholder">_buy_ticket_points</string>
+    <string name="event_limit_tickets_per_person_placeholder">_new_event_quantity_tickets_per_account</string>
+    <string name="event_tickets_quantity_placeholder">_new_event_quantity_ticket_placeholder</string>
+    <string name="event_ticket_price_placeholder">_new_event_price_placeholder</string>
+    <string name="event_description_placeholder">_android_event_description_placeholder</string>
+    <string name="event_post_button">_new_post_navbar_title_newPost</string>
+    <string name="event_edit_title">_new_event_navbar_title_edit</string>
+    <string name="event_menu_edit">_event_details_edit_event</string>
+    <string name="event_menu_change_status">_event_details_change_status_of_event</string>
+    <string name="event_status_annulled">annulled</string>
+    <string name="event_status_opened">_android_event_status_opened</string>
+    <string name="event_status_closed">closed</string>
+    <string name="event_status_suspended">suspended</string>
+
+    <string name="days_count">_android_days</string>
+    <string name="hours_count">_android_hours</string>
+    <string name="minutes_count">_android_minutes</string>
+    <string name="seconds_count">_android_seconds</string>
 
 </resources>

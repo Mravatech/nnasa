@@ -13,11 +13,7 @@ import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.EventAttendeeAccountDbEntity
 import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
-import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
-import com.mnassa.data.network.bean.retrofit.request.BuyTicketsRequest
-import com.mnassa.data.network.bean.retrofit.request.EventAttendeeBean
-import com.mnassa.data.network.bean.retrofit.request.EventAttendeeRequest
-import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
+import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.*
@@ -88,10 +84,28 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                 .map { EventAttendee(converter.convert(it), it.presence ?: false) }
     }
 
+    override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
+        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+                .document(eventId)
+                .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+                .toListChannel<EventAttendeeAccountDbEntity>(exceptionHandler)
+                .map { it.map { EventAttendee(converter.convert(it), it.presence ?: false) } }
+    }
+
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
         val attendees = ArrayList<EventAttendeeBean>()
         presentUsers.mapTo(attendees) { EventAttendeeBean(it, true) }
         notPresentUsers.mapTo(attendees) { EventAttendeeBean(it, false) }
         eventsApi.saveAttendee(EventAttendeeRequest(eventId, attendees)).handleException(exceptionHandler)
+    }
+
+    override suspend fun createEvent(model: CreateOrEditEventModel) {
+        val request: CreateOrEditEventRequest = converter.convert(model)
+        eventsApi.createEvent(request).handleException(exceptionHandler)
+    }
+
+    override suspend fun editEvent(model: CreateOrEditEventModel) {
+        val request: CreateOrEditEventRequest = converter.convert(model)
+        eventsApi.editEvent(request).handleException(exceptionHandler)
     }
 }

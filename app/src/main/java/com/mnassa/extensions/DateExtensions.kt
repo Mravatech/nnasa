@@ -4,10 +4,13 @@ import android.text.format.Time
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import com.mnassa.App
+import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.translation.fromDictionary
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 3/15/2018.
@@ -51,14 +54,47 @@ fun Date.getEndOfDay(): Date {
     return calendar.time
 }
 
-fun Date.toTimeAgo(): String {
+fun Date.toTimeAgo(): CharSequence {
     val locale = App.context.getInstance<LanguageProvider>().locale
     val messages = TimeAgoMessages.Builder().withLocale(locale).build()
     return TimeAgo.using(time, messages)
 }
 
 
-fun Date.hhmm(): String {
-    val localDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+fun Date.formatAsTime(): CharSequence {
+    val languageProvider: LanguageProvider = App.context.getInstance()
+    val localDateFormat = SimpleDateFormat("hh:mm a", languageProvider.locale)
     return localDateFormat.format(this)
+}
+
+fun Date.formatAsDate(): CharSequence {
+    val languageProvider: LanguageProvider = App.context.getInstance()
+    val localDateFormat = SimpleDateFormat("dd MMM yyyy", languageProvider.locale)
+    return localDateFormat.format(this)
+}
+
+fun Date.formatAsDateTime(): CharSequence {
+    val languageProvider: LanguageProvider = App.context.getInstance()
+    val localDateFormat = SimpleDateFormat("dd MMM yyyy hh:mm a", languageProvider.locale)
+    return localDateFormat.format(this)
+}
+
+
+fun Long.formatAsDuration(): CharSequence {
+    var value = this
+    val days = TimeUnit.MILLISECONDS.toDays(value)
+    value -= TimeUnit.DAYS.toMillis(days)
+    val hours = TimeUnit.MILLISECONDS.toHours(value)
+    value -= TimeUnit.HOURS.toMillis(hours)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(value)
+    value -= TimeUnit.MINUTES.toMillis(minutes)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(value)
+    value -= TimeUnit.SECONDS.toMillis(seconds)
+
+    val result = StringBuilder()
+    if (days > 0) result.append("${fromDictionary(R.string.days_count).format(days)} ")
+    if (hours > 0 || result.isNotEmpty()) result.append("${fromDictionary(R.string.hours_count).format(hours)} ")
+    if (minutes > 0 || result.isNotEmpty()) result.append("${fromDictionary(R.string.minutes_count).format(minutes)} ")
+    if (seconds > 0 || result.isEmpty()) result.append("${fromDictionary(R.string.seconds_count).format(seconds)} ")
+    return result.trim().toString()
 }

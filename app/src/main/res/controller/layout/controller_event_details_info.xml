@@ -135,6 +135,21 @@
         android:layout_marginBottom="@dimen/spacing_vertical" />
 
     <View
+        android:id="@+id/vTagsSeparator"
+        style="@style/MnassaDivider"
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginTop="@dimen/spacing_vertical" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        tools:background="#00a"
+        tools:layout_height="60dp" />
+
+    <View
         style="@style/MnassaDivider"
         android:layout_marginBottom="@dimen/spacing_vertical"
         android:layout_marginTop="@dimen/spacing_vertical" />

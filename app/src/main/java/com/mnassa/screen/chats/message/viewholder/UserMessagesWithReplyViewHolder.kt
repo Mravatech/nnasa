@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.PostModel
-import com.mnassa.extensions.hhmm
+import com.mnassa.extensions.formatAsTime
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.android.synthetic.main.item_chat_message_user_with_reply.view.*
 
@@ -21,7 +21,7 @@ class UserMessagesWithReplyViewHolder(itemView: View, private val onLongClickLis
         itemView.tvUserMessageWithReply.text = item.text
         itemView.tvUserMessageWithReply.setOnLongClickListener(onLongClickListener)
         itemView.tvUserMessageWithReply.tag = this@UserMessagesWithReplyViewHolder
-        itemView.tvUserMessageWithReplySent.text = item.createdAt.hhmm()
+        itemView.tvUserMessageWithReplySent.text = item.createdAt.formatAsTime()
         item.replyMessage?.second?.let {
             itemView.tvUserReplyMessage.text = it.text
         } ?: run {

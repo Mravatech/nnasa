@@ -46,10 +46,10 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         subscribeToErrorEvents()
     }
 
-    override fun onViewDestroyed(view: View) {
+    override fun onDestroyView(view: View) {
         hideProgress() //prevent showing progress after screen change
         hideKeyboard()
-        super.onViewDestroyed(view)
+        super.onDestroyView(view)
     }
 
     protected open fun subscribeToErrorEvents() {

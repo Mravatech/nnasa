@@ -22,6 +22,7 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
@@ -107,8 +108,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 text = text,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
-                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() },
-                allConnections = privacy.newsFeed,
+                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
                 tags = tags,
                 price = price,
                 location = placeId
@@ -141,8 +142,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 accountForRecommendation = accountId,
                 text = text,
                 privacyType = privacy.privacyType.stringValue,
-                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() },
-                allConnections = privacy.newsFeed
+                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
     }
 
@@ -159,8 +160,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.deletePost(postId).handleException(exceptionHandler)
     }
 
-    override suspend fun repostPost(postId: String, text: String?, privacyConnections: List<String>): PostModel {
-        return postApi.repostComment(RepostCommentRequest(postId, text?.takeIf { it.isNotBlank() }, privacyConnections.takeIf { it.isNotEmpty() }))
+    override suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel {
+        return postApi.repostComment(RepostCommentRequest(postId, text?.takeIf { it.isNotBlank() }, privacyConnections.takeIf { it.isNotEmpty() }?.toList()))
                 .handleException(exceptionHandler)
                 .data
                 .run { converter.convert(this) }

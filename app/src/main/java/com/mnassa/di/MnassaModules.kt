@@ -59,6 +59,8 @@ import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.events.create.CreateEventViewModel
 import com.mnassa.screen.events.create.CreateEventViewModelImpl
+import com.mnassa.screen.events.create.date.DateTimePickerViewModel
+import com.mnassa.screen.events.create.date.DateTimePickerViewModelImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.events.details.EventDetailsViewModel
 import com.mnassa.screen.events.details.EventDetailsViewModelImpl
@@ -202,12 +204,13 @@ private val viewModelsModule = Kodein.Module {
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
         }
     }
-    bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance()) }
-    bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance()) }
+    bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance(), instance()) }
+    bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance(), instance()) }
     bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
-    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance()) }
+    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance(), instance(), instance()) }
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
+    bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {
@@ -284,7 +287,7 @@ private val interactorModule = Kodein.Module {
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
-    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance()) }
+    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance()) }
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }

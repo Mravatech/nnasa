@@ -27,14 +27,14 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
     override val viewModel: RecommendUserViewModel by instance(arg = postId)
     private var waitForResumeJob: Job? = null
-    override var sharingOptions = SharingOptionsController.ShareToOptions.EMPTY
+    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
 
             waitForResumeJob?.cancel()
             waitForResumeJob = launchCoroutineUI {
                 lifecycle.awaitFirst { it == Lifecycle.Event.ON_RESUME }
-                view?.tvShareOptions?.text = formatShareToOptions(value)
+                view?.tvShareOptions?.text = value.format()
             }
         }
 
@@ -57,7 +57,7 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
             }
 
             launchCoroutineUI {
-                tvShareOptions.text = formatShareToOptions(sharingOptions)
+                tvShareOptions.text = sharingOptions.format()
             }
             etRecommend.prefix = "${fromDictionary(R.string.recommend_prefix)}  "
             etRecommend.hint = fromDictionary(R.string.recommend_message_placeholder)
@@ -73,27 +73,6 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
         launchCoroutineUI {
             viewModel.closeScreenChannel.consumeEach { close() }
-        }
-    }
-
-    private suspend fun formatShareToOptions(options: SharingOptionsController.ShareToOptions): String {
-        with(options) {
-            return fromDictionary(R.string.need_create_share_to_prefix).format(
-                    when {
-                        isPromoted -> fromDictionary(R.string.need_create_to_all_mnassa)
-                        isMyNewsFeedSelected -> fromDictionary(R.string.need_create_to_newsfeed)
-                        selectedConnections.isNotEmpty() -> {
-                            val usernames = options.selectedConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { viewModel.getUser(it) }.joinToString { it.userName }
-                            if (selectedConnections.size <= 2) {
-                                usernames
-                            } else {
-                                val tail = fromDictionary(R.string.need_create_to_connections_other).format(options.selectedConnections.size - 2)
-                                "$usernames $tail"
-                            }
-                        }
-                        else -> throw IllegalStateException()
-                    }
-            )
         }
     }
 

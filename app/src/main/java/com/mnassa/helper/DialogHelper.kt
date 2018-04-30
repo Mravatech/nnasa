@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.ProgressDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -20,7 +21,9 @@ import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.extensions.formatted
 import com.mnassa.extensions.getBoughtTicketsCount
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
@@ -34,6 +37,8 @@ import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 import kotlinx.android.synthetic.main.dialog_yes_no.*
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import mobi.upod.timedurationpicker.TimeDurationPicker
+import mobi.upod.timedurationpicker.TimeDurationPickerDialog
 import java.util.*
 
 class DialogHelper {
@@ -132,10 +137,28 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener) {
-        val calendar = Calendar.getInstance()
-        DatePickerDialog(context, listener, calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+        DatePickerDialog(
+                context,
+                listener,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    fun timeDialog(context: Context, listener: TimePickerDialog.OnTimeSetListener, calendar: Calendar = Calendar.getInstance()) {
+        TimePickerDialog(
+                context,
+                listener,
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        ).show()
+    }
+
+    fun durationDialog(context: Context, listener: TimeDurationPickerDialog.OnDurationSetListener, durationMillis: Long = 0) {
+        TimeDurationPickerDialog(context, listener, durationMillis, TimeDurationPicker.HH_MM).show()
     }
 
 
@@ -311,7 +334,7 @@ class DialogHelper {
                     .build()
 
             with(view) {
-                val setTotalPoints = { count : Long ->
+                val setTotalPoints = { count: Long ->
                     val priceText = SpannableStringBuilder((count * event.price).toString())
                     priceText.setSpan(RelativeSizeSpan(1f), 0, priceText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     priceText.append(" ")
@@ -352,5 +375,19 @@ class DialogHelper {
             dialog.show()
             continuation.invokeOnCompletion { dialog.dismiss() }
         }
+    }
+
+    fun selectEventStatusDialog(context: Context, initStatus: EventStatus? = null, onStatusSelected: (EventStatus) -> Unit) {
+        val statuses = listOf(EventStatus.ANNULED, EventStatus.OPENED, EventStatus.CLOSED, EventStatus.SUSPENDED)
+
+        val index = if (initStatus == null) -1 else statuses.indexOfFirst { it::class.java == initStatus::class.java }
+
+        MaterialDialog.Builder(context)
+                .items(statuses.map { it.formatted })
+                .itemsCallbackSingleChoice(index, { _, _, which, _ ->
+                    onStatusSelected(statuses[which])
+                    true
+                })
+                .show()
     }
 }

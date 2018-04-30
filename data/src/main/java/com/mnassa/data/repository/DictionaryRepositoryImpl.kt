@@ -46,7 +46,7 @@ class DictionaryRepositoryImpl(
     }
 
     override suspend fun loadDictionary(): List<TranslatedWordModel> {
-        return async {
+        val result = async {
             val dictionary = databaseReference
                     .child(DatabaseContract.TABLE_DICTIONARY)
                     .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
@@ -54,6 +54,7 @@ class DictionaryRepositoryImpl(
                     .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
             converter.convertCollection(dictionary, TranslatedWordModel::class.java)
         }.await()
+        return result
     }
 
     override fun getLocalDictionaryVersion(): Int = dictionaryPreferences.getDictionaryVersion()

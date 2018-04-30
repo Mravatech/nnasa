@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.extensions.hhmm
+import com.mnassa.extensions.formatAsTime
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.android.synthetic.main.item_chat_message_my.view.*
 
@@ -20,7 +20,7 @@ class MyMessagesViewHolder(itemView: View, private val onLongClickListener: View
         itemView.tvMyMessage.text = item.text//todo add date to message
         itemView.tvMyMessage.setOnLongClickListener(onLongClickListener)
         itemView.tvMyMessage.tag = this@MyMessagesViewHolder
-        itemView.tvMyMessageSent.text = item.createdAt.hhmm()
+        itemView.tvMyMessageSent.text = item.createdAt.formatAsTime()
     }
 
     companion object {

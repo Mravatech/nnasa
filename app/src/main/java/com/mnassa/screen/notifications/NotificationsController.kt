@@ -34,9 +34,9 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
             adapter.restoreState(this)
         }
         adapter.isLoadingEnabled = savedInstanceState == null
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             val view = getViewSuspend()
-            viewModel.notificationChannel.openSubscription().bufferize(this@NotificationsController).consumeEach {
+            viewModel.notificationChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false

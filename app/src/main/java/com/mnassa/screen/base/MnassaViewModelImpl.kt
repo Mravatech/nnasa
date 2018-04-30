@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.core.BaseViewModelImpl
 import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchCoroutineWorker
 import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
@@ -70,10 +71,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             loginInteractor.signOut()
         } catch (e: NetworkException) {
             Timber.d(e)
-            if (appInfoProvider.isDebug) {
-                val message = "${e.message}\n${Log.getStackTraceString(e.cause)}"
-                errorMessageChannel.send(message)
-            } else e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }
+            e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }
         } catch (e: FirebaseException) {
             Timber.e(e)
             val message = e.localizedMessage ?: e.message
@@ -86,11 +84,11 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     }
 
     open fun <T> handleException(function: suspend () -> T): Job {
-        return launchCoroutineUI { handleExceptionsSuspend(function) }
+        return launchCoroutineWorker { handleExceptionsSuspend(function) }
     }
 
-    protected open fun showProgress() = asyncUI { isProgressEnabledChannel.send(true) }
-    protected open fun hideProgress() = asyncUI { isProgressEnabledChannel.send(false) }
+    protected open fun showProgress() = launchCoroutineUI { isProgressEnabledChannel.send(true) }
+    protected open fun hideProgress() = launchCoroutineUI { isProgressEnabledChannel.send(false) }
     protected open suspend fun <T> withProgressSuspend(function: suspend () -> T) {
         showProgress()
         try {

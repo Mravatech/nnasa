@@ -76,9 +76,7 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
     }
 
     fun showConnectedAccountMenu(view: View, onChat: () -> Unit, onProfile: () -> Unit, onDisconnect: () -> Unit) {
-        //Creating the instance of PopupMenu
         val popup = PopupMenu(view.context, view)
-        //Inflating the Popup using xml file
         popup.menuInflater.inflate(R.menu.connections_item, popup.menu)
         popup.menu.findItem(R.id.action_connections_send_message).title = fromDictionary(R.string.tab_connections_all_item_send_message)
         popup.menu.findItem(R.id.action_connections_view_profile).title = fromDictionary(R.string.tab_connections_all_item_view_profile)
@@ -101,9 +99,7 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
     }
 
     fun showConnectionsTabMenu(view: View, openRecommendedConnectionsScreen: () -> Unit, openSentRequestsScreen: () -> Unit, openArchivedConnectionsScreen: () -> Unit) {
-        //Creating the instance of PopupMenu
         val popup = PopupMenu(view.context, view)
-        //Inflating the Popup using xml file
         popup.menuInflater.inflate(R.menu.connections_main, popup.menu)
         popup.menu.findItem(R.id.action_recommended_connections).title = fromDictionary(R.string.tab_connections_recommended)
         popup.menu.findItem(R.id.action_sent_requests).title = fromDictionary(R.string.tab_connections_new_requests)
