@@ -10,6 +10,9 @@
     <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
 
     <string name="connected_by_from">_android_connected_by_from</string>
+    <string name="general_yes">_pin_cancel_yes</string>
+    <string name="general_no">_pin_cancel_no</string>
+
 
     <!-- ===================================== LOGIN ==================================== -->
     <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
@@ -165,6 +168,8 @@
     <string name="new_requests_title">_connections_header_new_requests</string>
     <string name="new_requests_empty_title">_connectionsList_empty_newRequests</string>
     <string name="new_requests_empty_description">_android_connections_new_requests_empty_description</string>
+    <string name="new_requests_decline">_connectionAction_declineMessageTitle</string>
+    <string name="new_requests_decline_available">_connectionAction_declineMessage</string>
 
     <!-- recommended -->
     <string name="recommended_connections_title">_connections_header_recommended_conns</string>
@@ -233,8 +238,6 @@
     <string name="user_profile_connection_connect">connections_button_connect</string>
     <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>
     <string name="user_profile_you_want_to_disconnect">_connectionAction_disconnectMessageTitle</string>
-    <string name="user_profile_yes">_pin_cancel_yes</string>
-    <string name="user_profile_no">_pin_cancel_no</string>
 
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
     <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
@@ -357,7 +360,7 @@
     <string name="notification_thinks">_android_notification_thinks</string>
     <string name="notification_can_help_you_with">_android_notification_can_help_you_with</string>
     <string name="notification_you_promoted_your_post">_android_notification_you_promoted_your_post</string>
-    <string name="notification_your_post_will_expire_tomorrow">_android_notification_your_post_will_expire_tomorrow</string>
+    <string name="notification_your_post_will_expire_tomorrow">_notification_text_key_oneDayToExpirationOfPost</string>
     <string name="notification_your_post_has_expired">_android_notification_your_post_has_expired</string>
     <string name="notification_was_cancelled_by_organizer">_android_notification_was_cancelled_by_organizer</string>
     <string name="notification_points_were_returned">_android_notification_points_were_returned</string>

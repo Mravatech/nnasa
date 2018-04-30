@@ -12,4 +12,5 @@ interface NewRequestsViewModel : MnassaViewModel {
 
     fun accept(account: ShortAccountModel)
     fun decline(account: ShortAccountModel)
+    suspend fun getDisconnectTimeoutDays(): Int
 }

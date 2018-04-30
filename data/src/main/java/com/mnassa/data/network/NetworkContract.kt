@@ -46,7 +46,7 @@ object NetworkContract {
     object ConnectionsStatus {
         const val CONNECTED = "connected"
         const val REQUESTED = "requested"
-        const val SENT = "sended" //server side error
+        const val SENT = "sent"
         const val DISCONNECTED = "disconnected"
         const val RECOMMENDED = "recommended"
     }

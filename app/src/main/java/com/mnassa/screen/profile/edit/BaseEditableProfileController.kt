@@ -62,7 +62,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
                     thisRef().activity?.let {
                         when (imageSource) {
                             CropActivity.ImageSource.CAMERA -> {
-                                val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA)
+                                val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 if (!permissionsResult.isAllGranted) {
                                     return@launchCoroutineUI
                                 }

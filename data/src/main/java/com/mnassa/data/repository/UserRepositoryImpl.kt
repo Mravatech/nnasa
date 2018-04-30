@@ -251,7 +251,7 @@ class UserRepositoryImpl(
                 .map { it ?: PermissionsDbEntity.EMPTY  }
     }
 
-    override suspend fun addPushToken() {//todo add recheck token
+    override suspend fun addPushToken() {
         val token = FirebaseInstanceId.getInstance().token
         if (getAccountIdOrNull() != null && token != null) {
             val info = "$ANDROID,${getFirebaseUserId()},${getAccountIdOrNull()}"
