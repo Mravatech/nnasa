@@ -90,13 +90,13 @@ class ProfileViewModelImpl(
         }
     }
 
-    override fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String, isAcceptConnect: Boolean) {
+    override fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String) {
         handleException {
             withProgressSuspend {
                 val action = when (connectionStatus) {
                     ConnectionStatus.CONNECTED -> ConnectionAction.DISCONNECT
                     ConnectionStatus.SENT -> ConnectionAction.REVOKE
-                    ConnectionStatus.REQUESTED -> if (isAcceptConnect) ConnectionAction.ACCEPT else ConnectionAction.DECLINE
+                    ConnectionStatus.REQUESTED -> ConnectionAction.ACCEPT
                     ConnectionStatus.RECOMMENDED -> ConnectionAction.CONNECT
                     else -> throw IllegalArgumentException("Wrong connection status")
                 }

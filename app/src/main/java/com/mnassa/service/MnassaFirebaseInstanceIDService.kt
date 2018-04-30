@@ -1,10 +1,9 @@
 package com.mnassa.service
 
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.FirebaseInstanceIdService
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.UserProfileInteractor
-import timber.log.Timber
+import kotlinx.coroutines.experimental.launch
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,11 +21,11 @@ class MnassaFirebaseInstanceIDService : FirebaseInstanceIdService() {
     // [START refresh_token]
     override fun onTokenRefresh() {
         // Get updated InstanceID token.
-        val refreshedToken = FirebaseInstanceId.getInstance().token
-        Timber.i("Refreshed token: " + refreshedToken!!)
         val userProfileInteractor: UserProfileInteractor = applicationContext.getInstance<UserProfileInteractor>()
 
-//        userProfileInteractor.addPushToken()
+        launch {
+            userProfileInteractor.addPushToken()
+        }
     }
     // [END refresh_token]
 

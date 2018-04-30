@@ -86,8 +86,8 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
             }
             NEW_USER_JOINED, CONNECTION_REQUEST, CONNECTIONS_REQUEST_ACCEPTED,
             USER_WAS_RECOMMENDED_TO_YOU, PRIVATE_CHAT_MESSAGE, RESPONSE_CHAT_MESSAGE -> {
-                val id = item.extra.author?.id ?: item.extra.recommended?.id
-                open(ProfileController.newInstance(requireNotNull(id)))
+                val account = item.extra.recommended ?: item.extra.reffered ?: item.extra.author
+                open(ProfileController.newInstance(requireNotNull(account)))
             }
             I_WAS_RECOMMENDED_IN_EVENT, USER_WAS_RECOMMENDED_IN_EVENT, NEW_EVENT_BY_ADMIN, NEW_EVENT_ATTENDEE, EVENT_CANCELLING -> {
                 open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
@@ -95,7 +95,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
             INVITES_NUMBER_CHANGED -> {
                 open(InviteController.newInstance())
             }
-            else ->{
+            else -> {
                 when {
                     item.type.contains(POST) -> {
                         val postDetailsFactory: PostDetailsFactory by instance()
@@ -103,8 +103,8 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
                     }
                     item.type.contains(EVENT) -> open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
                     else -> {
-                        val id = item.extra.author?.id ?: item.extra.recommended?.id
-                        open(ProfileController.newInstance(requireNotNull(id)))
+                        val account = item.extra.recommended ?: item.extra.reffered ?: item.extra.author
+                        open(ProfileController.newInstance(requireNotNull(account)))
                     }
                 }
 

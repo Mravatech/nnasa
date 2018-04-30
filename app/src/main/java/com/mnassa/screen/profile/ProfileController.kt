@@ -44,21 +44,21 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
-
+    private lateinit var profileId: String
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        val id = accountModel?.let {
+        profileId = accountModel?.let {
             view.ivCropImage.avatarSquare(it.avatar)
             it.id
         } ?: run { accountId }
-        viewModel.getProfileWithAccountId(id)
+        viewModel.getProfileWithAccountId(profileId)
         adapter.onConnectionStatusClickListener = {
             when (it) {
                 ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
-                    viewModel.sendConnectionStatus(it, id, true)
+                    viewModel.sendConnectionStatus(it, profileId)
                 }
                 ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
-                    viewModel.sendConnectionStatus(it, id, true)
+                    viewModel.sendConnectionStatus(it, profileId)
             }
         }
         adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
@@ -89,7 +89,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
         }
-        viewModel.getPostsById(id)
+        viewModel.getPostsById(profileId)
         launchCoroutineUI {
             viewModel.postChannel.consumeEach {
                 //TODO: bufferization
@@ -120,15 +120,19 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleCollapsingToolbar(view: View, profileModel: ProfileModel) {
+
         view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+            val shouldShowFab = (profileModel.connectionStatus == ConnectionStatus.CONNECTED ||
+                    profileModel.connectionStatus == ConnectionStatus.CONNECTED ||
+                    profileModel.connectionStatus == ConnectionStatus.CONNECTED)
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
                 view.tvTitleCollapsed.visibility = View.VISIBLE
-                if (!profileModel.isMyProfile) {
+                if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.hide()
                 }
             } else {
                 view.tvTitleCollapsed.visibility = View.GONE
-                if (!profileModel.isMyProfile) {
+                if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.show()
                 }
             }
@@ -137,8 +141,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     override var onComplaint: String = ""
         set(value) {
-            val id = accountModel?.id ?: accountId
-            viewModel.sendComplaint(id, OTHER, value)
+            viewModel.sendComplaint(profileId, OTHER, value)
         }
 
     override fun onDestroyView(view: View) {
@@ -155,13 +158,21 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
             ConnectionStatus.RECOMMENDED -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener { }
+                fab.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, profileId)
+                }
                 fab.setImageResource(R.drawable.ic_new_requests)
             }
             ConnectionStatus.SENT -> {
                 fab.visibility = View.VISIBLE
-                fab.setOnClickListener { }
+                fab.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, profileId)
+                }
                 fab.setImageResource(R.drawable.ic_pending)
+            }
+            else -> {
+                fab.visibility = View.GONE
+                fab.setOnClickListener(null)
             }
         }
     }
