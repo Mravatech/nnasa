@@ -5,4 +5,5 @@ package com.mnassa.screen.main
  */
 interface OnPageSelected {
     fun onPageSelected()
+    fun onPageUnSelected() {}
 }

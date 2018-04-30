@@ -7,6 +7,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
@@ -17,7 +18,7 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class PostsController : MnassaControllerImpl<PostsViewModel>() {
+class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
     override val layoutId: Int = R.layout.controller_posts_list
     override val viewModel: PostsViewModel by instance()
     private val adapter = PostsRVAdapter()
@@ -73,6 +74,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>() {
         with(view) {
             rvNewsFeed.adapter = adapter
         }
+    }
+
+    override fun onPageSelected() {
+        val recyclerView = view?.rvNewsFeed ?: return
+        recyclerView.scrollToPosition(0)
     }
 
     override fun onDestroyView(view: View) {

@@ -48,7 +48,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
     private var drawer: Drawer? = null
     private var accountHeader: AccountHeader? = null
     private var activeAccountId: String = ""
-    private var currentPage = 0
+    private var previousSelectedPage = 0
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -82,7 +82,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
 
         with(view) {
             vpMain.adapter = adapter
-//            vpMain.offscreenPageLimit = adapter.count
 
             accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
@@ -153,33 +152,37 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
 
             bnMain.setOnTabSelectedListener { position, _ ->
                 vpMain.setCurrentItem(position, false)
-                val page = adapter.getRouter(position)?.getControllerWithTag(formatTabControllerTag(position))
-                if (page is OnPageSelected) {
-                    page.onPageSelected()
+                Pages.values().forEach { page ->
+                    val index = page.ordinal
+                    val controller = adapter.getRouter(index)?.getControllerWithTag(formatTabControllerTag(index))
+                    if (controller is OnPageSelected) {
+                        if (index == position) controller.onPageSelected()
+                        else controller.onPageUnSelected()
+                    }
                 }
 
-                if (currentPage == NOTIFICATION_PAGE) {
+                if (previousSelectedPage == Pages.NOTIFICATIONS.ordinal) {
                     viewModel.resetAllNotifications()
                 }
-                currentPage = position
+                previousSelectedPage = position
                 true
             }
         }
 
         launchCoroutineUI {
-            viewModel.unreadChatsCountChannel.consumeEach { setCounter(Pages.CHAT.ordinal, it) }
+            viewModel.unreadChatsCountChannel.consumeEach { setCounter(Pages.CHAT, it) }
         }
 
         launchCoroutineUI {
-            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS.ordinal, it) }
+            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS, it) }
         }
 
         launchCoroutineUI {
-            viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(Pages.CONNECTIONS.ordinal, it) }
+            viewModel.unreadConnectionsCountChannel.consumeEach { setCounter(Pages.CONNECTIONS, it) }
         }
 
         launchCoroutineUI {
-            viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(Pages.HOME.ordinal, it) }
+            viewModel.unreadEventsAndNeedsCountChannel.consumeEach { setCounter(Pages.HOME, it) }
         }
 
         launchCoroutineUI {
@@ -215,7 +218,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
         super.onSaveInstanceState(result)
     }
 
-    private fun setCounter(pageIndex: Int, counterValue: Int) {
+    private fun setCounter(page: Pages, counterValue: Int) {
         val view = view ?: return
 
         val notification = if (counterValue != 0) AHNotification.Builder()
@@ -223,7 +226,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                 .setBackgroundColor(ContextCompat.getColor(view.context, R.color.accent))
                 .setTextColor(ContextCompat.getColor(view.context, R.color.white))
                 .build() else null
-        view.bnMain.setNotification(notification, pageIndex)
+        view.bnMain.setNotification(notification, page.ordinal)
     }
 
     override fun handleBack(): Boolean {
@@ -269,7 +272,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
 
     companion object {
         const val ACCOUNT_ADD = -998L
-        const val NOTIFICATION_PAGE = 2
 
         fun newInstance() = MainController()
     }

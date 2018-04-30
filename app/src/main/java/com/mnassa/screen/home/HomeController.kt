@@ -8,11 +8,11 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.extensions.isGone
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
 import com.mnassa.screen.events.create.CreateEventController
+import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
@@ -22,7 +22,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 3/6/2018.
  */
-class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
+class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPageSelected {
     override val layoutId: Int = R.layout.controller_home
     override val viewModel: HomeViewModel by instance()
 
@@ -34,7 +34,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
                     HomePage.EVENTS.ordinal -> EventsController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
-                router.setRoot(RouterTransaction.with(page))
+                router.setRoot(RouterTransaction.with(page).tag(formatTabControllerTag(position)))
             }
         }
 
@@ -107,8 +107,23 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter {
         }
     }
 
+    override fun onPageSelected() = onPageSelectionChanged(true)
+    override fun onPageUnSelected() = onPageSelectionChanged(false)
+
+    private fun onPageSelectionChanged(isSelected: Boolean) {
+        val view = view ?: return
+        val selectedPageIndex = view.vpHome.currentItem
+        val controller = adapter.getRouter(selectedPageIndex)?.getControllerWithTag(formatTabControllerTag(selectedPageIndex))
+        if (controller is OnPageSelected) {
+            if (isSelected) controller.onPageSelected()
+            else controller.onPageUnSelected()
+        }
+    }
+
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
     override fun close(self: Controller) = mnassaRouter.close(self)
+
+    private fun formatTabControllerTag(position: Int): String = "home_tab_controller_$position"
 
     enum class HomePage {
         NEEDS, EVENTS
