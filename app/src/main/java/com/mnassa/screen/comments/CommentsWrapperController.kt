@@ -17,6 +17,7 @@ import com.mnassa.extensions.*
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.comments.rewarding.RewardingController
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
@@ -67,10 +68,11 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
 
-        commentsAdapter = PostCommentsRVAdapter { inflateHeader(it) }
+        commentsAdapter = PostCommentsRVAdapter(viewModel.getAccountId()) { inflateHeader(it) }
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
+        commentsAdapter.onCommentUsefulClick = { open(RewardingController.newInstance(it.creator, it.id)) }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
     }
 
