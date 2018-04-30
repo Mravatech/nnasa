@@ -27,6 +27,11 @@ interface PostModel : Model {
     val repostAuthor: ShortAccountModel?
 }
 
+interface InfoPostModel: PostModel {
+    val title: String
+    var isPinned: Boolean
+}
+
 sealed class PostAttachment : Serializable {
     data class PostPhotoAttachment(val photoUrl: String) : PostAttachment()
     data class PostVideoAttachment(val previewUrl: String, val videoUrl: String) : PostAttachment()

@@ -82,8 +82,54 @@ open class PostModelImpl(
     override fun toString(): String {
         return "PostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor)"
     }
+}
 
-
+class InfoPostImpl(
+        override var id: String,
+        override val allConnections: Boolean,
+        override val type: PostType,
+        override val createdAt: Date,
+        override val attachments: List<PostAttachment>,
+        override val locationPlace: LocationPlaceModel?,
+        override val originalCreatedAt: Date,
+        override val originalId: String,
+        override val privacyConnections: Set<String>,
+        override val privacyType: PostPrivacyType,
+        override val tags: List<String>,
+        override val text: String?,
+        override val updatedAt: Date,
+        override val counters: PostCounters,
+        override val author: ShortAccountModel,
+        override val copyOwnerId: String?,
+        override val price: Double,
+        override val autoSuggest: PostAutoSuggest,
+        override val repostAuthor: ShortAccountModel?,
+        override val title: String,
+        override var isPinned: Boolean = false
+) : PostModelImpl(
+        id,
+        allConnections,
+        type,
+        createdAt,
+        attachments,
+        locationPlace,
+        originalCreatedAt,
+        originalId,
+        privacyConnections,
+        privacyType,
+        tags,
+        text,
+        updatedAt,
+        counters,
+        author,
+        copyOwnerId,
+        price,
+        autoSuggest,
+        repostAuthor
+), InfoPostModel {
+    override fun toString(): String {
+        return "InfoPostImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title')"
+    }
 }
 
 class RecommendedProfilePostModelImpl(

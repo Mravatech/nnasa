@@ -22,6 +22,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
+    override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
     override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
 
@@ -111,6 +112,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel {
         return postsRepository.repostPost(postId, text, privacyConnections)
+    }
+
+    override suspend fun hideInfoPost(postId: String) {
+        postsRepository.hideInfoPost(postId)
     }
 
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {

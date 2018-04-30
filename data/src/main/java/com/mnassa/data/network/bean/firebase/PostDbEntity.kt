@@ -33,7 +33,10 @@ internal data class PostDbEntity(
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
         @SerializedName("repostAuthor") var repostAuthor: Map<String, ShortAccountDbEntity>?,
         //posted account
-        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?
+        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
+        //info post
+        @SerializedName("title") var title: String?,
+        @SerializedName("statusOfExpiration") var statusOfExpiration: String?
 ) : HasId
 
 internal data class PostCountersDbEntity(

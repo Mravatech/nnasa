@@ -189,6 +189,7 @@
     <string name="_android_seconds_INFO">%d seconds</string>
 
     <string name="_android_general_text_placeholder_INFO">Type your general here</string>
+    <string name="_android_general_post_author_INFO">MNASSA Help</string>
 
 
 </resources>

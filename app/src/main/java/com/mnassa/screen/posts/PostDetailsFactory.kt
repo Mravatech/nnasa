@@ -6,6 +6,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.posts.general.details.GeneralPostController
+import com.mnassa.screen.posts.info.details.InfoDetailsController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.profile.details.RecommendedProfileController
 
@@ -22,6 +23,7 @@ class PostDetailsFactory {
         val postController = when (post.type) {
             PostType.PROFILE -> RecommendedProfileController(args)
             PostType.GENERAL -> GeneralPostController(args)
+            PostType.INFO -> return InfoDetailsController.newInstance(post)
             else -> NeedDetailsController(args)
         }
         return CommentsWrapperController.newInstance(postController)

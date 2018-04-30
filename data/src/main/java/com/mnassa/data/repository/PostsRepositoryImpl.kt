@@ -11,19 +11,18 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
+import com.mnassa.data.network.bean.retrofit.request.HideInfoPostRequest
 import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
+import com.mnassa.data.repository.DatabaseContract.TABLE_INFO_FEED
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
 import com.mnassa.data.repository.DatabaseContract.TABLE_PABLIC_POSTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostPrivacyType
-import com.mnassa.domain.model.RecommendedProfilePostModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
@@ -46,6 +45,19 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = { mapPost(it) }
+                )
+    }
+
+    override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+        return db.child(TABLE_INFO_FEED)
+                .child(userRepository.getAccountIdOrException())
+                .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = {
+                            val post = converter.convert(it, Unit, InfoPostModel::class.java)
+                            post.isPinned = true
+                            post
+                        }
                 )
     }
 
@@ -202,6 +214,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .handleException(exceptionHandler)
                 .data
                 .run { converter.convert(this) }
+    }
+
+    override suspend fun hideInfoPost(postId: String) {
+        postApi.hideInfoPost(HideInfoPostRequest(postId)).handleException(exceptionHandler)
     }
 
     private suspend fun mapPost(input: PostDbEntity): PostModel {

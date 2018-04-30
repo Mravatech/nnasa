@@ -1,6 +1,7 @@
 package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
+import com.mnassa.data.network.bean.retrofit.request.HideInfoPostRequest
 import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.bean.retrofit.response.CreatePostResponse
@@ -26,4 +27,7 @@ interface FirebasePostApi {
 
     @POST("/repost")
     fun repostComment(@Body request: RepostCommentRequest): Deferred<CreatePostResponse>
+
+    @POST("/unpinInfoPost")
+    fun hideInfoPost(@Body request: HideInfoPostRequest): Deferred<MnassaResponse>
 }
