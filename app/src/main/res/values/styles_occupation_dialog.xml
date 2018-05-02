@@ -19,7 +19,7 @@
     </style>
 
     <style name="DialogRegistration.TextView">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">normal</item>

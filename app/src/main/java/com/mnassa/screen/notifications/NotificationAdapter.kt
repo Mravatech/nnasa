@@ -24,10 +24,10 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     override val itemsComparator: (item1: NotificationModel, item2: NotificationModel) -> Int = { first, second ->
         when {
             itemsTheSameComparator(first, second) -> 0
-            !first.isOld && second.type == OLD -> -1
             first.type == NEW && second.type == OLD -> -1
             first.type == OLD && second.type == NEW -> 1
             first.type == NEW && second.type != NEW && second.type != OLD -> -1
+            !first.isOld && second.type == OLD -> -1
             first.type == OLD && !second.isOld -> 1
             first.type == OLD && second.isOld -> -1
             else -> first.createdAt.compareTo(second.createdAt) * -1

@@ -35,7 +35,7 @@
     <style name="Invite.ToolbarText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:maxLines">1</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/invite_toolbar_text_size</item>
@@ -44,7 +44,7 @@
     <style name="Invite.TextSuggest">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textColor">@color/gray_cool</item>
@@ -64,7 +64,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:drawablePadding">@dimen/invite_main_screen_margin</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textSize">@dimen/invite_toolbar_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -80,7 +80,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:maxLines">1</item>
         <item name="android:textSize">@dimen/invite_toolbar_text_size</item>
         <item name="android:textStyle">normal</item>
@@ -91,7 +91,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/button_invite_to_mnassa_selector_background</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/blue_pale</item>
         <item name="android:textSize">@dimen/invite_text_size</item>
@@ -108,7 +108,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/transparent</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColor">@color/black_transparent_40</item>
         <item name="android:textSize">@dimen/invite_text_size</item>
         <item name="android:textStyle">normal</item>
@@ -134,7 +134,7 @@
     <style name="Invite.ItemViewContactName">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/invite_item_contact_name_text_size</item>
         <item name="android:textStyle">normal</item>
@@ -158,7 +158,7 @@
     <style name="Invite.DialogInviteWithTitle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_title_text_size</item>
         <item name="android:textStyle">normal</item>
@@ -167,7 +167,7 @@
     <style name="Invite.DialogInviteWithSubTitle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
         <item name="android:textStyle">normal</item>
@@ -195,7 +195,7 @@
     <style name="Invite.DialogInviteTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
         <item name="android:textStyle">normal</item>
@@ -204,7 +204,7 @@
     <style name="Invite.ItemInviteHistoryRegistration">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
     </style>
