@@ -100,6 +100,7 @@
     <string name="rewarding_info">_android_transfer_points_for_comments</string>
     <string name="rewarding_title">_android_transfer_points_new_transaction</string>
     <string name="rewarding_send">_android_send</string>
+    <string name="rewarding_you_can_add_comment">_newTransaction_commentCell_placeholder</string>
 
     <!-- recommend -->
     <string name="posts_recommend_title">_postProfile_navTitle</string>

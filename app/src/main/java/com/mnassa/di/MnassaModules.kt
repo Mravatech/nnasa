@@ -198,12 +198,14 @@ private val viewModelsModule = Kodein.Module {
                         postId = pair.second.getString(NeedDetailsController.EXTRA_NEED_ID),
                         commentsInteractor = instance(),
                         postsInteractor = instance(),
+                        walletInteractor = instance(),
                         userRepository = instance()) as CommentsWrapperViewModel //android studio bug
             EventDetailsInfoController::class.java ->
                 CommentsWrapperForEventViewModelImpl(
                         eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
                         commentsInteractor = instance(),
                         eventsInteractor = instance(),
+                        walletInteractor = instance(),
                         userRepository = instance()) as CommentsWrapperViewModel //android studio bug
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
         }
@@ -215,7 +217,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
-    bind<RewardingViewModel>() with provider { RewardingViewModelImpl() }
+    bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {

@@ -11,6 +11,7 @@ import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.await
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
@@ -38,7 +39,7 @@ import org.kodein.di.generic.instance
  * Created by Peter on 4/17/2018.
  */
 class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWrapperViewModel>(args),
-        RecommendController.OnRecommendPostResult, MnassaRouter, CommentsWrapperListener {
+        RecommendController.OnRecommendPostResult, MnassaRouter, CommentsWrapperListener, RewardingController.RewardingResult {
     override val layoutId: Int = R.layout.controller_comments_wrapper
     override val viewModel: CommentsWrapperViewModel by instance(fArg = { Pair(wrappedControllerClass, wrappedControllerParams) })
     //
@@ -72,7 +73,11 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
-        commentsAdapter.onCommentUsefulClick = { open(RewardingController.newInstance(it.creator, it.id)) }
+        commentsAdapter.onCommentUsefulClick = {
+            val controller = RewardingController.newInstance(it.creator, it.id)
+            controller.targetController = this@CommentsWrapperController
+            open(controller)
+        }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
     }
 
@@ -121,6 +126,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             }
         }
     }
+
+    override var onRewardApply: RewardModel? = null
+        set(value) {
+            val reward = value ?: return
+            viewModel.sendPointsForComment(reward)
+        }
 
     private fun initializeContainer() {
         launchCoroutineUI {

@@ -62,7 +62,8 @@
 
         <EditText
             android:id="@+id/etPoints"
-            android:layout_width="wrap_content"
+            android:inputType="number"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:textColor="@color/black"
@@ -85,7 +86,7 @@
     </RelativeLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilComplaintMessage"
+        android:id="@+id/tilComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/activity_vertical_margin"
@@ -94,7 +95,7 @@
         app:counterMaxLength="100">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/etComplaintMessage"
+            android:id="@+id/etComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="100"

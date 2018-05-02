@@ -1,6 +1,7 @@
 package com.mnassa.screen.comments
 
 import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.RewardModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -17,4 +18,5 @@ interface CommentsWrapperViewModel : MnassaViewModel {
     fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)
     fun deleteComment(commentModel: CommentModel)
     fun getAccountId(): String
+    fun sendPointsForComment(rewardModel: RewardModel)
 }

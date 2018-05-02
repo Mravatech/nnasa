@@ -1,6 +1,7 @@
 package com.mnassa.screen.comments.rewarding
 
 import com.mnassa.screen.base.MnassaViewModel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,4 +9,5 @@ import com.mnassa.screen.base.MnassaViewModel
  * Date: 4/30/2018
  */
 interface RewardingViewModel : MnassaViewModel {
+    val defaultRewardCountChannel: BroadcastChannel<Int>
 }
