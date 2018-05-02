@@ -95,7 +95,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
 
     override fun onPageSelected() {
         val recyclerView = view?.rvNewsFeed ?: return
-        recyclerView.scrollToPosition(0)
+        recyclerView.smoothScrollToPosition(0)
     }
 
     override fun onDestroyView(view: View) {

@@ -10,6 +10,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -18,7 +19,7 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
+class ChatListController : MnassaControllerImpl<ChatListViewModel>(), OnPageSelected {
     override val layoutId: Int = R.layout.controller_chat_list
     override val viewModel: ChatListViewModel by instance()
 
@@ -66,6 +67,10 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
             tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
         }
         adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(it.account))) }
+    }
+
+    override fun onPageSelected() {
+        view?.rvMessages?.smoothScrollToPosition(0)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

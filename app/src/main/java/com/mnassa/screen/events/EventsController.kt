@@ -67,7 +67,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
 
     override fun onPageSelected() {
         val recyclerView = view?.rvEvents ?: return
-        recyclerView.scrollToPosition(0)
+        recyclerView.smoothScrollToPosition(0)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
