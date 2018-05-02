@@ -19,11 +19,18 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/item_comment" />
 
+    <View
+        style="@style/MnassaShadow"
+        android:layout_above="@id/commentPanel"
+        android:rotation="180" />
+
     <LinearLayout
         android:id="@+id/commentPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        tools:background="#ff0900"
+        tools:layout_height="100dp" />
 
 </RelativeLayout>
