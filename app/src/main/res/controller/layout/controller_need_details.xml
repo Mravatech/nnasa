@@ -66,8 +66,8 @@
                 android:layout_centerVertical="true"
                 android:clickable="true"
                 android:focusable="true"
-                app:fab_size="mini"
                 android:foreground="?selectableItemBackgroundBorderless"
+                app:fab_size="mini"
                 app:srcCompat="@drawable/ic_chat" />
 
         </RelativeLayout>
@@ -76,6 +76,19 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_width"
             android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/MnassaHeader1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="Title" />
+
 
         <TextView
             android:id="@+id/tvNeedDescription"
@@ -94,16 +107,16 @@
 
         <Button
             android:id="@+id/btnConnectNow"
+            style="@style/MnassaButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_vertical"
             android:layout_marginBottom="@dimen/spacing_vertical"
-            android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
-            tools:visibility="visible"
-            style="@style/MnassaButton"
-            tools:text="Connect now"/>
+            tools:text="Connect now"
+            tools:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/flImages"
@@ -267,6 +280,7 @@
                 tools:text="Comment" />
 
             <android.support.v4.widget.Space
+                android:id="@+id/spacePostAction"
                 android:layout_width="@dimen/spacing_horizontal"
                 android:layout_height="wrap_content" />
 

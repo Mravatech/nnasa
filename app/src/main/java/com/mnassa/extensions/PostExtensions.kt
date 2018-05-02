@@ -98,3 +98,5 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
         is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)
     }
 }
+
+suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0

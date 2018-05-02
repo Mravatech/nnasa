@@ -182,6 +182,13 @@
     <string name="_android_event_address_INFO">Address</string>
     <string name="_android_event_description_placeholder_INFO">Enter description</string>
     <string name="_android_event_status_opened_INFO">Opened</string>
+    
+    <string name="_android_offer_button_my_customers_INFO">My customers</string>
+    <string name="_android_offer_button_buy_first_INFO">Buy this offer</string>
+    <string name="_android_offer_button_buy_again_INFO">Buy again</string>
+    <string name="_android_offer_purchase_title_INFO">Purchase</string>
+    <string name="_android_offer_purchase_description_INFO">Transfer points to buy this item</string>
+
 
     <string name="_android_days_INFO">%d days</string>
     <string name="_android_hours_INFO">%d hours</string>
