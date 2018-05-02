@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.view.View
 import android.widget.ImageView
 import com.mnassa.App
 import com.mnassa.R
@@ -74,6 +75,8 @@ fun PostModel.isMyPost(): Boolean = author.id == App.context.getInstance<UserPro
 val PostModel.isRepost: Boolean get() = originalId != id
 
 fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
+    (parent as? View)?.findViewById<View>(R.id.ivPlay)?.isInvisible = postAttachment is PostAttachment.PostPhotoAttachment
+
     when (postAttachment) {
         is PostAttachment.PostPhotoAttachment -> image(postAttachment.photoUrl, crop)
         is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)

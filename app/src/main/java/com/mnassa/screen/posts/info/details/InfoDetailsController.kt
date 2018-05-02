@@ -7,6 +7,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.InfoPostModel
 import com.mnassa.domain.model.PostModel
+import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.details.adapter.PostAttachmentsAdapter
@@ -44,6 +45,7 @@ class InfoDetailsController(args: Bundle) : MnassaControllerImpl<InfoDetailsView
         with(view ?: return) {
             tvInfoPostTitle.text = post.title
             tvInfoPostDescription.text = post.text
+            tvInfoPostDescription.goneIfEmpty()
 
             //attachments
             flImages.isGone = post.attachments.isEmpty()

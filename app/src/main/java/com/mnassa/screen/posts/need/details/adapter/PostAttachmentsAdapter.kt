@@ -53,7 +53,7 @@ class PostAttachmentsAdapter(private val attachments: List<PostAttachment>) : Pa
     private fun bindVideo(video: PostAttachment.PostVideoAttachment, container: ViewGroup): View {
         val view = LayoutInflater.from(container.context).inflate(R.layout.item_video, container, false)
 
-        view.ivPreview.image(video.previewUrl)
+        view.ivPreview.image(video)
         val listener = View.OnClickListener {
             launch(UI) {
                 try {
