@@ -70,6 +70,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
+        //todo not finish yet
         commentsAdapter = PostCommentsRVAdapter(isMyPost.takeIf { wrappedControllerClass != EventDetailsInfoController.javaClass }) { inflateHeader(it) }
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
@@ -128,11 +129,9 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
-    override var onRewardApply: RewardModel? = null
-        set(value) {
-            val reward = value ?: return
-            viewModel.sendPointsForComment(reward)
-        }
+    override fun onApplyReward(rewardModel: RewardModel) {
+        viewModel.sendPointsForComment(rewardModel)
+    }
 
     private fun initializeContainer() {
         launchCoroutineUI {

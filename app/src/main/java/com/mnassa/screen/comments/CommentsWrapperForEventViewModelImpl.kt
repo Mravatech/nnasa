@@ -5,7 +5,6 @@ import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.CommentModel
-import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.mostParentCommentId
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -36,8 +35,6 @@ class CommentsWrapperForEventViewModelImpl(
             }
         }
     }
-
-    override fun sendPointsForComment(rewardModel: RewardModel) {}
 
     override fun createComment(text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
         handleException {

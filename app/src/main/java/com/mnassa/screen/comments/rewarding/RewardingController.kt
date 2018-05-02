@@ -1,6 +1,5 @@
 package com.mnassa.screen.comments.rewarding
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
@@ -23,8 +22,8 @@ import org.kodein.di.generic.instance
 class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewModel>(args) {
     override val layoutId: Int = R.layout.controller_send_points
     override val viewModel: RewardingViewModel by instance()
-    private val accountModel: ShortAccountModel? by lazy { args.getSerializable(REWARDING_ACCOUNT) as ShortAccountModel? }
-    private val commentId: String? by lazy { args.getString(REWARDING_COMMENT) }
+    private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_REWARDING_ACCOUNT) as ShortAccountModel }
+    private val commentId: String by lazy { args.getString(EXTRA_REWARDING_COMMENT) }
     private val resultListener by lazy { targetController as RewardingResult }
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -35,39 +34,39 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
                     etAmount.error = "should be not empty or 0" //todo from dictionary
                     return@withActionButton
                 }
-                resultListener.onRewardApply = RewardModelImpl(
-                        recipientId = requireNotNull(accountModel).id,
+
+                resultListener.onApplyReward(RewardModelImpl(
+                        recipientId = accountModel.id,
                         amount = points.toLong(),
-                        commentId = requireNotNull(commentId),
+                        commentId = commentId,
                         userDescription = etComment.text.toString().takeIf { it.isNotBlank() }
-                )
+                ))
                 close()
             })
             toolbar.title = fromDictionary(R.string.rewarding_title)
-            etRecipient.hint = accountModel?.formattedName
-            etRecipient.setHintTextColor(Color.BLACK)
+            etRecipient.setText(accountModel.formattedName)
             etComment.hint = fromDictionary(R.string.rewarding_you_can_add_comment)
 
         }
         launchCoroutineUI {
-            viewModel.defaultRewardCountChannel.consumeEach {
+            viewModel.defaultRewardChannel.consumeEach {
                 view.etAmount.setText(it.toString())
             }
         }
     }
 
     interface RewardingResult {
-        var onRewardApply: RewardModel?
+        fun onApplyReward(rewardModel: RewardModel)
     }
 
     companion object {
-        private const val REWARDING_ACCOUNT = "REWARDING_ACCOUNT"
-        private const val REWARDING_COMMENT = "REWARDING_COMMENT"
+        private const val EXTRA_REWARDING_ACCOUNT = "EXTRA_REWARDING_ACCOUNT"
+        private const val EXTRA_REWARDING_COMMENT = "EXTRA_REWARDING_COMMENT"
         private const val ZERO_POINTS = "0"
         fun newInstance(account: ShortAccountModel, commentId: String): RewardingController {
             val params = Bundle()
-            params.putSerializable(REWARDING_ACCOUNT, account)
-            params.putString(REWARDING_COMMENT, commentId)
+            params.putSerializable(EXTRA_REWARDING_ACCOUNT, account)
+            params.putString(EXTRA_REWARDING_COMMENT, commentId)
             return RewardingController(params)
         }
     }

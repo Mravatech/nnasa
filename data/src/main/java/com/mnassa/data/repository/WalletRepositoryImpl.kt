@@ -61,7 +61,7 @@ class WalletRepositoryImpl(
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
     }
 
-    override suspend fun getDefaultRewardingPointsCount(): Int {
+    override suspend fun getDefaultRewardingPoints(): Int {
         return db.child(DatabaseContract.TABLE_DICTIONARY)
                 .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT)
                 .await<RewardDbEntity>(exceptionHandler)!!

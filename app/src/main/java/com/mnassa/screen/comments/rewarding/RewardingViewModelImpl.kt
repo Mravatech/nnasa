@@ -12,14 +12,14 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
  * Date: 4/30/2018
  */
 class RewardingViewModelImpl(private val walletInteractor: WalletInteractor) : MnassaViewModelImpl(), RewardingViewModel {
-    override val defaultRewardCountChannel: BroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val defaultRewardChannel: BroadcastChannel<Int> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleException {
             withProgressSuspend {
-                val defaultCount = walletInteractor.getDefaultRewardingPointsCount()
-                defaultRewardCountChannel.send(defaultCount)
+                val defaultCount = walletInteractor.getDefaultRewardingPoints()
+                defaultRewardChannel.send(defaultCount)
             }
         }
     }

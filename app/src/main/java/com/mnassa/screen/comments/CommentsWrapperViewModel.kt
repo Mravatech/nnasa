@@ -17,5 +17,5 @@ interface CommentsWrapperViewModel : MnassaViewModel {
     fun createComment(text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)
     fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)
     fun deleteComment(commentModel: CommentModel)
-    fun sendPointsForComment(rewardModel: RewardModel)
+    fun sendPointsForComment(rewardModel: RewardModel) {}
 }

@@ -9,5 +9,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Date: 4/30/2018
  */
 interface RewardingViewModel : MnassaViewModel {
-    val defaultRewardCountChannel: BroadcastChannel<Int>
+    val defaultRewardChannel: BroadcastChannel<Int>
 }
