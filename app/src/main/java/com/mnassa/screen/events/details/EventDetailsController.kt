@@ -63,7 +63,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId, eventModel))
+                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId, eventModel), null)
                     EventPages.PARTICIPANTS.ordinal -> EventDetailsParticipantsController.newInstance(eventId, eventModel)
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }

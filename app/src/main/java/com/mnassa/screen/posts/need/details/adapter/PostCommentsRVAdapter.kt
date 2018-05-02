@@ -20,7 +20,7 @@ import com.mnassa.translation.fromDictionary
  * Created by Peter on 3/23/2018.
  */
 
-class PostCommentsRVAdapter(private val accountId: String, private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
+class PostCommentsRVAdapter(private val isMyPost: Boolean?, private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
@@ -62,8 +62,8 @@ class PostCommentsRVAdapter(private val accountId: String, private val headerInf
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> = when (viewType) {
-        TYPE_COMMENT -> CommentViewHolder.newInstanceComment(parent, this, accountId)
-        TYPE_COMMENT_REPLY -> CommentViewHolder.newInstanceReply(parent, this, accountId)
+        TYPE_COMMENT -> CommentViewHolder.newInstanceComment(parent, this, isMyPost)
+        TYPE_COMMENT_REPLY -> CommentViewHolder.newInstanceReply(parent, this, isMyPost)
         else -> throw IllegalArgumentException("Illegal view type $viewType")
     }
 
@@ -100,7 +100,7 @@ class PostCommentsRVAdapter(private val accountId: String, private val headerInf
         private const val TYPE_COMMENT_REPLY = 2
     }
 
-    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener, private val accointId: String) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
+    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener, private val isMyPost: Boolean?) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
 
         override fun bind(item: CommentModel) {
             //used findViewById because this method is identical for Comment and Reply
@@ -130,16 +130,22 @@ class PostCommentsRVAdapter(private val accountId: String, private val headerInf
             usefulButton.text = fromDictionary(R.string.comment_useful)
             usefulButton.tag = this
             usefulButton.setOnClickListener(onClickListener)
-            handleUseful(item, usefulButton)
+            isMyPost?.let { handleUseful(item, usefulButton, it) } ?: run {
+                usefulButton.visibility = View.INVISIBLE
+                usefulButton.isEnabled = false
+            }
 
             commentRoot.tag = this
             commentRoot.setOnLongClickListener(this)
         }
 
-        private fun handleUseful(item: CommentModel, usefulButton: Button) {
+        private fun handleUseful(item: CommentModel, usefulButton: Button, isMyPost: Boolean) {
             when {
-                //todo should add one more id
-                accointId == item.creator.id -> {
+                (isMyPost && item.isMyComment()) || (!isMyPost && !item.isRewarded) -> {
+                    usefulButton.visibility = View.INVISIBLE
+                    usefulButton.isEnabled = false
+                }
+                (isMyPost && !item.isRewarded) -> {
                     usefulButton.visibility = View.VISIBLE
                     usefulButton.isEnabled = true
                 }
@@ -147,8 +153,9 @@ class PostCommentsRVAdapter(private val accountId: String, private val headerInf
                     usefulButton.visibility = View.VISIBLE
                     usefulButton.isEnabled = false
                 }
-                !item.isRewarded -> {
+                else -> {
                     usefulButton.visibility = View.INVISIBLE
+                    usefulButton.isEnabled = false
                 }
             }
         }
@@ -177,14 +184,14 @@ class PostCommentsRVAdapter(private val accountId: String, private val headerInf
         companion object {
             private const val FIRST_ITEM_POSITION = 1
 
-            fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener, accointId: String): CommentViewHolder {
+            fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener, isMyPost: Boolean?): CommentViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
-                return CommentViewHolder(view, onClickListener, accointId)
+                return CommentViewHolder(view, onClickListener, isMyPost)
             }
 
-            fun newInstanceReply(parent: ViewGroup, onClickListener: View.OnClickListener, accointId: String): CommentViewHolder {
+            fun newInstanceReply(parent: ViewGroup, onClickListener: View.OnClickListener, isMyPost: Boolean?): CommentViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment_reply, parent, false)
-                return CommentViewHolder(view, onClickListener, accointId)
+                return CommentViewHolder(view, onClickListener, isMyPost)
             }
         }
     }

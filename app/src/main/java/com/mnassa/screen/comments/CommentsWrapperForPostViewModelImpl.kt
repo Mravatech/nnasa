@@ -8,7 +8,6 @@ import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.mostParentCommentId
-import com.mnassa.domain.repository.UserRepository
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -21,8 +20,7 @@ class CommentsWrapperForPostViewModelImpl(
         private val postId: String,
         private val commentsInteractor: CommentsInteractor,
         private val postsInteractor: PostsInteractor,
-        private val walletInteractor: WalletInteractor,
-        private val userRepository: UserRepository
+        private val walletInteractor: WalletInteractor
 ) : MnassaViewModelImpl(), CommentsWrapperViewModel {
     override val scrollToChannel: ArrayBroadcastChannel<CommentModel> = ArrayBroadcastChannel(1)
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
@@ -42,8 +40,6 @@ class CommentsWrapperForPostViewModelImpl(
             }
         }
     }
-
-    override fun getAccountId(): String = userRepository.getAccountIdOrException()
 
     override fun sendPointsForComment(rewardModel: RewardModel) {
         handleException {

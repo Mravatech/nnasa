@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
+import com.mnassa.extensions.isMyPost
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.posts.general.details.GeneralPostController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
@@ -24,7 +25,7 @@ class PostDetailsFactory {
             PostType.GENERAL -> GeneralPostController(args)
             else -> NeedDetailsController(args)
         }
-        return CommentsWrapperController.newInstance(postController)
+        return CommentsWrapperController.newInstance(postController, post.isMyPost())
     }
 
 }
