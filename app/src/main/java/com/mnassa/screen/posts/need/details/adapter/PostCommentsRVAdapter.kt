@@ -14,13 +14,14 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
+import com.mnassa.screen.comments.CommentsRewardModel
 import com.mnassa.translation.fromDictionary
 
 /**
  * Created by Peter on 3/23/2018.
  */
 
-class PostCommentsRVAdapter(private val isMyPost: Boolean?, private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
+class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel, private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
@@ -62,8 +63,8 @@ class PostCommentsRVAdapter(private val isMyPost: Boolean?, private val headerIn
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> = when (viewType) {
-        TYPE_COMMENT -> CommentViewHolder.newInstanceComment(parent, this, isMyPost)
-        TYPE_COMMENT_REPLY -> CommentViewHolder.newInstanceReply(parent, this, isMyPost)
+        TYPE_COMMENT -> CommentViewHolder.newInstanceComment(parent, this, commentsRewardModel)
+        TYPE_COMMENT_REPLY -> CommentViewHolder.newInstanceReply(parent, this, commentsRewardModel)
         else -> throw IllegalArgumentException("Illegal view type $viewType")
     }
 
@@ -100,7 +101,7 @@ class PostCommentsRVAdapter(private val isMyPost: Boolean?, private val headerIn
         private const val TYPE_COMMENT_REPLY = 2
     }
 
-    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener, private val isMyPost: Boolean?) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
+    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener, private val commentsRewardModel: CommentsRewardModel) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
 
         override fun bind(item: CommentModel) {
             //used findViewById because this method is identical for Comment and Reply
@@ -130,11 +131,12 @@ class PostCommentsRVAdapter(private val isMyPost: Boolean?, private val headerIn
             usefulButton.text = fromDictionary(R.string.comment_useful)
             usefulButton.tag = this
             usefulButton.setOnClickListener(onClickListener)
-            isMyPost?.let { handleUseful(item, usefulButton, it) } ?: run {
+            if (commentsRewardModel.canReward) {
+                handleUseful(item, usefulButton, commentsRewardModel.isOwner)
+            } else {
                 usefulButton.visibility = View.INVISIBLE
                 usefulButton.isEnabled = false
             }
-
             commentRoot.tag = this
             commentRoot.setOnLongClickListener(this)
         }
@@ -184,14 +186,14 @@ class PostCommentsRVAdapter(private val isMyPost: Boolean?, private val headerIn
         companion object {
             private const val FIRST_ITEM_POSITION = 1
 
-            fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener, isMyPost: Boolean?): CommentViewHolder {
+            fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener, commentRewardModel: CommentsRewardModel): CommentViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
-                return CommentViewHolder(view, onClickListener, isMyPost)
+                return CommentViewHolder(view, onClickListener, commentRewardModel)
             }
 
-            fun newInstanceReply(parent: ViewGroup, onClickListener: View.OnClickListener, isMyPost: Boolean?): CommentViewHolder {
+            fun newInstanceReply(parent: ViewGroup, onClickListener: View.OnClickListener, commentRewardModel: CommentsRewardModel): CommentViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment_reply, parent, false)
-                return CommentViewHolder(view, onClickListener, isMyPost)
+                return CommentViewHolder(view, onClickListener, commentRewardModel)
             }
         }
     }

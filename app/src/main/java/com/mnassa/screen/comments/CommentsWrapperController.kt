@@ -19,7 +19,6 @@ import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.rewarding.RewardingController
-import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
@@ -46,7 +45,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     //
     private val wrappedControllerClass by lazy { args.getSerializable(EXTRA_CONTROLLER_CLASS) as Class<Controller> }
     private val wrappedControllerParams by lazy { args.getBundle(EXTRA_CONTROLLER_ARGS) }
-    private val isMyPost by lazy { args.getBoolean(EXTRA_POST_OWNER) }
+    private val commentsRewardModel by lazy { args.getSerializable(EXTRA_COMMENT_OWNER) as CommentsRewardModel }
     private val wrappedController = StateExecutor<Controller?, CommentsWrapperCallback>(null) { it is CommentsWrapperCallback }
     //
     private val popupMenuHelper: PopupMenuHelper by instance()
@@ -70,8 +69,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
-        //todo not finish yet
-        commentsAdapter = PostCommentsRVAdapter(isMyPost.takeIf { wrappedControllerClass != EventDetailsInfoController.javaClass }) { inflateHeader(it) }
+        commentsAdapter = PostCommentsRVAdapter(commentsRewardModel) { inflateHeader(it) }
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
@@ -344,13 +342,13 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         private const val EXTRA_CONTROLLER_CLASS = "EXTRA_CONTROLLER_CLASS"
         private const val EXTRA_CONTROLLER_ARGS = "EXTRA_CONTROLLER_ARGS"
         private const val EXTRA_COMMENT_TEXT = "EXTRA_COMMENT_TEXT"
-        private const val EXTRA_POST_OWNER = "EXTRA_POST_OWNER"
+        private const val EXTRA_COMMENT_OWNER = "EXTRA_POST_OWNER"
 
-        fun newInstance(controllerToWrap: Controller, isMyPost: Boolean?): CommentsWrapperController {
+        fun newInstance(controllerToWrap: Controller, commentsRewardModel: CommentsRewardModel): CommentsWrapperController {
             val args = Bundle()
             args.putSerializable(EXTRA_CONTROLLER_CLASS, controllerToWrap.javaClass)
             args.putBundle(EXTRA_CONTROLLER_ARGS, controllerToWrap.args)
-            isMyPost?.let { args.putBoolean(EXTRA_POST_OWNER, it) }
+            args.putSerializable(EXTRA_COMMENT_OWNER, commentsRewardModel)
             return CommentsWrapperController(args)
         }
     }
