@@ -45,4 +45,10 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             }
         }
     }
+
+    override fun resetCounter() {
+        handleException {
+            postsInteractor.resetCounter()
+        }
+    }
 }

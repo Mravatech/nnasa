@@ -105,6 +105,9 @@ import com.mnassa.screen.posts.need.recommend.RecommendViewModel
 import com.mnassa.screen.posts.need.recommend.RecommendViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
+import com.mnassa.screen.posts.offer.details.OfferDetailsController
+import com.mnassa.screen.posts.offer.details.OfferDetailsViewModel
+import com.mnassa.screen.posts.offer.details.OfferDetailsViewModelImpl
 import com.mnassa.screen.posts.profile.create.RecommendUserViewModel
 import com.mnassa.screen.posts.profile.create.RecommendUserViewModelImpl
 import com.mnassa.screen.posts.profile.details.RecommendedProfileController
@@ -178,6 +181,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance()) }
+    bind<OfferDetailsViewModel>() with factory { postId: String -> OfferDetailsViewModelImpl(postId, instance(), instance(), instance()) }
     bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
@@ -195,18 +199,19 @@ private val viewModelsModule = Kodein.Module {
         when (pair.first) {
             NeedDetailsController::class.java,
             RecommendedProfileController::class.java,
-            GeneralPostController::class.java ->
+            GeneralPostController::class.java,
+            OfferDetailsController::class.java ->
                 CommentsWrapperForPostViewModelImpl(
-                        postId = pair.second.getString(NeedDetailsController.EXTRA_NEED_ID),
+                        postId = pair.second.getString(PostDetailsFactory.EXTRA_POST_ID),
                         commentsInteractor = instance(),
-                        postsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+                        postsInteractor = instance())
             EventDetailsInfoController::class.java ->
                 CommentsWrapperForEventViewModelImpl(
                     eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
                     commentsInteractor = instance(),
-                    eventsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+                    eventsInteractor = instance())
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
-        }
+        } as CommentsWrapperViewModel
     }
     bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance(), instance()) }
     bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance(), instance()) }

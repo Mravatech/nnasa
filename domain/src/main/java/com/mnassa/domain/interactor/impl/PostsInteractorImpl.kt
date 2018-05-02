@@ -49,9 +49,9 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         viewItemChannel.send(ListItemEvent.Added(item))
     }
 
-    override suspend fun onItemOpened(item: PostModel) {
-        postsRepository.sendOpened(listOf(item.id))
-    }
+    override suspend fun onItemOpened(item: PostModel) = postsRepository.sendOpened(listOf(item.id))
+
+    override suspend fun resetCounter() = postsRepository.resetCounter()
 
     override suspend fun createNeed(
             text: String,

@@ -108,6 +108,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler)
     }
 
+    override suspend fun resetCounter() {
+        postApi.resetCounter(ResetCounterRequest(NetworkContract.ResetCounter.POSTS)).handleException(exceptionHandler)
+    }
+
     override suspend fun createNeed(
             text: String,
             uploadedImagesUrls: List<String>,

@@ -15,6 +15,8 @@ import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.comments.CommentsWrapperListener
 import com.mnassa.screen.complaintother.ComplaintOtherController
+import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_ID
+import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_MODEL
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostAttachmentsAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
@@ -38,7 +40,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         CommentsWrapperController.CommentsWrapperCallback,
         RecommendController.OnRecommendPostResult {
     override val layoutId: Int = R.layout.controller_need_details
-    protected val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
+    protected val postId by lazy { requireNotNull(args.getString(EXTRA_POST_ID)) }
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.DEFAULT
@@ -70,9 +72,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
-        (args.getSerializable(EXTRA_NEED_MODEL) as PostModel?)?.let { post ->
+        (args.getSerializable(EXTRA_POST_MODEL) as PostModel?)?.let { post ->
             runBlocking { bindPost(post) }
-            args.remove(EXTRA_NEED_MODEL)
+            args.remove(EXTRA_POST_MODEL)
         }
     }
 
@@ -250,8 +252,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     companion object {
-        const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
-        const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
+
         private const val OTHER = "other"
 
         //to create instance, use PostDetailsFactory

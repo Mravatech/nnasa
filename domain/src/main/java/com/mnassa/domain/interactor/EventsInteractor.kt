@@ -18,6 +18,7 @@ interface EventsInteractor {
 
     suspend fun onItemViewed(item: EventModel)
     suspend fun onItemOpened(item: EventModel)
+    suspend fun resetCounter()
     suspend fun getTickets(eventId: String): List<EventTicketModel>
     suspend fun canBuyTicket(eventId: String): Boolean
     suspend fun getBoughtTicketsCount(eventId: String): Long

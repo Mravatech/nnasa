@@ -18,6 +18,7 @@ interface PostsRepository {
     suspend fun loadUserPostById(id: String, accountId: String): PostModel?
     suspend fun sendViewed(ids: List<String>)
     suspend fun sendOpened(ids: List<String>)
+    suspend fun resetCounter()
     suspend fun createNeed(
             text: String,
             uploadedImagesUrls: List<String>,

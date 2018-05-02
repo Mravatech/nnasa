@@ -32,6 +32,12 @@ interface InfoPostModel: PostModel {
     var isPinned: Boolean
 }
 
+interface OfferPostModel: PostModel {
+    val title: String
+    val category: String?
+    val subCategory: String?
+}
+
 sealed class PostAttachment : Serializable {
     data class PostPhotoAttachment(val photoUrl: String) : PostAttachment()
     data class PostVideoAttachment(val previewUrl: String, val videoUrl: String) : PostAttachment()

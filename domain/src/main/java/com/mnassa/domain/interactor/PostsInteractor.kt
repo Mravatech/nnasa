@@ -14,6 +14,7 @@ interface PostsInteractor {
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
     suspend fun onItemOpened(item: PostModel)
+    suspend fun resetCounter()
 
     suspend fun createNeed(
             text: String,

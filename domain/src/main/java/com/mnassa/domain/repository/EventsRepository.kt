@@ -12,6 +12,7 @@ interface EventsRepository {
     suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>
     suspend fun sendViewed(ids: List<String>)
     suspend fun sendOpened(ids: List<String>)
+    suspend fun resetCounter()
     suspend fun getTickets(eventId: String): List<EventTicketModel>
     suspend fun buyTickets(eventId: String, ticketsCount: Long)
     suspend fun getAttendedUsers(eventId: String): List<EventAttendee>

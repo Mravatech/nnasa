@@ -17,6 +17,14 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : Mnas
             receiveChannelProvider = { eventsInteractor.getEventsFeedChannel() })
 
     override fun onAttachedToWindow(event: EventModel) {
-        handleException { eventsInteractor.onItemViewed(event) }
+        handleException {
+            eventsInteractor.onItemViewed(event)
+        }
+    }
+
+    override fun resetCounter() {
+        handleException {
+            eventsInteractor.resetCounter()
+        }
     }
 }

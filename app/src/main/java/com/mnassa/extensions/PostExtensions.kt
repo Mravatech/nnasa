@@ -67,6 +67,15 @@ val PostModel.formattedText: CharSequence?
                 spannable.append(text ?: "")
                 spannable
             }
+            PostType.OFFER -> {
+                if (text.isNullOrBlank()) return text
+
+                val spannable = SpannableStringBuilder(fromDictionary(R.string.offer_prefix))
+                spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.append(" ")
+                spannable.append(text)
+                spannable
+            }
             else -> text
         }
     }

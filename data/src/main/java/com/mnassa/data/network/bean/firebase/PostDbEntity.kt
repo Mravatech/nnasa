@@ -35,8 +35,12 @@ internal data class PostDbEntity(
         //posted account
         @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
         //info post
-        @SerializedName("title") var title: String?,
-        @SerializedName("statusOfExpiration") var statusOfExpiration: String?
+        @SerializedName("title") var title: String?, //offer post
+        @SerializedName("statusOfExpiration") var statusOfExpiration: String?,
+        //offer post
+        @SerializedName("category") val category: String?,
+        @SerializedName("subcategory") val subcategory: String?
+
 ) : HasId
 
 internal data class PostCountersDbEntity(
