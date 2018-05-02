@@ -1,5 +1,6 @@
 package com.mnassa.screen.comments.rewarding
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
@@ -10,7 +11,7 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.domain.model.impl.RewardModelImpl
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.controller_rewarding.view.*
+import kotlinx.android.synthetic.main.controller_send_points.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -20,7 +21,7 @@ import org.kodein.di.generic.instance
  * Date: 4/30/2018
  */
 class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewModel>(args) {
-    override val layoutId: Int = R.layout.controller_rewarding
+    override val layoutId: Int = R.layout.controller_send_points
     override val viewModel: RewardingViewModel by instance()
     private val accountModel: ShortAccountModel? by lazy { args.getSerializable(REWARDING_ACCOUNT) as ShortAccountModel? }
     private val commentId: String? by lazy { args.getString(REWARDING_COMMENT) }
@@ -28,12 +29,10 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         with(view) {
-            tilComment.hint = fromDictionary(R.string.rewarding_you_can_add_comment)
-            toolbar.actionButtonClickable = true
             toolbar.withActionButton(fromDictionary(R.string.rewarding_send), {
-                val points = etPoints.text.toString()
+                val points = etAmount.text.toString()
                 if (points.isEmpty() || points == ZERO_POINTS) {
-                    etPoints.error = "should not be empty or 0" //todo from dictionary
+                    etAmount.error = "should be not empty or 0" //todo from dictionary
                     return@withActionButton
                 }
                 resultListener.onRewardApply = RewardModelImpl(
@@ -44,15 +43,15 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
                 )
                 close()
             })
-            tvName.text = accountModel?.formattedName
-//            ["toAid": "-LAJ_dO12MFD0mJWYvqe", "amount": 2, "type": "rewardForComment", "fromAid": "-LAMUZAe1vrfyeN8HH2d", "commentId": "-LBKyV-9x51S5z8ruwsQ", "userDescription" : "text"]
             toolbar.title = fromDictionary(R.string.rewarding_title)
-            tvRewardingInfo.text = fromDictionary(R.string.rewarding_info)
-            tvPointInfo.text = fromDictionary(R.string.rewarding_for_comment)
+            etRecipient.hint = accountModel?.formattedName
+            etRecipient.setHintTextColor(Color.BLACK)
+            etComment.hint = fromDictionary(R.string.rewarding_you_can_add_comment)
+
         }
         launchCoroutineUI {
             viewModel.defaultRewardCountChannel.consumeEach {
-                view.etPoints.setText(it.toString())
+                view.etAmount.setText(it.toString())
             }
         }
     }
