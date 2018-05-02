@@ -13,6 +13,7 @@ interface PostsInteractor {
     suspend fun loadById(id: String): ReceiveChannel<PostModel?>
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
+    suspend fun onItemOpened(item: PostModel)
 
     suspend fun createNeed(
             text: String,

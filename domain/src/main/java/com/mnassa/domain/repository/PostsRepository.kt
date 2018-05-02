@@ -17,6 +17,7 @@ interface PostsRepository {
     suspend fun loadById(id: String): ReceiveChannel<PostModel?>
     suspend fun loadUserPostById(id: String, accountId: String): PostModel?
     suspend fun sendViewed(ids: List<String>)
+    suspend fun sendOpened(ids: List<String>)
     suspend fun createNeed(
             text: String,
             uploadedImagesUrls: List<String>,

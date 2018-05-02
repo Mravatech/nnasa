@@ -102,3 +102,7 @@ suspend fun EventModel.getBoughtTicketsCount(): Long {
 val EventModel.isFree: Boolean get() = price == 0L
 
 fun EventModel.isMyEvent(): Boolean = author.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
+
+suspend fun EventModel.markAsOpened() {
+    App.context.getInstance<EventsInteractor>().onItemOpened(this)
+}

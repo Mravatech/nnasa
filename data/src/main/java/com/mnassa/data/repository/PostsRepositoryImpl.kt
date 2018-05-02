@@ -10,10 +10,7 @@ import com.mnassa.data.extensions.toValueChannelWithPagination
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.PostDbEntity
-import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
-import com.mnassa.data.network.bean.retrofit.request.HideInfoPostRequest
-import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
-import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
+import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
@@ -105,6 +102,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun sendViewed(ids: List<String>) {
         postApi.viewItems(ViewItemsRequest(ids, NetworkContract.EntityType.POST)).handleException(exceptionHandler)
+    }
+
+    override suspend fun sendOpened(ids: List<String>) {
+        postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler)
     }
 
     override suspend fun createNeed(

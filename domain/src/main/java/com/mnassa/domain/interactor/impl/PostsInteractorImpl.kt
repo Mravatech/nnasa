@@ -49,6 +49,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         viewItemChannel.send(ListItemEvent.Added(item))
     }
 
+    override suspend fun onItemOpened(item: PostModel) {
+        postsRepository.sendOpened(listOf(item.id))
+    }
+
     override suspend fun createNeed(
             text: String,
             imagesToUpload: List<Uri>,

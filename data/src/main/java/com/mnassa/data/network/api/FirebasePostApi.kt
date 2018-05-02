@@ -1,9 +1,6 @@
 package com.mnassa.data.network.api
 
-import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
-import com.mnassa.data.network.bean.retrofit.request.HideInfoPostRequest
-import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
-import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
+import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.bean.retrofit.response.CreatePostResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
 import kotlinx.coroutines.experimental.Deferred
@@ -24,6 +21,9 @@ interface FirebasePostApi {
 
     @POST("/itemView")
     fun viewItems(@Body request: ViewItemsRequest): Deferred<MnassaResponse>
+
+    @POST("/itemOpen")
+    fun openItem(@Body request: OpenItemsRequest): Deferred<MnassaResponse>
 
     @POST("/repost")
     fun repostComment(@Body request: RepostCommentRequest): Deferred<CreatePostResponse>
