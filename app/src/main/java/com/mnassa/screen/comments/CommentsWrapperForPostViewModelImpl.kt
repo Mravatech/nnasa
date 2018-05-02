@@ -30,8 +30,6 @@ class CommentsWrapperForPostViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         handleException {
             postsInteractor.loadById(postId).consumeEach { post ->
                 if (post != null) {
@@ -45,6 +43,7 @@ class CommentsWrapperForPostViewModelImpl(
         handleException {
             withProgressSuspend {
                 walletInteractor.sendPointsForComment(rewardModel)
+                loadComments()
             }
         }
     }

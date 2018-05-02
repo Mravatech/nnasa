@@ -203,8 +203,7 @@ private val viewModelsModule = Kodein.Module {
                 CommentsWrapperForEventViewModelImpl(
                         eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
                         commentsInteractor = instance(),
-                        eventsInteractor = instance(),
-                        walletInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+                        eventsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
         }
     }

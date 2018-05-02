@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
-import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.mostParentCommentId
@@ -19,8 +18,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class CommentsWrapperForEventViewModelImpl(
         private val eventId: String,
         private val commentsInteractor: CommentsInteractor,
-        private val eventsInteractor: EventsInteractor,
-        private val walletInteractor: WalletInteractor
+        private val eventsInteractor: EventsInteractor
 ) : MnassaViewModelImpl(), CommentsWrapperViewModel {
     override val scrollToChannel: ArrayBroadcastChannel<CommentModel> = ArrayBroadcastChannel(1)
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
@@ -39,13 +37,7 @@ class CommentsWrapperForEventViewModelImpl(
         }
     }
 
-    override fun sendPointsForComment(rewardModel: RewardModel) {
-        handleException {
-            withProgressSuspend {
-                walletInteractor.sendPointsForComment(rewardModel)
-            }
-        }
-    }
+    override fun sendPointsForComment(rewardModel: RewardModel) {}
 
     override fun createComment(text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
         handleException {
