@@ -36,6 +36,8 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.chats.message.ChatMessageViewModel
 import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
+import com.mnassa.screen.chats.startchat.ChatConnectionsViewModel
+import com.mnassa.screen.chats.startchat.ChatConnectionsViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForEventViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForPostViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperViewModel
@@ -211,6 +213,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
+    bind<ChatConnectionsViewModel>() with provider { ChatConnectionsViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
