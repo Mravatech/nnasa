@@ -1,9 +1,7 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.InfoPostModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -59,5 +57,7 @@ interface PostsRepository {
     suspend fun removePost(postId: String)
     suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
     suspend fun hideInfoPost(postId: String)
+
+    suspend fun loadOfferCategories(): List<OfferCategoryModel>
 }
 

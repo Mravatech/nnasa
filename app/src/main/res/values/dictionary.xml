@@ -478,6 +478,10 @@
     <string name="offer_purchase_title">_android_offer_purchase_title</string>
     <string name="offer_purchase_description">_android_offer_purchase_description</string>
     <string name="offer_create_title">_new_post_navbar_title_create_offer</string>
+    <string name="offer_title_placeholder">create_offer_your_title</string>
+    <string name="offer_description_placeholder">_android_offer_placeholder</string>
+    <string name="offer_price_placeholder">_new_post_offer_price_placeholder</string>
+    <string name="offer_place_placeholder">_new_post_offer_city_title</string>
 
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>

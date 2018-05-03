@@ -122,6 +122,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.hideInfoPost(postId)
     }
 
+    override suspend fun loadOfferCategories(): List<OfferCategoryModel> {
+        return postsRepository.loadOfferCategories()
+    }
+
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }

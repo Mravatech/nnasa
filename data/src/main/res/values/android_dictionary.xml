@@ -188,6 +188,7 @@
     <string name="_android_offer_button_buy_again_INFO">Buy again</string>
     <string name="_android_offer_purchase_title_INFO">Purchase</string>
     <string name="_android_offer_purchase_description_INFO">Transfer points to buy this item</string>
+    <string name="_android_offer_placeholder_INFO">Type your offer here</string>
 
 
     <string name="_android_days_INFO">%d days</string>

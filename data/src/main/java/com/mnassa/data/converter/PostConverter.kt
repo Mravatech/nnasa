@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
 import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
@@ -20,13 +21,14 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.*
+import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
-class PostConverter : ConvertersContextRegistrationCallback {
+class PostConverter(private val languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertPost)
@@ -37,6 +39,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertPostData)
         convertersContext.registerConverter(this::convertInfoPost)
         convertersContext.registerConverter(this::convertOfferPost)
+        convertersContext.registerConverter(this::convertOfferCategory)
     }
 
     private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostModelImpl {
@@ -215,6 +218,14 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 reposts = input.reposts,
                 unreadResponse = input.unreadResponse,
                 views = input.views
+        )
+    }
+
+    private fun convertOfferCategory(input: OfferCategoryDbModel): OfferCategoryModel {
+        return OfferCategoryModel(
+                id = input.id,
+                name = TranslatedWordModelImpl(languageProvider, "", input.en, input.en, input.ar),
+                parentId = input.parentId
         )
     }
 }

@@ -66,6 +66,8 @@ interface PostsInteractor {
     suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
 
     suspend fun hideInfoPost(postId: String)
+
+    suspend fun loadOfferCategories(): List<OfferCategoryModel>
 }
 
 data class PostPrivacyOptions(

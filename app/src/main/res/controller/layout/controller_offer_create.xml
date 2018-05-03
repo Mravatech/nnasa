@@ -55,7 +55,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 app:counterEnabled="true"
                 app:counterMaxLength="@integer/max_offer_desc_length"
                 tools:hint="I offer something new">
@@ -75,7 +74,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 tools:hint="Price">
 
                 <android.support.design.widget.TextInputEditText
@@ -91,7 +89,6 @@
                 style="@style/Registration.TextInputLayout"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 app:errorEnabled="false"
                 tools:hint="Offer place">
 
@@ -103,22 +100,34 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spinnerCategory"
+                android:id="@+id/sCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:spinnerMode="dialog"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
+            <View
+                style="@style/MnassaDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal" />
+
             <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spinnerSubCategory"
+                android:id="@+id/sSubCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:spinnerMode="dialog"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+            <View
+                style="@style/MnassaDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal" />
 
             <com.mnassa.widget.ChipLayout
                 android:id="@+id/chipTags"
