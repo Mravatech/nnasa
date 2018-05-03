@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.ComplaintInteractor
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.PostModel
@@ -11,7 +12,6 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
-import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -68,10 +68,10 @@ open class NeedDetailsViewModelImpl(
         }
     }
 
-    override fun repost(sharingOptions: SharingOptionsController.ShareToOptions) {
+    override fun repost(sharingOptions: PostPrivacyOptions) {
         handleException {
             withProgressSuspend {
-                postsInteractor.repostPost(postId, null, sharingOptions.selectedConnections)
+                postsInteractor.repostPost(postId, null, sharingOptions)
             }
         }
     }

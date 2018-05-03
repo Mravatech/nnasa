@@ -42,7 +42,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.DEFAULT
-        set(value) = viewModel.repost(value)
+        set(value) = viewModel.repost(value.asPostPrivacy)
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()

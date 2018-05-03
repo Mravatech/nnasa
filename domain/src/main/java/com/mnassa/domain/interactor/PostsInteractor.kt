@@ -62,7 +62,7 @@ interface PostsInteractor {
 
     suspend fun removePost(postId: String)
 
-    suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel
+    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
 
     suspend fun hideInfoPost(postId: String)
 }
