@@ -1,33 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <FrameLayout
+
+    <include
+        layout="@layout/item_image_one"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <ImageView
-            android:id="@+id/ivOne"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:foreground="@drawable/avatar_shadow"
-            android:scaleType="centerCrop"
-            tools:src="@mipmap/ic_launcher" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/ivPlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            app:srcCompat="@drawable/ic_play_mini_icon" />
-    </FrameLayout>
+        android:layout_weight="1" />
 
 
     <android.support.v4.widget.Space

@@ -89,3 +89,5 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
         is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)
     }
 }
+
+val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE && !this.isMyPost()

@@ -84,5 +84,3 @@ sealed class EntityType : Serializable {
     object EVENT : EntityType()
     object POST : EntityType()
 }
-
-val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE
