@@ -18,6 +18,5 @@
         android:fontFamily="@font/roboto_medium"
         android:textColor="@color/blue_turquoise"
         android:textSize="@dimen/personal_info_add_ability_text_size"
-        android:textStyle="normal"
         android:visibility="gone" />
 </LinearLayout>

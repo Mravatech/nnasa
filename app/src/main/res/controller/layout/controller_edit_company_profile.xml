@@ -23,41 +23,33 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/activity_margin_size"
             android:orientation="vertical">
 
             <include layout="@layout/sub_profile_avatar" />
 
             <TextView
                 android:id="@+id/tvEditProfileMoreInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="#9fa9b5"
-                android:textSize="14sp"
-                android:textStyle="normal"
+                style="@style/MnassaHeader3"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:textColor="@color/gray_cool"
                 tools:text="Main Information" />
 
             <include layout="@layout/sub_reg_company" />
 
             <TextView
                 android:id="@+id/tvProfilePersonalInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="#9fa9b5"
-                android:textSize="14sp"
-                android:textStyle="normal"
+                style="@style/MnassaHeader3"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:textColor="@color/gray_cool"
                 tools:text="Personal Info" />
 
             <include layout="@layout/sub_company_info" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="56dp" />
+                android:layout_height="@dimen/profile_bottom_margin_space" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

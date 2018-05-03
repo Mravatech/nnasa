@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:layout_margin="16dp"
+                    android:layout_margin="@dimen/activity_margin_size"
                     android:orientation="vertical">
 
                     <TextView
@@ -47,7 +47,6 @@
                         android:fontFamily="@font/roboto_medium"
                         android:textColor="@color/white"
                         android:textSize="@dimen/profile_toolbar_title_expanded_text_size"
-                        android:textStyle="normal"
                         tools:text="Calvin Chambers" />
 
                     <TextView
@@ -57,7 +56,6 @@
                         android:fontFamily="@font/roboto"
                         android:textColor="@color/gray_pale"
                         android:textSize="@dimen/profile_toolbar_title_expanded_sub_text_size"
-                        android:textStyle="normal"
                         tools:text="UI/UX Designer in ISDDESIGN" />
                 </LinearLayout>
             </FrameLayout>

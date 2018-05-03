@@ -52,7 +52,6 @@
             android:gravity="end"
             android:textColor="@color/gray_cool"
             android:textSize="14sp"
-            android:textStyle="normal"
             tools:text="9 min" />
 
     </LinearLayout>
