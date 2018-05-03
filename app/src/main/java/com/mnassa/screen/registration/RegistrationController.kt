@@ -9,9 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
 import com.mnassa.extensions.hideKeyboard
@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 2/26/2018.
@@ -101,12 +102,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 view.ivAccountTypePersonal.enable()
                 view.tvAccountTypePersonal.setTextColor(blackColor)
                 view.tvAccountTypeOrganization.setTextColor(grayColor)
+                onPersonChanged()
             }
             PAGE_ORGANIZATION_INFO -> {
                 view.ivAccountTypeOrganization.enable()
                 view.ivAccountTypePersonal.disable()
                 view.tvAccountTypePersonal.setTextColor(grayColor)
                 view.tvAccountTypeOrganization.setTextColor(blackColor)
+                onOrganizationChanged()
             }
         }
     }
@@ -118,27 +121,49 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onDestroy()
     }
 
-    private fun validatePersonInfo(): Boolean {
-        val v = view
-        return v != null
+    private fun canCreatePersonInfo(): Boolean {
+        val v = view ?: return false
+        if (v.vpRegistration.etPersonFirstName == null) return false//todo make beauty here (is not initialized when first onPageSelected called)
+        if (v.vpRegistration.etPersonFirstName.text.isBlank()) return false
+        if (v.vpRegistration.etPersonSecondName.text.isBlank()) return false
+        if (v.vpRegistration.etPersonUserName.text.isBlank()) return false
+        if (registrationAdapter.personSelectedPlaceId == null) return false
+        if (v.vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
+        if (v.vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
+        return true
     }
 
-    private fun validateOrganizationInfo(): Boolean {
-        val v = view
-        return v != null
+    private fun canCreateOrganizationInfo(): Boolean {
+        val v = view ?: return false
+        if (v.vpRegistration.etCompanyName.text.isBlank()) return false
+        if (v.vpRegistration.etCompanyUserName.text.isBlank()) return false
+        if (registrationAdapter.companySelectedPlaceId == null) return false
+        if (v.vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
+        if (v.vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
+        return true
+    }
+
+    private fun onPersonChanged() {
+        val view = view ?: return
+        view.btnScreenHeaderAction.isEnabled = canCreatePersonInfo()
+    }
+
+    private fun onOrganizationChanged() {
+        val view = view ?: return
+        view.btnScreenHeaderAction.isEnabled = canCreateOrganizationInfo()
     }
 
     private fun processRegisterClick() {
         with(requireNotNull(view)) {
             when (vpRegistration.currentItem) {
-                PAGE_PERSON_INFO -> if (validatePersonInfo()) viewModel.registerPerson(
+                PAGE_PERSON_INFO -> viewModel.registerPerson(
                         firstName = etPersonFirstName.text.toString(),
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
                         city = registrationAdapter.personSelectedPlaceId ?: "",
                         offers = chipPersonOffers.getTags(),
                         interests = chipPersonInterests.getTags())
-                PAGE_ORGANIZATION_INFO -> if (validateOrganizationInfo()) viewModel.registerOrganization(
+                PAGE_ORGANIZATION_INFO -> viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
                         city = registrationAdapter.companySelectedPlaceId ?: "",
@@ -158,14 +183,21 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     inner class RegistrationAdapter(
-        private val context: Context
-    )
-        : PagerAdapter() {
+            private val context: Context
+    ) : PagerAdapter() {
 
         private var companySelectedPlaceName: String? = null
         private var personSelectedPlaceName: String? = null
         var companySelectedPlaceId: String? = null
+            set(value) {
+                field = value
+                onOrganizationChanged()
+            }
         var personSelectedPlaceId: String? = null
+            set(value) {
+                field = value
+                onPersonChanged()
+            }
 
         override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
@@ -213,7 +245,13 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipPersonOffers.setTags(emptyList())
                 chipPersonInterests.chipSearch = viewModel
                 chipPersonInterests.setTags(emptyList())
+                etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+                etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+                etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+                chipPersonOffers.chipsChangeListener = { onPersonChanged() }
+                chipPersonInterests.chipsChangeListener = { onPersonChanged() }
             }
+            onPersonChanged()
             setAdapter(view.actvPersonCity, true)
         }
 
@@ -228,7 +266,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
                 chipCompanyOffers.chipSearch = viewModel
                 chipCompanyInterests.chipSearch = viewModel
+                etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
+                etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
+                chipCompanyOffers.chipsChangeListener = { onOrganizationChanged() }
+                chipCompanyInterests.chipsChangeListener = { onOrganizationChanged() }
             }
+            onOrganizationChanged()
             setAdapter(view.actvCompanyCity, false)
         }
 

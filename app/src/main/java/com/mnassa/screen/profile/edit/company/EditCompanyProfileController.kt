@@ -4,11 +4,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
 import com.mnassa.helper.PlayServiceHelper
@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.sub_company_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,47 +40,71 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
 
     private var companySelectedPlaceName: String? = null
     private var companySelectedPlaceId: String? = null
-
+        set(value) {
+            field = value
+            onOrganizationChanged()
+        }
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
         companySelectedPlaceId = accountModel.location?.placeId
         setupView(view)
-        view.etFoundation.isLongClickable = false
-        view.etFoundation.isFocusableInTouchMode = false
-        view.etFoundation.setText(getDateByTimeMillis(accountModel.createdAt))
-        timeMillis = accountModel.createdAt
-        setCalendarEditText(view.etFoundation)
-        view.etCompanyEmail.setHideMode(accountModel.showContactEmail)
-        view.etCompanyEmail.setText(accountModel.contactEmail)
-        view.etCompanyName.setText(accountModel.organizationInfo?.organizationName)
-        view.etCompanyUserName.setText(accountModel.userName)
-        view.etCompanyPhone.setHideMode(accountModel.showContactPhone)
-        view.etCompanyPhone.setText(accountModel.contactPhone)
-        view.etWebSite.setText(accountModel.website)
-        view.vCompanyStatus.setOrganization(accountModel.organizationType)
-        view.etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-        view.chipCompanyOffers.chipSearch = viewModel
-        view.chipCompanyOffers.setTags(offers)
-        view.chipCompanyInterests.chipSearch = viewModel
-        view.chipCompanyInterests.setTags(interests)
-        addPhoto(view.fabInfoAddPhoto)
-        val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
-        view.actvCompanyCity.setText(accountModel.location?.formatted())
-        view.actvCompanyCity.setAdapter(placeAutocompleteAdapter)
-        view.actvCompanyCity.setOnItemClickListener({ _, _, i, _ ->
-            placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-            companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-            companySelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
-            view.actvCompanyCity.setText(companySelectedPlaceName ?: "")
-        })
-        setToolbar(view.toolbarEditProfile, view)
-        view.ivUserAvatar.avatarSquare(accountModel.avatar)
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 close()
             }
         }
+        with(view){
+            etFoundation.isLongClickable = false
+            etFoundation.isFocusableInTouchMode = false
+            etFoundation.setText(getDateByTimeMillis(accountModel.createdAt))
+            timeMillis = accountModel.createdAt
+            setCalendarEditText(etFoundation)
+            etCompanyEmail.setHideMode(accountModel.showContactEmail)
+            etCompanyEmail.setText(accountModel.contactEmail)
+            etCompanyName.setText(accountModel.organizationInfo?.organizationName)
+            etCompanyUserName.setText(accountModel.userName)
+            etCompanyPhone.setHideMode(accountModel.showContactPhone)
+            etCompanyPhone.setText(accountModel.contactPhone)
+            etWebSite.setText(accountModel.website)
+            vCompanyStatus.setOrganization(accountModel.organizationType)
+            etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
+            chipCompanyOffers.chipSearch = viewModel
+            chipCompanyOffers.setTags(offers)
+            chipCompanyInterests.chipSearch = viewModel
+            chipCompanyInterests.setTags(interests)
+            addPhoto(fabInfoAddPhoto)
+            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
+            actvCompanyCity.setText(accountModel.location?.formatted())
+            actvCompanyCity.setAdapter(placeAutocompleteAdapter)
+            actvCompanyCity.setOnItemClickListener({ _, _, i, _ ->
+                placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
+                companySelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                actvCompanyCity.setText(companySelectedPlaceName ?: "")
+            })
+            setToolbar(toolbarEditProfile, this)
+            ivUserAvatar.avatarSquare(accountModel.avatar)
+            etCompanyName.addTextChangedListener(SimpleTextWatcher{onOrganizationChanged()})
+            etCompanyUserName.addTextChangedListener(SimpleTextWatcher{onOrganizationChanged()})
+            chipCompanyInterests.chipsChangeListener = { onOrganizationChanged()}
+            chipCompanyOffers.chipsChangeListener = { onOrganizationChanged()}
+        }
+    }
+
+    private fun onOrganizationChanged() {
+        val view = view ?: return
+        view.toolbarEditProfile.actionButtonEnabled = canCreateOrganizationInfo()
+    }
+
+    private fun canCreateOrganizationInfo(): Boolean {
+        val v = view ?: return false
+        if (v.etCompanyName.text.isBlank()) return false
+        if (v.etCompanyUserName.text.isBlank()) return false
+        if (companySelectedPlaceId == null) return false
+        if (v.chipCompanyOffers.getTags().isEmpty()) return false
+        if (v.chipCompanyInterests.getTags().isEmpty()) return false
+        return true
     }
 
     override fun onViewDestroyed(view: View) {

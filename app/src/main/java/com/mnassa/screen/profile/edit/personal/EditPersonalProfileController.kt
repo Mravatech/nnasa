@@ -4,12 +4,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
 import com.mnassa.helper.PlayServiceHelper
@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import java.util.*
 
 /**
@@ -41,46 +42,76 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     private val playServiceHelper: PlayServiceHelper by instance()
     private var personSelectedPlaceName: String? = null
     private var personSelectedPlaceId: String? = null
+        set(value) {
+            field = value
+            onPersonChanged()
+        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
         playServiceHelper.googleApiClient.connect()
         personSelectedPlaceId = accountModel.location?.placeId
-        view.rInfoBtnFemale.isChecked = accountModel.gender == Gender.MALE
-        view.rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
-        val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
-        view.actvPersonCity.setText(accountModel.location?.formatted())
-        view.actvPersonCity.setAdapter(placeAutocompleteAdapter)
-        view.actvPersonCity.setOnItemClickListener({ _, _, i, _ ->
-            placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-            personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-            personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
-            view.actvPersonCity.setText(personSelectedPlaceName ?: "")
-        })
-        view.containerSelectOccupation.setAbilities(accountModel.abilities)
-        view.etPhoneNumber.setText(accountModel.contactPhone)
-        view.etPhoneNumber.setHideMode(accountModel.showContactEmail)
-        view.etYourEmail.setText(accountModel.contactEmail)
-        view.etYourEmail.setHideMode(accountModel.showContactPhone)
-        addPhoto(view.fabInfoAddPhoto)
-        view.etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
-        view.chipPersonInterests.chipSearch = viewModel
-        view.chipPersonInterests.setTags(interests)
-        view.chipPersonOffers.chipSearch = viewModel
-        view.chipPersonOffers.setTags(offers)
-        view.etPersonFirstName.setText(accountModel.personalInfo?.firstName)
-        view.etPersonSecondName.setText(accountModel.personalInfo?.lastName)
-        view.etPersonUserName.setText(accountModel.userName)
-        setToolbar(view.toolbarEditProfile, view)
-        timeMillis = accountModel.createdAt
-        setCalendarEditText(view.etDateOfBirthday)
-        view.ivUserAvatar.avatarSquare(accountModel.avatar)
+
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 close()
             }
         }
+        with(view) {
+            rInfoBtnFemale.isChecked = accountModel.gender == Gender.MALE
+            rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
+            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
+            actvPersonCity.setText(accountModel.location?.formatted())
+            actvPersonCity.setAdapter(placeAutocompleteAdapter)
+            actvPersonCity.setOnItemClickListener({ _, _, i, _ ->
+                placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
+                personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                actvPersonCity.setText(personSelectedPlaceName ?: "")
+            })
+            containerSelectOccupation.setAbilities(accountModel.abilities)
+            etPhoneNumber.setText(accountModel.contactPhone)
+            etPhoneNumber.setHideMode(accountModel.showContactEmail)
+            etYourEmail.setText(accountModel.contactEmail)
+            etYourEmail.setHideMode(accountModel.showContactPhone)
+            addPhoto(fabInfoAddPhoto)
+            etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
+            chipPersonInterests.chipSearch = viewModel
+            chipPersonInterests.setTags(interests)
+            chipPersonOffers.chipSearch = viewModel
+            chipPersonOffers.setTags(offers)
+            etPersonFirstName.setText(accountModel.personalInfo?.firstName)
+            etPersonSecondName.setText(accountModel.personalInfo?.lastName)
+            etPersonUserName.setText(accountModel.userName)
+            setToolbar(toolbarEditProfile, this)
+            timeMillis = accountModel.createdAt
+            setCalendarEditText(etDateOfBirthday)
+            ivUserAvatar.avatarSquare(accountModel.avatar)
+            chipPersonOffers.chipsChangeListener = { onPersonChanged() }
+            chipPersonInterests.chipsChangeListener = { onPersonChanged() }
+            etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            onPersonChanged()
+        }
+    }
+
+    private fun onPersonChanged() {
+        val view = view ?: return
+        view.toolbarEditProfile.actionButtonEnabled = canCreatePersonInfo()
+    }
+
+    private fun canCreatePersonInfo(): Boolean {
+        val v = view ?: return false
+        if (v.etPersonFirstName == null) return false//todo make beauty here (is not initialized when first onPageSelected called)
+        if (v.etPersonFirstName.text.isBlank()) return false
+        if (v.etPersonSecondName.text.isBlank()) return false
+        if (v.etPersonUserName.text.isBlank()) return false
+        if (personSelectedPlaceId == null) return false
+        if (v.chipPersonOffers.getTags().isEmpty()) return false
+        if (v.chipPersonInterests.getTags().isEmpty()) return false
+        return true
     }
 
     override fun onViewDestroyed(view: View) {
