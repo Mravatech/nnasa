@@ -75,7 +75,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
     }
 
     override fun onPageSelected() {
-        view?.rvNotifications?.smoothScrollToPosition(0)
+        view?.rvNotifications?.scrollToPosition(0)
     }
 
     private fun onNotificationClickHandle(item: NotificationModel) {

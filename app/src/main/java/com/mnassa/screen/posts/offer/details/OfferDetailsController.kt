@@ -43,6 +43,12 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
             tvTitle.text = post.title
             tvTitle.goneIfEmpty()
 
+//            bindBuyOfferButton(post)
+        }
+    }
+
+    private suspend fun bindBuyOfferButton(post: OfferPostModel) {
+        with(getViewSuspend()) {
             btnComment.isGone = true
             spacePostAction.isGone = true
             val offerButton = btnRecommend
@@ -76,5 +82,6 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
     }
 
     //action button is always visible
-    override suspend fun makePostActionsGone() = makePostActionsVisible()
+    //TODO: uncomment to add ability to buy offer
+//    override suspend fun makePostActionsGone() = makePostActionsVisible()
 }

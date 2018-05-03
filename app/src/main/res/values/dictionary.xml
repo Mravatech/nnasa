@@ -477,6 +477,7 @@
     <string name="offer_button_customers">_android_offer_button_my_customers</string>
     <string name="offer_purchase_title">_android_offer_purchase_title</string>
     <string name="offer_purchase_description">_android_offer_purchase_description</string>
+    <string name="offer_create_title">_new_post_navbar_title_create_offer</string>
 
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>

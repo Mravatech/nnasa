@@ -87,6 +87,13 @@
             android:layout_marginTop="@dimen/spacing_vertical"
             tools:background="#0ac" />
 
+        <View
+            android:id="@+id/vImagesDivider"
+            style="@style/MnassaDivider"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"/>
+
         <TextView
             android:id="@+id/tvItemTitle"
             style="@style/MnassaHeader1"

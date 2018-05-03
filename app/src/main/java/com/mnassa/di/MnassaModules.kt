@@ -105,6 +105,8 @@ import com.mnassa.screen.posts.need.recommend.RecommendViewModel
 import com.mnassa.screen.posts.need.recommend.RecommendViewModelImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsViewModelImpl
+import com.mnassa.screen.posts.offer.create.CreateOfferViewModel
+import com.mnassa.screen.posts.offer.create.CreateOfferViewModelImpl
 import com.mnassa.screen.posts.offer.details.OfferDetailsController
 import com.mnassa.screen.posts.offer.details.OfferDetailsViewModel
 import com.mnassa.screen.posts.offer.details.OfferDetailsViewModelImpl
@@ -225,6 +227,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance())}
     bind<InfoDetailsViewModel>() with provider { InfoDetailsViewModelImpl(instance()) }
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
+    bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance()) }
 }
 
 private val convertersModule = Kodein.Module {

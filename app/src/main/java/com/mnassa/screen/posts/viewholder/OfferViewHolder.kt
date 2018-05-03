@@ -85,6 +85,7 @@ class OfferViewHolder(itemView: View, private val onClickListener: View.OnClickL
                 }
                 inflater.inflate(imagesLayout, view.flImagesRoot, true)
             }
+            view.vImagesDivider.isGone = imagesCount > 0
             return OfferViewHolder(view, onClickListener)
         }
     }

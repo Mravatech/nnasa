@@ -16,6 +16,7 @@ import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -87,6 +88,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
             fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
             fabCreateOffer.setOnClickListener {
                 famHome.close(false)
+                open(CreateOfferController.newInstance())
             }
 
             fabCreateEvent.labelText = fromDictionary(R.string.tab_home_button_create_event)
@@ -100,20 +102,20 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                 famHome.close(false)
                 open(CreateGeneralPostController.newInstance())
             }
+        }
 
-            launchCoroutineUI {
-                viewModel.permissionsChannel.consumeEach { permission ->
-                    with(getViewSuspend()) {
-                        fabCreateNeed.isEnabled = permission.canCreateNeedPost
-                        fabCreateOffer.isEnabled = permission.canCreateOfferPost
-                        fabCreateEvent.isEnabled = permission.canCreateEvent
-                        fabCreateGeneralPost.isEnabled = permission.canCreateGeneralPost
-                        famHome.isEnabled = (
-                                permission.canCreateNeedPost ||
-                                        permission.canCreateOfferPost ||
-                                        permission.canCreateEvent ||
-                                        permission.canCreateGeneralPost)
-                    }
+        launchCoroutineUI {
+            viewModel.permissionsChannel.consumeEach { permission ->
+                with(getViewSuspend()) {
+                    fabCreateNeed.isEnabled = permission.canCreateNeedPost
+                    fabCreateOffer.isEnabled = permission.canCreateOfferPost
+                    fabCreateEvent.isEnabled = permission.canCreateEvent
+                    fabCreateGeneralPost.isEnabled = permission.canCreateGeneralPost
+                    famHome.isEnabled = (
+                            permission.canCreateNeedPost ||
+                                    permission.canCreateOfferPost ||
+                                    permission.canCreateEvent ||
+                                    permission.canCreateGeneralPost)
                 }
             }
         }
