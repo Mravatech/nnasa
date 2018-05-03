@@ -114,8 +114,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.removePost(postId)
     }
 
-    override suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel {
-        return postsRepository.repostPost(postId, text, privacyConnections)
+    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel {
+        return postsRepository.repostPost(postId, text, privacy)
     }
 
     override suspend fun hideInfoPost(postId: String) {

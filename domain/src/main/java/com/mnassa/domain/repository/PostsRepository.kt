@@ -57,7 +57,7 @@ interface PostsRepository {
     suspend fun updateUserRecommendation(postId: String, accountId: String, text: String)
 
     suspend fun removePost(postId: String)
-    suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel
+    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
     suspend fun hideInfoPost(postId: String)
 }
 

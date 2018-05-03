@@ -92,15 +92,13 @@
 
         <TextView
             android:id="@+id/tvNeedDescription"
+            style="@style/PostDetails.Description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
             android:paddingBottom="@dimen/spacing_vertical"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
             android:paddingTop="@dimen/spacing_vertical"
-            android:textColor="@color/black"
-            android:textSize="17sp"
             tools:text="Need description" />
 
         <include layout="@layout/recommended_profile" />
@@ -151,13 +149,11 @@
 
         <TextView
             android:id="@+id/tvPrice"
+            style="@style/PostDetails.Price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_bold"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
-            android:textColor="@color/black"
-            android:textSize="18sp"
             tools:text="5000 SAR" />
 
         <LinearLayout
@@ -169,21 +165,17 @@
 
             <TextView
                 android:id="@+id/tvLocation"
-                style="@style/MnassaTextTiny"
+                style="@style/PostDetails.Location"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:drawableStart="@drawable/ic_location"
-                android:textSize="16sp"
                 tools:text="LOCATION" />
 
             <TextView
                 android:id="@+id/tvCreationTime"
-                style="@style/MnassaTextTiny"
+                style="@style/PostDetails.CreationTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
                 tools:text="5 min ago" />
         </LinearLayout>
 

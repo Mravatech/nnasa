@@ -100,3 +100,5 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
 }
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
+
+val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE && !this.isMyPost()
