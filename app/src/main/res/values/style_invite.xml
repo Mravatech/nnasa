@@ -160,7 +160,7 @@
     <style name="Invite.DialogInviteWithSubTitle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColor">@color/black_transparent_90</item>
         <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
     </style>
