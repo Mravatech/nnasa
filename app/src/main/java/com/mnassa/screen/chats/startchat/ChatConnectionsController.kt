@@ -5,6 +5,7 @@ import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.translation.fromDictionary
@@ -45,8 +46,8 @@ class ChatConnectionsController : MnassaControllerImpl<ChatConnectionsViewModel>
                 allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
 
-                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
-                view.rvAllConnections.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+                view.rlEmptyView.isInvisible = it.isNotEmpty()
+                view.rvAllConnections.isInvisible = it.isEmpty()
             }
         }
     }
