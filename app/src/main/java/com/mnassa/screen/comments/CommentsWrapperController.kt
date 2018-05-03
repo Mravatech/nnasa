@@ -74,9 +74,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
         commentsAdapter.onCommentUsefulClick = {
-            val controller = RewardingController.newInstance(it.creator, it.id)
-            controller.targetController = this@CommentsWrapperController
-            open(controller)
+            open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it.id))
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
     }

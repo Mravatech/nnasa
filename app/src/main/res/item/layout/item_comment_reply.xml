@@ -82,7 +82,7 @@
             android:layout_below="@id/rvRecommendedAccounts"
             android:layout_toStartOf="@+id/btnReply"
             android:textColor="@drawable/button_transparent_text_color"
-            android:visibility="gone"
+            android:visibility="invisible"
             tools:visibility="visible"
             tools:text="Useful" />
 
