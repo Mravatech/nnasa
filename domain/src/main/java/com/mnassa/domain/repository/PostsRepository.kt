@@ -51,6 +51,34 @@ interface PostsRepository {
             placeId: String?
     )
 
+    suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<String>,
+            uploadedImagesUrls: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel
+
+    suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<String>,
+            uploadedImagesUrls: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    )
+
+    suspend fun getShareOfferPostPrice(): Long?
+    suspend fun getShareOfferPostPerUserPrice(): Long?
+
     suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions)
     suspend fun updateUserRecommendation(postId: String, accountId: String, text: String)
 

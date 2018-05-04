@@ -110,6 +110,47 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.updateGeneralPost(postId, text, allImages, createTags(tags), placeId)
     }
 
+    override suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+        return postsRepository.createOffer(title, offer, category, subCategory, createTags(tags), allImages, placeId, price, postPrivacyOptions)
+    }
+
+    override suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ) {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+        return postsRepository.updateOffer(postId, title, offer, category, subCategory, createTags(tags), allImages, placeId, price, postPrivacyOptions)
+    }
+
+    override suspend fun getPostSharePrice(): Long {
+        return postsRepository.getShareOfferPostPrice() ?: postsRepository.getShareOfferPostPerUserPrice() ?: 0L
+    }
+
     override suspend fun removePost(postId: String) {
         postsRepository.removePost(postId)
     }

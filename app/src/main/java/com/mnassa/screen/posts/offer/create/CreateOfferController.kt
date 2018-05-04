@@ -1,7 +1,12 @@
 package com.mnassa.screen.posts.offer.create
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.support.v7.widget.AppCompatSpinner
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,6 +16,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.OfferCategoryModel
 import com.mnassa.domain.model.OfferPostModel
 import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.formatAsMoney
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -22,7 +28,9 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_offer_create.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
+import timber.log.Timber
 
 /**
  * Created by Peter on 5/3/2018.
@@ -35,9 +43,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
-            launchCoroutineUI {
-                getViewSuspend().tvShareOptions?.text = value.format()
-            }
+            applyShareOptionsChanges()
         }
     private val playServiceHelper: PlayServiceHelper by instance()
     private val dialogHelper: DialogHelper by instance()
@@ -63,14 +69,17 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-//                viewModel.createPost(
-//                        need = etNeed.text.toString(),
-//                        tags = chipTags.getTags(),
-//                        images = attachedImagesAdapter.dataStorage.toList(),
-//                        placeId = placeId,
-//                        price = etPrice.text.toString().toLongOrNull(),
-//                        postPrivacyOptions = sharingOptions.asPostPrivacy
-//                )
+                viewModel.createPost(
+                        title = etTitle.text.toString(),
+                        offer = etOffer.text.toString(),
+                        category = (sCategory.selectedItem as? CategoryWrapper)?.category,
+                        subCategory = (sSubCategory.selectedItem as? CategoryWrapper)?.category,
+                        tags = chipTags.getTags(),
+                        placeId = placeId,
+                        price = etPrice.text.toString().toLongOrNull(),
+                        postPrivacyOptions = sharingOptions.asPostPrivacy,
+                        images = attachedImagesAdapter.dataStorage.toList()
+                )
             }
             tvShareOptions.setOnClickListener {
                 val post = post
@@ -80,9 +89,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                         accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
             }
 
-            launchCoroutineUI {
-                tvShareOptions.text = sharingOptions.format()
-            }
+            applyShareOptionsChanges()
             etOffer.prefix = fromDictionary(R.string.offer_prefix) + " "
             etOffer.hint = fromDictionary(R.string.offer_description_placeholder)
             etOffer.addTextChangedListener(SimpleTextWatcher { onOfferChanged() })
@@ -107,16 +114,43 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
             rvImages.adapter = attachedImagesAdapter
 
-            initCategorySpinner()
-        }
-
-        if (args.containsKey(EXTRA_OFFER)) {
-            setData(args.getSerializable(EXTRA_OFFER) as OfferPostModel)
-            args.remove(EXTRA_OFFER)
+            showProgress()
+            launchCoroutineUI {
+                initCategorySpinner()
+                if (args.containsKey(EXTRA_OFFER)) {
+                    setData(args.getSerializable(EXTRA_OFFER) as OfferPostModel)
+                    args.remove(EXTRA_OFFER)
+                }
+                hideProgress()
+            }
         }
 
         launchCoroutineUI {
             viewModel.closeScreenChannel.consumeEach { close() }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_CODE_CROP) return
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                val uri: Uri? = data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
+                uri?.let {
+                    val imageToReplaceLocal = imageToReplace
+                    val newImage = AttachedImage.LocalImage(uri)
+                    if (imageToReplaceLocal != null) {
+                        attachedImagesAdapter.replace(imageToReplaceLocal, newImage)
+                    } else {
+                        attachedImagesAdapter.dataStorage.add(newImage)
+                    }
+                    imageToReplace = null
+                }
+            }
+            CropActivity.GET_PHOTO_ERROR -> {
+                imageToReplace = null
+                Timber.e("CropActivity.GET_PHOTO_ERROR")
+            }
         }
     }
 
@@ -129,54 +163,94 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
         super.onDestroyView(view)
     }
 
-    private fun initCategorySpinner() {
-        launchCoroutineUI {
-            with(getViewSuspend()) {
-                sCategory.adapter = ArrayAdapter(
-                        context,
-                        R.layout.support_simple_spinner_dropdown_item,
-                        android.R.id.text1,
-                        viewModel.getOfferCategories().map { CategoryWrapper(it) }
-                )
-                sCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onNothingSelected(parent: AdapterView<*>?) = onOfferChanged()
+    private suspend fun initCategorySpinner() {
+        with(getViewSuspend()) {
+            sCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = onOfferChanged()
 
-                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                        (sCategory.selectedItem as CategoryWrapper?)?.apply { initSubCategorySpinner(category) }
-                        onOfferChanged()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun initSubCategorySpinner(category: OfferCategoryModel) {
-        launchCoroutineUI {
-            with(getViewSuspend()) {
-                sSubCategory.adapter = ArrayAdapter(
-                        context,
-                        R.layout.support_simple_spinner_dropdown_item,
-                        android.R.id.text1,
-                        viewModel.getOfferSubCategories(category).map { CategoryWrapper(it) }
-                )
-                sSubCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onNothingSelected(parent: AdapterView<*>?) = onOfferChanged()
-
-                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                        (sSubCategory.selectedItem as CategoryWrapper?)?.run {
-                            //do something
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    (sCategory.selectedItem as CategoryWrapper?)?.category?.let { category ->
+                        if((sSubCategory.selectedItem as CategoryWrapper?)?.category?.parentId != category.id) {
+                            launchCoroutineUI { initSubCategorySpinner(category) }
                         }
                     }
+                    onOfferChanged()
+                }
+            }
+            sCategory.adapter = ArrayAdapter(
+                    context,
+                    R.layout.support_simple_spinner_dropdown_item,
+                    android.R.id.text1,
+                    viewModel.getOfferCategories().map { CategoryWrapper(it) }
+            )
+            (sCategory.selectedItem as CategoryWrapper?)?.apply { initSubCategorySpinner(category) }
+            onOfferChanged()
+        }
+    }
+
+    private suspend fun initSubCategorySpinner(category: OfferCategoryModel) {
+        with(getViewSuspend()) {
+            sSubCategory.adapter = ArrayAdapter(
+                    context,
+                    R.layout.support_simple_spinner_dropdown_item,
+                    android.R.id.text1,
+                    viewModel.getOfferSubCategories(category).map { CategoryWrapper(it) }
+            )
+            sSubCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = onOfferChanged()
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    (sSubCategory.selectedItem as CategoryWrapper?)?.run {
+                        //do something
+                    }
                 }
             }
         }
     }
 
-    private fun setData(offer: OfferPostModel) {
+    private suspend fun setData(offer: OfferPostModel) {
         this.post = offer
 
+        with(getViewSuspend()) {
+            toolbar.title = fromDictionary(R.string.offer_edit_title)
+            etTitle.setText(offer.title)
+            etOffer.setText(offer.text)
 
+            val categoryIndex = findCategoryIndex(offer.category, sCategory)
+            if (categoryIndex >= 0) {
+                sCategory.setSelection(categoryIndex)
+                initSubCategorySpinner((sCategory.selectedItem as CategoryWrapper).category)
+            }
 
+            val subCategoryIndex = findCategoryIndex(offer.subCategory, sSubCategory)
+            if (subCategoryIndex >= 0) {
+                sSubCategory.setSelection(subCategoryIndex)
+            }
+
+            chipTags.setTags(offer.tags.mapNotNull { viewModel.getTag(it) })
+            attachedImagesAdapter.set(offer.attachments.map { AttachedImage.UploadedImage(it) })
+
+            placeId = offer.locationPlace?.placeId
+            actvPlace.setText(offer.locationPlace?.placeName?.toString())
+
+            etPrice.setText(if (offer.price > 0.0) offer.price.formatAsMoney().toString() else null)
+            sharingOptions.selectedConnections = offer.privacyConnections
+            applyShareOptionsChanges()
+            //no ability to change sharing options while post changing
+            tvShareOptions.visibility = View.GONE
+        }
+    }
+
+    private fun findCategoryIndex(categoryString: String?, categorySpinner: AppCompatSpinner): Int {
+        for (categoryPosition in 0 until categorySpinner.adapter.count) {
+            val category = (categorySpinner.adapter.getItem(categoryPosition) as CategoryWrapper).category
+            if (category.name.engTranslate == categoryString ||
+                    category.name.arabicTranslate == categoryString ||
+                    category.id == categoryString) {
+                return categoryPosition
+            }
+        }
+        return -1
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
@@ -200,6 +274,13 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                     etTitle.text.length >= MIN_OFFER_TITLE_LENGTH
         }
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun applyShareOptionsChanges() {
+        launchCoroutineUI {
+            getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} (${viewModel.getOfferPrice()})"
+        }
     }
 
     private class CategoryWrapper(val category: OfferCategoryModel) {

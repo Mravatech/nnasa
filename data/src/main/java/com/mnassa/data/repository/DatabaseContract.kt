@@ -98,5 +98,8 @@ internal object DatabaseContract {
     const val TABLE_INFO_FEED = "infofeed"
     //
     const val TABLE_OFFER_CATEGORY = "categories"
+    //offer
+    const val SHARE_OFFER_POST = "dictionary/paymentTypes/shareOfferPost"
+    const val SHARE_OFFER_POST_PER_USER = "dictionary/paymentTypes/shareOfferPostPerUser"
 
 }

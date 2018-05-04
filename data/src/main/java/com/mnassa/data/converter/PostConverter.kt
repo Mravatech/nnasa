@@ -37,6 +37,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         convertersContext.registerConverter(this::convertPostPrivacyType)
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertPostData)
+        convertersContext.registerConverter(this::convertPostDataToOffer)
         convertersContext.registerConverter(this::convertInfoPost)
         convertersContext.registerConverter(this::convertOfferPost)
         convertersContext.registerConverter(this::convertOfferCategory)
@@ -47,6 +48,10 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         val id = input.id
         post.id = id
         return converter.convert(post)
+    }
+
+    private fun convertPostDataToOffer(input: PostData, token: Any?, converter: ConvertersContext): OfferPostModelImpl {
+        return convertPostData(input, token, converter) as OfferPostModelImpl
     }
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {

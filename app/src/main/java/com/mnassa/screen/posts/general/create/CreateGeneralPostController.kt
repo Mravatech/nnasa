@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts.general.create
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -36,9 +37,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
-            launchCoroutineUI {
-                getViewSuspend().tvShareOptions?.text = value.format()
-            }
+            applyShareOptionsChanges()
         }
     private val playServiceHelper: PlayServiceHelper by instance()
     private val dialogHelper: DialogHelper by instance()
@@ -81,9 +80,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
                         accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
             }
 
-            launchCoroutineUI {
-                tvShareOptions.text = sharingOptions.format()
-            }
+            applyShareOptionsChanges()
             etGeneralPost.hint = fromDictionary(R.string.general_text_placeholder)
             etGeneralPost.addTextChangedListener(SimpleTextWatcher { onGeneralTextUpdated() })
             onGeneralTextUpdated()
@@ -163,29 +160,34 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
     private fun setData(post: PostModel) {
         this.post = post
-        with(view ?: return) {
-            toolbar.title = fromDictionary(R.string.general_edit_title)
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                toolbar.title = fromDictionary(R.string.general_edit_title)
 
-            etGeneralPost.setText(post.text)
-            launchCoroutineUI {
+                etGeneralPost.setText(post.text)
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
-            }
-            attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
+                attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
-            placeId = post.locationPlace?.placeId
-            actvPlace.setText(post.locationPlace?.placeName?.toString())
-            sharingOptions.selectedConnections = post.privacyConnections
-            launchCoroutineUI {
-                tvShareOptions.text = sharingOptions.format()
+                placeId = post.locationPlace?.placeId
+                actvPlace.setText(post.locationPlace?.placeName?.toString())
+                sharingOptions.selectedConnections = post.privacyConnections
+                applyShareOptionsChanges()
+                //no ability to change sharing options while post changing
+                tvShareOptions.visibility = View.GONE
             }
-            //no ability to change sharing options while post changing
-            tvShareOptions.visibility = View.GONE
         }
     }
 
     private fun onGeneralTextUpdated() {
         val view = view ?: return
         view.toolbar.actionButtonEnabled = view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun applyShareOptionsChanges() {
+        launchCoroutineUI {
+            getViewSuspend().tvShareOptions?.text = sharingOptions.format()
+        }
     }
 
 

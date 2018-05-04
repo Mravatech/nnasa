@@ -8,6 +8,7 @@ import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
+import com.mnassa.data.network.bean.firebase.OfferPostPriceDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
@@ -190,6 +191,77 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 tags = tags,
                 location = placeId
         )).handleException(exceptionHandler)
+    }
+
+    override suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<String>,
+            uploadedImagesUrls: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel {
+        val result = postApi.createPost(CreatePostRequest(
+                title = title,
+                text = offer,
+                type = NetworkContract.PostType.OFFER,
+                category = category?.name?.engTranslate, //TODO: move to category.id (backend, iOS)
+                subcategory = subCategory?.name?.engTranslate,
+                tags = tags,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
+                location = placeId,
+                price = price,
+                privacyType = postPrivacyOptions.privacyType.stringValue,
+                privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                allConnections = postPrivacyOptions.privacyType == PostPrivacyType.PUBLIC
+        )).handleException(exceptionHandler)
+        return result.data.run { converter.convert(this) }
+    }
+
+    override suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<String>,
+            uploadedImagesUrls: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ) {
+        postApi.changePost(CreatePostRequest(
+                postId = postId,
+                title = title,
+                text = offer,
+                type = NetworkContract.PostType.OFFER,
+                category = category?.name?.engTranslate, //TODO: move to category.id (backend, iOS)
+                subcategory = subCategory?.name?.engTranslate,
+                tags = tags,
+                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
+                location = placeId,
+                price = price,
+                privacyType = postPrivacyOptions.privacyType.stringValue,
+                privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                allConnections = postPrivacyOptions.privacyType == PostPrivacyType.PUBLIC
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun getShareOfferPostPrice(): Long? {
+        return db.child(DatabaseContract.SHARE_OFFER_POST)
+                .await<OfferPostPriceDbEntity>(exceptionHandler)
+                ?.takeIf { it.state }
+                ?.amount
+    }
+
+    override suspend fun getShareOfferPostPerUserPrice(): Long? {
+        return db.child(DatabaseContract.SHARE_OFFER_POST_PER_USER)
+                .await<OfferPostPriceDbEntity>(exceptionHandler)
+                ?.takeIf { it.state }
+                ?.amount
     }
 
     override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {

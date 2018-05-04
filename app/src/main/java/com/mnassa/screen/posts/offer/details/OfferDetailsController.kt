@@ -5,14 +5,11 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.domain.model.OfferPostModel
 import com.mnassa.domain.model.PostModel
-import com.mnassa.extensions.getBoughtItemsCount
-import com.mnassa.extensions.goneIfEmpty
-import com.mnassa.extensions.isGone
-import com.mnassa.extensions.isMyPost
+import com.mnassa.extensions.*
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.posts.offer.details.buy.BuyOfferController
-import com.mnassa.screen.posts.offer.details.buy.BuyOfferViewModel
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_need_details.view.*
 import org.kodein.di.generic.instance
@@ -43,8 +40,29 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
             tvTitle.text = post.title
             tvTitle.goneIfEmpty()
 
+            val offerCategoryString = StringBuilder()
+
+            if (!post.category.isNullOrBlank()) {
+                offerCategoryString.append(post.category)
+
+                if (!post.subCategory.isNullOrBlank()) {
+                    offerCategoryString.append(" / ")
+                    offerCategoryString.append(post.subCategory)
+                }
+            }
+            tvType.text = offerCategoryString
+            tvType.goneIfEmpty()
+
 //            bindBuyOfferButton(post)
         }
+    }
+
+    override fun showMyPostMenu(view: View, post: PostModel) {
+        post as OfferPostModel
+        popupMenuHelper.showMyPostMenu(
+                view = view,
+                onEditPost = { open(CreateOfferController.newInstance(post)) },
+                onDeletePost = { viewModel.delete() })
     }
 
     private suspend fun bindBuyOfferButton(post: OfferPostModel) {
