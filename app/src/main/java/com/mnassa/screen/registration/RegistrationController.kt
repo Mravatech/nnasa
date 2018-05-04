@@ -272,7 +272,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipCompanyOffers.chipsChangeListener = { onOrganizationChanged() }
                 chipCompanyInterests.chipsChangeListener = { onOrganizationChanged() }
             }
-            onOrganizationChanged()
             setAdapter(view.actvCompanyCity, false)
         }
 
