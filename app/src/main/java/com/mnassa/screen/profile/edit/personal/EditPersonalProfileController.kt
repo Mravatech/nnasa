@@ -9,6 +9,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
@@ -71,10 +72,10 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 actvPersonCity.setText(personSelectedPlaceName ?: "")
             })
             containerSelectOccupation.setAbilities(accountModel.abilities)
-            etPhoneNumber.setText(accountModel.contactPhone)
-            etPhoneNumber.setHideMode(accountModel.showContactEmail)
+            etPhoneNumber.setText(accountModel.contactPhone?.replace("+", ""))
+            etPhoneNumber.setHideMode(accountModel.showContactPhone)
             etYourEmail.setText(accountModel.contactEmail)
-            etYourEmail.setHideMode(accountModel.showContactPhone)
+            etYourEmail.setHideMode(accountModel.showContactEmail)
             addPhoto(fabInfoAddPhoto)
             etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
             chipPersonInterests.chipSearch = viewModel
@@ -104,7 +105,6 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
 
     private fun canCreatePersonInfo(): Boolean {
         val v = view ?: return false
-        if (v.etPersonFirstName == null) return false//todo make beauty here (is not initialized when first onPageSelected called)
         if (v.etPersonFirstName.text.isBlank()) return false
         if (v.etPersonSecondName.text.isBlank()) return false
         if (v.etPersonUserName.text.isBlank()) return false
@@ -134,20 +134,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!Patterns.PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etPhoneNumber.error = fromDictionary(R.string.phone_is_not_valid)
-            return
-        }
-        if (view.etPersonFirstName.text.isBlank()) {
-            view.etPersonFirstName.error = fromDictionary(R.string.person_name_is_not_valid)
-            return
-        }
-        if (view.etPersonSecondName.text.isBlank()) {
-            view.etPersonSecondName.error = fromDictionary(R.string.person_last_name_is_not_valid)
-            return
-        }
-        if (view.etPersonUserName.text.isBlank()) {
-            view.etPersonUserName.error = fromDictionary(R.string.user_name_is_not_valid)
             return
         }
         viewModel.updatePersonalAccount(

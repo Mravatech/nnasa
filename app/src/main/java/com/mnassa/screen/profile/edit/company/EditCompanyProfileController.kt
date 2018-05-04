@@ -8,6 +8,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
@@ -65,7 +66,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             etCompanyName.setText(accountModel.organizationInfo?.organizationName)
             etCompanyUserName.setText(accountModel.userName)
             etCompanyPhone.setHideMode(accountModel.showContactPhone)
-            etCompanyPhone.setText(accountModel.contactPhone)
+            etCompanyPhone.setText(accountModel.contactPhone?.replace("+", ""))
             etWebSite.setText(accountModel.website)
             vCompanyStatus.setOrganization(accountModel.organizationType)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
@@ -127,16 +128,8 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!Patterns.PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etCompanyPhone.error = fromDictionary(R.string.phone_is_not_valid)
-            return
-        }
-        if (view.etCompanyUserName.text.isBlank()) {
-            view.etCompanyUserName.error = fromDictionary(R.string.user_name_is_not_valid)
-            return
-        }
-        if (view.etCompanyName.text.isBlank()) {
-            view.etCompanyName.error = fromDictionary(R.string.company_name_is_not_valid)
             return
         }
         viewModel.updateCompanyAccount(

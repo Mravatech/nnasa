@@ -54,6 +54,10 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 override fun onPageSelected(position: Int) {
                     updateAccountTypeSwitch()
                     hideKeyboard()
+                    when (position) {
+                        PAGE_PERSON_INFO -> onPersonChanged()
+                        PAGE_ORGANIZATION_INFO -> onOrganizationChanged()
+                    }
                 }
             })
             updateAccountTypeSwitch()
@@ -102,14 +106,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 view.ivAccountTypePersonal.enable()
                 view.tvAccountTypePersonal.setTextColor(blackColor)
                 view.tvAccountTypeOrganization.setTextColor(grayColor)
-                onPersonChanged()
             }
             PAGE_ORGANIZATION_INFO -> {
                 view.ivAccountTypeOrganization.enable()
                 view.ivAccountTypePersonal.disable()
                 view.tvAccountTypePersonal.setTextColor(grayColor)
                 view.tvAccountTypeOrganization.setTextColor(blackColor)
-                onOrganizationChanged()
             }
         }
     }
@@ -123,7 +125,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private fun canCreatePersonInfo(): Boolean {
         val v = view ?: return false
-        if (v.vpRegistration.etPersonFirstName == null) return false//todo make beauty here (is not initialized when first onPageSelected called)
         if (v.vpRegistration.etPersonFirstName.text.isBlank()) return false
         if (v.vpRegistration.etPersonSecondName.text.isBlank()) return false
         if (v.vpRegistration.etPersonUserName.text.isBlank()) return false
