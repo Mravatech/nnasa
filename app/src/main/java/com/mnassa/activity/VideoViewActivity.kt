@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.MediaController
 import com.mnassa.R
 import kotlinx.android.synthetic.main.activity_video_view.*
-import timber.log.Timber
 
 
 /**
@@ -19,18 +18,13 @@ class VideoViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_view)
 
-        try {
-            videoView.setVideoURI(intent.getParcelableExtra(EXTRA_VIDEO_URI))
+        videoView.setVideoURI(intent.getParcelableExtra(EXTRA_VIDEO_URI))
 
-            val mediaController = MediaController(this)
-            mediaController.setAnchorView(videoView)
-            videoView.setMediaController(mediaController)
+        val mediaController = MediaController(this)
+        mediaController.setAnchorView(videoView)
+        videoView.setMediaController(mediaController)
 
-            videoView.start()
-        } catch (e: Exception) {
-            Timber.e(e)
-            finish()
-        }
+        videoView.start()
     }
 
     companion object {

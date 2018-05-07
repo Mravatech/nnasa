@@ -3,7 +3,7 @@ package com.mnassa.screen.events
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.extensions.ReConsumeWhenAccountChangedArrayBroadcastChannel
+import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : MnassaViewModelImpl(), EventsViewModel {
 
-    override val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>> by ReConsumeWhenAccountChangedArrayBroadcastChannel(
+    override val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>> by ProcessAccountChangeArrayBroadcastChannel(
             beforeReConsume = { it.send(ListItemEvent.Cleared()) },
             receiveChannelProvider = { eventsInteractor.getEventsFeedChannel() })
 
