@@ -86,11 +86,6 @@
 
     <string name="_android_email_validation_INFO">Email is not valid</string>
     <string name="_android_phone_validation_INFO">Phone is not valid</string>
-    <string name="_android_organization_name_validation_INFO">Please enter your Organization name</string>
-    <string name="_android_person_name_validation_INFO">Please enter your First name</string>
-    <string name="_android_person_last_name_validation_INFO">Please enter your Last name</string>
-    <string name="_android_user_name_validation_INFO">Please enter your User name</string>
-
 
     <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>
     <string name="_android_invite_search_hint_INFO">Search people in Phone Book</string>
