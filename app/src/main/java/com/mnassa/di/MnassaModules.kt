@@ -90,6 +90,8 @@ import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
+import com.mnassa.screen.posts.general.create.CreateGeneralPostViewModel
+import com.mnassa.screen.posts.general.create.CreateGeneralPostViewModelImpl
 import com.mnassa.screen.posts.general.details.GeneralPostController
 import com.mnassa.screen.posts.general.details.GeneralPostViewModelImpl
 import com.mnassa.screen.posts.need.create.CreateNeedViewModel
@@ -211,6 +213,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
+    bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance())}
 }
 
 private val convertersModule = Kodein.Module {

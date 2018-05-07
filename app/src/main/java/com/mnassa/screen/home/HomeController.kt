@@ -14,6 +14,7 @@ import com.mnassa.screen.events.EventsController
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.PostsController
+import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
@@ -87,6 +88,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
             fabCreateGeneralPost.labelText = fromDictionary(R.string.tab_home_button_create_general_post)
             fabCreateGeneralPost.setOnClickListener {
                 famHome.close(false)
+                open(CreateGeneralPostController.newInstance())
             }
 
             launchCoroutineUI {

@@ -462,6 +462,12 @@
     <string name="event_status_closed">closed</string>
     <string name="event_status_suspended">suspended</string>
 
+    <!-- ========================================== CREATE GENERAL ============================= -->
+    <string name="general_text_placeholder">_android_general_text_placeholder</string>
+    <string name="general_create_title">_new_post_navbar_title_create_general</string>
+    <string name="general_edit_title">_new_post_navbar_title_edit_general</string>
+    <string name="general_publish">_new_post_navbar_title_newPost</string>
+
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>
     <string name="minutes_count">_android_minutes</string>

@@ -33,6 +33,22 @@ interface PostsRepository {
             placeId: String?
     )
 
+    suspend fun createGeneralPost(
+            text: String,
+            uploadedImagesUrls: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<String>,
+            placeId: String?
+    ): PostModel
+
+    suspend fun updateGeneralPost(
+            postId: String,
+            text: String,
+            uploadedImagesUrls: List<String>,
+            tags: List<String>,
+            placeId: String?
+    )
+
     suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions)
     suspend fun updateUserRecommendation(postId: String, accountId: String, text: String)
 

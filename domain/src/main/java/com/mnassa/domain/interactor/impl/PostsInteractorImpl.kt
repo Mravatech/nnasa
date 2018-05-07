@@ -77,6 +77,34 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.updateNeed(postId, text, allImages, createTags(tags), price, placeId)
     }
 
+    override suspend fun createGeneralPost(
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<TagModel>,
+            placeId: String?
+    ): PostModel {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+        return postsRepository.createGeneralPost(text, allImages, privacy, createTags(tags), placeId)
+    }
+
+    override suspend fun updateGeneralPost(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            tags: List<TagModel>,
+            placeId: String?
+    ) {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+        postsRepository.updateGeneralPost(postId, text, allImages, createTags(tags), placeId)
+    }
+
     override suspend fun removePost(postId: String) {
         postsRepository.removePost(postId)
     }
