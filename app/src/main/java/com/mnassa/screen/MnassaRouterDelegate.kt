@@ -1,5 +1,6 @@
 package com.mnassa.screen
 
+import android.content.Intent
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.activity.SecondActivity
@@ -16,6 +17,14 @@ import com.mnassa.screen.splash.SplashController
  */
 class MnassaRouterDelegate : MnassaRouter {
     override fun open(self: Controller, controller: Controller) {
+
+        if (openInNewActivityWithoutStack(self, controller)) {
+            SecondActivity.start(
+                    context = requireNotNull(self.activity),
+                    controller = controller,
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            return
+        }
 
         if (openInNewActivity(self, controller)) {
             SecondActivity.start(context = requireNotNull(self.activity), controller = controller)
@@ -51,8 +60,15 @@ class MnassaRouterDelegate : MnassaRouter {
         }
     }
 
+    private fun openInNewActivityWithoutStack(self: Controller, controller: Controller): Boolean {
+        return when (controller) {
+            is MainController -> true
+            else -> false
+        }
+    }
+
     private fun openInNewActivity(self: Controller, controller: Controller): Boolean {
-        return isInMainController(self) && self.activity !is SecondActivity
+        return isInMainController(self) //&& self.activity !is SecondActivity
     }
 
     private fun isInMainController(controller: Controller): Boolean {
