@@ -191,5 +191,10 @@
     <string name="_android_general_text_placeholder_INFO">Type your general here</string>
     <string name="_android_general_post_author_INFO">MNASSA Help</string>
 
+    <string name="_commentCell_usefulButton_INFO">Useful</string>
+    <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
+    <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
+
+
 
 </resources>

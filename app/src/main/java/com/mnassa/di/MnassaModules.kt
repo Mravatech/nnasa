@@ -39,6 +39,8 @@ import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForEventViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForPostViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperViewModel
+import com.mnassa.screen.comments.rewarding.RewardingViewModel
+import com.mnassa.screen.comments.rewarding.RewardingViewModelImpl
 import com.mnassa.screen.complaintother.ComplaintOtherViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
@@ -199,12 +201,13 @@ private val viewModelsModule = Kodein.Module {
                 CommentsWrapperForPostViewModelImpl(
                         postId = pair.second.getString(NeedDetailsController.EXTRA_NEED_ID),
                         commentsInteractor = instance(),
-                        postsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+                        postsInteractor = instance(),
+                        walletInteractor = instance()) as CommentsWrapperViewModel //android studio bug
             EventDetailsInfoController::class.java ->
                 CommentsWrapperForEventViewModelImpl(
-                    eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
-                    commentsInteractor = instance(),
-                    eventsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
+                        eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
+                        commentsInteractor = instance(),
+                        eventsInteractor = instance()) as CommentsWrapperViewModel //android studio bug
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
         }
     }
@@ -217,6 +220,7 @@ private val viewModelsModule = Kodein.Module {
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
     bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance())}
     bind<InfoDetailsViewModel>() with provider { InfoDetailsViewModelImpl(instance()) }
+    bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -270,7 +274,7 @@ private val repositoryModule = Kodein.Module {
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(),instance(), instance()) }
+    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }

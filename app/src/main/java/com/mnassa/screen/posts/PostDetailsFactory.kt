@@ -5,6 +5,8 @@ import com.bluelinelabs.conductor.Controller
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
 import com.mnassa.extensions.markAsOpened
+import com.mnassa.extensions.isMyPost
+import com.mnassa.screen.comments.CommentsRewardModel
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.posts.general.details.GeneralPostController
 import com.mnassa.screen.posts.info.details.InfoDetailsController
@@ -38,7 +40,7 @@ class PostDetailsFactory {
             PostType.INFO -> return InfoDetailsController.newInstance(post)
             else -> NeedDetailsController(args)
         }
-        return CommentsWrapperController.newInstance(postController)
+        return CommentsWrapperController.newInstance(postController, CommentsRewardModel(true, post.isMyPost()))
     }
 
 }

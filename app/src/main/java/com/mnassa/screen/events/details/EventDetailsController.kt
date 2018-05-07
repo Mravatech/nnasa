@@ -24,6 +24,7 @@ import com.mnassa.extensions.isMyEvent
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.comments.CommentsRewardModel
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.events.create.CreateEventController
@@ -42,7 +43,7 @@ import org.kodein.di.generic.instance
 class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsViewModel>(args),
         CommentsWrapperController.CommentInputContainer,
         MnassaRouter,
-        ComplaintOtherController.OnComplaintResult{
+        ComplaintOtherController.OnComplaintResult {
     private val eventId by lazy { args.getString(EXTRA_EVENT_ID) }
     override val layoutId: Int = R.layout.controller_event_details
     override val viewModel: EventDetailsViewModel by instance(arg = eventId)
@@ -63,7 +64,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId, eventModel))
+                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId, eventModel), CommentsRewardModel(false, false))
                     EventPages.PARTICIPANTS.ordinal -> EventDetailsParticipantsController.newInstance(eventId, eventModel)
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }

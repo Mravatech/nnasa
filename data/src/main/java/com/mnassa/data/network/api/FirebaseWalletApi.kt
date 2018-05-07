@@ -1,5 +1,6 @@
 package com.mnassa.data.network.api
 
+import com.mnassa.data.network.bean.retrofit.request.RewardForCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.SendPointsRequest
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
 import kotlinx.coroutines.experimental.Deferred
@@ -14,4 +15,6 @@ interface FirebaseWalletApi {
     @POST("sendPoints")
     fun sendPoints(@Body request: SendPointsRequest): Deferred<MnassaResponse>
 
+    @POST("rewardForComment")
+    fun rewardForComment(@Body request: RewardForCommentRequest): Deferred<MnassaResponse>
 }

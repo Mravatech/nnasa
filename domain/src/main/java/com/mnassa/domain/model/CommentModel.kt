@@ -10,6 +10,7 @@ interface CommentModel : Model {
     val creator: ShortAccountModel
     val text: String?
     val recommends: List<ShortAccountModel>
+    val isRewarded: Boolean
 }
 
 interface CommentReplyModel : CommentModel {
