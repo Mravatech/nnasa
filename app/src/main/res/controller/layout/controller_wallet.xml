@@ -14,7 +14,7 @@
     <LinearLayout
         android:id="@+id/llBalanceRoot"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="@dimen/spacing_vertical"
         android:background="@color/background_highlighted"
@@ -28,13 +28,15 @@
             android:layout_height="wrap_content"
             android:text="@string/wallet_balance" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tvBalance"
-            style="@style/MnassaHeader1"
+            style="@style/Wallet.Balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
-            tools:text="9999" />
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            tools:text="99999999999999999999" />
     </LinearLayout>
 
     <View
@@ -71,15 +73,14 @@
             android:layout_height="wrap_content"
             android:text="@string/wallet_spent" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tvSpent"
-            style="@style/MnassaHeader1"
+            style="@style/Wallet.Spent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_light"
-            android:textColor="@color/money_spent"
-            android:textSize="32sp"
-            tools:text="9999" />
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            tools:text="9999667766776677666777777766777666777" />
     </LinearLayout>
 
     <LinearLayout
@@ -100,15 +101,14 @@
             android:layout_height="wrap_content"
             android:text="@string/wallet_gained" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tvGained"
-            style="@style/MnassaHeader1"
+            style="@style/Wallet.Gained"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_light"
-            android:textColor="@color/money_gained"
-            android:textSize="32sp"
-            tools:text="9999" />
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            tools:text="996699" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

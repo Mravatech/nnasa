@@ -15,7 +15,7 @@ import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
-import kotlinx.android.synthetic.main.controller_need_details_header.view.*
+import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.android.synthetic.main.recommended_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance

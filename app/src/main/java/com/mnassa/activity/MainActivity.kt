@@ -106,7 +106,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val fromName = intent.getStringExtra(MnassaFirebaseMessagingService.FROM_USER)
-            val amount = intent.getStringExtra(MnassaFirebaseMessagingService.AMOUNT).toInt()
+            val amount = intent.getStringExtra(MnassaFirebaseMessagingService.AMOUNT).toLong()
             val layout = layoutInflater.inflate(R.layout.in_out_come_toast, findViewById(R.id.toastRoot))
             layout.iocView.showView(amount, fromName)
             val toast = Toast(applicationContext)

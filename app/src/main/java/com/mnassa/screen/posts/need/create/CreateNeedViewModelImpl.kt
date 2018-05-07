@@ -48,7 +48,7 @@ class CreateNeedViewModelImpl(
                     )
                 } else {
                     postsInteractor.updateNeed(
-                            postId,
+                            postId = postId,
                             text = need,
                             imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
                             uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },

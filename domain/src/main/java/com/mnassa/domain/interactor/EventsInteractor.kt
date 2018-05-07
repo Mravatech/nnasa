@@ -17,6 +17,7 @@ interface EventsInteractor {
     suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>
 
     suspend fun onItemViewed(item: EventModel)
+    suspend fun onItemOpened(item: EventModel)
     suspend fun getTickets(eventId: String): List<EventTicketModel>
     suspend fun canBuyTicket(eventId: String): Boolean
     suspend fun getBoughtTicketsCount(eventId: String): Long

@@ -7,11 +7,6 @@
     android:layout_above="@id/commentPanel"
     android:orientation="vertical">
 
-    <View
-        style="@style/MnassaShadow"
-        android:alpha="0.6"
-        android:rotation="180" />
-
     <include
         android:id="@+id/editPanel"
         layout="@layout/panel_comment_edit"

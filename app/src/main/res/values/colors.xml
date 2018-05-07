@@ -59,5 +59,7 @@
     <color name="button_buy_more_active">@color/green_cool</color>
     <color name="button_buy_more_pressed">#259640</color>
     <color name="button_buy_more_disabled">@color/btn_disabled</color>
+    <!-- post -->
+    <color name="info_post">#ffab02</color>
 
 </resources>
