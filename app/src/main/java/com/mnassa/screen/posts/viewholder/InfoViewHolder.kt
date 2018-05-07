@@ -23,8 +23,7 @@ class InfoViewHolder(itemView: View, private val onClickListener: View.OnClickLi
         item as InfoPostModel
 
         with(itemView) {
-//            ivAvatar.avatarRound(item.author.avatar)
-            tvUserName.text = fromDictionary(R.string.general_author)   //item.author.formattedName
+            tvUserName.text = fromDictionary(R.string.general_author)
             tvTime.text = item.originalCreatedAt.toTimeAgo()
             tvTitle.text = item.title
             tvDescription.text = item.formattedText

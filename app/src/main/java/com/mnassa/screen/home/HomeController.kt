@@ -1,13 +1,16 @@
 package com.mnassa.screen.home
 
 import android.support.design.widget.TabLayout
+import android.support.v4.content.ContextCompat
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.github.clans.fab.FloatingActionButton
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.isGone
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
@@ -16,9 +19,11 @@ import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
 
 /**
@@ -77,46 +82,69 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
     private fun initFab(view: View) {
         with(view) {
             famHome.setClosedOnTouchOutside(true)
+        }
 
-            fabCreateNeed.labelText = fromDictionary(R.string.tab_home_button_create_need)
-            fabCreateNeed.setOnClickListener {
-                famHome.close(false)
-                open(CreateNeedController.newInstance())
-            }
+        launchCoroutineUI {
+            viewModel.permissionsChannel.consumeEach { permission ->
+                delay(500)
+                with(getViewSuspend()) {
+                    famHome.removeAllMenuButtons()
 
-            fabCreateOffer.labelText = fromDictionary(R.string.tab_home_button_create_offer)
-            fabCreateOffer.setOnClickListener {
-                famHome.close(false)
-            }
-
-            fabCreateEvent.labelText = fromDictionary(R.string.tab_home_button_create_event)
-            fabCreateEvent.setOnClickListener {
-                famHome.close(false)
-                open(CreateEventController.newInstance())
-            }
-
-            fabCreateGeneralPost.labelText = fromDictionary(R.string.tab_home_button_create_general_post)
-            fabCreateGeneralPost.setOnClickListener {
-                famHome.close(false)
-                open(CreateGeneralPostController.newInstance())
-            }
-
-            launchCoroutineUI {
-                viewModel.permissionsChannel.consumeEach { permission ->
-                    with(getViewSuspend()) {
-                        fabCreateNeed.isEnabled = permission.canCreateNeedPost
-                        fabCreateOffer.isEnabled = permission.canCreateOfferPost
-                        fabCreateEvent.isEnabled = permission.canCreateEvent
-                        fabCreateGeneralPost.isEnabled = permission.canCreateGeneralPost
-                        famHome.isEnabled = (
-                                permission.canCreateNeedPost ||
-                                        permission.canCreateOfferPost ||
-                                        permission.canCreateEvent ||
-                                        permission.canCreateGeneralPost)
+                    if (permission.canCreateGeneralPost) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
+                        button.setOnClickListener {
+                            famHome.close(false)
+                            open(CreateGeneralPostController.newInstance())
+                        }
+                        famHome.addMenuButton(button)
                     }
+
+                    if (permission.canCreateEvent) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
+                        button.setOnClickListener {
+                            famHome.close(false)
+                            open(CreateEventController.newInstance())
+                        }
+                        famHome.addMenuButton(button)
+                    }
+
+                    if (permission.canCreateOfferPost) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
+                        button.setOnClickListener {
+                            famHome.close(false)
+                            open(CreateOfferController.newInstance())
+                        }
+                        famHome.addMenuButton(button)
+                    }
+
+                    if (permission.canCreateNeedPost) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
+                        button.setOnClickListener {
+                            famHome.close(false)
+                            open(CreateNeedController.newInstance())
+                        }
+                        famHome.addMenuButton(button)
+                    }
+
+                    famHome.isGone = !(
+                            permission.canCreateNeedPost ||
+                                    permission.canCreateOfferPost ||
+                                    permission.canCreateEvent ||
+                                    permission.canCreateGeneralPost)
                 }
             }
         }
+    }
+
+    private fun View.inflateMenuButton(text: String): FloatingActionButton {
+        val button = FloatingActionButton(context)
+        button.buttonSize = FloatingActionButton.SIZE_MINI
+        button.setImageResource(R.drawable.ic_edit_white_24dp)
+        button.colorNormal = ContextCompat.getColor(context, R.color.accent)
+        button.colorPressed = ContextCompat.getColor(context, R.color.tealish)
+        button.labelText = text
+
+        return button
     }
 
     override fun onPageSelected() = onPageSelectionChanged(true)

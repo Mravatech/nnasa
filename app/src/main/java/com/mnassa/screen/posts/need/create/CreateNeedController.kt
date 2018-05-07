@@ -166,22 +166,20 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     private fun setData(post: PostModel) {
         this.post = post
-        with(view ?: return) {
-            etNeed.setText(post.text)
-            launchCoroutineUI {
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                etNeed.setText(post.text)
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
-            }
-            attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
+                attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
-            placeId = post.locationPlace?.placeId
-            actvPlace.setText(post.locationPlace?.placeName?.toString())
-            etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-            sharingOptions.selectedConnections = post.privacyConnections
-            launchCoroutineUI {
+                placeId = post.locationPlace?.placeId
+                actvPlace.setText(post.locationPlace?.placeName?.toString())
+                etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
+                sharingOptions.selectedConnections = post.privacyConnections
                 tvShareOptions.text = sharingOptions.format()
+                //no ability to change sharing options while post changing
+                tvShareOptions.visibility = View.GONE
             }
-            //no ability to change sharing options while post changing
-            tvShareOptions.visibility = View.GONE
         }
     }
 

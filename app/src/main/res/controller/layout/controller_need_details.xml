@@ -78,6 +78,19 @@
             android:background="@color/divider" />
 
         <TextView
+            android:id="@+id/tvTitle"
+            style="@style/MnassaHeader1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            android:visibility="gone"
+            tools:text="Title"
+            tools:visibility="visible" />
+
+
+        <TextView
             android:id="@+id/tvNeedDescription"
             style="@style/PostDetails.Description"
             android:layout_width="match_parent"
@@ -158,6 +171,10 @@
                 android:layout_weight="1"
                 tools:text="LOCATION" />
 
+            <Space
+                android:layout_width="@dimen/spacing_horizontal"
+                android:layout_height="wrap_content" />
+
             <TextView
                 android:id="@+id/tvCreationTime"
                 style="@style/PostDetails.CreationTime"
@@ -165,6 +182,15 @@
                 android:layout_height="wrap_content"
                 tools:text="5 min ago" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvType"
+            style="@style/PostDetails.Type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:visibility="gone"
+            android:paddingStart="@dimen/spacing_horizontal"/>
 
         <View
             android:layout_width="match_parent"
@@ -259,6 +285,7 @@
                 tools:text="Comment" />
 
             <android.support.v4.widget.Space
+                android:id="@+id/spacePostAction"
                 android:layout_width="@dimen/spacing_horizontal"
                 android:layout_height="wrap_content" />
 

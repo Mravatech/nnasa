@@ -83,6 +83,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
             }
         }
 
+        viewModel.resetCounter()
+
     }
 
     override fun onViewCreated(view: View) {
@@ -95,7 +97,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
 
     override fun onPageSelected() {
         val recyclerView = view?.rvNewsFeed ?: return
-        recyclerView.smoothScrollToPosition(0)
+        recyclerView.scrollToPosition(0)
+        viewModel.resetCounter()
     }
 
     override fun onDestroyView(view: View) {

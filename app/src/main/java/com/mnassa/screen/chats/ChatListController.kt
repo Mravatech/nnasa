@@ -75,7 +75,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
     }
 
     override fun onPageSelected() {
-        view?.rvMessages?.smoothScrollToPosition(0)
+        view?.rvMessages?.scrollToPosition(0)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

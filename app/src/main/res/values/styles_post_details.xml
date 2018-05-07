@@ -6,6 +6,9 @@
         <item name="android:drawableStart">@drawable/ic_location</item>
         <item name="android:textSize">16sp</item>
     </style>
+    <style name="PostDetails.Type" parent="@style/MnassaTextTiny">
+        <item name="android:textSize">16sp</item>
+    </style>
     <style name="PostDetails.CreationTime" parent="@style/MnassaTextTiny">
         <item name="android:textSize">16sp</item>
     </style>

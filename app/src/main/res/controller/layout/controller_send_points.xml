@@ -26,6 +26,7 @@
             android:paddingTop="@dimen/spacing_vertical">
 
             <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvDescription"
                 style="@style/MnassaText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

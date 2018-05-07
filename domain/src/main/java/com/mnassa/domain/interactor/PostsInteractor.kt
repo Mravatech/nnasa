@@ -14,6 +14,7 @@ interface PostsInteractor {
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
     suspend fun onItemOpened(item: PostModel)
+    suspend fun resetCounter()
 
     suspend fun createNeed(
             text: String,
@@ -49,6 +50,36 @@ interface PostsInteractor {
             tags: List<TagModel>,
             placeId: String?)
 
+    suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel
+
+    suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    )
+
+
+    suspend fun getShareOfferPostPrice(): Long?
+    suspend fun getShareOfferPostPerUserPrice(): Long?
 
     suspend fun createUserRecommendation(
             accountId: String,
@@ -65,6 +96,8 @@ interface PostsInteractor {
     suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
 
     suspend fun hideInfoPost(postId: String)
+
+    suspend fun loadOfferCategories(): List<OfferCategoryModel>
 }
 
 data class PostPrivacyOptions(

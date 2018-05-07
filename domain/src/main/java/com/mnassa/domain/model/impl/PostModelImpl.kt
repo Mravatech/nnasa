@@ -132,6 +132,55 @@ class InfoPostImpl(
     }
 }
 
+class OfferPostModelImpl(
+        override var id: String,
+        override val allConnections: Boolean,
+        override val type: PostType,
+        override val createdAt: Date,
+        override val attachments: List<PostAttachment>,
+        override val locationPlace: LocationPlaceModel?,
+        override val originalCreatedAt: Date,
+        override val originalId: String,
+        override val privacyConnections: Set<String>,
+        override val privacyType: PostPrivacyType,
+        override val tags: List<String>,
+        override val text: String?,
+        override val updatedAt: Date,
+        override val counters: PostCounters,
+        override val author: ShortAccountModel,
+        override val copyOwnerId: String?,
+        override val price: Double,
+        override val autoSuggest: PostAutoSuggest,
+        override val repostAuthor: ShortAccountModel?,
+        override val title: String,
+        override val category: String?,
+        override val subCategory: String?
+): PostModelImpl(
+        id,
+        allConnections,
+        type,
+        createdAt,
+        attachments,
+        locationPlace,
+        originalCreatedAt,
+        originalId,
+        privacyConnections,
+        privacyType,
+        tags,
+        text,
+        updatedAt,
+        counters,
+        author,
+        copyOwnerId,
+        price,
+        autoSuggest,
+        repostAuthor
+), OfferPostModel {
+    override fun toString(): String {
+        return "OfferPostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', category=$category, subCategory=$subCategory)"
+    }
+}
+
 class RecommendedProfilePostModelImpl(
         override var id: String,
         override val allConnections: Boolean,

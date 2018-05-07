@@ -25,6 +25,9 @@ interface FirebasePostApi {
     @POST("/itemOpen")
     fun openItem(@Body request: OpenItemsRequest): Deferred<MnassaResponse>
 
+    @POST("/resetCounter")
+    fun resetCounter(@Body request: ResetCounterRequest): Deferred<MnassaResponse>
+
     @POST("/repost")
     fun repostComment(@Body request: RepostCommentRequest): Deferred<CreatePostResponse>
 

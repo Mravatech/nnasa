@@ -49,9 +49,9 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         viewItemChannel.send(ListItemEvent.Added(item))
     }
 
-    override suspend fun onItemOpened(item: PostModel) {
-        postsRepository.sendOpened(listOf(item.id))
-    }
+    override suspend fun onItemOpened(item: PostModel) = postsRepository.sendOpened(listOf(item.id))
+
+    override suspend fun resetCounter() = postsRepository.resetCounter()
 
     override suspend fun createNeed(
             text: String,
@@ -110,6 +110,47 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.updateGeneralPost(postId, text, allImages, createTags(tags), placeId)
     }
 
+    override suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+        return postsRepository.createOffer(title, offer, category, subCategory, createTags(tags), allImages, placeId, price, postPrivacyOptions)
+    }
+
+    override suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ) {
+        val allImages = uploadedImages + imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+        return postsRepository.updateOffer(postId, title, offer, category, subCategory, createTags(tags), allImages, placeId, price, postPrivacyOptions)
+    }
+
+    override suspend fun getShareOfferPostPrice(): Long? = postsRepository.getShareOfferPostPrice()
+
+    override suspend fun getShareOfferPostPerUserPrice(): Long? = postsRepository.getShareOfferPostPerUserPrice()
+
     override suspend fun removePost(postId: String) {
         postsRepository.removePost(postId)
     }
@@ -120,6 +161,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun hideInfoPost(postId: String) {
         postsRepository.hideInfoPost(postId)
+    }
+
+    override suspend fun loadOfferCategories(): List<OfferCategoryModel> {
+        return postsRepository.loadOfferCategories()
     }
 
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {

@@ -59,6 +59,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             }
         }
 
+        viewModel.resetCounter()
+
     }
 
     override fun onViewCreated(view: View) {
@@ -71,7 +73,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
 
     override fun onPageSelected() {
         val recyclerView = view?.rvEvents ?: return
-        recyclerView.smoothScrollToPosition(0)
+        recyclerView.scrollToPosition(0)
+        viewModel.resetCounter()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

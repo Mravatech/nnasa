@@ -24,14 +24,15 @@ class SecondActivity : MainActivity() {
         private const val EXTRA_CONTROLLER_CLASS = "EXTRA_CONTROLLER_CLASS"
         private const val EXTRA_CONTROLLER_PARAMS = "EXTRA_CONTROLLER_PARAMS"
 
-        fun start(context: Context, controllerClass: Class<out Controller>, params: Bundle) {
+        fun start(context: Context, controllerClass: Class<out Controller>, params: Bundle, flags: Int = 0) {
             context.startActivity(Intent(context, SecondActivity::class.java)
                     .putExtra(EXTRA_CONTROLLER_CLASS, controllerClass)
-                    .putExtra(EXTRA_CONTROLLER_PARAMS, params))
+                    .putExtra(EXTRA_CONTROLLER_PARAMS, params)
+                    .setFlags(flags))
         }
 
-        fun start(context: Context, controller: Controller) {
-            start(context, controller::class.java, controller.args)
+        fun start(context: Context, controller: Controller, flags: Int = 0) {
+            start(context, controller::class.java, controller.args, flags)
         }
     }
 }

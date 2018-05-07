@@ -92,11 +92,20 @@ class UserRepositoryImpl(
 
     override suspend fun getAccounts(): List<ShortAccountModel> {
         val localFirebaseUserId = getFirebaseUserId() ?: return emptyList()
-        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(localFirebaseUserId).awaitList<ShortAccountDbEntity>(exceptionHandler)
+        val beans = db.child(DatabaseContract.TABLE_ACCOUNT_LINKS)
+                .child(localFirebaseUserId)
+                .awaitList<ShortAccountDbEntity>(exceptionHandler)
         return converter.convertCollection(beans, ShortAccountModel::class.java)
     }
 
-    override suspend fun createPersonAccount(firstName: String, secondName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
+    override suspend fun createPersonAccount(
+            firstName: String,
+            secondName: String,
+            userName: String,
+            city: String,
+            offers: List<String>,
+            interests: List<String>
+    ): ShortAccountModel {
         val result = firebaseAuthApi.registerPersonalAccount(RegisterPersonalAccountRequest(
                 firstName = firstName,
                 lastName = secondName,
@@ -110,7 +119,13 @@ class UserRepositoryImpl(
         return converter.convert(result.account)
     }
 
-    override suspend fun createOrganizationAccount(companyName: String, userName: String, city: String, offers: List<String>, interests: List<String>): ShortAccountModel {
+    override suspend fun createOrganizationAccount(
+            companyName: String,
+            userName: String,
+            city: String,
+            offers: List<String>,
+            interests: List<String>
+    ): ShortAccountModel {
         val result = firebaseAuthApi.registerOrganizationAccount(RegisterOrganizationAccountRequest(
                 userName = userName,
                 type = NetworkContract.AccountType.ORGANIZATION,
@@ -216,7 +231,7 @@ class UserRepositoryImpl(
                 .child(accountId)
                 .apply { keepSynced(true) }
                 .toValueChannel<ProfileDbEntity>(exceptionHandler)
-                .map { converter.convert(it!!, ProfileAccountModel::class.java) }
+                .map { it?.run { converter.convert(this, ProfileAccountModel::class.java) } }
     }
 
     override suspend fun getFirebaseToken(): String? {

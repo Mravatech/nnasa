@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:foreground="@drawable/avatar_shadow"
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_launcher" />
 
@@ -40,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:foreground="@drawable/avatar_shadow"
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_launcher" />
 

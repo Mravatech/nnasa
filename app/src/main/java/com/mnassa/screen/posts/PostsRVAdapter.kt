@@ -63,15 +63,21 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
             TYPE_NEED_WITH_IMAGE_2 -> NeedViewHolder.newInstance(parent, this, imagesCount = 2)
             TYPE_NEED_WITH_IMAGE_3 -> NeedViewHolder.newInstance(parent, this, imagesCount = 3)
             TYPE_NEED_WITH_IMAGE_MORE -> NeedViewHolder.newInstance(parent, this, imagesCount = 4)
-
+            //
             TYPE_NEED_REPOST -> NeedViewHolder.newInstance(parent, this, isRepost = true)
             TYPE_NEED_WITH_IMAGE_1_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 1, isRepost = true)
             TYPE_NEED_WITH_IMAGE_2_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 2, isRepost = true)
             TYPE_NEED_WITH_IMAGE_3_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 3, isRepost = true)
             TYPE_NEED_WITH_IMAGE_MORE_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 4, isRepost = true)
-
-            TYPE_OFFER -> UnsupportedTypeViewHolder.newInstance(parent, this)
+            //
+            TYPE_OFFER -> OfferViewHolder.newInstance(parent, this, imagesCount = 0)
+            TYPE_OFFER_WITH_IMAGE_1 -> OfferViewHolder.newInstance(parent, this, imagesCount = 1)
+            TYPE_OFFER_WITH_IMAGE_2 -> OfferViewHolder.newInstance(parent, this, imagesCount = 2)
+            TYPE_OFFER_WITH_IMAGE_3 -> OfferViewHolder.newInstance(parent, this, imagesCount = 3)
+            TYPE_OFFER_WITH_IMAGE_MORE -> OfferViewHolder.newInstance(parent, this, imagesCount = 4)
+            //
             TYPE_PROFILE -> ProfileViewHolder.newInstance(parent, this)
+            //
             TYPE_INFO_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 0, isPinned = true)
             TYPE_INFO -> InfoViewHolder.newInstance(parent, this, imagesCount = 0, isPinned = false)
             TYPE_INFO_WITH_IMAGE_1_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 1, isPinned = true)
@@ -82,6 +88,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
             TYPE_INFO_WITH_IMAGE_3 -> InfoViewHolder.newInstance(parent, this, imagesCount = 3, isPinned = false)
             TYPE_INFO_WITH_IMAGE_MORE_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 4, isPinned = true)
             TYPE_INFO_WITH_IMAGE_MORE -> InfoViewHolder.newInstance(parent, this, imagesCount = 4, isPinned = false)
+            //
             TYPE_OTHER -> UnsupportedTypeViewHolder.newInstance(parent, this)
             else -> throw IllegalStateException("Illegal view type $viewType")
         }
@@ -115,7 +122,13 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
                 3 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_3_REPOST else TYPE_NEED_WITH_IMAGE_3
                 else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
             }
-            PostType.OFFER -> TYPE_OFFER
+            PostType.OFFER -> when (item.attachments.size) {
+                0 -> TYPE_OFFER
+                1 -> TYPE_OFFER_WITH_IMAGE_1
+                2 -> TYPE_OFFER_WITH_IMAGE_2
+                3 -> TYPE_OFFER_WITH_IMAGE_3
+                else -> TYPE_OFFER_WITH_IMAGE_MORE
+            }
             PostType.GENERAL -> when (item.attachments.size) {
                 0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
                 1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
@@ -164,9 +177,9 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         private const val TYPE_NEED_WITH_IMAGE_3_REPOST = 10
         private const val TYPE_NEED_WITH_IMAGE_MORE_REPOST = 11
 
-        private const val TYPE_OFFER = 12
         private const val TYPE_PROFILE = 13
         private const val TYPE_PROFILE_REPOST = 14
+
         private const val TYPE_INFO = 15
         private const val TYPE_INFO_PINNED = 16
         private const val TYPE_INFO_WITH_IMAGE_1 = 17
@@ -177,6 +190,13 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         private const val TYPE_INFO_WITH_IMAGE_3_PINNED = 22
         private const val TYPE_INFO_WITH_IMAGE_MORE = 23
         private const val TYPE_INFO_WITH_IMAGE_MORE_PINNED = 24
-        private const val TYPE_OTHER = 25
+
+        private const val TYPE_OFFER = 25
+        private const val TYPE_OFFER_WITH_IMAGE_1 = 26
+        private const val TYPE_OFFER_WITH_IMAGE_2 = 27
+        private const val TYPE_OFFER_WITH_IMAGE_3 = 28
+        private const val TYPE_OFFER_WITH_IMAGE_MORE = 29
+
+        private const val TYPE_OTHER = 30
     }
 }

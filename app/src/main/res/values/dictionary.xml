@@ -475,6 +475,19 @@
     <string name="general_author">_android_general_post_author</string>
     <string name="general_details_got_it">_right_button_post_got_it</string>
 
+    <!-- ============================================== OFFERS ================================= -->
+    <string name="offer_button_buy_first">_android_offer_button_buy_first</string>
+    <string name="offer_button_buy_second">_android_offer_button_buy_again</string>
+    <string name="offer_button_customers">_android_offer_button_my_customers</string>
+    <string name="offer_purchase_title">_android_offer_purchase_title</string>
+    <string name="offer_purchase_description">_android_offer_purchase_description</string>
+    <string name="offer_create_title">_new_post_navbar_title_create_offer</string>
+    <string name="offer_edit_title">_new_post_navbar_title_edit_offer</string>
+    <string name="offer_title_placeholder">create_offer_your_title</string>
+    <string name="offer_description_placeholder">_android_offer_placeholder</string>
+    <string name="offer_price_placeholder">_new_post_offer_price_placeholder</string>
+    <string name="offer_place_placeholder">_new_post_offer_city_title</string>
+
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>
     <string name="minutes_count">_android_minutes</string>

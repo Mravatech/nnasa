@@ -118,7 +118,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
     override fun onPageSelected() {
         askPermissions()
-        view?.rvAllConnections?.smoothScrollToPosition(0)
+        view?.rvAllConnections?.scrollToPosition(0)
     }
 
     private var askPermissionsJob: Job? = null
