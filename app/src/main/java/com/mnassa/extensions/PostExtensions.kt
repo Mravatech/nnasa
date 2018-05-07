@@ -1,13 +1,17 @@
 package com.mnassa.extensions
 
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
@@ -15,6 +19,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
+import java.util.*
 
 /**
  * Created by Peter on 3/19/2018.
@@ -97,6 +102,29 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
         is PostAttachment.PostPhotoAttachment -> image(postAttachment.photoUrl, crop)
         is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)
     }
+}
+
+fun TextView.expireType(statusOfExpiration: ExpirationType, timeOfExpiration: Date?) {
+    if (statusOfExpiration is ExpirationType.ACTIVE) {
+        timeOfExpiration?.let {
+            val spanText = it.formatAsDate().toString()
+            val validation = fromDictionary(R.string.post_expires_valid_till)
+            val sentence = "$validation $spanText"
+            setTextWithOneSpanText(sentence, spanText, Color.BLACK)
+            val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_expiration_active, null)
+            setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+        }
+        return
+    }
+    val img: Drawable? = when (statusOfExpiration) {
+        is ExpirationType.EXPIRED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_expired, null)
+        is ExpirationType.CLOSED -> null
+        is ExpirationType.FULFILLED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_done_black_24dp, null)
+        else -> null
+    }
+    setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+    setTextColor(Color.BLACK)
+    text = statusOfExpiration.text
 }
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
