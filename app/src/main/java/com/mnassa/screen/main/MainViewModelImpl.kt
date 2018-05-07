@@ -8,7 +8,7 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.extensions.ReConsumeWhenAccountChangedConflatedBroadcastChannel
+import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -27,24 +27,24 @@ class MainViewModelImpl(
 ) : MnassaViewModelImpl(), MainViewModel {
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
 
-    override val unreadChatsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val unreadChatsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
         countersInteractor.numberOfUnreadChats
     }
-    override val unreadNotificationsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val unreadNotificationsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
         countersInteractor.numberOfUnreadNotifications
     }
-    override val unreadConnectionsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val unreadConnectionsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
         countersInteractor.numberOfRequested
     }
-    private val unreadEventsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel(
+    private val unreadEventsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel(
             receiveChannelProvider = { countersInteractor.numberOfUnreadEvents }
     )
-    private val unreadNeedsCountChannel: ConflatedBroadcastChannel<Int> by ReConsumeWhenAccountChangedConflatedBroadcastChannel(
+    private val unreadNeedsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel(
             receiveChannelProvider = { countersInteractor.numberOfUnreadNeeds }
     )
     override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel(0)
 
-    override val currentAccountChannel: ConflatedBroadcastChannel<ShortAccountModel> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val currentAccountChannel: ConflatedBroadcastChannel<ShortAccountModel> by ProcessAccountChangeConflatedBroadcastChannel {
         val accountId = userProfileInteractor.getAccountIdOrException()
         userProfileInteractor.getAccountByIdChannel(accountId).map {
             it
