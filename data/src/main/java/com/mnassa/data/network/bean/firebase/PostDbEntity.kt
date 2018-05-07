@@ -28,6 +28,7 @@ internal data class PostDbEntity(
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
         @SerializedName("statusOfExpiration") var statusOfExpiration: String,
+        @SerializedName("timeOfExpiration") var timeOfExpiration: Long?,
         @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,

@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
@@ -16,6 +15,7 @@ import kotlinx.android.synthetic.main.controller_organization_info.view.*
 import kotlinx.android.synthetic.main.sub_company_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<OrganizationInfoViewModel>(data) {
 
@@ -26,15 +26,17 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
-        setCalendarEditText(view.etFoundation)
-        addPhoto(view.fabInfoAddPhoto)
-        view.etCompanyEmail.setHideMode(false)
-        view.etCompanyPhone.setHideMode(false)
-        view.etCompanyPhone.setText(accountModel.contactPhone)
-        view.etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-        view.btnHeaderNext.setOnClickListener { proccesProfile(view) }
-        view.tvSkipThisStep.setOnClickListener {
-            viewModel.skipThisStep()
+        with(view){
+            setCalendarEditText(etFoundation)
+            addPhoto(fabInfoAddPhoto)
+            etCompanyEmail.setHideMode(false)
+            etCompanyPhone.setHideMode(false)
+            etCompanyPhone.setText(accountModel.contactPhone)
+            etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
+            btnHeaderNext.setOnClickListener { proccesProfile(this) }
+            tvSkipThisStep.setOnClickListener {
+                viewModel.skipThisStep()
+            }
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -77,14 +79,16 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
     }
 
     private fun setupViews(view: View) {
-        view.tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
-        view.tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
-        view.tvHeader.text = fromDictionary(R.string.reg_company_title)
-        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
-        view.tilWebSite.hint = fromDictionary(R.string.reg_company_website)
-        view.tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
-        view.tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
-        view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
+        with(view){
+            tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
+            tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
+            tvHeader.text = fromDictionary(R.string.reg_company_title)
+            btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+            tilWebSite.hint = fromDictionary(R.string.reg_company_website)
+            tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
+            tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
+            tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
+        }
     }
 
     companion object {

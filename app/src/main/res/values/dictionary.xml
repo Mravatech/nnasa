@@ -86,6 +86,7 @@
 
     <string name="post_expires_in">_android_post_expires_in</string>
     <string name="post_expires_day_s">connections_button_daysLeft</string>
+    <string name="post_expires_valid_till">_android_expiration_valid_till</string>
 
     <!-- comments -->
     <string name="posts_comment_reply">_commentCell_Reply</string>

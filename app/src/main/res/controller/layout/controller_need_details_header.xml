@@ -66,8 +66,8 @@
                 android:layout_centerVertical="true"
                 android:clickable="true"
                 android:focusable="true"
-                app:fab_size="mini"
                 android:foreground="?selectableItemBackgroundBorderless"
+                app:fab_size="mini"
                 app:srcCompat="@drawable/ic_chat" />
 
         </RelativeLayout>
@@ -94,16 +94,16 @@
 
         <Button
             android:id="@+id/btnConnectNow"
+            style="@style/MnassaButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_vertical"
             android:layout_marginBottom="@dimen/spacing_vertical"
-            android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
-            tools:visibility="visible"
-            style="@style/MnassaButton"
-            tools:text="Connect now"/>
+            tools:text="Connect now"
+            tools:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/flImages"
@@ -192,6 +192,30 @@
 
         <View
             android:id="@+id/vTagsSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/tvExpiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:drawablePadding="@dimen/drawable_padding"
+            android:drawableStart="@drawable/ic_eye_18dp"
+            android:focusable="true"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            tools:text="Expiration" />
+
+        <View
+            android:id="@+id/vExpirationSeparator"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_width"
             android:layout_marginBottom="@dimen/spacing_horizontal"

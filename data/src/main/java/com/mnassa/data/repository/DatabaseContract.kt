@@ -97,5 +97,9 @@ internal object DatabaseContract {
     //
     const val TABLE_EVENT_ATTENDIES = "attendedUsers"
     const val TABLE_EVENT_ATTENDIES_COLLECTION = "attendanceList"
-
+    //
+    const val EXPIRATION_TYPE_ACTIVE = "active"
+    const val EXPIRATION_TYPE_EXPIRED = "expired"
+    const val EXPIRATION_TYPE_CLOSED = "closed"
+    const val EXPIRATION_TYPE_FULFILLED = "fulfilled"
 }

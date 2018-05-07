@@ -9,6 +9,10 @@ import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.PostData
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_ACTIVE
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_CLOSED
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_EXPIRED
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_FULFILLED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PRIVATE
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_WORLD
@@ -64,7 +68,8 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags ?: emptyList(),
                     text = input.text,
-                    statusOfExpiration = input.statusOfExpiration,
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
                     author = convertAuthor(input.author, converter),
@@ -90,7 +95,8 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags ?: emptyList(),
                     text = input.text,
-                    statusOfExpiration = input.statusOfExpiration,
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
                     author = convertAuthor(input.author, converter),
@@ -101,6 +107,16 @@ class PostConverter : ConvertersContextRegistrationCallback {
             )
         }
 
+    }
+
+    private fun convertExpiration(expiration: String): ExpirationType {
+        return when (expiration) {
+            EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE(expiration)
+            EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED(expiration)
+            EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED(expiration)
+            EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED(expiration)
+            else -> throw  IllegalArgumentException("There is no convert type for $expiration")
+        }
     }
 
     private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {

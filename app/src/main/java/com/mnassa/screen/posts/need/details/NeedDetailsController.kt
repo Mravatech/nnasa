@@ -1,6 +1,9 @@
 package com.mnassa.screen.posts.need.details
 
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.ViewPager
 import android.view.View
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
@@ -92,9 +95,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 if (it.id == OTHER) {
                     val controller = ComplaintOtherController.newInstance()
                     controller.targetController = this@NeedDetailsController
-                            open(controller)
+                    open(controller)
                 } else {
-                viewModel.sendComplaint(postId, it.id, null)
+                    viewModel.sendComplaint(postId, it.id, null)
                 }
             }
         }
@@ -165,6 +168,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             ivRepost.setOnClickListener { openSharingOptionsScreen() }
             tvRepostsCount.text = post.counters.reposts.toString()
 
+            //expiration
+            handleExpiration(this, post)
+
             btnComment.text = fromDictionary(R.string.need_comment_button)
             btnComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
 
@@ -179,6 +185,34 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             btnRecommend.setOnClickListener { openRecommendScreen(post, recommendedAccounts.map { it.id }) }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
+        }
+    }
+
+    private fun handleExpiration(view: View, post: PostModel) {
+        with(view) {
+            if (post.statusOfExpiration is ExpirationType.ACTIVE) {
+                post.timeOfExpiration?.let {
+                    val spanText = it.formatAsDate().toString()
+                    val validation = fromDictionary(R.string.post_expires_valid_till)
+                    val text = "$validation $spanText"
+                    tvExpiration.setTextWithOneSpanText(text, spanText.toString(), Color.BLACK)
+                    val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_expiration_active, null)
+                    tvExpiration.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+                } ?: run {
+                    tvExpiration.visibility = View.GONE
+                    vExpirationSeparator.visibility = View.GONE
+                }
+            } else {
+                val img: Drawable? = when (post.statusOfExpiration) {
+                    is ExpirationType.EXPIRED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_expired, null)
+                    is ExpirationType.CLOSED -> null
+                    is ExpirationType.FULFILLED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_done_black_24dp, null)
+                    else -> null
+                }
+                tvExpiration.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+                tvExpiration.setTextColor(Color.BLACK)
+                tvExpiration.text = post.statusOfExpiration.text
+            }
         }
     }
 
