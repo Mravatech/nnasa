@@ -1,66 +1,289 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.mnassa.widget.MnassaToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvPostDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/commentPanel"
-        android:layout_below="@id/toolbar"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_comment" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/llPanels"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/commentPanel"
-        android:orientation="vertical">
+        android:background="@color/background_highlighted"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/spacing_vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlCreatorRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical">
+
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="@dimen/avatar_list_item"
+                android:layout_height="@dimen/avatar_list_item"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                tools:src="@mipmap/ic_launcher" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ivAvatar"
+                android:layout_toStartOf="@id/ivChat"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    style="@style/Connections.UserName"
+                    tools:text="User name" />
+
+                <TextView
+                    android:id="@+id/tvPosition"
+                    style="@style/Connections.UserPosition"
+                    tools:text="at some company" />
+
+                <TextView
+                    android:id="@+id/tvEventName"
+                    style="@style/Connections.UserPosition"
+                    tools:text="at some company" />
+            </LinearLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/ivChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackgroundBorderless"
+                app:fab_size="mini"
+                app:srcCompat="@drawable/ic_chat" />
+
+        </RelativeLayout>
 
         <View
-            style="@style/MnassaShadow"
-            android:alpha="0.6"
-            android:rotation="180" />
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:background="@color/divider" />
 
-        <include
-            android:id="@+id/editPanel"
-            layout="@layout/panel_comment_edit"
+        <TextView
+            android:id="@+id/tvNeedDescription"
+            style="@style/PostDetails.Description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"
+            tools:text="Need description" />
 
-        <include
-            android:id="@+id/replyPanel"
-            layout="@layout/panel_reply"
+        <include layout="@layout/recommended_profile" />
+
+        <Button
+            android:id="@+id/btnConnectNow"
+            style="@style/MnassaButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
+            tools:text="Connect now"
             tools:visibility="visible" />
 
-        <include
-            android:id="@+id/recommendPanel"
-            layout="@layout/panel_recommend"
+        <FrameLayout
+            android:id="@+id/flImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_vertical">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vpImages"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                tools:background="#0f0" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/shadow"
+                android:rotation="180" />
+
+            <com.rd.PageIndicatorView
+                android:id="@+id/pivImages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                app:piv_animationType="worm"
+                app:piv_dynamicCount="true"
+                app:piv_interactiveAnimation="true"
+                app:piv_radius="4dp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvPrice"
+            style="@style/PostDetails.Price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            tools:text="5000 SAR" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
+
+            <TextView
+                android:id="@+id/tvLocation"
+                style="@style/PostDetails.Location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="LOCATION" />
+
+            <TextView
+                android:id="@+id/tvCreationTime"
+                style="@style/PostDetails.CreationTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="5 min ago" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            tools:background="#00a"
+            tools:layout_height="60dp" />
+
+        <View
+            android:id="@+id/vTagsSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
+
+            <TextView
+                android:id="@+id/tvViewsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:drawablePadding="@dimen/drawable_padding"
+                android:drawableStart="@drawable/ic_eye_18dp"
+                android:focusable="true"
+                tools:text="Views " />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivRepost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_repost" />
+
+            <TextView
+                android:id="@+id/tvRepostsCount"
+                style="@style/MnassaText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                tools:text="200" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/vOtherPersonPostActionsSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:id="@+id/llOtherPersonPostActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="visible">
+
+            <Button
+                android:id="@+id/btnComment"
+                style="@style/MnassaButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Comment" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="@dimen/spacing_horizontal"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnRecommend"
+                style="@style/MnassaButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Comment" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <include
-        android:id="@+id/commentPanel"
-        layout="@layout/panel_comment"
+    <View style="@style/MnassaShadow" />
+
+    <TextView
+        android:id="@+id/tvCommentsCount"
+        style="@style/MnassaHeader2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        tools:text="Comments" />
 
-</RelativeLayout>
+</LinearLayout>

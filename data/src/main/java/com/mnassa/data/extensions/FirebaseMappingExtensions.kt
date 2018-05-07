@@ -1,6 +1,5 @@
 package com.mnassa.data.extensions
 
-import android.os.Looper
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.gson.JsonElement
@@ -16,7 +15,7 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?
     if (dataSnapshot == null) return null
 
     val jsonElement: JsonElement = dataSnapshot.value.toJson<T>()
-    Timber.i("THREAD: ${Thread.currentThread() == Looper.getMainLooper().thread} FIREBASE DATABASE >>> ${dataSnapshot.path} >>> $jsonElement")
+    Timber.i("FIREBASE DATABASE >>> ${dataSnapshot.path} >>> $jsonElement")
 
     return jsonElement.mapTo(dataSnapshot.key, dataSnapshot.path)
 }

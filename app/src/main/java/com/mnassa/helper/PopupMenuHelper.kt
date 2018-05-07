@@ -8,7 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.mnassa.R
 import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.canBeShared
+import com.mnassa.extensions.canBeShared
 import com.mnassa.translation.fromDictionary
 
 /**

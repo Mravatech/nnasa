@@ -17,7 +17,9 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_GENERAL
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_INFO
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
+import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.InfoPostImpl
 import com.mnassa.domain.model.impl.PostCountersImpl
 import com.mnassa.domain.model.impl.PostModelImpl
 import com.mnassa.domain.model.impl.RecommendedProfilePostModelImpl
@@ -36,6 +38,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertPostPrivacyType)
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertPostData)
+        convertersContext.registerConverter(this::convertInfoPost)
     }
 
     private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostModelImpl {
@@ -47,6 +50,12 @@ class PostConverter : ConvertersContextRegistrationCallback {
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
 
+        val attachments = input.images.orEmpty().mapIndexed { index, image ->
+            val videoUrl = input.videos.orEmpty().getOrNull(index)
+            if (videoUrl != null) PostAttachment.PostVideoAttachment(previewUrl = image, videoUrl = videoUrl)
+            else PostAttachment.PostPhotoAttachment(image)
+        }
+
         val postType: PostType = converter.convert(input.type)
         return when (postType) {
             PostType.PROFILE -> RecommendedProfilePostModelImpl(
@@ -54,7 +63,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     allConnections = input.allConnections,
                     type = postType,
                     createdAt = Date(input.createdAt),
-                    images = input.images ?: emptyList(),
+                    attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
@@ -74,12 +83,37 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter),
                     offers = emptyList()
             )
+            PostType.INFO -> InfoPostImpl(
+                    id = input.id,
+                    allConnections = input.allConnections,
+                    type = postType,
+                    createdAt = Date(input.createdAt),
+                    attachments = attachments,
+                    locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
+                        converter.convert<LocationPlaceModel>(it)
+                    },
+                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalId = input.originalId,
+                    privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
+                    privacyType = converter.convert(input.privacyType),
+                    tags = input.tags ?: emptyList(),
+                    text = input.text,
+                    updatedAt = Date(input.updatedAt),
+                    counters = converter.convert(input.counters),
+                    author = convertAuthor(input.author, converter),
+                    copyOwnerId = input.copyOwner,
+                    price = input.price ?: 0.0,
+                    autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
+                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    title = input.title
+                            ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!"))
+            )
             else -> PostModelImpl(
                     id = input.id,
                     allConnections = input.allConnections,
                     type = postType,
                     createdAt = Date(input.createdAt),
-                    images = input.images ?: emptyList(),
+                    attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
@@ -98,7 +132,10 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) }
             )
         }
+    }
 
+    private fun convertInfoPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): InfoPostImpl {
+        return convertPost(input, token, converter) as InfoPostImpl
     }
 
     private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {

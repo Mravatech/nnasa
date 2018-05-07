@@ -153,7 +153,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
         val permissionsList = when (imageSource) {
             CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA)
+            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         val permissionResult = permissions.requestPermissions(permissionsList)
         if (permissionResult.isAllGranted) {
@@ -171,7 +171,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             launchCoroutineUI {
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
             }
-            attachedImagesAdapter.set(post.images.map { AttachedImage.UploadedImage(it) })
+            attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
             placeId = post.locationPlace?.placeId
             actvPlace.setText(post.locationPlace?.placeName?.toString())

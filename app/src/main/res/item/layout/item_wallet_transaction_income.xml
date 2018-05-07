@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -40,7 +41,7 @@
             android:maxLines="1"
             tools:text="Completing registration" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tvAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,11 +50,17 @@
             android:layout_alignTop="@id/tvFrom"
             android:background="@drawable/transaction_corners_spent"
             android:gravity="center"
-            android:padding="8dp"
+            android:maxWidth="180dp"
             android:minWidth="60dp"
+            android:maxLines="1"
+            android:padding="8dp"
             android:textColor="@color/money_spent"
             android:textSize="18sp"
-            tools:text="+1" />
+            app:autoSizeMaxTextSize="18sp"
+            app:autoSizeMinTextSize="5sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
+            tools:text="+1001122223334455566" />
 
         <TextView
             android:id="@+id/tvTime"

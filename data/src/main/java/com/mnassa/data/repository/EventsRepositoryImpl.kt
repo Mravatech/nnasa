@@ -65,6 +65,10 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
         postApi.viewItems(ViewItemsRequest(ids, NetworkContract.EntityType.EVENT)).handleException(exceptionHandler)
     }
 
+    override suspend fun sendOpened(ids: List<String>) {
+        postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.EVENT)).handleException(exceptionHandler)
+    }
+
     override suspend fun getTickets(eventId: String): List<EventTicketModel> {
         return firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
                 .document(eventId)

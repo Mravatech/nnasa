@@ -45,6 +45,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
 
         adapter.isLoadingEnabled = savedInstanceState == null
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -66,6 +67,22 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
                 }
             }
         }
+
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.infoFeedChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        if (it.item.isNotEmpty()) {
+                            adapter.dataStorage.addAll(it.item)
+                        }
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                }
+            }
+        }
+
     }
 
     override fun onViewCreated(view: View) {
@@ -78,7 +95,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
 
     override fun onPageSelected() {
         val recyclerView = view?.rvNewsFeed ?: return
-        recyclerView.scrollToPosition(0)
+        recyclerView.smoothScrollToPosition(0)
     }
 
     override fun onDestroyView(view: View) {
