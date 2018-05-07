@@ -136,10 +136,10 @@
             <!--</android.support.design.widget.TextInputLayout>-->
             <!---->
             <com.mnassa.widget.text.EndPrefixEditText
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                android:layout_marginBottom="@dimen/spacing_vertical"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:id="@+id/postExpiresIn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

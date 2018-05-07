@@ -23,6 +23,7 @@ interface PostsInteractor {
             privacy: PostPrivacyOptions,
             tags: List<TagModel>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?): PostModel
 
     suspend fun updateNeed(
@@ -48,7 +49,7 @@ interface PostsInteractor {
 
     suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel
 
-    suspend fun getDefaultPromotePostPrice(): Long
+    suspend fun getDefaultExpirationDays(): Int
 }
 
 data class PostPrivacyOptions(

@@ -18,6 +18,7 @@ interface PostModel : Model {
     val privacyType: PostPrivacyType
     val tags: List<String>
     val text: String?
+    val statusOfExpiration: String
     val updatedAt: Date
     val counters: PostCounters
     val author: ShortAccountModel

@@ -21,6 +21,7 @@ interface PostsRepository {
             privacy: PostPrivacyOptions,
             tags: List<String>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?
     ): PostModel
 
@@ -32,7 +33,7 @@ interface PostsRepository {
             price: Long?,
             placeId: String?
     )
-    suspend fun getDefaultPromotePostPrice(): Long
+    suspend fun getDefaultExpirationDays(): Int
     suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions)
     suspend fun updateUserRecommendation(postId: String, accountId: String, text: String)
 

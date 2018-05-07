@@ -16,5 +16,6 @@ data class CreatePostRequest(
         @SerializedName("postedAccount") val accountForRecommendation: String? = null,
         @SerializedName("privacyConnections") val privacyConnections: List<String>? = null,
         @SerializedName("price") val price: Long? = null,
+        @SerializedName("timeOfExpiration") val timeOfExpiration: Long? = null,
         @SerializedName("postId") val postId: String? = null //for post updating
 )

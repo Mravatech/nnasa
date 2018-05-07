@@ -9,7 +9,6 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.screen.base.MnassaViewModelImpl
-import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -17,11 +16,11 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 3/19/2018.
  */
 class CreateNeedViewModelImpl(
-    private val postId: String?,
-    private val postsInteractor: PostsInteractor,
-    private val tagInteractor: TagInteractor,
-    private val placeFinderInteractor: PlaceFinderInteractor,
-    private val userRepository: UserRepository
+        private val postId: String?,
+        private val postsInteractor: PostsInteractor,
+        private val tagInteractor: TagInteractor,
+        private val placeFinderInteractor: PlaceFinderInteractor,
+        private val userRepository: UserRepository
 ) : MnassaViewModelImpl(), CreateNeedViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -32,6 +31,7 @@ class CreateNeedViewModelImpl(
             images: List<AttachedImage>,
             placeId: String?,
             price: Long?,
+            timeOfExpiration: Long?,
             postPrivacyOptions: PostPrivacyOptions
     ) {
         handleException {
@@ -44,6 +44,7 @@ class CreateNeedViewModelImpl(
                             privacy = postPrivacyOptions,
                             tags = tags,
                             price = price,
+                            timeOfExpiration = timeOfExpiration,
                             placeId = placeId
                     )
                 } else {
@@ -62,6 +63,8 @@ class CreateNeedViewModelImpl(
             }
         }
     }
+
+    override suspend fun getDefaultExpirationDays(): Int = postsInteractor.getDefaultExpirationDays()
 
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountById(userId) }
 

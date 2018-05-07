@@ -55,12 +55,13 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             privacy: PostPrivacyOptions,
             tags: List<TagModel>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?
     ): PostModel {
         val allImages = uploadedImages + imagesToUpload.map {
             async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
         }.map { it.await() }
-        return postsRepository.createNeed(text, allImages, privacy, createTags(tags), price, placeId)
+        return postsRepository.createNeed(text, allImages, privacy, createTags(tags), price, timeOfExpiration, placeId)
     }
 
     override suspend fun updateNeed(
@@ -105,8 +106,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.updateUserRecommendation(postId, accountId, text)
     }
 
-    override suspend fun getDefaultPromotePostPrice(): Long = postsRepository.getDefaultPromotePostPrice()
-
+    override suspend fun getDefaultExpirationDays(): Int = postsRepository.getDefaultExpirationDays()
 
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
