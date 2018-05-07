@@ -60,17 +60,17 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             }
         }
         with(view) {
-            rInfoBtnFemale.isChecked = accountModel.gender == Gender.MALE
+            rInfoBtnFemale.isChecked = accountModel.gender == Gender.FEMALE
             rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
             actvPersonCity.setText(accountModel.location?.formatted())
             actvPersonCity.setAdapter(placeAutocompleteAdapter)
-            actvPersonCity.setOnItemClickListener({ _, _, i, _ ->
-                placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-                personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+            actvPersonCity.setOnItemClickListener { _, _, i, _ ->
+                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                personSelectedPlaceId = item.placeId
+                personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                 actvPersonCity.setText(personSelectedPlaceName ?: "")
-            })
+            }
             containerSelectOccupation.setAbilities(accountModel.abilities)
             etPhoneNumber.setText(accountModel.contactPhone?.replace("+", ""))
             etPhoneNumber.setHideMode(accountModel.showContactPhone)
@@ -86,7 +86,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             etPersonSecondName.setText(accountModel.personalInfo?.lastName)
             etPersonUserName.setText(accountModel.userName)
             setToolbar(toolbarEditProfile, this)
-            timeMillis = accountModel.createdAt
+            birthday = accountModel.createdAt
             setCalendarEditText(etDateOfBirthday)
             ivUserAvatar.avatarSquare(accountModel.avatar)
             chipPersonOffers.chipsChangeListener = { onPersonChanged() }
@@ -104,13 +104,14 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     }
 
     private fun canCreatePersonInfo(): Boolean {
-        val v = view ?: return false
-        if (v.etPersonFirstName.text.isBlank()) return false
-        if (v.etPersonSecondName.text.isBlank()) return false
-        if (v.etPersonUserName.text.isBlank()) return false
-        if (personSelectedPlaceId == null) return false
-        if (v.chipPersonOffers.getTags().isEmpty()) return false
-        if (v.chipPersonInterests.getTags().isEmpty()) return false
+        with(view ?: return false) {
+            if (etPersonFirstName.text.isBlank()) return false
+            if (etPersonSecondName.text.isBlank()) return false
+            if (etPersonUserName.text.isBlank()) return false
+            if (personSelectedPlaceId == null) return false
+            if (chipPersonOffers.getTags().isEmpty()) return false
+            if (chipPersonInterests.getTags().isEmpty()) return false
+        }
         return true
     }
 
@@ -147,7 +148,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 contactEmail = view.etYourEmail.text.toString(),
                 showContactPhone = view.etPhoneNumber.isChosen,
                 contactPhone = view.etPhoneNumber.text.toString(),
-                birthday = timeMillis,
+                birthday = birthday,
                 birthdayDate = view.etDateOfBirthday.text.toString(),
                 locationId = personSelectedPlaceId,
                 isMale = view.rInfoBtnMale.isChecked,
@@ -158,26 +159,28 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     }
 
     private fun setupViews(view: View) {
-        view.toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
-        view.tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
-        view.chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
-        view.chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-        view.chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
-        view.tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
-        view.tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
-        view.tilPersonCity.hint = fromDictionary(R.string.edit_profile_city)
-        view.tvInfoGender.hint = fromDictionary(R.string.reg_person_info_gender)
-        view.tvProfilePersonalInfo.text = fromDictionary(R.string.reg_person_info_title)
-        view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
-        view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
-        view.tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
-        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
-        view.tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
-        view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
-        view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
-        view.tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
+        with(view) {
+            toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
+            tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
+            chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+            chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+            chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
+            tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
+            tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+            tilPersonCity.hint = fromDictionary(R.string.edit_profile_city)
+            tvInfoGender.hint = fromDictionary(R.string.reg_person_info_gender)
+            tvProfilePersonalInfo.text = fromDictionary(R.string.reg_person_info_title)
+            rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
+            rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
+            tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
+            tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
+            tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
+            rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
+            rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
+            tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
+        }
     }
 
     companion object {

@@ -65,7 +65,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
                 view.containerSelectOccupation.getAllAbilities(),
                 view.etDateOfBirthday.text.toString(),
                 view.etYourEmail.isChosen,
-                timeMillis,
+                birthday,
                 view.etPhoneNumber.isChosen,
                 view.etYourEmail.text.toString(),
                 view.rInfoBtnMale.isChecked

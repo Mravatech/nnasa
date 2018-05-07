@@ -124,23 +124,25 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     private fun canCreatePersonInfo(): Boolean {
-        val v = view ?: return false
-        if (v.vpRegistration.etPersonFirstName.text.isBlank()) return false
-        if (v.vpRegistration.etPersonSecondName.text.isBlank()) return false
-        if (v.vpRegistration.etPersonUserName.text.isBlank()) return false
-        if (registrationAdapter.personSelectedPlaceId == null) return false
-        if (v.vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
-        if (v.vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
+        with(view ?: return false) {
+            if (vpRegistration.etPersonFirstName.text.isBlank()) return false
+            if (vpRegistration.etPersonSecondName.text.isBlank()) return false
+            if (vpRegistration.etPersonUserName.text.isBlank()) return false
+            if (registrationAdapter.personSelectedPlaceId == null) return false
+            if (vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
+            if (vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
+        }
         return true
     }
 
     private fun canCreateOrganizationInfo(): Boolean {
-        val v = view ?: return false
-        if (v.vpRegistration.etCompanyName.text.isBlank()) return false
-        if (v.vpRegistration.etCompanyUserName.text.isBlank()) return false
-        if (registrationAdapter.companySelectedPlaceId == null) return false
-        if (v.vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
-        if (v.vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
+        with(view ?: return false) {
+            if (vpRegistration.etCompanyName.text.isBlank()) return false
+            if (vpRegistration.etCompanyUserName.text.isBlank()) return false
+            if (registrationAdapter.companySelectedPlaceId == null) return false
+            if (vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
+            if (vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
+        }
         return true
     }
 

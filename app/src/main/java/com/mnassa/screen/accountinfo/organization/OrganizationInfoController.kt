@@ -70,7 +70,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
                 view.etFoundation.text.toString().takeIf { it.isNotBlank() },
                 view.etCompanyEmail.isChosen,
                 view.etCompanyPhone.isChosen,
-                timeMillis,
+                birthday,
                 view.etCompanyEmail.text.toString().takeIf { it.isNotBlank() },
                 view.etCompanyPhone.text.toString().takeIf { it.isNotBlank() },
                 view.etWebSite.text.toString().takeIf { it.isNotBlank() }

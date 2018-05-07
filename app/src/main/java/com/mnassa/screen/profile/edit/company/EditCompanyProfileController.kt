@@ -45,6 +45,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             field = value
             onOrganizationChanged()
         }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
@@ -55,11 +56,11 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
                 close()
             }
         }
-        with(view){
+        with(view) {
             etFoundation.isLongClickable = false
             etFoundation.isFocusableInTouchMode = false
             etFoundation.setText(getDateByTimeMillis(accountModel.createdAt))
-            timeMillis = accountModel.createdAt
+            birthday = accountModel.createdAt
             setCalendarEditText(etFoundation)
             etCompanyEmail.setHideMode(accountModel.showContactEmail)
             etCompanyEmail.setText(accountModel.contactEmail)
@@ -78,18 +79,18 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
             actvCompanyCity.setText(accountModel.location?.formatted())
             actvCompanyCity.setAdapter(placeAutocompleteAdapter)
-            actvCompanyCity.setOnItemClickListener({ _, _, i, _ ->
-                placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-                companySelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-                companySelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+            actvCompanyCity.setOnItemClickListener { _, _, i, _ ->
+                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                companySelectedPlaceId = item.placeId
+                companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                 actvCompanyCity.setText(companySelectedPlaceName ?: "")
-            })
+            }
             setToolbar(toolbarEditProfile, this)
             ivUserAvatar.avatarSquare(accountModel.avatar)
-            etCompanyName.addTextChangedListener(SimpleTextWatcher{onOrganizationChanged()})
-            etCompanyUserName.addTextChangedListener(SimpleTextWatcher{onOrganizationChanged()})
-            chipCompanyInterests.chipsChangeListener = { onOrganizationChanged()}
-            chipCompanyOffers.chipsChangeListener = { onOrganizationChanged()}
+            etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
+            etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
+            chipCompanyInterests.chipsChangeListener = { onOrganizationChanged() }
+            chipCompanyOffers.chipsChangeListener = { onOrganizationChanged() }
         }
     }
 
@@ -99,12 +100,13 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     }
 
     private fun canCreateOrganizationInfo(): Boolean {
-        val v = view ?: return false
-        if (v.etCompanyName.text.isBlank()) return false
-        if (v.etCompanyUserName.text.isBlank()) return false
-        if (companySelectedPlaceId == null) return false
-        if (v.chipCompanyOffers.getTags().isEmpty()) return false
-        if (v.chipCompanyInterests.getTags().isEmpty()) return false
+        with(view ?: return false) {
+            if (etCompanyName.text.isBlank()) return false
+            if (etCompanyUserName.text.isBlank()) return false
+            if (companySelectedPlaceId == null) return false
+            if (chipCompanyOffers.getTags().isEmpty()) return false
+            if (chipCompanyInterests.getTags().isEmpty()) return false
+        }
         return true
     }
 
@@ -140,7 +142,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
                 showContactPhone = view.etCompanyPhone.isChosen,
                 contactEmail = view.etCompanyEmail.text.toString(),
                 contactPhone = view.etCompanyPhone.text.toString(),
-                founded = timeMillis,
+                founded = birthday,
                 organizationType = view.vCompanyStatus.getOrganizationType(),
                 website = view.etWebSite.text.toString(),
                 foundedDate = view.etFoundation.text.toString(),
@@ -151,20 +153,22 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     }
 
     private fun setupView(view: View) {
-        view.toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
-        view.tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
-        view.tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
-        view.tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
-        view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
-        view.chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
-        view.chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-        view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
-        view.tilWebSite.hint = fromDictionary(R.string.reg_company_website)
-        view.tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
-        view.tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
-        view.tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
+        with(view) {
+            toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
+            tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
+            tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
+            tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+            tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
+            chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+            chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+            tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
+            tilWebSite.hint = fromDictionary(R.string.reg_company_website)
+            tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
+            tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
+            tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
+        }
     }
 
     companion object {

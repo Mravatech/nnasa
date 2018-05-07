@@ -29,7 +29,7 @@ import java.util.*
 abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle) : MnassaControllerImpl<VM>(data) {
 
     protected val dialog: DialogHelper by instance()
-    protected var timeMillis: Long? = null
+    protected var birthday: Long? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -91,7 +91,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.YEAR, year)
-                timeMillis = cal.timeInMillis
+                birthday = cal.timeInMillis
             })
         }
     }
