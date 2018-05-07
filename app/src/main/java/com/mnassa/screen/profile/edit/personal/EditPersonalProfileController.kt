@@ -89,8 +89,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             birthday = accountModel.createdAt
             setCalendarEditText(etDateOfBirthday)
             ivUserAvatar.avatarSquare(accountModel.avatar)
-            chipPersonOffers.chipsChangeListener = { onPersonChanged() }
-            chipPersonInterests.chipsChangeListener = { onPersonChanged() }
+            chipPersonOffers.onChipsChangeListener = { onPersonChanged() }
+            chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
             etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
             etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
             etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })

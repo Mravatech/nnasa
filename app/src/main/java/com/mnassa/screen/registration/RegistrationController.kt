@@ -251,8 +251,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
                 etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
                 etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
-                chipPersonOffers.chipsChangeListener = { onPersonChanged() }
-                chipPersonInterests.chipsChangeListener = { onPersonChanged() }
+                chipPersonOffers.onChipsChangeListener = { onPersonChanged() }
+                chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
             }
             onPersonChanged()
             setAdapter(view.actvPersonCity, true)
@@ -271,8 +271,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipCompanyInterests.chipSearch = viewModel
                 etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
-                chipCompanyOffers.chipsChangeListener = { onOrganizationChanged() }
-                chipCompanyInterests.chipsChangeListener = { onOrganizationChanged() }
+                chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
+                chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
             }
             setAdapter(view.actvCompanyCity, false)
         }

@@ -41,7 +41,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     private lateinit var adapter: ChipsAdapter
     private val chips = LongSparseArray<TagModel>()
     lateinit var chipSearch: ChipsAdapter.ChipSearch
-    var chipsChangeListener = { }
+    var onChipsChangeListener = { }
 
     init {
         View.inflate(context, R.layout.chip_layout, this)
@@ -85,7 +85,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
-        chipsChangeListener()
+        onChipsChangeListener()
     }
 
     override fun onEmptySearchResult() {
@@ -148,7 +148,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         flChipContainer.addView(chipView, position)
         chips.append(key, tagModelTemp)
         etChipInput.text = null
-        chipsChangeListener()
+        onChipsChangeListener()
     }
 
     private fun animateViews(

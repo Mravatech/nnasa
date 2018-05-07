@@ -89,8 +89,8 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             ivUserAvatar.avatarSquare(accountModel.avatar)
             etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
             etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
-            chipCompanyInterests.chipsChangeListener = { onOrganizationChanged() }
-            chipCompanyOffers.chipsChangeListener = { onOrganizationChanged() }
+            chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
+            chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
         }
     }
 
