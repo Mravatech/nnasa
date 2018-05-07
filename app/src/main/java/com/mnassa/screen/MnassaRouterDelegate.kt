@@ -68,7 +68,7 @@ class MnassaRouterDelegate : MnassaRouter {
     }
 
     private fun openInNewActivity(self: Controller, controller: Controller): Boolean {
-        return isInMainController(self) //&& self.activity !is SecondActivity
+        return isInMainController(self)
     }
 
     private fun isInMainController(controller: Controller): Boolean {

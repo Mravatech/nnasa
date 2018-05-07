@@ -53,7 +53,7 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
             tvType.text = offerCategoryString
             tvType.goneIfEmpty()
 
-//            bindBuyOfferButton(post)
+//            bindBuyOfferButton(post) //TODO: uncomment to add ability to buy offer
         }
     }
 
