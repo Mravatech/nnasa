@@ -117,6 +117,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
                             ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!"))
             )
@@ -145,7 +147,9 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     title = input.title
                             ?: throw FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!")),
                     category = input.category,
-                    subCategory = input.subcategory
+                    subCategory = input.subcategory,
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) }
             )
             else -> PostModelImpl(
                     id = input.id,

@@ -38,7 +38,6 @@ internal data class PostDbEntity(
         @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
         //info post
         @SerializedName("title") var title: String?, //offer post
-        @SerializedName("statusOfExpiration") var statusOfExpiration: String?,
         //offer post
         @SerializedName("category") val category: String?,
         @SerializedName("subcategory") val subcategory: String?

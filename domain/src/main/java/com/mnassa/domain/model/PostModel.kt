@@ -99,5 +99,3 @@ sealed class ExpirationType(val text: String) : Serializable {
     class CLOSED(text: String) : ExpirationType(text)
     class FULFILLED(text: String) : ExpirationType(text)
 }
-
-val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE
