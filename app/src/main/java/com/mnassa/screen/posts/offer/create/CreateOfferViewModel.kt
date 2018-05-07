@@ -20,7 +20,8 @@ interface CreateOfferViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, Place
     suspend fun getUser(userId: String): ShortAccountModel?
     suspend fun getOfferCategories(): List<OfferCategoryModel>
     suspend fun getOfferSubCategories(category: OfferCategoryModel): List<OfferCategoryModel>
-    suspend fun getOfferPrice(): Long
+    suspend fun getShareOfferPostPrice(): Long?
+    suspend fun getShareOfferPostPerUserPrice(): Long?
 
     fun createPost(
             title: String,

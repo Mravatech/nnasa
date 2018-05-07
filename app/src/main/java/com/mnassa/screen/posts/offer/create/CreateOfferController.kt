@@ -28,7 +28,6 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_offer_create.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -279,7 +278,15 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
     @SuppressLint("SetTextI18n")
     private fun applyShareOptionsChanges() {
         launchCoroutineUI {
-            getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} (${viewModel.getOfferPrice()})"
+            val perPost = viewModel.getShareOfferPostPrice()
+            val perPerson = viewModel.getShareOfferPostPerUserPrice() ?: 0L
+
+            if (perPost != null) {
+                getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} ($perPost)"
+            } else {
+                getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} (${perPerson * sharingOptions.selectedConnections.size})"
+            }
+
         }
     }
 

@@ -77,7 +77,9 @@ interface PostsInteractor {
             postPrivacyOptions: PostPrivacyOptions
     )
 
-    suspend fun getPostSharePrice(): Long
+
+    suspend fun getShareOfferPostPrice(): Long?
+    suspend fun getShareOfferPostPerUserPrice(): Long?
 
     suspend fun createUserRecommendation(
             accountId: String,

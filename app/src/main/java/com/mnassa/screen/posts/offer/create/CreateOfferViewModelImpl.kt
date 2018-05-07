@@ -61,7 +61,9 @@ class CreateOfferViewModelImpl(private val offerId: String?,
         return categoryToSubCategory[category.id] ?: emptyList()
     }
 
-    override suspend fun getOfferPrice(): Long = postsInteractor.getPostSharePrice()
+    override suspend fun getShareOfferPostPrice(): Long? = postsInteractor.getShareOfferPostPrice()
+
+    override suspend fun getShareOfferPostPerUserPrice(): Long? = postsInteractor.getShareOfferPostPerUserPrice()
 
     override fun createPost(
             title: String,
