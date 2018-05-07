@@ -121,6 +121,7 @@
     <string name="_android_post_recommends_open_profile_INFO">Open profile</string>
     <string name="_android_post_recommends_message_placeholder_INFO">type your message…</string>
     <string name="_android_post_recommends_publish_INFO">Publish</string>
+    <string name="_android_post_empty_list_description_INFO">You have no publications yet</string>
 
     <string name="_android_connected_by_from_INFO">from</string>
     <string name="_android_notification_receive_INFO">You just receive %i points</string>
@@ -166,6 +167,8 @@
     <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
     <string name="_android_event_participant_header_other_INFO">Other Participants</string>
     <string name="_android_event_participant_guest_INFO">Guest %d</string>
+    <string name="_android_event_empty_list_title_INFO">You have no events yet</string>
+    <string name="_android_event_empty_list_description_INFO">You have no events yet (description)</string>
 
     <string name="_android_home_button_create_event_INFO">Create Event</string>
     <string name="_android_home_button_create_general_INFO">Create General Post</string>
@@ -198,6 +201,11 @@
     <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
     <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
 
+    <string name="_android_connections_recommendations_empty_description_INFO">You have no recommendations yet (description)</string>
+    <string name="_android_post_recommend_empty_title_INFO">You have no connections yet</string>
+    <string name="_android_post_recommend_empty_description_INFO">You have no connections yet (description)</string>
+    <string name="_android_connections_sent_empty_title_INFO">You have no sent connection requests yet</string>
+    <string name="_android_connections_sent_empty_description_INFO">You have no sent connection requests yet (description)</string>
 
 
 </resources>

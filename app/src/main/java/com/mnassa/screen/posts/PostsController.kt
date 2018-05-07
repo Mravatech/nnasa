@@ -6,6 +6,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
+import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.need.create.CreateNeedController
@@ -46,15 +47,25 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view)
+
+        view.rvNewsFeed.adapter = adapter
 
         adapter.isLoadingEnabled = savedInstanceState == null
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.newsFeedChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
+        launchCoroutineUI {
+            viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
+
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
+                            getViewSuspend().rlEmptyView.isInvisible = true
+                        } else {
+                            getViewSuspend().rlEmptyView.isInvisible = !adapter.dataStorage.isEmpty()
                         }
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
@@ -63,17 +74,19 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
                     is ListItemEvent.Cleared -> {
                         adapter.dataStorage.clear()
                         adapter.isLoadingEnabled = true
+                        getViewSuspend().rlEmptyView.isInvisible = true
                     }
                 }
             }
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.infoFeedChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
+        launchCoroutineUI {
+            viewModel.infoFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
+                            getViewSuspend().rlEmptyView.isInvisible = true
                         }
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
@@ -84,15 +97,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
         }
 
         viewModel.resetCounter()
-
-    }
-
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
-
-        with(view) {
-            rvNewsFeed.adapter = adapter
-        }
     }
 
     override fun onPageSelected() {

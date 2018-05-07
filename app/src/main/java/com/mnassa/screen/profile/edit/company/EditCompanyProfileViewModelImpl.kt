@@ -58,7 +58,6 @@ class EditCompanyProfileViewModelImpl(
 
                 val profile = ProfileCompanyInfoModelImpl(
                         id = profileAccountModel.id,
-                        firebaseUserId = profileAccountModel.firebaseUserId,
                         userName = userName,
                         accountType = AccountType.ORGANIZATION,
                         avatar = avatarSavedPath,

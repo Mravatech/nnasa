@@ -3,7 +3,6 @@ package com.mnassa.data.converter
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
-import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.DeclinedShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountAbilityDbEntity
@@ -48,7 +47,6 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
         return ShortAccountModelImpl(
                 id = input.id,
-                firebaseUserId = requireNotNull(FirebaseAuth.getInstance().uid),
                 userName = input.userName,
                 accountType = accountType,
                 avatar = input.avatar,
@@ -85,7 +83,6 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
         return ShortAccountModelImpl(
                 id = input.id,
-                firebaseUserId = requireNotNull(FirebaseAuth.getInstance().uid),
                 userName = input.userName,
                 accountType = accountType,
                 avatar = null,
@@ -129,7 +126,6 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
         return DeclinedShortAccountModelImpl(
                 id = input.id,
-                firebaseUserId = requireNotNull(FirebaseAuth.getInstance().uid),
                 userName = input.userName,
                 accountType = accountType,
                 avatar = input.avatar,

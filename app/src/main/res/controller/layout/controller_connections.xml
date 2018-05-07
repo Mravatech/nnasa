@@ -11,6 +11,35 @@
         android:layout_height="wrap_content"
         app:drawer_button_enabled="true"/>
 
+    <RelativeLayout
+        android:id="@+id/rlEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/toolbar"
+        android:gravity="center"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivEmpty"
+            style="@style/EmptyList.Icon"
+            app:srcCompat="@drawable/ic_connections" />
+
+        <TextView
+            android:id="@+id/tvEmptyTitle"
+            style="@style/EmptyList.Title"
+            android:layout_below="@id/ivEmpty"
+            tools:text="EMPTY TITLE" />
+
+        <TextView
+            android:id="@+id/tvEmptyDescription"
+            style="@style/EmptyList.Description"
+            android:layout_below="@id/tvEmptyTitle"
+            tools:text="Empty description" />
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvAllConnections"
         android:layout_width="match_parent"

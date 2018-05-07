@@ -63,12 +63,12 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         recommendedConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
-        newConnectionRequestsAdapter.onDeclineClickListener = {
+        newConnectionRequestsAdapter.onDeclineClickListener = { account ->
             view?.let { view ->
-                launchCoroutineUI { thisRef ->
-                    val disconnectDays = thisRef().viewModel.getDisconnectTimeoutDays()
+                launchCoroutineUI {
+                    val disconnectDays = viewModel.getDisconnectTimeoutDays()
                     dialog.showDeclineConnectionDialog(view.context, disconnectDays) {
-                        viewModel.decline(it)
+                        viewModel.decline(account)
                     }
                 }
             }

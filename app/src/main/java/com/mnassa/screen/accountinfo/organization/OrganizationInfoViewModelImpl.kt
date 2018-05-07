@@ -51,7 +51,6 @@ class OrganizationInfoViewModelImpl(
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val companyInfo = CompanyInfoModelImpl(
                         id = accountModel.id,
-                        firebaseUserId = accountModel.firebaseUserId,
                         userName = accountModel.userName,
                         accountType = accountModel.accountType,
                         avatar = avatarSavedPath,

@@ -3,7 +3,6 @@ package com.mnassa.data.converter
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.registerConverter
-import com.google.firebase.auth.FirebaseAuth
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.ConnectedByDbEntity
 import com.mnassa.data.network.bean.firebase.LocationDbEntity
@@ -66,7 +65,6 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 createdAt = input.createdAt,
                 id = input.id,
                 createdAtDate = input.createdAtDate,
-                firebaseUserId = requireNotNull(FirebaseAuth.getInstance().uid),
                 interests = input.interests?: emptyList(),
                 offers = input.offers?: emptyList(),
                 userName = input.userName,

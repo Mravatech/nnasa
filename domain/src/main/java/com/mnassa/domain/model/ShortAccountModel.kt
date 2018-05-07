@@ -8,7 +8,6 @@ import java.util.*
  */
 interface ShortAccountModel : Model {
     override var id: String // account ID
-    var firebaseUserId: String // fireBase user ID
     var userName: String
     var accountType: AccountType
     //

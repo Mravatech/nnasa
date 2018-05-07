@@ -78,6 +78,9 @@
     <string name="posts_recommends">_android_post_recommends</string>
     <string name="posts_recommends_skills_prefix">_accEdit_cellSkills_placeholder</string>
 
+    <string name="posts_empty_list_title">_profile_emptyTablePlaceholder</string>
+    <string name="posts_empty_list_description">_android_post_empty_list_description</string>
+
 
     <string name="post_delete_dialog_title">_question_postDeleting_title</string>
     <string name="post_delete_dialog_description">_question_postDeleting_message</string>
@@ -439,7 +442,9 @@
     <string name="event_participant_save">_navItem_Save</string>
     <string name="event_participant_guest">_android_event_participant_guest</string>
     <string name="event_duration_not_specified">_android_event_duration_not_specified</string>
-    
+    <string name="event_empty_title">_android_event_empty_list_title</string>
+    <string name="event_empty_description">_android_event_empty_list_description</string>
+
     <!-- ======================================= CREATE EVENT ================================== -->
     <string name="event_create_title_placeholder">create_event_your_title</string>
     <string name="event_create_date_placeholder">_date_selection_date_time</string>
@@ -492,5 +497,12 @@
     <string name="hours_count">_android_hours</string>
     <string name="minutes_count">_android_minutes</string>
     <string name="seconds_count">_android_seconds</string>
+
+    <string name="connections_recommended_empty_title">_connectionsList_empty_recommendations</string>
+    <string name="connections_recommended_empty_description">_android_connections_recommendations_empty_description</string>
+    <string name="connections_sent_requests_empty_title">_android_connections_sent_empty_title</string>
+    <string name="connections_sent_requests_empty_description">_android_connections_sent_empty_description</string>
+    <string name="post_recommend_empty_title">_android_post_recommend_empty_title</string>
+    <string name="post_recommend_empty_description">_android_post_recommend_empty_description</string>
 
 </resources>

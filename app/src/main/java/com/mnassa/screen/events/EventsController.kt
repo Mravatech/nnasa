@@ -9,6 +9,7 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
@@ -37,15 +38,25 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view)
+
+        view.rvEvents.adapter = adapter
 
         adapter.isLoadingEnabled = savedInstanceState == null
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.eventsFeedChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
+        launchCoroutineUI {
+            viewModel.eventsFeedChannel.openSubscription().bufferize(this@EventsController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
+
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
+                            getViewSuspend().rlEmptyView.isInvisible = true
+                        } else {
+                            getViewSuspend().rlEmptyView.isInvisible = !adapter.dataStorage.isEmpty()
                         }
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
@@ -54,21 +65,13 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
                     is ListItemEvent.Cleared -> {
                         adapter.dataStorage.clear()
                         adapter.isLoadingEnabled = true
+                        getViewSuspend().rlEmptyView.isInvisible = true
                     }
                 }
             }
         }
 
         viewModel.resetCounter()
-
-    }
-
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
-
-        with(view) {
-            rvEvents.adapter = adapter
-        }
     }
 
     override fun onPageSelected() {
