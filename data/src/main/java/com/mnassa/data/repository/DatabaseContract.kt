@@ -95,5 +95,7 @@ internal object DatabaseContract {
     //
     const val TABLE_EVENT_ATTENDIES = "attendedUsers"
     const val TABLE_EVENT_ATTENDIES_COLLECTION = "attendanceList"
+    //
+    const val TABLE_INFO_FEED = "infofeed"
 
 }

@@ -76,7 +76,7 @@ class InOutComeView : FrameLayout {
     }
 
 
-    fun showView(count: Int, name: String?) {
+    fun showView(count: Long, name: String?) {
         val from = StringBuilder()//"You just receive 50 points from ${name?:"Admin"}"
         paint.isAntiAlias = true
         if (count < 0) {

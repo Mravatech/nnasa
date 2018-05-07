@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.needAttach
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.await
@@ -69,6 +70,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
+
         commentsAdapter = PostCommentsRVAdapter(commentsRewardModel) { inflateHeader(it) }
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
@@ -205,6 +207,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             controller.retainViewMode = RetainViewMode.RETAIN_DETACH
         } else {
             val controller = router.backstack.first().controller()
+            controller.needAttach = true
             router.rebindIfNeeded()
             wrappedController.value = controller
         }

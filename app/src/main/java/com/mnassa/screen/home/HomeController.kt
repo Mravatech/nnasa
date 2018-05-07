@@ -1,11 +1,11 @@
 package com.mnassa.screen.home
 
+import android.support.design.widget.TabLayout
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.MnassaRouter
@@ -14,10 +14,12 @@ import com.mnassa.screen.events.EventsController
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.posts.PostsController
+import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/6/2018.
@@ -53,6 +55,10 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
         with(view) {
             vpHome.adapter = adapter
             tlHome.setupWithViewPager(vpHome)
+            tlHome.addOnTabSelectedListener(object : TabLayout.ViewPagerOnTabSelectedListener(vpHome) {
+                override fun onTabSelected(tab: TabLayout.Tab?) = Unit
+                override fun onTabReselected(tab: TabLayout.Tab?) = onPageSelectionChanged(true)
+            })
 
             launchCoroutineUI {
                 viewModel.unreadEventsCountChannel.consumeEach {
@@ -64,7 +70,12 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                     tlHome.setBadgeText(HomePage.NEEDS.ordinal, it.takeIf { it > 0 }?.toString())
                 }
             }
+            initFab(this)
+        }
+    }
 
+    private fun initFab(view: View) {
+        with(view) {
             famHome.setClosedOnTouchOutside(true)
 
             fabCreateNeed.labelText = fromDictionary(R.string.tab_home_button_create_need)
@@ -87,6 +98,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
             fabCreateGeneralPost.labelText = fromDictionary(R.string.tab_home_button_create_general_post)
             fabCreateGeneralPost.setOnClickListener {
                 famHome.close(false)
+                open(CreateGeneralPostController.newInstance())
             }
 
             launchCoroutineUI {

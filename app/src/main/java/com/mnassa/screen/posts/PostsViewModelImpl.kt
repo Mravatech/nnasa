@@ -1,7 +1,9 @@
 package com.mnassa.screen.posts
 
+import android.os.Bundle
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.InfoPostModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
@@ -21,11 +23,26 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             beforeReConsume = { it.send(ListItemEvent.Cleared()) },
             receiveChannelProvider = { postsInteractor.loadAll() })
 
+    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ReConsumeWhenAccountChangedArrayBroadcastChannel(
+            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()
     }
 
     override fun onAttachedToWindow(post: PostModel) {
         handleException { postsInteractor.onItemViewed(post) }
+    }
+
+    override fun hideInfoPost(post: PostModel) {
+        handleException {
+            withProgressSuspend {
+                postsInteractor.hideInfoPost(post.id)
+            }
+        }
     }
 }
