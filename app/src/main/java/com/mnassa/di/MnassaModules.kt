@@ -212,7 +212,8 @@ private val viewModelsModule = Kodein.Module {
                 CommentsWrapperForPostViewModelImpl(
                         postId = pair.second.getString(PostDetailsFactory.EXTRA_POST_ID),
                         commentsInteractor = instance(),
-                        postsInteractor = instance())
+                        postsInteractor = instance(),
+                        walletInteractor = instance())
             EventDetailsInfoController::class.java ->
                 CommentsWrapperForEventViewModelImpl(
                     eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
