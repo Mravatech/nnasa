@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.NetworkContract
+import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
 import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
@@ -21,17 +22,17 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_GENERAL
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_INFO
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
+import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.*
-import com.mnassa.domain.model.impl.PostCountersImpl
-import com.mnassa.domain.model.impl.PostModelImpl
-import com.mnassa.domain.model.impl.RecommendedProfilePostModelImpl
+import com.mnassa.domain.model.impl.*
+import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
-class PostConverter : ConvertersContextRegistrationCallback {
+class PostConverter(private val languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertPost)
@@ -40,6 +41,10 @@ class PostConverter : ConvertersContextRegistrationCallback {
         convertersContext.registerConverter(this::convertPostPrivacyType)
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertPostData)
+        convertersContext.registerConverter(this::convertPostDataToOffer)
+        convertersContext.registerConverter(this::convertInfoPost)
+        convertersContext.registerConverter(this::convertOfferPost)
+        convertersContext.registerConverter(this::convertOfferCategory)
     }
 
     private fun convertPostData(input: PostData, token: Any?, converter: ConvertersContext): PostModelImpl {
@@ -49,7 +54,17 @@ class PostConverter : ConvertersContextRegistrationCallback {
         return converter.convert(post)
     }
 
+    private fun convertPostDataToOffer(input: PostData, token: Any?, converter: ConvertersContext): OfferPostModelImpl {
+        return convertPostData(input, token, converter) as OfferPostModelImpl
+    }
+
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+
+        val attachments = input.images.orEmpty().mapIndexed { index, image ->
+            val videoUrl = input.videos.orEmpty().getOrNull(index)
+            if (videoUrl != null) PostAttachment.PostVideoAttachment(previewUrl = image, videoUrl = videoUrl)
+            else PostAttachment.PostPhotoAttachment(image)
+        }
 
         val postType: PostType = converter.convert(input.type)
         return when (postType) {
@@ -58,7 +73,7 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     allConnections = input.allConnections,
                     type = postType,
                     createdAt = Date(input.createdAt),
-                    images = input.images ?: emptyList(),
+                    attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
@@ -80,12 +95,64 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter),
                     offers = emptyList()
             )
+            PostType.INFO -> InfoPostImpl(
+                    id = input.id,
+                    allConnections = input.allConnections,
+                    type = postType,
+                    createdAt = Date(input.createdAt),
+                    attachments = attachments,
+                    locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
+                        converter.convert<LocationPlaceModel>(it)
+                    },
+                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalId = input.originalId,
+                    privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
+                    privacyType = converter.convert(input.privacyType),
+                    tags = input.tags ?: emptyList(),
+                    text = input.text,
+                    updatedAt = Date(input.updatedAt),
+                    counters = converter.convert(input.counters),
+                    author = convertAuthor(input.author, converter),
+                    copyOwnerId = input.copyOwner,
+                    price = input.price ?: 0.0,
+                    autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
+                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    title = input.title
+                            ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!"))
+            )
+            PostType.OFFER -> OfferPostModelImpl(
+                    id = input.id,
+                    allConnections = input.allConnections,
+                    type = postType,
+                    createdAt = Date(input.createdAt),
+                    attachments = attachments,
+                    locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
+                        converter.convert<LocationPlaceModel>(it)
+                    },
+                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalId = input.originalId,
+                    privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
+                    privacyType = converter.convert(input.privacyType),
+                    tags = input.tags ?: emptyList(),
+                    text = input.text,
+                    updatedAt = Date(input.updatedAt),
+                    counters = converter.convert(input.counters),
+                    author = convertAuthor(input.author, converter),
+                    copyOwnerId = input.copyOwner,
+                    price = input.price ?: 0.0,
+                    autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
+                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    title = input.title
+                            ?: throw FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!")),
+                    category = input.category,
+                    subCategory = input.subcategory
+            )
             else -> PostModelImpl(
                     id = input.id,
                     allConnections = input.allConnections,
                     type = postType,
                     createdAt = Date(input.createdAt),
-                    images = input.images ?: emptyList(),
+                    attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
@@ -106,7 +173,14 @@ class PostConverter : ConvertersContextRegistrationCallback {
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) }
             )
         }
+    }
 
+    private fun convertInfoPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): InfoPostImpl {
+        return convertPost(input, token, converter) as InfoPostImpl
+    }
+
+    private fun convertOfferPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): OfferPostModelImpl {
+        return convertPost(input, token, converter) as OfferPostModelImpl
     }
 
     private fun convertExpiration(expiration: String): ExpirationType {
@@ -167,6 +241,14 @@ class PostConverter : ConvertersContextRegistrationCallback {
                 reposts = input.reposts,
                 unreadResponse = input.unreadResponse,
                 views = input.views
+        )
+    }
+
+    private fun convertOfferCategory(input: OfferCategoryDbModel): OfferCategoryModel {
+        return OfferCategoryModel(
+                id = input.id,
+                name = TranslatedWordModelImpl(languageProvider, "", input.en, input.en, input.ar),
+                parentId = input.parentId
         )
     }
 }

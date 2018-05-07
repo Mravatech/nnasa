@@ -2,7 +2,6 @@ package com.mnassa.screen.posts.need.create
 
 import android.Manifest
 import android.app.Activity
-import android.arch.lifecycle.Lifecycle
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,7 +9,6 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
@@ -22,7 +20,6 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import timber.log.Timber
@@ -35,15 +32,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     override val layoutId: Int = R.layout.controller_need_create
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
     override val viewModel: CreateNeedViewModel by instance(arg = postId)
-    private var waitForResumeJob: Job? = null
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
             field = value
-
-            waitForResumeJob?.cancel()
-            waitForResumeJob = launchCoroutineUI {
-                lifecycle.awaitFirst { it == Lifecycle.Event.ON_RESUME }
-                view?.tvShareOptions?.text = value.format()
+            launchCoroutineUI {
+                getViewSuspend().tvShareOptions?.text = value.format()
             }
         }
     private val playServiceHelper: PlayServiceHelper by instance()
@@ -163,7 +156,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
         val permissionsList = when (imageSource) {
             CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA)
+            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         val permissionResult = permissions.requestPermissions(permissionsList)
         if (permissionResult.isAllGranted) {
@@ -176,22 +169,20 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     private fun setData(post: PostModel) {
         this.post = post
-        with(view ?: return) {
-            etNeed.setText(post.text)
-            launchCoroutineUI {
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                etNeed.setText(post.text)
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
-            }
-            attachedImagesAdapter.set(post.images.map { AttachedImage.UploadedImage(it) })
+                attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
-            placeId = post.locationPlace?.placeId
-            actvPlace.setText(post.locationPlace?.placeName?.toString())
-            etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-            sharingOptions.selectedConnections = post.privacyConnections
-            launchCoroutineUI {
+                placeId = post.locationPlace?.placeId
+                actvPlace.setText(post.locationPlace?.placeName?.toString())
+                etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
+                sharingOptions.selectedConnections = post.privacyConnections
                 tvShareOptions.text = sharingOptions.format()
+                //no ability to change sharing options while post changing
+                tvShareOptions.visibility = View.GONE
             }
-            //no ability to change sharing options while post changing
-            tvShareOptions.visibility = View.GONE
         }
     }
 

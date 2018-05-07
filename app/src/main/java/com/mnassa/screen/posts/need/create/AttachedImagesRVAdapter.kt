@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
+import com.mnassa.domain.model.PostAttachment
 import com.mnassa.extensions.image
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
@@ -167,7 +168,9 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
 }
 
 sealed class AttachedImage(val typeId: Int) : Serializable {
-    class UploadedImage(val imageUrl: String) : AttachedImage(TYPE_UPLOADED)
+    class UploadedImage(val imageUrl: String) : AttachedImage(TYPE_UPLOADED) {
+        constructor(postAttachment: PostAttachment) : this((postAttachment as PostAttachment.PostPhotoAttachment).photoUrl)
+    }
     class LocalImage(val imageUri: Uri) : AttachedImage(TYPE_LOCAL)
     object AddImage : AttachedImage(TYPE_ADD)
 

@@ -107,6 +107,11 @@ object NetworkContract {
         const val EXERCISE = "exercise"
         const val ACTIVITY = "activity"
     }
+
+    object ResetCounter {
+        const val EVENTS = "events"
+        const val POSTS = "needs"
+    }
 }
 
 val PostPrivacyType.stringValue: String

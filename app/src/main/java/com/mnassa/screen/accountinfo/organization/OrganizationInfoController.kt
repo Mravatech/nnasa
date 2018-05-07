@@ -7,6 +7,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
@@ -62,7 +63,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!Patterns.PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etCompanyPhone.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -71,7 +72,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
                 view.etFoundation.text.toString().takeIf { it.isNotBlank() },
                 view.etCompanyEmail.isChosen,
                 view.etCompanyPhone.isChosen,
-                timeMillis,
+                birthday,
                 view.etCompanyEmail.text.toString().takeIf { it.isNotBlank() },
                 view.etCompanyPhone.text.toString().takeIf { it.isNotBlank() },
                 view.etWebSite.text.toString().takeIf { it.isNotBlank() }

@@ -8,8 +8,7 @@
     android:paddingStart="20dp"
     android:background="@color/background_main"
     android:paddingTop="16dp"
-    android:fontFamily="sans-serif-medium"
-    android:textColor="#000000"
+    android:fontFamily="@font/roboto_medium"
+    android:textColor="@color/black"
     android:textSize="14sp"
-    android:textStyle="normal"
     tools:text="Recent Notifications" />

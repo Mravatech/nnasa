@@ -12,3 +12,13 @@ data class SendPointsRequest(
         @SerializedName("amount") val amount: Long,
         @SerializedName("userDescription") val userDescription: String?
 )
+
+data class RewardForCommentRequest(
+        @SerializedName("fromAid") val fromAid: String,
+        @SerializedName("toAid") val toAid: String,
+        @SerializedName("type") val type: String = "rewardForComment",
+        @SerializedName("amount") val amount: Long,
+        @SerializedName("userDescription") val userDescription: String?,
+        @SerializedName("commentId") var commentId: String
+)
+

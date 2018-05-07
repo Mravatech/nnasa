@@ -44,6 +44,10 @@ class EventsInteractorImpl(
         viewItemChannel.send(ListItemEvent.Added(item))
     }
 
+    override suspend fun onItemOpened(item: EventModel) = eventsRepository.sendOpened(listOf(item.id))
+
+    override suspend fun resetCounter() = eventsRepository.resetCounter()
+
     override suspend fun createEvent(model: CreateOrEditEventModel) {
         val allImages = model.uploadedImages + model.imagesToUpload.map {
             async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }

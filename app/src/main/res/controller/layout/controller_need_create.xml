@@ -62,7 +62,8 @@
                 android:layout_marginBottom="@dimen/spacing_vertical"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical">
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:layout_height="260dp">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvImages"

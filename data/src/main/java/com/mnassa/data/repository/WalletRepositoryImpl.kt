@@ -2,13 +2,17 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseWalletApi
+import com.mnassa.data.network.bean.firebase.RewardDbEntity
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
+import com.mnassa.data.network.bean.retrofit.request.RewardForCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.SendPointsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
+import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.repository.WalletRepository
@@ -57,12 +61,30 @@ class WalletRepositoryImpl(
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
     }
 
+    override suspend fun getDefaultRewardingPoints(): Int {
+        return db.child(DatabaseContract.TABLE_DICTIONARY)
+                .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT)
+                .await<RewardDbEntity>(exceptionHandler)!!
+                .amount
+    }
+
+
     override suspend fun sendPoints(amount: Long, recipientId: String, description: String?) {
         walletApi.sendPoints(SendPointsRequest(
                 fromAid = requireNotNull(userRepository.getAccountIdOrException()),
                 toAid = recipientId,
                 amount = amount,
                 userDescription = description
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun sendPointsForComment(rewardModel: RewardModel) {
+        walletApi.rewardForComment(RewardForCommentRequest(
+                fromAid = requireNotNull(userRepository.getAccountIdOrException()),
+                toAid = rewardModel.recipientId,
+                amount = rewardModel.amount,
+                userDescription = rewardModel.userDescription,
+                commentId = rewardModel.commentId
         )).handleException(exceptionHandler)
     }
 }

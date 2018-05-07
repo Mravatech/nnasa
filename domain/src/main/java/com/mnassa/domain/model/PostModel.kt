@@ -10,7 +10,7 @@ interface PostModel : Model {
     val allConnections: Boolean
     val type: PostType
     val createdAt: Date
-    val images: List<String>
+    val attachments: List<PostAttachment>
     val locationPlace: LocationPlaceModel?
     val originalCreatedAt: Date
     val originalId: String
@@ -27,6 +27,22 @@ interface PostModel : Model {
     val price: Double
     val autoSuggest: PostAutoSuggest
     val repostAuthor: ShortAccountModel?
+}
+
+interface InfoPostModel: PostModel {
+    val title: String
+    var isPinned: Boolean
+}
+
+interface OfferPostModel: PostModel {
+    val title: String
+    val category: String?
+    val subCategory: String?
+}
+
+sealed class PostAttachment : Serializable {
+    data class PostPhotoAttachment(val photoUrl: String) : PostAttachment()
+    data class PostVideoAttachment(val previewUrl: String, val videoUrl: String) : PostAttachment()
 }
 
 interface RecommendedProfilePostModel : PostModel {
@@ -77,10 +93,6 @@ sealed class EntityType : Serializable {
     object POST : EntityType()
 }
 
-//"active"
-//"expired"
-//"closed"
-//"fulfilled"
 sealed class ExpirationType(val text: String) : Serializable {
     class ACTIVE(text: String) : ExpirationType(text)
     class EXPIRED(text: String) : ExpirationType(text)

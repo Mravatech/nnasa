@@ -66,13 +66,25 @@
             style="@style/MnassaTextTiny"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/btnReply"
+            android:layout_alignBottom="@id/btnUseful"
             android:layout_alignStart="@id/tvUserName"
-            android:layout_alignTop="@id/btnReply"
+            android:layout_alignTop="@id/btnUseful"
             android:layout_marginTop="@dimen/spacing_vertical"
-            android:layout_toStartOf="@id/btnReply"
+            android:layout_toStartOf="@id/btnUseful"
             android:gravity="center_vertical"
             tools:text="17 minutes ago" />
+
+        <Button
+            android:id="@+id/btnUseful"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rvRecommendedAccounts"
+            android:layout_toStartOf="@+id/btnReply"
+            android:textColor="@drawable/button_transparent_text_color"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            tools:text="Useful" />
 
         <Button
             android:id="@+id/btnReply"

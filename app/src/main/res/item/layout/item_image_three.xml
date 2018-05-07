@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/ivOne"
+
+    <include
+        layout="@layout/item_image_one"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:scaleType="centerCrop"
-        tools:src="@mipmap/ic_launcher" />
+        android:layout_weight="1" />
+
 
     <android.support.v4.widget.Space
         android:layout_width="@dimen/post_space_between_images"
@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:foreground="@drawable/avatar_shadow"
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_launcher" />
 
@@ -40,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:foreground="@drawable/avatar_shadow"
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_launcher" />
 

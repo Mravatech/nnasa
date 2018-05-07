@@ -45,19 +45,17 @@
     <style name="ProfileHeaderItem.TextViewLabel">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColor">@color/chip_edit_text_hint</item>
         <item name="android:textSize">@dimen/profile_header_item_label_text_size</item>
-        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="ProfileHeaderItem.TextViewMoreInfo">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColor">@color/chip_edit_text_hint</item>
         <item name="android:textSize">@dimen/profile_header_item_text_size</item>
-        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="ProfileHeaderItem.TextView">
@@ -75,8 +73,7 @@
         <item name="android:paddingBottom">@dimen/profile_header_item_main_padding_vertical</item>
         <item name="android:paddingTop">@dimen/profile_header_item_main_padding_vertical</item>
         <item name="android:textSize">@dimen/profile_header_item_more_text_size</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textColor">@color/blue_turquoise</item>
     </style>

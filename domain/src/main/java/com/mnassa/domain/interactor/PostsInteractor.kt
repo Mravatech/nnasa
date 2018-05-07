@@ -1,10 +1,7 @@
 package com.mnassa.domain.interactor
 
 import android.net.Uri
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostPrivacyType
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -12,9 +9,12 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface PostsInteractor {
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadById(id: String): ReceiveChannel<PostModel?>
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
+    suspend fun onItemOpened(item: PostModel)
+    suspend fun resetCounter()
 
     suspend fun createNeed(
             text: String,
@@ -35,6 +35,53 @@ interface PostsInteractor {
             price: Long?,
             placeId: String?)
 
+    suspend fun createGeneralPost(
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<TagModel>,
+            placeId: String?): PostModel
+
+    suspend fun updateGeneralPost(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            tags: List<TagModel>,
+            placeId: String?)
+
+    suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel
+
+    suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    )
+
+
+    suspend fun getShareOfferPostPrice(): Long?
+    suspend fun getShareOfferPostPerUserPrice(): Long?
+
     suspend fun createUserRecommendation(
             accountId: String,
             text: String,
@@ -50,6 +97,11 @@ interface PostsInteractor {
     suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel
 
     suspend fun getDefaultExpirationDays(): Int
+    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
+
+    suspend fun hideInfoPost(postId: String)
+
+    suspend fun loadOfferCategories(): List<OfferCategoryModel>
 }
 
 data class PostPrivacyOptions(

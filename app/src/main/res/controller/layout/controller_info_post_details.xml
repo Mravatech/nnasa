@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_title="@string/general_author" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_vertical">
+
+            <TextView
+                android:id="@+id/tvInfoPostTitle"
+                style="@style/MnassaHeader1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/spacing_vertical"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal"
+                android:paddingTop="@dimen/spacing_vertical"
+                tools:text="How add photo to your Need post" />
+
+            <View
+                style="@style/MnassaDivider"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <TextView
+                android:id="@+id/tvInfoPostDescription"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/spacing_vertical"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal"
+                android:paddingTop="@dimen/spacing_vertical"
+                android:textSize="17sp"
+                tools:text="Long text" />
+
+            <FrameLayout
+                android:id="@+id/flImages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_vertical">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vpImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    tools:background="#0f0" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/shadow"
+                    android:rotation="180" />
+
+                <com.rd.PageIndicatorView
+                    android:id="@+id/pivImages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="@dimen/spacing_vertical"
+                    app:piv_animationType="worm"
+                    app:piv_dynamicCount="true"
+                    app:piv_interactiveAnimation="true"
+                    app:piv_radius="4dp" />
+            </FrameLayout>
+
+            <View
+                style="@style/MnassaDivider"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal">
+
+                <TextView
+                    android:id="@+id/tvViewsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    android:drawableStart="@drawable/ic_eye_18dp"
+                    android:focusable="true"
+                    tools:text="Views " />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>

@@ -1,12 +1,10 @@
 package com.mnassa.screen.connections.allconnections
 
 import android.view.View
-import android.widget.Toast
-import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.isInvisible
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -43,8 +41,8 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
                 allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
 
-                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
-                view.rvAllConnections.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+                view.rlEmptyView.isInvisible = it.isNotEmpty()
+                view.rvAllConnections.isInvisible = it.isEmpty()
             }
         }
     }

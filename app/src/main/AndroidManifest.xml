@@ -32,6 +32,10 @@
         <activity android:name=".activity.SecondActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".activity.VideoViewActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

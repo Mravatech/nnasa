@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
@@ -19,15 +18,17 @@ import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.comments.CommentsWrapperListener
 import com.mnassa.screen.complaintother.ComplaintOtherController
+import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_ID
+import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_MODEL
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
+import com.mnassa.screen.posts.need.details.adapter.PostAttachmentsAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
-import kotlinx.android.synthetic.main.controller_need_details_header.view.*
+import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
@@ -41,12 +42,12 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         ComplaintOtherController.OnComplaintResult,
         CommentsWrapperController.CommentsWrapperCallback,
         RecommendController.OnRecommendPostResult {
-    override val layoutId: Int = R.layout.controller_need_details_header
-    protected val postId by lazy { requireNotNull(args.getString(EXTRA_NEED_ID)) }
+    override val layoutId: Int = R.layout.controller_need_details
+    protected val postId by lazy { requireNotNull(args.getString(EXTRA_POST_ID)) }
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = postId)
     override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.DEFAULT
-        set(value) = viewModel.repost(value)
+        set(value) = viewModel.repost(value.asPostPrivacy)
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
@@ -74,9 +75,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
-        (args.getSerializable(EXTRA_NEED_MODEL) as PostModel?)?.let { post ->
+        (args.getSerializable(EXTRA_POST_MODEL) as PostModel?)?.let { post ->
             runBlocking { bindPost(post) }
-            args.remove(EXTRA_NEED_MODEL)
+            args.remove(EXTRA_POST_MODEL)
         }
     }
 
@@ -138,15 +139,13 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             //
             tvNeedDescription.text = post.formattedText
             tvNeedDescription.goneIfEmpty()
-            //images
-            flImages.isGone = post.images.isEmpty()
-            if (post.images.isNotEmpty()) {
-                pivImages.count = post.images.size
+            //attachments
+            flImages.isGone = post.attachments.isEmpty()
+            if (post.attachments.isNotEmpty()) {
+                pivImages.count = post.attachments.size
                 pivImages.selection = 0
 
-                vpImages.adapter = PhotoPagerAdapter(post.images) {
-                    PhotoPagerActivity.start(context, post.images, post.images.indexOf(it))
-                }
+                vpImages.adapter = PostAttachmentsAdapter(post.attachments)
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
                         pivImages.selection = position
@@ -287,8 +286,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     companion object {
-        const val EXTRA_NEED_ID = "EXTRA_NEED_ID"
-        const val EXTRA_NEED_MODEL = "EXTRA_NEED_MODEL"
+
         private const val OTHER = "other"
 
         //to create instance, use PostDetailsFactory

@@ -70,9 +70,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     /////////////////////////////////////// SAVING STATE LOGIC /////////////////////////////////////
 
     fun saveState(outState: Bundle) {
-        if (dataStorage.size < MAX_STATE_SIZE) {
-            outState.putSerializable(stateId, dataStorage.toCollection(ArrayList()))
-        }
+        outState.putSerializable(stateId, dataStorage.toCollection(ArrayList()))
     }
 
     @Suppress("UNCHECKED_CAST")

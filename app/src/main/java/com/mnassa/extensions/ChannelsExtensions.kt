@@ -62,9 +62,9 @@ abstract class ReConsumableBroadcastChannel<T>(
     }
 }
 
-class ReConsumeWhenAccountChangedArrayBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
-                                                          onEachEvent: suspend (event: T) -> Unit = {},
-                                                          receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
+class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
+                                                   onEachEvent: suspend (event: T) -> Unit = {},
+                                                   receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
         outputChannelInstanceCreator = { ArrayBroadcastChannel(100) },
         beforeReConsume = beforeReConsume,
         onEachEvent = onEachEvent,
@@ -79,9 +79,9 @@ class ReConsumeWhenAccountChangedArrayBroadcastChannel<T>(beforeReConsume: suspe
     }
 }
 
-class ReConsumeWhenAccountChangedConflatedBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
-                                                              onEachEvent: suspend (event: T) -> Unit = {},
-                                                              receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
+class ProcessAccountChangeConflatedBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
+                                                       onEachEvent: suspend (event: T) -> Unit = {},
+                                                       receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
         outputChannelInstanceCreator = { ConflatedBroadcastChannel() },
         beforeReConsume = beforeReConsume,
         onEachEvent = onEachEvent,
