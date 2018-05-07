@@ -47,6 +47,8 @@ interface PostsInteractor {
     suspend fun removePost(postId: String)
 
     suspend fun repostPost(postId: String, text: String?, privacyConnections: Set<String>): PostModel
+
+    suspend fun getDefaultPromotePostPrice(): Long
 }
 
 data class PostPrivacyOptions(

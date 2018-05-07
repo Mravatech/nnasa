@@ -117,6 +117,33 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <!--<android.support.design.widget.TextInputLayout-->
+                <!--android:id="@+id/tilPostExpiresIn"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_marginEnd="@dimen/spacing_horizontal"-->
+                <!--android:layout_marginStart="@dimen/spacing_horizontal"-->
+                <!--android:layout_marginTop="@dimen/spacing_vertical">-->
+
+                <!--<android.support.design.widget.TextInputEditText-->
+                    <!--android:id="@+id/etPostExpiresIn"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:inputType="number"-->
+                    <!--tools:text="day(s)" />-->
+
+            <!--</android.support.design.widget.TextInputLayout>-->
+            <!---->
+            <com.mnassa.widget.text.EndPrefixEditText
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                android:id="@+id/postExpiresIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

@@ -105,6 +105,9 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         postsRepository.updateUserRecommendation(postId, accountId, text)
     }
 
+    override suspend fun getDefaultPromotePostPrice(): Long = postsRepository.getDefaultPromotePostPrice()
+
+
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
     }

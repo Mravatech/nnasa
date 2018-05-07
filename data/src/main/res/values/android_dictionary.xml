@@ -48,6 +48,7 @@
     <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
     <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
     <string name="_android_post_comment_edit_button_INFO">Edit</string>
+    <string name="_android_post_expires_in_INFO">Post expires in</string>
     <string name="_android_my_wallet_title_INFO">My wallet</string>
     <string name="_android_my_wallet_balance_INFO">Balance</string>
     <string name="_android_my_wallet_spent_INFO">Spent</string>

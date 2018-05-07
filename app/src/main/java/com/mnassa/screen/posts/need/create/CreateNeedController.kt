@@ -110,7 +110,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             tvExtraDetails.text = fromDictionary(R.string.need_create_extra)
             tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
-
+//            postExpiresIn.hint = fromDictionary(R.string.post_expires_in)
+//            etPostExpiresIn.setText(fromDictionary(R.string.post_expires_day_s))
             rvImages.adapter = attachedImagesAdapter
         }
 

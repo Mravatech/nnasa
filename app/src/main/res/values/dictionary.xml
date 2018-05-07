@@ -84,6 +84,9 @@
     <string name="post_delete_dialog_yes">_question_postDeleting_ok</string>
     <string name="post_delete_dialog_no">_question_postDeleting_cancel</string>
 
+    <string name="post_expires_in">_android_post_expires_in</string>
+    <string name="post_expires_day_s">connections_button_daysLeft</string>
+
     <!-- comments -->
     <string name="posts_comment_reply">_commentCell_Reply</string>
     <string name="posts_comment_create">_android_post_details_create_comment_post_btn</string>

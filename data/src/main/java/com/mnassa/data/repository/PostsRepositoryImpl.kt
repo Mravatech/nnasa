@@ -9,6 +9,7 @@ import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.extensions.toValueChannelWithPagination
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
+import com.mnassa.data.network.bean.firebase.PaymentDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreatePostRequest
 import com.mnassa.data.network.bean.retrofit.request.RepostCommentRequest
@@ -16,6 +17,8 @@ import com.mnassa.data.network.bean.retrofit.request.ViewItemsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
+import com.mnassa.data.repository.DatabaseContract.TABLE_DICTIONARY
+import com.mnassa.data.repository.DatabaseContract.TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_POST
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
 import com.mnassa.data.repository.DatabaseContract.TABLE_PABLIC_POSTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
@@ -165,6 +168,13 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .handleException(exceptionHandler)
                 .data
                 .run { converter.convert(this) }
+    }
+
+    override suspend fun getDefaultPromotePostPrice(): Long {
+        return db.child(TABLE_DICTIONARY)
+                .child(TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_POST)
+                .await<PaymentDbEntity>(exceptionHandler)!!
+                .amount
     }
 
     private suspend fun mapPost(input: PostDbEntity): PostModel {
