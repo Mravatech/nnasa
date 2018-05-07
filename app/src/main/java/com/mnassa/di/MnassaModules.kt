@@ -36,9 +36,13 @@ import com.mnassa.screen.chats.ChatListViewModel
 import com.mnassa.screen.chats.ChatListViewModelImpl
 import com.mnassa.screen.chats.message.ChatMessageViewModel
 import com.mnassa.screen.chats.message.ChatMessageViewModelImpl
+import com.mnassa.screen.chats.startchat.ChatConnectionsViewModel
+import com.mnassa.screen.chats.startchat.ChatConnectionsViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForEventViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperForPostViewModelImpl
 import com.mnassa.screen.comments.CommentsWrapperViewModel
+import com.mnassa.screen.comments.rewarding.RewardingViewModel
+import com.mnassa.screen.comments.rewarding.RewardingViewModelImpl
 import com.mnassa.screen.complaintother.ComplaintOtherViewModel
 import com.mnassa.screen.complaintother.ComplaintOtherViewModelImpl
 import com.mnassa.screen.connections.ConnectionsViewModel
@@ -224,8 +228,10 @@ private val viewModelsModule = Kodein.Module {
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
+    bind<ChatConnectionsViewModel>() with provider { ChatConnectionsViewModelImpl(instance()) }
     bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance())}
     bind<InfoDetailsViewModel>() with provider { InfoDetailsViewModelImpl(instance()) }
+    bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
     bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
 }
@@ -281,7 +287,7 @@ private val repositoryModule = Kodein.Module {
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(),instance(), instance()) }
+    bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }

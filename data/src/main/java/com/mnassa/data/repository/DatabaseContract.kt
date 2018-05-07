@@ -31,6 +31,7 @@ internal object DatabaseContract {
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
+    const val TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT ="paymentTypes/rewardForComment"
     //
     const val TABLE_CONNECTIONS = "connections"
 

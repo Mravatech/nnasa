@@ -2,6 +2,7 @@ package com.mnassa.screen.complaintother
 
 import android.view.View
 import com.mnassa.R
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_complaint_other.view.*
@@ -20,13 +21,18 @@ class ComplaintOtherController : MnassaControllerImpl<ComplaintOtherViewModel>()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        view.tvInfoComplaint.text = fromDictionary(R.string.complaint_describe_reason)
-        view.tilComplaintMessage.hint = fromDictionary(R.string.complaint_type_message)
-        view.tlbrComplaint.actionButtonClickable = true
-        view.tlbrComplaint.withActionButton(fromDictionary(R.string.complaint_send), {
-            resultListener.onComplaint = view.etComplaintMessage.text.toString()
-            close()
-        })
+        with(view) {
+            tvInfoComplaint.text = fromDictionary(R.string.complaint_describe_reason)
+            tilComplaintMessage.hint = fromDictionary(R.string.complaint_type_message)
+            tlbrComplaint.actionButtonClickable = false
+            tlbrComplaint.withActionButton(fromDictionary(R.string.complaint_send), {
+                resultListener.onComplaint = etComplaintMessage.text.toString()
+                close()
+            })
+            etComplaintMessage.addTextChangedListener(SimpleTextWatcher{
+                tlbrComplaint.actionButtonClickable = it.isNotBlank()
+            })
+        }
     }
 
 

@@ -22,10 +22,8 @@ import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
-import kotlinx.android.synthetic.main.chip_layout.view.*
-import timber.log.Timber
-import androidx.view.get
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.chip_layout.view.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,6 +41,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     private lateinit var adapter: ChipsAdapter
     private val chips = LongSparseArray<TagModel>()
     lateinit var chipSearch: ChipsAdapter.ChipSearch
+    var onChipsChangeListener = { }
 
     init {
         View.inflate(context, R.layout.chip_layout, this)
@@ -83,10 +82,10 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     override fun onViewRemoved(key: Long) {
         chips.remove(key)
-        Timber.i(chips.toString())
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
+        onChipsChangeListener()
     }
 
     override fun onEmptySearchResult() {
@@ -149,14 +148,15 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         flChipContainer.addView(chipView, position)
         chips.append(key, tagModelTemp)
         etChipInput.text = null
+        onChipsChangeListener()
     }
 
     private fun animateViews(
-        @FloatRange(from = 0.0, to = 1.0) scale: Float,
-        transition: Float,
-        timeTV: Long,
-        timeET: Long,
-        @FloatRange(from = 0.0, to = 1.0) scaleTV: Float
+            @FloatRange(from = 0.0, to = 1.0) scale: Float,
+            transition: Float,
+            timeTV: Long,
+            timeET: Long,
+            @FloatRange(from = 0.0, to = 1.0) scaleTV: Float
     ) {
         etChipInput.animate().setDuration(timeET).scaleX(scale)
         etChipInput.animate().setDuration(timeET).scaleY(scale)

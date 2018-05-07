@@ -86,11 +86,6 @@
 
     <string name="_android_email_validation_INFO">Email is not valid</string>
     <string name="_android_phone_validation_INFO">Phone is not valid</string>
-    <string name="_android_organization_name_validation_INFO">Please enter your Organization name</string>
-    <string name="_android_person_name_validation_INFO">Please enter your First name</string>
-    <string name="_android_person_last_name_validation_INFO">Please enter your Last name</string>
-    <string name="_android_user_name_validation_INFO">Please enter your User name</string>
-
 
     <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>
     <string name="_android_invite_search_hint_INFO">Search people in Phone Book</string>
@@ -198,6 +193,11 @@
 
     <string name="_android_general_text_placeholder_INFO">Type your general here</string>
     <string name="_android_general_post_author_INFO">MNASSA Help</string>
+
+    <string name="_commentCell_usefulButton_INFO">Useful</string>
+    <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
+    <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
+
 
 
 </resources>

@@ -4,6 +4,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.isInvisible
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewAdapter
@@ -50,8 +51,9 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
             viewModel.newConnectionRequestsChannel.consumeEach {
                 adapter.isLoadingEnabled = false
                 adapter.set(it)
-                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
-                view.rvNewConnectionRequests.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+
+                view.rlEmptyView.isInvisible = it.isNotEmpty()
+                view.rvNewConnectionRequests.isInvisible = it.isEmpty()
             }
         }
     }

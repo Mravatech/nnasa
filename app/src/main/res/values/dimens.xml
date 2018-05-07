@@ -51,4 +51,6 @@
     <dimen name="material_drawer_account_header_height">172dp</dimen>
 
     <dimen name="user_icon_in_rv_size">40dp</dimen>
+
+    <dimen name="profile_bottom_space">56dp</dimen>
 </resources>

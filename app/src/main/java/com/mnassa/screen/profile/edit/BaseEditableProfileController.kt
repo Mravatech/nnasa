@@ -6,7 +6,6 @@ import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.EditText
 import com.mnassa.R
@@ -15,8 +14,8 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.base.MnassaViewModel
+import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
-import kotlinx.android.synthetic.main.header_main.view.*
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.text.DateFormatSymbols
@@ -30,7 +29,7 @@ import java.util.*
 abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle) : MnassaControllerImpl<VM>(data) {
 
     protected val dialog: DialogHelper by instance()
-    protected var timeMillis: Long? = null
+    protected var birthday: Long? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -92,7 +91,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.YEAR, year)
-                timeMillis = cal.timeInMillis
+                birthday = cal.timeInMillis
             })
         }
     }
@@ -104,11 +103,10 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
     }
 
     protected fun setToolbar(toolbar: MnassaToolbar, view: View) {
-        toolbar.onMoreClickListener = { proccesProfile(view) }
         toolbar.backButtonEnabled = true
-        toolbar.ivToolbarMore.setImageResource(R.drawable.ic_check)
-        toolbar.ivToolbarMore.setColorFilter(ContextCompat.getColor(view.context, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
-        toolbar.ivToolbarMore.visibility = View.VISIBLE
+        toolbar.withActionButton(fromDictionary(R.string.edit_save)){
+            proccesProfile(view)
+        }
     }
 
     abstract fun proccesProfile(view: View)

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_highlighted">
 
     <RelativeLayout
         android:id="@+id/commentRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
         android:clickable="true"
-        android:focusable="true"
-        android:background="?selectableItemBackground">
+        android:focusable="true">
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/ivAvatar"
@@ -56,8 +56,8 @@
             android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_comment_recommended_account"
             tools:layout_height="120dp"
+            tools:listitem="@layout/item_comment_recommended_account"
             tools:visibility="visible" />
 
         <TextView
@@ -65,13 +65,25 @@
             style="@style/MnassaTextTiny"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/btnReply"
+            android:layout_alignBottom="@id/btnUseful"
             android:layout_alignStart="@id/tvUserName"
-            android:layout_alignTop="@id/btnReply"
+            android:layout_alignTop="@id/btnUseful"
             android:layout_marginTop="@dimen/spacing_vertical"
-            android:layout_toStartOf="@id/btnReply"
+            android:layout_toStartOf="@id/btnUseful"
             android:gravity="center_vertical"
             tools:text="17 minutes ago" />
+
+        <Button
+            android:id="@+id/btnUseful"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rvRecommendedAccounts"
+            android:layout_toStartOf="@+id/btnReply"
+            android:textColor="@drawable/button_transparent_text_color"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            tools:text="Useful" />
 
         <Button
             android:id="@+id/btnReply"

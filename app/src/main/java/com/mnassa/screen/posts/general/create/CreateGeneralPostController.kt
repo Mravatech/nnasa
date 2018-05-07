@@ -51,16 +51,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
 
-        attachedImagesAdapter.onAddImageClickListener = {
-            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
-        }
-        attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
-            attachedImagesAdapter.dataStorage.remove(item)
-        }
-        attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
-            imageToReplace = item
-            attachedImagesAdapter.onAddImageClickListener()
-        }
+        initAttachedImagesAdapter(view)
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.general_publish)) {
@@ -88,15 +79,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
             chipTags.chipSearch = viewModel
 
-            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
-            actvPlace.setAdapter(placeAutocompleteAdapter)
-            actvPlace.setOnItemClickListener { _, _, i, _ ->
-                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-                placeId = item.placeId
-                val placeName = "${item.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
-                actvPlace.setText(placeName)
-            }
-            tilPlace.hint = fromDictionary(R.string.need_create_city_hint)
+            initPlaceAutoComplete(view)
 
             rvImages.adapter = attachedImagesAdapter
         }
@@ -108,6 +91,33 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
         launchCoroutineUI {
             viewModel.closeScreenChannel.consumeEach { close() }
+        }
+    }
+
+    private fun initAttachedImagesAdapter(view: View) {
+        attachedImagesAdapter.onAddImageClickListener = {
+            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+        }
+        attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
+            attachedImagesAdapter.dataStorage.remove(item)
+        }
+        attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
+            imageToReplace = item
+            attachedImagesAdapter.onAddImageClickListener()
+        }
+    }
+
+    private fun initPlaceAutoComplete(view: View) {
+        with(view) {
+            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
+            actvPlace.setAdapter(placeAutocompleteAdapter)
+            actvPlace.setOnItemClickListener { _, _, i, _ ->
+                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                placeId = item.placeId
+                val placeName = "${item.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                actvPlace.setText(placeName)
+            }
+            tilPlace.hint = fromDictionary(R.string.need_create_city_hint)
         }
     }
 

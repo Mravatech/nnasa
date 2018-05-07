@@ -4,12 +4,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
 import com.mnassa.helper.PlayServiceHelper
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 import java.util.*
 
 /**
@@ -41,46 +43,76 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     private val playServiceHelper: PlayServiceHelper by instance()
     private var personSelectedPlaceName: String? = null
     private var personSelectedPlaceId: String? = null
+        set(value) {
+            field = value
+            onPersonChanged()
+        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
         playServiceHelper.googleApiClient.connect()
         personSelectedPlaceId = accountModel.location?.placeId
-        view.rInfoBtnFemale.isChecked = accountModel.gender == Gender.MALE
-        view.rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
-        val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
-        view.actvPersonCity.setText(accountModel.location?.formatted())
-        view.actvPersonCity.setAdapter(placeAutocompleteAdapter)
-        view.actvPersonCity.setOnItemClickListener({ _, _, i, _ ->
-            placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-            personSelectedPlaceId = placeAutocompleteAdapter.getItem(i)?.placeId
-            personSelectedPlaceName = "${placeAutocompleteAdapter.getItem(i)?.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
-            view.actvPersonCity.setText(personSelectedPlaceName ?: "")
-        })
-        view.containerSelectOccupation.setAbilities(accountModel.abilities)
-        view.etPhoneNumber.setText(accountModel.contactPhone)
-        view.etPhoneNumber.setHideMode(accountModel.showContactEmail)
-        view.etYourEmail.setText(accountModel.contactEmail)
-        view.etYourEmail.setHideMode(accountModel.showContactPhone)
-        addPhoto(view.fabInfoAddPhoto)
-        view.etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
-        view.chipPersonInterests.chipSearch = viewModel
-        view.chipPersonInterests.setTags(interests)
-        view.chipPersonOffers.chipSearch = viewModel
-        view.chipPersonOffers.setTags(offers)
-        view.etPersonFirstName.setText(accountModel.personalInfo?.firstName)
-        view.etPersonSecondName.setText(accountModel.personalInfo?.lastName)
-        view.etPersonUserName.setText(accountModel.userName)
-        setToolbar(view.toolbarEditProfile, view)
-        timeMillis = accountModel.createdAt
-        setCalendarEditText(view.etDateOfBirthday)
-        view.ivUserAvatar.avatarSquare(accountModel.avatar)
+
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 close()
             }
         }
+        with(view) {
+            rInfoBtnFemale.isChecked = accountModel.gender == Gender.FEMALE
+            rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
+            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
+            actvPersonCity.setText(accountModel.location?.formatted())
+            actvPersonCity.setAdapter(placeAutocompleteAdapter)
+            actvPersonCity.setOnItemClickListener { _, _, i, _ ->
+                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                personSelectedPlaceId = item.placeId
+                personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
+                actvPersonCity.setText(personSelectedPlaceName ?: "")
+            }
+            containerSelectOccupation.setAbilities(accountModel.abilities)
+            etPhoneNumber.setText(accountModel.contactPhone?.replace("+", ""))
+            etPhoneNumber.setHideMode(accountModel.showContactPhone)
+            etYourEmail.setText(accountModel.contactEmail)
+            etYourEmail.setHideMode(accountModel.showContactEmail)
+            addPhoto(fabInfoAddPhoto)
+            etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
+            chipPersonInterests.chipSearch = viewModel
+            chipPersonInterests.setTags(interests)
+            chipPersonOffers.chipSearch = viewModel
+            chipPersonOffers.setTags(offers)
+            etPersonFirstName.setText(accountModel.personalInfo?.firstName)
+            etPersonSecondName.setText(accountModel.personalInfo?.lastName)
+            etPersonUserName.setText(accountModel.userName)
+            setToolbar(toolbarEditProfile, this)
+            birthday = accountModel.createdAt
+            setCalendarEditText(etDateOfBirthday)
+            ivUserAvatar.avatarSquare(accountModel.avatar)
+            chipPersonOffers.onChipsChangeListener = { onPersonChanged() }
+            chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
+            etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            onPersonChanged()
+        }
+    }
+
+    private fun onPersonChanged() {
+        val view = view ?: return
+        view.toolbarEditProfile.actionButtonEnabled = canCreatePersonInfo()
+    }
+
+    private fun canCreatePersonInfo(): Boolean {
+        with(view ?: return false) {
+            if (etPersonFirstName.text.isBlank()) return false
+            if (etPersonSecondName.text.isBlank()) return false
+            if (etPersonUserName.text.isBlank()) return false
+            if (personSelectedPlaceId == null) return false
+            if (chipPersonOffers.getTags().isEmpty()) return false
+            if (chipPersonInterests.getTags().isEmpty()) return false
+        }
+        return true
     }
 
     override fun onViewDestroyed(view: View) {
@@ -103,20 +135,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!Patterns.PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etPhoneNumber.error = fromDictionary(R.string.phone_is_not_valid)
-            return
-        }
-        if (view.etPersonFirstName.text.isBlank()) {
-            view.etPersonFirstName.error = fromDictionary(R.string.person_name_is_not_valid)
-            return
-        }
-        if (view.etPersonSecondName.text.isBlank()) {
-            view.etPersonSecondName.error = fromDictionary(R.string.person_last_name_is_not_valid)
-            return
-        }
-        if (view.etPersonUserName.text.isBlank()) {
-            view.etPersonUserName.error = fromDictionary(R.string.user_name_is_not_valid)
             return
         }
         viewModel.updatePersonalAccount(
@@ -128,7 +148,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 contactEmail = view.etYourEmail.text.toString(),
                 showContactPhone = view.etPhoneNumber.isChosen,
                 contactPhone = view.etPhoneNumber.text.toString(),
-                birthday = timeMillis,
+                birthday = birthday,
                 birthdayDate = view.etDateOfBirthday.text.toString(),
                 locationId = personSelectedPlaceId,
                 isMale = view.rInfoBtnMale.isChecked,
@@ -139,26 +159,28 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     }
 
     private fun setupViews(view: View) {
-        view.toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
-        view.tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
-        view.chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
-        view.chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-        view.chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-        view.tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
-        view.tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
-        view.tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
-        view.tilPersonCity.hint = fromDictionary(R.string.edit_profile_city)
-        view.tvInfoGender.hint = fromDictionary(R.string.reg_person_info_gender)
-        view.tvProfilePersonalInfo.text = fromDictionary(R.string.reg_person_info_title)
-        view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
-        view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
-        view.tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
-        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
-        view.tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
-        view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
-        view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
-        view.tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
+        with(view) {
+            toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
+            tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
+            chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+            chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+            chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
+            tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
+            tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+            tilPersonCity.hint = fromDictionary(R.string.edit_profile_city)
+            tvInfoGender.hint = fromDictionary(R.string.reg_person_info_gender)
+            tvProfilePersonalInfo.text = fromDictionary(R.string.reg_person_info_title)
+            rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
+            rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
+            tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
+            tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
+            tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
+            rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
+            rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
+            tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
+        }
     }
 
     companion object {
