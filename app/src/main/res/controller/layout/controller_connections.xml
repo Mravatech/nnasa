@@ -11,6 +11,17 @@
         android:layout_height="wrap_content"
         app:drawer_button_enabled="true"/>
 
+    <com.mnassa.widget.search.MnassaSearchView
+        android:id="@+id/searchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginEnd="@dimen/search_toolbar_space_for_close_view"
+        android:layout_marginStart="@dimen/search_toolbar_space_for_close_view"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:background="@color/accent" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvAllConnections"
         android:layout_width="match_parent"

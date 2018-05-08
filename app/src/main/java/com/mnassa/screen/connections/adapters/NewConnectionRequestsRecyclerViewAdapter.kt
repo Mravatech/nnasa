@@ -12,6 +12,8 @@ import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
+import com.mnassa.screen.base.adapter.SearchListener
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connection_request.view.*
 import kotlinx.android.synthetic.main.item_connection_request_more.view.*
@@ -25,6 +27,18 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     var onDeclineClickListener = { account: ShortAccountModel -> }
     var onItemClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = { }
+
+    override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
+
+    init {
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        searchListener = dataStorage as SearchListener
+    }
+
+    fun searchByName(searchText: String) {
+        searchPhrase = searchText
+        searchListener.search()
+    }
 
     fun destroyCallbacks() {
         onAcceptClickListener = { }

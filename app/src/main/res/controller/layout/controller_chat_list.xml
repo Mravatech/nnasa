@@ -19,7 +19,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="@dimen/spacing_vertical"
         android:layout_marginEnd="@dimen/spacing_horizontal"
-        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/search_toolbar_space_for_close_view"
         android:layout_marginTop="@dimen/spacing_vertical"
         android:background="@color/accent" />
 

@@ -33,9 +33,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     }
     override val itemClass: Class<ChatRoomModel> = ChatRoomModel::class.java
 
-    private val searchListener: SearchListener
-    private var searchPhrase = ""
-    private var filterPredicate: (item: ChatRoomModel) -> Boolean = { it.account?.formattedName?.toLowerCase()!!.contains(searchPhrase.toLowerCase()) }
+    override var filterPredicate: (item: ChatRoomModel) -> Boolean = { it.account?.formattedName?.toLowerCase()!!.contains(searchPhrase.toLowerCase()) }
 
     init {
         itemsTheSameComparator = { first, second -> first.id == second.id }

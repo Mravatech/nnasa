@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_post_recommend.view.*
+import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/27/2018.
@@ -63,6 +65,9 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
                 resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())
                 close()
             }
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher{
+                allAccountsAdapter.searchByName(it)
+            })
 
             tvRecommendHeader.text = fromDictionary(R.string.posts_recommend_subtitle)
         }

@@ -12,6 +12,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.isGone
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.extensions.setHeaderWithCounter
@@ -31,6 +32,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
+import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -99,6 +101,11 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                         openArchivedConnectionsScreen = { openArchivedConnectionsScreen() }
                 )
             }
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher{
+                allConnectionsAdapter.searchByName(it)
+                recommendedConnectionsAdapter.searchByName(it)
+                newConnectionRequestsAdapter.searchByName(it)
+            })
         }
     }
 
