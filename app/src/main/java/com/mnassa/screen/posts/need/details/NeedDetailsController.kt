@@ -80,7 +80,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
         (args.getSerializable(EXTRA_POST_MODEL) as PostModel?)?.let { post ->
-            runBlocking { bindPost(post) }
+            launchCoroutineUI { bindPost(post) }
             args.remove(EXTRA_POST_MODEL)
         }
     }
@@ -265,7 +265,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         post?.takeIf { it.canBeShared }?.let {
             open(SharingOptionsController.newInstance(
                     listener = this,
-                    accountsToExclude = listOf(it.author.id)))
+                    accountsToExclude = listOf(it.author.id),
+                    restrictShareReduction = false,
+                    canBePromoted = false,
+                    promotePrice = 0L))
         }
     }
 

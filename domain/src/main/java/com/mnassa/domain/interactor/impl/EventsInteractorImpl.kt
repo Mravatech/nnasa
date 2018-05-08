@@ -99,6 +99,10 @@ class EventsInteractorImpl(
         eventsRepository.promote(id)
     }
 
+    override suspend fun getPromotePostPrice(): Long {
+        return eventsRepository.getPromoteEventPrice() ?: 0L
+    }
+
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
@@ -129,7 +133,7 @@ class EventsInteractorImpl(
 
     override suspend fun canBuyTicket(eventId: String): Boolean {
         val event = loadByIdChannel(eventId).consume { receive() } ?: return false
-        if (event.ticketsSold >= event.ticketsTotal || event.status != EventStatus.OPENED) return false
+        if (event.ticketsSold >= event.ticketsTotal || event.status !is EventStatus.OPENED) return false
         return getBoughtTicketsCount(eventId) < event.ticketsPerAccount
     }
 

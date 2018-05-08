@@ -65,10 +65,15 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
             }
             tvShareOptions.setOnClickListener {
                 val post = post
-                open(SharingOptionsController.newInstance(
-                        options = sharingOptions,
-                        listener = this@CreateGeneralPostController,
-                        accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
+                launchCoroutineUI {
+                    open(SharingOptionsController.newInstance(
+                            options = sharingOptions,
+                            listener = this@CreateGeneralPostController,
+                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                            restrictShareReduction = postId != null,
+                            canBePromoted = viewModel.canPromotePost(),
+                            promotePrice = viewModel.getPromotePostPrice()))
+                }
             }
 
             applyShareOptionsChanges()
@@ -82,6 +87,10 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
             initPlaceAutoComplete(view)
 
             rvImages.adapter = attachedImagesAdapter
+
+            if (postId != null) {
+                toolbar.title = fromDictionary(R.string.general_edit_title)
+            }
         }
 
         if (args.containsKey(EXTRA_POST)) {
@@ -172,8 +181,6 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
         this.post = post
         launchCoroutineUI {
             with(getViewSuspend()) {
-                toolbar.title = fromDictionary(R.string.general_edit_title)
-
                 etGeneralPost.setText(post.text)
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
                 attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })

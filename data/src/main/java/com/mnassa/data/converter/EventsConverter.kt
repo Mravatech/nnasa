@@ -48,7 +48,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 pictures = input.pictures,
                 price = input.price,
                 privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) }
-                        ?: PostPrivacyType.PUBLIC,
+                        ?: PostPrivacyType.PUBLIC(),
                 status = converter.convert(input.status),
                 tags = input.tags ?: emptyList(),
                 title = input.title,
@@ -76,9 +76,9 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                     location = converter.convert(input.locationDbEntity),
                     id = requireNotNull(input.locationId) { "LocationId not specified, but type: ${input.locationType}. Event: $input" },
                     description = input.locationDescription
-            ) else EventLocationType.Later //server side error
-            NetworkContract.EventLocationType.LATER -> EventLocationType.Later
-            NetworkContract.EventLocationType.NOT_DEFINED -> EventLocationType.NotDefined
+            ) else EventLocationType.Later() //server side error
+            NetworkContract.EventLocationType.LATER -> EventLocationType.Later()
+            NetworkContract.EventLocationType.NOT_DEFINED -> EventLocationType.NotDefined()
             else -> throw IllegalArgumentException("Invalid location type ${input.locationType}. Event: $input")
         }
     }
@@ -101,21 +101,21 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertStatus(input: String): EventStatus {
         return when (input) {
-            NetworkContract.EventStatus.ANNULED -> EventStatus.ANNULED
-            NetworkContract.EventStatus.CLOSED -> EventStatus.CLOSED
-            NetworkContract.EventStatus.OPENED -> EventStatus.OPENED
-            NetworkContract.EventStatus.SUSPENDED -> EventStatus.SUSPENDED
+            NetworkContract.EventStatus.ANNULED -> EventStatus.ANNULED()
+            NetworkContract.EventStatus.CLOSED -> EventStatus.CLOSED()
+            NetworkContract.EventStatus.OPENED -> EventStatus.OPENED()
+            NetworkContract.EventStatus.SUSPENDED -> EventStatus.SUSPENDED()
             else -> throw IllegalArgumentException("Invalid event status $input")
         }
     }
 
     private fun convertType(input: String): EventType {
         return when (input) {
-            NetworkContract.EventType.ACTIVITY -> EventType.ACTIVITY
-            NetworkContract.EventType.DISCUSSION -> EventType.DISCUSSION
-            NetworkContract.EventType.EXERCISE -> EventType.EXERCISE
-            NetworkContract.EventType.LECTURE -> EventType.LECTURE
-            NetworkContract.EventType.WORKSHOP -> EventType.WORKSHOP
+            NetworkContract.EventType.ACTIVITY -> EventType.ACTIVITY()
+            NetworkContract.EventType.DISCUSSION -> EventType.DISCUSSION()
+            NetworkContract.EventType.EXERCISE -> EventType.EXERCISE()
+            NetworkContract.EventType.LECTURE -> EventType.LECTURE()
+            NetworkContract.EventType.WORKSHOP -> EventType.WORKSHOP()
             else -> throw IllegalArgumentException("Invalid event type $input")
         }
     }

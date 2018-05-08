@@ -21,8 +21,6 @@ import timber.log.Timber
  */
 class PostDetailsFactory {
 
-
-
     fun newInstance(post: PostModel): Controller {
 
         launch {
@@ -38,10 +36,10 @@ class PostDetailsFactory {
         args.putSerializable(EXTRA_POST_MODEL, post)
 
         val postController = when (post.type) {
-            PostType.PROFILE -> RecommendedProfileController(args)
-            PostType.GENERAL -> GeneralPostController(args)
-            PostType.INFO -> return InfoDetailsController.newInstance(post)
-            PostType.OFFER -> OfferDetailsController(args)
+            is PostType.PROFILE -> RecommendedProfileController(args)
+            is PostType.GENERAL -> GeneralPostController(args)
+            is PostType.INFO -> return InfoDetailsController.newInstance(post)
+            is PostType.OFFER -> OfferDetailsController(args)
             else -> NeedDetailsController(args)
         }
         return CommentsWrapperController.newInstance(postController, CommentsRewardModel(true, post.isMyPost()))

@@ -35,7 +35,7 @@
     <string name="_android_connections_archived_empty_description_INFO">You have no rejected users yet (description)</string>
     <string name="_android_news_feed_title_INFO">News feed</string>
     <string name="_android_need_details_title_INFO">%s Demands</string>
-    <string name="_android_create_post_promote_title_INFO">Promote post (200 points)</string>
+    <string name="_android_create_post_promote_title_template_INFO">Promote post (%d points)</string>
     <string name="_android_create_post_promote_description_INFO">Will be shown to all MNASSA community</string>
     <string name="_android_create_post_promote_short_INFO">all MNASSA community</string>
     <string name="_android_create_post_share_to_prefix_INFO">to %s</string>

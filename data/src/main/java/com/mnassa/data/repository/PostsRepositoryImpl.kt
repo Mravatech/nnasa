@@ -129,7 +129,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC,
                 tags = tags,
                 price = price,
                 location = placeId
@@ -169,7 +169,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC(),
                 tags = tags,
                 location = placeId
         )).handleException(exceptionHandler)
@@ -216,7 +216,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 price = price,
                 privacyType = postPrivacyOptions.privacyType.stringValue,
                 privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = postPrivacyOptions.privacyType == PostPrivacyType.PUBLIC
+                allConnections = postPrivacyOptions.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
         return result.data.run { converter.convert(this) }
     }
@@ -246,7 +246,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 price = price,
                 privacyType = postPrivacyOptions.privacyType.stringValue,
                 privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = postPrivacyOptions.privacyType == PostPrivacyType.PUBLIC
+                allConnections = postPrivacyOptions.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
     }
 
@@ -282,7 +282,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 text = text,
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
     }
 
@@ -304,7 +304,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 postId = postId,
                 text = text?.takeIf { it.isNotBlank() },
                 privacyConnections = privacy.privacyConnections.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC))
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC))
                 .handleException(exceptionHandler)
                 .data
                 .run { converter.convert(this) }

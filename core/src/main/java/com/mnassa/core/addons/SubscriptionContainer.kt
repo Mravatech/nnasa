@@ -2,6 +2,7 @@ package com.mnassa.core.addons
 
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * Created by Peter on 2/20/2018.
@@ -47,7 +48,7 @@ interface SubscriptionContainer {
  * Simple [SubscriptionContainer] implementation
  */
 open class SubscriptionsContainerDelegate : SubscriptionContainer {
-    private val jobs = ArrayList<Job>()
+    private val jobs = ConcurrentLinkedQueue<Job>()
 
     override fun addJob(job: Job): Job = job.also { jobs.add(it) }
 

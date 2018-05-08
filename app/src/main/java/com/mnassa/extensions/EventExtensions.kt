@@ -108,12 +108,16 @@ suspend fun EventModel.markAsOpened() {
     App.context.getInstance<EventsInteractor>().onItemOpened(this)
 }
 
-suspend fun EventModel.canBePromoted(): Boolean {
-    if (privacyType == PostPrivacyType.WORLD) return false
-    if (!isMyEvent()) return false
+suspend fun EventModel?.canBePromoted(): Boolean {
+    if (this?.privacyType is PostPrivacyType.WORLD) return false
+    if (this?.isMyEvent() == false) return false
 
     val userProfileInteractor: UserProfileInteractor = App.context.getInstance()
     val permissions = userProfileInteractor.getPermissions().consume { receive() }
 
     return permissions.canPromoteEvent
+}
+
+suspend fun EventModel.getPromotionPrice(): Long {
+    return App.context.getInstance<EventsInteractor>().getPromotePostPrice()
 }

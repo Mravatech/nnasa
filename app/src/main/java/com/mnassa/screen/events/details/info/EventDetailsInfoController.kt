@@ -161,9 +161,9 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         buyTicketsText.append(when {
             canBuyTickets && boughtTicketsCount == 0L -> fromDictionary(R.string.event_buy_button_active)
             canBuyTickets && boughtTicketsCount > 0L -> fromDictionary(R.string.event_tickets_buy_more)
-            event.status == EventStatus.ANNULED -> fromDictionary(R.string.event_tickets_buy_annulled)
-            event.status == EventStatus.CLOSED -> fromDictionary(R.string.event_tickets_buy_closed)
-            event.status == EventStatus.SUSPENDED -> fromDictionary(R.string.event_tickets_buy_suspended)
+            event.status is EventStatus.ANNULED -> fromDictionary(R.string.event_tickets_buy_annulled)
+            event.status is EventStatus.CLOSED -> fromDictionary(R.string.event_tickets_buy_closed)
+            event.status is EventStatus.SUSPENDED -> fromDictionary(R.string.event_tickets_buy_suspended)
             event.ticketsSold >= event.ticketsTotal -> fromDictionary(R.string.event_tickets_buy_sold_out)
             boughtTicketsCount >= event.ticketsPerAccount -> fromDictionary(R.string.event_buy_button_reached_limit)
             else -> ""

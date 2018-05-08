@@ -397,7 +397,7 @@ class DialogHelper {
     }
 
     fun selectEventStatusDialog(context: Context, initStatus: EventStatus? = null, onStatusSelected: (EventStatus) -> Unit) {
-        val statuses = listOf(EventStatus.ANNULED, EventStatus.OPENED, EventStatus.CLOSED, EventStatus.SUSPENDED)
+        val statuses = listOf(EventStatus.ANNULED(), EventStatus.OPENED(), EventStatus.CLOSED(), EventStatus.SUSPENDED())
 
         val index = if (initStatus == null) -1 else statuses.indexOfFirst { it::class.java == initStatus::class.java }
 
