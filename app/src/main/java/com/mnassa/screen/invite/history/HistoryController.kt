@@ -27,7 +27,6 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
         super.onViewCreated(view)
         with(view){
             toolbar.title = fromDictionary(R.string.invite_invite_header)
-//            ivInvitesHistory.visibility = View.GONE
             searchView.visibility = View.VISIBLE
             searchView.etSearch.addTextChangedListener(SimpleTextWatcher {
                 adapter.search(it)
