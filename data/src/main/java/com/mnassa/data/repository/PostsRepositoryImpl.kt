@@ -8,7 +8,7 @@ import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
-import com.mnassa.data.network.bean.firebase.OfferPostPriceDbEntity
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
@@ -252,16 +252,27 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun getShareOfferPostPrice(): Long? {
         return db.child(DatabaseContract.SHARE_OFFER_POST)
-                .await<OfferPostPriceDbEntity>(exceptionHandler)
+                .await<PriceDbEntity>(exceptionHandler)
                 ?.takeIf { it.state }
                 ?.amount
     }
 
     override suspend fun getShareOfferPostPerUserPrice(): Long? {
         return db.child(DatabaseContract.SHARE_OFFER_POST_PER_USER)
-                .await<OfferPostPriceDbEntity>(exceptionHandler)
+                .await<PriceDbEntity>(exceptionHandler)
                 ?.takeIf { it.state }
                 ?.amount
+    }
+
+    override suspend fun getPromotePostPrice(): Long? {
+        return db.child(DatabaseContract.PROMOTE_POST)
+                .await<PriceDbEntity>(exceptionHandler)
+                ?.takeIf { it.state }
+                ?.amount
+    }
+
+    override suspend fun promote(post: PostModel) {
+        postApi.promote(PromotePostRequest(post.id, converter.convert(post.type))).handleException(exceptionHandler)
     }
 
     override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {

@@ -10,6 +10,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.event_date.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import timber.log.Timber
 import java.text.SimpleDateFormat
 
@@ -80,7 +81,7 @@ val EventType.formatted: CharSequence
     }
 
 val EventStatus.formatted: CharSequence
-    get() = when(this) {
+    get() = when (this) {
         is EventStatus.ANNULED -> fromDictionary(R.string.event_status_annulled)
         is EventStatus.OPENED -> fromDictionary(R.string.event_status_opened)
         is EventStatus.CLOSED -> fromDictionary(R.string.event_status_closed)
@@ -105,4 +106,14 @@ fun EventModel.isMyEvent(): Boolean = author.id == App.context.getInstance<UserP
 
 suspend fun EventModel.markAsOpened() {
     App.context.getInstance<EventsInteractor>().onItemOpened(this)
+}
+
+suspend fun EventModel.canBePromoted(): Boolean {
+    if (privacyType == PostPrivacyType.WORLD) return false
+    if (!isMyEvent()) return false
+
+    val userProfileInteractor: UserProfileInteractor = App.context.getInstance()
+    val permissions = userProfileInteractor.getPermissions().consume { receive() }
+
+    return permissions.canPromoteEvent
 }

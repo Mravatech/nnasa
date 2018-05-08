@@ -2,17 +2,16 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mnassa.data.extensions.awaitList
-import com.mnassa.data.extensions.toListChannel
-import com.mnassa.data.extensions.toValueChannel
-import com.mnassa.data.extensions.toValueChannelWithChangesHandling
+import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseEventsApi
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.EventAttendeeAccountDbEntity
 import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
@@ -30,7 +29,8 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val exceptionHandler: ExceptionHandler,
                            private val converter: ConvertersContext,
                            private val postApi: FirebasePostApi,
-                           private val eventsApi: FirebaseEventsApi) : EventsRepository {
+                           private val eventsApi: FirebaseEventsApi,
+                           private val db: DatabaseReference) : EventsRepository {
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
         return firestore
@@ -115,5 +115,16 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     override suspend fun editEvent(model: CreateOrEditEventModel) {
         val request: CreateOrEditEventRequest = converter.convert(model)
         eventsApi.editEvent(request).handleException(exceptionHandler)
+    }
+
+    override suspend fun getPromoteEventPrice(): Long? {
+        return db.child(DatabaseContract.PROMOTE_EVENT)
+                .await<PriceDbEntity>(exceptionHandler)
+                ?.takeIf { it.state }
+                ?.amount
+    }
+
+    override suspend fun promote(id: String) {
+        postApi.promote(PromotePostRequest(id, NetworkContract.EntityType.EVENT)).handleException(exceptionHandler)
     }
 }

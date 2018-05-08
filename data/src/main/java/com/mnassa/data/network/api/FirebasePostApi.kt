@@ -33,4 +33,7 @@ interface FirebasePostApi {
 
     @POST("/unpinInfoPost")
     fun hideInfoPost(@Body request: HideInfoPostRequest): Deferred<MnassaResponse>
+
+    @POST("/promote")
+    fun promote(@Body request: PromotePostRequest): Deferred<MnassaResponse>
 }

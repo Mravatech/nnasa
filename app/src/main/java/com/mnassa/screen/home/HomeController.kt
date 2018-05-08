@@ -107,7 +107,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                     }
 
                     if (permission.canCreateOfferPost) {
-                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
                         button.setOnClickListener {
                             famHome.close(false)
                             open(CreateOfferController.newInstance())
@@ -116,7 +116,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                     }
 
                     if (permission.canCreateNeedPost) {
-                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
                         button.setOnClickListener {
                             famHome.close(false)
                             open(CreateNeedController.newInstance())

@@ -10,6 +10,7 @@
     <string name="_android_country_canada_INFO">Canada</string>
 
     <string name="_android_cancel_INFO">Cancel</string>
+    <string name="_android_ok_INFO">OK</string>
 
     <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
     <string name="_android_enter_validation_code_header_INFO">Validation Code</string>

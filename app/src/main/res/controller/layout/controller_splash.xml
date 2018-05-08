@@ -8,10 +8,10 @@
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/ivLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/ic_logo" />
+        app:srcCompat="@drawable/ic_mnassa_logo" />
 
 
     <TextView

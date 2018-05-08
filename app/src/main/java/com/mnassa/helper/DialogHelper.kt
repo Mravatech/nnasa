@@ -186,6 +186,15 @@ class DialogHelper {
                 .show()
     }
 
+    fun showConfirmPostPromotingDialog(context: Context, price: Long, onOkClick: () -> Unit) {
+        MaterialDialog.Builder(context)
+                .content(fromDictionary(R.string.post_promote_dialog_title).format(price))
+                .positiveText(fromDictionary(R.string.post_promote_dialog_yes))
+                .negativeText(fromDictionary(R.string.post_promote_dialog_no))
+                .onPositive { _, _ -> onOkClick() }
+                .show()
+    }
+
     fun showDeclineConnectionDialog(context: Context, disconnectDays: Int, onOkClick: () -> Unit) {
         MaterialDialog.Builder(context)
                 .title(fromDictionary(R.string.new_requests_decline))

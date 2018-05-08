@@ -15,6 +15,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
+import kotlinx.coroutines.experimental.channels.consume
 
 /**
  * Created by Peter on 3/19/2018.
@@ -101,4 +102,25 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
 
-val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE && !this.isMyPost()
+val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE && !isMyPost()
+
+suspend fun PostModel.canBePromoted(): Boolean {
+    if (privacyType == PostPrivacyType.WORLD) return false
+    if (!isMyPost()) return false
+
+    val userProfileInteractor: UserProfileInteractor = App.context.getInstance()
+    val permissions = userProfileInteractor.getPermissions().consume { receive() }
+
+    return when (type) {
+        is PostType.NEED -> permissions.canPromoteNeedPost
+        is PostType.OFFER -> permissions.canPromoteOfferPost
+        is PostType.GENERAL -> permissions.canPromoteGeneralPost
+        is PostType.PROFILE -> permissions.canPromoteAccountPost
+        is PostType.INFO -> false
+        is PostType.OTHER -> false
+    }
+}
+
+suspend fun PostModel.getPromotionPrice(): Long {
+    return App.context.getInstance<PostsInteractor>().getPromotePostPrice()
+}

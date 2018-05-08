@@ -34,6 +34,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         convertersContext.registerConverter(this::convertPost)
         convertersContext.registerConverter(this::convertNewsFeedItemCounters)
         convertersContext.registerConverter(this::convertPostType)
+        convertersContext.registerConverter(this::convertFromPostType)
         convertersContext.registerConverter(this::convertPostPrivacyType)
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertPostData)
@@ -193,6 +194,18 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                 Timber.e(IllegalArgumentException("Wrong post item type $input"))
                 PostType.OTHER
             }
+        }
+    }
+
+    private fun convertFromPostType(input: PostType): String {
+        return when(input) {
+            PostType.NEED -> NEWS_FEED_TYPE_NEED
+            PostType.OFFER -> NEWS_FEED_TYPE_OFFER
+            PostType.GENERAL -> NEWS_FEED_TYPE_GENERAL
+            PostType.PROFILE -> NEWS_FEED_TYPE_ACCOUNT
+            PostType.INFO -> NEWS_FEED_TYPE_INFO
+            PostType.OTHER -> ""
+            else -> ""
         }
     }
 

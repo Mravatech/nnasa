@@ -29,11 +29,13 @@ class GeneralPostController(args: Bundle) : NeedDetailsController(args) {
         }
     }
 
-    override fun showMyPostMenu(view: View, post: PostModel) {
+    override suspend fun showMyPostMenu(view: View, post: PostModel) {
         popupMenuHelper.showMyPostMenu(
                 view = view,
+                post = post,
                 onEditPost = { open(CreateGeneralPostController.newInstance(post)) },
-                onDeletePost = { viewModel.delete() })
+                onDeletePost = { viewModel.delete() },
+                onPromotePost = { viewModel.promote() })
     }
 
     override suspend fun makePostActionsVisible() = makePostActionsGone()

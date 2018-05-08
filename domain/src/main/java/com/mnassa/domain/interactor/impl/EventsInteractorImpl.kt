@@ -95,6 +95,10 @@ class EventsInteractorImpl(
         return eventsRepository.editEvent(model)
     }
 
+    override suspend fun promote(id: String) {
+        eventsRepository.promote(id)
+    }
+
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }

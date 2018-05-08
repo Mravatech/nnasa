@@ -76,11 +76,13 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
         toolbar.title = fromDictionary(R.string.recommend_title)
     }
 
-    override fun showMyPostMenu(view: View, post: PostModel) {
+    override suspend fun showMyPostMenu(view: View, post: PostModel) {
         popupMenuHelper.showMyPostMenu(
                 view = view,
+                post = post,
                 onEditPost = { open(RecommendUserController.newInstance(post as RecommendedProfilePostModel)) },
-                onDeletePost = { viewModel.delete() })
+                onDeletePost = { viewModel.delete() },
+                onPromotePost = { viewModel.promote() })
     }
 
     override suspend fun bindTags(tags: List<TagModel>) = Unit
