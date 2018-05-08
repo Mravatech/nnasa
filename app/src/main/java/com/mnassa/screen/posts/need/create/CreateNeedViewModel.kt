@@ -16,6 +16,6 @@ interface CreateNeedViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceA
 
     suspend fun getTag(tagId: String): TagModel?
     suspend fun getUser(userId: String): ShortAccountModel?
-    suspend fun getDefaultExpirationDays(): Int
+    suspend fun getDefaultExpirationDays(): Long
     fun createPost(need: String, tags: List<TagModel>, images: List<AttachedImage>, placeId: String?, price: Long?, timeOfExpiration: Long?, postPrivacyOptions: PostPrivacyOptions)
 }

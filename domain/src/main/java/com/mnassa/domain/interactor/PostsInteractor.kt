@@ -94,7 +94,7 @@ interface PostsInteractor {
 
     suspend fun removePost(postId: String)
 
-    suspend fun getDefaultExpirationDays(): Int
+    suspend fun getDefaultExpirationDays(): Long
     suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
 
     suspend fun hideInfoPost(postId: String)

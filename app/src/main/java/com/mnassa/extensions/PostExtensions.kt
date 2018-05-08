@@ -105,10 +105,11 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
 }
 
 fun TextView.expireType(statusOfExpiration: ExpirationType, timeOfExpiration: Date?) {
+    val key: String = resources.getString(R.string.post_expires_text_key)
     if (statusOfExpiration is ExpirationType.ACTIVE) {
         timeOfExpiration?.let {
             val spanText = it.formatAsDate().toString()
-            val validation = fromDictionary(R.string.post_expires_valid_till)
+            val validation = fromDictionary(key + statusOfExpiration.text)
             val sentence = "$validation $spanText"
             setTextWithOneSpanText(sentence, spanText, Color.BLACK)
             val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_expiration_active, null)
@@ -124,7 +125,8 @@ fun TextView.expireType(statusOfExpiration: ExpirationType, timeOfExpiration: Da
     }
     setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
     setTextColor(Color.BLACK)
-    text = statusOfExpiration.text
+
+    text = fromDictionary(key + statusOfExpiration.text)
 }
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0

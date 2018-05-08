@@ -35,7 +35,7 @@ interface PostsRepository {
             price: Long?,
             placeId: String?
     )
-    suspend fun getDefaultExpirationDays(): Int
+    suspend fun getDefaultExpirationDays(): Long
 
     suspend fun createGeneralPost(
             text: String,

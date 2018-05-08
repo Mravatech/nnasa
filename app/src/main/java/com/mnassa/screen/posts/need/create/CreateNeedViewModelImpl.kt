@@ -64,7 +64,7 @@ class CreateNeedViewModelImpl(
         }
     }
 
-    override suspend fun getDefaultExpirationDays(): Int = postsInteractor.getDefaultExpirationDays()
+    override suspend fun getDefaultExpirationDays(): Long = postsInteractor.getDefaultExpirationDays()
 
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountById(userId) }
 

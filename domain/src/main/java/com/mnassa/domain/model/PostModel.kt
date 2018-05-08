@@ -19,7 +19,7 @@ interface PostModel : Model {
     val tags: List<String>
     val text: String?
     val statusOfExpiration: ExpirationType
-    val timeOfExpiration: Date?
+    var timeOfExpiration: Date?
     val updatedAt: Date
     val counters: PostCounters
     val author: ShortAccountModel

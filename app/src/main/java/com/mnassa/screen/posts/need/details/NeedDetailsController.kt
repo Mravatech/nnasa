@@ -6,7 +6,10 @@ import android.view.View
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -165,12 +168,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvRepostsCount.text = post.counters.reposts.toString()
 
             //expiration
-            if (post.timeOfExpiration == null && post.statusOfExpiration is ExpirationType.ACTIVE) {
-                tvExpiration.visibility = View.GONE
-                vExpirationSeparator.visibility = View.GONE
-            } else {
-                tvExpiration.expireType(post.statusOfExpiration, post.timeOfExpiration)
-            }
+            tvExpiration.expireType(post.statusOfExpiration, post.timeOfExpiration)
 
             btnComment.text = fromDictionary(R.string.need_comment_button)
             btnComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }

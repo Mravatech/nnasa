@@ -16,6 +16,9 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import timber.log.Timber
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 3/19/2018.
@@ -29,15 +32,15 @@ open class NeedDetailsViewModelImpl(
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
-
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         handleException {
             postsInteractor.loadById(postId).consumeEach {
                 if (it != null) {
+                    it.timeOfExpiration = getExpiration(it)
+                    Timber.i(it.toString())
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
                 } else {
@@ -48,6 +51,13 @@ open class NeedDetailsViewModelImpl(
         handleException {
             reportsList = complaintInteractor.getReports()
         }
+    }
+
+    private suspend fun getExpiration(post: PostModel): Date {
+        Timber.i(post.toString())
+        if (post.timeOfExpiration != null) return requireNotNull(post.timeOfExpiration)
+        val defaultDaysToExpire = postsInteractor.getDefaultExpirationDays()
+        return Date(post.originalCreatedAt.time + TimeUnit.MILLISECONDS.convert(defaultDaysToExpire, TimeUnit.DAYS))
     }
 
     override suspend fun retrieveComplaints(): List<TranslatedWordModel> {

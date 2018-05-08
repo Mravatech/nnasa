@@ -5,7 +5,10 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.domain.model.OfferPostModel
 import com.mnassa.domain.model.PostModel
-import com.mnassa.extensions.*
+import com.mnassa.extensions.getBoughtItemsCount
+import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.extensions.isGone
+import com.mnassa.extensions.isMyPost
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.offer.create.CreateOfferController
@@ -39,7 +42,8 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
         with(getViewSuspend()) {
             tvTitle.text = post.title
             tvTitle.goneIfEmpty()
-
+            tvExpiration.visibility = View.GONE
+            vExpirationSeparator.visibility = View.GONE
             val offerCategoryString = StringBuilder()
 
             if (!post.category.isNullOrBlank()) {

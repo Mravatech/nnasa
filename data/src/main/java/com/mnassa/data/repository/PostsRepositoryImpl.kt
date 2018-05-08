@@ -301,7 +301,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .run { converter.convert(this) }
     }
 
-    override suspend fun getDefaultExpirationDays(): Int {
+    override suspend fun getDefaultExpirationDays(): Long {
         return db.child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME)
                 .await(exceptionHandler)!!

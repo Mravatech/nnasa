@@ -33,6 +33,7 @@ class EndPrefixEditText : LinearLayout {
             val timeToExpire = etEditableText.text.toString().toLongOrNull() ?: return null
             return System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(timeToExpire, TimeUnit.DAYS)
         }
+        private set
 
     init {
         orientation = VERTICAL
