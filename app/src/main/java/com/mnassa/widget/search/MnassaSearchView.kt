@@ -1,6 +1,8 @@
 package com.mnassa.widget.search
 
 import android.content.Context
+import android.graphics.Color
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -16,13 +18,18 @@ import kotlinx.android.synthetic.main.search_view.view.*
  */
 class MnassaSearchView : FrameLayout {
     constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        processAttrs(attrs, 0, 0)
+    }
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        processAttrs(attrs, defStyleAttr, 0)
+    }
 
     init {
         inflate(context, R.layout.search_view, this)
         ivSearchClose.setOnClickListener {
-            if (etSearch.text.toString().isNotEmpty()){
+            if (etSearch.text.toString().isNotEmpty()) {
                 etSearch.text = null
                 return@setOnClickListener
             }
@@ -35,6 +42,15 @@ class MnassaSearchView : FrameLayout {
             ivSearchClose.visibility = View.VISIBLE
             showKeyboard(etSearch)
         }
+    }
+
+    private fun processAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) {
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.MnassaSearchView, 0, 0)
+        val color = attributes.getColor(R.styleable.MnassaSearchView_icons_color, Color.WHITE)
+        DrawableCompat.setTint(ivSearch.drawable, color)
+        DrawableCompat.setTint(ivSearchClose.drawable, color)
+        etSearch.setTextColor(color)
+        attributes.recycle()
     }
 
 }

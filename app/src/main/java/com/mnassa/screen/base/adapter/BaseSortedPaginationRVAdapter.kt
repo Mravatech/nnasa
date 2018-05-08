@@ -99,23 +99,23 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
 
         private fun convert(dataPosition: Int) = adapter.convertDataIndexToAdapterPosition(dataPosition)
     }
-
-    open inner class FilteredSortedDataStorage(private val filterPredicate: (item1: ITEM) -> Boolean,
-                                               private val dataStorage: DataStorage<ITEM>,
-                                               private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> by dataStorage, SearchListener {
-
-        private var itemList: List<ITEM> = emptyList()
-
-        override fun search() {
-            if (itemList.isEmpty() || itemList.size < dataStorage.size){
-                itemList = dataStorage.toList()
-            }
-            val newValues = itemList.filter(filterPredicate)
-            dataStorage.set(newValues)
-        }
-    }
-
-    interface SearchListener {
-        fun search()
-    }
+//
+//    open inner class FilteredSortedDataStorage(private val filterPredicate: (item1: ITEM) -> Boolean,
+//                                               private val dataStorage: DataStorage<ITEM>,
+//                                               private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> by dataStorage, SearchListener {
+//
+//        private var itemList: List<ITEM> = emptyList()
+//
+//        override fun search() {
+//            if (itemList.isEmpty() || itemList.size < dataStorage.size){
+//                itemList = dataStorage.toList()
+//            }
+//            val newValues = itemList.filter(filterPredicate)
+//            dataStorage.set(newValues)
+//        }
+//    }
+//
+//    interface SearchListener {
+//        fun search()
+//    }
 }

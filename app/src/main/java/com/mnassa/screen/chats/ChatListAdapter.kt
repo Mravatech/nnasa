@@ -13,6 +13,8 @@ import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
+import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
+import com.mnassa.screen.base.adapter.SearchListener
 import kotlinx.android.synthetic.main.item_chat_room.view.*
 
 
@@ -31,9 +33,9 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     }
     override val itemClass: Class<ChatRoomModel> = ChatRoomModel::class.java
 
-    val searchListener: SearchListener
+    private val searchListener: SearchListener
     private var searchPhrase = ""
-    private var filterPredicate: (item: ChatRoomModel) -> Boolean = { it.account?.formattedName?.toLowerCase()!!.startsWith(searchPhrase.toLowerCase()) }
+    private var filterPredicate: (item: ChatRoomModel) -> Boolean = { it.account?.formattedName?.toLowerCase()!!.contains(searchPhrase.toLowerCase()) }
 
     init {
         itemsTheSameComparator = { first, second -> first.id == second.id }

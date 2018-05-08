@@ -11,6 +11,8 @@ import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
+import com.mnassa.screen.base.adapter.SearchListener
 import kotlinx.android.synthetic.main.item_build_network.view.*
 
 /**
@@ -29,6 +31,20 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
 
             notifyDataSetChanged()
         }
+
+    private val searchListener: SearchListener
+    private var searchPhrase = ""
+    private var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
+
+    init {
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        searchListener = dataStorage as SearchListener
+    }
+
+    fun searchByName(searchText: String) {
+        searchPhrase = searchText
+        searchListener.search()
+    }
 
     fun destroyCallbacks() {
         onSelectedAccountsChangedListener = { }

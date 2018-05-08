@@ -12,6 +12,8 @@ import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
+import com.mnassa.screen.base.adapter.SearchListener
 import kotlinx.android.synthetic.main.item_connections_all.view.*
 
 /**
@@ -21,6 +23,20 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
     var onItemOptionsClickListener = { account: ShortAccountModel, sender: View -> }
     var onItemClickListener = { account: ShortAccountModel -> }
     var onBindHeader = { header: View -> }
+
+    private val searchListener: SearchListener
+    private var searchPhrase = ""
+    private var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
+
+    init {
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        searchListener = dataStorage as SearchListener
+    }
+
+    fun searchByName(searchText: String) {
+        searchPhrase = searchText
+        searchListener.search()
+    }
 
     fun destroyCallbacks() {
         onItemOptionsClickListener = { _, _ -> }

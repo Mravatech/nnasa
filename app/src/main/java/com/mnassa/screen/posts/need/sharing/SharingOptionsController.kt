@@ -11,11 +11,13 @@ import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_sharing_options.view.*
+import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.io.Serializable
@@ -56,6 +58,9 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 rbMyNewsFeed.isChecked = it.isEmpty()
                 ignoreCheckedListener = false
             }
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher{
+                adapter.searchByName(it)
+            })
 
             rbPromotePost.setOnCheckedChangeListener { button, isChecked ->
                 if (ignoreCheckedListener) return@setOnCheckedChangeListener
