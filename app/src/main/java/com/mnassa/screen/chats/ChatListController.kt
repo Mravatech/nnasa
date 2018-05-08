@@ -7,11 +7,13 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_list.view.*
+import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -64,6 +66,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>() {
             toolbar.title = fromDictionary(R.string.chats_title)
 
             tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher { adapter.searchByName(it) })
         }
         adapter.onItemClickListener = { open(ChatMessageController.newInstance(requireNotNull(it.account))) }
     }

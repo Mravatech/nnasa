@@ -5,9 +5,14 @@
     style="@style/Invite.MainContainer"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/toolbar_invite"
-        android:id="@+id/invite_toolbar"/>
+    <!--<include-->
+        <!--android:id="@+id/invite_toolbar"-->
+        <!--layout="@layout/toolbar_invite" />-->
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <View style="@style/MnassaShadow" />
 
@@ -28,8 +33,8 @@ or choose from them your Phone Book" />
     <Button
         android:id="@+id/btnInvite"
         style="@style/Invite.InviteButton"
-        android:enabled="false"
         android:layout_margin="@dimen/invite_main_screen_margin"
+        android:enabled="false"
         tools:text="INVITE" />
 
     <LinearLayout

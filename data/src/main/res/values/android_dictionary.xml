@@ -188,6 +188,8 @@
     <string name="_android_minutes_INFO">%d minutes</string>
     <string name="_android_seconds_INFO">%d seconds</string>
 
+    <string name="_android_search_done_INFO">Done</string>
+    <string name="_android_search_hint_INFO">Search</string>
 
 
 </resources>

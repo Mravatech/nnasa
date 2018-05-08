@@ -467,4 +467,7 @@
     <string name="minutes_count">_android_minutes</string>
     <string name="seconds_count">_android_seconds</string>
 
+    <string name="search_done">_android_search_done</string>
+    <string name="search_hint">_android_search_hint</string>
+
 </resources>

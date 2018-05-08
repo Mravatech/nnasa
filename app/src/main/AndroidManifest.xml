@@ -32,6 +32,9 @@
         <activity android:name=".activity.SecondActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

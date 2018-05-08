@@ -1,16 +1,17 @@
 package com.mnassa.screen.invite.history
 
+//import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_history.view.*
-import kotlinx.android.synthetic.main.toolbar_invite.view.*
+import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,19 +25,14 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
     private var adapter: InviteHistoryAdapter = InviteHistoryAdapter()
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
-        view.ivInvitesHistory.visibility = View.GONE
-        view.ivInvitesSearch.visibility = View.VISIBLE
-        view.ivInvitesSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                adapter.search(newText)
-                return false
-            }
-        })
+        with(view){
+            toolbar.title = fromDictionary(R.string.invite_invite_header)
+//            ivInvitesHistory.visibility = View.GONE
+            searchView.visibility = View.VISIBLE
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher {
+                adapter.search(it)
+            })
+        }
         launchCoroutineUI {
             viewModel.phoneContactChannel.consumeEach {
                 view.rvInviteHistory.layoutManager = LinearLayoutManager(view.context)

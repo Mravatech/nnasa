@@ -6,15 +6,14 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.helper.CountryHelper
-import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.openApplicationSettings
+import com.mnassa.helper.CountryHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.history.HistoryController
@@ -22,9 +21,10 @@ import com.mnassa.screen.login.enterphone.CountryCode
 import com.mnassa.screen.login.enterphone.CountryCodeAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
+import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
-import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -73,7 +73,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
         }
         launchCoroutineUI {
             viewModel.invitesCountChannel.consumeEach {
-                view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_invites_left).format(it)
+                view.toolbar.title = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
         }
     }
@@ -103,33 +103,36 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     private fun initViews(view: View) {
-        view.tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
-        view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
-        view.etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
-        view.etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
-        view.btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
-        view.spinnerPhoneCode.adapter = CountryCodeAdapter(view.spinnerPhoneCode.context, countryHelper.countries)
-        view.spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
-        }
-        view.etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
-            view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
-            adapter.searchByNumber(it)
-        })
-        view.btnInvite.setOnClickListener {
-            viewModel.checkPhoneContact(PhoneContactImpl(
-                    phoneNumber + view.etPhoneNumberTail.text.toString(),
-                    adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
-                            ?: EMPTY_STRING, null))
-        }
-        view.etInviteSearch.addTextChangedListener(
-                SimpleTextWatcher { searchWord ->
-                    adapter.searchByName(searchWord)
-                }
-        )
-        view.ivInvitesHistory.setOnClickListener {
-            open(HistoryController.newInstance())
+        with(view) {
+            tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
+            toolbar.title = fromDictionary(R.string.invite_invite_header)
+            etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
+            etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
+            btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
+            spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+            }
+            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
+                view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
+                adapter.searchByNumber(it)
+            })
+            btnInvite.setOnClickListener {
+                viewModel.checkPhoneContact(PhoneContactImpl(
+                        phoneNumber,
+                        adapter.getNameByNumber(etPhoneNumberTail.text.toString())
+                                ?: EMPTY_STRING, null))
+            }
+            etInviteSearch.addTextChangedListener(
+                    SimpleTextWatcher { searchWord ->
+                        adapter.searchByName(searchWord)
+                    }
+            )
+            toolbar.ivToolbarMore.setImageResource(R.drawable.ic_archive)
+            toolbar.onMoreClickListener = {
+                open(HistoryController.newInstance())
+            }
         }
     }
 
