@@ -1,8 +1,8 @@
 package com.mnassa.data.extensions
 
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import timber.log.Timber
 
@@ -53,7 +53,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.awaitList(): Lis
     return result
 }
 
-internal suspend inline fun <reified T : Any> CollectionReference.awaitList(): List<T> {
+internal suspend inline fun <reified T : Any> Query.awaitList(): List<T> {
     val result = suspendCancellableCoroutine<List<T>> { continuation ->
         lateinit var listener: ListenerRegistration
         listener = addSnapshotListener { snapshot, firebaseFirestoreException ->

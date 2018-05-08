@@ -1,7 +1,6 @@
 package com.mnassa.data.network.bean.retrofit.response
 
 import com.google.gson.annotations.SerializedName
-import com.mnassa.data.network.bean.firebase.ShortAccountAbilityDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 
 /**
@@ -22,6 +21,7 @@ internal data class CommentResponseEntity(
         @SerializedName("createdAt") val createdAt: Long,
         @SerializedName("creator") val creator: Map<String, ShortAccountDbEntity>,
         @SerializedName("isPrivate") var isPrivate: Boolean = false,
+        @SerializedName("isRewarded") var isRewarded: Boolean = false,
         @SerializedName("replies") var replies: Map<String, CommentResponseEntity>?,
         @SerializedName("text") var text: String?,
         @SerializedName("accounts") var recommendedAccounts: Map<String, ShortAccountDbEntity>?

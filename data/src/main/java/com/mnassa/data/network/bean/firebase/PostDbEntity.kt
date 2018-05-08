@@ -16,6 +16,7 @@ internal data class PostDbEntity(
         @SerializedName("counters") var counters: PostCountersDbEntity,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("images") var images: List<String>?,
+        @SerializedName("videos") var videos: List<String>?,
         @SerializedName("itemType") var itemType: String,
         @SerializedName("type") var type: String,
         @SerializedName("originalCreatedAt") var originalCreatedAt: Long,
@@ -32,7 +33,14 @@ internal data class PostDbEntity(
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
         @SerializedName("repostAuthor") var repostAuthor: Map<String, ShortAccountDbEntity>?,
         //posted account
-        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?
+        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
+        //info post
+        @SerializedName("title") var title: String?, //offer post
+        @SerializedName("statusOfExpiration") var statusOfExpiration: String?,
+        //offer post
+        @SerializedName("category") val category: String?,
+        @SerializedName("subcategory") val subcategory: String?
+
 ) : HasId
 
 internal data class PostCountersDbEntity(

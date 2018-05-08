@@ -6,9 +6,12 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.view.View
+import android.widget.ImageView
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
+import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
@@ -64,6 +67,15 @@ val PostModel.formattedText: CharSequence?
                 spannable.append(text ?: "")
                 spannable
             }
+            PostType.OFFER -> {
+                if (text.isNullOrBlank()) return text
+
+                val spannable = SpannableStringBuilder(fromDictionary(R.string.offer_prefix))
+                spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.append(" ")
+                spannable.append(text)
+                spannable
+            }
             else -> text
         }
     }
@@ -71,3 +83,22 @@ val PostModel.formattedText: CharSequence?
 fun PostModel.isMyPost(): Boolean = author.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
 
 val PostModel.isRepost: Boolean get() = originalId != id
+
+
+suspend fun PostModel.markAsOpened() {
+    val postInteractor = App.context.getInstance<PostsInteractor>()
+    postInteractor.onItemOpened(this)
+}
+
+fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
+    (parent as? View)?.findViewById<View>(R.id.ivPlay)?.isInvisible = postAttachment is PostAttachment.PostPhotoAttachment
+
+    when (postAttachment) {
+        is PostAttachment.PostPhotoAttachment -> image(postAttachment.photoUrl, crop)
+        is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)
+    }
+}
+
+suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
+
+val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE && !this.isMyPost()

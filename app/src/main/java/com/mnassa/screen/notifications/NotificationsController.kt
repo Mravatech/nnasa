@@ -11,6 +11,7 @@ import com.mnassa.domain.model.bufferize
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.notifications.viewholder.*
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
@@ -22,7 +23,7 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
+class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), OnPageSelected {
     override val layoutId: Int = R.layout.controller_notifications
     override val viewModel: NotificationsViewModel by instance()
 
@@ -71,6 +72,10 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         adapter.saveState(outState)
+    }
+
+    override fun onPageSelected() {
+        view?.rvNotifications?.scrollToPosition(0)
     }
 
     private fun onNotificationClickHandle(item: NotificationModel) {

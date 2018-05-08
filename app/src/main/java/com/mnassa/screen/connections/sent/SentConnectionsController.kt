@@ -2,13 +2,14 @@ package com.mnassa.screen.connections.sent
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_sent.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 9.03.2018.
@@ -32,8 +33,8 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
         adapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.sentConnectionsChannel.consumeEach {
-                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
-                view.rvSentConnections.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+                view.rlEmptyView.isInvisible = it.isNotEmpty()
+                view.rvSentConnections.isInvisible = it.isEmpty()
 
                 adapter.isLoadingEnabled = false
                 adapter.set(it)

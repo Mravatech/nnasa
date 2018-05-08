@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.support.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.extensions.ReConsumeWhenAccountChangedConflatedBroadcastChannel
+import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -15,13 +15,13 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
  */
 class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), ConnectionsViewModel {
 
-    override val newConnectionRequestsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val newConnectionRequestsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ProcessAccountChangeConflatedBroadcastChannel {
         connectionsInteractor.getConnectionRequests()
     }
-    override val recommendedConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val recommendedConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ProcessAccountChangeConflatedBroadcastChannel {
         connectionsInteractor.getRecommendedConnections()
     }
-    override val allConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ReConsumeWhenAccountChangedConflatedBroadcastChannel {
+    override val allConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> by ProcessAccountChangeConflatedBroadcastChannel {
         connectionsInteractor.getConnectedConnections()
     }
 

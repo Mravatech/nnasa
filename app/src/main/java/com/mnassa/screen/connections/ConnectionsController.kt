@@ -116,7 +116,10 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         newConnectionRequestsAdapter.saveState(outState)
     }
 
-    override fun onPageSelected() = askPermissions()
+    override fun onPageSelected() {
+        askPermissions()
+        view?.rvAllConnections?.scrollToPosition(0)
+    }
 
     private var askPermissionsJob: Job? = null
     @SuppressLint("MissingPermission")

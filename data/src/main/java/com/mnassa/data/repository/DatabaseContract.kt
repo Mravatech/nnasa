@@ -31,6 +31,7 @@ internal object DatabaseContract {
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
+    const val TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT ="paymentTypes/rewardForComment"
     //
     const val TABLE_CONNECTIONS = "connections"
 
@@ -94,5 +95,12 @@ internal object DatabaseContract {
     //
     const val TABLE_EVENT_ATTENDIES = "attendedUsers"
     const val TABLE_EVENT_ATTENDIES_COLLECTION = "attendanceList"
+    //
+    const val TABLE_INFO_FEED = "infofeed"
+    //
+    const val TABLE_OFFER_CATEGORY = "categories"
+    //offer
+    const val SHARE_OFFER_POST = "dictionary/paymentTypes/shareOfferPost"
+    const val SHARE_OFFER_POST_PER_USER = "dictionary/paymentTypes/shareOfferPostPerUser"
 
 }

@@ -4,10 +4,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.controller_organization_info.view.*
 import kotlinx.android.synthetic.main.sub_company_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<OrganizationInfoViewModel>(data) {
 
@@ -30,7 +31,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
         addPhoto(view.fabInfoAddPhoto)
         view.etCompanyEmail.setHideMode(false)
         view.etCompanyPhone.setHideMode(false)
-        view.etCompanyPhone.setText(accountModel.contactPhone)
+        view.etCompanyPhone.setText(accountModel.contactPhone?.replace("+", ""))
         view.etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
         view.btnHeaderNext.setOnClickListener { proccesProfile(view) }
         view.tvSkipThisStep.setOnClickListener {
@@ -60,7 +61,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!Patterns.PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etCompanyPhone.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -69,7 +70,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
                 view.etFoundation.text.toString().takeIf { it.isNotBlank() },
                 view.etCompanyEmail.isChosen,
                 view.etCompanyPhone.isChosen,
-                timeMillis,
+                birthday,
                 view.etCompanyEmail.text.toString().takeIf { it.isNotBlank() },
                 view.etCompanyPhone.text.toString().takeIf { it.isNotBlank() },
                 view.etWebSite.text.toString().takeIf { it.isNotBlank() }

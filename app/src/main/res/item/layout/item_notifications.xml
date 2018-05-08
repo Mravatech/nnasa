@@ -24,6 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -47,11 +48,10 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginStart="@dimen/spacing_small"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/roboto"
             android:gravity="end"
             android:textColor="@color/gray_cool"
             android:textSize="14sp"
-            android:textStyle="normal"
             tools:text="9 min" />
 
     </LinearLayout>

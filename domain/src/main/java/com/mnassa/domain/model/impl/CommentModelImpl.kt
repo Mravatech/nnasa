@@ -13,7 +13,8 @@ data class CommentModelImpl(
         override val createdAt: Date,
         override val creator: ShortAccountModel,
         override val text: String?,
-        override val recommends: List<ShortAccountModel>
+        override val recommends: List<ShortAccountModel>,
+        override val isRewarded: Boolean
 ) : CommentModel
 
 data class CommentReplyModelImpl(
@@ -22,5 +23,6 @@ data class CommentReplyModelImpl(
         override val creator: ShortAccountModel,
         override val text: String?,
         override val recommends: List<ShortAccountModel>,
-        override val parentId: String
+        override val parentId: String,
+        override val isRewarded: Boolean
 ) : CommentReplyModel

@@ -15,9 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/personal_info_inner_margin_start"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/roboto_medium"
         android:textColor="@color/blue_turquoise"
         android:textSize="@dimen/personal_info_add_ability_text_size"
-        android:textStyle="normal"
         android:visibility="gone" />
 </LinearLayout>

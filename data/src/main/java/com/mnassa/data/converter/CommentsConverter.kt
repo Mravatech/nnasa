@@ -65,14 +65,16 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
                     text = input.text,
                     recommends = convertUser(input.recommendedAccounts
                             ?: emptyMap(), converter),
-                    parentId = parentItemId
+                    parentId = parentItemId,
+                    isRewarded = input.isRewarded
             )
             else -> CommentModelImpl(
                     id = input.id,
                     createdAt = Date(input.createdAt),
                     creator = convertUser(input.creator, converter).first(),
                     text = input.text,
-                    recommends = convertUser(input.recommendedAccounts ?: emptyMap(), converter)
+                    recommends = convertUser(input.recommendedAccounts ?: emptyMap(), converter),
+                    isRewarded = input.isRewarded
             )
         }
 
@@ -83,7 +85,8 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
                     creator = convertUser(commentBody.creator, converter).first(),
                     text = commentBody.text,
                     recommends = convertUser(commentBody.recommendedAccounts ?: emptyMap(), converter),
-                    parentId = head.id
+                    parentId = head.id,
+                    isRewarded = input.isRewarded
             )
         }
 

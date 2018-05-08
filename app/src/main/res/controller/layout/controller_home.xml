@@ -54,23 +54,6 @@
         android:paddingBottom="@dimen/spacing_vertical"
         android:paddingEnd="@dimen/spacing_horizontal"
         android:paddingStart="@dimen/spacing_horizontal"
-        android:paddingTop="@dimen/spacing_vertical">
+        android:paddingTop="@dimen/spacing_vertical"/>
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabCreateGeneralPost"
-            style="@style/Fab.Item" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabCreateEvent"
-            style="@style/Fab.Item" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabCreateOffer"
-            style="@style/Fab.Item" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabCreateNeed"
-            style="@style/Fab.Item" />
-
-    </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>

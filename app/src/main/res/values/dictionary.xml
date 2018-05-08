@@ -95,6 +95,13 @@
     <string name="posts_comment_edit_title">_android_post_comment_edit_title</string>
     <string name="posts_comment_edit_button">_android_post_comment_edit_button</string>
 
+    <string name="comment_useful">_commentCell_usefulButton</string>
+    <string name="rewarding_for_comment">_android_my_wallet_send_points_amount_hint</string>
+    <string name="rewarding_info">_android_transfer_points_for_comments</string>
+    <string name="rewarding_title">_android_transfer_points_new_transaction</string>
+    <string name="rewarding_send">_android_send</string>
+    <string name="rewarding_you_can_add_comment">_newTransaction_commentCell_placeholder</string>
+
     <!-- recommend -->
     <string name="posts_recommend_title">_postProfile_navTitle</string>
     <string name="posts_recommend_best_matches">_accountsSelector_bestSuggest_title</string>
@@ -242,6 +249,7 @@
     <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
     <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
     <string name="edit_profile_city">_new_post_offer_city_title</string>
+    <string name="edit_save">accEdit_navItem_save</string>
 
     <!-- ======================================= WALLET ======================================== -->
     <string name="wallet_title">_android_my_wallet_title</string>
@@ -268,10 +276,6 @@
     <!-- ========================================= OTHER ====================================== -->
     <string name="email_is_not_valid">_android_email_validation</string>
     <string name="phone_is_not_valid">_android_phone_validation</string>
-    <string name="company_name_is_not_valid">_android_organization_name_validation</string>
-    <string name="person_name_is_not_valid">_android_person_name_validation</string>
-    <string name="person_last_name_is_not_valid">_android_person_last_name_validation</string>
-    <string name="user_name_is_not_valid">_android_user_name_validation</string>
     <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
     <string name="error_no_internet">_android_no_internet_connection</string>
     <string name="loading">_android_loading</string>
@@ -461,6 +465,28 @@
     <string name="event_status_opened">_android_event_status_opened</string>
     <string name="event_status_closed">closed</string>
     <string name="event_status_suspended">suspended</string>
+
+    <!-- ========================================== CREATE GENERAL ============================= -->
+    <string name="general_text_placeholder">_android_general_text_placeholder</string>
+    <string name="general_create_title">_new_post_navbar_title_create_general</string>
+    <string name="general_edit_title">_new_post_navbar_title_edit_general</string>
+    <string name="general_publish">_new_post_navbar_title_newPost</string>
+    <string name="general_thanks_got_it">_post_info_got_it</string>
+    <string name="general_author">_android_general_post_author</string>
+    <string name="general_details_got_it">_right_button_post_got_it</string>
+
+    <!-- ============================================== OFFERS ================================= -->
+    <string name="offer_button_buy_first">_android_offer_button_buy_first</string>
+    <string name="offer_button_buy_second">_android_offer_button_buy_again</string>
+    <string name="offer_button_customers">_android_offer_button_my_customers</string>
+    <string name="offer_purchase_title">_android_offer_purchase_title</string>
+    <string name="offer_purchase_description">_android_offer_purchase_description</string>
+    <string name="offer_create_title">_new_post_navbar_title_create_offer</string>
+    <string name="offer_edit_title">_new_post_navbar_title_edit_offer</string>
+    <string name="offer_title_placeholder">create_offer_your_title</string>
+    <string name="offer_description_placeholder">_android_offer_placeholder</string>
+    <string name="offer_price_placeholder">_new_post_offer_price_placeholder</string>
+    <string name="offer_place_placeholder">_new_post_offer_city_title</string>
 
     <string name="days_count">_android_days</string>
     <string name="hours_count">_android_hours</string>

@@ -5,10 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 class PersonalInfoController(data: Bundle) : BaseEditableProfileController<PersonalInfoViewModel>(data) {
 
@@ -29,7 +30,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
-        view.etPhoneNumber.setText(accountModel.contactPhone)
+        view.etPhoneNumber.setText(accountModel.contactPhone?.replace("+", ""))
         view.etPhoneNumber.setHideMode(false)
         view.etYourEmail.setHideMode(false)
         view.tvSkipThisStep.setOnClickListener { viewModel.skipThisStep() }
@@ -55,7 +56,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!Patterns.PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etPhoneNumber.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -64,7 +65,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
                 view.containerSelectOccupation.getAllAbilities(),
                 view.etDateOfBirthday.text.toString(),
                 view.etYourEmail.isChosen,
-                timeMillis,
+                birthday,
                 view.etPhoneNumber.isChosen,
                 view.etYourEmail.text.toString(),
                 view.rInfoBtnMale.isChecked

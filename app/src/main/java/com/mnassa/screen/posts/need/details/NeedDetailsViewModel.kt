@@ -1,10 +1,10 @@
 package com.mnassa.screen.posts.need.details
 
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.base.MnassaViewModel
-import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
@@ -18,6 +18,6 @@ interface NeedDetailsViewModel : MnassaViewModel {
     suspend fun retrieveComplaints(): List<TranslatedWordModel>
 
     fun delete()
-    fun repost(sharingOptions: SharingOptionsController.ShareToOptions)
+    fun repost(sharingOptions: PostPrivacyOptions)
     fun sendComplaint(id: String, reason: String, authorText: String?)
 }

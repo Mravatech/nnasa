@@ -5,16 +5,20 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.extensions.markAsOpened
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.launch
 import org.kodein.di.generic.instance
+import timber.log.Timber
 
 /**
  * Created by Peter on 3/6/2018.
@@ -32,7 +36,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
 
         adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
-        adapter.onItemClickListener = { open(EventDetailsController.newInstance(it)) }
+        adapter.onItemClickListener = { openEvent(it) }
 
         adapter.isLoadingEnabled = savedInstanceState == null
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -55,6 +59,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             }
         }
 
+        viewModel.resetCounter()
+
     }
 
     override fun onViewCreated(view: View) {
@@ -68,6 +74,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     override fun onPageSelected() {
         val recyclerView = view?.rvEvents ?: return
         recyclerView.scrollToPosition(0)
+        viewModel.resetCounter()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -78,6 +85,18 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     override fun onDestroyView(view: View) {
         view.rvEvents.adapter = null
         super.onDestroyView(view)
+    }
+
+    private fun openEvent(event: EventModel) {
+        launch {
+            try {
+                event.markAsOpened()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+
+        open(EventDetailsController.newInstance(event))
     }
 
     companion object {
