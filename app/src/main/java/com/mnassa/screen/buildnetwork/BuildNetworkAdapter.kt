@@ -33,7 +33,7 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
     override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
         searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 

@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_event_select_participants_guest.view.
  */
 class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
     var onCheckParticipantsClickListener = {}
-    var onSearchClick = {}
+    var onSearchClickListener = {}
     var onSaveClickListener = { dataSet: List<EventParticipantItem> -> }
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         first.compareTo(second)
@@ -45,7 +45,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
             } else first == second
         }
         contentTheSameComparator = { first, second -> first == second }
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this))
         searchListener = dataStorage as SearchListener<EventParticipantItem>
     }
 
@@ -60,7 +60,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
         when (view.id) {
             R.id.btnSave -> onSaveClickListener(dataStorage.toList())
             R.id.ivCheckParticipants -> onCheckParticipantsClickListener()
-            R.id.ivSearch -> onSearchClick()
+            R.id.ivSearch -> onSearchClickListener()
         }
     }
 
@@ -155,7 +155,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                 btnSave.isInvisible = !(item is EventParticipantItem.ConnectionsHeader && item.canEdit)
                 btnSave.isEnabled = (item is EventParticipantItem.ConnectionsHeader && item.canEdit)
                 btnSave.text = fromDictionary(R.string.event_participant_save)
-                ivSearch.isInvisible = item === EventParticipantItem.OtherHeader
+                ivSearch.isInvisible = item is EventParticipantItem.OtherHeader
             }
         }
 

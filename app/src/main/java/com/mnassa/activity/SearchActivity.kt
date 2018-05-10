@@ -29,35 +29,39 @@ class SearchActivity : AppCompatActivity() {
         etSearch.hint = fromDictionary(R.string.search_hint)
         rvSearch.layoutManager = LinearLayoutManager(this)
         when (type) {
-            ALL_PARTICIPANT -> {
-                val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
-                val adapter = EventParticipantsRVAdapter()
-                adapter.set(listType)
-                adapter.onParticipantClickListener = {
-                    setResult(ALL_PARTICIPANT_RESULT, intent.putExtra(EXTRA_ITEM_TO_OPEN_SCREEN, it))
-                    finish()
-                }
-                etSearch.addTextChangedListener(SimpleTextWatcher {
-                    adapter.searchByName(it)
-                })
-                rvSearch.adapter = adapter
-                btnDone.setOnClickListener {
-                    finish()
-                }
-            }
-            SELECT_PARTICIPANT -> {
-                val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
-                val adapter = EventSelectParticipantsRVAdapter()
-                adapter.set(listType)
-                etSearch.addTextChangedListener(SimpleTextWatcher {
-                    adapter.searchByName(it)
-                })
-                rvSearch.adapter = adapter
-                btnDone.setOnClickListener {
-                    setResult(SELECT_PARTICIPANT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, listType))
-                    finish()
-                }
-            }
+            ALL_PARTICIPANT -> allParticipant()
+            SELECT_PARTICIPANT -> selectParticipant()
+        }
+    }
+
+    private fun selectParticipant() {
+        val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
+        val adapter = EventSelectParticipantsRVAdapter()
+        adapter.set(listType)
+        etSearch.addTextChangedListener(SimpleTextWatcher {
+            adapter.searchByName(it)
+        })
+        rvSearch.adapter = adapter
+        btnDone.setOnClickListener {
+            setResult(SELECT_PARTICIPANT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, listType))
+            finish()
+        }
+    }
+
+    private fun allParticipant() {
+        val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
+        val adapter = EventParticipantsRVAdapter()
+        adapter.set(listType)
+        adapter.onParticipantClickListener = {
+            setResult(ALL_PARTICIPANT_RESULT, intent.putExtra(EXTRA_ITEM_TO_OPEN_SCREEN, it))
+            finish()
+        }
+        etSearch.addTextChangedListener(SimpleTextWatcher {
+            adapter.searchByName(it)
+        })
+        rvSearch.adapter = adapter
+        btnDone.setOnClickListener {
+            finish()
         }
     }
 

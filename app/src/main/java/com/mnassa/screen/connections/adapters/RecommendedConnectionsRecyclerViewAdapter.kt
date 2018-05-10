@@ -29,7 +29,7 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     private var onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
     var onAfterSearchListener = { size: Int ->  }
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener))
         searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 

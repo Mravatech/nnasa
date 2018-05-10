@@ -46,7 +46,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
     }
 
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
         searchListener = dataStorage as SearchListener<GroupedAccount>
     }
 

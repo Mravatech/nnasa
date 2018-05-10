@@ -56,8 +56,8 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
         if (requestCode != REQUEST_CODE_SEARCH) return
         when (resultCode) {
             SearchActivity.SELECT_PARTICIPANT_RESULT -> {
-               val filteredList = data?.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<EventParticipantItem>
-                selectParticipantAdapter.dataStorage.set(filteredList)
+               val resultList = data?.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<EventParticipantItem>
+                selectParticipantAdapter.dataStorage.set(resultList)
             }
             SearchActivity.ALL_PARTICIPANT_RESULT -> {
                val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN) as EventParticipantItem.User
@@ -68,10 +68,10 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.rvParticipants.adapter = allParticipantsadAdapter
-        selectParticipantAdapter.onSearchClick = {
+        selectParticipantAdapter.onSearchClickListener = {
             val intent = SearchActivity.start(view.context, selectParticipantAdapter.dataStorage.toList(), SearchActivity.SELECT_PARTICIPANT)
             startActivityForResult(intent, REQUEST_CODE_SEARCH) }
-        allParticipantsadAdapter.onSearchClick = {
+        allParticipantsadAdapter.onSearchClickListener = {
             val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT)
             startActivityForResult(intent, REQUEST_CODE_SEARCH) }
     }

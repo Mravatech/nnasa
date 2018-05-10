@@ -42,14 +42,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             }
         }
 
-    ///////////////// FILTER /////////////
-    open var searchPhrase = ""
-    lateinit var searchListener: SearchListener<ITEM>
-    open var filterPredicate: (item: ITEM) -> Boolean = { true }
-
     /////////////////////////////////// BASIC DATASET OPERATIONS ///////////////////////////////////
     open fun clear() = run { dataStorage.clear() }
-
     open fun set(list: List<ITEM>) = dataStorage.set(list)
     open fun add(list: List<ITEM>) = run { dataStorage.addAll(list); Unit }
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,11 +316,14 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
     }
 
+    ///////////////// FILTER /////////////
+    open var searchPhrase = ""
+    lateinit var searchListener: SearchListener<ITEM>
+    open var filterPredicate: (item: ITEM) -> Boolean = { true }
 
     /////////////////   FILTER   ////////////////
     open class FilteredSortedDataStorage<ITEM>(private val filterPredicate: (item1: ITEM) -> Boolean,
-                                               private val dataStorage: BasePaginationRVAdapter.DataStorage<ITEM>,
-                                               private val adapter: BasePaginationRVAdapter<ITEM>) : BasePaginationRVAdapter.DataStorage<ITEM> by dataStorage, SearchListener<ITEM> {
+                                               private val dataStorage: BasePaginationRVAdapter.DataStorage<ITEM>) : BasePaginationRVAdapter.DataStorage<ITEM> by dataStorage, SearchListener<ITEM> {
 
         override var containerList: List<ITEM> = emptyList()
 

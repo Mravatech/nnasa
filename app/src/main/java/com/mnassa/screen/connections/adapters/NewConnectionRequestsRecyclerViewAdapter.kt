@@ -31,7 +31,7 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener))
         searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 

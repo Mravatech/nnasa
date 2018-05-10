@@ -40,7 +40,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
                     first.viewedAtDate == second.viewedAtDate &&
                     first.unreadCount == second.unreadCount
         }
-        dataStorage = FilteredSortedDataStorage(filterPredicate, ChatDataStorage(this), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, ChatDataStorage(this))
         searchListener = dataStorage as SearchListener<ChatRoomModel>
     }
 

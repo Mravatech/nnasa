@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.item_event_participants_header.view.*
  */
 class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
     var onParticipantClickListener = { user: EventParticipantItem.User -> }
-    var onSearchClick = {}
+    var onSearchClickListener = {}
     var onCheckParticipantsClickListener = {}
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         first.compareTo(second)
@@ -44,7 +44,7 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
             } else first == second
         }
         contentTheSameComparator = { first, second -> first == second }
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this))
         searchListener = dataStorage as SearchListener<EventParticipantItem>
     }
 
@@ -59,7 +59,7 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         when (view.id) {
             R.id.rlClickableRoot -> onParticipantClickListener(getDataItemByAdapterPosition(position) as EventParticipantItem.User)
             R.id.ivCheckParticipants -> onCheckParticipantsClickListener()
-            R.id.ivSearch -> onSearchClick()
+            R.id.ivSearch -> onSearchClickListener()
         }
     }
 
