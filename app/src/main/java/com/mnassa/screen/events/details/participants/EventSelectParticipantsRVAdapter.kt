@@ -84,7 +84,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
 
                 cbParticipant.setOnCheckedChangeListener(null)
                 cbParticipant.isChecked = item.isChecked
-                cbParticipant.setOnCheckedChangeListener { buttonView, isChecked -> item.isChecked = isChecked }
+                cbParticipant.setOnCheckedChangeListener { _, isChecked -> item.isChecked = isChecked }
             }
         }
 

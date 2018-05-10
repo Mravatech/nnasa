@@ -5,9 +5,9 @@ def deps = [:]
 
 deps.applicationId = "com.mnassa"
 //=============================================== MODULES===========================================
-deps.core = project(":core")
-deps.data = project(":data")
-deps.domain = project(":domain")
+deps.core = project(':core')
+deps.data = project(':data')
+deps.domain = project(':domain')
 
 //============================================== BUILD =============================================
 versions.androidGradlePluginVersion = '3.1.2'
@@ -41,8 +41,7 @@ archComponents.paging = "android.arch.paging:runtime:1.0.0-alpha5"
 deps.archComponents = archComponents
 
 //============================================= PLAY SERVICES ======================================
-//versions.playServices = "15.0.0" //build problems
-versions.playServices = "12.0.1"
+versions.playServices = "15.0.0" //build problems
 versions.playServicesGradlePluginVersion = '3.2.1'
 
 def playServices = [:]
@@ -66,16 +65,15 @@ deps.fabric = fabric
 
 //========================================== FIREBASE ==============================================
 versions.firebase = versions.playServices
-versions.ui = '3.2.1' //'3.3.1'
 def firebase = [:]
-firebase.core =            "com.google.firebase:firebase-core:$versions.firebase"
-firebase.auth =            "com.google.firebase:firebase-auth:$versions.firebase"
-firebase.auth_service =    "com.google.android.gms:play-services-auth:$versions.firebase"
-firebase.database =        "com.google.firebase:firebase-database:$versions.firebase"
-firebase.storage =         "com.google.firebase:firebase-storage:$versions.firebase"
-firebase.ui  =             "com.firebaseui:firebase-ui-storage:$versions.ui"
-firebase.firestore =       "com.google.firebase:firebase-firestore:${versions.firebase}"
-firebase.fcm =             "com.google.firebase:firebase-messaging:$versions.firebase"
+firebase.core =            "com.google.firebase:firebase-core:15.0.2"
+firebase.auth =            "com.google.firebase:firebase-auth:15.1.0"
+firebase.auth_service =    "com.google.android.gms:play-services-auth:15.0.0"
+firebase.database =        "com.google.firebase:firebase-database:15.0.0"
+firebase.storage =         "com.google.firebase:firebase-storage:15.0.2"
+firebase.ui  =             "com.firebaseui:firebase-ui-storage:3.3.1"
+firebase.firestore =       "com.google.firebase:firebase-firestore:16.0.0"
+firebase.fcm =             "com.google.firebase:firebase-messaging:15.0.2"
 
 deps.firebase = firebase
 
