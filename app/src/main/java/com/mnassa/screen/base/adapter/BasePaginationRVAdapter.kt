@@ -44,7 +44,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
 
     ///////////////// FILTER /////////////
     open var searchPhrase = ""
-    lateinit var searchListener: SearchListener
+    lateinit var searchListener: SearchListener<ITEM>
     open var filterPredicate: (item: ITEM) -> Boolean = { true }
 
     /////////////////////////////////// BASIC DATASET OPERATIONS ///////////////////////////////////
@@ -322,8 +322,29 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /////////////////   FILTER   ////////////////
+    open class FilteredSortedDataStorage<ITEM>(private val filterPredicate: (item1: ITEM) -> Boolean,
+                                               private val dataStorage: BasePaginationRVAdapter.DataStorage<ITEM>,
+                                               private val adapter: BasePaginationRVAdapter<ITEM>) : BasePaginationRVAdapter.DataStorage<ITEM> by dataStorage, SearchListener<ITEM> {
+
+        override var containerList: List<ITEM> = emptyList()
+
+        override fun search() {
+            if (containerList.isEmpty() || containerList.size < dataStorage.size){
+                containerList = dataStorage.toList()
+            }
+            val newValues = containerList.filter(filterPredicate)
+            dataStorage.set(newValues)
+        }
+    }
+
+    interface SearchListener<T> {
+        var containerList: List<T>
+        fun search()
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     companion object {
         const val EXTRA_STATE_PREFIX = "EXTRA_STATE_PREFIX"
         const val MAX_STATE_SIZE = 75

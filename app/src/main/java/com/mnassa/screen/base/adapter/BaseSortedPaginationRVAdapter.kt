@@ -104,13 +104,13 @@ abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITE
 //                                               private val dataStorage: DataStorage<ITEM>,
 //                                               private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> by dataStorage, SearchListener {
 //
-//        private var itemList: List<ITEM> = emptyList()
+//        private var containerList: List<ITEM> = emptyList()
 //
 //        override fun search() {
-//            if (itemList.isEmpty() || itemList.size < dataStorage.size){
-//                itemList = dataStorage.toList()
+//            if (containerList.isEmpty() || containerList.size < dataStorage.size){
+//                containerList = dataStorage.toList()
 //            }
-//            val newValues = itemList.filter(filterPredicate)
+//            val newValues = containerList.filter(filterPredicate)
 //            dataStorage.set(newValues)
 //        }
 //    }

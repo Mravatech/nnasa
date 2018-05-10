@@ -11,29 +11,12 @@ import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
-import com.mnassa.screen.base.adapter.SearchListener
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_build_network.view.*
 import kotlinx.android.synthetic.main.item_connections_recommended_group.view.*
 import java.util.TreeSet
-import kotlin.Boolean
 import kotlin.Comparator
-import kotlin.IllegalArgumentException
-import kotlin.Int
-import kotlin.String
 import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.MutableSet
-import kotlin.collections.Set
-import kotlin.collections.filter
-import kotlin.collections.firstOrNull
-import kotlin.collections.isNotEmpty
-import kotlin.collections.mapNotNull
-import kotlin.collections.mapTo
-import kotlin.collections.plusAssign
-import kotlin.collections.toList
-import kotlin.with
 
 /**
  * Created by Peter on 3/27/2018.
@@ -64,7 +47,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 
     init {
         dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
-        searchListener = dataStorage as SearchListener
+        searchListener = dataStorage as SearchListener<GroupedAccount>
     }
 
     fun searchByName(searchText: String) {

@@ -9,8 +9,6 @@ import com.mnassa.R
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
-import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
-import com.mnassa.screen.base.adapter.SearchListener
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_event_participants_header.view.*
 import kotlinx.android.synthetic.main.item_event_select_participants.view.*
@@ -48,7 +46,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
         }
         contentTheSameComparator = { first, second -> first == second }
         dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this), this)
-        searchListener = dataStorage as SearchListener
+        searchListener = dataStorage as SearchListener<EventParticipantItem>
     }
 
     fun searchByName(text: String) {

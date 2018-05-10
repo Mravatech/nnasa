@@ -12,8 +12,6 @@ import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
-import com.mnassa.screen.base.adapter.SearchListener
 import kotlinx.android.synthetic.main.item_connections_all.view.*
 
 /**
@@ -28,7 +26,7 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
 
     init {
         dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
-        searchListener = dataStorage as SearchListener
+        searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 
     fun searchByName(searchText: String) {

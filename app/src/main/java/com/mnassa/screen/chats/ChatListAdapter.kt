@@ -13,8 +13,6 @@ import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
-import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
-import com.mnassa.screen.base.adapter.SearchListener
 import kotlinx.android.synthetic.main.item_chat_room.view.*
 
 
@@ -43,7 +41,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
                     first.unreadCount == second.unreadCount
         }
         dataStorage = FilteredSortedDataStorage(filterPredicate, ChatDataStorage(this), this)
-        searchListener = dataStorage as SearchListener
+        searchListener = dataStorage as SearchListener<ChatRoomModel>
     }
 
     override fun onClick(view: View) {

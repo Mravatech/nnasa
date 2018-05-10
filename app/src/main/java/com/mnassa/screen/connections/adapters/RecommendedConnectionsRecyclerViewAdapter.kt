@@ -12,8 +12,6 @@ import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.invisibleIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
-import com.mnassa.screen.base.adapter.SearchListener
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_connections_recommended.view.*
 import kotlinx.android.synthetic.main.item_connections_recommended_more.view.*
@@ -31,7 +29,7 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
 
     init {
         dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
-        searchListener = dataStorage as SearchListener
+        searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 
     fun searchByName(searchText: String) {
@@ -47,7 +45,7 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
 
     fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
         val maxItemsCount = maxItemsCount + 1
-
+        searchListener.containerList = list
         moreItemsCount = maxOf(list.size - maxItemsCount, 0)
         if (list.size > maxItemsCount) {
             super.set(list.subList(0, maxItemsCount))
