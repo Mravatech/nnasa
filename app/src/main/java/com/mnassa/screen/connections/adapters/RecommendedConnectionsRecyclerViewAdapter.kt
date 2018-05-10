@@ -34,7 +34,8 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
 
     fun searchByName(searchText: String) {
         searchPhrase = searchText
-        searchListener.search()
+        val newValues = searchListener.containerList.filter(filterPredicate)
+        setWithMaxRange(newValues, 10)
     }
 
     fun destoryCallbacks() {
@@ -45,7 +46,9 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
 
     fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
         val maxItemsCount = maxItemsCount + 1
-        searchListener.containerList = list
+        if (searchListener.containerList.isEmpty()) {
+            searchListener.containerList = list
+        }
         moreItemsCount = maxOf(list.size - maxItemsCount, 0)
         if (list.size > maxItemsCount) {
             super.set(list.subList(0, maxItemsCount))
