@@ -101,7 +101,24 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                         openArchivedConnectionsScreen = { openArchivedConnectionsScreen() }
                 )
             }
-            searchView.etSearch.addTextChangedListener(SimpleTextWatcher{
+            allConnectionsAdapter.onAfterSearchListener = {
+                val allSize = allConnectionsAdapter.dataStorage.size
+                tvAllConnections.isGone = allSize == 0
+                tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, allSize)
+            }
+            recommendedConnectionsAdapter.onAfterSearchListener = {
+                val recommendSize = if (it == 0) recommendedConnectionsAdapter.dataStorage.size else it + recommendedConnectionsAdapter.dataStorage.size
+                rvRecommendedConnections.isGone = recommendSize == 0
+                tvRecommendedConnections.isGone = recommendSize == 0
+                tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, recommendSize)
+            }
+            newConnectionRequestsAdapter.onAfterSearchListener = {
+                val newSize = if (it == 0) newConnectionRequestsAdapter.dataStorage.size else it + newConnectionRequestsAdapter.dataStorage.size
+                rvNewConnectionRequests.isGone = newSize == 0
+                tvNewConnectionRequests.isGone = newSize == 0
+                tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, newSize)
+            }
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher {
                 allConnectionsAdapter.searchByName(it)
                 recommendedConnectionsAdapter.searchByName(it)
                 newConnectionRequestsAdapter.searchByName(it)
@@ -188,7 +205,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
         launchCoroutineUI {
             viewModel.recommendedConnectionsChannel.consumeEach {
-                recommendedConnectionsAdapter.setWithMaxRange(it, MAX_RECOMMENDED_ITEMS_COUNT)
+                recommendedConnectionsAdapter.setWithMaxRange(it)
 
                 with(headerRef()) {
                     tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
@@ -200,7 +217,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
         launchCoroutineUI {
             viewModel.newConnectionRequestsChannel.consumeEach {
-                newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTED_ITEMS_COUNT)
+                newConnectionRequestsAdapter.setWithMaxRange(it)
 
                 with(headerRef()) {
                     tvNewConnectionRequests.isGone = it.isEmpty()
@@ -242,9 +259,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     }
 
     companion object {
-        private const val MAX_RECOMMENDED_ITEMS_COUNT = 10
-        private const val MAX_REQUESTED_ITEMS_COUNT = 2
-
         fun newInstance() = ConnectionsController()
     }
 }

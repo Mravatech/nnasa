@@ -21,11 +21,12 @@ class AllConnectionsRecyclerViewAdapter(private val withHeader: Boolean = false)
     var onItemOptionsClickListener = { account: ShortAccountModel, sender: View -> }
     var onItemClickListener = { account: ShortAccountModel -> }
     var onBindHeader = { header: View -> }
-
+    private var onDataChangedListener = { onAfterSearchListener() }
+    var onAfterSearchListener = { }
     override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener), this)
         searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 

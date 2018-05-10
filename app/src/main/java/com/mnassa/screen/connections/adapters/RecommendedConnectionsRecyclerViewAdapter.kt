@@ -24,18 +24,19 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     var onConnectClickListener = { account: ShortAccountModel -> }
     var onItemClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = {}
-
     override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
+    private var onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
+    var onAfterSearchListener = { size: Int ->  }
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(), this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener), this)
         searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 
     fun searchByName(searchText: String) {
         searchPhrase = searchText
         val newValues = searchListener.containerList.filter(filterPredicate)
-        setWithMaxRange(newValues, 10)
+        setWithMaxRange(newValues)
     }
 
     fun destoryCallbacks() {
@@ -44,8 +45,8 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
         onShowAllClickListener = { }
     }
 
-    fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
-        val maxItemsCount = maxItemsCount + 1
+    fun setWithMaxRange(list: List<ShortAccountModel>) {
+        val maxItemsCount = MAX_RECOMMENDED_ITEMS_COUNT + 1
         if (searchListener.containerList.isEmpty()) {
             searchListener.containerList = list
         }
@@ -151,5 +152,6 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     private companion object {
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
+        private const val MAX_RECOMMENDED_ITEMS_COUNT = 10
     }
 }
