@@ -8,10 +8,14 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
+import com.mnassa.domain.model.impl.NotificationExtraImpl
+import com.mnassa.domain.model.impl.NotificationModelImpl
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.main.OnPageSelected
+import com.mnassa.screen.notifications.NotificationAdapter.Companion.NEW
+import com.mnassa.screen.notifications.NotificationAdapter.Companion.OLD
 import com.mnassa.screen.notifications.viewholder.*
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
@@ -19,6 +23,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
+import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
@@ -33,6 +38,8 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         super.onCreated(savedInstanceState)
         savedInstanceState?.apply {
             adapter.restoreState(this)
+            adapter.dataStorage.remove(headerNew)
+            adapter.dataStorage.remove(headerOld)
         }
         adapter.isLoadingEnabled = savedInstanceState == null
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -43,10 +50,20 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                         adapter.isLoadingEnabled = false
                         adapter.dataStorage.addAll(it.item)
                         view.llEmptyNotifications.visibility = View.GONE
+                        handleHeaders(it.item)
                     }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Changed -> {
+                        adapter.dataStorage.addAll(it.item)
+                        handleHeaders(it.item)
+                    }
+                    is ListItemEvent.Moved -> {
+                        adapter.dataStorage.addAll(it.item)
+                        handleHeaders(it.item)
+                    }
+                    is ListItemEvent.Removed -> {
+                        adapter.dataStorage.removeAll(it.item)
+                        handleHeaders(it.item)
+                    }
                     is ListItemEvent.Cleared -> {
                         adapter.dataStorage.clear()
                         adapter.isLoadingEnabled = false
@@ -78,6 +95,49 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         view?.rvNotifications?.scrollToPosition(0)
     }
 
+    private fun handleHeaders(items: List<NotificationModel>) {
+        var old = items.firstOrNull { it.isOld }
+        if (old == null) {
+            old = adapter.dataStorage.firstOrNull { it.isOld }
+        }
+        if (old != null) {
+            adapter.dataStorage.add(headerOld)
+        }
+
+        val new: MutableList<NotificationModel> = items.filter { !it.isOld }.toMutableList()
+        val oldNew = adapter.dataStorage.filter { !it.isOld && it.type != NEW }
+        new.removeAll(oldNew)
+        if (new.isEmpty()) {
+            adapter.dataStorage.remove(headerNew)
+        } else {
+            adapter.dataStorage.add(headerNew)
+        }
+        //todo ask for better solution
+    }
+
+    private var headerOld: NotificationModel = getHeader(true, OLD)
+    private var headerNew: NotificationModel = getHeader(false, NEW)
+    private fun getHeader(isOld: Boolean, type: String) = NotificationModelImpl(
+            id = type,
+            createdAt = Date(),
+            text = type,
+            type = type,
+            extra = NotificationExtraImpl(
+                    author = null,
+                    attendee = null,
+                    eventName = null,
+                    post = null,
+                    recommended = null,
+                    reffered = null,
+                    ticketsPrice = null,
+                    totalPrice = null,
+                    event = null,
+                    newInviteNumber = null
+            ),
+            isOld = isOld
+    )
+
+
     private fun onNotificationClickHandle(item: NotificationModel) {
         if (!item.isOld) {
             viewModel.notificationView(item.id)
@@ -108,7 +168,8 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                     }
                     item.type.contains(EVENT) -> open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
                     else -> {
-                        val account = item.extra.recommended ?: item.extra.reffered ?: item.extra.author
+                        val account = item.extra.recommended ?: item.extra.reffered
+                        ?: item.extra.author
                         open(ProfileController.newInstance(requireNotNull(account)))
                     }
                 }
