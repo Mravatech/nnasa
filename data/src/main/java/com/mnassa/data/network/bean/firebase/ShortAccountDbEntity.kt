@@ -7,7 +7,7 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 2/22/2018.
  */
 internal open class ShortAccountDbEntity(
-        override var id: String,
+        @SerializedName("id") override var id: String,
         @SerializedName("avatar") var avatar: String?,
         @SerializedName("firstName") var firstName: String?,
         @SerializedName("lastName") var lastName: String?,

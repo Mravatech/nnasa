@@ -9,8 +9,6 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class PushTokenRequest(
-        @SerializedName("token")
-        val token: String,
-        @SerializedName("deviceInfo")
-        val deviceInfo: String
+        @SerializedName("token") val token: String,
+        @SerializedName("deviceInfo") val deviceInfo: String
 )

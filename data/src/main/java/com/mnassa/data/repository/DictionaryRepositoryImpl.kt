@@ -85,7 +85,12 @@ class DictionaryRepositoryImpl(
 
     private fun registerWord(id: String, info: String? = null) {
         Timber.i("REGISTER_WORD: id: $id; info: $info")
-        dictionaryApi.registerUiKey(RegisterUiKeyRequest(id, info ?: id))
+        try {
+            dictionaryApi.registerUiKey(RegisterUiKeyRequest(id, info ?: id))
+        } catch (e: Exception) {
+            //ignore all exceptions here
+            Timber.e(e)
+        }
     }
 
 }
