@@ -36,7 +36,8 @@ class App : MultiDexApplication(), KodeinAware {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        if (getInstance<AppInfoProvider>().isDebug) {
+        val appInfoProvider = getInstance<AppInfoProvider>()
+        if (appInfoProvider.isDebug) {
             Timber.plant(Timber.DebugTree())
             Stetho.initializeWithDefaults(this)
         } else {
@@ -47,6 +48,13 @@ class App : MultiDexApplication(), KodeinAware {
         launch {
             getInstance<DictionaryInteractor>().handleDictionaryUpdates()
         }
+
+        Timber.e("appId: ${appInfoProvider.applicationId}")
+        Timber.e("packageName: $packageName")
+        Timber.e("isDebug: ${appInfoProvider.isDebug}")
+        Timber.e("endpoint: ${appInfoProvider.endpoint}")
+        Timber.e("versionCode: ${appInfoProvider.versionCode}")
+        Timber.e("versionName: ${appInfoProvider.versionName}")
     }
 
     companion object {

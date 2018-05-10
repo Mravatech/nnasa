@@ -75,7 +75,7 @@
             android:value="@string/play_services_key"/>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="1f73e75d940d8e708410e044c12ab58e541708fb" />
+            android:value="d0d1bd501c834701ce7742edfcd3e707e9af3189" />
 
     </application>
 
