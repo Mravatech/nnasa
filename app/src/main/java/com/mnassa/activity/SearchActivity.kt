@@ -6,9 +6,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import com.mnassa.R
-import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.screen.chats.ChatListAdapter
+import com.mnassa.screen.events.details.participants.EventParticipantItem
+import com.mnassa.screen.events.details.participants.EventParticipantsRVAdapter
+import com.mnassa.screen.events.details.participants.EventSelectParticipantsRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_search.*
 
@@ -24,32 +25,55 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         val type = intent.getIntExtra(EXTRA_LIST_TYPE, 0)
-        val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<ChatRoomModel>
         btnDone.text = fromDictionary(R.string.search_done)
         etSearch.hint = fromDictionary(R.string.search_hint)
         rvSearch.layoutManager = LinearLayoutManager(this)
-        val adapter = ChatListAdapter()
-        adapter.set(intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<ChatRoomModel>)
-        rvSearch.adapter = adapter
-        etSearch.addTextChangedListener(SimpleTextWatcher{
-            adapter.searchByName(it)
-        })
-        //todo have to have it done
-    }
-
-
-    fun setAdapterByType() {
-        //todo have to have it done
+        when (type) {
+            ALL_PARTICIPANT -> {
+                val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
+                val adapter = EventParticipantsRVAdapter()
+                adapter.set(listType)
+                adapter.onParticipantClickListener = {
+                    setResult(ALL_PARTICIPANT_RESULT, intent.putExtra(EXTRA_ITEM_TO_OPEN_SCREEN, it))
+                    finish()
+                }
+                etSearch.addTextChangedListener(SimpleTextWatcher {
+                    adapter.searchByName(it)
+                })
+                rvSearch.adapter = adapter
+                btnDone.setOnClickListener {
+                    finish()
+                }
+            }
+            SELECT_PARTICIPANT -> {
+                val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
+                val adapter = EventSelectParticipantsRVAdapter()
+                adapter.set(listType)
+                etSearch.addTextChangedListener(SimpleTextWatcher {
+                    adapter.searchByName(it)
+                })
+                rvSearch.adapter = adapter
+                btnDone.setOnClickListener {
+                    setResult(SELECT_PARTICIPANT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, listType))
+                    finish()
+                }
+            }
+        }
     }
 
     companion object {
 
         private const val EXTRA_LIST_TYPE = "EXTRA_LIST_TYPE"
         private const val EXTRA_LIST_ITEMS = "EXTRA_LIST_ITEMS"
+        const val EXTRA_LIST_RESULT = "EXTRA_LIST_RESULT"
+        const val EXTRA_ITEM_TO_OPEN_SCREEN = "EXTRA_ITEM_TO_OPEN_SCREEN"
 
-        const val CONNECTION_RECOMINDATION = 1
+        const val ALL_PARTICIPANT_RESULT = 101
+        const val SELECT_PARTICIPANT_RESULT = 102
+        const val ALL_PARTICIPANT = 1
+        const val SELECT_PARTICIPANT = 2
 
-        fun <ITEM> start(list: List<ITEM>, type: Int, context: Context) {
+        fun <ITEM> start(context: Context, list: List<ITEM>, type: Int): Intent {
             val extraList: ArrayList<ITEM> = ArrayList(list)
 
             val intent = Intent(context, SearchActivity::class.java)
@@ -58,7 +82,7 @@ class SearchActivity : AppCompatActivity() {
             bundle.putSerializable(EXTRA_LIST_ITEMS, extraList)
 
             intent.putExtras(bundle)
-            context.startActivity(intent)
+            return intent
         }
     }
 

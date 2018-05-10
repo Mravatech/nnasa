@@ -1,8 +1,10 @@
 package com.mnassa.screen.events.details.participants
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
+import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.EventModel
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -47,16 +49,37 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
                 getViewSuspend().rvParticipants.adapter = allParticipantsadAdapter
             }
         }
-    }
 
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_CODE_SEARCH) return
+        when (resultCode) {
+            SearchActivity.SELECT_PARTICIPANT_RESULT -> {
+               val filteredList = data?.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<EventParticipantItem>
+                selectParticipantAdapter.dataStorage.set(filteredList)
+            }
+            SearchActivity.ALL_PARTICIPANT_RESULT -> {
+               val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN) as EventParticipantItem.User
+                open(ProfileController.newInstance(item.user))
+            }
+        }
+    }
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.rvParticipants.adapter = allParticipantsadAdapter
+        selectParticipantAdapter.onSearchClick = {
+            val intent = SearchActivity.start(view.context, selectParticipantAdapter.dataStorage.toList(), SearchActivity.SELECT_PARTICIPANT)
+            startActivityForResult(intent, REQUEST_CODE_SEARCH) }
+        allParticipantsadAdapter.onSearchClick = {
+            val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT)
+            startActivityForResult(intent, REQUEST_CODE_SEARCH) }
     }
 
     companion object {
         private const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         private const val EXTRA_EVENT = "EXTRA_EVENT"
+        private const val REQUEST_CODE_SEARCH = 999
 
         fun newInstance(eventId: String, event: EventModel? = null): EventDetailsParticipantsController {
             val args = Bundle()

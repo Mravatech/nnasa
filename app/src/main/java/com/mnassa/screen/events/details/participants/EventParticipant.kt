@@ -1,11 +1,12 @@
 package com.mnassa.screen.events.details.participants
 
 import com.mnassa.domain.model.ShortAccountModel
+import java.io.Serializable
 
 /**
  * Created by Peter on 4/19/2018.
  */
-sealed class EventParticipantItem : Comparable<EventParticipantItem> {
+sealed class EventParticipantItem : Comparable<EventParticipantItem>, Serializable {
 
     data class User(val user: ShortAccountModel, val isInConnections: Boolean, val guestsCount: Int, var isChecked: Boolean = false) : EventParticipantItem() {
         override val order: String get() = (if (isInConnections) ORDER_CONNECTIONS_HEADER else ORDER_OTHER_HEADER) + user.id

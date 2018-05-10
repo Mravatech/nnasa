@@ -9,6 +9,8 @@ import com.mnassa.R
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
+import com.mnassa.screen.base.adapter.FilteredSortedDataStorage
+import com.mnassa.screen.base.adapter.SearchListener
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_event_participants_header.view.*
 import kotlinx.android.synthetic.main.item_event_select_participants.view.*
@@ -19,20 +21,39 @@ import kotlinx.android.synthetic.main.item_event_select_participants_guest.view.
  */
 class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
     var onCheckParticipantsClickListener = {}
+    var onSearchClick = {}
     var onSaveClickListener = { dataSet: List<EventParticipantItem> -> }
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         first.compareTo(second)
     }
     override val itemClass: Class<EventParticipantItem> = EventParticipantItem::class.java
 
+    override var filterPredicate: (item: EventParticipantItem) -> Boolean = {
+        when (it) {
+            is EventParticipantItem.User -> {
+                it.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+            }
+            is EventParticipantItem.Guest -> {
+                it.parent.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+            }
+            else -> false
+        }
+    }
+
     init {
-        dataStorage = SortedDataStorage(itemClass, this)
         itemsTheSameComparator = { first, second ->
             if (first is EventParticipantItem.User && second is EventParticipantItem.User) {
                 first.user.id == second.user.id
             } else first == second
         }
         contentTheSameComparator = { first, second -> first == second }
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this), this)
+        searchListener = dataStorage as SearchListener
+    }
+
+    fun searchByName(text: String) {
+        searchPhrase = text
+        searchListener.search()
     }
 
     override fun onClick(view: View) {
@@ -41,6 +62,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
         when (view.id) {
             R.id.btnSave -> onSaveClickListener(dataStorage.toList())
             R.id.ivCheckParticipants -> onCheckParticipantsClickListener()
+            R.id.ivSearch -> onSearchClick()
         }
     }
 
@@ -135,6 +157,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                 btnSave.isInvisible = !(item is EventParticipantItem.ConnectionsHeader && item.canEdit)
                 btnSave.isEnabled = (item is EventParticipantItem.ConnectionsHeader && item.canEdit)
                 btnSave.text = fromDictionary(R.string.event_participant_save)
+                ivSearch.isInvisible = item === EventParticipantItem.OtherHeader
             }
         }
 
@@ -149,6 +172,9 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                     //
                     btnSave.setOnClickListener(onClickListener)
                     btnSave.tag = viewHolder
+
+                    ivSearch.setOnClickListener(onClickListener)
+                    ivSearch.tag = viewHolder
                 }
 
                 return viewHolder
