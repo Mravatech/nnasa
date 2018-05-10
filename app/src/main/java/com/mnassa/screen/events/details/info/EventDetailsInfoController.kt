@@ -28,6 +28,7 @@ import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details_info.view.*
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.text.SimpleDateFormat
@@ -49,9 +50,10 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         super.onViewCreated(view)
 
         showProgress()
+        eventParam?.apply { bindEvent(this, view) }
+
         launchCoroutineUI {
-            eventParam?.apply { bindEvent(this) }
-            viewModel.eventChannel.consumeEach { bindEvent(it) }
+            viewModel.eventChannel.consumeEach { bindEvent(it, getViewSuspend()) }
         }
 
         with(view) {
@@ -69,17 +71,13 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         super.onDestroyView(view)
     }
 
-    private suspend fun bindEvent(event: EventModel) {
-        with(getViewSuspend()) {
+    private fun bindEvent(event: EventModel, view: View) {
+        with(view) {
             hideProgress()
-            val boughtTicketsCount = event.getBoughtTicketsCount()
-            val canBuyTickets = event.canBuyTickets()
 
             tvSchedule.text = formatTime(event)
             //
             tvLocation.text = event.locationType.formatted
-            //
-            tvTickets.text = formatTicketsText(event, context, boughtTicketsCount)
             //
             tvType.text = event.type.formatted
             //
@@ -106,10 +104,22 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, event.commentsCount)
             //
             llEventLocation.setOnClickListener { openGoogleMaps(event, it.context) }
+
+            launchCoroutineUI { bindBuyTicketButton(event) }
+        }
+    }
+
+    private suspend fun bindBuyTicketButton(event: EventModel) {
+        with(getViewSuspend()) {
+            val boughtTicketsCount = async { event.getBoughtTicketsCount() }
+            val canBuyTickets = async { event.canBuyTickets() }
+            //
+            tvTickets.text = formatTicketsText(event, getViewSuspend().context, boughtTicketsCount.await())
+
             // buy button logic
-            btnBuyTickets.isEnabled = canBuyTickets
-            btnBuyTickets.text = formatBuyButtonText(event, canBuyTickets, boughtTicketsCount)
-            btnBuyTickets.setBackgroundResource(if (boughtTicketsCount == 0L) R.drawable.btn_main else R.drawable.btn_green)
+            btnBuyTickets.isEnabled = canBuyTickets.await()
+            btnBuyTickets.text = formatBuyButtonText(event, canBuyTickets.await(), boughtTicketsCount.await())
+            btnBuyTickets.setBackgroundResource(if (boughtTicketsCount.await() == 0L) R.drawable.btn_main else R.drawable.btn_green)
             btnBuyTickets.setOnClickListener { view ->
                 launchCoroutineUI {
                     viewModel.buyTickets(dialogHelper.showBuyTicketDialog(view.context, event))
@@ -135,7 +145,8 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         scheduleText.append("\n")
         scheduleText.append(fromDictionary(R.string.event_duration))
         scheduleText.append(": ")
-        scheduleText.append(event.duration?.formatted ?: fromDictionary(R.string.event_duration_not_specified))
+        scheduleText.append(event.duration?.formatted
+                ?: fromDictionary(R.string.event_duration_not_specified))
         return scheduleText
     }
 

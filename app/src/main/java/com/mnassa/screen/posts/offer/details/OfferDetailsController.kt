@@ -32,11 +32,11 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
     }
 
 
-    override suspend fun bindPost(post: PostModel) {
-        super.bindPost(post)
+    override fun bindPost(post: PostModel, view: View) {
+        super.bindPost(post, view)
         post as OfferPostModel
 
-        with(getViewSuspend()) {
+        with(view) {
             tvTitle.text = post.title
             tvTitle.goneIfEmpty()
 
