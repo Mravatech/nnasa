@@ -197,7 +197,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
     private fun onGeneralTextUpdated() {
         val view = view ?: return
-        view.toolbar.actionButtonEnabled = view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
+        view.toolbar.actionButtonClickable = view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
     }
 
     @SuppressLint("SetTextI18n")
