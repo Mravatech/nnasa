@@ -9,6 +9,8 @@ import com.google.firebase.FirebaseApp
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
+import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import io.fabric.sdk.android.Fabric
@@ -47,6 +49,10 @@ class App : MultiDexApplication(), KodeinAware {
 
         launch {
             getInstance<DictionaryInteractor>().handleDictionaryUpdates()
+        }
+
+        launch {
+            getInstance<LoginInteractor>().handleUserStatus()
         }
 
         Timber.e("appId: ${appInfoProvider.applicationId}")

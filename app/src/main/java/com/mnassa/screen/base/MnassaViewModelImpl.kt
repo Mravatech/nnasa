@@ -14,6 +14,7 @@ import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.Job
@@ -67,7 +68,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         } catch (e: NotAuthorizedException) {
             Timber.e(e)
             val loginInteractor by kodein.instance<LoginInteractor>()
-            loginInteractor.signOut()
+            loginInteractor.signOut(LogoutReason.NotAuthorized())
         } catch (e: NetworkException) {
             Timber.d(e)
             e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }

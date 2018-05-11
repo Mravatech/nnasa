@@ -511,4 +511,6 @@
     <string name="post_recommend_empty_title">_android_post_recommend_empty_title</string>
     <string name="post_recommend_empty_description">_android_post_recommend_empty_description</string>
 
+    <string name="blocked_account_message">message_accIsDisabled</string>
+
 </resources>

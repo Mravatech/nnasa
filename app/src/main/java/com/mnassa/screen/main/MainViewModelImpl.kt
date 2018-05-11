@@ -7,6 +7,7 @@ import com.mnassa.domain.interactor.CountersInteractor
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -89,7 +90,7 @@ class MainViewModelImpl(
 
     override fun logout() {
         handleException {
-            loginInteractor.signOut()
+            loginInteractor.signOut(LogoutReason.ManualLogout())
         }
     }
 
