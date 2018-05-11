@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/tvGroupName"
-        style="@style/MnassaText"
+        style="@style/MnassaHeader2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Connections group" />
