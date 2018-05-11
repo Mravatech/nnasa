@@ -54,7 +54,7 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != REQUEST_CODE_SEARCH) return
+        if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
         when (resultCode) {
             SearchActivity.SELECT_PARTICIPANT_RESULT -> {
                val resultList = data?.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<EventParticipantItem>
@@ -72,16 +72,15 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
         view.rvParticipants.adapter = allParticipantsadAdapter
         selectParticipantAdapter.onSearchClickListener = {
             val intent = SearchActivity.start(view.context, selectParticipantAdapter.dataStorage.toList(), SearchActivity.SELECT_PARTICIPANT_TYPE)
-            startActivityForResult(intent, REQUEST_CODE_SEARCH) }
+            startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH) }
         allParticipantsadAdapter.onSearchClickListener = {
             val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT_TYPE)
-            startActivityForResult(intent, REQUEST_CODE_SEARCH) }
+            startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH) }
     }
 
     companion object {
         private const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         private const val EXTRA_EVENT = "EXTRA_EVENT"
-        private const val REQUEST_CODE_SEARCH = 999
 
         fun newInstance(eventId: String, event: EventModel? = null): EventDetailsParticipantsController {
             val args = Bundle()

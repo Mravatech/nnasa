@@ -14,6 +14,7 @@ import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_build_network.view.*
 import kotlinx.android.synthetic.main.item_connections_recommended_group.view.*
+import java.io.Serializable
 import java.util.TreeSet
 import kotlin.Comparator
 import kotlin.collections.ArrayList
@@ -161,7 +162,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
     }
 }
 
-sealed class GroupedAccount {
+sealed class GroupedAccount: Serializable {
     data class Group(val name: String) : GroupedAccount()
     data class Recommendation(val account: ShortAccountModel) : GroupedAccount()
 }

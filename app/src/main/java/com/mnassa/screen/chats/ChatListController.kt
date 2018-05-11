@@ -75,7 +75,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
 
             tvNoConversation.text = fromDictionary(R.string.chats_no_conversation)
             toolbar.onMoreClickListener = {
-                startActivityForResult(SearchActivity.start(context, adapter.dataStorage.toList(), SearchActivity.CHAT_TYPE), REQUEST_CODE_SEARCH)
+                startActivityForResult(SearchActivity.start(context, adapter.dataStorage.toList(), SearchActivity.CHAT_TYPE), SearchActivity.REQUEST_CODE_SEARCH)
             }
             toolbar.ivToolbarMore.setImageResource(R.drawable.ic_search)
         }
@@ -84,7 +84,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != REQUEST_CODE_SEARCH) return
+        if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
         when (resultCode) {
             SearchActivity.CHAT_RESULT -> {
                 val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN_RESULT) as ChatRoomModel
@@ -107,7 +107,6 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
     }
 
     companion object {
-        private const val REQUEST_CODE_SEARCH = 999
         fun newInstance() = ChatListController()
     }
 }

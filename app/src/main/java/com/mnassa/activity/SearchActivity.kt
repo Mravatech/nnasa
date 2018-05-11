@@ -14,6 +14,8 @@ import com.mnassa.screen.chats.ChatListAdapter
 import com.mnassa.screen.events.details.participants.EventParticipantItem
 import com.mnassa.screen.events.details.participants.EventParticipantsRVAdapter
 import com.mnassa.screen.events.details.participants.EventSelectParticipantsRVAdapter
+import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
+import com.mnassa.screen.posts.need.recommend.adapter.GroupedAccount
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_search.*
 
@@ -37,6 +39,7 @@ class SearchActivity : AppCompatActivity() {
             SELECT_PARTICIPANT_TYPE -> selectParticipant()
             CHAT_TYPE -> chat()
             SHARING_TYPE -> sharing()
+            GROUPED_ACCOUNT_TYPE -> recommend()
         }
     }
 
@@ -53,6 +56,23 @@ class SearchActivity : AppCompatActivity() {
         }
         rvSearch.adapter = adapter
         btnDone.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun recommend() {
+        val items = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<GroupedAccount>
+        val checkBoxes = intent.getSerializableExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS) as ArrayList<ShortAccountModel>
+        val adapter = AccountsToRecommendRVAdapter(intent.getSerializableExtra(EXTRA_BEST_MATCHES_ITEMS) as ArrayList<String>)
+        adapter.selectedAccounts = HashSet(checkBoxes)
+        adapter.set(items)
+        etSearch.addTextChangedListener(SimpleTextWatcher {
+            adapter.searchByName(it)
+        })
+        rvSearch.adapter = adapter
+        btnDone.setOnClickListener {
+            intent.putExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT, ArrayList(adapter.selectedAccounts))
+            setResult(GROUPED_ACCOUNT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, items))
             finish()
         }
     }
@@ -111,9 +131,11 @@ class SearchActivity : AppCompatActivity() {
         private const val EXTRA_LIST_TYPE = "EXTRA_LIST_TYPE"
         private const val EXTRA_LIST_ITEMS = "EXTRA_LIST_ITEMS"
         private const val EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS = "EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS"
+        private const val EXTRA_BEST_MATCHES_ITEMS = "EXTRA_BEST_MATCHES_ITEMS"
         const val EXTRA_LIST_RESULT = "EXTRA_LIST_RESULT"
         const val EXTRA_ITEM_TO_OPEN_SCREEN_RESULT = "EXTRA_ITEM_TO_OPEN_SCREEN_RESULT"
         const val EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT = "EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT"
+        const val EXTRA_BEST_MATCHES_ITEMS_RESULT = "EXTRA_BEST_MATCHES_ITEMS_RESULT"
 
         const val ALL_PARTICIPANT_RESULT = 101
         const val ALL_PARTICIPANT_TYPE = 1
@@ -123,21 +145,38 @@ class SearchActivity : AppCompatActivity() {
         const val CHAT_TYPE = 3
         const val SHARING_RESULT = 104
         const val SHARING_TYPE = 4
+        const val GROUPED_ACCOUNT_RESULT = 105
+        const val GROUPED_ACCOUNT_TYPE = 5
 
-        fun <ITEM> start(context: Context, list: List<ITEM>, type: Int, checkBoxes: Set<String>? = null): Intent {
+        fun <ITEM, CHECK> start(context: Context, list: List<ITEM>, type: Int, checkBoxes: Set<CHECK>, bestMatches: List<String>? = null): Intent {
             val extraList: ArrayList<ITEM> = ArrayList(list)
 
             val intent = Intent(context, SearchActivity::class.java)
             val bundle = Bundle()
             bundle.putSerializable(EXTRA_LIST_TYPE, type)
             bundle.putSerializable(EXTRA_LIST_ITEMS, extraList)
-            checkBoxes?.let {
+            checkBoxes.let {
                 bundle.putSerializable(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS, ArrayList(it))
             }
-
+            bestMatches?.let {
+                bundle.putSerializable(EXTRA_BEST_MATCHES_ITEMS, ArrayList(it))
+            }
             intent.putExtras(bundle)
             return intent
         }
+
+        fun <ITEM> start(context: Context, list: List<ITEM>, type: Int): Intent {
+            val extraList: ArrayList<ITEM> = ArrayList(list)
+
+            val intent = Intent(context, SearchActivity::class.java)
+            val bundle = Bundle()
+            bundle.putSerializable(EXTRA_LIST_TYPE, type)
+            bundle.putSerializable(EXTRA_LIST_ITEMS, extraList)
+            intent.putExtras(bundle)
+            return intent
+        }
+
+
     }
 
 }

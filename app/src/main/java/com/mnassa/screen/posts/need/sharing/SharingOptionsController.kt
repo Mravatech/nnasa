@@ -63,10 +63,6 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 startActivityForResult(SearchActivity.start(context, adapter.dataStorage.toList(), SearchActivity.SHARING_TYPE, adapter.selectedAccounts), SearchActivity.REQUEST_CODE_SEARCH)
             }
 
-//            searchView.etSearch.addTextChangedListener(SimpleTextWatcher{
-//                adapter.searchByName(it)
-//            })
-
             rbPromotePost.setOnCheckedChangeListener { button, isChecked ->
                 if (ignoreCheckedListener) return@setOnCheckedChangeListener
                 if (isChecked) {
