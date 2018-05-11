@@ -51,6 +51,7 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
         }
 
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != REQUEST_CODE_SEARCH) return
@@ -65,14 +66,15 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
             }
         }
     }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.rvParticipants.adapter = allParticipantsadAdapter
         selectParticipantAdapter.onSearchClickListener = {
-            val intent = SearchActivity.start(view.context, selectParticipantAdapter.dataStorage.toList(), SearchActivity.SELECT_PARTICIPANT)
+            val intent = SearchActivity.start(view.context, selectParticipantAdapter.dataStorage.toList(), SearchActivity.SELECT_PARTICIPANT_TYPE)
             startActivityForResult(intent, REQUEST_CODE_SEARCH) }
         allParticipantsadAdapter.onSearchClickListener = {
-            val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT)
+            val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT_TYPE)
             startActivityForResult(intent, REQUEST_CODE_SEARCH) }
     }
 

@@ -105,8 +105,8 @@
             android:paddingTop="@dimen/spacing_vertical"
             tools:text="Connections" />
 
-        <com.mnassa.widget.search.MnassaSearchView
-            android:id="@+id/searchView"
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -114,8 +114,8 @@
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/spacing_vertical"
-            android:background="@color/white"
-            app:icons_color="@color/black" />
+            android:tint="@color/black"
+            app:srcCompat="@drawable/ic_search" />
 
     </RelativeLayout>
 
