@@ -16,7 +16,6 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -40,7 +39,6 @@ open class NeedDetailsViewModelImpl(
             postsInteractor.loadById(postId).consumeEach {
                 if (it != null) {
                     it.timeOfExpiration = getExpiration(it)
-                    Timber.i(it.toString())
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
                 } else {
@@ -54,7 +52,6 @@ open class NeedDetailsViewModelImpl(
     }
 
     private suspend fun getExpiration(post: PostModel): Date {
-        Timber.i(post.toString())
         if (post.timeOfExpiration != null) return requireNotNull(post.timeOfExpiration)
         val defaultDaysToExpire = postsInteractor.getDefaultExpirationDays()
         return Date(post.originalCreatedAt.time + TimeUnit.MILLISECONDS.convert(defaultDaysToExpire, TimeUnit.DAYS))
