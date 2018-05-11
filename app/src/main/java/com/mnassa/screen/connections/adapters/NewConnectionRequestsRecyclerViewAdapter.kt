@@ -49,7 +49,7 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     }
 
     fun setWithMaxRange(list: List<ShortAccountModel>) {
-        val maxItemsCount = MAX_REQUESTED_ITEMS_COUNT + 1
+        val maxItemsCount = MAX_REQUESTED_ITEMS_COUNT
         if (searchListener.containerList.isEmpty()) {
             searchListener.containerList = list
         }
@@ -156,6 +156,6 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     private companion object {
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
-        private const val MAX_REQUESTED_ITEMS_COUNT = 2
+        private const val MAX_REQUESTED_ITEMS_COUNT = 3
     }
 }

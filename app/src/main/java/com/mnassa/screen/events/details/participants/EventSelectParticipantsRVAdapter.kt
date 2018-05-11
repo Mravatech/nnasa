@@ -34,7 +34,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
             is EventParticipantItem.Guest -> {
                 it.parent.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
             }
-            else -> false
+            else -> true
         }
     }
 

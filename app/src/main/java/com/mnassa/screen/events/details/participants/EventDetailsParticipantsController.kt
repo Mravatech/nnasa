@@ -60,7 +60,7 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
                 selectParticipantAdapter.dataStorage.set(resultList)
             }
             SearchActivity.ALL_PARTICIPANT_RESULT -> {
-               val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN) as EventParticipantItem.User
+               val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN_RESULT) as EventParticipantItem.User
                 open(ProfileController.newInstance(item.user))
             }
         }

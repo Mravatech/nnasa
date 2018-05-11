@@ -46,7 +46,7 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     }
 
     fun setWithMaxRange(list: List<ShortAccountModel>) {
-        val maxItemsCount = MAX_RECOMMENDED_ITEMS_COUNT + 1
+        val maxItemsCount = MAX_RECOMMENDED_ITEMS_COUNT
         if (searchListener.containerList.isEmpty()) {
             searchListener.containerList = list
         }
@@ -152,6 +152,6 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     private companion object {
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
-        private const val MAX_RECOMMENDED_ITEMS_COUNT = 10
+        private const val MAX_RECOMMENDED_ITEMS_COUNT = 11
     }
 }

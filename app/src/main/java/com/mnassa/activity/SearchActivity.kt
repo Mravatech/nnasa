@@ -35,25 +35,25 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun selectParticipant() {
-        val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
+        val items = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
         val adapter = EventSelectParticipantsRVAdapter()
-        adapter.set(listType)
+        adapter.set(items)
         etSearch.addTextChangedListener(SimpleTextWatcher {
             adapter.searchByName(it)
         })
         rvSearch.adapter = adapter
         btnDone.setOnClickListener {
-            setResult(SELECT_PARTICIPANT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, listType))
+            setResult(SELECT_PARTICIPANT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, items))
             finish()
         }
     }
 
     private fun allParticipant() {
-        val listType = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
+        val items = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<EventParticipantItem>
         val adapter = EventParticipantsRVAdapter()
-        adapter.set(listType)
+        adapter.set(items)
         adapter.onParticipantClickListener = {
-            setResult(ALL_PARTICIPANT_RESULT, intent.putExtra(EXTRA_ITEM_TO_OPEN_SCREEN, it))
+            setResult(ALL_PARTICIPANT_RESULT, intent.putExtra(EXTRA_ITEM_TO_OPEN_SCREEN_RESULT, it))
             finish()
         }
         etSearch.addTextChangedListener(SimpleTextWatcher {
@@ -70,7 +70,7 @@ class SearchActivity : AppCompatActivity() {
         private const val EXTRA_LIST_TYPE = "EXTRA_LIST_TYPE"
         private const val EXTRA_LIST_ITEMS = "EXTRA_LIST_ITEMS"
         const val EXTRA_LIST_RESULT = "EXTRA_LIST_RESULT"
-        const val EXTRA_ITEM_TO_OPEN_SCREEN = "EXTRA_ITEM_TO_OPEN_SCREEN"
+        const val EXTRA_ITEM_TO_OPEN_SCREEN_RESULT = "EXTRA_ITEM_TO_OPEN_SCREEN_RESULT"
 
         const val ALL_PARTICIPANT_RESULT = 101
         const val SELECT_PARTICIPANT_RESULT = 102
