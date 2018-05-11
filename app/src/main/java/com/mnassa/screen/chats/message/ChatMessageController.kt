@@ -41,7 +41,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         with(view) {
             setupView(this)
             setupOnClickListeners(this)
-            toolbarChatMessage.title = accountModel?.formattedName ?: "admin"//todo get known what should be here
+            toolbarChatMessage.title = accountModel?.formattedName ?: fromDictionary(R.string.support_chat_with)
             toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
             toolbarChatMessage.onMoreClickListener = { accountModel?.let { open(ProfileController.newInstance(it)) } }
             rvMessages.layoutManager = LinearLayoutManager(context)

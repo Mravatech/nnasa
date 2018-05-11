@@ -301,6 +301,7 @@
     <string name="chats_cancel">_android_cancel</string>
 
     <string name="position_not_specified">_android_position_not_specified</string>
+    <string name="support_chat_with">_chat_controllet_empty_nav_title</string>
 
     <!-- ========================================= INVITE ====================================== -->
     <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
