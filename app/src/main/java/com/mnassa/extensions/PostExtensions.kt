@@ -21,7 +21,7 @@ import kotlinx.coroutines.experimental.channels.consume
  * Created by Peter on 3/19/2018.
  */
 fun Double.formatAsMoneySAR(): String {
-    return formatAsMoney().toString() + " Points"
+    return fromDictionary(R.string.points_count).format(formatAsMoney())
 }
 
 fun Double.formatAsMoney(): Long {

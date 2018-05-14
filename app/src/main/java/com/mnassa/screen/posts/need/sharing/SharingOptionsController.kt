@@ -220,7 +220,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                                 "$usernames $tail"
                             }
                         }
-                        else -> "To value center"
+                        else -> fromDictionary(R.string.posts_sharing_value_centre)
                     }
             )
         }
