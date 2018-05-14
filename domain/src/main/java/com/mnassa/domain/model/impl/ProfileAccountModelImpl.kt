@@ -13,7 +13,6 @@ data class ProfileAccountModelImpl(
         override val createdAt: Long?,
         override var id: String,
         override val createdAtDate: String?,
-        override var firebaseUserId: String,
         override val interests: List<String>,
         override val offers: List<String>,
         override var userName: String,

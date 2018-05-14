@@ -23,7 +23,6 @@ import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
 
 /**
@@ -86,7 +85,6 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
 
         launchCoroutineUI {
             viewModel.permissionsChannel.consumeEach { permission ->
-                delay(500)
                 with(getViewSuspend()) {
                     famHome.removeAllMenuButtons()
 
