@@ -9,4 +9,8 @@
     <item
         android:id="@+id/action_event_change_status"
         android:title="" />
+
+    <item
+        android:id="@+id/action_event_promote"
+        android:title="" />
 </menu>

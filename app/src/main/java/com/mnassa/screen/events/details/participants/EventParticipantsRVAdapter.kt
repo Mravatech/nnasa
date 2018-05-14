@@ -104,8 +104,9 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                     is EventParticipantItem.ConnectionsHeader -> fromDictionary(R.string.event_participant_header_connection)
                     else -> throw IllegalStateException()
                 }
-                ivCheckParticipants.isInvisible = !(item is EventParticipantItem.ConnectionsHeader && item.canEdit)
-                ivCheckParticipants.isEnabled = (item is EventParticipantItem.ConnectionsHeader && item.canEdit)
+                val editButtonEnabled = item is EventParticipantItem.ConnectionsHeader && item.canEdit || item is EventParticipantItem.OtherHeader && item.canEdit
+                ivCheckParticipants.isInvisible = !editButtonEnabled
+                ivCheckParticipants.isEnabled = editButtonEnabled
             }
         }
 

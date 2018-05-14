@@ -7,7 +7,6 @@ import java.util.*
  * Created by Peter on 2/28/2018.
  */
 data class ShortAccountModelImpl(override var id: String,
-                                 override var firebaseUserId: String,
                                  override var userName: String,
                                  override var accountType: AccountType,
                                  override var avatar: String?,
@@ -21,7 +20,6 @@ data class ShortAccountModelImpl(override var id: String,
 
 data class DeclinedShortAccountModelImpl(
         override var id: String,
-        override var firebaseUserId: String,
         override var userName: String,
         override var accountType: AccountType,
         override var avatar: String?,
@@ -36,7 +34,6 @@ data class DeclinedShortAccountModelImpl(
 
 data class PersonalInfoModelImpl(
         override var id: String,
-        override var firebaseUserId: String,
         override var userName: String,
         override var accountType: AccountType,
         override var avatar: String?,
@@ -56,7 +53,6 @@ data class PersonalInfoModelImpl(
 
 data class ProfilePersonalInfoModelImpl(
         override var id: String,
-        override var firebaseUserId: String,
         override var userName: String,
         override var accountType: AccountType,
         override var avatar: String?,
@@ -79,7 +75,6 @@ data class ProfilePersonalInfoModelImpl(
 
 data class CompanyInfoModelImpl(
         override var id: String,
-        override var firebaseUserId: String,
         override var userName: String,
         override var accountType: AccountType,
         override var avatar: String?,
@@ -100,7 +95,6 @@ data class CompanyInfoModelImpl(
 
 data class ProfileCompanyInfoModelImpl(
         override var id: String,
-        override var firebaseUserId: String,
         override var userName: String,
         override var accountType: AccountType,
         override var avatar: String?,

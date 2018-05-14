@@ -152,6 +152,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun getShareOfferPostPerUserPrice(): Long? = postsRepository.getShareOfferPostPerUserPrice()
 
+    override suspend fun getPromotePostPrice(): Long = postsRepository.getPromotePostPrice() ?: 0L
+
     override suspend fun removePost(postId: String) {
         postsRepository.removePost(postId)
     }
@@ -166,6 +168,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun loadOfferCategories(): List<OfferCategoryModel> {
         return postsRepository.loadOfferCategories()
+    }
+
+    override suspend fun promote(post: PostModel) {
+        postsRepository.promote(post)
     }
 
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {

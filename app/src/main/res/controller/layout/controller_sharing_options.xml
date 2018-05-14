@@ -20,7 +20,6 @@
         android:background="?selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:visibility="gone"
         android:gravity="center_vertical"
         android:paddingBottom="@dimen/spacing_vertical"
         android:paddingEnd="@dimen/spacing_horizontal"
@@ -36,7 +35,7 @@
             android:layout_toStartOf="@id/rbPromotePost"
             tools:text="Promote post (200 points)" />
 
-        <TextView
+        <com.mnassa.widget.MnassaTextView
             android:id="@+id/tvPromotePostDescription"
             style="@style/MnassaTextTiny"
             android:layout_width="wrap_content"
@@ -44,14 +43,14 @@
             android:layout_alignParentStart="true"
             android:layout_below="@id/tvPromotePostTitle"
             android:layout_toStartOf="@id/rbPromotePost"
-            tools:text="Will be shown to all MNASSA community" />
+            android:text="@string/sharing_options_promote_description" />
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbPromotePost"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 
@@ -73,10 +72,10 @@
         <TextView
             android:id="@+id/tvMyNewsFeed"
             style="@style/MnassaHeader2"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_toStartOf="@id/rbMyNewsFeed"
             tools:text="My Newsfeed" />
 
@@ -84,8 +83,8 @@
             android:id="@+id/rbMyNewsFeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
     <View style="@style/MnassaDivider" />

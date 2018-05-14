@@ -7,7 +7,7 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 3/30/2018.
  */
 internal data class TransactionDbEntity(
-        override var id: String,
+        @SerializedName("id") override var id: String,
         @SerializedName("afterBalance") var afterBalance: Long,
         @SerializedName("amount") var amount: Long,
         @SerializedName("transactionAt") var transactionAt: Long,

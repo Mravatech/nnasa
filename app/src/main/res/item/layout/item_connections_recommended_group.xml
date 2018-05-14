@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/spacing_vertical"
-    android:paddingEnd="@dimen/spacing_horizontal"
-    android:paddingStart="@dimen/spacing_horizontal"
-    android:paddingTop="@dimen/spacing_vertical">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvGroupName"
-        style="@style/MnassaText"
+        style="@style/MnassaHeader2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical"
         tools:text="Connections group" />
 
-</RelativeLayout>
+    <View
+        style="@style/MnassaShadow"
+        android:rotation="180" />
+
+</LinearLayout>

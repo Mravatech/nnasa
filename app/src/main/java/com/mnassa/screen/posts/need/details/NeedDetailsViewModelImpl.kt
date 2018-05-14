@@ -97,6 +97,14 @@ open class NeedDetailsViewModelImpl(
         }
     }
 
+    override fun promote() {
+        handleException {
+            withProgressSuspend {
+                postsInteractor.promote(postChannel.consume { receive() })
+            }
+        }
+    }
+
     private suspend fun loadTags(tags: List<String>): List<TagModel> {
         return tags.map { tag -> asyncWorker { tagInteractor.get(tag) } }.mapNotNull { it.await() }
     }

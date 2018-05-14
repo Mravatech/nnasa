@@ -61,22 +61,17 @@ class ConnectionsInteractorImpl(private val phoneContactsRepository: ContactsRep
         }
     }
 
-    private suspend fun <T> ReceiveChannel<List<T>>.withoutMe(): ReceiveChannel<List<T>> where T : ShortAccountModel {
+    private fun <T> ReceiveChannel<List<T>>.withoutMe(): ReceiveChannel<List<T>> where T : ShortAccountModel {
         return map {
             val currentUserId = userProfileInteractor.getAccountIdOrNull()
             it.filter { it.id != currentUserId }
         }
     }
 
-    private suspend fun ReceiveChannel<RecommendedConnections>.withoutMeRecommended(): ReceiveChannel<RecommendedConnections> {
+    private fun ReceiveChannel<RecommendedConnections>.withoutMeRecommended(): ReceiveChannel<RecommendedConnections> {
         return map {
             val currentUserId = userProfileInteractor.getAccountIdOrNull()
-
-            RecommendedConnectionsImpl(
-                    byPhone = it.byPhone.mapValues { it.value.filter { it.id != currentUserId } },
-                    byEvents = it.byEvents.mapValues { it.value.filter { it.id != currentUserId } },
-                    byGroups = it.byGroups.mapValues { it.value.filter { it.id != currentUserId } }
-            )
+            RecommendedConnectionsImpl(it.recommendations.mapValues { it.value.filter { it.id != currentUserId } })
         }
     }
 

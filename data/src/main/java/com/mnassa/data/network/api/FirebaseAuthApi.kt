@@ -1,6 +1,6 @@
 package com.mnassa.data.network.api
 
-import com.mnassa.data.network.bean.retrofit.RegisterAccountInfoResponse
+import com.mnassa.data.network.bean.retrofit.response.RegisterAccountInfoResponse
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
 import com.mnassa.data.network.bean.retrofit.response.RegisterAccountResponse

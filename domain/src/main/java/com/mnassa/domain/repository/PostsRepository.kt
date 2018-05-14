@@ -80,6 +80,8 @@ interface PostsRepository {
 
     suspend fun getShareOfferPostPrice(): Long?
     suspend fun getShareOfferPostPerUserPrice(): Long?
+    suspend fun getPromotePostPrice(): Long?
+    suspend fun promote(post: PostModel)
 
     suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions)
     suspend fun updateUserRecommendation(postId: String, accountId: String, text: String)

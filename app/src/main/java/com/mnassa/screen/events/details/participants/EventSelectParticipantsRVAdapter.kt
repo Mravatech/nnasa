@@ -84,7 +84,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
 
                 cbParticipant.setOnCheckedChangeListener(null)
                 cbParticipant.isChecked = item.isChecked
-                cbParticipant.setOnCheckedChangeListener { buttonView, isChecked -> item.isChecked = isChecked }
+                cbParticipant.setOnCheckedChangeListener { _, isChecked -> item.isChecked = isChecked }
             }
         }
 
@@ -132,8 +132,9 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                     is EventParticipantItem.ConnectionsHeader -> fromDictionary(R.string.event_participant_header_connection)
                     else -> throw IllegalStateException()
                 }
-                btnSave.isInvisible = !(item is EventParticipantItem.ConnectionsHeader && item.canEdit)
-                btnSave.isEnabled = (item is EventParticipantItem.ConnectionsHeader && item.canEdit)
+                val editButtonEnabled = item is EventParticipantItem.ConnectionsHeader && item.canEdit || item is EventParticipantItem.OtherHeader && item.canEdit
+                btnSave.isInvisible = !editButtonEnabled
+                btnSave.isEnabled = editButtonEnabled
                 btnSave.text = fromDictionary(R.string.event_participant_save)
             }
         }

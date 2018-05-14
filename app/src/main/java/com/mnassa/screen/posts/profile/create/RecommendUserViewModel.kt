@@ -13,4 +13,8 @@ interface RecommendUserViewModel : MnassaViewModel {
     suspend fun getUser(userId: String): ShortAccountModel?
 
     fun createPost(recommendedUser: ShortAccountModel, text: String, postPrivacyOptions: PostPrivacyOptions)
+
+    suspend fun canPromotePost(): Boolean
+
+    suspend fun getPromotePostPrice(): Long
 }

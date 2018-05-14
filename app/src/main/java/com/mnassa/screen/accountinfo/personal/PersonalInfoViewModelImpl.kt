@@ -47,23 +47,22 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
             withProgressSuspend {
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val personalInfo = PersonalInfoModelImpl(
-                        accountModel.id,
-                        accountModel.firebaseUserId,
-                        accountModel.userName,
-                        accountModel.accountType,
-                        avatarSavedPath,
-                        contactPhone.takeIf { it.isNotBlank() },
-                        accountModel.language,
-                        accountModel.personalInfo,
-                        accountModel.organizationInfo,
-                        abilities,
-                        birthdayDate.takeIf { it.isNotBlank() },
-                        showContactEmail,
-                        birthday,
-                        showContactPhone,
-                        contactEmail.takeIf { it.isNotBlank() },
-                        if (isMale) Gender.MALE else Gender.FEMALE,
-                        null
+                        id = accountModel.id,
+                        userName = accountModel.userName,
+                        accountType = accountModel.accountType,
+                        avatar = avatarSavedPath,
+                        contactPhone = contactPhone.takeIf { it.isNotBlank() },
+                        language = accountModel.language,
+                        personalInfo = accountModel.personalInfo,
+                        organizationInfo = accountModel.organizationInfo,
+                        abilities = abilities,
+                        birthdayDate = birthdayDate.takeIf { it.isNotBlank() },
+                        showContactEmail = showContactEmail,
+                        birthday = birthday,
+                        showContactPhone = showContactPhone,
+                        contactEmail = contactEmail.takeIf { it.isNotBlank() },
+                        gender = if (isMale) Gender.MALE else Gender.FEMALE,
+                        connectedBy = null
                 )
                 userProfileInteractor.processAccount(personalInfo)
                 openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())

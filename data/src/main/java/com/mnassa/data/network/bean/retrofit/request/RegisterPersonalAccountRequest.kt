@@ -6,20 +6,12 @@ import com.google.gson.annotations.SerializedName
  * Created by Peter on 2/27/2018.
  */
 data class RegisterPersonalAccountRequest(
-        @SerializedName("firstName")
-        val firstName: String?,
-        @SerializedName("lastName")
-        val lastName: String?,
-        @SerializedName("userName")
-        val userName: String,
-        @SerializedName("type")
-        val type: String,
-        @SerializedName("offers")
-        val offers: List<String>,
-        @SerializedName("interests")
-        val interests: List<String>,
-        @SerializedName("location")
-        val location: Location,
-        @SerializedName("locationId")
-        val locationId: String
+        @SerializedName("firstName") val firstName: String?,
+        @SerializedName("lastName") val lastName: String?,
+        @SerializedName("userName") val userName: String,
+        @SerializedName("type") val type: String,
+        @SerializedName("offers") val offers: List<String>,
+        @SerializedName("interests") val interests: List<String>,
+        @SerializedName("location") val location: Location,
+        @SerializedName("locationId") val locationId: String
 )

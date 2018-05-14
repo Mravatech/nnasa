@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by Peter on 5/4/2018.
  */
-data class OfferPostPriceDbEntity (
+data class PriceDbEntity (
         @SerializedName("amount") val amount: Long,
         @SerializedName("state") val state: Boolean
 )

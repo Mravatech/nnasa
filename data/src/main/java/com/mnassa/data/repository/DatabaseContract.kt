@@ -105,6 +105,12 @@ internal object DatabaseContract {
     //offer
     const val SHARE_OFFER_POST = "dictionary/paymentTypes/shareOfferPost"
     const val SHARE_OFFER_POST_PER_USER = "dictionary/paymentTypes/shareOfferPostPerUser"
+    const val PROMOTE_POST = "dictionary/paymentTypes/promotePost"
+    const val PROMOTE_EVENT = "dictionary/paymentTypes/promoteEvent"
+    //users
+    const val TABLE_USERS = "users"
+    const val TABLE_USERS_COL_STATE = "state"
+    const val TABLE_USERS_COL_STATE_DISABLED = "disabled"
 
     //
     const val EXPIRATION_TYPE_ACTIVE = "active"

@@ -7,6 +7,4 @@ import com.google.gson.annotations.SerializedName
  * User: okli
  * Date: 3/13/2018
  */
-data class CustomTagsRequest(
-        @SerializedName("tags")
-        val tags: List<String>)
+data class CustomTagsRequest(@SerializedName("tags") val tags: List<String>)

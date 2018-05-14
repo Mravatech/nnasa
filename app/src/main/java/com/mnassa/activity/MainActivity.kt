@@ -16,6 +16,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
@@ -23,6 +24,7 @@ import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
 import com.mnassa.service.MnassaFirebaseMessagingService
 import com.mnassa.translation.LanguageProviderImpl
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.in_out_come_toast.view.*
 import org.kodein.di.Kodein
@@ -44,7 +46,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
     }
 
     private lateinit var router: Router
-    private lateinit var onLogoutListener: (Unit) -> Unit
+    private lateinit var onLogoutListener: (LogoutReason) -> Unit
 
     private val languageProvider: LanguageProvider by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +58,14 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             router.setRoot(RouterTransaction.with(createRootControllerInstance()))
         }
 
-        onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe {
+        onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe { reason ->
+            when (reason) {
+                is LogoutReason.NotAuthorized -> { }
+                is LogoutReason.ManualLogout -> { }
+                is LogoutReason.AccountBlocked -> {
+                    Toast.makeText(applicationContext, fromDictionary(R.string.blocked_account_message), Toast.LENGTH_LONG).show()
+                }
+            }
             startActivity(
                     Intent(this@MainActivity, MainActivity::class.java)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

@@ -1,6 +1,5 @@
 package com.mnassa.screen.posts
 
-import android.os.Bundle
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.InfoPostModel
@@ -19,16 +18,17 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                          private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), PostsViewModel {
 
+    private var isCounterReset = false
+
     override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> by ProcessAccountChangeArrayBroadcastChannel(
-            beforeReConsume = { it.send(ListItemEvent.Cleared()) },
+            beforeReConsume = {
+                isCounterReset = false
+                it.send(ListItemEvent.Cleared())
+            },
             receiveChannelProvider = { postsInteractor.loadAll() })
 
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
             receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()
@@ -36,6 +36,9 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
 
     override fun onAttachedToWindow(post: PostModel) {
         handleException { postsInteractor.onItemViewed(post) }
+        if (!isCounterReset) {
+            resetCounter()
+        }
     }
 
     override fun hideInfoPost(post: PostModel) {
@@ -46,9 +49,10 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         }
     }
 
-    override fun resetCounter() {
+    private fun resetCounter() {
         handleException {
             postsInteractor.resetCounter()
+            isCounterReset = true
         }
     }
 }

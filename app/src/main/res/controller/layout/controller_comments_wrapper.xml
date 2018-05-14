@@ -20,6 +20,7 @@
         tools:listitem="@layout/item_comment" />
 
     <View
+        android:id="@+id/commentPanelShadow"
         style="@style/MnassaShadow"
         android:layout_above="@id/commentPanel"
         android:rotation="180" />
