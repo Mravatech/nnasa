@@ -176,7 +176,6 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     companion object {
-        const val PHONE_NUMBER_WITHOUT_CODE = 9
         const val EMPTY_STRING = ""
         const val INVITE_WITH_WHATS_APP = 1
         const val INVITE_WITH_SMS = 2

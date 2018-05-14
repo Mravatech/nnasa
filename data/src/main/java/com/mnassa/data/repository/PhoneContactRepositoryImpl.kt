@@ -43,7 +43,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                     val regex = Regex("[^0-9 ]")
                     while (!cursor.isAfterLast) {
                         val phone = regex.replace(cursor.getString(numberColumnIndex), "")
-                        if (phone.length > NUMBER_WITHOUT_CODE) {
+                        if (phone.length > NUMBER_LENGTH) {
                             result += PhoneContactImpl(
                                     phoneNumber = phone,
                                     fullName = cursor.getString(nameColumnIndex),
@@ -58,7 +58,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
     }
 
     companion object {
-        private const val NUMBER_WITHOUT_CODE = 11
+        private const val NUMBER_LENGTH = 11
     }
 
 }
