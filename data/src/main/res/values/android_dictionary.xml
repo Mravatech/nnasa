@@ -50,6 +50,7 @@
     <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
     <string name="_android_post_comment_edit_button_INFO">Edit</string>
     <string name="_android_post_share_value_center_INFO">To value center</string>
+    <string name="_android_post_expires_in_INFO">Post expires in</string>
     <string name="_android_my_wallet_title_INFO">My wallet</string>
     <string name="_android_my_wallet_balance_INFO">Balance</string>
     <string name="_android_my_wallet_spent_INFO">Spent</string>
@@ -194,6 +195,8 @@
     <string name="_android_hours_INFO">%d hours</string>
     <string name="_android_minutes_INFO">%d minutes</string>
     <string name="_android_seconds_INFO">%d seconds</string>
+
+    <string name="_android_expiration_valid_till_INFO">Valid till</string>
 
     <string name="_android_search_done_INFO">Done</string>
     <string name="_android_search_hint_INFO">Search</string>
