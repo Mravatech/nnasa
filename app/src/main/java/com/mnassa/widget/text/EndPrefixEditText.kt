@@ -22,16 +22,16 @@ class EndPrefixEditText : LinearLayout {
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    var dayToExpire: String? = null
+    var dayTo: String? = null
         set(value) {
             field = value
             etEditableText.setText(value)
         }
 
-    var millisToExpire: Long? = null
+    var millisTo: Long? = null
         get() {
-            val timeToExpire = etEditableText.text.toString().toLongOrNull() ?: return null
-            return System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(timeToExpire, TimeUnit.DAYS)
+            val timeTo = etEditableText.text.toString().toLongOrNull() ?: return null
+            return System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(timeTo, TimeUnit.DAYS)
         }
         private set
 
