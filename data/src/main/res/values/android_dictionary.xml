@@ -209,5 +209,6 @@
     <string name="_android_connections_sent_empty_title_INFO">You have no sent connection requests yet</string>
     <string name="_android_connections_sent_empty_description_INFO">You have no sent connection requests yet (description)</string>
 
+    <string name="_android_points_count_INFO">%d Points</string>
 
 </resources>
