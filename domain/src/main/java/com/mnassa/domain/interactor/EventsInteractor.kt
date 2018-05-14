@@ -12,6 +12,8 @@ interface EventsInteractor {
     suspend fun createEvent(model: CreateOrEditEventModel)
     suspend fun editEvent(model: CreateOrEditEventModel)
     suspend fun changeStatus(event: EventModel, status: EventStatus)
+    suspend fun promote(id: String)
+    suspend fun getPromotePostPrice(): Long
 
     suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?>
     suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>

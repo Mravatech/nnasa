@@ -1,21 +1,18 @@
 package com.mnassa.screen.posts.offer.create
 
 import android.os.Bundle
-import com.mnassa.domain.interactor.PlaceFinderInteractor
-import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.interactor.PostsInteractor
-import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.OfferCategoryModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.repository.UserRepository
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.screen.posts.need.create.AttachedImage
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.consume
 
 /**
  * Created by Peter on 5/3/2018.
@@ -24,7 +21,7 @@ class CreateOfferViewModelImpl(private val offerId: String?,
                                private val postsInteractor: PostsInteractor,
                                private val tagInteractor: TagInteractor,
                                private val placeFinderInteractor: PlaceFinderInteractor,
-                               private val userRepository: UserRepository) : MnassaViewModelImpl(), CreateOfferViewModel {
+                               private val userRepository: UserProfileInteractor) : MnassaViewModelImpl(), CreateOfferViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private val categoryToSubCategory = HashMap<String, MutableList<OfferCategoryModel>>()
@@ -111,14 +108,10 @@ class CreateOfferViewModelImpl(private val offerId: String?,
         }
     }
 
-    override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountById(userId) }
-
+    override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountByIdChannel(userId).consume { receive() } }
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
-
-    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
-        return placeFinderInteractor.getReqieredPlaces(constraint)
-    }
-
+    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
     override suspend fun search(search: String): List<TagModel> = tagInteractor.search(search)
-
+    override suspend fun canPromotePost(): Boolean = userRepository.getPermissions().consume { receive() }.canPromoteOfferPost
+    override suspend fun getPromotePostPrice(): Long = postsInteractor.getPromotePostPrice()
 }

@@ -19,7 +19,6 @@ internal class ProfileDbEntity(
         abilitiesInternal: List<ShortAccountAbilityDbEntity>,
         createdAt: Long,
         @SerializedName("createdAtDate") var createdAtDate: String?,
-//        @SerializedName("firebaseUserId") var firebaseUserId: String,
         @SerializedName("interests") var interests: List<String>?,
         @SerializedName("offers") var offers: List<String>?,
         @SerializedName("points") var points: Int?,
@@ -54,25 +53,3 @@ internal class ProfileDbEntity(
     val gender: String? = gender
 
 }
-
-//internal data class LocationDbEntity(
-//        @SerializedName("placeId")
-//        val placeId: String?,
-//        @SerializedName("en")
-//        val en: LocationDetailDbEntity?,
-//        @SerializedName("ar")
-//        val ar: LocationDetailDbEntity?
-//)
-
-//internal data class LocationDetailDbEntity(
-//        @SerializedName("city")
-//        val city: String?,
-//        @SerializedName("lat")
-//        val lat: Double?,
-//        @SerializedName("lng")
-//        val lng: Double?,
-//        @SerializedName("placeId")
-//        val placeId: String?,
-//        @SerializedName("placeName")
-//        val placeName: String?
-//)

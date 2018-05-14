@@ -8,5 +8,4 @@ import com.google.gson.annotations.SerializedName
 data class ViewItemsRequest(
         @SerializedName("ids") val ids: List<String>,
         @SerializedName("type") val type: String
-) {
-}
+)

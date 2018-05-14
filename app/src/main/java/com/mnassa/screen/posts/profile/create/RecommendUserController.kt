@@ -50,10 +50,15 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
                 )
             }
             tvShareOptions.setOnClickListener {
-                open(SharingOptionsController.newInstance(
-                        options = sharingOptions,
-                        listener = this@RecommendUserController,
-                        accountsToExclude = listOf(recommendedUser.id)))
+                launchCoroutineUI {
+                    open(SharingOptionsController.newInstance(
+                            options = sharingOptions,
+                            listener = this@RecommendUserController,
+                            accountsToExclude = listOf(recommendedUser.id),
+                            canBePromoted = viewModel.canPromotePost(),
+                            restrictShareReduction = postId != null,
+                            promotePrice = viewModel.getPromotePostPrice()))
+                }
             }
 
             launchCoroutineUI {
@@ -78,7 +83,7 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
     private fun onNeedTextUpdated() {
         val view = view ?: return
-        view.toolbar.actionButtonEnabled = view.etRecommend.text.length >= MIN_TEXT_LENGTH
+        view.toolbar.actionButtonClickable = view.etRecommend.text.length >= MIN_TEXT_LENGTH
     }
 
     companion object {

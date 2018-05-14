@@ -20,7 +20,7 @@ sealed class EventParticipantItem : Comparable<EventParticipantItem>, Serializab
         override val order: String = ORDER_CONNECTIONS_HEADER
     }
 
-    object OtherHeader : EventParticipantItem() {
+    data class OtherHeader(val canEdit: Boolean) : EventParticipantItem() {
         override val order: String = ORDER_OTHER_HEADER
     }
 

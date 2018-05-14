@@ -17,10 +17,7 @@ import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.bindDate
-import com.mnassa.extensions.image
-import com.mnassa.extensions.isInvisible
-import com.mnassa.extensions.isMyEvent
+import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -34,7 +31,6 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details.view.*
 import kotlinx.android.synthetic.main.event_date.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
 
 /**
@@ -64,7 +60,9 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(EventDetailsInfoController.newInstance(eventId, eventModel), CommentsRewardModel(false, false))
+                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(
+                            EventDetailsInfoController.newInstance(eventId, eventModel),
+                            CommentsRewardModel(false, false))
                     EventPages.PARTICIPANTS.ordinal -> EventDetailsParticipantsController.newInstance(eventId, eventModel)
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
@@ -87,32 +85,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         with(view) {
             tlEventTabs.setupWithViewPager(vpEvents)
             vpEvents.adapter = adapter
-
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-            if (eventModel?.isMyEvent() == true) {
-                toolbar.inflateMenu(R.menu.event_edit)
-            } else {
-                toolbar.inflateMenu(R.menu.event_view)
-            }
-            toolbar.menu.apply {
-                findItem(R.id.action_event_edit)?.title = fromDictionary(R.string.event_menu_edit)
-                findItem(R.id.action_event_change_status)?.title = fromDictionary(R.string.event_menu_change_status)
-                findItem(R.id.action_event_report)?.title = fromDictionary(R.string.need_action_report)
-            }
-
-            toolbar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.action_event_edit -> eventModel?.let { open(CreateEventController.newInstance(it)) }
-                    R.id.action_event_change_status -> {
-                        dialogHelper.selectEventStatusDialog(context, eventModel?.status) { status ->
-                            eventModel?.let { event -> viewModel.changeStatus(event, status) }
-                        }
-                    }
-                    R.id.action_event_report -> complainAboutProfile()
-                }
-                true
-            }
-
             appBarLayout.addOnOffsetChangedListener(offsetChangedListener)
         }
 
@@ -120,7 +93,11 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             viewModel.finishScreenChannel.consumeEach { close() }
         }
 
-        runBlocking { eventModel?.apply { bindEvent(this) } }
+        launchCoroutineUI {
+            viewModel.eventChannel.consumeEach { bindEvent(it) }
+        }
+
+        launchCoroutineUI { eventModel?.apply { bindEvent(this) } }
     }
 
     override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {
@@ -129,6 +106,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
 
     private suspend fun bindEvent(event: EventModel) {
         eventModel = event
+        initToolbarMenu(event)
         with(getViewSuspend()) {
             val mainImage = event.pictures.firstOrNull()
             ivEventImage.image(mainImage)
@@ -146,6 +124,48 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             creatorText.setSpan(StyleSpan(Typeface.BOLD), spanStart, creatorText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             tvEventCreator.text = creatorText
+        }
+    }
+
+    private suspend fun initToolbarMenu(event: EventModel) {
+        val toolbar = getViewSuspend().toolbar
+
+        toolbar.menu?.clear()
+        if (event.isMyEvent()) {
+            toolbar.inflateMenu(R.menu.event_edit)
+        } else {
+            toolbar.inflateMenu(R.menu.event_view)
+        }
+
+        toolbar.menu.apply {
+            findItem(R.id.action_event_edit)?.title = fromDictionary(R.string.event_menu_edit)
+            findItem(R.id.action_event_change_status)?.title = fromDictionary(R.string.event_menu_change_status)
+            findItem(R.id.action_event_promote)?.title = fromDictionary(R.string.event_promote_menu)
+            findItem(R.id.action_event_report)?.title = fromDictionary(R.string.need_action_report)
+        }
+
+        if (!event.canBePromoted()) {
+            toolbar.menu.removeItem(R.id.action_event_promote)
+        }
+
+        val promotionPrice = event.getPromotionPrice()
+
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_event_edit -> event.let { open(CreateEventController.newInstance(it)) }
+                R.id.action_event_change_status -> {
+                    dialogHelper.selectEventStatusDialog(toolbar.context, event.status) { status ->
+                        event.let { event -> viewModel.changeStatus(event, status) }
+                    }
+                }
+                R.id.action_event_report -> complainAboutProfile()
+                R.id.action_event_promote -> {
+                    dialogHelper.showConfirmPostPromotingDialog(toolbar.context, promotionPrice) {
+                        viewModel.promote()
+                    }
+                }
+            }
+            true
         }
     }
 

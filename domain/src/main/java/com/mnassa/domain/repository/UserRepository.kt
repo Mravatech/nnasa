@@ -48,4 +48,6 @@ interface UserRepository {
     suspend fun getFirebaseUserId(): String?
 
     suspend fun getPermissions(): ReceiveChannel<PermissionsModel>
+
+    suspend fun getUserStatusChannel(firebaseUserId: String): ReceiveChannel<UserStatusModel>
 }

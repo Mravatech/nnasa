@@ -10,6 +10,7 @@
     <string name="_android_country_canada_INFO">Canada</string>
 
     <string name="_android_cancel_INFO">Cancel</string>
+    <string name="_android_ok_INFO">OK</string>
 
     <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
     <string name="_android_enter_validation_code_header_INFO">Validation Code</string>
@@ -34,7 +35,7 @@
     <string name="_android_connections_archived_empty_description_INFO">You have no rejected users yet (description)</string>
     <string name="_android_news_feed_title_INFO">News feed</string>
     <string name="_android_need_details_title_INFO">%s Demands</string>
-    <string name="_android_create_post_promote_title_INFO">Promote post (200 points)</string>
+    <string name="_android_create_post_promote_title_template_INFO">Promote post (%d points)</string>
     <string name="_android_create_post_promote_description_INFO">Will be shown to all MNASSA community</string>
     <string name="_android_create_post_promote_short_INFO">all MNASSA community</string>
     <string name="_android_create_post_share_to_prefix_INFO">to %s</string>
@@ -48,6 +49,7 @@
     <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
     <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
     <string name="_android_post_comment_edit_button_INFO">Edit</string>
+    <string name="_android_post_share_value_center_INFO">To value center</string>
     <string name="_android_my_wallet_title_INFO">My wallet</string>
     <string name="_android_my_wallet_balance_INFO">Balance</string>
     <string name="_android_my_wallet_spent_INFO">Spent</string>
@@ -121,6 +123,7 @@
     <string name="_android_post_recommends_open_profile_INFO">Open profile</string>
     <string name="_android_post_recommends_message_placeholder_INFO">type your message…</string>
     <string name="_android_post_recommends_publish_INFO">Publish</string>
+    <string name="_android_post_empty_list_description_INFO">You have no publications yet</string>
 
     <string name="_android_connected_by_from_INFO">from</string>
     <string name="_android_notification_receive_INFO">You just receive %i points</string>
@@ -166,6 +169,8 @@
     <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
     <string name="_android_event_participant_header_other_INFO">Other Participants</string>
     <string name="_android_event_participant_guest_INFO">Guest %d</string>
+    <string name="_android_event_empty_list_title_INFO">You have no events yet</string>
+    <string name="_android_event_empty_list_description_INFO">You have no events yet (description)</string>
 
     <string name="_android_home_button_create_event_INFO">Create Event</string>
     <string name="_android_home_button_create_general_INFO">Create General Post</string>
@@ -200,6 +205,11 @@
     <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
     <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
 
+    <string name="_android_connections_recommendations_empty_description_INFO">You have no recommendations yet (description)</string>
+    <string name="_android_post_recommend_empty_title_INFO">You have no connections yet</string>
+    <string name="_android_post_recommend_empty_description_INFO">You have no connections yet (description)</string>
+    <string name="_android_connections_sent_empty_title_INFO">You have no sent connection requests yet</string>
+    <string name="_android_connections_sent_empty_description_INFO">You have no sent connection requests yet (description)</string>
 
 
 </resources>

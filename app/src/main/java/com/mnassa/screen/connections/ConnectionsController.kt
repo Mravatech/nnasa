@@ -47,7 +47,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private val allConnectionsAdapter = AllConnectionsRecyclerViewAdapter(true)
     private val recommendedConnectionsAdapter = RecommendedConnectionsRecyclerViewAdapter()
     private val newConnectionRequestsAdapter = NewConnectionRequestsRecyclerViewAdapter()
-    private var isHeaderBounded = false
     private var permissionsSnackbar: Snackbar? = null
     private val dialog: DialogHelper by instance()
 
@@ -65,12 +64,12 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         recommendedConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
-        newConnectionRequestsAdapter.onDeclineClickListener = {
+        newConnectionRequestsAdapter.onDeclineClickListener = { account ->
             view?.let { view ->
-                launchCoroutineUI { thisRef ->
-                    val disconnectDays = thisRef().viewModel.getDisconnectTimeoutDays()
+                launchCoroutineUI {
+                    val disconnectDays = viewModel.getDisconnectTimeoutDays()
                     dialog.showDeclineConnectionDialog(view.context, disconnectDays) {
-                        viewModel.decline(it)
+                        viewModel.decline(account)
                     }
                 }
             }
@@ -127,7 +126,6 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     }
 
     override fun onDestroyView(view: View) {
-        isHeaderBounded = false
         permissionsSnackbar = null
         view.rvAllConnections.adapter = null
         super.onDestroyView(view)
@@ -172,14 +170,18 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         }
     }
 
-    private fun bindHeader(header: View) {
-        if (isHeaderBounded) return
-        isHeaderBounded = true
+    private var loadAllConnectionsJob: Job? = null
+    private var loadRecommendedConnectionsJob: Job? = null
+    private var loadNewConnectionsJob: Job? = null
 
+    private fun bindHeader(header: View) {
         with(header) {
             tvNewConnectionRequests.text = fromDictionary(R.string.tab_connections_new_requests)
             tvRecommendedConnections.text = fromDictionary(R.string.tab_connections_recommended)
             tvAllConnections.text = fromDictionary(R.string.tab_connections_all)
+
+            rvNewConnectionRequests.itemAnimator = null
+            rvNewConnectionRequests.isNestedScrollingEnabled = false
 
             rvRecommendedConnections.adapter = recommendedConnectionsAdapter
             rvNewConnectionRequests.adapter = newConnectionRequestsAdapter
@@ -190,7 +192,8 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
         val headerRef = header.asReference()
 
-        launchCoroutineUI {
+        loadAllConnectionsJob?.cancel()
+        loadAllConnectionsJob = launchCoroutineUI {
             viewModel.allConnectionsChannel.consumeEach {
                 allConnectionsAdapter.isLoadingEnabled = false
                 allConnectionsAdapter.set(it)
@@ -203,7 +206,8 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             }
         }
 
-        launchCoroutineUI {
+        loadRecommendedConnectionsJob?.cancel()
+        loadRecommendedConnectionsJob = launchCoroutineUI {
             viewModel.recommendedConnectionsChannel.consumeEach {
                 recommendedConnectionsAdapter.setWithMaxRange(it)
 
@@ -215,7 +219,8 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
             }
         }
 
-        launchCoroutineUI {
+        loadNewConnectionsJob?.cancel()
+        loadNewConnectionsJob = launchCoroutineUI {
             viewModel.newConnectionRequestsChannel.consumeEach {
                 newConnectionRequestsAdapter.setWithMaxRange(it)
 

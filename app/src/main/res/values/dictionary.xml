@@ -78,6 +78,9 @@
     <string name="posts_recommends">_android_post_recommends</string>
     <string name="posts_recommends_skills_prefix">_accEdit_cellSkills_placeholder</string>
 
+    <string name="posts_empty_list_title">_profile_emptyTablePlaceholder</string>
+    <string name="posts_empty_list_description">_android_post_empty_list_description</string>
+
 
     <string name="post_delete_dialog_title">_question_postDeleting_title</string>
     <string name="post_delete_dialog_description">_question_postDeleting_message</string>
@@ -94,6 +97,7 @@
 
     <string name="posts_comment_edit_title">_android_post_comment_edit_title</string>
     <string name="posts_comment_edit_button">_android_post_comment_edit_button</string>
+    <string name="posts_sharing_value_centre">_android_post_share_value_center</string>
 
     <string name="comment_useful">_commentCell_usefulButton</string>
     <string name="rewarding_for_comment">_android_my_wallet_send_points_amount_hint</string>
@@ -144,10 +148,15 @@
     <!-- sharing options -->
     <string name="sharing_options_title">_privacy_connections_nav_title</string>
     <string name="sharing_options_button">_accountSelector_rigthButton_Apply</string>
-    <string name="sharing_options_promote_title">_android_create_post_promote_title</string>
+    <string name="sharing_options_promote_title">_android_create_post_promote_title_template</string>
     <string name="sharing_options_promote_description">_android_create_post_promote_description</string>
     <string name="sharing_options_newsfeed_title">_share_to_in_newsfeed</string>
     <string name="sharing_options_connections_title">_connectionsList_navTitle_connections</string>
+
+    <string name="post_promote_menu">_event_details_alert_promote_post</string>
+    <string name="post_promote_dialog_title">_promotion_willCostMaskpromotePost</string>
+    <string name="post_promote_dialog_no">_post_details_alert_cancel</string>
+    <string name="post_promote_dialog_yes">_android_ok</string>
 
     <!-- ========================================== OFFER ======================================= -->
     <string name="offer_prefix">_post_type_offer_Info</string>
@@ -440,7 +449,9 @@
     <string name="event_participant_save">_navItem_Save</string>
     <string name="event_participant_guest">_android_event_participant_guest</string>
     <string name="event_duration_not_specified">_android_event_duration_not_specified</string>
-    
+    <string name="event_empty_title">_android_event_empty_list_title</string>
+    <string name="event_empty_description">_android_event_empty_list_description</string>
+
     <!-- ======================================= CREATE EVENT ================================== -->
     <string name="event_create_title_placeholder">create_event_your_title</string>
     <string name="event_create_date_placeholder">_date_selection_date_time</string>
@@ -466,6 +477,7 @@
     <string name="event_status_opened">_android_event_status_opened</string>
     <string name="event_status_closed">closed</string>
     <string name="event_status_suspended">suspended</string>
+    <string name="event_promote_menu">_post_details_alert_promote</string>
 
     <!-- ========================================== CREATE GENERAL ============================= -->
     <string name="general_text_placeholder">_android_general_text_placeholder</string>
@@ -496,5 +508,14 @@
 
     <string name="search_done">_android_search_done</string>
     <string name="search_hint">_android_search_hint</string>
+
+    <string name="connections_recommended_empty_title">_connectionsList_empty_recommendations</string>
+    <string name="connections_recommended_empty_description">_android_connections_recommendations_empty_description</string>
+    <string name="connections_sent_requests_empty_title">_android_connections_sent_empty_title</string>
+    <string name="connections_sent_requests_empty_description">_android_connections_sent_empty_description</string>
+    <string name="post_recommend_empty_title">_android_post_recommend_empty_title</string>
+    <string name="post_recommend_empty_description">_android_post_recommend_empty_description</string>
+
+    <string name="blocked_account_message">message_accIsDisabled</string>
 
 </resources>

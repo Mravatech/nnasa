@@ -32,8 +32,8 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
         selectParticipantAdapter.isLoadingEnabled = true
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.participantsChannel.consumeEach {
-                allParticipantsadAdapter.isLoadingEnabled = it.isEmpty()
-                selectParticipantAdapter.isLoadingEnabled = it.isEmpty()
+                allParticipantsadAdapter.isLoadingEnabled = false
+                selectParticipantAdapter.isLoadingEnabled = false
 
                 allParticipantsadAdapter.set(it)
                 selectParticipantAdapter.set(it.flatMap { it.withGuests() })

@@ -58,7 +58,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val attachedImagesAdapter = AttachedImagesRVAdapter()
     private var imageToReplace: AttachedImage? = null
     private var dateTime: DateTimePickerController.DatePickerResult? = null
-    private var eventStatus: EventStatus = EventStatus.OPENED
+    private var eventStatus: EventStatus = EventStatus.OPENED()
     private var placeId: String? = null
         set(value) {
             field = value
@@ -111,11 +111,15 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             }
             tvShareOptions.setOnClickListener {
                 val event = event
-                open(SharingOptionsController.newInstance(
-                        options = sharingOptions,
-                        listener = this@CreateEventController,
-                        accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
-                        restrictShareReduction = eventId != null))
+                launchCoroutineUI {
+                    open(SharingOptionsController.newInstance(
+                            options = sharingOptions,
+                            listener = this@CreateEventController,
+                            accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
+                            restrictShareReduction = eventId != null,
+                            canBePromoted = viewModel.canPromoteEvents(),
+                            promotePrice = viewModel.getPromoteEventPrice()))
+                }
             }
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
@@ -177,7 +181,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             }
             placeId?.apply { centerMapOn(this) }
             //
-            val eventTypes = listOf(EventType.LECTURE, EventType.DISCUSSION, EventType.WORKSHOP, EventType.EXERCISE, EventType.ACTIVITY)
+            val eventTypes = listOf(EventType.LECTURE(), EventType.DISCUSSION(), EventType.WORKSHOP(), EventType.EXERCISE(), EventType.ACTIVITY())
             sEventType.adapter = ArrayAdapter(
                     context,
                     R.layout.support_simple_spinner_dropdown_item,
@@ -214,6 +218,10 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             etTicketsPerAccountLimit.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             //
             onEventChanged()
+            //
+            if (eventId != null) {
+                toolbar.title = fromDictionary(R.string.event_edit_title)
+            }
         }
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
@@ -296,8 +304,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 )
                 EventLocationType.Specified(place, placeId, getLocationDescription())
             }
-            EVENT_LOCATION_NOT_DEFINED -> EventLocationType.NotDefined
-            EVENT_LOCATION_LATER -> EventLocationType.Later
+            EVENT_LOCATION_NOT_DEFINED -> EventLocationType.NotDefined()
+            EVENT_LOCATION_LATER -> EventLocationType.Later()
             else -> throw IllegalStateException("Invalid location type: ${view.sLocation.selectedItemPosition}")
         }
     }
@@ -311,8 +319,6 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         this.event = event
         this.eventStatus = event.status
         with(view ?: return) {
-            toolbar.title = fromDictionary(R.string.event_edit_title)
-
             dateTime = DateTimePickerController.DatePickerResult(event.startAt, event.duration?.toMillis()
                     ?: 0L)
             etEventDateTime.setText(requireNotNull(dateTime).format())
@@ -337,7 +343,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 }
             }
 
-            sharingOptions.selectedConnections = event.privacyConnections
+            sharingOptions = SharingOptionsController.ShareToOptions(event.privacyType, event.privacyConnections)
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }

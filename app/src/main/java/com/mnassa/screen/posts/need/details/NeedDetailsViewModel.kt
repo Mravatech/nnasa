@@ -19,5 +19,6 @@ interface NeedDetailsViewModel : MnassaViewModel {
 
     fun delete()
     fun repost(sharingOptions: PostPrivacyOptions)
+    fun promote()
     fun sendComplaint(id: String, reason: String, authorText: String?)
 }

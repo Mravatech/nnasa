@@ -6,7 +6,7 @@ import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseWalletApi
-import com.mnassa.data.network.bean.firebase.RewardDbEntity
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RewardForCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.SendPointsRequest
@@ -61,13 +61,11 @@ class WalletRepositoryImpl(
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
     }
 
-    override suspend fun getDefaultRewardingPoints(): Int {
+    override suspend fun getDefaultRewardingPoints(): Long {
         return db.child(DatabaseContract.TABLE_DICTIONARY)
                 .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT)
-                .await<RewardDbEntity>(exceptionHandler)!!
-                .amount
+                .await<PriceDbEntity>(exceptionHandler)?.amount ?: 0L
     }
-
 
     override suspend fun sendPoints(amount: Long, recipientId: String, description: String?) {
         walletApi.sendPoints(SendPointsRequest(

@@ -143,6 +143,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         fun set(elements: List<T>)
         operator fun get(index: Int): T
         val size: Int
+        fun isEmpty() = size == 0
     }
 
     ////////////////////////////////////////// DATA STORAGE ////////////////////////////////////////
@@ -217,6 +218,8 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             }
             return true
         }
+
+        override fun isEmpty(): Boolean = size == 0
     }
 
     /////////////////////////////////////// DIFF UTILS HELPERS /////////////////////////////////////

@@ -70,4 +70,12 @@ class EventDetailsViewModelImpl(private val eventId: String,
         hideProgress()
         return reportsList
     }
+
+    override fun promote() {
+        handleException {
+            withProgressSuspend {
+                eventsInteractor.promote(eventId)
+            }
+        }
+    }
 }

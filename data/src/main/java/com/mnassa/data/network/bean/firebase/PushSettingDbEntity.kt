@@ -10,8 +10,7 @@ import com.mnassa.domain.model.HasId
  */
 
 data class PushSettingDbEntity(
-        @SerializedName("id")
-        override var id: String,
+        @SerializedName("id") override var id: String,
         @SerializedName("isActive") var isActive: Boolean,
         @SerializedName("withSound") var withSound: Boolean
 ) : HasId

@@ -36,7 +36,7 @@
             android:layout_toStartOf="@id/rbPromotePost"
             tools:text="Promote post (200 points)" />
 
-        <TextView
+        <com.mnassa.widget.MnassaTextView
             android:id="@+id/tvPromotePostDescription"
             style="@style/MnassaTextTiny"
             android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@id/tvPromotePostTitle"
             android:layout_toStartOf="@id/rbPromotePost"
-            tools:text="Will be shown to all MNASSA community" />
+            android:text="@string/sharing_options_promote_description" />
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbPromotePost"

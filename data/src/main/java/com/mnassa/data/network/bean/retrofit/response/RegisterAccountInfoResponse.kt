@@ -1,4 +1,4 @@
-package com.mnassa.data.network.bean.retrofit
+package com.mnassa.data.network.bean.retrofit.response
 
 import com.google.gson.annotations.SerializedName
 
