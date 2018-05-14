@@ -117,7 +117,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
             }
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
-                view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
+                view.btnInvite.isEnabled = validateInput()
                 adapter.searchByNumber(it)
             })
             btnInvite.setOnClickListener {
