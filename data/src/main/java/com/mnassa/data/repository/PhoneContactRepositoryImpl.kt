@@ -53,6 +53,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                     }
                 }
             }
+
             result.distinctBy { it.phoneNumber }
         }.await()
     }

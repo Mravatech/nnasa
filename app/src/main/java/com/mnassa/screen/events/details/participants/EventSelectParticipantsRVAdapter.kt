@@ -19,20 +19,39 @@ import kotlinx.android.synthetic.main.item_event_select_participants_guest.view.
  */
 class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
     var onCheckParticipantsClickListener = {}
+    var onSearchClickListener = {}
     var onSaveClickListener = { dataSet: List<EventParticipantItem> -> }
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         first.compareTo(second)
     }
     override val itemClass: Class<EventParticipantItem> = EventParticipantItem::class.java
 
+    override var filterPredicate: (item: EventParticipantItem) -> Boolean = {
+        when (it) {
+            is EventParticipantItem.User -> {
+                it.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+            }
+            is EventParticipantItem.Guest -> {
+                it.parent.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+            }
+            else -> true
+        }
+    }
+
     init {
-        dataStorage = SortedDataStorage(itemClass, this)
         itemsTheSameComparator = { first, second ->
             if (first is EventParticipantItem.User && second is EventParticipantItem.User) {
                 first.user.id == second.user.id
             } else first == second
         }
         contentTheSameComparator = { first, second -> first == second }
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this))
+        searchListener = dataStorage as SearchListener<EventParticipantItem>
+    }
+
+    fun searchByName(text: String) {
+        searchPhrase = text
+        searchListener.search()
     }
 
     override fun onClick(view: View) {
@@ -41,6 +60,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
         when (view.id) {
             R.id.btnSave -> onSaveClickListener(dataStorage.toList())
             R.id.ivCheckParticipants -> onCheckParticipantsClickListener()
+            R.id.ivSearch -> onSearchClickListener()
         }
     }
 
@@ -136,6 +156,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                 btnSave.isInvisible = !editButtonEnabled
                 btnSave.isEnabled = editButtonEnabled
                 btnSave.text = fromDictionary(R.string.event_participant_save)
+                ivSearch.isInvisible = item is EventParticipantItem.OtherHeader
             }
         }
 
@@ -150,6 +171,9 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                     //
                     btnSave.setOnClickListener(onClickListener)
                     btnSave.tag = viewHolder
+
+                    ivSearch.setOnClickListener(onClickListener)
+                    ivSearch.tag = viewHolder
                 }
 
                 return viewHolder

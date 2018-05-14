@@ -10,6 +10,10 @@ import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.PostData
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_ACTIVE
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_CLOSED
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_EXPIRED
+import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_FULFILLED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PRIVATE
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_PRIVACY_TYPE_WORLD
@@ -80,6 +84,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags ?: emptyList(),
                     text = input.text,
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
                     author = convertAuthor(input.author, converter),
@@ -112,6 +118,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
                             ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!"))
             )
@@ -140,7 +148,9 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     title = input.title
                             ?: throw FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!")),
                     category = input.category,
-                    subCategory = input.subcategory
+                    subCategory = input.subcategory,
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) }
             )
             else -> PostModelImpl(
                     id = input.id,
@@ -157,6 +167,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags ?: emptyList(),
                     text = input.text,
+                    statusOfExpiration = convertExpiration(input.statusOfExpiration),
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
                     author = convertAuthor(input.author, converter),
@@ -174,6 +186,16 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
 
     private fun convertOfferPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): OfferPostModelImpl {
         return convertPost(input, token, converter) as OfferPostModelImpl
+    }
+
+    private fun convertExpiration(expiration: String): ExpirationType {
+        return when (expiration) {
+            EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE(expiration)
+            EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED(expiration)
+            EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED(expiration)
+            EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED(expiration)
+            else -> throw  IllegalArgumentException("There is no convert type for $expiration")
+        }
     }
 
     private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {

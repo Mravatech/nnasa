@@ -2,14 +2,16 @@ package com.mnassa.screen.connections.select
 
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_all.view.*
+import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 4/2/2018.
@@ -34,6 +36,9 @@ class SelectConnectionController : MnassaControllerImpl<SelectConnectionViewMode
         with(view) {
             toolbar.title = fromDictionary(R.string.select_recipient_title)
             rvAllConnections.adapter = adapter
+            searchView.etSearch.addTextChangedListener(SimpleTextWatcher{
+                adapter.searchByName(it)
+            })
         }
 
         adapter.isLoadingEnabled = true

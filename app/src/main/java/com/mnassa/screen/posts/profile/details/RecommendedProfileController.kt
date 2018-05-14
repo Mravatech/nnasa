@@ -65,6 +65,8 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
                 tvRecommendedUserName.text = post.recommendedProfile.formattedName
                 tvRecommendedUserPosition.text = post.recommendedProfile.formattedPosition
                 tvRecommendedUserPosition.goneIfEmpty()
+                tvExpiration.visibility = View.GONE
+                vExpirationSeparator.visibility = View.GONE
 
                 btnConnectNow.tag = post
             }

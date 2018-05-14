@@ -21,8 +21,8 @@ import com.mnassa.screen.login.enterphone.CountryCode
 import com.mnassa.screen.login.enterphone.CountryCodeAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
+import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
-import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -67,7 +67,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
         }
         launchCoroutineUI {
             viewModel.invitesCountChannel.consumeEach {
-                view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_invites_left).format(it)
+                view.toolbar.title = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
         }
         adapter.onItemClickListener = {
@@ -107,7 +107,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     private fun initViews(view: View) {
         with(view) {
             tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
-            tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
+            toolbar.title = fromDictionary(R.string.invite_invite_header)
             etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
             etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
             btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
@@ -117,8 +117,8 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
             }
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
-                btnInvite.isEnabled = validateInput()
-                adapter.searchByNumber(countryCodePhrase + it)
+                view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
+                adapter.searchByNumber(it)
             })
             btnInvite.setOnClickListener {
                 viewModel.checkPhoneContact(PhoneContactImpl(
@@ -131,7 +131,8 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                         adapter.searchByName(searchWord)
                     }
             )
-            ivInvitesHistory.setOnClickListener {
+            toolbar.ivToolbarMore.setImageResource(R.drawable.ic_archive)
+            toolbar.onMoreClickListener = {
                 open(HistoryController.newInstance())
             }
         }

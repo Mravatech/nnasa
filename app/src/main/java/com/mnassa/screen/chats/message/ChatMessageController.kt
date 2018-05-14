@@ -6,13 +6,13 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.PostDetailsFactory
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_message.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
@@ -38,13 +38,15 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        setupView(view)
-        setupOnClickListeners(view)
-        view.toolbarChatMessage.title = accountModel?.formattedName ?: "admin"//todo get known what should be here
-        view.toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
-        view.toolbarChatMessage.onMoreClickListener = { Toast.makeText(view.context, "Set profile after merge", Toast.LENGTH_SHORT).show() }
-        view.rvMessages.layoutManager = LinearLayoutManager(view.context)
-        view.rvMessages.adapter = adapter
+        with(view) {
+            setupView(this)
+            setupOnClickListeners(this)
+            toolbarChatMessage.title = accountModel?.formattedName ?: fromDictionary(R.string.support_chat_with)
+            toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
+            toolbarChatMessage.onMoreClickListener = { accountModel?.let { open(ProfileController.newInstance(it)) } }
+            rvMessages.layoutManager = LinearLayoutManager(context)
+            rvMessages.adapter = adapter
+        }
         launchCoroutineUI {
             val accountId = viewModel.retrieveMyAccount()
             adapter.accountId = accountId

@@ -49,9 +49,6 @@ class ClickableDrawableTextInputEditText : TextInputEditText {
     }
 
     private fun onDrawableRightClick(@ColorRes color: Int, @DrawableRes drawable: Int) {
-        isFocusable = isChosen
-        isFocusableInTouchMode = isChosen
-        isLongClickable = isChosen
         isChosen = !isChosen
         setTextColor(ContextCompat.getColor(context, color))
         val img = ResourcesCompat.getDrawable(resources, drawable, null)
