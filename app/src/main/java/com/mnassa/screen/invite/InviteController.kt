@@ -21,6 +21,7 @@ import com.mnassa.screen.login.enterphone.CountryCode
 import com.mnassa.screen.login.enterphone.CountryCodeAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
+import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
