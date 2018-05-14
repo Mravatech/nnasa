@@ -69,12 +69,15 @@ class OfferViewHolder(itemView: View, private val onClickListener: View.OnClickL
         fun newInstance(
                 parent: ViewGroup,
                 onClickListener: View.OnClickListener,
-                imagesCount: Int = 0
+                imagesCount: Int,
+                isPromoted: Boolean
         ): OfferViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_news_feed_offer, parent, false)
             view.flImagesRoot.isGone = imagesCount == 0
+            view.vImagesDivider.isGone = imagesCount > 0
+            view.llPromotedRoot.isGone = !isPromoted
 
             if (imagesCount > 0) {
                 val imagesLayout = when (imagesCount) {
@@ -85,7 +88,7 @@ class OfferViewHolder(itemView: View, private val onClickListener: View.OnClickL
                 }
                 inflater.inflate(imagesLayout, view.flImagesRoot, true)
             }
-            view.vImagesDivider.isGone = imagesCount > 0
+
             return OfferViewHolder(view, onClickListener)
         }
     }

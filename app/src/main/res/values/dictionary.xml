@@ -91,6 +91,7 @@
     <string name="post_expires_day_s">connections_button_daysLeft</string>
     <string name="post_expires_valid_till">_android_expiration_valid_till</string>
     <string name="post_expires_text_key">_expirationStatusView_</string>
+    <string name="post_promoted_label">_post_cell_promoted_label</string>
 
     <!-- comments -->
     <string name="posts_comment_reply">_commentCell_Reply</string>

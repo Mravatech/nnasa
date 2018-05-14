@@ -17,6 +17,7 @@ import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_need.view.*
+import kotlinx.android.synthetic.main.item_promoted_panel.view.*
 
 /**
  * Created by Peter on 3/14/2018.
@@ -108,14 +109,16 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
         fun newInstance(
                 parent: ViewGroup,
                 onClickListener: View.OnClickListener,
-                imagesCount: Int = 0,
-                isRepost: Boolean = false
+                imagesCount: Int,
+                isRepost: Boolean,
+                isPromoted: Boolean
         ): NeedViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)
             view.rlRepostRoot.isGone = !isRepost
             view.flImagesRoot.isGone = imagesCount == 0
+            view.llPromotedRoot.isGone = !isPromoted
 
             if (imagesCount > 0) {
                 val imagesLayout = when (imagesCount) {
@@ -126,6 +129,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
                 }
                 inflater.inflate(imagesLayout, view.flImagesRoot, true)
             }
+
             return NeedViewHolder(view, onClickListener)
         }
     }

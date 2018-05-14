@@ -97,9 +97,15 @@ class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClic
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): ProfileViewHolder {
+        fun newInstance(
+                parent: ViewGroup,
+                onClickListener: View.OnClickListener,
+                isPromoted: Boolean): ProfileViewHolder {
+
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_profile, parent, false)
             view.rlRecommendedProfileRoot.visibility = View.VISIBLE
+            view.llPromotedRoot.isGone = !isPromoted
+
             return ProfileViewHolder(view, onClickListener)
         }
     }

@@ -5,10 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
-import com.mnassa.domain.model.InfoPostModel
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostType
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.isRepost
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
@@ -57,39 +54,35 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PostModel> {
-        return when (viewType) {
-            TYPE_NEED -> NeedViewHolder.newInstance(parent, this)
-            TYPE_NEED_WITH_IMAGE_1 -> NeedViewHolder.newInstance(parent, this, imagesCount = 1)
-            TYPE_NEED_WITH_IMAGE_2 -> NeedViewHolder.newInstance(parent, this, imagesCount = 2)
-            TYPE_NEED_WITH_IMAGE_3 -> NeedViewHolder.newInstance(parent, this, imagesCount = 3)
-            TYPE_NEED_WITH_IMAGE_MORE -> NeedViewHolder.newInstance(parent, this, imagesCount = 4)
-            //
-            TYPE_NEED_REPOST -> NeedViewHolder.newInstance(parent, this, isRepost = true)
-            TYPE_NEED_WITH_IMAGE_1_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 1, isRepost = true)
-            TYPE_NEED_WITH_IMAGE_2_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 2, isRepost = true)
-            TYPE_NEED_WITH_IMAGE_3_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 3, isRepost = true)
-            TYPE_NEED_WITH_IMAGE_MORE_REPOST -> NeedViewHolder.newInstance(parent, this, imagesCount = 4, isRepost = true)
-            //
-            TYPE_OFFER -> OfferViewHolder.newInstance(parent, this, imagesCount = 0)
-            TYPE_OFFER_WITH_IMAGE_1 -> OfferViewHolder.newInstance(parent, this, imagesCount = 1)
-            TYPE_OFFER_WITH_IMAGE_2 -> OfferViewHolder.newInstance(parent, this, imagesCount = 2)
-            TYPE_OFFER_WITH_IMAGE_3 -> OfferViewHolder.newInstance(parent, this, imagesCount = 3)
-            TYPE_OFFER_WITH_IMAGE_MORE -> OfferViewHolder.newInstance(parent, this, imagesCount = 4)
-            //
-            TYPE_PROFILE -> ProfileViewHolder.newInstance(parent, this)
-            //
-            TYPE_INFO_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 0, isPinned = true)
-            TYPE_INFO -> InfoViewHolder.newInstance(parent, this, imagesCount = 0, isPinned = false)
-            TYPE_INFO_WITH_IMAGE_1_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 1, isPinned = true)
-            TYPE_INFO_WITH_IMAGE_1 -> InfoViewHolder.newInstance(parent, this, imagesCount = 1, isPinned = false)
-            TYPE_INFO_WITH_IMAGE_2_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 2, isPinned = true)
-            TYPE_INFO_WITH_IMAGE_2 -> InfoViewHolder.newInstance(parent, this, imagesCount = 2, isPinned = false)
-            TYPE_INFO_WITH_IMAGE_3_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 3, isPinned = true)
-            TYPE_INFO_WITH_IMAGE_3 -> InfoViewHolder.newInstance(parent, this, imagesCount = 3, isPinned = false)
-            TYPE_INFO_WITH_IMAGE_MORE_PINNED -> InfoViewHolder.newInstance(parent, this, imagesCount = 4, isPinned = true)
-            TYPE_INFO_WITH_IMAGE_MORE -> InfoViewHolder.newInstance(parent, this, imagesCount = 4, isPinned = false)
-            //
-            TYPE_OTHER -> UnsupportedTypeViewHolder.newInstance(parent, this)
+        return when {
+            viewType.hasFlag(NEED) || viewType.hasFlag(GENERAL) -> NeedViewHolder.newInstance(
+                    parent = parent,
+                    onClickListener = this,
+                    imagesCount = viewType.getImagesCount(),
+                    isRepost = viewType.hasFlag(REPOST),
+                    isPromoted = viewType.hasFlag(PROMOTED)
+            )
+            viewType.hasFlag(OFFER) -> OfferViewHolder.newInstance(
+                    parent = parent,
+                    imagesCount = viewType.getImagesCount(),
+                    onClickListener = this,
+                    isPromoted = viewType.hasFlag(PROMOTED)
+            )
+            viewType.hasFlag(PROFILE) -> ProfileViewHolder.newInstance(
+                    parent = parent,
+                    onClickListener = this,
+                    isPromoted = viewType.hasFlag(PROMOTED)
+            )
+            viewType.hasFlag(INFO) -> InfoViewHolder.newInstance(
+                    parent = parent,
+                    onClickListener = this,
+                    imagesCount = viewType.getImagesCount(),
+                    isPinned = viewType.hasFlag(PINNED)
+            )
+            viewType.hasFlag(OTHER) -> UnsupportedTypeViewHolder.newInstance(
+                    parent = parent,
+                    onClickListener = this
+            )
             else -> throw IllegalStateException("Illegal view type $viewType")
         }
     }
@@ -114,41 +107,38 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
 
     override fun getViewType(position: Int): Int {
         val item = dataStorage[position]
-        return when (item.type) {
-            is PostType.NEED -> when (item.attachments.size) {
-                0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
-                1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
-                2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
-                3 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_3_REPOST else TYPE_NEED_WITH_IMAGE_3
-                else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
-            }
-            is PostType.OFFER -> when (item.attachments.size) {
-                0 -> TYPE_OFFER
-                1 -> TYPE_OFFER_WITH_IMAGE_1
-                2 -> TYPE_OFFER_WITH_IMAGE_2
-                3 -> TYPE_OFFER_WITH_IMAGE_3
-                else -> TYPE_OFFER_WITH_IMAGE_MORE
-            }
-            is PostType.GENERAL -> when (item.attachments.size) {
-                0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
-                1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
-                2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
-                3 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_3_REPOST else TYPE_NEED_WITH_IMAGE_3
-                else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
-            }
-            is PostType.PROFILE -> TYPE_PROFILE
-            is PostType.INFO -> {
-                item as InfoPostModel
-                when (item.attachments.size) {
-                    0 -> if (item.isPinned) TYPE_INFO_PINNED else TYPE_INFO
-                    1 -> if (item.isPinned) TYPE_INFO_WITH_IMAGE_1_PINNED else TYPE_INFO_WITH_IMAGE_1
-                    2 -> if (item.isPinned) TYPE_INFO_WITH_IMAGE_2_PINNED else TYPE_INFO_WITH_IMAGE_2
-                    3 -> if (item.isPinned) TYPE_INFO_WITH_IMAGE_3_PINNED else TYPE_INFO_WITH_IMAGE_3
-                    else -> if (item.isPinned) TYPE_INFO_WITH_IMAGE_MORE_PINNED else TYPE_INFO_WITH_IMAGE_MORE
-                }
-            }
-            is PostType.OTHER -> TYPE_OTHER
+
+        var type = 0
+        type = type or when (item.type) {
+            is PostType.NEED -> NEED
+            is PostType.OFFER -> OFFER
+            is PostType.GENERAL -> GENERAL
+            is PostType.PROFILE -> PROFILE
+            is PostType.INFO -> INFO
+            is PostType.OTHER -> OTHER
         }
+
+        if (item.isRepost) {
+            type = type or REPOST
+        }
+
+        type = type or when (item.attachments.size) {
+            0 -> 0
+            1 -> IMAGE_1
+            2 -> IMAGE_2
+            3 -> IMAGE_3
+            else -> IMAGE_MORE
+        }
+
+        if (item is InfoPostModel && item.isPinned) {
+            type = type or PINNED
+        }
+
+        if (item.privacyType is PostPrivacyType.WORLD) {
+            type = type or PROMOTED
+        }
+
+        return type
     }
 
     override fun onClick(view: View) {
@@ -163,40 +153,31 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         }
     }
 
-
     private companion object {
-        private const val TYPE_NEED = 2
-        private const val TYPE_NEED_WITH_IMAGE_1 = 3
-        private const val TYPE_NEED_WITH_IMAGE_2 = 4
-        private const val TYPE_NEED_WITH_IMAGE_3 = 5
-        private const val TYPE_NEED_WITH_IMAGE_MORE = 6
+        private const val NEED = 1 shl 1
+        private const val OFFER = 1 shl 2
+        private const val INFO = 1 shl 3
+        private const val PROFILE = 1 shl 4
+        private const val GENERAL = 1 shl 5
+        private const val OTHER = 1 shl 6
 
-        private const val TYPE_NEED_REPOST = 7
-        private const val TYPE_NEED_WITH_IMAGE_1_REPOST = 8
-        private const val TYPE_NEED_WITH_IMAGE_2_REPOST = 9
-        private const val TYPE_NEED_WITH_IMAGE_3_REPOST = 10
-        private const val TYPE_NEED_WITH_IMAGE_MORE_REPOST = 11
+        private const val IMAGE_1 = 1 shl 7
+        private const val IMAGE_2 = 1 shl 8
+        private const val IMAGE_3 = 1 shl 9
+        private const val IMAGE_MORE = 1 shl 10
 
-        private const val TYPE_PROFILE = 13
-        private const val TYPE_PROFILE_REPOST = 14
+        private const val REPOST = 1 shl 11
+        private const val PINNED = 1 shl 12
+        private const val PROMOTED = 1 shl 13
 
-        private const val TYPE_INFO = 15
-        private const val TYPE_INFO_PINNED = 16
-        private const val TYPE_INFO_WITH_IMAGE_1 = 17
-        private const val TYPE_INFO_WITH_IMAGE_1_PINNED = 18
-        private const val TYPE_INFO_WITH_IMAGE_2 = 19
-        private const val TYPE_INFO_WITH_IMAGE_2_PINNED = 20
-        private const val TYPE_INFO_WITH_IMAGE_3 = 21
-        private const val TYPE_INFO_WITH_IMAGE_3_PINNED = 22
-        private const val TYPE_INFO_WITH_IMAGE_MORE = 23
-        private const val TYPE_INFO_WITH_IMAGE_MORE_PINNED = 24
+        private fun Int.hasFlag(flag: Int) = this and flag == flag
 
-        private const val TYPE_OFFER = 25
-        private const val TYPE_OFFER_WITH_IMAGE_1 = 26
-        private const val TYPE_OFFER_WITH_IMAGE_2 = 27
-        private const val TYPE_OFFER_WITH_IMAGE_3 = 28
-        private const val TYPE_OFFER_WITH_IMAGE_MORE = 29
-
-        private const val TYPE_OTHER = 30
+        private fun Int.getImagesCount() = when {
+            hasFlag(IMAGE_1) -> 1
+            hasFlag(IMAGE_2) -> 2
+            hasFlag(IMAGE_3) -> 3
+            hasFlag(IMAGE_MORE) -> 4
+            else -> 0
+        }
     }
 }
