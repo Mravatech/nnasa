@@ -5,9 +5,10 @@
     style="@style/Invite.MainContainer"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/toolbar_invite"
-        android:id="@+id/invite_toolbar"/>
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <View style="@style/MnassaShadow" />
 
@@ -28,8 +29,8 @@ or choose from them your Phone Book" />
     <Button
         android:id="@+id/btnInvite"
         style="@style/Invite.InviteButton"
-        android:enabled="false"
         android:layout_margin="@dimen/invite_main_screen_margin"
+        android:enabled="false"
         tools:text="INVITE" />
 
     <LinearLayout
@@ -38,11 +39,12 @@ or choose from them your Phone Book" />
         android:layout_marginStart="@dimen/invite_main_screen_margin"
         android:layout_marginTop="@dimen/invite_main_margin_between_views">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/invite_main_margin_between_views"
             android:contentDescription="@null"
+            android:tint="@color/black"
             app:srcCompat="@drawable/ic_search" />
 
         <EditText

@@ -14,7 +14,10 @@ import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_build_network.view.*
 import kotlinx.android.synthetic.main.item_connections_recommended_group.view.*
+import java.io.Serializable
 import java.util.TreeSet
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 /**
  * Created by Peter on 3/27/2018.
@@ -34,6 +37,24 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
                 notifyDataSetChanged()
             }
         }
+
+    override var filterPredicate: (item: GroupedAccount) -> Boolean = {
+        if (it is GroupedAccount.Recommendation) {
+            it.account.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+        } else {
+            true
+        }
+    }
+
+    init {
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
+        searchListener = dataStorage as SearchListener<GroupedAccount>
+    }
+
+    fun searchByName(searchText: String) {
+        searchPhrase = searchText
+        searchListener.search()
+    }
 
     fun destroyCallbacks() {
         onSelectedAccountsChangedListener = {}
@@ -141,7 +162,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
     }
 }
 
-sealed class GroupedAccount {
+sealed class GroupedAccount: Serializable {
     data class Group(val name: String) : GroupedAccount()
     data class Recommendation(val account: ShortAccountModel) : GroupedAccount()
 }

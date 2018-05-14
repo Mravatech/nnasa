@@ -1,20 +1,24 @@
 package com.mnassa.screen.posts.need.recommend
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.Controller
-import org.kodein.di.generic.instance
 import com.mnassa.R
+import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
+import com.mnassa.screen.posts.need.recommend.adapter.GroupedAccount
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_post_recommend.view.*
+import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/27/2018.
@@ -63,6 +67,15 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
                 resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())
                 close()
             }
+            toolbar.onMoreClickListener = {
+                startActivityForResult(SearchActivity.start(
+                        context,
+                        allAccountsAdapter.dataStorage.toList(),
+                        SearchActivity.GROUPED_ACCOUNT_TYPE,
+                        allAccountsAdapter.selectedAccounts,
+                        bestMatchesAccounts), SearchActivity.REQUEST_CODE_SEARCH)
+            }
+            toolbar.ivToolbarMore.setImageResource(R.drawable.ic_search)
 
             tvRecommendHeader.text = fromDictionary(R.string.posts_recommend_subtitle)
         }
@@ -89,6 +102,20 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         view.rvAccountsToRecommend.adapter = null
         view.rvSelectedAccounts.adapter = null
         super.onDestroyView(view)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
+        when (resultCode) {
+            SearchActivity.GROUPED_ACCOUNT_RESULT -> {
+                val data = data ?: return
+                val resultCheckBoxes = data.getSerializableExtra(SearchActivity.EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT) as ArrayList<ShortAccountModel>
+                val resultList = data.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<GroupedAccount>
+                allAccountsAdapter.selectedAccounts = HashSet(resultCheckBoxes)
+                allAccountsAdapter.dataStorage.set(resultList)
+            }
+        }
     }
 
     interface OnRecommendPostResult {

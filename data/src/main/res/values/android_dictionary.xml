@@ -191,7 +191,6 @@
     <string name="_android_offer_purchase_description_INFO">Transfer points to buy this item</string>
     <string name="_android_offer_placeholder_INFO">Type your offer here</string>
 
-
     <string name="_android_days_INFO">%d days</string>
     <string name="_android_hours_INFO">%d hours</string>
     <string name="_android_minutes_INFO">%d minutes</string>
@@ -199,10 +198,13 @@
 
     <string name="_android_expiration_valid_till_INFO">Valid till</string>
 
+    <string name="_android_search_done_INFO">Done</string>
+    <string name="_android_search_hint_INFO">Search</string>
     <string name="_android_general_text_placeholder_INFO">Type your general here</string>
     <string name="_android_general_post_author_INFO">MNASSA Help</string>
 
     <string name="_commentCell_usefulButton_INFO">Useful</string>
+
     <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
     <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
 

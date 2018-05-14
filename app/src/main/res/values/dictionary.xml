@@ -315,6 +315,7 @@
     <string name="chats_cancel">_android_cancel</string>
 
     <string name="position_not_specified">_android_position_not_specified</string>
+    <string name="support_chat_with">_chat_controllet_empty_nav_title</string>
 
     <!-- ========================================= INVITE ====================================== -->
     <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
@@ -509,6 +510,9 @@
     <string name="hours_count">_android_hours</string>
     <string name="minutes_count">_android_minutes</string>
     <string name="seconds_count">_android_seconds</string>
+
+    <string name="search_done">_android_search_done</string>
+    <string name="search_hint">_android_search_hint</string>
 
     <string name="connections_recommended_empty_title">_connectionsList_empty_recommendations</string>
     <string name="connections_recommended_empty_description">_android_connections_recommendations_empty_description</string>
