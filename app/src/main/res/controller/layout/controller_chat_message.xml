@@ -38,7 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/llBottomContainer"
-        android:layout_below="@+id/toolbarChatMessage" />
+        android:layout_below="@+id/toolbarChatMessage"
+        tools:listitem="@layout/item_chat_message_my" />
 
     <LinearLayout
         android:id="@+id/llBottomContainer"
@@ -81,13 +82,9 @@
         <RelativeLayout
             android:id="@+id/llCreateMessageContainer"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/chat_message_send_container_height"
-            android:gravity="center">
+            android:layout_height="@dimen/chat_message_send_container_height">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider" />
+            <View style="@style/MnassaDivider" />
 
             <ImageView
                 android:id="@+id/ivAttach"

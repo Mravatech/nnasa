@@ -32,7 +32,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     private val postModel: PostModel? by lazy { args.getSerializable(CHAT_POST) as PostModel? }
     private val dialog: DialogHelper by instance()
 
-    val adapter = MessagesAdapter()
+    private val adapter = MessagesAdapter()
     private var replyMessageModel: ChatMessageModel? = null
     private var replyPostModel: PostModel? = null
 
@@ -44,7 +44,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             toolbarChatMessage.title = accountModel?.formattedName ?: fromDictionary(R.string.support_chat_with)
             toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
             toolbarChatMessage.onMoreClickListener = { accountModel?.let { open(ProfileController.newInstance(it)) } }
-            rvMessages.layoutManager = LinearLayoutManager(context)
+            rvMessages.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
             rvMessages.adapter = adapter
         }
         launchCoroutineUI {
