@@ -8,8 +8,8 @@ import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
-import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
@@ -121,6 +121,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             privacy: PostPrivacyOptions,
             tags: List<String>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?
     ): PostModel {
         val result = postApi.createPost(CreatePostRequest(
@@ -132,6 +133,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 allConnections = privacy.privacyType is PostPrivacyType.PUBLIC,
                 tags = tags,
                 price = price,
+                timeOfExpiration = timeOfExpiration,
                 location = placeId
         )).handleException(exceptionHandler)
         return result.data.run { converter.convert(this) }
@@ -308,6 +310,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .handleException(exceptionHandler)
                 .data
                 .run { converter.convert(this) }
+    }
+
+    override suspend fun getDefaultExpirationDays(): Long {
+        return db.child(DatabaseContract.TABLE_CLIENT_DATA)
+                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME)
+                .await(exceptionHandler)!!
     }
 
     override suspend fun hideInfoPost(postId: String) {

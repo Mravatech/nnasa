@@ -39,6 +39,7 @@
         android:layout_marginEnd="@dimen/chat_room_base_margin"
         android:layout_marginStart="@dimen/chat_room_margin_time_ago_start"
         android:layout_marginTop="@dimen/chat_room_base_margin"
+        android:gravity="end"
         android:orientation="vertical">
 
         <TextView
@@ -50,6 +51,7 @@
             android:id="@+id/tvMessageUnread"
             style="@style/ChatRoom.UnreadCountItem"
             android:visibility="gone"
+            tools:visibility="visible"
             android:layout_marginTop="@dimen/chat_room_unread_count_margin_top"
             tools:text="8" />
 

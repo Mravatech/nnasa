@@ -16,7 +16,7 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_LIST
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_MESSAGES
-import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_TYPE
+import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_TYPE_PRIVATE
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
@@ -54,7 +54,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         val myUserId = requireNotNull(userRepository.getAccountIdOrException())
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
-                .child(TABLE_CHAT_TYPE)
+                .child(TABLE_CHAT_TYPE_PRIVATE)
                 .child(myUserId)
                 .child(chatId)
                 .apply { keepSynced(true) }
@@ -95,7 +95,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         val myUserId = requireNotNull(userRepository.getAccountIdOrException())
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
-                .child(TABLE_CHAT_TYPE)
+                .child(TABLE_CHAT_TYPE_PRIVATE)
                 .child(myUserId)
                 .child(chatId)
                 .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
@@ -123,7 +123,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         val userId = userRepository.getAccountIdOrException()
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_LIST)
-                .child(TABLE_CHAT_TYPE)
+                .child(TABLE_CHAT_TYPE_PRIVATE)
                 .child(userId)
                 .toValueChannelWithChangesHandling<ChatDbModel, ChatRoomModel>(
                         exceptionHandler = exceptionHandler,
@@ -143,7 +143,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
     private suspend fun getReplyMessage(myUserId: String, chatId: String, first: String): ChatMessageDbModel? =
             db.child(TABLE_CHAT)
                     .child(TABLE_CHAT_MESSAGES)
-                    .child(TABLE_CHAT_TYPE)
+                    .child(TABLE_CHAT_TYPE_PRIVATE)
                     .child(myUserId)
                     .child(chatId)
                     .child(first)

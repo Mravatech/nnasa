@@ -87,6 +87,11 @@
     <string name="post_delete_dialog_yes">_question_postDeleting_ok</string>
     <string name="post_delete_dialog_no">_question_postDeleting_cancel</string>
 
+    <string name="post_expires_in">_android_post_expires_in</string>
+    <string name="post_expires_day_s">connections_button_daysLeft</string>
+    <string name="post_expires_valid_till">_android_expiration_valid_till</string>
+    <string name="post_expires_text_key">_expirationStatusView_</string>
+
     <!-- comments -->
     <string name="posts_comment_reply">_commentCell_Reply</string>
     <string name="posts_comment_create">_android_post_details_create_comment_post_btn</string>
@@ -310,6 +315,7 @@
     <string name="chats_cancel">_android_cancel</string>
 
     <string name="position_not_specified">_android_position_not_specified</string>
+    <string name="support_chat_with">_chat_controllet_empty_nav_title</string>
 
     <!-- ========================================= INVITE ====================================== -->
     <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
@@ -504,6 +510,9 @@
     <string name="hours_count">_android_hours</string>
     <string name="minutes_count">_android_minutes</string>
     <string name="seconds_count">_android_seconds</string>
+
+    <string name="search_done">_android_search_done</string>
+    <string name="search_hint">_android_search_hint</string>
 
     <string name="connections_recommended_empty_title">_connectionsList_empty_recommendations</string>
     <string name="connections_recommended_empty_description">_android_connections_recommendations_empty_description</string>

@@ -123,8 +123,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
         view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
             val shouldShowFab = (profileModel.connectionStatus == ConnectionStatus.CONNECTED ||
-                    profileModel.connectionStatus == ConnectionStatus.CONNECTED ||
-                    profileModel.connectionStatus == ConnectionStatus.CONNECTED)
+                    profileModel.connectionStatus == ConnectionStatus.RECOMMENDED ||
+                    profileModel.connectionStatus == ConnectionStatus.SENT)
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
                 view.tvTitleCollapsed.visibility = View.VISIBLE
                 if (!profileModel.isMyProfile && shouldShowFab) {

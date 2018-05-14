@@ -4,9 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/invite_toolbar"
-        layout="@layout/toolbar_invite" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.mnassa.widget.MnassaToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.mnassa.widget.search.MnassaSearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/search_toolbar_space_for_close_view"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/accent" />
+
+    </RelativeLayout>
 
     <View style="@style/MnassaShadow" />
 

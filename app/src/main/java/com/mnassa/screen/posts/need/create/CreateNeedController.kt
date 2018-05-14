@@ -69,6 +69,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                         images = attachedImagesAdapter.dataStorage.toList(),
                         placeId = placeId,
                         price = etPrice.text.toString().toLongOrNull(),
+                        timeOfExpiration = postExpiresIn.millisTo,
                         postPrivacyOptions = sharingOptions.asPostPrivacy
                 )
             }
@@ -108,7 +109,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             tvExtraDetails.text = fromDictionary(R.string.need_create_extra)
             tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
-
+            launchCoroutineUI {
+                postExpiresIn.dayTo = viewModel.getDefaultExpirationDays().toString()
+            }
             rvImages.adapter = attachedImagesAdapter
         }
 

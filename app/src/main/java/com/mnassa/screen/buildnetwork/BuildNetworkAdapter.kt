@@ -30,6 +30,18 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
             notifyDataSetChanged()
         }
 
+    override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
+
+    init {
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
+        searchListener = dataStorage as SearchListener<ShortAccountModel>
+    }
+
+    fun searchByName(searchText: String) {
+        searchPhrase = searchText
+        searchListener.search()
+    }
+
     fun destroyCallbacks() {
         onSelectedAccountsChangedListener = { }
     }

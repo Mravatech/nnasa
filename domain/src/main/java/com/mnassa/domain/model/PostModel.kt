@@ -18,6 +18,8 @@ interface PostModel : Model {
     val privacyType: PostPrivacyType
     val tags: List<String>
     val text: String?
+    val statusOfExpiration: ExpirationType
+    var timeOfExpiration: Date?
     val updatedAt: Date
     val counters: PostCounters
     val author: ShortAccountModel
@@ -89,4 +91,11 @@ sealed class PostPrivacyType : Serializable {
 sealed class EntityType : Serializable {
     class EVENT : EntityType()
     class POST : EntityType()
+}
+
+sealed class ExpirationType(val text: String) : Serializable {
+    class ACTIVE(text: String) : ExpirationType(text)
+    class EXPIRED(text: String) : ExpirationType(text)
+    class CLOSED(text: String) : ExpirationType(text)
+    class FULFILLED(text: String) : ExpirationType(text)
 }

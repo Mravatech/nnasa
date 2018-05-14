@@ -25,6 +25,21 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     var onDeclineClickListener = { account: ShortAccountModel -> }
     var onItemClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = { }
+    private var onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
+    var onAfterSearchListener = { size: Int ->  }
+
+    override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
+
+    init {
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener))
+        searchListener = dataStorage as SearchListener<ShortAccountModel>
+    }
+
+    fun searchByName(searchText: String) {
+        searchPhrase = searchText
+        val newValues = searchListener.containerList.filter(filterPredicate)
+        setWithMaxRange(newValues)
+    }
 
     fun destroyCallbacks() {
         onAcceptClickListener = { }
@@ -33,9 +48,11 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
         onItemClickListener = { }
     }
 
-    fun setWithMaxRange(list: List<ShortAccountModel>, maxItemsCount: Int) {
-        val maxItemsCount = maxItemsCount + 1
-
+    fun setWithMaxRange(list: List<ShortAccountModel>) {
+        val maxItemsCount = MAX_REQUESTED_ITEMS_COUNT
+        if (searchListener.containerList.isEmpty()) {
+            searchListener.containerList = list
+        }
         moreItemsCount = maxOf(list.size - maxItemsCount, 0)
         if (list.size > maxItemsCount) {
             super.set(list.subList(0, maxItemsCount))
@@ -139,5 +156,6 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     private companion object {
         private const val TYPE_ITEM = 1
         private const val TYPE_MORE = 2
+        private const val MAX_REQUESTED_ITEMS_COUNT = 3
     }
 }
