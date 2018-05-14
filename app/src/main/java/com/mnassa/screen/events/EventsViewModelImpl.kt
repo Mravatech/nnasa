@@ -12,19 +12,28 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : MnassaViewModelImpl(), EventsViewModel {
 
+    private var isCounterReset = false
+
     override val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>> by ProcessAccountChangeArrayBroadcastChannel(
-            beforeReConsume = { it.send(ListItemEvent.Cleared()) },
+            beforeReConsume = {
+                isCounterReset = false
+                it.send(ListItemEvent.Cleared())
+            },
             receiveChannelProvider = { eventsInteractor.getEventsFeedChannel() })
 
     override fun onAttachedToWindow(event: EventModel) {
         handleException {
             eventsInteractor.onItemViewed(event)
         }
+        if (!isCounterReset) {
+            resetCounter()
+        }
     }
 
-    override fun resetCounter() {
+    private fun resetCounter() {
         handleException {
             eventsInteractor.resetCounter()
+            isCounterReset = true
         }
     }
 }
