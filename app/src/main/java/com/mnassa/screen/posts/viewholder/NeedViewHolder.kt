@@ -49,7 +49,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
                 tvAction.setTextColor(ContextCompat.getColor(context, R.color.accent))
             } else {
                 tvAction.visibility = View.VISIBLE
-                tvAction.expireType(item.statusOfExpiration, item.timeOfExpiration)
+                tvAction.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
             }
 
             tvAction.setOnClickListener(onClickListener)

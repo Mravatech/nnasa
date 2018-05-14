@@ -172,7 +172,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvRepostsCount.text = post.counters.reposts.toString()
 
             //expiration
-            tvExpiration.expireType(post.statusOfExpiration, post.timeOfExpiration)
+            tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)
 
             btnComment.text = fromDictionary(R.string.need_comment_button)
             btnComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
