@@ -20,4 +20,6 @@ interface EventsRepository {
     suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>)
     suspend fun createEvent(model: CreateOrEditEventModel)
     suspend fun editEvent(model: CreateOrEditEventModel)
+    suspend fun getPromoteEventPrice(): Long?
+    suspend fun promote(id: String)
 }

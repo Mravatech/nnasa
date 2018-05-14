@@ -115,29 +115,29 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     override fun getViewType(position: Int): Int {
         val item = dataStorage[position]
         return when (item.type) {
-            PostType.NEED -> when (item.attachments.size) {
+            is PostType.NEED -> when (item.attachments.size) {
                 0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
                 1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
                 2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
                 3 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_3_REPOST else TYPE_NEED_WITH_IMAGE_3
                 else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
             }
-            PostType.OFFER -> when (item.attachments.size) {
+            is PostType.OFFER -> when (item.attachments.size) {
                 0 -> TYPE_OFFER
                 1 -> TYPE_OFFER_WITH_IMAGE_1
                 2 -> TYPE_OFFER_WITH_IMAGE_2
                 3 -> TYPE_OFFER_WITH_IMAGE_3
                 else -> TYPE_OFFER_WITH_IMAGE_MORE
             }
-            PostType.GENERAL -> when (item.attachments.size) {
+            is PostType.GENERAL -> when (item.attachments.size) {
                 0 -> if (item.isRepost) TYPE_NEED_REPOST else TYPE_NEED
                 1 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_1_REPOST else TYPE_NEED_WITH_IMAGE_1
                 2 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_2_REPOST else TYPE_NEED_WITH_IMAGE_2
                 3 -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_3_REPOST else TYPE_NEED_WITH_IMAGE_3
                 else -> if (item.isRepost) TYPE_NEED_WITH_IMAGE_MORE_REPOST else TYPE_NEED_WITH_IMAGE_MORE
             }
-            PostType.PROFILE -> TYPE_PROFILE
-            PostType.INFO -> {
+            is PostType.PROFILE -> TYPE_PROFILE
+            is PostType.INFO -> {
                 item as InfoPostModel
                 when (item.attachments.size) {
                     0 -> if (item.isPinned) TYPE_INFO_PINNED else TYPE_INFO
@@ -147,7 +147,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
                     else -> if (item.isPinned) TYPE_INFO_WITH_IMAGE_MORE_PINNED else TYPE_INFO_WITH_IMAGE_MORE
                 }
             }
-            PostType.OTHER -> TYPE_OTHER
+            is PostType.OTHER -> TYPE_OTHER
         }
     }
 

@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName
  * Created by Peter on 3/29/2018.
  */
 data class EditCommentRequest(
-//        @SerializedName("postId") val postId: String,
         @SerializedName("commentId") val commentId: String,
         @SerializedName("text") val text: String?,
         @SerializedName("entityType") val entityType: String,

@@ -20,4 +20,6 @@ interface CreateGeneralPostViewModel : MnassaViewModel, ChipsAdapter.ChipSearch,
     suspend fun getUser(userId: String): ShortAccountModel?
 
     fun createPost(text: String, tags: List<TagModel>, images: List<AttachedImage>, placeId: String?, postPrivacyOptions: PostPrivacyOptions)
+    suspend fun canPromotePost(): Boolean
+    suspend fun getPromotePostPrice(): Long
 }

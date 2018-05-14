@@ -6,8 +6,6 @@ import com.google.gson.annotations.SerializedName
  * Created by Peter on 3/5/2018.
  */
 data class ConnectionActionRequest(
-        @SerializedName("action")
-        private val action: String,
-        @SerializedName("requestAid")
-        private val accountIds: List<String>
+        @SerializedName("action") val action: String,
+        @SerializedName("requestAid") val accountIds: List<String>
 )

@@ -12,10 +12,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.*
 
 /**
  * Created by Peter on 3/19/2018.
@@ -87,6 +84,14 @@ open class NeedDetailsViewModelImpl(
                 ))
             }
             finishScreenChannel.send(Unit)
+        }
+    }
+
+    override fun promote() {
+        handleException {
+            withProgressSuspend {
+                postsInteractor.promote(postChannel.consume { receive() })
+            }
         }
     }
 

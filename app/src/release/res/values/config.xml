@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mnassa</string>
+
+    <!-- prod key -->
+    <string name="play_services_key" formatted="false" translatable="false">AIzaSyDHTcxftaSFE3yK8BXtI4PZ2qOkYe2sIkI</string>
+</resources>

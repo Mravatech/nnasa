@@ -7,7 +7,7 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 4/13/2018.
  */
 internal data class EventDbEntity(
-        override var id: String,
+        @SerializedName("id") override var id: String,
         @SerializedName("allConnections") val allConnections: Boolean,
         @SerializedName("author") val author: ShortAccountDbEntity,
         @SerializedName("copyOwner") val copyOwner: String,
@@ -40,7 +40,7 @@ internal data class EventDbEntity(
 }
 
 internal data class EventTicketDbEntity(
-        override var id: String,
+        @SerializedName("id") override var id: String,
         @SerializedName("eventName") val eventName: String,
         @SerializedName("eventOrganizer") val eventOrganizer: String,
         @SerializedName("pricePerTicket") val pricePerTicket: Long,

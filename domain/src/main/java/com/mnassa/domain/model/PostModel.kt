@@ -72,21 +72,21 @@ interface PostAutoSuggest : Serializable {
 }
 
 sealed class PostType(val ordinal: Int) : Serializable {
-    object NEED : PostType(1)
-    object OFFER : PostType(2)
-    object GENERAL : PostType(3)
-    object PROFILE : PostType(4)
-    object INFO : PostType(5)
-    object OTHER : PostType(6)
+    class NEED : PostType(1)
+    class OFFER : PostType(2)
+    class GENERAL : PostType(3)
+    class PROFILE : PostType(4)
+    class INFO : PostType(5)
+    class OTHER : PostType(6)
 }
 
 sealed class PostPrivacyType : Serializable {
-    object PUBLIC : PostPrivacyType()
-    object PRIVATE : PostPrivacyType()
-    object WORLD : PostPrivacyType()
+    class PUBLIC : PostPrivacyType()
+    class PRIVATE : PostPrivacyType()
+    class WORLD : PostPrivacyType()
 }
 
 sealed class EntityType : Serializable {
-    object EVENT : EntityType()
-    object POST : EntityType()
+    class EVENT : EntityType()
+    class POST : EntityType()
 }

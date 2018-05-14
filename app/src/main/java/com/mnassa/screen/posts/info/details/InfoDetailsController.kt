@@ -38,11 +38,11 @@ class InfoDetailsController(args: Bundle) : MnassaControllerImpl<InfoDetailsView
             viewModel.closeScreenChannel.consumeEach { close() }
         }
 
-        bindPost(post)
+        bindPost(post, view)
     }
 
-    private fun bindPost(post: InfoPostModel) {
-        with(view ?: return) {
+    private fun bindPost(post: InfoPostModel, view: View) {
+        with(view) {
             tvInfoPostTitle.text = post.title
             tvInfoPostDescription.text = post.text
             tvInfoPostDescription.goneIfEmpty()

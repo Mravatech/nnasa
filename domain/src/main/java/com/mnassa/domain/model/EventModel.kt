@@ -45,7 +45,7 @@ interface EventTicketModel : Model {
 
 val EventModel.isActive: Boolean
     get() {
-        return status == EventStatus.OPENED
+        return status is EventStatus.OPENED
     }
 
 sealed class EventDuration(val value: Long) : Serializable {
@@ -66,21 +66,21 @@ sealed class EventDuration(val value: Long) : Serializable {
 
 sealed class EventLocationType : Serializable {
     class Specified(val location: LocationPlaceModel, val id: String, val description: String?) : EventLocationType()
-    object NotDefined : EventLocationType()
-    object Later : EventLocationType()
+    class NotDefined : EventLocationType()
+    class Later : EventLocationType()
 }
 
 sealed class EventStatus : Serializable {
-    object ANNULED : EventStatus()
-    object OPENED : EventStatus()
-    object CLOSED : EventStatus()
-    object SUSPENDED : EventStatus()
+    class ANNULED : EventStatus()
+    class OPENED : EventStatus()
+    class CLOSED : EventStatus()
+    class SUSPENDED : EventStatus()
 }
 
 sealed class EventType(val position: Int) : Serializable {
-    object LECTURE : EventType(0)
-    object DISCUSSION : EventType(1)
-    object WORKSHOP : EventType(2)
-    object EXERCISE : EventType(3)
-    object ACTIVITY : EventType(4)
+    class LECTURE : EventType(0)
+    class DISCUSSION : EventType(1)
+    class WORKSHOP : EventType(2)
+    class EXERCISE : EventType(3)
+    class ACTIVITY : EventType(4)
 }

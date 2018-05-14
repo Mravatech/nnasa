@@ -80,6 +80,7 @@ interface PostsInteractor {
 
     suspend fun getShareOfferPostPrice(): Long?
     suspend fun getShareOfferPostPerUserPrice(): Long?
+    suspend fun getPromotePostPrice(): Long
 
     suspend fun createUserRecommendation(
             accountId: String,
@@ -98,6 +99,8 @@ interface PostsInteractor {
     suspend fun hideInfoPost(postId: String)
 
     suspend fun loadOfferCategories(): List<OfferCategoryModel>
+
+    suspend fun promote(post: PostModel)
 }
 
 data class PostPrivacyOptions(

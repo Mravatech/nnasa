@@ -34,6 +34,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         convertersContext.registerConverter(this::convertPost)
         convertersContext.registerConverter(this::convertNewsFeedItemCounters)
         convertersContext.registerConverter(this::convertPostType)
+        convertersContext.registerConverter(this::convertFromPostType)
         convertersContext.registerConverter(this::convertPostPrivacyType)
         convertersContext.registerConverter(this::convertItemType)
         convertersContext.registerConverter(this::convertPostData)
@@ -64,7 +65,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
 
         val postType: PostType = converter.convert(input.type)
         return when (postType) {
-            PostType.PROFILE -> RecommendedProfilePostModelImpl(
+            is PostType.PROFILE -> RecommendedProfilePostModelImpl(
                     id = input.id,
                     allConnections = input.allConnections,
                     type = postType,
@@ -89,7 +90,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter),
                     offers = emptyList()
             )
-            PostType.INFO -> InfoPostImpl(
+            is PostType.INFO -> InfoPostImpl(
                     id = input.id,
                     allConnections = input.allConnections,
                     type = postType,
@@ -114,7 +115,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     title = input.title
                             ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!"))
             )
-            PostType.OFFER -> OfferPostModelImpl(
+            is PostType.OFFER -> OfferPostModelImpl(
                     id = input.id,
                     allConnections = input.allConnections,
                     type = postType,
@@ -184,23 +185,35 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
 
     private fun convertPostType(input: String): PostType {
         return when (input) {
-            NEWS_FEED_TYPE_NEED -> PostType.NEED
-            NEWS_FEED_TYPE_ACCOUNT -> PostType.PROFILE
-            NEWS_FEED_TYPE_OFFER -> PostType.OFFER
-            NEWS_FEED_TYPE_GENERAL -> PostType.GENERAL
-            NEWS_FEED_TYPE_INFO -> PostType.INFO
+            NEWS_FEED_TYPE_NEED -> PostType.NEED()
+            NEWS_FEED_TYPE_ACCOUNT -> PostType.PROFILE()
+            NEWS_FEED_TYPE_OFFER -> PostType.OFFER()
+            NEWS_FEED_TYPE_GENERAL -> PostType.GENERAL()
+            NEWS_FEED_TYPE_INFO -> PostType.INFO()
             else -> {
                 Timber.e(IllegalArgumentException("Wrong post item type $input"))
-                PostType.OTHER
+                PostType.OTHER()
             }
+        }
+    }
+
+    private fun convertFromPostType(input: PostType): String {
+        return when(input) {
+            is PostType.NEED -> NEWS_FEED_TYPE_NEED
+            is PostType.OFFER -> NEWS_FEED_TYPE_OFFER
+            is PostType.GENERAL -> NEWS_FEED_TYPE_GENERAL
+            is PostType.PROFILE -> NEWS_FEED_TYPE_ACCOUNT
+            is PostType.INFO -> NEWS_FEED_TYPE_INFO
+            is PostType.OTHER -> ""
+            else -> ""
         }
     }
 
     private fun convertPostPrivacyType(input: String): PostPrivacyType {
         return when (input) {
-            NEWS_FEED_PRIVACY_TYPE_PUBLIC -> PostPrivacyType.PUBLIC
-            NEWS_FEED_PRIVACY_TYPE_PRIVATE -> PostPrivacyType.PRIVATE
-            NEWS_FEED_PRIVACY_TYPE_WORLD -> PostPrivacyType.WORLD
+            NEWS_FEED_PRIVACY_TYPE_PUBLIC -> PostPrivacyType.PUBLIC()
+            NEWS_FEED_PRIVACY_TYPE_PRIVATE -> PostPrivacyType.PRIVATE()
+            NEWS_FEED_PRIVACY_TYPE_WORLD -> PostPrivacyType.WORLD()
 
             else -> throw IllegalArgumentException("Wrong post privacy type $input")
         }
@@ -208,8 +221,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
 
     private fun convertItemType(input: String): EntityType {
         return when (input) {
-            NetworkContract.EntityType.POST -> EntityType.POST
-            NetworkContract.EntityType.EVENT -> EntityType.EVENT
+            NetworkContract.EntityType.POST -> EntityType.POST()
+            NetworkContract.EntityType.EVENT -> EntityType.EVENT()
 
             else -> throw IllegalArgumentException("Wrong post item type $input")
         }

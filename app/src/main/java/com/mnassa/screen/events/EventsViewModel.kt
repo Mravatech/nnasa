@@ -11,5 +11,4 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface EventsViewModel : MnassaViewModel {
     val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>>
     fun onAttachedToWindow(event: EventModel)
-    fun resetCounter()
 }

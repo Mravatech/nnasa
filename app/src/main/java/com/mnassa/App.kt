@@ -9,9 +9,10 @@ import com.google.firebase.FirebaseApp
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
+import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
@@ -25,6 +26,7 @@ import timber.log.Timber
  * Created by Peter on 2/20/2018.
  */
 class App : MultiDexApplication(), KodeinAware {
+
     override val kodein: Kodein = Kodein.lazy {
         import(androidModule(this@App))
         registerAppModules(this)
@@ -36,10 +38,8 @@ class App : MultiDexApplication(), KodeinAware {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        if (getInstance<AppInfoProvider>().isDebug) {
-            if (LeakCanary.isInAnalyzerProcess(this)) return
-            LeakCanary.install(this)
-
+        val appInfoProvider = getInstance<AppInfoProvider>()
+        if (appInfoProvider.isDebug) {
             Timber.plant(Timber.DebugTree())
             Stetho.initializeWithDefaults(this)
         } else {
@@ -50,6 +50,17 @@ class App : MultiDexApplication(), KodeinAware {
         launch {
             getInstance<DictionaryInteractor>().handleDictionaryUpdates()
         }
+
+        launch {
+            getInstance<LoginInteractor>().handleUserStatus()
+        }
+
+        Timber.e("appId: ${appInfoProvider.applicationId}")
+        Timber.e("packageName: $packageName")
+        Timber.e("isDebug: ${appInfoProvider.isDebug}")
+        Timber.e("endpoint: ${appInfoProvider.endpoint}")
+        Timber.e("versionCode: ${appInfoProvider.versionCode}")
+        Timber.e("versionName: ${appInfoProvider.versionName}")
     }
 
     companion object {

@@ -62,6 +62,8 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
             return@addSnapshotListener
         }
 
+        if (dataSnapshot == null) return@addSnapshotListener
+
         dataSnapshot.documentChanges.forEach {
             when (it.type) {
                 DocumentChange.Type.ADDED -> emitter(it.document, null, ADDED)

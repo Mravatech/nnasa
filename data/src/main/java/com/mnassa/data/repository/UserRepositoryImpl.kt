@@ -21,6 +21,9 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.repository.DatabaseContract.TABLE_ACCOUNTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_ACCOUNTS_COL_PERMISSIONS
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
+import com.mnassa.data.repository.DatabaseContract.TABLE_USERS
+import com.mnassa.data.repository.DatabaseContract.TABLE_USERS_COL_STATE
+import com.mnassa.data.repository.DatabaseContract.TABLE_USERS_COL_STATE_DISABLED
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
@@ -272,6 +275,18 @@ class UserRepositoryImpl(
             val info = "$ANDROID,${getFirebaseUserId()},${getAccountIdOrNull()}"
             firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
         }
+    }
+
+    override suspend fun getUserStatusChannel(firebaseUserId: String): ReceiveChannel<UserStatusModel> {
+        return db.child(TABLE_USERS)
+                .child(firebaseUserId)
+                .child(TABLE_USERS_COL_STATE)
+                .toValueChannel<String>(exceptionHandler)
+                .map {
+                    if (it == TABLE_USERS_COL_STATE_DISABLED) {
+                        UserStatusModel.Disabled()
+                    } else UserStatusModel.Enabled()
+                }
     }
 
     private fun getAccountType(type: AccountType) = when (type) {

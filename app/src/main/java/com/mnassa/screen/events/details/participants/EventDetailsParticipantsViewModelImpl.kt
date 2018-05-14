@@ -82,12 +82,12 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                             hasOtherUsers = hasOtherUsers || !it.isInConnections
                         }
                     }
+                    val event = eventChannel.openSubscription().consume { receive() }
                     if (hasConnections) {
-                        val event = eventChannel.openSubscription().consume { receive() }
                         participants += EventParticipantItem.ConnectionsHeader(event.isMyEvent())
                     }
                     if (hasOtherUsers) {
-                        participants += EventParticipantItem.OtherHeader
+                        participants += EventParticipantItem.OtherHeader(!hasConnections && event.isMyEvent())
                     }
                     participantsChannel.send(participants)
                 }.await()

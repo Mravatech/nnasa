@@ -34,4 +34,6 @@ interface CreateOfferViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, Place
             price: Long?,
             postPrivacyOptions: PostPrivacyOptions
     )
+    suspend fun canPromotePost(): Boolean
+    suspend fun getPromotePostPrice(): Long
 }

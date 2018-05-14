@@ -32,11 +32,11 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
     }
 
 
-    override suspend fun bindPost(post: PostModel) {
-        super.bindPost(post)
+    override fun bindPost(post: PostModel, view: View) {
+        super.bindPost(post, view)
         post as OfferPostModel
 
-        with(getViewSuspend()) {
+        with(view) {
             tvTitle.text = post.title
             tvTitle.goneIfEmpty()
 
@@ -57,12 +57,14 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
         }
     }
 
-    override fun showMyPostMenu(view: View, post: PostModel) {
+    override suspend fun showMyPostMenu(view: View, post: PostModel) {
         post as OfferPostModel
         popupMenuHelper.showMyPostMenu(
                 view = view,
+                post = post,
                 onEditPost = { open(CreateOfferController.newInstance(post)) },
-                onDeletePost = { viewModel.delete() })
+                onDeletePost = { viewModel.delete() },
+                onPromotePost = { viewModel.promote() })
     }
 
     private suspend fun bindBuyOfferButton(post: OfferPostModel) {

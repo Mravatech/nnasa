@@ -15,4 +15,6 @@ interface CreateEventViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
 
     suspend fun getTag(tagId: String): TagModel?
     fun publish(model: CreateOrEditEventModel)
+    suspend fun canPromoteEvents(): Boolean
+    suspend fun getPromoteEventPrice(): Long
 }

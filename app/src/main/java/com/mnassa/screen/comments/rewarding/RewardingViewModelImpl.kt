@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
  * Date: 4/30/2018
  */
 class RewardingViewModelImpl(private val walletInteractor: WalletInteractor) : MnassaViewModelImpl(), RewardingViewModel {
-    override val defaultRewardChannel: BroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val defaultRewardChannel: BroadcastChannel<Long> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

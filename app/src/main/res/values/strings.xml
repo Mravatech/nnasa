@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Mnassa</string>
     <string name="jpg_dimension">.jpg</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>
