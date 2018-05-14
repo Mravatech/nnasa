@@ -225,7 +225,7 @@ private val viewModelsModule = Kodein.Module {
     bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance(), instance()) }
     bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance(), instance()) }
     bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
-    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance(), instance(), instance()) }
+    bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance(), instance(), instance(), instance()) }
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
@@ -289,7 +289,7 @@ private val repositoryModule = Kodein.Module {
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
 }

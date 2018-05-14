@@ -11,7 +11,6 @@ import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
@@ -25,6 +24,7 @@ import timber.log.Timber
  * Created by Peter on 2/20/2018.
  */
 class App : MultiDexApplication(), KodeinAware {
+
     override val kodein: Kodein = Kodein.lazy {
         import(androidModule(this@App))
         registerAppModules(this)
@@ -37,9 +37,6 @@ class App : MultiDexApplication(), KodeinAware {
         FirebaseApp.initializeApp(this)
 
         if (getInstance<AppInfoProvider>().isDebug) {
-            if (LeakCanary.isInAnalyzerProcess(this)) return
-            LeakCanary.install(this)
-
             Timber.plant(Timber.DebugTree())
             Stetho.initializeWithDefaults(this)
         } else {

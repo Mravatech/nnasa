@@ -15,6 +15,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
+import kotlinx.coroutines.experimental.channels.consume
 
 /**
  * Created by Peter on 3/19/2018.
@@ -43,7 +44,7 @@ val PostModel.formattedText: CharSequence?
     get() {
 
         return when (type) {
-            PostType.NEED -> {
+            is PostType.NEED -> {
                 if (text.isNullOrBlank()) return text
 
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.need_prefix))
@@ -52,7 +53,7 @@ val PostModel.formattedText: CharSequence?
                 spannable.append(text)
                 spannable
             }
-            PostType.PROFILE -> {
+            is PostType.PROFILE -> {
                 this as RecommendedProfilePostModel
 
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.recommend_prefix))
@@ -67,7 +68,7 @@ val PostModel.formattedText: CharSequence?
                 spannable.append(text ?: "")
                 spannable
             }
-            PostType.OFFER -> {
+            is PostType.OFFER -> {
                 if (text.isNullOrBlank()) return text
 
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.offer_prefix))
@@ -101,4 +102,26 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
 
-val PostModel.canBeShared: Boolean get() = privacyType != PostPrivacyType.PRIVATE && !this.isMyPost()
+val PostModel.canBeShared: Boolean get() = privacyType !is PostPrivacyType.PRIVATE && !isMyPost()
+
+suspend fun PostModel?.canBePromoted(): Boolean {
+    if (this?.privacyType is PostPrivacyType.WORLD) return false
+    if (this?.isMyPost() == false) return false
+
+    val userProfileInteractor: UserProfileInteractor = App.context.getInstance()
+    val permissions = userProfileInteractor.getPermissions().consume { receive() }
+
+    return when (this?.type) {
+        is PostType.NEED -> permissions.canPromoteNeedPost
+        is PostType.OFFER -> permissions.canPromoteOfferPost
+        is PostType.GENERAL -> permissions.canPromoteGeneralPost
+        is PostType.PROFILE -> permissions.canPromoteAccountPost
+        is PostType.INFO -> false
+        is PostType.OTHER -> false
+        else -> false
+    }
+}
+
+suspend fun PostModel.getPromotionPrice(): Long {
+    return App.context.getInstance<PostsInteractor>().getPromotePostPrice()
+}

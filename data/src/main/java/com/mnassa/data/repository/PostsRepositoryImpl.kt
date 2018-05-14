@@ -8,7 +8,7 @@ import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
-import com.mnassa.data.network.bean.firebase.OfferPostPriceDbEntity
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.PostDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
@@ -129,7 +129,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC,
                 tags = tags,
                 price = price,
                 location = placeId
@@ -169,7 +169,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC,
+                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC(),
                 tags = tags,
                 location = placeId
         )).handleException(exceptionHandler)
@@ -216,7 +216,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 price = price,
                 privacyType = postPrivacyOptions.privacyType.stringValue,
                 privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = postPrivacyOptions.privacyType == PostPrivacyType.PUBLIC
+                allConnections = postPrivacyOptions.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
         return result.data.run { converter.convert(this) }
     }
@@ -246,22 +246,33 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 price = price,
                 privacyType = postPrivacyOptions.privacyType.stringValue,
                 privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = postPrivacyOptions.privacyType == PostPrivacyType.PUBLIC
+                allConnections = postPrivacyOptions.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
     }
 
     override suspend fun getShareOfferPostPrice(): Long? {
         return db.child(DatabaseContract.SHARE_OFFER_POST)
-                .await<OfferPostPriceDbEntity>(exceptionHandler)
+                .await<PriceDbEntity>(exceptionHandler)
                 ?.takeIf { it.state }
                 ?.amount
     }
 
     override suspend fun getShareOfferPostPerUserPrice(): Long? {
         return db.child(DatabaseContract.SHARE_OFFER_POST_PER_USER)
-                .await<OfferPostPriceDbEntity>(exceptionHandler)
+                .await<PriceDbEntity>(exceptionHandler)
                 ?.takeIf { it.state }
                 ?.amount
+    }
+
+    override suspend fun getPromotePostPrice(): Long? {
+        return db.child(DatabaseContract.PROMOTE_POST)
+                .await<PriceDbEntity>(exceptionHandler)
+                ?.takeIf { it.state }
+                ?.amount
+    }
+
+    override suspend fun promote(post: PostModel) {
+        postApi.promote(PromotePostRequest(post.id, converter.convert(post.type))).handleException(exceptionHandler)
     }
 
     override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {
@@ -271,7 +282,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 text = text,
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
     }
 
@@ -293,7 +304,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 postId = postId,
                 text = text?.takeIf { it.isNotBlank() },
                 privacyConnections = privacy.privacyConnections.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC))
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC))
                 .handleException(exceptionHandler)
                 .data
                 .run { converter.convert(this) }

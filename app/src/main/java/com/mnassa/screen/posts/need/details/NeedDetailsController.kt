@@ -6,7 +6,10 @@ import android.view.View
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -66,14 +69,18 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             rvTags.adapter = tagsAdapter
         }
 
-        launchCoroutineUI { viewModel.postChannel.consumeEach { bindPost(it) } }
+        launchCoroutineUI {
+            viewModel.postChannel.consumeEach {
+                bindPost(it)
+            }
+        }
 
         launchCoroutineUI { viewModel.postTagsChannel.consumeEach { bindTags(it) } }
 
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
         (args.getSerializable(EXTRA_POST_MODEL) as PostModel?)?.let { post ->
-            runBlocking { bindPost(post) }
+            launchCoroutineUI { bindPost(post) }
             args.remove(EXTRA_POST_MODEL)
         }
     }
@@ -101,22 +108,23 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     }
 
-    protected open fun showMyPostMenu(view: View, post: PostModel) {
+    protected open suspend fun showMyPostMenu(view: View, post: PostModel) {
         popupMenuHelper.showMyPostMenu(
                 view = view,
+                post = post,
                 onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
-                onDeletePost = { viewModel.delete() })
+                onDeletePost = { viewModel.delete() },
+                onPromotePost = { viewModel.promote() }
+        )
     }
 
-    private fun showOtherUserPostMenu(view: View) {
-        post?.let {
-            popupMenuHelper.showPostMenu(
-                    view = view,
-                    post = it,
-                    onRepost = { openSharingOptionsScreen() },
-                    onReport = { complainAboutProfile(view) }
-            )
-        }
+    protected open suspend fun showOtherUserPostMenu(view: View, post: PostModel) {
+        popupMenuHelper.showPostMenu(
+                view = view,
+                post = post,
+                onRepost = { openSharingOptionsScreen() },
+                onReport = { complainAboutProfile(view) }
+        )
     }
 
     protected open suspend fun bindPost(post: PostModel) {
@@ -193,13 +201,23 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
     override fun bindToolbar(toolbar: MnassaToolbar) {
         launchCoroutineUI {
-            val post = viewModel.postChannel.openSubscription().consume { receive() }
+            val post = viewModel.postChannel.consume { receive() }
             toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
             if (post.isMyPost()) {
-                toolbar.onMoreClickListener = { showMyPostMenu(it, post) }
+                toolbar.onMoreClickListener = { view ->
+                    launchCoroutineUI {
+                        showMyPostMenu(view,
+                                viewModel.postChannel.consume { receive() })
+                    }
+                }
                 makePostActionsGone()
             } else {
-                toolbar.onMoreClickListener = { showOtherUserPostMenu(it) }
+                toolbar.onMoreClickListener = { view ->
+                    launchCoroutineUI {
+                        showOtherUserPostMenu(view,
+                                viewModel.postChannel.consume { receive() })
+                    }
+                }
                 makePostActionsVisible()
             }
         }
@@ -247,7 +265,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         post?.takeIf { it.canBeShared }?.let {
             open(SharingOptionsController.newInstance(
                     listener = this,
-                    accountsToExclude = listOf(it.author.id)))
+                    accountsToExclude = listOf(it.author.id),
+                    restrictShareReduction = false,
+                    canBePromoted = false,
+                    promotePrice = 0L))
         }
     }
 

@@ -7,7 +7,6 @@ import com.google.firebase.FirebaseException
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.BaseViewModelImpl
-import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchCoroutineWorker
 import com.mnassa.domain.exception.FirebaseMappingException

@@ -16,4 +16,6 @@ interface EventDetailsViewModel : MnassaViewModel {
     fun changeStatus(event: EventModel, status: EventStatus)
     fun sendComplaint(eventId: String, reason: String, authorText: String?)
     suspend fun retrieveComplaints(): List<TranslatedWordModel>
+
+    fun promote()
 }

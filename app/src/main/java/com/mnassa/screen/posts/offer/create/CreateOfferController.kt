@@ -82,10 +82,16 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             }
             tvShareOptions.setOnClickListener {
                 val post = post
-                open(SharingOptionsController.newInstance(
-                        options = sharingOptions,
-                        listener = this@CreateOfferController,
-                        accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
+                launchCoroutineUI {
+                    open(SharingOptionsController.newInstance(
+                            options = sharingOptions,
+                            listener = this@CreateOfferController,
+                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                            restrictShareReduction = offerId != null,
+                            canBePromoted = viewModel.canPromotePost(),
+                            promotePrice = viewModel.getPromotePostPrice()))
+                }
+
             }
 
             applyShareOptionsChanges()
@@ -121,6 +127,10 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                     args.remove(EXTRA_OFFER)
                 }
                 hideProgress()
+            }
+
+            if (offerId != null) {
+                toolbar.title = fromDictionary(R.string.offer_edit_title)
             }
         }
 
@@ -211,7 +221,6 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
         this.post = offer
 
         with(getViewSuspend()) {
-            toolbar.title = fromDictionary(R.string.offer_edit_title)
             etTitle.setText(offer.title)
             etOffer.setText(offer.text)
 

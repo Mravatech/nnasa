@@ -102,5 +102,6 @@ internal object DatabaseContract {
     //offer
     const val SHARE_OFFER_POST = "dictionary/paymentTypes/shareOfferPost"
     const val SHARE_OFFER_POST_PER_USER = "dictionary/paymentTypes/shareOfferPostPerUser"
-
+    const val PROMOTE_POST = "dictionary/paymentTypes/promotePost"
+    const val PROMOTE_EVENT = "dictionary/paymentTypes/promoteEvent"
 }

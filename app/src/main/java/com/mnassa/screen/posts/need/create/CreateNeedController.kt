@@ -74,10 +74,15 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             }
             tvShareOptions.setOnClickListener {
                 val post = post
-                open(SharingOptionsController.newInstance(
-                        options = sharingOptions,
-                        listener = this@CreateNeedController,
-                        accountsToExclude = if (post != null) listOf(post.author.id) else emptyList()))
+                launchCoroutineUI {
+                    open(SharingOptionsController.newInstance(
+                            options = sharingOptions,
+                            listener = this@CreateNeedController,
+                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                            restrictShareReduction = postId != null,
+                            canBePromoted = viewModel.canPromotePost(),
+                            promotePrice = viewModel.getPromotePostPrice()))
+                }
             }
 
             launchCoroutineUI {
