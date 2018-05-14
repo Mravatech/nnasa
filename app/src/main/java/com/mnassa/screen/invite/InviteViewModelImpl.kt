@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.annotation.RequiresPermission
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContact
@@ -25,7 +24,6 @@ class InviteViewModelImpl(
 
     override val invitesCountChannel: BroadcastChannel<Int> = BroadcastChannel(10)
     override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = BroadcastChannel(10)
-    override val phoneSelectedChannel: BroadcastChannel<PhoneContact> = BroadcastChannel(10)
     override val checkPhoneContactChannel: BroadcastChannel<Boolean> = BroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,14 +39,6 @@ class InviteViewModelImpl(
         retrievePhoneJob = handleException {
             val contacts = connectionsInteractor.retrievePhoneContacts()
             phoneContactChannel.send(contacts)
-        }
-    }
-
-    private var selectPhoneJob: Job? = null
-    override fun selectPhoneContact(contact: PhoneContact) {
-        selectPhoneJob?.cancel()
-        selectPhoneJob = launchCoroutineUI {
-            phoneSelectedChannel.send(contact)
         }
     }
 

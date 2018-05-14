@@ -6,15 +6,14 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.helper.CountryHelper
-import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.openApplicationSettings
+import com.mnassa.helper.CountryHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.history.HistoryController
@@ -25,6 +24,7 @@ import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,26 +40,20 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     private val countryHelper: CountryHelper by instance()
     private val intentHelper: IntentHelper by instance()
 
+    private var countryCodePhrase = ""
     private val phoneNumber: String
         get() {
             val view = view ?: return EMPTY_STRING
             val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode
                     ?: return EMPTY_STRING
-            return countryCode.phonePrefix.code
-                    .replace("+", EMPTY_STRING) +
-                    view.etPhoneNumberTail.text.toString()
+            countryCodePhrase = countryCode.phonePrefix.code.replace("+", EMPTY_STRING)
+            return countryCodePhrase + view.etPhoneNumberTail.text.toString()
         }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         initViews(view)
         checkReadContactPermission(view)
-        launchCoroutineUI {
-            viewModel.phoneSelectedChannel.consumeEach {
-                view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
-                view.etPhoneNumberTail.setText(it.phoneNumber)
-            }
-        }
         launchCoroutineUI {
             viewModel.checkPhoneContactChannel.consumeEach {
                 if (it) {
@@ -76,6 +70,14 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
         }
+        adapter.onItemClickListener = {
+            view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
+            var number = it.phoneNumber
+            if (number.startsWith(countryCodePhrase)) {
+                number = number.replaceFirst(countryCodePhrase, "")
+            }
+            view.etPhoneNumberTail.setText(number)
+        }
     }
 
     override fun onDestroyView(view: View) {
@@ -90,7 +92,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 viewModel.retrievePhoneContacts()
                 viewModel.phoneContactChannel.consumeEach {
                     view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
-                    adapter.setData(it, viewModel)
+                    adapter.setData(it)
                     view.rvInviteToMnassa.adapter = adapter
                 }
             } else {
@@ -103,33 +105,35 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     private fun initViews(view: View) {
-        view.tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
-        view.tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
-        view.etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
-        view.etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
-        view.btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
-        view.spinnerPhoneCode.adapter = CountryCodeAdapter(view.spinnerPhoneCode.context, countryHelper.countries)
-        view.spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
-        }
-        view.etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
-            view.btnInvite.isEnabled = it.length >= PHONE_NUMBER_WITHOUT_CODE
-            adapter.searchByNumber(it)
-        })
-        view.btnInvite.setOnClickListener {
-            viewModel.checkPhoneContact(PhoneContactImpl(
-                    phoneNumber + view.etPhoneNumberTail.text.toString(),
-                    adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
-                            ?: EMPTY_STRING, null))
-        }
-        view.etInviteSearch.addTextChangedListener(
-                SimpleTextWatcher { searchWord ->
-                    adapter.searchByName(searchWord)
-                }
-        )
-        view.ivInvitesHistory.setOnClickListener {
-            open(HistoryController.newInstance())
+        with(view) {
+            tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
+            tvToolbarScreenHeader.text = fromDictionary(R.string.invite_invite_header)
+            etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
+            etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
+            btnInvite.text = fromDictionary(R.string.invite_invite_button_text)
+            spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
+            spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+            }
+            etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
+                btnInvite.isEnabled = validateInput()
+                adapter.searchByNumber(countryCodePhrase + it)
+            })
+            btnInvite.setOnClickListener {
+                viewModel.checkPhoneContact(PhoneContactImpl(
+                        phoneNumber,
+                        adapter.getNameByNumber(etPhoneNumberTail.text.toString())
+                                ?: EMPTY_STRING, null))
+            }
+            etInviteSearch.addTextChangedListener(
+                    SimpleTextWatcher { searchWord ->
+                        adapter.searchByName(searchWord)
+                    }
+            )
+            ivInvitesHistory.setOnClickListener {
+                open(HistoryController.newInstance())
+            }
         }
     }
 
@@ -138,9 +142,11 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     private fun onInputChanged() {
-        val view = view ?: return
-        view.btnInvite.isEnabled = validateInput()
-        view.etPhoneNumberTail.error = null
+        with(view ?: return) {
+            btnInvite.isEnabled = validateInput()
+            etPhoneNumberTail.error = null
+            adapter.searchByNumber(countryCodePhrase + etPhoneNumberTail.text.toString())
+        }
     }
 
     private fun handleInviteWith(inviteWith: Int, number: String) {
