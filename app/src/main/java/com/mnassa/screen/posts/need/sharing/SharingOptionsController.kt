@@ -248,7 +248,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         companion object {
             private const val MAX_SHARE_TO_USERNAMES = 2
 
-            val DEFAULT = ShareToOptions(PostPrivacyType.PUBLIC, emptySet())
+            val DEFAULT = ShareToOptions(PostPrivacyType.PUBLIC(), emptySet())
         }
     }
 }
