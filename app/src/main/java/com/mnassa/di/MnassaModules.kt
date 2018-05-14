@@ -73,6 +73,14 @@ import com.mnassa.screen.events.details.info.EventDetailsInfoViewModel
 import com.mnassa.screen.events.details.info.EventDetailsInfoViewModelImpl
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsViewModel
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsViewModelImpl
+import com.mnassa.screen.group.details.GroupDetailsViewModel
+import com.mnassa.screen.group.details.GroupDetailsViewModelImpl
+import com.mnassa.screen.group.list.GroupListViewModel
+import com.mnassa.screen.group.list.GroupListViewModelImpl
+import com.mnassa.screen.group.members.GroupMembersViewModel
+import com.mnassa.screen.group.members.GroupMembersViewModelImpl
+import com.mnassa.screen.group.profile.GroupProfileViewModel
+import com.mnassa.screen.group.profile.GroupProfileViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.invite.InviteViewModel
@@ -235,6 +243,10 @@ private val viewModelsModule = Kodein.Module {
     bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
     bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
+    bind<GroupProfileViewModel>() with provider { GroupProfileViewModelImpl() }
+    bind<GroupMembersViewModel>() with provider { GroupMembersViewModelImpl() }
+    bind<GroupListViewModel>() with provider { GroupListViewModelImpl() }
+    bind<GroupDetailsViewModel>() with provider { GroupDetailsViewModelImpl() }
 }
 
 private val convertersModule = Kodein.Module {

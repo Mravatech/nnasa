@@ -24,6 +24,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.ConnectionsController
+import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.main.MainController.DrawerItem.*
@@ -114,6 +115,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_profile).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_profile).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_wallet).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_invite).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_settings).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
@@ -127,6 +129,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                     .withOnDrawerItemClickListener { _, _, item ->
                         when (values()[item.identifier.toInt()]) {
                             PROFILE -> open(ProfileController.newInstance(activeAccountId))
+                            GROUPS -> open(GroupListController.newInstance())
                             WALLET -> open(WalletController.newInstance())
                             INVITE -> open(InviteController.newInstance())
                             SETTINGS -> open(SettingsController.newInstance())
@@ -262,6 +265,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
 
     enum class DrawerItem {
         PROFILE,
+        GROUPS,
         WALLET,
         INVITE,
         SETTINGS,

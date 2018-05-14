@@ -337,6 +337,7 @@
 
     <!-- ======================================== SIDE MENU ===================================== -->
     <string name="side_menu_profile">_android_side_menu_profile</string>
+    <string name="side_menu_groups">_android_side_menu_groups</string>
     <string name="side_menu_wallet">_sidemenu_wallet</string>
     <string name="side_menu_invite">_sidemenu_invite</string>
     <string name="side_menu_settings">_sidemenu_settings</string>
