@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.mnassa.R
+import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
@@ -36,17 +37,23 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             rlClickableRoot.setOnClickListener(onClickListener)
             rlClickableRoot.tag = this@NeedViewHolder
 
-            btnAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
-            btnAction.text = when {
-                item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
-                    fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
-                item.autoSuggest.youCanHelp -> fromDictionary(R.string.need_item_btn_you_can_help)
-                item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
-                else -> null
+            if (item.statusOfExpiration is ExpirationType.ACTIVE) {
+                tvAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
+                tvAction.text = when {
+                    item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
+                        fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
+                    item.autoSuggest.youCanHelp -> fromDictionary(R.string.need_item_btn_you_can_help)
+                    item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
+                    else -> null
+                }
+                tvAction.setTextColor(ContextCompat.getColor(context, R.color.accent))
+            } else {
+                tvAction.visibility = View.VISIBLE
+                tvAction.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
             }
 
-            btnAction.setOnClickListener(onClickListener)
-            btnAction.tag = this@NeedViewHolder
+            tvAction.setOnClickListener(onClickListener)
+            tvAction.tag = this@NeedViewHolder
 
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@NeedViewHolder
@@ -79,7 +86,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
     private fun bindRepost(item: PostModel) {
         if (!item.isRepost) return
 
-        with (itemView) {
+        with(itemView) {
             val repostedBySpan = SpannableStringBuilder(fromDictionary(R.string.need_item_reposted_by))
             repostedBySpan.append(" ")
             val startSpan = repostedBySpan.length
@@ -99,10 +106,10 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
 
     companion object {
         fun newInstance(
-            parent: ViewGroup,
-            onClickListener: View.OnClickListener,
-            imagesCount: Int = 0,
-            isRepost: Boolean = false
+                parent: ViewGroup,
+                onClickListener: View.OnClickListener,
+                imagesCount: Int = 0,
+                isRepost: Boolean = false
         ): NeedViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)

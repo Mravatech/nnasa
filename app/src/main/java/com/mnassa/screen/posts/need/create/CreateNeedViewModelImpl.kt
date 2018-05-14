@@ -28,6 +28,7 @@ class CreateNeedViewModelImpl(
             images: List<AttachedImage>,
             placeId: String?,
             price: Long?,
+            timeOfExpiration: Long?,
             postPrivacyOptions: PostPrivacyOptions
     ) {
         handleException {
@@ -40,6 +41,7 @@ class CreateNeedViewModelImpl(
                             privacy = postPrivacyOptions,
                             tags = tags,
                             price = price,
+                            timeOfExpiration = timeOfExpiration,
                             placeId = placeId
                     )
                 } else {
@@ -58,6 +60,9 @@ class CreateNeedViewModelImpl(
             }
         }
     }
+
+    override suspend fun getDefaultExpirationDays(): Long = postsInteractor.getDefaultExpirationDays()
+
 
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userInteractor.getAccountByIdChannel(userId).consume { receive() } }
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)

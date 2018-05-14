@@ -28,6 +28,8 @@ internal data class PostDbEntity(
         @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
+        @SerializedName("statusOfExpiration") var statusOfExpiration: String,
+        @SerializedName("timeOfExpiration") var timeOfExpiration: Long?,
         @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
@@ -36,7 +38,6 @@ internal data class PostDbEntity(
         @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
         //info post
         @SerializedName("title") var title: String?, //offer post
-        @SerializedName("statusOfExpiration") var statusOfExpiration: String?,
         //offer post
         @SerializedName("category") val category: String?,
         @SerializedName("subcategory") val subcategory: String?

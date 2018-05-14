@@ -16,11 +16,11 @@
 
             <TextView
                 android:id="@+id/tvHeader"
-                style="@style/PersonalInfo.HeaderTitle" />
+                style="@style/ScreenHeaderTitle" />
 
             <Button
                 android:id="@+id/btnHeaderNext"
-                style="@style/PersonalInfo.HeaderNext" />
+                style="@style/ScreenHeaderButton"/>
         </LinearLayout>
 
         <include layout="@layout/sub_profile_avatar" />

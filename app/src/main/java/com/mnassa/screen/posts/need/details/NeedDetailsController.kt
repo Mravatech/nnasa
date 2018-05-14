@@ -171,6 +171,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             ivRepost.setOnClickListener { openSharingOptionsScreen() }
             tvRepostsCount.text = post.counters.reposts.toString()
 
+            //expiration
+            tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)
+
             btnComment.text = fromDictionary(R.string.need_comment_button)
             btnComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
 

@@ -6,15 +6,14 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.helper.CountryHelper
-import com.mnassa.helper.DialogHelper
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.openApplicationSettings
+import com.mnassa.helper.CountryHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.history.HistoryController
@@ -25,6 +24,7 @@ import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -119,7 +119,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
         })
         view.btnInvite.setOnClickListener {
             viewModel.checkPhoneContact(PhoneContactImpl(
-                    phoneNumber + view.etPhoneNumberTail.text.toString(),
+                    phoneNumber,
                     adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
                             ?: EMPTY_STRING, null))
         }

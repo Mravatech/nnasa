@@ -23,6 +23,7 @@ interface PostsRepository {
             privacy: PostPrivacyOptions,
             tags: List<String>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?
     ): PostModel
 
@@ -34,6 +35,7 @@ interface PostsRepository {
             price: Long?,
             placeId: String?
     )
+    suspend fun getDefaultExpirationDays(): Long
 
     suspend fun createGeneralPost(
             text: String,
