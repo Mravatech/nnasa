@@ -124,6 +124,7 @@ fun TextView.bindExpireType(statusOfExpiration: ExpirationType, timeOfExpiration
         is ExpirationType.FULFILLED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_done_black_24dp, null)
         else -> null
     }
+
     setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
     setTextColor(Color.BLACK)
 

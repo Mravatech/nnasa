@@ -40,6 +40,8 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
 
             if (item.statusOfExpiration is ExpirationType.ACTIVE) {
                 tvAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
+                tvExpiration.visibility = View.INVISIBLE
+
                 tvAction.text = when {
                     item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
                         fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
@@ -47,10 +49,10 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
                     item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
                     else -> null
                 }
-                tvAction.setTextColor(ContextCompat.getColor(context, R.color.accent))
             } else {
-                tvAction.visibility = View.VISIBLE
-                tvAction.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
+                tvAction.visibility = View.INVISIBLE
+                tvExpiration.visibility = View.VISIBLE
+                tvExpiration.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
             }
 
             tvAction.setOnClickListener(onClickListener)

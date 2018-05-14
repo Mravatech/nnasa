@@ -1,6 +1,7 @@
 package com.mnassa.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.auth.FirebaseAuth
@@ -86,6 +87,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getAccountByIdChannel(accountId: String): ReceiveChannel<ShortAccountModel?> {
+        Log.e("GET_ACCOUNT__","GET_ACCOUNT__ getAccountByIdChannel $accountId")
         return db
                 .child(DatabaseContract.TABLE_ACCOUNTS)
                 .child(accountId)
@@ -220,6 +222,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel? {
+        Log.e("GET_ACCOUNT__","getProfileByAccountId GET_ACCOUNT__ $accountId")
+
         val dbChild = if (accountId == getAccountIdOrException()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
         val profile = db.child(dbChild)
                 .child(accountId)
@@ -229,6 +233,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?> {
+        Log.e("GET_ACCOUNT__","getProfileById GET_ACCOUNT__ $accountId")
+
         val dbChild = if (accountId == getAccountIdOrException()) DatabaseContract.TABLE_ACCOUNTS else DatabaseContract.TABLE_PUBLIC_ACCOUNTS
         return db.child(dbChild)
                 .child(accountId)
@@ -252,6 +258,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getAccountById(id: String): ShortAccountModel? {
+        Log.e("GET_ACCOUNT__","getAccountById GET_ACCOUNT__ $id")
         return db
                 .child(TABLE_PUBLIC_ACCOUNTS)
                 .child(id)

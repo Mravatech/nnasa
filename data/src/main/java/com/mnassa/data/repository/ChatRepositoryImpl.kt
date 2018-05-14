@@ -130,9 +130,10 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         mapper = { converter.convert(it, ChatRoomModel::class.java) }
                 )
                 .map {
-                    it.item.account = userRepository
-                            .getAccountById(it.item.members?.first { it != userId }
-                                    ?: "")
+                    val otherUserId = it.item.members?.firstOrNull { it != userId }
+                    if (otherUserId != null) {
+                        it.item.account = userRepository.getAccountById(otherUserId)
+                    }
                     it
                 }
                 .filter {
