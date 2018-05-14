@@ -277,7 +277,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
     private fun onOfferChanged() {
         with(view ?: return) {
-            toolbar.actionButtonEnabled =
+            toolbar.actionButtonClickable =
                     etOffer.text.length >= MIN_OFFER_DESCRIPTION_LENGTH &&
                     etTitle.text.length >= MIN_OFFER_TITLE_LENGTH
         }

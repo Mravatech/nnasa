@@ -2,6 +2,7 @@ package com.mnassa.data.extensions
 
 import com.google.firebase.database.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.channels.*
@@ -155,12 +156,22 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
                 }
 
                 channel.send(result)
-            } catch (e: ClosedSendChannelException) {
-                removeEventListener(listener)
             } catch (e: Exception) {
-                Timber.e(e)
-                removeEventListener(listener)
-                channel.close(exceptionHandler.handle(e))
+                when (e) {
+                    is ClosedSendChannelException -> removeEventListener(listener)
+                    is IllegalArgumentException,
+                    is IllegalStateException,
+                    is NullPointerException -> {
+                        Timber.e(e)
+                        removeEventListener(listener)
+                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))
+                    }
+                    else -> {
+                        Timber.e(e)
+                        removeEventListener(listener)
+                        channel.close(exceptionHandler.handle(e))
+                    }
+                }
             }
         }
     }

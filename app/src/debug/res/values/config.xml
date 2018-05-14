@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MnPreProd</string>
+    <string name="app_name">MnDEV</string>
 
     <!--pre prod key-->
     <string name="play_services_key" formatted="false" translatable="false">AIzaSyBNKhG4LEZSe_Qa9DRR0b63fk11tZnZ5mw</string>

@@ -169,7 +169,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
                 privacyType = privacy.privacyType.stringValue,
                 privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType == PostPrivacyType.PUBLIC(),
+                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC,
                 tags = tags,
                 location = placeId
         )).handleException(exceptionHandler)

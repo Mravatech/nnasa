@@ -31,31 +31,12 @@ class GroupedRecommendedConnectionsRVAdapter : BasePaginationRVAdapter<GroupedCo
 
     fun set(input: RecommendedConnections) {
         val result = ArrayList<GroupedConnection>()
-        if (input.byPhone.isNotEmpty()) {
-            result += GroupedConnection.Group(fromDictionary(R.string.recommended_connections_by_phone))
-            input.byPhone.values.forEach {
-                it.forEach {
-                    result += GroupedConnection.Connection(it)
-                }
-            }
-        }
 
-        if (input.byEvents.isNotEmpty()) {
-            result += GroupedConnection.Group(fromDictionary(R.string.recommended_connections_by_event))
-            input.byEvents.values.forEach {
-                it.forEach {
-                    result += GroupedConnection.Connection(it)
-                }
+        input.recommendations.entries.forEach {
+            if (it.value.isNotEmpty()) {
+                result += GroupedConnection.Group(fromDictionary(it.key))
             }
-        }
-
-        if (input.byGroups.isNotEmpty()) {
-            result += GroupedConnection.Group(fromDictionary(R.string.recommended_connections_by_refer))
-            input.byGroups.values.forEach {
-                it.forEach {
-                    result += GroupedConnection.Connection(it)
-                }
-            }
+            it.value.mapTo(result) { GroupedConnection.Connection(it) }
         }
 
         set(result)

@@ -7,14 +7,10 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 2/23/2018.
  */
 internal data class TranslatedWordDbEntity(
-        override var id: String,
-
-        @SerializedName("info")
-        val info: String,
-        @SerializedName("ar")
-        val ar: String?,
-        @SerializedName("en")
-        val en: String?
+        @SerializedName("id") override var id: String,
+        @SerializedName("info") val info: String,
+        @SerializedName("ar") val ar: String?,
+        @SerializedName("en") val en: String?
 ) : HasId {
     constructor() : this("", "", null, null)
 }

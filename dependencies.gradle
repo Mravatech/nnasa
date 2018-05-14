@@ -221,7 +221,7 @@ ext.deps = deps
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ext {
-    endpointProd = 'https://release.com'
+    endpointProd = 'https://us-central1-mnassa4prod.cloudfunctions.net'
     endpointPreProd = 'https://us-central1-mnassa4dev.cloudfunctions.net/'
     endpointDev = 'https://us-central1-fir-test-b7667.cloudfunctions.net/'
     termsAndConditionsProd = 'https://mnassa.com/'

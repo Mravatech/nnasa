@@ -95,14 +95,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
                 }
             }
         }
-
-        viewModel.resetCounter()
     }
 
     override fun onPageSelected() {
         val recyclerView = view?.rvNewsFeed ?: return
         recyclerView.scrollToPosition(0)
-        viewModel.resetCounter()
     }
 
     override fun onDestroyView(view: View) {

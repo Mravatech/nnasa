@@ -8,13 +8,8 @@ import com.google.gson.annotations.SerializedName
  * Date: 4/10/2018
  */
 data class ComplaintRequest(
-
-        @SerializedName("id")
-        private val id: String,
-        @SerializedName("type")
-        private val type: String,
-        @SerializedName("reason")
-        private val reason: String,
-        @SerializedName("authorText")
-        private val authorText: String?
+        @SerializedName("id") val id: String,
+        @SerializedName("type") val type: String,
+        @SerializedName("reason") val reason: String,
+        @SerializedName("authorText") val authorText: String?
 )

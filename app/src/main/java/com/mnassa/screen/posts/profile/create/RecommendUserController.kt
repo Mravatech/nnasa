@@ -83,7 +83,7 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
     private fun onNeedTextUpdated() {
         val view = view ?: return
-        view.toolbar.actionButtonEnabled = view.etRecommend.text.length >= MIN_TEXT_LENGTH
+        view.toolbar.actionButtonClickable = view.etRecommend.text.length >= MIN_TEXT_LENGTH
     }
 
     companion object {

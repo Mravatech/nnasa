@@ -53,12 +53,12 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
 
     }
 
-    override suspend fun bindPost(post: PostModel) {
-        super.bindPost(post)
+    override fun bindPost(post: PostModel, view: View) {
+        super.bindPost(post, view)
 
         if (post is RecommendedProfilePostModel) {
-            super.bindTags(post.offers)
-            with(getViewSuspend()) {
+            super.bindTags(post.offers, view)
+            with(view) {
                 rlRecommendedProfileRoot.visibility = View.VISIBLE
                 ivRecommendedUserAvatar.avatarSquare(post.recommendedProfile.avatar)
                 ivRecommendedUserAvatar.setOnClickListener { open(ProfileController.newInstance(post.recommendedProfile)) }
@@ -85,7 +85,7 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
                 onPromotePost = { viewModel.promote() })
     }
 
-    override suspend fun bindTags(tags: List<TagModel>) = Unit
+    override fun bindTags(tags: List<TagModel>, view: View) = Unit
     override suspend fun makePostActionsVisible() = makePostActionsGone()
 
     companion object {

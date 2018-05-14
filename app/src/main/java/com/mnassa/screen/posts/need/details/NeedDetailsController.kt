@@ -31,7 +31,6 @@ import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
 
 /**
@@ -71,16 +70,16 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
         launchCoroutineUI {
             viewModel.postChannel.consumeEach {
-                bindPost(it)
+                bindPost(it, getViewSuspend())
             }
         }
 
-        launchCoroutineUI { viewModel.postTagsChannel.consumeEach { bindTags(it) } }
+        launchCoroutineUI { viewModel.postTagsChannel.consumeEach { bindTags(it, getViewSuspend()) } }
 
         launchCoroutineUI { viewModel.finishScreenChannel.consumeEach { close() } }
 
         (args.getSerializable(EXTRA_POST_MODEL) as PostModel?)?.let { post ->
-            launchCoroutineUI { bindPost(post) }
+            bindPost(post, view)
             args.remove(EXTRA_POST_MODEL)
         }
     }
@@ -127,10 +126,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         )
     }
 
-    protected open suspend fun bindPost(post: PostModel) {
+    protected open fun bindPost(post: PostModel, view: View) {
         this.post = post
 
-        with(getViewSuspend()) {
+        with(view) {
             //author block
             ivAvatar.avatarRound(post.author.avatar)
             tvUserName.text = post.author.formattedName
@@ -189,13 +188,11 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     }
 
-    protected open suspend fun bindTags(tags: List<TagModel>) {
-        getViewSuspend().let {
-            with(it) {
-                vTagsSeparator.isGone = tags.isEmpty()
-                rvTags.isGone = tags.isEmpty()
-                tagsAdapter.set(tags)
-            }
+    protected open fun bindTags(tags: List<TagModel>, view: View) {
+        with(view) {
+            vTagsSeparator.isGone = tags.isEmpty()
+            rvTags.isGone = tags.isEmpty()
+            tagsAdapter.set(tags)
         }
     }
 

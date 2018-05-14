@@ -9,8 +9,6 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class PushSettingsRequest (
-        @SerializedName("isActive")
-        val isActive: Boolean,
-        @SerializedName("withSound")
-        val withSound: Boolean
+        @SerializedName("isActive") val isActive: Boolean,
+        @SerializedName("withSound") val withSound: Boolean
 )

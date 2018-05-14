@@ -4,16 +4,6 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
-
-//def getGitHash = { ->
-//    def stdout = new ByteArrayOutputStream()
-//    exec {
-//        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-//        standardOutput = stdout
-//    }
-//    return stdout.toString().trim()
-//}
-
 def globalConfiguration = rootProject.extensions.getByName("ext")
 
 android {
@@ -35,8 +25,6 @@ android {
         versionCode 1
 
         multiDexEnabled true
-
-//        buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
     }
 
     compileOptions {
@@ -70,7 +58,7 @@ android {
             keyPassword 'android'
         }
         stage {
-            storeFile file("../keystore/key.jks") //TODO: add release keystore
+            storeFile file("../keystore/key.jks")
             storePassword 'android'
             keyAlias 'android'
             keyPassword 'android'
@@ -85,7 +73,7 @@ android {
 
     buildTypes {
         release {
-//            minifyEnabled true
+            minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
@@ -101,6 +89,7 @@ android {
             applicationIdSuffix ".dev"
             minifyEnabled false
             debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
     }

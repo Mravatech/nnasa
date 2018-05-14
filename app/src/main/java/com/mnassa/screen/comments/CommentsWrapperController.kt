@@ -303,6 +303,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     private fun bindCanWriteComments(canWriteComments: Boolean) {
         view?.commentPanel?.isGone = !canWriteComments
+        view?.commentPanelShadow?.isGone = !canWriteComments
         wrappedController.invoke { it.bindCanWriteComments(canWriteComments) }
     }
 

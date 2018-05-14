@@ -7,7 +7,7 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 5/3/2018.
  */
 data class OfferCategoryDbModel(
-        override var id: String,
+        @SerializedName("id") override var id: String,
         @SerializedName("ar") val ar: String?,
         @SerializedName("en") val en: String,
         @SerializedName("parentId") val parentId: String?
