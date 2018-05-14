@@ -60,12 +60,8 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
 
         onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe { reason ->
             when (reason) {
-                is LogoutReason.NotAuthorized -> {
-
-                }
-                is LogoutReason.ManualLogout -> {
-
-                }
+                is LogoutReason.NotAuthorized -> { }
+                is LogoutReason.ManualLogout -> { }
                 is LogoutReason.AccountBlocked -> {
                     Toast.makeText(applicationContext, fromDictionary(R.string.blocked_account_message), Toast.LENGTH_LONG).show()
                 }
