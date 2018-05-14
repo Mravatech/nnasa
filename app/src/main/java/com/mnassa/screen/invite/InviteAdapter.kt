@@ -2,9 +2,12 @@ package com.mnassa.screen.invite
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.PhoneContact
+import com.mnassa.extensions.avatarRound
+import kotlinx.android.synthetic.main.item_invite.view.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,10 +15,12 @@ import com.mnassa.domain.model.PhoneContact
  * Date: 3/19/2018
  */
 
-class InviteAdapter : RecyclerView.Adapter<InviteHolder>() {
+class InviteAdapter : RecyclerView.Adapter<InviteAdapter.InviteHolder>() {
     private var data: List<PhoneContact> = emptyList()
-    private lateinit var viewModel: InviteViewModel
+    var onItemClickListener = { item: PhoneContact -> }
     private var filtered: List<PhoneContact> = data
+    private var numberPhrase = ""
+    private var namePhrase = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             InviteHolder(LayoutInflater.from(parent.context)
@@ -24,27 +29,39 @@ class InviteAdapter : RecyclerView.Adapter<InviteHolder>() {
     override fun getItemCount() = filtered.size
 
     override fun onBindViewHolder(holder: InviteHolder, position: Int) {
-        holder.setup(filtered[position], viewModel)
+        holder.setup(filtered[position])
     }
 
-    fun setData(data: List<PhoneContact>, viewModel: InviteViewModel) {
-        this.viewModel = viewModel
+    fun setData(data: List<PhoneContact>) {
         this.data = data
         filtered = data
         notifyDataSetChanged()
     }
 
     fun searchByName(text: String) {
-        filtered = data.filter { it.fullName.toLowerCase().startsWith(text.toLowerCase()) }
+        namePhrase = text
+        filtered = data.filter { it.fullName.toLowerCase().startsWith(text.toLowerCase()) && it.phoneNumber.startsWith(numberPhrase) }
         notifyDataSetChanged()
     }
 
     fun searchByNumber(text: String) {
-        filtered = data.filter { it.phoneNumber.startsWith(text) }
+        numberPhrase = text
+        filtered = data.filter { it.phoneNumber.startsWith(text) && it.fullName.toLowerCase().startsWith(namePhrase.toLowerCase()) }
         notifyDataSetChanged()
     }
 
     fun getNameByNumber(text: String): String? {
         return data.firstOrNull { it.phoneNumber.endsWith(text) }?.fullName
     }
+
+    inner class InviteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun setup(contact: PhoneContact) {
+            itemView.ivPhoneContactAvatar.avatarRound(contact.avatar)
+            itemView.tvInviteContactName.text = contact.fullName
+            itemView.tvInviteContactNumber.text = contact.phoneNumber
+            itemView.setOnClickListener { onItemClickListener(contact) }
+        }
+    }
+
 }

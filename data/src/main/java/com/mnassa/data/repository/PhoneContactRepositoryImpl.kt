@@ -40,12 +40,12 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                     val numberColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                     val nameColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                     val avatarColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
-
+                    val regex = Regex("[^0-9 ]")
                     while (!cursor.isAfterLast) {
-                        if (cursor.getString(numberColumnIndex).length > NUMBER_WITHOUT_CODE) {
-                            val phone = cursor.getString(numberColumnIndex)
+                        val phone = regex.replace(cursor.getString(numberColumnIndex), "")
+                        if (phone.length > NUMBER_LENGTH) {
                             result += PhoneContactImpl(
-                                    phoneNumber = phone.substring(phone.length - NUMBER_WITHOUT_CODE),
+                                    phoneNumber = phone,
                                     fullName = cursor.getString(nameColumnIndex),
                                     avatar = cursor.getString(avatarColumnIndex))
                         }
@@ -59,7 +59,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
     }
 
     companion object {
-        const val NUMBER_WITHOUT_CODE = 9
+        private const val NUMBER_LENGTH = 11
     }
 
 }

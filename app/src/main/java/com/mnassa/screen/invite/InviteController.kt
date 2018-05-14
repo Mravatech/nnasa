@@ -40,26 +40,20 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     private val countryHelper: CountryHelper by instance()
     private val intentHelper: IntentHelper by instance()
 
+    private var countryCodePhrase = ""
     private val phoneNumber: String
         get() {
             val view = view ?: return EMPTY_STRING
             val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode
                     ?: return EMPTY_STRING
-            return countryCode.phonePrefix.code
-                    .replace("+", EMPTY_STRING) +
-                    view.etPhoneNumberTail.text.toString()
+            countryCodePhrase = countryCode.phonePrefix.code.replace("+", EMPTY_STRING)
+            return countryCodePhrase + view.etPhoneNumberTail.text.toString()
         }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         initViews(view)
         checkReadContactPermission(view)
-        launchCoroutineUI {
-            viewModel.phoneSelectedChannel.consumeEach {
-                view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
-                view.etPhoneNumberTail.setText(it.phoneNumber)
-            }
-        }
         launchCoroutineUI {
             viewModel.checkPhoneContactChannel.consumeEach {
                 if (it) {
@@ -76,6 +70,14 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 view.toolbar.title = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
         }
+        adapter.onItemClickListener = {
+            view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
+            var number = it.phoneNumber
+            if (number.startsWith(countryCodePhrase)) {
+                number = number.replaceFirst(countryCodePhrase, "")
+            }
+            view.etPhoneNumberTail.setText(number)
+        }
     }
 
     override fun onDestroyView(view: View) {
@@ -90,7 +92,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 viewModel.retrievePhoneContacts()
                 viewModel.phoneContactChannel.consumeEach {
                     view.rvInviteToMnassa.layoutManager = LinearLayoutManager(view.context)
-                    adapter.setData(it, viewModel)
+                    adapter.setData(it)
                     view.rvInviteToMnassa.adapter = adapter
                 }
             } else {
@@ -141,9 +143,11 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     private fun onInputChanged() {
-        val view = view ?: return
-        view.btnInvite.isEnabled = validateInput()
-        view.etPhoneNumberTail.error = null
+        with(view ?: return) {
+            btnInvite.isEnabled = validateInput()
+            etPhoneNumberTail.error = null
+            adapter.searchByNumber(countryCodePhrase + etPhoneNumberTail.text.toString())
+        }
     }
 
     private fun handleInviteWith(inviteWith: Int, number: String) {
@@ -173,7 +177,6 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     companion object {
-        const val PHONE_NUMBER_WITHOUT_CODE = 9
         const val EMPTY_STRING = ""
         const val INVITE_WITH_WHATS_APP = 1
         const val INVITE_WITH_SMS = 2
