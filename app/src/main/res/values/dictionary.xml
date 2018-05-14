@@ -97,6 +97,7 @@
 
     <string name="posts_comment_edit_title">_android_post_comment_edit_title</string>
     <string name="posts_comment_edit_button">_android_post_comment_edit_button</string>
+    <string name="posts_sharing_value_centre">_android_post_share_value_center</string>
 
     <string name="comment_useful">_commentCell_usefulButton</string>
     <string name="rewarding_for_comment">_android_my_wallet_send_points_amount_hint</string>
