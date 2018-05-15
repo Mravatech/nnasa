@@ -21,7 +21,10 @@ import com.mnassa.translation.fromDictionary
  * Created by Peter on 3/23/2018.
  */
 
-class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel, private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
+class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel,
+                            private val headerInflater: (parent: ViewGroup) -> View,
+                            reverseOrder: Boolean = false) :
+        BaseSortedPaginationRVAdapter<CommentModel>(reverseOrder), View.OnClickListener {
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
@@ -36,7 +39,7 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
     }
 
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
-        when {
+        val result = when {
             itemsTheSameComparator(first, second) -> 0
             first is CommentReplyModel && second is CommentReplyModel -> {
                 val parentComparingResult = first.parentId.compareTo(second.parentId)
@@ -52,6 +55,7 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             }
             else -> first.id.compareTo(second.id)
         }
+        result * if (reverseOrder) -1 else 1
     }
 
     override val itemClass: Class<CommentModel> = CommentModel::class.java

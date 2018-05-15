@@ -1,10 +1,12 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.core.events.impl.SimpleCompositeEventListener
+import com.mnassa.domain.exception.AccountDisabledException
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
 
 /**
  * Created by Peter on 2/21/2018.
@@ -67,8 +69,10 @@ class UserProfileInteractorImpl(
     override suspend fun processAccount(account: CompanyInfoModel) = userRepository.processAccount(account)
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
-        userRepository.setCurrentAccount(account)
-        onAccountChangedListener.emit(account)
+        if (userRepository.getAccountStatusChannel(account.id).consume { receive() } is UserStatusModel.Enabled) {
+            userRepository.setCurrentAccount(account)
+            onAccountChangedListener.emit(account)
+        } else throw AccountDisabledException("Account ${account.formattedName} (${account.id}) is disabled!", IllegalArgumentException())
     }
 
     override suspend fun addPushToken() = userRepository.addPushToken()

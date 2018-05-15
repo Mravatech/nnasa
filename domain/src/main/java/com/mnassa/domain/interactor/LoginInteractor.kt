@@ -25,4 +25,5 @@ interface LoginInteractor {
     suspend fun signOut(reason: LogoutReason)
 
     suspend fun handleUserStatus()
+    suspend fun handleAccountStatus()
 }

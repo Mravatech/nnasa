@@ -6,7 +6,7 @@ import android.support.v7.widget.util.SortedListAdapterCallback
 /**
  * Created by Peter on 3/7/2018.
  */
-abstract class BaseSortedPaginationRVAdapter<ITEM> : BasePaginationRVAdapter<ITEM>() {
+abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false) : BasePaginationRVAdapter<ITEM>(reverseOrder) {
     abstract val itemsComparator: (item1: ITEM, item2: ITEM) -> Int
     abstract val itemClass: Class<ITEM>
 

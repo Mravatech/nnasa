@@ -9,10 +9,7 @@ import com.mnassa.R
 import com.mnassa.core.BaseViewModelImpl
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchCoroutineWorker
-import com.mnassa.domain.exception.FirebaseMappingException
-import com.mnassa.domain.exception.NetworkDisableException
-import com.mnassa.domain.exception.NetworkException
-import com.mnassa.domain.exception.NotAuthorizedException
+import com.mnassa.domain.exception.*
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.other.AppInfoProvider
@@ -65,6 +62,9 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         } catch (e: NetworkDisableException) {
             Timber.d(e)
             errorMessageChannel.send(fromDictionary(R.string.error_no_internet))
+        } catch(e: AccountDisabledException) {
+            Timber.d(e)
+            errorMessageChannel.send(fromDictionary(R.string.blocked_account_message))
         } catch (e: NotAuthorizedException) {
             Timber.e(e)
             val loginInteractor by kodein.instance<LoginInteractor>()
@@ -78,7 +78,9 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             message?.let { errorMessageChannel.send(it) }
         } catch (e: Throwable) {
             Timber.e(e)
-            throw e
+            if (appInfoProvider.isDebug) {
+                throw e
+            }
         }
         return result
     }

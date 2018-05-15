@@ -55,6 +55,10 @@ class App : MultiDexApplication(), KodeinAware {
             getInstance<LoginInteractor>().handleUserStatus()
         }
 
+        launch {
+            getInstance<LoginInteractor>().handleAccountStatus()
+        }
+
         Timber.e("appId: ${appInfoProvider.applicationId}")
         Timber.e("packageName: $packageName")
         Timber.e("isDebug: ${appInfoProvider.isDebug}")

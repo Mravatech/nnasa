@@ -76,7 +76,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
                 if (it is UserStatusModel.Disabled) {
                     logoutJob = async(UI) {
                         delay(1_000)
-                        signOut(LogoutReason.AccountBlocked())
+                        signOut(LogoutReason.UserBlocked())
                     }
                     return@consumeEach
                 }
@@ -86,5 +86,25 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
             Timber.e(e)
         }
         return handleUserStatus()
+    }
+
+    override suspend fun handleAccountStatus() {
+        val listenAccountStatusJob: Job = async(UI) {
+            val currentAccountId = userProfileInteractor.getAccountIdOrNull() ?: return@async
+            var logoutJob: Job? = null
+            userRepository.getAccountStatusChannel(currentAccountId).consumeEach {
+                Timber.i("#ACCOUNT_STATUS#: $currentAccountId : $it")
+                logoutJob?.cancel()
+                if (it is UserStatusModel.Disabled) {
+                    logoutJob = async(UI) {
+                        delay(1_000)
+                        signOut(LogoutReason.AccountBlocked())
+                    }
+                }
+            }
+        }
+        userProfileInteractor.onAccountChangedListener.awaitFirst()
+        listenAccountStatusJob.cancel()
+        handleAccountStatus()
     }
 }

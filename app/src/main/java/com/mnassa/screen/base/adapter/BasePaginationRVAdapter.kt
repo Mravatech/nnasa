@@ -15,7 +15,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
 
-abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
+abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = WeakStateExecutor<RecyclerView?, RecyclerView>(
             initState = null,
             executionPredicate = { it != null })
@@ -99,10 +99,22 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     //////////////////////////////////////// VIEW TYPES ////////////////////////////////////////////
 
     open fun getViewType(position: Int): Int = TYPE_UNDEFINED
-    final override fun getItemViewType(position: Int) = when (position) {
-        0 -> TYPE_HEADER
-        itemCount - 1 -> if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
-        else -> getViewType(position - emptyHeaderItemsCount)
+    final override fun getItemViewType(position: Int): Int {
+
+        val firstItem = if (reverseOrder) {
+            if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
+        } else TYPE_HEADER
+        val lastItem = if (reverseOrder) {
+            TYPE_HEADER
+        } else {
+            if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
+        }
+
+        return when (position) {
+            0 -> firstItem
+            itemCount - 1 -> lastItem
+            else -> getViewType(position - emptyHeaderItemsCount)
+        }
     }
 
     /////////////////////////////////// ITEMS COUNT & POSITIONS ////////////////////////////////////
