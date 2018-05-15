@@ -19,7 +19,7 @@ data class NotificationModelImpl(
 ) : NotificationModel
 
 data class NotificationExtraImpl(
-        override val author: ShortAccountModel?,
+        override var author: ShortAccountModel?,
         override val post: PostModel?,
         override var reffered: ShortAccountModel?,
         override var recommended: ShortAccountModel?,

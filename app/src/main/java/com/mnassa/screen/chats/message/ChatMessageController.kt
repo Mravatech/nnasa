@@ -102,19 +102,8 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                         view.llNoMessages.visibility = View.GONE
                         viewModel.resetChatUnreadCount()
                     }
-                    view.rvMessages.scrollToPosition(adapter.itemCount)
+                    view.rvMessages.scrollToPosition(0)
                 }
-            }
-        }
-        adapter.onUserMessageLongClick = { callDialog(view, false, it) }
-        adapter.onMyMessageLongClick = { callDialog(view, true, it) }
-        adapter.onReplyClick = { chatMessageModel, post ->
-            if (post != null) {
-                val postDetailsFactory: PostDetailsFactory by instance()
-                open(postDetailsFactory.newInstance(post))
-            } else {
-                val position = adapter.dataStorage.indexOf(chatMessageModel)
-                view.rvMessages.scrollToPosition(position)
             }
         }
     }

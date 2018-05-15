@@ -70,7 +70,6 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                         view.llEmptyNotifications.visibility = View.VISIBLE
                     }
                 }
-
             }
         }
     }
@@ -144,17 +143,33 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         }
 
         when (item.type) {
-            POST_COMMENT, POST_IS_EXPIRED, POST_PROMOTED, USER_WAS_RECOMMENDED_BY_POST, USER_WAS_RECOMMENDED,
-            GENERAL_POST_BY_ADMIN, I_WAS_RECOMMENDED, AUTO_SUGGEST_YOU_CAN_HELP, ONE_DAY_TO_EXPIRATION_OF_POST -> {
+            POST_COMMENT,
+            POST_IS_EXPIRED,
+            POST_PROMOTED,
+            USER_WAS_RECOMMENDED_BY_POST,
+            USER_WAS_RECOMMENDED,
+            GENERAL_POST_BY_ADMIN,
+            I_WAS_RECOMMENDED,
+            AUTO_SUGGEST_YOU_CAN_HELP,
+            ONE_DAY_TO_EXPIRATION_OF_POST -> {
                 val postDetailsFactory: PostDetailsFactory by instance()
                 open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
             }
-            NEW_USER_JOINED, POST_REPOST, CONNECTION_REQUEST, CONNECTIONS_REQUEST_ACCEPTED,
-            USER_WAS_RECOMMENDED_TO_YOU, PRIVATE_CHAT_MESSAGE, RESPONSE_CHAT_MESSAGE -> {
+            NEW_USER_JOINED,
+            POST_REPOST,
+            CONNECTION_REQUEST,
+            CONNECTIONS_REQUEST_ACCEPTED,
+            USER_WAS_RECOMMENDED_TO_YOU,
+            PRIVATE_CHAT_MESSAGE,
+            RESPONSE_CHAT_MESSAGE -> {
                 val account = item.extra.recommended ?: item.extra.reffered ?: item.extra.author
                 open(ProfileController.newInstance(requireNotNull(account)))
             }
-            I_WAS_RECOMMENDED_IN_EVENT, USER_WAS_RECOMMENDED_IN_EVENT, NEW_EVENT_BY_ADMIN, NEW_EVENT_ATTENDEE, EVENT_CANCELLING -> {
+            I_WAS_RECOMMENDED_IN_EVENT,
+            USER_WAS_RECOMMENDED_IN_EVENT,
+            NEW_EVENT_BY_ADMIN,
+            NEW_EVENT_ATTENDEE,
+            EVENT_CANCELLING -> {
                 open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
             }
             INVITES_NUMBER_CHANGED -> {
