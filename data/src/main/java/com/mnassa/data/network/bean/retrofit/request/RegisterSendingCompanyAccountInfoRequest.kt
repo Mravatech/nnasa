@@ -14,7 +14,9 @@ data class RegisterSendingCompanyAccountInfoRequest(
         @SerializedName("avatar")
         val avatar: String? = null,
         @SerializedName("showContactEmail")
-        val showContactEmail: Boolean? = false,
+        val showContactEmail: Boolean?,
+        @SerializedName("showContactPhone")
+        val showContactPhone: Boolean?,
         @SerializedName("contactEmail")
         val contactEmail: String?,
         @SerializedName("userName")
@@ -38,9 +40,13 @@ data class ProfileCompanyAccountInfoRequest(
         @SerializedName("avatar")
         val avatar: String? = null,
         @SerializedName("showContactEmail")
-        val showContactEmail: Boolean? = false,
+        val showContactEmail: Boolean?,
+        @SerializedName("showContactPhone")
+        val showContactPhone: Boolean?,
         @SerializedName("contactEmail")
         val contactEmail: String?,
+        @SerializedName("contactPhone")
+        val contactPhone: String?,
         @SerializedName("userName")
         val userName: String,
         @SerializedName("language")

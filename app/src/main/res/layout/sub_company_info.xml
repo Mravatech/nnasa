@@ -44,7 +44,7 @@
             style="@style/PersonalInfo.EditText"
             android:drawableEnd="@drawable/ic_eye_off"
             android:drawablePadding="@dimen/personal_info_drawable_padding"
-            android:inputType="textEmailAddress" />
+            android:inputType="phone" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -67,6 +67,6 @@
             android:id="@+id/etWebSite"
             style="@style/PersonalInfo.EditText"
             android:imeOptions="actionDone"
-            android:inputType="textEmailAddress" />
+            android:inputType="textUri" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

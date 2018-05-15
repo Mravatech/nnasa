@@ -15,7 +15,7 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("userName")
         val userName: String,
         @SerializedName("showContactEmail")
-        val showContactEmail: Boolean? = false,
+        val showContactEmail: Boolean?,
         @SerializedName("language")
         val language: String? = null,
         @SerializedName("type")
@@ -23,7 +23,7 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("birthday")
         val birthday: Long? = 0,
         @SerializedName("contactPhone")
-        val contactPhone: String? = null,
+        val contactPhone: String?,
         @SerializedName("abilities")
         val abilities: List<Ability>? = null,
         @SerializedName("id")
@@ -33,7 +33,7 @@ data class RegisterSendingAccountInfoRequest(
         @SerializedName("firstName")
         val firstName: String?,
         @SerializedName("showContactPhone")
-        val showContactPhone: Boolean? = false,
+        val showContactPhone: Boolean?,
         @SerializedName("contactEmail")
         val contactEmail: String?,
         @SerializedName("gender")
@@ -71,7 +71,7 @@ data class ProfilePersonAccountInfoRequest(
         @SerializedName("birthday")
         val birthday: Long? = 0,
         @SerializedName("contactPhone")
-        val contactPhone: String? = null,
+        val contactPhone: String?,
         @SerializedName("abilities")
         val abilities: List<Ability>? = null,
         @SerializedName("id")
@@ -81,7 +81,7 @@ data class ProfilePersonAccountInfoRequest(
         @SerializedName("firstName")
         val firstName: String?,
         @SerializedName("showContactPhone")
-        val showContactPhone: Boolean? = false,
+        val showContactPhone: Boolean?,
         @SerializedName("contactEmail")
         val contactEmail: String?,
         @SerializedName("gender")

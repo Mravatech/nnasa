@@ -25,6 +25,7 @@ internal class ProfileDbEntity(
         @SerializedName("totalIncome") var totalIncome: Int?,
         @SerializedName("totalOutcome") var totalOutcome: Int?,
         @SerializedName("contactEmail") var contactEmail: String?,
+        @SerializedName("contactPhone") val contactPhone: String?,
         @SerializedName("showContactPhone") var showContactPhone: Boolean,
         @SerializedName("showContactEmail") var showContactEmail: Boolean,
         @SerializedName("numberOfCommunities") val numberOfCommunities: Int?,
