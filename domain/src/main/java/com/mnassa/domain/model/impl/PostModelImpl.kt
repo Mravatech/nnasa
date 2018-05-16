@@ -213,7 +213,7 @@ class RecommendedProfilePostModelImpl(
         override val price: Double,
         override val autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
-        override val recommendedProfile: ShortAccountModel,
+        override val recommendedProfile: ShortAccountModel?,
         override var offers: List<TagModel>
 ) : PostModelImpl(
         id,
@@ -291,7 +291,7 @@ class RecommendedProfilePostModelImpl(
         result = 31 * result + price.hashCode()
         result = 31 * result + autoSuggest.hashCode()
         result = 31 * result + (repostAuthor?.hashCode() ?: 0)
-        result = 31 * result + recommendedProfile.hashCode()
+        result = 31 * result + (recommendedProfile?.hashCode() ?: 0)
         result = 31 * result + offers.hashCode()
         return result
     }

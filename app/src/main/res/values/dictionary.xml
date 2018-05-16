@@ -523,6 +523,7 @@
     <string name="post_recommend_empty_description">_android_post_recommend_empty_description</string>
 
     <string name="blocked_account_message">message_accIsDisabled</string>
+    <string name="deleted_user">_android_user_was_deleted</string>
 
     <string name="points_count">_android_points_count</string>
 

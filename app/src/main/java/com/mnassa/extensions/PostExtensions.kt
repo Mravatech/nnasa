@@ -64,7 +64,7 @@ val PostModel.formattedText: CharSequence?
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.recommend_prefix))
                 spannable.append(" ")
                 val nameStart = spannable.length
-                spannable.append(this.recommendedProfile.formattedName)
+                spannable.append(this.recommendedProfile?.formattedName ?: fromDictionary(R.string.deleted_user))
                 spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(App.context, R.color.accent)), nameStart, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 if (!text.isNullOrBlank()) {

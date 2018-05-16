@@ -82,7 +82,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
-                    tags = input.tags ?: emptyList(),
+                    tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
@@ -93,7 +93,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    recommendedProfile = convertAuthor(requireNotNull(input.postedAccount), converter),
+                    recommendedProfile = try { convertAuthor(requireNotNull(input.postedAccount), converter) } catch (e: Exception) { null },
                     offers = emptyList()
             )
             is PostType.INFO -> InfoPostImpl(
@@ -109,7 +109,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
-                    tags = input.tags ?: emptyList(),
+                    tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
@@ -136,7 +136,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
-                    tags = input.tags ?: emptyList(),
+                    tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
@@ -145,8 +145,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    title = input.title
-                            ?: throw FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!")),
+                    //TODO: server side problem - offer without title
+                    title = input.title ?: "Title is not specified".also { Timber.e(FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!"))) },
                     category = input.category,
                     subCategory = input.subcategory,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
@@ -165,7 +165,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
-                    tags = input.tags ?: emptyList(),
+                    tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
@@ -195,7 +195,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
             EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED(expiration)
             EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED(expiration)
             else -> {
-                Timber.e(IllegalArgumentException("There is no convert type for $expiration"))
+                Timber.d(IllegalArgumentException("Wrong expiration type $expiration"))
                 ExpirationType.EXPIRED("expired")
             }
 

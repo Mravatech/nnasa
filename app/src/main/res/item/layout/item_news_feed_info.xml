@@ -95,6 +95,7 @@
             android:fontFamily="@font/roboto"
             android:maxLines="2"
             android:textSize="17sp"
+            android:autoLink="all"
             tools:text="General post text \nSecond Line\nThird line" />
 
         <FrameLayout

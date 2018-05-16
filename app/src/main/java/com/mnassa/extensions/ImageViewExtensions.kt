@@ -31,8 +31,6 @@ fun ImageView.enable() {
 }
 
 fun ImageView.avatarRound(avatarUrl: String?) {
-    //todo: add placeholder, error
-
     val storage = context.getInstance<FirebaseStorage>()
     val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
@@ -46,8 +44,6 @@ fun ImageView.avatarRound(avatarUrl: String?) {
 }
 
 fun ImageView.avatarSquare(avatarUrl: String?) {
-    //todo: add placeholder, error
-
     val storage = context.getInstance<FirebaseStorage>()
     val ref = avatarUrl?.takeIf { it.startsWith("gs://") }?.let { storage.getReferenceFromUrl(it) }
 
@@ -61,7 +57,6 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
 }
 
 fun ImageView.avatarSquare(avatarUrl: Uri?) {
-    //todo: add placeholder, error
     val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_ava).error(R.drawable.ic_empty_ava)
 
     GlideApp.with(this)

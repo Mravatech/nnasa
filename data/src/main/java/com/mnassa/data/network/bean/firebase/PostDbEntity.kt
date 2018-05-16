@@ -20,7 +20,7 @@ internal data class PostDbEntity(
         @SerializedName("itemType") var itemType: String,
         @SerializedName("type") var type: String,
         @SerializedName("originalCreatedAt") var originalCreatedAt: Long,
-        @SerializedName("originalId") var originalId: String,
+        @SerializedName("originalId", alternate = arrayOf("originalPostId")) var originalId: String,
         @SerializedName("privacyConnections") var privacyConnections: List<String>?,
         @SerializedName("privacyType") var privacyType: String,
         @SerializedName("text") var text: String?,

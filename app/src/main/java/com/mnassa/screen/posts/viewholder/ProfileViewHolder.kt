@@ -56,9 +56,9 @@ class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClic
             bindRepost(item)
 
             val recommended = (item as RecommendedProfilePostModel).recommendedProfile
-            ivRecommendedUserAvatar.avatarSquare(recommended.avatar)
-            tvRecommendedUserName.text = recommended.formattedName
-            tvRecommendedUserPosition.text = recommended.formattedPosition
+            ivRecommendedUserAvatar.avatarSquare(recommended?.avatar)
+            tvRecommendedUserName.text = recommended?.formattedName ?:  fromDictionary(R.string.deleted_user)
+            tvRecommendedUserPosition.text = recommended?.formattedPosition
             tvRecommendedUserPosition.goneIfEmpty()
 
             if (item.offers.isNotEmpty()) {

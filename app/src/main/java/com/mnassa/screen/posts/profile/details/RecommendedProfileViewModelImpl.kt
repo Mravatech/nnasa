@@ -43,8 +43,11 @@ class RecommendedProfileViewModelImpl(postId: String,
     private fun loadConnectionStatus(recommendedProfilePostModel: RecommendedProfilePostModel) {
         loadConnectionStatusJob?.cancel()
         loadConnectionStatusJob = handleException {
-            connectionsInteractor.getStatusesConnections(recommendedProfilePostModel.recommendedProfile.id).consumeEach {
-                connectionStatusChannel.send(it)
+            val profile = recommendedProfilePostModel.recommendedProfile
+            if (profile != null) {
+                connectionsInteractor.getStatusesConnections(profile.id).consumeEach {
+                    connectionStatusChannel.send(it)
+                }
             }
         }
     }

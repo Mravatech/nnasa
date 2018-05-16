@@ -3,12 +3,15 @@ package com.mnassa.screen.posts
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
+import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.main.OnPageSelected
+import com.mnassa.screen.main.OnScrollToTop
+import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
@@ -19,10 +22,14 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
+class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_posts_list
     override val viewModel: PostsViewModel by instance()
     private val adapter = PostsRVAdapter()
+    private val controllerSelectedExecutor = StateExecutor<Unit, Unit>(initState = Unit) {
+        val parent = parentController
+        parent is PageContainer && parent.isPageSelected(this@PostsController)
+    }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -32,7 +39,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
         }
 
         //todo: send only when page selected
-        adapter.onAttachedToWindow = { post -> viewModel.onAttachedToWindow(post) }
+        adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
@@ -59,14 +66,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
             viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
-                            getViewSuspend().rlEmptyView.isInvisible = true
-                        } else {
-                            getViewSuspend().rlEmptyView.isInvisible = !adapter.dataStorage.isEmpty()
                         }
+                        adapter.isLoadingEnabled = false
+                        getViewSuspend().rlEmptyView.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
@@ -86,7 +90,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
                     is ListItemEvent.Added -> {
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
-                            getViewSuspend().rlEmptyView.isInvisible = true
                         }
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
@@ -97,13 +100,18 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected {
         }
     }
 
-    override fun onPageSelected() {
+    override fun scrollToTop() {
         val recyclerView = view?.rvNewsFeed ?: return
         recyclerView.scrollToPosition(0)
     }
 
+    override fun onPageSelected() {
+        controllerSelectedExecutor.trigger()
+    }
+
     override fun onDestroyView(view: View) {
         view.rvNewsFeed.adapter = null
+        controllerSelectedExecutor.clear()
         super.onDestroyView(view)
     }
 

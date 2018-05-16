@@ -46,7 +46,7 @@ sealed class PostAttachment : Serializable {
 }
 
 interface RecommendedProfilePostModel : PostModel {
-    val recommendedProfile: ShortAccountModel
+    val recommendedProfile: ShortAccountModel?
     var offers: List<TagModel>
 }
 

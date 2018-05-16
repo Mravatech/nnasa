@@ -30,13 +30,14 @@
                 android:layout_width="@dimen/avatar_list_item"
                 android:layout_height="@dimen/avatar_list_item"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 tools:src="@mipmap/ic_launcher" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_toEndOf="@id/ivAvatar"
                 android:layout_toStartOf="@id/ivChat"
                 android:gravity="center_vertical"
@@ -99,6 +100,7 @@
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
             android:paddingTop="@dimen/spacing_vertical"
+            android:autoLink="all"
             tools:text="Need description" />
 
         <include layout="@layout/recommended_profile" />

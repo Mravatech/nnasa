@@ -9,6 +9,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.extensions.isGone
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
@@ -38,14 +39,14 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
         launchCoroutineUI {
             viewModel.connectionStatusChannel.consumeEach { connectionStatus ->
                 with(viewRef.invoke()) {
-                    val post = btnConnectNow.tag as? RecommendedProfilePostModel
-                            ?: return@with
+                    val post = btnConnectNow.tag as? RecommendedProfilePostModel ?: return@with
+                    val profile = post.recommendedProfile ?: return@with
                     if (connectionStatus.canBeConnected) {
                         btnConnectNow.text = fromDictionary(R.string.recommend_connect_now)
-                        btnConnectNow.setOnClickListener { viewModel.connect(post.recommendedProfile) }
+                        btnConnectNow.setOnClickListener { viewModel.connect(profile) }
                     } else {
                         btnConnectNow.text = fromDictionary(R.string.recommend_open_profile)
-                        btnConnectNow.setOnClickListener { open(ProfileController.newInstance(post.recommendedProfile)) }
+                        btnConnectNow.setOnClickListener { open(ProfileController.newInstance(profile)) }
                     }
                 }
             }
@@ -58,12 +59,17 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
 
         if (post is RecommendedProfilePostModel) {
             super.bindTags(post.offers, view)
+
+
             with(view) {
+                btnConnectNow.isGone = post.recommendedProfile == null
+                val profile = post.recommendedProfile ?: return
+
                 rlRecommendedProfileRoot.visibility = View.VISIBLE
-                ivRecommendedUserAvatar.avatarSquare(post.recommendedProfile.avatar)
-                ivRecommendedUserAvatar.setOnClickListener { open(ProfileController.newInstance(post.recommendedProfile)) }
-                tvRecommendedUserName.text = post.recommendedProfile.formattedName
-                tvRecommendedUserPosition.text = post.recommendedProfile.formattedPosition
+                ivRecommendedUserAvatar.avatarSquare(profile.avatar)
+                ivRecommendedUserAvatar.setOnClickListener { open(ProfileController.newInstance(profile)) }
+                tvRecommendedUserName.text = profile.formattedName
+                tvRecommendedUserPosition.text = profile.formattedPosition
                 tvRecommendedUserPosition.goneIfEmpty()
                 tvExpiration.visibility = View.GONE
                 vExpirationSeparator.visibility = View.GONE

@@ -9,11 +9,9 @@ import android.widget.Toast
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.AccountType
-import com.mnassa.domain.model.ConnectionStatus
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
+import com.mnassa.extensions.formattedPosition
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -25,6 +23,7 @@ import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.profile.model.ProfileModel
+import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -45,7 +44,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
     private lateinit var profileId: String
-    override fun onViewCreated(view: View) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view)
         profileId = accountModel?.let {
             view.ivCropImage.avatarSquare(it.avatar)
@@ -61,7 +61,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     viewModel.sendConnectionStatus(it, profileId)
             }
         }
-        adapter.onWalletClickListener = { Toast.makeText(view.context, "ProfileWallet", Toast.LENGTH_SHORT).show() }
+        adapter.onWalletClickListener = { open(WalletController.newInstance()) }
         adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
         view.ivProfileBack.setOnClickListener { close() }
         adapter.onItemClickListener = {
@@ -90,17 +90,20 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
         viewModel.getPostsById(profileId)
+
+        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
-            viewModel.postChannel.consumeEach {
-                //TODO: bufferization
+            viewModel.postChannel.openSubscription().bufferize(this@ProfileController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.add(it.item)
+                        if (it.item.isNotEmpty()) {
+                            adapter.isLoadingEnabled = false
+                            adapter.dataStorage.addAll(it.item)
+                        }
                     }
-                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
                     is ListItemEvent.Cleared -> adapter.dataStorage.clear()
                 }
 
@@ -226,11 +229,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun setTitle(profileModel: ProfileModel, view: View) {
         if (profileModel.profile.accountType == AccountType.PERSONAL) {
-            view.profileName.text = "${profileModel.profile.personalInfo?.firstName
-                    ?: ""} ${profileModel.profile.personalInfo?.lastName ?: ""}"
-            view.profileSubName.text = profileModel.profile.abilities.firstOrNull { it.isMain }?.place
-            view.tvTitleCollapsed.text = "${profileModel.profile.personalInfo?.firstName
-                    ?: ""} ${profileModel.profile.personalInfo?.lastName ?: ""}"
+            view.profileName.text = profileModel.formattedName
+            view.profileSubName.text = profileModel.formattedPosition
+            view.tvTitleCollapsed.text = profileModel.formattedName
         } else {
             view.profileName.text = profileModel.profile.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.profile.organizationType
@@ -242,7 +243,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
         private const val OTHER = "other"
-        private const val EMPTY_SPACE = ""
+
         fun newInstance(account: ShortAccountModel): ProfileController {
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, account)

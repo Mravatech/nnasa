@@ -80,6 +80,7 @@
                 android:fontFamily="@font/roboto"
                 android:maxLines="2"
                 android:textSize="17sp"
+                android:autoLink="all"
                 tools:text="I need text \n second need text line \n third" />
 
             <FrameLayout

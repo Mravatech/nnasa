@@ -4,7 +4,8 @@
     android:id="@+id/profileInfo"
     style="@style/ProfileHeaderItem.MainContainer"
     android:orientation="vertical"
-    android:visibility="gone">
+    android:visibility="gone"
+    tools:visibility="visible">
 
     <TextView
         android:id="@+id/tvProfileLocation"
@@ -17,6 +18,8 @@
         android:drawableStart="@drawable/ic_location"
         android:textColor="@color/black"
         android:visibility="gone"
+        tools:visibility="visible"
+        android:autoLink="all"
         tools:text="Dp" />
 
     <View
@@ -24,7 +27,8 @@
         style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/tvProfileCanHelpWith"
@@ -34,6 +38,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
         android:visibility="gone"
+        tools:visibility="visible"
         tools:text="I Can help with" />
 
     <com.mnassa.widget.FlowLayout
@@ -42,14 +47,16 @@
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <View
         android:id="@+id/vTopProfileInterestedIn"
         style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/tvProfileInterestedIn"
@@ -59,6 +66,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginTop="@dimen/profile_header_item_interests_margin_top"
         android:visibility="gone"
+        tools:visibility="visible"
         tools:text="My Interests" />
 
     <com.mnassa.widget.FlowLayout
@@ -67,14 +75,16 @@
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <View
         android:id="@+id/vTopProfileDateOfBirth"
         style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/tvLabelDateOfBirth"
@@ -84,6 +94,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
         android:visibility="gone"
+        tools:visibility="visible"
         tools:text="Date of Birth" />
 
     <TextView
@@ -94,6 +105,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:textColor="@color/black"
         android:visibility="gone"
+        tools:visibility="visible"
         tools:text="01 Februrary 1991 (26 years)" />
 
     <View
@@ -101,7 +113,8 @@
         style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
         android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/tvLabelProfilePhone"
@@ -111,6 +124,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
         android:visibility="gone"
+        tools:visibility="visible"
         tools:text="Mobile Phone" />
 
     <TextView
@@ -121,6 +135,8 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:textColor="@color/blue_turquoise"
         android:visibility="gone"
+        tools:visibility="visible"
+        android:autoLink="all"
         tools:text="+38 (066) 752 02 65" />
 
     <View
@@ -138,6 +154,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
         android:visibility="gone"
+        tools:visibility="visible"
         tools:text="Email" />
 
     <TextView
@@ -148,5 +165,7 @@
         android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
         android:textColor="@color/blue_turquoise"
         android:visibility="gone"
+        tools:visibility="visible"
+        android:autoLink="all"
         tools:text="calvin@gmail.com" />
 </LinearLayout>

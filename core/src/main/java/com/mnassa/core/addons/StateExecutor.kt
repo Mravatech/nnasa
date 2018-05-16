@@ -19,12 +19,7 @@ open class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<
     open var value: State
         set(value) {
             field = value
-            if (actionsQueue.isNotEmpty() && executionPredicate(value)) {
-                val transformedValue = transformer(value)
-                while (actionsQueue.isNotEmpty()) {
-                    actionsQueue.poll().invoke(transformedValue)
-                }
-            }
+            trigger()
         }
     private val actionsQueue = ConcurrentLinkedQueue<(OutState) -> Unit>()
     private val executionPredicate: ((state: State) -> Boolean)
@@ -60,8 +55,8 @@ open class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<
      * @param action - action to invoke
      * */
     operator fun invoke(action: (state: OutState) -> Unit) {
-        if (executionPredicate(value)) action(transformer(value))
-        else actionsQueue.add(action)
+        actionsQueue.add(action)
+        trigger()
     }
 
     /**
@@ -73,6 +68,15 @@ open class StateExecutor<State : Any?, out OutState : Any?> : ReadWriteProperty<
      * Clear [actionsQueue]
      * */
     fun clear() { actionsQueue.clear() }
+
+    fun trigger() {
+        if (actionsQueue.isNotEmpty() && executionPredicate(value)) {
+            val transformedValue = transformer(value)
+            while (actionsQueue.isNotEmpty()) {
+                actionsQueue.poll().invoke(transformedValue)
+            }
+        }
+    }
 }
 
 class WeakStateExecutor<State : Any?, out OutState : Any?> : StateExecutor<WeakReference<State>, OutState> {
