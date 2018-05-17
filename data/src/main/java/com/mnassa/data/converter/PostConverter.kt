@@ -188,7 +188,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         return convertPost(input, token, converter) as OfferPostModelImpl
     }
 
-    private fun convertExpiration(expiration: String?): ExpirationType {
+    private fun convertExpiration(expiration: String?): ExpirationType? {
         return when (expiration) {
             EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE(expiration)
             EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED(expiration)
@@ -196,7 +196,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
             EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED(expiration)
             else -> {
                 Timber.d(IllegalArgumentException("Wrong expiration type $expiration"))
-                ExpirationType.EXPIRED("expired")
+                null
             }
 
         }

@@ -73,7 +73,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
                                 }
                             }
                         }
-                        val intent = CropActivity.start(imageSource, it)
+                        val intent = CropActivity.start(imageSource, it, cropSquare = true)
                         startActivityForResult(intent, REQUEST_CODE_CROP)
                     }
                 }
@@ -85,7 +85,7 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
         editText.isLongClickable = false
         editText.isFocusableInTouchMode = false
         editText.setOnClickListener {
-            dialog.calendarDialog(editText.context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            dialog.calendarDialogPast(editText.context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 editText.setText("${DateFormatSymbols().months[month]} $dayOfMonth, $year")
                 val cal = Calendar.getInstance()
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)

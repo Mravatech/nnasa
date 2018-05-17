@@ -111,7 +111,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
 
     override fun onDestroyView(view: View) {
         view.rvNewsFeed.adapter = null
-        controllerSelectedExecutor.clear()
         super.onDestroyView(view)
     }
 

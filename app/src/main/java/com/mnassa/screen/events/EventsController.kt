@@ -92,7 +92,6 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
 
     override fun onDestroyView(view: View) {
         view.rvEvents.adapter = null
-        controllerSelectedExecutor.clear()
         super.onDestroyView(view)
     }
 

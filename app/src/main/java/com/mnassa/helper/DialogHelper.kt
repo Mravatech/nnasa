@@ -137,7 +137,7 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialog(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+    fun calendarDialogPast(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
         val dialog = DatePickerDialog(
                 context,
                 listener,
@@ -146,6 +146,18 @@ class DialogHelper {
                 calendar.get(Calendar.DAY_OF_MONTH)
         )
         dialog.datePicker.maxDate = System.currentTimeMillis()
+        dialog.show()
+    }
+
+    fun calendarDialogFuture(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+        val dialog = DatePickerDialog(
+                context,
+                listener,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        dialog.datePicker.minDate = System.currentTimeMillis()
         dialog.show()
     }
 

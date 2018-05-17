@@ -18,7 +18,7 @@ interface PostModel : Model {
     val privacyType: PostPrivacyType
     val tags: List<String>
     val text: String?
-    val statusOfExpiration: ExpirationType
+    val statusOfExpiration: ExpirationType?
     var timeOfExpiration: Date?
     val updatedAt: Date
     val counters: PostCounters

@@ -161,10 +161,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
                     is ClosedSendChannelException -> removeEventListener(listener)
                     is IllegalArgumentException,
                     is IllegalStateException,
-                    is NullPointerException -> {
-                        Timber.e(e)
-                        removeEventListener(listener)
-                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))
+                    is NullPointerException,
+                    is FirebaseMappingException -> {
+                        //ignore all mapping exceptions
+                        Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} path: ${input.path}")
+//                        removeEventListener(listener)
+//                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))
                     }
                     else -> {
                         Timber.e(e)

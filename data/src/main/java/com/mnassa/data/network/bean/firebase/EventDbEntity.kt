@@ -48,8 +48,8 @@ internal data class EventTicketDbEntity(
 ) : HasId
 
 internal data class EventCountersDbEntity(
-        @SerializedName("comments") val comments: Int,
-        @SerializedName("views") val views: Int
+        @SerializedName("comments") val comments: Int?,
+        @SerializedName("views") val views: Int?
 )
 
 internal data class EventDurationDbEntity(

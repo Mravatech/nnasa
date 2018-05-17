@@ -105,7 +105,13 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
     }
 }
 
-fun TextView.bindExpireType(statusOfExpiration: ExpirationType, timeOfExpiration: Date?) {
+fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?) {
+    if (statusOfExpiration == null) {
+        visibility = View.GONE
+        return
+    }
+    visibility = View.VISIBLE
+
     val key: String = resources.getString(R.string.post_expires_text_key)
     if (statusOfExpiration is ExpirationType.ACTIVE) {
         timeOfExpiration?.let {
