@@ -1,13 +1,14 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
-import com.mnassa.core.addons.consumeTo
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -30,6 +31,7 @@ class ProfileViewModelImpl(
     override val postChannel: ConflatedBroadcastChannel<ListItemEvent<PostModel>> = ConflatedBroadcastChannel()
     override val interestsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val offersChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
+    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +41,13 @@ class ProfileViewModelImpl(
         }
 
         handleException {
-            userProfileInteractor.getProfileByIdChannel(accountId).consumeTo(profileChannel)
+            userProfileInteractor.getProfileByIdChannel(accountId).consumeEach {
+                if (it != null) {
+                    profileChannel.send(it)
+                } else {
+                    closeScreenChannel.send(Unit)
+                }
+            }
         }
         handleException {
             connectionsInteractor.getStatusesConnections(accountId).consumeEach {

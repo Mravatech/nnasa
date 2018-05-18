@@ -2,7 +2,6 @@ package com.mnassa.screen.profile
 
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import com.mnassa.R
@@ -122,6 +121,10 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     is ListItemEvent.Cleared -> adapter.dataStorage.clear()
                 }
             }
+        }
+
+        launchCoroutineUI {
+            viewModel.closeScreenChannel.consumeEach { close() }
         }
     }
 

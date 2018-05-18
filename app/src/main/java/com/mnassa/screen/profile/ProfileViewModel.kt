@@ -15,6 +15,7 @@ interface ProfileViewModel : MnassaViewModel {
     val postChannel: BroadcastChannel<ListItemEvent<PostModel>>
     val interestsChannel: BroadcastChannel<List<TagModel>>
     val offersChannel: BroadcastChannel<List<TagModel>>
+    val closeScreenChannel: BroadcastChannel<Unit>
 
     fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String)
 
