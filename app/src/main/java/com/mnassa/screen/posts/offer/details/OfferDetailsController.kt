@@ -11,6 +11,7 @@ import com.mnassa.extensions.isGone
 import com.mnassa.extensions.isMyPost
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.posts.offer.details.buy.BuyOfferController
 import com.mnassa.translation.fromDictionary
@@ -22,7 +23,7 @@ import org.kodein.di.generic.instance
  */
 class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
 
-    override val viewModel: OfferDetailsViewModel by instance(arg = postId)
+    override val viewModel: OfferDetailsViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onViewCreated(view: View) {

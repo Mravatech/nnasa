@@ -10,7 +10,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface PostsInteractor {
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
-    suspend fun loadById(id: String): ReceiveChannel<PostModel?>
+    suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?>
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
     suspend fun onItemOpened(item: PostModel)

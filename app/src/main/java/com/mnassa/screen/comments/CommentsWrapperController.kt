@@ -80,6 +80,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it.id))
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
+        commentsAdapter.onCommentAuthorClick = { open(ProfileController.newInstance(it)) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

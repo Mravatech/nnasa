@@ -8,10 +8,12 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.extensions.*
+import com.mnassa.extensions.PATTERN_PHONE
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.avatarSquare
+import com.mnassa.extensions.formatted
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
-import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
@@ -173,11 +175,11 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         private const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
         private const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
 
-        fun newInstance(profileModel: ProfileModel): EditCompanyProfileController {
+        fun newInstance(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>): EditCompanyProfileController {
             val params = Bundle()
-            params.putParcelable(EXTRA_PROFILE, profileModel.profile)
-            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, profileModel.interests as ArrayList<out TagModel>)
-            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, profileModel.offers as ArrayList<out TagModel>)
+            params.putParcelable(EXTRA_PROFILE, profile)
+            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, interests as ArrayList<out TagModel>)
+            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, offers as ArrayList<out TagModel>)
             return EditCompanyProfileController(params)
         }
     }

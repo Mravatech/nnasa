@@ -46,11 +46,8 @@ internal class ProfileDbEntity(
         @SerializedName("organizationType") val organizationType: String?
 ) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
 
-    @SerializedName("createdAt")
-    var createdAt: Long? = createdAt
-    @SerializedName("location")
-    val location: LocationDbEntity? = location
-    @SerializedName("gender")
-    val gender: String? = gender
+    @SerializedName("createdAt") var createdAt: Long? = createdAt
+    @SerializedName("location") val location: LocationDbEntity? = location
+    @SerializedName("gender") val gender: String? = gender
 
 }

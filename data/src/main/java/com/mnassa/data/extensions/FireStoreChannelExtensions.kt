@@ -47,13 +47,9 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
 
                 channel.send(result)
             } catch (e: Exception) {
-                when (e) {
-                    is ClosedSendChannelException -> listener.remove()
-                    is IllegalArgumentException,
-                    is IllegalStateException,
-                    is NullPointerException,
-                    is FirebaseMappingException -> {
-                        //ignore all mapping exceptions
+                when {
+                    e is ClosedSendChannelException -> listener.remove()
+                    e.isSuppressed -> {
                         Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} id: ${input.id}")
 //                        removeEventListener(listener)
 //                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))

@@ -148,7 +148,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
             viewModel.notificationView(item.id)
         }
 
-        when (item.type) {
+         when (item.type) {
             POST_COMMENT,
             POST_IS_EXPIRED,
             POST_PROMOTED,

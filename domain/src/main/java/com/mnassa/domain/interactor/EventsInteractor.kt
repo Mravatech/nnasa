@@ -22,7 +22,7 @@ interface EventsInteractor {
     suspend fun onItemOpened(item: EventModel)
     suspend fun resetCounter()
     suspend fun getTickets(eventId: String): List<EventTicketModel>
-    suspend fun canBuyTicket(eventId: String): Boolean
+
     suspend fun getBoughtTicketsCount(eventId: String): Long
     suspend fun buyTickets(eventId: String, ticketsCount: Long)
 

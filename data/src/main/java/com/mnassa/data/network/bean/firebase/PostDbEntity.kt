@@ -8,9 +8,7 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 3/15/2018.
  */
 internal data class PostDbEntity(
-        @SerializedName("id")
-        @Nullable
-        override var id: String,
+        @SerializedName("id") @Nullable override var id: String,
         @SerializedName("allConnections") var allConnections: Boolean,
         @SerializedName("copyOwner") var copyOwner: String?,
         @SerializedName("counters") var counters: PostCountersDbEntity,

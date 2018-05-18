@@ -54,7 +54,7 @@ internal object DatabaseContract {
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"//"byEvents" //
     //
     const val TABLE_POSTS = "posts"
-    const val TABLE_PABLIC_POSTS = "publicPosts"
+    const val TABLE_PUBLIC_POSTS = "publicPosts"
     //
     const val TABLE_NOTIFICATIONS = "notifications"
     const val TABLE_NOTIFICATIONS_OLD = "notificationsOld"

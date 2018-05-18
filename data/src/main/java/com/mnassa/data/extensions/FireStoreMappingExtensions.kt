@@ -12,7 +12,7 @@ import timber.log.Timber
 //////////////////////////////////////////// MAPPING ///////////////////////////////////////////////
 
 internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: QueryDocumentSnapshot?): T? {
-    if (dataSnapshot == null) return null
+    if (dataSnapshot == null || dataSnapshot.data == null) return null
     if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
 
     val jsonElement: JsonElement = dataSnapshot.data.toJson<T>()

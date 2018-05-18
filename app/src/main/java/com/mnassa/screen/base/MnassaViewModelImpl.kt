@@ -77,10 +77,8 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
             val message = e.localizedMessage ?: e.message
             message?.let { errorMessageChannel.send(it) }
         } catch (e: Throwable) {
+            //ignore all exceptions here
             Timber.e(e)
-            if (appInfoProvider.isDebug) {
-                throw e
-            }
         }
         return result
     }

@@ -1,11 +1,7 @@
 package com.mnassa.screen.profile
 
-import com.mnassa.domain.model.ConnectionStatus
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModel
-import com.mnassa.screen.profile.model.ProfileModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
@@ -14,12 +10,12 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Date: 2/26/2018
  */
 interface ProfileViewModel : MnassaViewModel {
-    val profileChannel: BroadcastChannel<ProfileModel>
+    val profileChannel: BroadcastChannel<ProfileAccountModel>
     val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus>
     val postChannel: BroadcastChannel<ListItemEvent<PostModel>>
+    val interestsChannel: BroadcastChannel<List<TagModel>>
+    val offersChannel: BroadcastChannel<List<TagModel>>
 
-    fun getPostsById(accountId: String)
-    fun getProfileWithAccountId(accountId: String)
     fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String)
 
     fun sendComplaint(id: String, reason: String, authorText: String?)
