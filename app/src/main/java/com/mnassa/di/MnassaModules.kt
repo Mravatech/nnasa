@@ -277,7 +277,7 @@ private val repositoryModule = Kodein.Module {
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), { instance() } ) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
@@ -301,7 +301,7 @@ private val serviceModule = Kodein.Module {
 }
 
 private val interactorModule = Kodein.Module {
-    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
+    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl( { instance() }) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }

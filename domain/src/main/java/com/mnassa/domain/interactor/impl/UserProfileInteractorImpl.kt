@@ -12,8 +12,10 @@ import kotlinx.coroutines.experimental.channels.consume
  * Created by Peter on 2/21/2018.
  */
 class UserProfileInteractorImpl(
-        private val userRepository: UserRepository
+        userRepositoryLazy: () -> UserRepository
 ) : UserProfileInteractor {
+
+    private val userRepository: UserRepository by lazy(userRepositoryLazy)
 
     override val onAccountChangedListener: SimpleCompositeEventListener<ShortAccountModel> = SimpleCompositeEventListener()
 
