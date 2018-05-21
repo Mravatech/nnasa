@@ -50,6 +50,12 @@ class OneLineLinear : LinearLayout {
                     btnCount.visibility = View.GONE
                     return
                 } else if (::btnCount.isInitialized) {
+                    if (left == 1) {
+                        val tagView = SimpleChipView(context, tags[tags.size - 1])
+                        addView(tagView)
+                        btnCount.visibility = View.GONE
+                        return
+                    }
                     btnCount.setText("+$left")
                 }
             }
