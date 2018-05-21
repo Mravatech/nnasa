@@ -61,7 +61,7 @@ class AllGroupsRecyclerViewAdapter(private val withHeader: Boolean = false) : Ba
 
         companion object {
             fun newInstance(parent: ViewGroup): HeaderHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.controller_connections_header, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.controller_groups_header, parent, false)
                 return HeaderHolder(view)
             }
         }

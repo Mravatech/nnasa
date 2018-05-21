@@ -115,7 +115,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                     .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_profile).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_profile).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_group).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_wallet).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_invite).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_settings).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),

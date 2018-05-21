@@ -73,6 +73,16 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
+    override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
+        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                .document(groupId)
+                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
+                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = { mapPost(it) }
+                )
+    }
+
     override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> {
         val userId = requireNotNull(userRepository.getAccountIdOrException())
 

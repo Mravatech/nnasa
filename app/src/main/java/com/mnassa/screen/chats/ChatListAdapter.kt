@@ -33,9 +33,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
 
     override var filterPredicate: (item: ChatRoomModel) -> Boolean = {
         val account = it.account
-        if (account != null) {
-            account.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
-        } else false
+        account?.formattedName?.toLowerCase()?.contains(searchPhrase.toLowerCase()) ?: false
     }
 
     init {

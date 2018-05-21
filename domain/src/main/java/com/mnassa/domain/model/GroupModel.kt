@@ -8,8 +8,12 @@ import java.io.Serializable
 interface GroupModel : Model {
     val name: String
     val type: GroupType
-    val creator: String
     val avatar: String?
+    val creator: ShortAccountModel
+    val isAdmin: Boolean
+    val admins: List<String>
+    val numberOfParticipants: Long
+
 }
 
 sealed class GroupType : Serializable {

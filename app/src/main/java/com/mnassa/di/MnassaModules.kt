@@ -247,7 +247,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
     bind<GroupProfileViewModel>() with provider { GroupProfileViewModelImpl() }
     bind<GroupMembersViewModel>() with provider { GroupMembersViewModelImpl() }
-    bind<GroupListViewModel>() with provider { GroupListViewModelImpl() }
+    bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
     bind<GroupDetailsViewModel>() with provider { GroupDetailsViewModelImpl() }
 }
 
@@ -266,10 +266,11 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(CommentsConverter())
         converter.registerConverter(WalletConverter({ instance() }))
         converter.registerConverter(InvitationConverter())
-        converter.registerConverter(ChatConverter::class.java)
+        converter.registerConverter(ChatConverter())
         converter.registerConverter(EventsConverter())
         converter.registerConverter(NotificationsConverter())
         converter.registerConverter(PushSettingsConverter())
+        converter.registerConverter(GroupsConverter())
         converter
     }
 }
@@ -306,6 +307,7 @@ private val repositoryModule = Kodein.Module {
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -330,6 +332,7 @@ private val interactorModule = Kodein.Module {
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
+    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
@@ -353,6 +356,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseEventsApi>()
     bindRetrofitApi<FirebaseNotificationsApi>()
     bindRetrofitApi<FirebaseSettingsApi>()
+    bindRetrofitApi<FirebaseGroupsApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }

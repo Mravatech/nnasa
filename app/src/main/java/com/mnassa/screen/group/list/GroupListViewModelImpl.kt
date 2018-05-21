@@ -1,9 +1,41 @@
 package com.mnassa.screen.group.list
 
+import com.mnassa.domain.interactor.GroupsInteractor
+import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.model.GroupModel
+import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
  * Created by Peter on 5/14/2018.
  */
-class GroupListViewModelImpl : MnassaViewModelImpl(), GroupListViewModel {
+class GroupListViewModelImpl(
+        private val groupsInteractor: GroupsInteractor,
+        private val postsInteractor: PostsInteractor
+
+) : MnassaViewModelImpl(), GroupListViewModel {
+
+    override val groupConnectionRequestsChannel: BroadcastChannel<List<GroupModel>> by ProcessAccountChangeConflatedBroadcastChannel {
+        groupsInteractor.getInvitesToGroups()
+    }
+    override val myGroupsChannel: BroadcastChannel<List<GroupModel>> by ProcessAccountChangeConflatedBroadcastChannel {
+        groupsInteractor.getMyGroups()
+    }
+
+    override fun connect(group: GroupModel) {
+
+    }
+
+    override fun disconnect(group: GroupModel) {
+
+    }
+
+    override fun accept(group: GroupModel) {
+
+    }
+
+    override fun decline(group: GroupModel) {
+
+    }
 }

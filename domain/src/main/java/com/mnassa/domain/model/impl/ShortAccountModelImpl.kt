@@ -16,6 +16,20 @@ data class ShortAccountModelImpl(override var id: String,
                                  override var organizationInfo: OrganizationAccountDiffModel?,
                                  override var abilities: List<AccountAbility>,
                                  override var connectedBy: ConnectedByModel?) : ShortAccountModel {
+    companion object {
+        val EMPTY = ShortAccountModelImpl(
+                id = "",
+                userName = "Deleted user",
+                accountType = AccountType.PERSONAL,
+                avatar = "",
+                contactPhone = "",
+                language = "",
+                personalInfo = PersonalAccountDiffModelImpl("Deleted", "User"),
+                organizationInfo = null,
+                abilities = emptyList(),
+                connectedBy = null
+        )
+    }
 }
 
 data class DeclinedShortAccountModelImpl(

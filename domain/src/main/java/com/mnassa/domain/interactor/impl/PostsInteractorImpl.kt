@@ -25,6 +25,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id, authorId)
     override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
+    override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
 
     private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(10)
 
@@ -149,30 +150,14 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     override suspend fun getShareOfferPostPrice(): Long? = postsRepository.getShareOfferPostPrice()
-
     override suspend fun getShareOfferPostPerUserPrice(): Long? = postsRepository.getShareOfferPostPerUserPrice()
-
     override suspend fun getPromotePostPrice(): Long = postsRepository.getPromotePostPrice() ?: 0L
-
-    override suspend fun removePost(postId: String) {
-        postsRepository.removePost(postId)
-    }
-
-    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel {
-        return postsRepository.repostPost(postId, text, privacy)
-    }
-
-    override suspend fun hideInfoPost(postId: String) {
-        postsRepository.hideInfoPost(postId)
-    }
-
-    override suspend fun loadOfferCategories(): List<OfferCategoryModel> {
-        return postsRepository.loadOfferCategories()
-    }
-
-    override suspend fun promote(post: PostModel) {
-        postsRepository.promote(post)
-    }
+    override suspend fun removePost(postId: String) = postsRepository.removePost(postId)
+    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel =
+            postsRepository.repostPost(postId, text, privacy)
+    override suspend fun hideInfoPost(postId: String) = postsRepository.hideInfoPost(postId)
+    override suspend fun loadOfferCategories(): List<OfferCategoryModel> = postsRepository.loadOfferCategories()
+    override suspend fun promote(post: PostModel) = postsRepository.promote(post)
 
     private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
@@ -186,13 +171,11 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         return tags
     }
 
-    override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {
-        postsRepository.createUserRecommendation(accountId, text, privacy)
-    }
+    override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) =
+            postsRepository.createUserRecommendation(accountId, text, privacy)
 
-    override suspend fun updateUserRecommendation(postId: String, accountId: String, text: String) {
-        postsRepository.updateUserRecommendation(postId, accountId, text)
-    }
+    override suspend fun updateUserRecommendation(postId: String, accountId: String, text: String) =
+            postsRepository.updateUserRecommendation(postId, accountId, text)
 
     override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()
 

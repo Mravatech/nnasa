@@ -12,7 +12,6 @@ import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.isGone
 import com.mnassa.extensions.setHeaderWithCounter
-import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -22,12 +21,11 @@ import com.mnassa.screen.connections.recommended.RecommendedConnectionsControlle
 import com.mnassa.screen.connections.sent.SentConnectionsController
 import com.mnassa.screen.group.list.adapters.AllGroupsRecyclerViewAdapter
 import com.mnassa.screen.group.list.adapters.NewGroupRequestsRecyclerViewAdapter
-import com.mnassa.screen.group.list.adapters.RecommendedGroupsRecyclerViewAdapter
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
-import kotlinx.android.synthetic.main.controller_connections.view.*
-import kotlinx.android.synthetic.main.controller_connections_header.view.*
+import kotlinx.android.synthetic.main.controller_groups_header.view.*
+import kotlinx.android.synthetic.main.controller_group_list.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -39,9 +37,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
     override val layoutId: Int = R.layout.controller_group_list
     override val viewModel: GroupListViewModel by instance()
     private val popupMenuHelper: PopupMenuHelper by instance()
-    private val dialog: DialogHelper by instance()
     private val allGroupsAdapter = AllGroupsRecyclerViewAdapter(true)
-    private val recommendedGroupsAdapter = RecommendedGroupsRecyclerViewAdapter()
     private val newConnectionRequestsAdapter = NewGroupRequestsRecyclerViewAdapter()
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -49,25 +45,11 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
 
         savedInstanceState?.apply {
             allGroupsAdapter.restoreState(this)
-            recommendedGroupsAdapter.restoreState(this)
             newConnectionRequestsAdapter.restoreState(this)
         }
 
-        recommendedGroupsAdapter.onShowAllClickListener = { openRecommendedConnectionsScreen() }
-        recommendedGroupsAdapter.onConnectClickListener = { viewModel.connect(it) }
-        recommendedGroupsAdapter.onItemClickListener = { open(GroupProfileController.newInstance(it)) }
-
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
-        newConnectionRequestsAdapter.onDeclineClickListener = { account ->
-            view?.let { view ->
-                launchCoroutineUI {
-                    val disconnectDays = viewModel.getDisconnectTimeoutDays()
-                    dialog.showDeclineConnectionDialog(view.context, disconnectDays) {
-                        viewModel.decline(account)
-                    }
-                }
-            }
-        }
+        newConnectionRequestsAdapter.onDeclineClickListener = { account -> viewModel.decline(account) }
         newConnectionRequestsAdapter.onItemClickListener = { open(GroupProfileController.newInstance(it)) }
         newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
 
@@ -84,7 +66,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
             toolbar.backButtonEnabled = false
             toolbar.title = fromDictionary(R.string.tab_connections_title)
 
-            rvAllConnections.adapter = allGroupsAdapter
+            rvAllGroups.adapter = allGroupsAdapter
 
             toolbar.onMoreClickListener = {
                 popupMenuHelper.showConnectionsTabMenu(
@@ -98,14 +80,13 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
     }
 
     override fun onDestroyView(view: View) {
-        view.rvAllConnections.adapter = null
+        view.rvAllGroups.adapter = null
         super.onDestroyView(view)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         allGroupsAdapter.saveState(outState)
-        recommendedGroupsAdapter.saveState(outState)
         newConnectionRequestsAdapter.saveState(outState)
     }
 
@@ -115,17 +96,10 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
 
     private fun bindHeader(header: View) {
         with(header) {
-            tvNewConnectionRequests.text = fromDictionary(R.string.tab_connections_new_requests)
-            tvRecommendedConnections.text = fromDictionary(R.string.tab_connections_recommended)
-            tvAllConnections.text = fromDictionary(R.string.tab_connections_all)
-
             rvNewConnectionRequests.itemAnimator = null
             rvNewConnectionRequests.isNestedScrollingEnabled = false
 
-            rvRecommendedConnections.adapter = recommendedGroupsAdapter
             rvNewConnectionRequests.adapter = newConnectionRequestsAdapter
-
-            rvRecommendedConnections.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             rvNewConnectionRequests.layoutManager = BlockedScrollingLayoutManager(context, RecyclerView.VERTICAL, false)
         }
 
@@ -133,45 +107,47 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
 
         loadAllConnectionsJob?.cancel()
         loadAllConnectionsJob = launchCoroutineUI {
-            viewModel.allConnectionsChannel.consumeEach {
+            viewModel.myGroupsChannel.consumeEach {
                 allGroupsAdapter.isLoadingEnabled = false
                 allGroupsAdapter.set(it)
 
                 with(headerRef()) {
-                    tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, it.size)
-                    tvAllConnections.isGone = it.isEmpty()
-                    vAllConnections.isGone = it.isEmpty()
+                    tvAllGroups.setHeaderWithCounter(R.string.tab_connections_all, it.size)
+                    tvAllGroups.isGone = it.isEmpty()
+                    vAllGroups.isGone = it.isEmpty()
                 }
             }
         }
 
         loadRecommendedConnectionsJob?.cancel()
         loadRecommendedConnectionsJob = launchCoroutineUI {
-            viewModel.recommendedConnectionsChannel.consumeEach {
-                recommendedGroupsAdapter.setWithMaxRange(it, MAX_RECOMMENDED_ITEMS_COUNT)
+            viewModel.groupConnectionRequestsChannel.consumeEach {
+                newConnectionRequestsAdapter.setWithMaxRange(it, MAX_RECOMMENDED_ITEMS_COUNT)
 
                 with(headerRef()) {
-                    tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
-                    tvRecommendedConnections.isGone = it.isEmpty()
-                    rvRecommendedConnections.isGone = it.isEmpty()
-                }
-            }
-        }
+                    tvGroupInvites.setHeaderWithCounter(R.string.groups_requests, it.size)
+                    tvGroupInvites.isGone = it.isEmpty()
+                    vGroupInvites.isGone = it.isEmpty()
 
-        loadNewConnectionsJob?.cancel()
-        loadNewConnectionsJob = launchCoroutineUI {
-            viewModel.newConnectionRequestsChannel.consumeEach {
-                newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTED_ITEMS_COUNT)
-
-                with(headerRef()) {
-                    tvNewConnectionRequests.isGone = it.isEmpty()
                     rvNewConnectionRequests.isGone = it.isEmpty()
-                    vNewConnectionRequests.isGone = it.isEmpty()
-
-                    tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
                 }
             }
         }
+//
+//        loadNewConnectionsJob?.cancel()
+//        loadNewConnectionsJob = launchCoroutineUI {
+//            viewModel.newConnectionRequestsChannel.consumeEach {
+//                newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTED_ITEMS_COUNT)
+//
+//                with(headerRef()) {
+//                    tvNewConnectionRequests.isGone = it.isEmpty()
+//                    rvNewConnectionRequests.isGone = it.isEmpty()
+//                    vNewConnectionRequests.isGone = it.isEmpty()
+//
+//                    tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
+//                }
+//            }
+//        }
     }
 
     ///////////////////////////////////////// CONNECTION TYPE SCREENS ///////////////////////////////
