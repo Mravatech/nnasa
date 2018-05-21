@@ -43,7 +43,7 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 2/21/2018.
  */
-class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
+class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, PageContainer {
     override val layoutId: Int = R.layout.controller_main
     override val viewModel: MainViewModel by instance()
     private var drawer: Drawer? = null
@@ -162,6 +162,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                         if (index == position) controller.onPageSelected()
                         else controller.onPageUnSelected()
                     }
+                    if (controller is OnScrollToTop) {
+                        controller.scrollToTop()
+                    }
                 }
 
                 if (previousSelectedPage == Pages.NOTIFICATIONS.ordinal) {
@@ -211,6 +214,20 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter {
                 accountHeader?.setActiveProfile(activeAccountId.hashCode().toLong())
             }
         }
+    }
+
+    override fun isPageSelected(page: Controller): Boolean {
+        val currentPageIndex = view?.vpMain?.currentItem ?: return false
+
+        val controllerPage = when (page) {
+            is HomeController -> Pages.HOME.ordinal
+            is ConnectionsController -> Pages.CONNECTIONS.ordinal
+            is NotificationsController -> Pages.NOTIFICATIONS.ordinal
+            is ChatListController -> Pages.CHAT.ordinal
+            else -> -1
+        }
+
+        return currentPageIndex == controllerPage
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

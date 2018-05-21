@@ -1,16 +1,19 @@
 package com.mnassa.screen.posts.need.sharing
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.App
 import com.mnassa.R
+import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
@@ -63,6 +66,9 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 rbMyNewsFeed.isChecked = it.isEmpty()
                 ignoreCheckedListener = false
             }
+            ivSearch.setOnClickListener {
+                startActivityForResult(SearchActivity.start(context, adapter.dataStorage.toList(), SearchActivity.SHARING_TYPE, adapter.selectedAccounts), SearchActivity.REQUEST_CODE_SEARCH)
+            }
 
             rbPromotePost.setOnCheckedChangeListener { button, isChecked ->
                 if (ignoreCheckedListener) return@setOnCheckedChangeListener
@@ -111,6 +117,20 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         adapter.destroyCallbacks()
         view.rvAllConnections.adapter = null
         super.onDestroyView(view)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
+        when (resultCode) {
+            SearchActivity.SHARING_RESULT -> {
+                val data = data ?: return
+                val resultCheckBoxes = data.getSerializableExtra(SearchActivity.EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT) as ArrayList<String>
+                val resultList = data.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<ShortAccountModel>
+                adapter.selectedAccounts = HashSet(resultCheckBoxes)
+                adapter.dataStorage.set(resultList)
+            }
+        }
     }
 
     private fun getSelection(): ShareToOptions {

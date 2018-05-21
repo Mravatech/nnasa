@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.mnassa.R
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
@@ -26,6 +27,11 @@ import java.util.*
  * Date: 3/28/2018
  */
 abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
+
+    abstract fun bindProfile(profile: ProfileAccountModel)
+    abstract fun bindOffers(offers: List<TagModel>)
+    abstract fun bindInterests(interests: List<TagModel>)
+    abstract fun bindConnectionStatus(connectionStatus: ConnectionStatus)
 
     protected fun getSpannableText(count: String, text: String, color: Int): SpannableString {
         val value = "$count\n$text"

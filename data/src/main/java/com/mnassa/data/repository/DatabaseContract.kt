@@ -21,16 +21,21 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
     const val TABLE_ACCOUNTS_COL_INVITES_COUNT = "invites"
     const val TABLE_ACCOUNTS_COL_PERMISSIONS = "permissions"
+    const val TABLE_ACCOUNTS_COL_STATE = "state"
+    const val TABLE_ACCOUNTS_COL_STATE_DISABLED = "disabled"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
     const val TABLE_CLIENT_DATA = "clientData"
     const val TABLE_CLIENT_DATA_COL_UI_VERSION = "mobileUiVersion"
     const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"
+    const val TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME = "parameters/defaultExpirationTime"
     const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
+    const val TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_EVENT = "paymentTypes/promoteEvent"
+    const val TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_POST = "paymentTypes/promotePost"
     const val TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT ="paymentTypes/rewardForComment"
     //
     const val TABLE_CONNECTIONS = "connections"
@@ -49,7 +54,7 @@ internal object DatabaseContract {
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"//"byEvents" //
     //
     const val TABLE_POSTS = "posts"
-    const val TABLE_PABLIC_POSTS = "publicPosts"
+    const val TABLE_PUBLIC_POSTS = "publicPosts"
     //
     const val TABLE_NOTIFICATIONS = "notifications"
     const val TABLE_NOTIFICATIONS_OLD = "notificationsOld"
@@ -57,7 +62,7 @@ internal object DatabaseContract {
     const val TABLE_CHAT = "chats"
     const val TABLE_CHAT_LIST = "chatsList"
     const val TABLE_CHAT_MESSAGES = "chatsMessages"
-    const val TABLE_CHAT_TYPE = "private"
+    const val TABLE_CHAT_TYPE_PRIVATE = "private"
     //
     const val TABLE_INVITETION = "invitations"
     //
@@ -108,4 +113,10 @@ internal object DatabaseContract {
     const val TABLE_USERS = "users"
     const val TABLE_USERS_COL_STATE = "state"
     const val TABLE_USERS_COL_STATE_DISABLED = "disabled"
+
+    //
+    const val EXPIRATION_TYPE_ACTIVE = "active"
+    const val EXPIRATION_TYPE_EXPIRED = "expired"
+    const val EXPIRATION_TYPE_CLOSED = "closed"
+    const val EXPIRATION_TYPE_FULFILLED = "fulfilled"
 }

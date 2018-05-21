@@ -9,13 +9,9 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.extensions.avatarSquare
-import com.mnassa.extensions.formatted
+import com.mnassa.extensions.*
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
-import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
@@ -72,7 +68,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 actvPersonCity.setText(personSelectedPlaceName ?: "")
             }
             containerSelectOccupation.setAbilities(accountModel.abilities)
-            etPhoneNumber.setText(accountModel.contactPhone?.replace("+", ""))
+            etPhoneNumber.setText(accountModel.contactPhone)
             etPhoneNumber.setHideMode(accountModel.showContactPhone)
             etYourEmail.setText(accountModel.contactEmail)
             etYourEmail.setHideMode(accountModel.showContactEmail)
@@ -135,7 +131,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etPhoneNumber.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -188,11 +184,11 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         private const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
         private const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
 
-        fun newInstance(profileModel: ProfileModel): EditPersonalProfileController {
+        fun newInstance(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>): EditPersonalProfileController {
             val params = Bundle()
-            params.putParcelable(EXTRA_PROFILE, profileModel.profile)
-            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, profileModel.interests as ArrayList<out TagModel>)
-            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, profileModel.offers as ArrayList<out TagModel>)
+            params.putParcelable(EXTRA_PROFILE, profile)
+            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, interests as ArrayList<out TagModel>)
+            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, offers as ArrayList<out TagModel>)
             return EditPersonalProfileController(params)
         }
     }

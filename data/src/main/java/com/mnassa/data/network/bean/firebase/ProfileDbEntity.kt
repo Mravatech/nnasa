@@ -25,6 +25,7 @@ internal class ProfileDbEntity(
         @SerializedName("totalIncome") var totalIncome: Int?,
         @SerializedName("totalOutcome") var totalOutcome: Int?,
         @SerializedName("contactEmail") var contactEmail: String?,
+        @SerializedName("contactPhone") val contactPhone: String?,
         @SerializedName("showContactPhone") var showContactPhone: Boolean,
         @SerializedName("showContactEmail") var showContactEmail: Boolean,
         @SerializedName("numberOfCommunities") val numberOfCommunities: Int?,
@@ -45,11 +46,8 @@ internal class ProfileDbEntity(
         @SerializedName("organizationType") val organizationType: String?
 ) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
 
-    @SerializedName("createdAt")
-    var createdAt: Long? = createdAt
-    @SerializedName("location")
-    val location: LocationDbEntity? = location
-    @SerializedName("gender")
-    val gender: String? = gender
+    @SerializedName("createdAt") var createdAt: Long? = createdAt
+    @SerializedName("location") val location: LocationDbEntity? = location
+    @SerializedName("gender") val gender: String? = gender
 
 }

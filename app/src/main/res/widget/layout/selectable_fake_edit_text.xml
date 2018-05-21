@@ -15,20 +15,13 @@
             android:id="@+id/tvMakePrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/vOccupationDivider"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_toStartOf="@id/tvRemoveAbility"
             android:contentDescription="@null"
             android:textColor="@color/blue_turquoise"
             android:visibility="gone"
-            tools:text="Make Primary" />
-
-        <View
-            android:id="@+id/vOccupationDivider"
-            android:layout_width="@dimen/divider_width"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_toStartOf="@+id/tvRemoveAbility"
-            android:background="@color/divider" />
+            tools:text="Make Primary"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tvRemoveAbility"
@@ -39,13 +32,15 @@
             android:contentDescription="@null"
             android:textColor="@color/red"
             android:visibility="gone"
-            tools:text="Delete" />
+            tools:text="Delete"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tvSelectLabel"
             style="@style/PersonalInfo.SelectableTextViewLabel"
             android:visibility="invisible"
-            tools:text="Primary Occupation" />
+            tools:text="Primary Occupation"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

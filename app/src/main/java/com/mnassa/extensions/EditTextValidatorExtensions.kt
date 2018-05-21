@@ -3,6 +3,7 @@ package com.mnassa.extensions
 import android.support.design.widget.TextInputLayout
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Patterns
 import android.view.ViewGroup
 import android.widget.EditText
 import java.util.regex.Pattern
@@ -14,6 +15,7 @@ import java.util.regex.Pattern
 //TODO: pass error text as function parameter (?)
 
 val PATTERN_PHONE_TAIL = Pattern.compile("\\d{12,13}")!!
+val PATTERN_PHONE = Patterns.PHONE
 
 fun TextInputLayout.validateAsFirstName(): Boolean {
     val editText = findEditText()

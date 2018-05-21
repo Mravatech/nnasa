@@ -389,7 +389,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        requireNotNull(view).mapView.onSaveInstanceState(outState)
+        view?.mapView?.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 

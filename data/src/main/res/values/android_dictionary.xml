@@ -50,6 +50,7 @@
     <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
     <string name="_android_post_comment_edit_button_INFO">Edit</string>
     <string name="_android_post_share_value_center_INFO">To value center</string>
+    <string name="_android_post_expires_in_INFO">Post expires in</string>
     <string name="_android_my_wallet_title_INFO">My wallet</string>
     <string name="_android_my_wallet_balance_INFO">Balance</string>
     <string name="_android_my_wallet_spent_INFO">Spent</string>
@@ -183,7 +184,7 @@
     <string name="_android_event_address_INFO">Address</string>
     <string name="_android_event_description_placeholder_INFO">Enter description</string>
     <string name="_android_event_status_opened_INFO">Opened</string>
-    
+
     <string name="_android_offer_button_my_customers_INFO">My customers</string>
     <string name="_android_offer_button_buy_first_INFO">Buy this offer</string>
     <string name="_android_offer_button_buy_again_INFO">Buy again</string>
@@ -191,16 +192,20 @@
     <string name="_android_offer_purchase_description_INFO">Transfer points to buy this item</string>
     <string name="_android_offer_placeholder_INFO">Type your offer here</string>
 
-
     <string name="_android_days_INFO">%d days</string>
     <string name="_android_hours_INFO">%d hours</string>
     <string name="_android_minutes_INFO">%d minutes</string>
     <string name="_android_seconds_INFO">%d seconds</string>
 
+    <string name="_android_expiration_valid_till_INFO">Valid till</string>
+
+    <string name="_android_search_done_INFO">Done</string>
+    <string name="_android_search_hint_INFO">Search</string>
     <string name="_android_general_text_placeholder_INFO">Type your general here</string>
     <string name="_android_general_post_author_INFO">MNASSA Help</string>
 
     <string name="_commentCell_usefulButton_INFO">Useful</string>
+
     <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
     <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
 
@@ -209,6 +214,8 @@
     <string name="_android_post_recommend_empty_description_INFO">You have no connections yet (description)</string>
     <string name="_android_connections_sent_empty_title_INFO">You have no sent connection requests yet</string>
     <string name="_android_connections_sent_empty_description_INFO">You have no sent connection requests yet (description)</string>
+
+    <string name="_android_user_was_deleted_INFO">Deleted user</string>
 
     <string name="_android_points_count_INFO">%d Points</string>
 

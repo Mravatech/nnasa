@@ -1,13 +1,17 @@
 package com.mnassa.extensions
 
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
@@ -16,6 +20,7 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.experimental.channels.consume
+import java.util.*
 
 /**
  * Created by Peter on 3/19/2018.
@@ -59,7 +64,7 @@ val PostModel.formattedText: CharSequence?
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.recommend_prefix))
                 spannable.append(" ")
                 val nameStart = spannable.length
-                spannable.append(this.recommendedProfile.formattedName)
+                spannable.append(this.recommendedProfile?.formattedName ?: fromDictionary(R.string.deleted_user))
                 spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(App.context, R.color.accent)), nameStart, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 if (!text.isNullOrBlank()) {
@@ -98,6 +103,38 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
         is PostAttachment.PostPhotoAttachment -> image(postAttachment.photoUrl, crop)
         is PostAttachment.PostVideoAttachment -> image(postAttachment.previewUrl, crop)
     }
+}
+
+fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?) {
+    if (statusOfExpiration == null) {
+        visibility = View.GONE
+        return
+    }
+    visibility = View.VISIBLE
+
+    val key: String = resources.getString(R.string.post_expires_text_key)
+    if (statusOfExpiration is ExpirationType.ACTIVE) {
+        timeOfExpiration?.let {
+            val spanText = it.formatAsDate().toString()
+            val validation = fromDictionary(key + statusOfExpiration.text)
+            val sentence = "$validation $spanText"
+            setTextWithOneSpanText(sentence, spanText, Color.BLACK)
+            val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_expiration_active, null)
+            setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+        }
+        return
+    }
+    val img: Drawable? = when (statusOfExpiration) {
+        is ExpirationType.EXPIRED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_expired, null)
+        is ExpirationType.CLOSED -> null
+        is ExpirationType.FULFILLED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_done_black_24dp, null)
+        else -> null
+    }
+
+    setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+    setTextColor(Color.BLACK)
+
+    text = fromDictionary(key + statusOfExpiration.text)
 }
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0

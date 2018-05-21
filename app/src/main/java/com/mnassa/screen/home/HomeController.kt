@@ -16,6 +16,8 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.main.OnPageSelected
+import com.mnassa.screen.main.OnScrollToTop
+import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
@@ -28,7 +30,7 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPageSelected {
+class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPageSelected, PageContainer, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_home
     override val viewModel: HomeViewModel by instance()
 
@@ -60,8 +62,8 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
             vpHome.adapter = adapter
             tlHome.setupWithViewPager(vpHome)
             tlHome.addOnTabSelectedListener(object : TabLayout.ViewPagerOnTabSelectedListener(vpHome) {
-                override fun onTabSelected(tab: TabLayout.Tab?) = Unit
-                override fun onTabReselected(tab: TabLayout.Tab?) = onPageSelectionChanged(true)
+                override fun onTabSelected(tab: TabLayout.Tab?) = onPageSelectionChanged(true, false)
+                override fun onTabReselected(tab: TabLayout.Tab?) = onPageSelectionChanged(true, true)
             })
 
             launchCoroutineUI {
@@ -76,6 +78,19 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
             }
             initFab(this)
         }
+    }
+
+    override fun isPageSelected(page: Controller): Boolean {
+        val isThisControllerSelected = (parentController as? PageContainer)?.isPageSelected(this)
+        return if (isThisControllerSelected != false) {
+            val currentPageIndex = view?.vpHome?.currentItem ?: return false
+            val controllerPage = when(page) {
+                is PostsController -> HomePage.NEEDS.ordinal
+                is EventsController -> HomePage.EVENTS.ordinal
+                else -> -1
+            }
+            currentPageIndex == controllerPage
+        } else false
     }
 
     private fun initFab(view: View) {
@@ -145,16 +160,20 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
         return button
     }
 
-    override fun onPageSelected() = onPageSelectionChanged(true)
-    override fun onPageUnSelected() = onPageSelectionChanged(false)
+    override fun onPageSelected() = onPageSelectionChanged(true, false)
+    override fun onPageUnSelected() = onPageSelectionChanged(false, false)
+    override fun scrollToTop() = onPageSelectionChanged(true, true)
 
-    private fun onPageSelectionChanged(isSelected: Boolean) {
+    private fun onPageSelectionChanged(isSelected: Boolean, isReSelected: Boolean) {
         val view = view ?: return
         val selectedPageIndex = view.vpHome.currentItem
         val controller = adapter.getRouter(selectedPageIndex)?.getControllerWithTag(formatTabControllerTag(selectedPageIndex))
         if (controller is OnPageSelected) {
             if (isSelected) controller.onPageSelected()
             else controller.onPageUnSelected()
+        }
+        if (isReSelected && controller is OnScrollToTop) {
+            controller.scrollToTop()
         }
     }
 

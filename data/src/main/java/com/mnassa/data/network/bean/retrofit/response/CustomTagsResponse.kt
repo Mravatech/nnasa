@@ -8,9 +8,7 @@ import com.google.gson.annotations.SerializedName
  * Date: 3/13/2018
  */
 data class CustomTagsResponse(
-        @SerializedName("data")
-        val data: CustomTags)
+        @SerializedName("data") val data: CustomTags)
 
 data class CustomTags(
-        @SerializedName("tagKeys")
-        val tags: List<String>)
+        @SerializedName("tagKeys") val tags: List<String>)

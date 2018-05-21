@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/llCharRoom"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background_highlighted"
     android:orientation="horizontal">
 
     <ImageView
@@ -39,6 +40,7 @@
         android:layout_marginEnd="@dimen/chat_room_base_margin"
         android:layout_marginStart="@dimen/chat_room_margin_time_ago_start"
         android:layout_marginTop="@dimen/chat_room_base_margin"
+        android:gravity="end"
         android:orientation="vertical">
 
         <TextView
@@ -49,9 +51,10 @@
         <TextView
             android:id="@+id/tvMessageUnread"
             style="@style/ChatRoom.UnreadCountItem"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/chat_room_unread_count_margin_top"
-            tools:text="8" />
+            android:visibility="gone"
+            tools:text="8"
+            tools:visibility="visible" />
 
     </LinearLayout>
 </LinearLayout>

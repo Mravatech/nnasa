@@ -8,9 +8,7 @@ import com.mnassa.domain.model.HasId
  * Created by Peter on 3/23/2018.
  */
 internal data class CommentDbEntity(
-        @SerializedName("id")
-        @Nullable
-        override var id: String,
+        @SerializedName("id") @Nullable override var id: String,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("creator") var creator: ShortAccountDbEntity,
         @SerializedName("isPrivate") var isPrivate: Boolean,
@@ -19,9 +17,7 @@ internal data class CommentDbEntity(
 ) : HasId
 
 internal data class ReplyCommentDbEntity(
-        @SerializedName("id")
-        @Nullable
-        override var id: String,
+        @SerializedName("id") @Nullable override var id: String,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("creator") var creator: ShortAccountDbEntity,
         @SerializedName("isPrivate") var isPrivate: Boolean,

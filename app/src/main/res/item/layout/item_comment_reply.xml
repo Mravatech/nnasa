@@ -45,6 +45,7 @@
             android:layout_alignEnd="@id/tvUserName"
             android:layout_alignStart="@id/tvUserName"
             android:layout_below="@id/tvUserName"
+            android:autoLink="all"
             tools:text="Dummy comment\nDummy comment\nDummy comment" />
 
         <android.support.v7.widget.RecyclerView

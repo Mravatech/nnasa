@@ -20,7 +20,7 @@ internal data class EventDbEntity(
         @SerializedName("locationId") val locationId: String?,
         @SerializedName("locationType") val locationType: String,
         @SerializedName("originalCreatedAt") val originalCreatedAt: Long,
-        @SerializedName("originalId") val originalId: String,
+        @SerializedName("originalId", alternate = arrayOf("originalPostId")) val originalId: String,
         @SerializedName("pictures") val pictures: List<String>,
         @SerializedName("price") val price: Long,
         @SerializedName("privacyType") val privacyType: String?,
@@ -48,8 +48,8 @@ internal data class EventTicketDbEntity(
 ) : HasId
 
 internal data class EventCountersDbEntity(
-        @SerializedName("comments") val comments: Int,
-        @SerializedName("views") val views: Int
+        @SerializedName("comments") val comments: Int?,
+        @SerializedName("views") val views: Int?
 )
 
 internal data class EventDurationDbEntity(

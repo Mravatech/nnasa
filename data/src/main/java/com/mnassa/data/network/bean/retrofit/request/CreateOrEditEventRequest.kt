@@ -23,7 +23,8 @@ data class CreateOrEditEventRequest (
         @SerializedName("pictures") val pictures: List<String>?,
         @SerializedName("tags") val tags: List<String>?,
         @SerializedName("status") val status: String,
-        @SerializedName("allConnections") val allConnections: Boolean
+        @SerializedName("allConnections") val allConnections: Boolean,
+        @SerializedName("privacyConnections") val privacyConnections: List<String>? = null
 )
 
 data class EventDuration(

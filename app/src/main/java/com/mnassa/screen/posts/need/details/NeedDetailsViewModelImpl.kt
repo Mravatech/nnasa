@@ -13,28 +13,34 @@ import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.*
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 3/19/2018.
  */
 open class NeedDetailsViewModelImpl(
-        private val postId: String,
+        params: NeedDetailsViewModel.ViewModelParams,
         private val postsInteractor: PostsInteractor,
         private val tagInteractor: TagInteractor,
         private val complaintInteractor: ComplaintInteractor
 ) : MnassaViewModelImpl(), NeedDetailsViewModel {
+
+    protected val postId: String = params.postId
+    protected val postAuthorId: String = params.postAuthorId
+
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
-
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         handleException {
-            postsInteractor.loadById(postId).consumeEach {
+            postsInteractor.loadById(postId, postAuthorId).consumeEach {
                 if (it != null) {
+                    it.timeOfExpiration = getExpiration(it)
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
                 } else {
@@ -45,6 +51,12 @@ open class NeedDetailsViewModelImpl(
         handleException {
             reportsList = complaintInteractor.getReports()
         }
+    }
+
+    private suspend fun getExpiration(post: PostModel): Date {
+        if (post.timeOfExpiration != null) return requireNotNull(post.timeOfExpiration)
+        val defaultDaysToExpire = postsInteractor.getDefaultExpirationDays()
+        return Date(post.originalCreatedAt.time + TimeUnit.MILLISECONDS.convert(defaultDaysToExpire, TimeUnit.DAYS))
     }
 
     override suspend fun retrieveComplaints(): List<TranslatedWordModel> {

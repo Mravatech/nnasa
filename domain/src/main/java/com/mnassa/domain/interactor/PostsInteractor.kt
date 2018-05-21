@@ -10,7 +10,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface PostsInteractor {
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
-    suspend fun loadById(id: String): ReceiveChannel<PostModel?>
+    suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?>
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun onItemViewed(item: PostModel)
     suspend fun onItemOpened(item: PostModel)
@@ -23,6 +23,7 @@ interface PostsInteractor {
             privacy: PostPrivacyOptions,
             tags: List<TagModel>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?): PostModel
 
     suspend fun updateNeed(
@@ -94,6 +95,7 @@ interface PostsInteractor {
 
     suspend fun removePost(postId: String)
 
+    suspend fun getDefaultExpirationDays(): Long
     suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
 
     suspend fun hideInfoPost(postId: String)

@@ -9,13 +9,10 @@ import com.google.gson.annotations.SerializedName
  */
 
 class ChatResponse : MnassaResponse() {
-    @SerializedName("data")
-    internal lateinit var data: ChatRoom
+    @SerializedName("data") internal lateinit var data: ChatRoom
 }
 
 data class ChatRoom(
-        @SerializedName("chatID")
-        val chatID: String,
-        @SerializedName("chatType")
-        val chatType: String
+        @SerializedName("chatID") val chatID: String,
+        @SerializedName("chatType") val chatType: String
 )

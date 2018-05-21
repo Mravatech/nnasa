@@ -12,7 +12,7 @@ import timber.log.Timber
 
 internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?): T? {
     if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
-    if (dataSnapshot == null) return null
+    if (dataSnapshot == null || dataSnapshot.value == null) return null
 
     val jsonElement: JsonElement = dataSnapshot.value.toJson<T>()
     Timber.i("FIREBASE DATABASE >>> ${dataSnapshot.path} >>> $jsonElement")

@@ -2,7 +2,6 @@ package com.mnassa.data.extensions
 
 import com.google.firebase.database.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
-import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.channels.*
@@ -147,7 +146,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
             try {
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = mapper(dbEntity)
-                val result: ListItemEvent<OutType> = when(eventType) {
+                val result: ListItemEvent<OutType> = when (eventType) {
                     MOVED -> ListItemEvent.Moved(outModel, previousChildName)
                     CHANGED -> ListItemEvent.Changed(outModel, previousChildName)
                     ADDED -> ListItemEvent.Added(outModel, previousChildName)
@@ -157,14 +156,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
 
                 channel.send(result)
             } catch (e: Exception) {
-                when (e) {
-                    is ClosedSendChannelException -> removeEventListener(listener)
-                    is IllegalArgumentException,
-                    is IllegalStateException,
-                    is NullPointerException -> {
-                        Timber.e(e)
-                        removeEventListener(listener)
-                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))
+                when {
+                    e is ClosedSendChannelException -> removeEventListener(listener)
+                    e.isSuppressed -> {
+                        Timber.e(e, "Suppressed exception: class: ${DbType::class.java.name} path: ${input.path}")
+//                        removeEventListener(listener)
+//                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))
                     }
                     else -> {
                         Timber.e(e)

@@ -20,20 +20,21 @@ import kotlinx.android.synthetic.main.item_connections_sent.view.*
 class SentConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
 
     var onCancelClickListener = { account: ShortAccountModel -> }
+    var onItemClickListener = { account: ShortAccountModel -> }
 
     fun destoryCallbacks() {
         onCancelClickListener = { }
+        onItemClickListener = { }
     }
 
     override fun onClick(view: View) {
+        val vh = view.tag as RecyclerView.ViewHolder
+        val position = vh.adapterPosition
+        if (position < 0) return
+
         when (view.id) {
-            R.id.btnCancel -> {
-                val vh = view.tag as RecyclerView.ViewHolder
-                val position = vh.adapterPosition
-                if (position >= 0) {
-                    onCancelClickListener(getDataItemByAdapterPosition(position))
-                }
-            }
+            R.id.btnCancel -> onCancelClickListener(getDataItemByAdapterPosition(position))
+            R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
         }
     }
 
@@ -55,6 +56,9 @@ class SentConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAccountM
 
                 btnCancel.setOnClickListener(onClickListener)
                 btnCancel.tag = this@SentConnectionViewHolder
+
+                rlClickableRoot.setOnClickListener(onClickListener)
+                rlClickableRoot.tag = this@SentConnectionViewHolder
             }
         }
 

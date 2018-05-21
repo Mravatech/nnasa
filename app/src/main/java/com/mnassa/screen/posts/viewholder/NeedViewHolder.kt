@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.mnassa.R
+import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_need.view.*
+import kotlinx.android.synthetic.main.item_promoted_panel.view.*
 
 /**
  * Created by Peter on 3/14/2018.
@@ -36,17 +38,25 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             rlClickableRoot.setOnClickListener(onClickListener)
             rlClickableRoot.tag = this@NeedViewHolder
 
-            btnAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
-            btnAction.text = when {
-                item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
-                    fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
-                item.autoSuggest.youCanHelp -> fromDictionary(R.string.need_item_btn_you_can_help)
-                item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
-                else -> null
+            if (item.statusOfExpiration is ExpirationType.ACTIVE) {
+                tvAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
+                tvExpiration.visibility = View.INVISIBLE
+
+                tvAction.text = when {
+                    item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
+                        fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
+                    item.autoSuggest.youCanHelp -> fromDictionary(R.string.need_item_btn_you_can_help)
+                    item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
+                    else -> null
+                }
+            } else {
+                tvAction.visibility = View.INVISIBLE
+                tvExpiration.visibility = View.VISIBLE
+                tvExpiration.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
             }
 
-            btnAction.setOnClickListener(onClickListener)
-            btnAction.tag = this@NeedViewHolder
+            tvAction.setOnClickListener(onClickListener)
+            tvAction.tag = this@NeedViewHolder
 
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@NeedViewHolder
@@ -79,7 +89,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
     private fun bindRepost(item: PostModel) {
         if (!item.isRepost) return
 
-        with (itemView) {
+        with(itemView) {
             val repostedBySpan = SpannableStringBuilder(fromDictionary(R.string.need_item_reposted_by))
             repostedBySpan.append(" ")
             val startSpan = repostedBySpan.length
@@ -99,16 +109,18 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
 
     companion object {
         fun newInstance(
-            parent: ViewGroup,
-            onClickListener: View.OnClickListener,
-            imagesCount: Int = 0,
-            isRepost: Boolean = false
+                parent: ViewGroup,
+                onClickListener: View.OnClickListener,
+                imagesCount: Int,
+                isRepost: Boolean,
+                isPromoted: Boolean
         ): NeedViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_news_feed_need, parent, false)
             view.rlRepostRoot.isGone = !isRepost
             view.flImagesRoot.isGone = imagesCount == 0
+            view.llPromotedRoot.isGone = !isPromoted
 
             if (imagesCount > 0) {
                 val imagesLayout = when (imagesCount) {
@@ -119,6 +131,7 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
                 }
                 inflater.inflate(imagesLayout, view.flImagesRoot, true)
             }
+
             return NeedViewHolder(view, onClickListener)
         }
     }

@@ -6,13 +6,13 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.PostDetailsFactory
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_message.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
@@ -32,19 +32,21 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     private val postModel: PostModel? by lazy { args.getSerializable(CHAT_POST) as PostModel? }
     private val dialog: DialogHelper by instance()
 
-    val adapter = MessagesAdapter()
+    private val adapter = MessagesAdapter()
     private var replyMessageModel: ChatMessageModel? = null
     private var replyPostModel: PostModel? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-        setupView(view)
-        setupOnClickListeners(view)
-        view.toolbarChatMessage.title = accountModel?.formattedName ?: "admin"//todo get known what should be here
-        view.toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
-        view.toolbarChatMessage.onMoreClickListener = { Toast.makeText(view.context, "Set profile after merge", Toast.LENGTH_SHORT).show() }
-        view.rvMessages.layoutManager = LinearLayoutManager(view.context)
-        view.rvMessages.adapter = adapter
+        with(view) {
+            setupView(this)
+            setupOnClickListeners(this)
+            toolbarChatMessage.title = accountModel?.formattedName ?: fromDictionary(R.string.support_chat_with)
+            toolbarChatMessage.ivToolbarMore.setImageResource(R.drawable.ic_info)
+            toolbarChatMessage.onMoreClickListener = { accountModel?.let { open(ProfileController.newInstance(it)) } }
+            rvMessages.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+            rvMessages.adapter = adapter
+        }
         launchCoroutineUI {
             val accountId = viewModel.retrieveMyAccount()
             adapter.accountId = accountId
@@ -98,21 +100,10 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                     }
                     if (view.llNoMessages.visibility == View.VISIBLE) {
                         view.llNoMessages.visibility = View.GONE
-                        viewModel.resetChatUnreadCount()
                     }
-                    view.rvMessages.scrollToPosition(adapter.itemCount)
+                    view.rvMessages.scrollToPosition(0)
+                    viewModel.resetChatUnreadCount()
                 }
-            }
-        }
-        adapter.onUserMessageLongClick = { callDialog(view, false, it) }
-        adapter.onMyMessageLongClick = { callDialog(view, true, it) }
-        adapter.onReplyClick = { chatMessageModel, post ->
-            if (post != null) {
-                val postDetailsFactory: PostDetailsFactory by instance()
-                open(postDetailsFactory.newInstance(post))
-            } else {
-                val position = adapter.dataStorage.indexOf(chatMessageModel)
-                view.rvMessages.scrollToPosition(position)
             }
         }
     }

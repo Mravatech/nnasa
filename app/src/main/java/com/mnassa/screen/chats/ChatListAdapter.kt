@@ -1,7 +1,6 @@
 package com.mnassa.screen.chats
 
 import android.graphics.Typeface
-import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -32,6 +31,13 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     }
     override val itemClass: Class<ChatRoomModel> = ChatRoomModel::class.java
 
+    override var filterPredicate: (item: ChatRoomModel) -> Boolean = {
+        val account = it.account
+        if (account != null) {
+            account.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+        } else false
+    }
+
     init {
         itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second ->
@@ -39,7 +45,8 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
                     first.viewedAtDate == second.viewedAtDate &&
                     first.unreadCount == second.unreadCount
         }
-        dataStorage = ChatDataStorage(this)
+        dataStorage = FilteredSortedDataStorage(filterPredicate, ChatDataStorage(this))
+        searchListener = dataStorage as SearchListener<ChatRoomModel>
     }
 
     override fun onClick(view: View) {
@@ -52,6 +59,11 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         }
     }
 
+    fun searchByName(text: String) {
+        searchPhrase = text
+        searchListener.search()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ChatRoomModel> =
             ChatRoomViewHolder.newInstance(parent, this)
 
@@ -62,7 +74,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             itemView.tvLastMessage.text = item.chatMessageModel?.text
             item.account?.let {
                 itemView.ivChatUserIcon.avatarRound(it.avatar)
-                itemView.tvUserName.text =  it.formattedName
+                itemView.tvUserName.text = it.formattedName
             }
             item.takeIf { it.unreadCount > 0 }?.let {
                 itemView.tvMessageUnread.visibility = View.VISIBLE

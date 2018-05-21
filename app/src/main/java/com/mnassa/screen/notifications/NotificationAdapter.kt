@@ -6,12 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.NotificationModel
-import com.mnassa.domain.model.impl.NotificationExtraImpl
-import com.mnassa.domain.model.impl.NotificationModelImpl
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.notifications.viewholder.NotificationHeaderHolder
 import com.mnassa.screen.notifications.viewholder.NotificationHolder
-import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,12 +21,14 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
     override val itemsComparator: (item1: NotificationModel, item2: NotificationModel) -> Int = { first, second ->
         when {
             itemsTheSameComparator(first, second) -> 0
-            first.type == NEW && second.type == OLD -> -1
-            first.type == OLD && second.type == NEW -> 1
-            first.type == NEW && second.type != NEW && second.type != OLD -> -1
-            !first.isOld && second.type == OLD -> -1
-            first.type == OLD && !second.isOld -> 1
+            first.type == NEW && second.type != NEW -> -1
+            first.type != NEW && second.type == NEW -> 1
             first.type == OLD && second.isOld -> -1
+            first.isOld && second.type == OLD -> 1
+            first.type == OLD && !second.isOld -> 1
+            !first.isOld && second.type == OLD -> -1
+            !first.isOld && second.isOld -> -1
+            first.isOld && !second.isOld -> 1
             else -> first.createdAt.compareTo(second.createdAt) * -1
         }
     }
@@ -41,7 +40,7 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
         contentTheSameComparator = { first, second ->
             first == second
         }
-        dataStorage = NotificationsDataStorage(this)
+        dataStorage = SortedDataStorage<NotificationModel>(itemClass, this)
     }
 
     override fun onClick(view: View) {
@@ -68,74 +67,12 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationModel>(), 
         }
     }
 
-    class NotificationsDataStorage(private val adapter: BaseSortedPaginationRVAdapter<NotificationModel>) :
-            SortedDataStorage<NotificationModel>(NotificationModel::class.java, adapter), DataStorage<NotificationModel> {
-        private var headerOld: NotificationModel = getHeader(true, OLD)
-        private var headerNew: NotificationModel = getHeader(false, NEW)
-        private val newNotificationIds = mutableListOf<String>()
-
-        override fun addAll(elements: Collection<NotificationModel>): Boolean {
-            adapter.postUpdate {
-                wrappedList.beginBatchedUpdates()
-                elements.forEach {
-                    if (!it.isOld) {
-                        newNotificationIds.add(it.id)
-                        if (wrappedList.indexOf(headerNew) == -1) {
-                            super.add(headerNew)
-                        }
-                    }
-                    if (wrappedList.indexOf(headerOld) == -1) {
-                        super.add(headerOld)
-                    }
-                }
-                super.addAll(elements)
-                wrappedList.endBatchedUpdates()
-            }
-            return true
-        }
-
-        override fun removeAll(elements: Collection<NotificationModel>): Boolean {
-            adapter.postUpdate {
-                wrappedList.beginBatchedUpdates()
-                elements.forEach {
-                    if (!it.isOld) {
-                        newNotificationIds.remove(it.id)
-                    }
-                }
-                if (newNotificationIds.isEmpty()) super.remove(headerNew)
-                wrappedList.endBatchedUpdates()
-            }
-            return super.removeAll(elements)
-        }
-
-        private fun getHeader(isOld: Boolean, type: String) = NotificationModelImpl(
-                id = type,
-                createdAt = Date(),
-                text = type,
-                type = type,
-                extra = NotificationExtraImpl(
-                        author = null,
-                        attendee = null,
-                        eventName = null,
-                        post = null,
-                        recommended = null,
-                        reffered = null,
-                        ticketsPrice = null,
-                        totalPrice = null,
-                        event = null,
-                        newInviteNumber = null
-                ),
-                isOld = isOld
-        )
-
-    }
-
     companion object {
         private const val HEADER = 1
         private const val CONTENT = 2
 
-        private const val NEW = "NEW"
-        private const val OLD = "OLD"
+        const val NEW = "NEW"
+        const val OLD = "OLD"
     }
 
 }

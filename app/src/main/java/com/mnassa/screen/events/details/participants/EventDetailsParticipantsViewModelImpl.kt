@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentSkipListSet
  * Created by Peter on 4/18/2018.
  */
 class EventDetailsParticipantsViewModelImpl(private val eventId: String,
+                                            private val event: EventModel,
                                             private val eventsInteractor: EventsInteractor,
                                             private val userProfileInteractor: UserProfileInteractor,
                                             private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), EventDetailsParticipantsViewModel {
@@ -32,6 +33,8 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
         super.onCreate(savedInstanceState)
 
         handleException {
+            eventChannel.send(event)
+
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 if (it != null) {
                     eventChannel.send(it)
@@ -51,7 +54,6 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
     }
 
     override suspend fun saveParticipants(participants: List<EventParticipantItem>) {
-
         handleExceptionsSuspend {
             withProgressSuspend {
                 val users = participants.mapNotNull { (it as? EventParticipantItem.User) }
@@ -83,7 +85,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                         }
                     }
                     val event = eventChannel.openSubscription().consume { receive() }
-                    if (hasConnections) {
+                    if (hasConnections) {                                               //TODO: cannot load event within notifications
                         participants += EventParticipantItem.ConnectionsHeader(event.isMyEvent())
                     }
                     if (hasOtherUsers) {

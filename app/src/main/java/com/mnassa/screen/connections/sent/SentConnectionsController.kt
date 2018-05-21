@@ -6,6 +6,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_sent.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -23,6 +24,7 @@ class SentConnectionsController : MnassaControllerImpl<SentConnectionsViewModel>
         super.onViewCreated(view)
 
         adapter.onCancelClickListener = { viewModel.cancelRequest(it) }
+        adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         with(view) {
             toolbar.title = fromDictionary(R.string.sent_connection_requests_title)

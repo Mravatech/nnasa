@@ -27,17 +27,16 @@ class ClickableDrawableTextInputEditText : TextInputEditText {
 
     init {
         setOnTouchListener { _, event ->
+            var result = false
             if (event.action == MotionEvent.ACTION_UP) {
                 if (event.rawX >= (right - compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
-                    when (isChosen) {
-                        true -> onDrawableRightClick(R.color.black, R.drawable.ic_eye_on)
-                        false -> onDrawableRightClick(R.color.gray_cool, R.drawable.ic_eye_off)
-                    }
+                    setHideMode(!isChosen)
+                    result = true
                 }
             }
-            false
+            result
         }
-        onDrawableRightClick(R.color.gray_cool, R.drawable.ic_eye_off)
+        setHideMode(false)
     }
 
     fun setHideMode(hasToHide: Boolean) {
@@ -49,11 +48,6 @@ class ClickableDrawableTextInputEditText : TextInputEditText {
     }
 
     private fun onDrawableRightClick(@ColorRes color: Int, @DrawableRes drawable: Int) {
-        isFocusable = isChosen
-        isFocusableInTouchMode = isChosen
-        isLongClickable = isChosen
-        isChosen = !isChosen
-        setTextColor(ContextCompat.getColor(context, color))
         val img = ResourcesCompat.getDrawable(resources, drawable, null)
         setCompoundDrawablesWithIntrinsicBounds(null, null, img, null)
     }

@@ -131,12 +131,6 @@ class EventsInteractorImpl(
         return eventsRepository.getTickets(eventId)
     }
 
-    override suspend fun canBuyTicket(eventId: String): Boolean {
-        val event = loadByIdChannel(eventId).consume { receive() } ?: return false
-        if (event.ticketsSold >= event.ticketsTotal || event.status !is EventStatus.OPENED) return false
-        return getBoughtTicketsCount(eventId) < event.ticketsPerAccount
-    }
-
     override suspend fun getBoughtTicketsCount(eventId: String): Long {
         val userId = userProfileInteractor.getAccountIdOrNull() ?: return 0L
         var counter = 0L

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <View style="@style/MnassaDivider" />
+
+    <com.mnassa.widget.MnassaTextView
+        style="@style/MnassaTextTiny"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:drawablePadding="@dimen/drawable_padding"
+        android:drawableStart="@drawable/ic_promoted"
+        android:text="@string/post_promoted_label" />
+
+</LinearLayout>

@@ -9,6 +9,7 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.coroutines.experimental.channels.consume
@@ -18,7 +19,8 @@ import org.kodein.di.generic.instance
  * Created by Peter on 4/13/2018.
  */
 class GeneralPostController(args: Bundle) : NeedDetailsController(args) {
-    override val viewModel: GeneralPostViewModel by instance(arg = postId)
+
+    override val viewModel: GeneralPostViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun bindToolbar(toolbar: MnassaToolbar) {

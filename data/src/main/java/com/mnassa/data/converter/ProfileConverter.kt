@@ -73,7 +73,7 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 totalIncome = input.totalIncome,
                 totalOutcome = input.totalOutcome,
                 avatar = input.avatar,
-                contactPhone = null,
+                contactPhone = input.contactPhone,
                 language = null,
                 organizationInfo = organizationInfo,
                 personalInfo = personalInfo,

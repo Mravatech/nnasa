@@ -7,7 +7,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
@@ -27,15 +27,17 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
-        setCalendarEditText(view.etFoundation)
-        addPhoto(view.fabInfoAddPhoto)
-        view.etCompanyEmail.setHideMode(false)
-        view.etCompanyPhone.setHideMode(false)
-        view.etCompanyPhone.setText(accountModel.contactPhone?.replace("+", ""))
-        view.etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-        view.btnHeaderNext.setOnClickListener { proccesProfile(view) }
-        view.tvSkipThisStep.setOnClickListener {
-            viewModel.skipThisStep()
+        with(view){
+            setCalendarEditText(etFoundation)
+            addPhoto(fabInfoAddPhoto)
+            etCompanyEmail.setHideMode(false)
+            etCompanyPhone.setHideMode(false)
+            etCompanyPhone.setText(accountModel.contactPhone)
+            etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
+            btnHeaderNext.setOnClickListener { proccesProfile(this) }
+            tvSkipThisStep.setOnClickListener {
+                viewModel.skipThisStep()
+            }
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -61,7 +63,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etCompanyPhone.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -78,14 +80,16 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
     }
 
     private fun setupViews(view: View) {
-        view.tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
-        view.tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
-        view.tvHeader.text = fromDictionary(R.string.reg_company_title)
-        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
-        view.tilWebSite.hint = fromDictionary(R.string.reg_company_website)
-        view.tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
-        view.tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
-        view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
+        with(view){
+            tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
+            tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
+            tvHeader.text = fromDictionary(R.string.reg_company_title)
+            btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+            tilWebSite.hint = fromDictionary(R.string.reg_company_website)
+            tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
+            tilFoundation.hint = fromDictionary(R.string.reg_company_founded)
+            tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
+        }
     }
 
     companion object {

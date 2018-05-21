@@ -63,8 +63,13 @@ class CropActivity : AppCompatActivity() {
     private fun cropImage(uri: Uri?) {
         uri?.let {
             val options = UCrop.Options()
-            options.setToolbarColor(ContextCompat.getColor(this, R.color.white))
-            options.setStatusBarColor(ContextCompat.getColor(this, R.color.white))
+            options.setToolbarColor(ContextCompat.getColor(this, R.color.accent))
+            options.setStatusBarColor(ContextCompat.getColor(this, R.color.accent))
+            options.setLogoColor(ContextCompat.getColor(this, R.color.white))
+            options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.white))
+            if (intent.getBooleanExtra(EXTRA_CROP_SQUARE, false)) {
+                options.withAspectRatio(1.0f, 1.0f)
+            }
             UCrop.of(it, cachedUri)
                     .withOptions(options)
                     .start(this)
@@ -107,12 +112,14 @@ class CropActivity : AppCompatActivity() {
     companion object {
         const val URI_PHOTO_RESULT = "URI_PHOTO_RESULT"
         const val GET_PHOTO_ERROR = 102
+        private const val EXTRA_CROP_SQUARE = "EXTRA_CROP_SQUARE"
         private const val PHOTO_INTENT_FLAG = "PHOTO_INTENT_FLAG"
         private const val DEFAULT_VALUE = 0
 
-        fun start(source: ImageSource, context: Context): Intent {
+        fun start(source: ImageSource, context: Context, cropSquare: Boolean = false): Intent {
             val intent = Intent(context, CropActivity::class.java)
             intent.putExtra(PHOTO_INTENT_FLAG, source.ordinal)
+            intent.putExtra(EXTRA_CROP_SQUARE, cropSquare)
             return intent
         }
     }

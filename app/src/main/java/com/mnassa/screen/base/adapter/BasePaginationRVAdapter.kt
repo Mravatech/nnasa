@@ -11,12 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.core.addons.WeakStateExecutor
-import com.mnassa.screen.base.adapter.new.PersistanceAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
 
-abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
+abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = WeakStateExecutor<RecyclerView?, RecyclerView>(
             initState = null,
             executionPredicate = { it != null })
@@ -26,6 +25,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             it.post { update() }
         }
     }
+
     var itemsTheSameComparator: ((item1: ITEM, item2: ITEM) -> Boolean) = { item1, item2 -> item1 == item2 }
     var contentTheSameComparator: ((oldItem: ITEM, newItem: ITEM) -> Boolean) = { _, _ -> true }
     var dataStorage: DataStorage<ITEM> = SimpleDataProviderImpl()
@@ -99,10 +99,22 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
     //////////////////////////////////////// VIEW TYPES ////////////////////////////////////////////
 
     open fun getViewType(position: Int): Int = TYPE_UNDEFINED
-    final override fun getItemViewType(position: Int) = when (position) {
-        0 -> TYPE_HEADER
-        itemCount - 1 -> if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
-        else -> getViewType(position - emptyHeaderItemsCount)
+    final override fun getItemViewType(position: Int): Int {
+
+        val firstItem = if (reverseOrder) {
+            if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
+        } else TYPE_HEADER
+        val lastItem = if (reverseOrder) {
+            TYPE_HEADER
+        } else {
+            if (isLoadingEnabled) TYPE_LOADING_ENABLED else TYPE_LOADING_DISABLED
+        }
+
+        return when (position) {
+            0 -> firstItem
+            itemCount - 1 -> lastItem
+            else -> getViewType(position - emptyHeaderItemsCount)
+        }
     }
 
     /////////////////////////////////// ITEMS COUNT & POSITIONS ////////////////////////////////////
@@ -285,6 +297,7 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
             wrappedMutableVal.clear()
             wrappedMutableVal.addAll(elements)
         }
+
         override fun get(index: Int): T = wrappedMutableVal[index]
 
         override fun iterator(): Iterator<T> {
@@ -318,8 +331,32 @@ abstract class BasePaginationRVAdapter<ITEM> : RecyclerView.Adapter<BasePaginati
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////// FILTER /////////////
+    open var searchPhrase = ""
+    lateinit var searchListener: SearchListener<ITEM>
+    open var filterPredicate: (item: ITEM) -> Boolean = { true }
 
+    /////////////////   FILTER   ////////////////
+    open class FilteredSortedDataStorage<ITEM>(private val filterPredicate: (item1: ITEM) -> Boolean,
+                                               private val dataStorage: BasePaginationRVAdapter.DataStorage<ITEM>) : BasePaginationRVAdapter.DataStorage<ITEM> by dataStorage, SearchListener<ITEM> {
+
+        override var containerList: List<ITEM> = emptyList()
+
+        override fun search() {
+            if (containerList.isEmpty() || containerList.size < dataStorage.size){
+                containerList = dataStorage.toList()
+            }
+            val newValues = containerList.filter(filterPredicate)
+            dataStorage.set(newValues)
+        }
+    }
+
+    interface SearchListener<T> {
+        var containerList: List<T>
+        fun search()
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     companion object {
         const val EXTRA_STATE_PREFIX = "EXTRA_STATE_PREFIX"
         const val MAX_STATE_SIZE = 75

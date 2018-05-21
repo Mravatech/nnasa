@@ -21,4 +21,6 @@ interface NeedDetailsViewModel : MnassaViewModel {
     fun repost(sharingOptions: PostPrivacyOptions)
     fun promote()
     fun sendComplaint(id: String, reason: String, authorText: String?)
+
+    data class ViewModelParams(val postId: String, val postAuthorId: String)
 }

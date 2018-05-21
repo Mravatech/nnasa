@@ -21,6 +21,7 @@ import com.mnassa.data.repository.*
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
+import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
@@ -180,7 +181,7 @@ private val viewModelsModule = Kodein.Module {
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl(instance(), instance()) }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance(), instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
-    bind<ProfileViewModel>() with provider { ProfileViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance()) }
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance()) }
@@ -195,10 +196,10 @@ private val viewModelsModule = Kodein.Module {
     bind<ArchivedConnectionViewModel>() with provider { ArchivedConnectionViewModelImpl(instance()) }
     bind<AllConnectionsViewModel>() with provider { AllConnectionsViewModelImpl(instance()) }
     bind<CreateNeedViewModel>() with factory { postId: String? -> CreateNeedViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<NeedDetailsViewModel>() with factory { postId: String -> NeedDetailsViewModelImpl(postId, instance(), instance(), instance()) }
-    bind<RecommendedProfileViewModel>() with factory { postId: String -> RecommendedProfileViewModelImpl(postId, instance(), instance(), instance(), instance()) }
-    bind<OfferDetailsViewModel>() with factory { postId: String -> OfferDetailsViewModelImpl(postId, instance(), instance(), instance()) }
-    bind<GeneralPostViewModelImpl>() with factory { postId: String -> GeneralPostViewModelImpl(postId, instance(), instance(), instance()) }
+    bind<NeedDetailsViewModel>() with factory { params: NeedDetailsViewModel.ViewModelParams -> NeedDetailsViewModelImpl(params, instance(), instance(), instance()) }
+    bind<RecommendedProfileViewModel>() with factory { params: NeedDetailsViewModel.ViewModelParams -> RecommendedProfileViewModelImpl(params, instance(), instance(), instance(), instance()) }
+    bind<OfferDetailsViewModel>() with factory { params: NeedDetailsViewModel.ViewModelParams -> OfferDetailsViewModelImpl(params, instance(), instance(), instance()) }
+    bind<GeneralPostViewModelImpl>() with factory { params: NeedDetailsViewModel.ViewModelParams -> GeneralPostViewModelImpl(params, instance(), instance(), instance()) }
     bind<InviteViewModel>() with provider { InviteViewModelImpl(instance(), instance()) }
     bind<HistoryViewModel>() with provider { HistoryViewModelImpl(instance()) }
     bind<SharingOptionsViewModel>() with factory { params: SharingOptionsViewModel.SharingOptionsParams -> SharingOptionsViewModelImpl(params, instance(), instance()) }
@@ -219,6 +220,7 @@ private val viewModelsModule = Kodein.Module {
             OfferDetailsController::class.java ->
                 CommentsWrapperForPostViewModelImpl(
                         postId = pair.second.getString(PostDetailsFactory.EXTRA_POST_ID),
+                        postAuthorId = pair.second.getString(PostDetailsFactory.EXTRA_POST_AUTHOR_ID),
                         commentsInteractor = instance(),
                         postsInteractor = instance(),
                         walletInteractor = instance())
@@ -232,7 +234,7 @@ private val viewModelsModule = Kodein.Module {
     }
     bind<EventDetailsViewModel>() with factory { eventId: String -> EventDetailsViewModelImpl(eventId, instance(), instance()) }
     bind<EventDetailsInfoViewModel>() with factory { eventId: String -> EventDetailsInfoViewModelImpl(eventId, instance(), instance()) }
-    bind<EventDetailsParticipantsViewModel>() with factory { eventId: String -> EventDetailsParticipantsViewModelImpl(eventId, instance(), instance(), instance()) }
+    bind<EventDetailsParticipantsViewModel>() with factory { event: EventModel -> EventDetailsParticipantsViewModelImpl(event.id, event, instance(), instance(), instance()) }
     bind<CreateEventViewModel>() with factory { eventId: String? -> CreateEventViewModelImpl(eventId, instance(), instance(), instance(), instance()) }
     bind<SettingsViewModel>() with provider { SettingsViewModelImpl() }
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
@@ -287,7 +289,7 @@ private val repositoryModule = Kodein.Module {
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), { instance() } ) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
@@ -311,7 +313,7 @@ private val serviceModule = Kodein.Module {
 }
 
 private val interactorModule = Kodein.Module {
-    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance()) }
+    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl( { instance() }) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }

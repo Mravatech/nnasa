@@ -28,6 +28,7 @@ class CommentsWrapperForEventViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
+            loadComments() //load comments even if event is not available
             eventsInteractor.loadByIdChannel(eventId).consumeEach { event ->
                 if (event != null) {
                     loadComments()

@@ -19,6 +19,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
 import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import timber.log.Timber
 
@@ -43,7 +44,7 @@ class App : MultiDexApplication(), KodeinAware {
             Timber.plant(Timber.DebugTree())
             Stetho.initializeWithDefaults(this)
         } else {
-            Timber.plant(CrashReportingTree())
+            Timber.plant(CrashReportingTree(getInstance()))
         }
         Fabric.with(this, Crashlytics())
 
@@ -53,6 +54,10 @@ class App : MultiDexApplication(), KodeinAware {
 
         launch {
             getInstance<LoginInteractor>().handleUserStatus()
+        }
+
+        launch {
+            getInstance<LoginInteractor>().handleAccountStatus()
         }
 
         Timber.e("appId: ${appInfoProvider.applicationId}")

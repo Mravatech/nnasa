@@ -93,7 +93,9 @@ val EventStatus.formatted: CharSequence
     }
 
 suspend fun EventModel.canBuyTickets(): Boolean {
-    return App.context.getInstance<EventsInteractor>().canBuyTicket(id)
+    val event = this
+    if (event.ticketsSold >= event.ticketsTotal || event.status !is EventStatus.OPENED) return false
+    return event.getBoughtTicketsCount() < event.ticketsPerAccount
 }
 
 suspend fun EventModel.getBoughtTicketsCount(): Long {

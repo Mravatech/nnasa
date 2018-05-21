@@ -18,20 +18,39 @@ import kotlinx.android.synthetic.main.item_event_participants_header.view.*
  */
 class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipantItem>(), View.OnClickListener {
     var onParticipantClickListener = { user: EventParticipantItem.User -> }
+    var onSearchClickListener = {}
     var onCheckParticipantsClickListener = {}
     override val itemsComparator: (item1: EventParticipantItem, item2: EventParticipantItem) -> Int = { first, second ->
         first.compareTo(second)
     }
     override val itemClass: Class<EventParticipantItem> = EventParticipantItem::class.java
 
+    override var filterPredicate: (item: EventParticipantItem) -> Boolean = {
+        when (it) {
+            is EventParticipantItem.User -> {
+                it.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+            }
+            is EventParticipantItem.Guest -> {
+                it.parent.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase())
+            }
+            else -> true
+        }
+    }
+
     init {
-        dataStorage = SortedDataStorage(itemClass, this)
         itemsTheSameComparator = { first, second ->
             if (first is EventParticipantItem.User && second is EventParticipantItem.User) {
                 first.user.id == second.user.id
             } else first == second
         }
         contentTheSameComparator = { first, second -> first == second }
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SortedDataStorage(itemClass, this))
+        searchListener = dataStorage as SearchListener<EventParticipantItem>
+    }
+
+    fun searchByName(text: String) {
+        searchPhrase = text
+        searchListener.search()
     }
 
     override fun onClick(view: View) {
@@ -40,6 +59,7 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
         when (view.id) {
             R.id.rlClickableRoot -> onParticipantClickListener(getDataItemByAdapterPosition(position) as EventParticipantItem.User)
             R.id.ivCheckParticipants -> onCheckParticipantsClickListener()
+            R.id.ivSearch -> onSearchClickListener()
         }
     }
 
@@ -107,6 +127,7 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                 val editButtonEnabled = item is EventParticipantItem.ConnectionsHeader && item.canEdit || item is EventParticipantItem.OtherHeader && item.canEdit
                 ivCheckParticipants.isInvisible = !editButtonEnabled
                 ivCheckParticipants.isEnabled = editButtonEnabled
+                ivSearch.isInvisible = item is EventParticipantItem.OtherHeader
             }
         }
 
@@ -116,6 +137,8 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                 val viewHolder = HeaderViewHolder(view)
                 view.ivCheckParticipants.setOnClickListener(onClickListener)
                 view.ivCheckParticipants.tag = viewHolder
+                view.ivSearch.setOnClickListener(onClickListener)
+                view.ivSearch.tag = viewHolder
                 return viewHolder
             }
         }

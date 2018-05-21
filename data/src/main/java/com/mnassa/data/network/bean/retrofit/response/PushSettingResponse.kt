@@ -9,13 +9,11 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class PushSettingResponse(
-        @SerializedName("data")
-        internal var data: AccountPushSettingData
+        @SerializedName("data") internal var data: AccountPushSettingData
 ) : MnassaResponse()
 
 data class AccountPushSettingData(
-        @SerializedName("accountPushSettings")
-        val accountPushSettings: HashMap<String, PushSettingData>
+        @SerializedName("accountPushSettings") val accountPushSettings: HashMap<String, PushSettingData>
 )
 
 data class PushSettingData(

@@ -8,7 +8,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
@@ -30,13 +30,15 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
-        view.etPhoneNumber.setText(accountModel.contactPhone?.replace("+", ""))
-        view.etPhoneNumber.setHideMode(false)
-        view.etYourEmail.setHideMode(false)
-        view.tvSkipThisStep.setOnClickListener { viewModel.skipThisStep() }
-        setCalendarEditText(view.etDateOfBirthday)
-        addPhoto(view.fabInfoAddPhoto)
-        view.btnHeaderNext.setOnClickListener { proccesProfile(view) }
+        with(view) {
+            etPhoneNumber.setText(accountModel.contactPhone)
+            etPhoneNumber.setHideMode(false)
+            etYourEmail.setHideMode(false)
+            tvSkipThisStep.setOnClickListener { viewModel.skipThisStep() }
+            setCalendarEditText(etDateOfBirthday)
+            addPhoto(fabInfoAddPhoto)
+            btnHeaderNext.setOnClickListener { proccesProfile(this) }
+        }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 val controller = when (it) {
@@ -56,7 +58,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etPhoneNumber.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -78,15 +80,17 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     }
 
     private fun setupViews(view: View) {
-        view.tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
-        view.tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
-        view.tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
-        view.rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
-        view.rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
-        view.tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
-        view.tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
-        view.tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
-        view.btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+        with(view) {
+            tilDateOfBirthday.hint = fromDictionary(R.string.reg_person_info_birthday)
+            tilPhoneNumber.hint = fromDictionary(R.string.reg_info_phone_number)
+            tvInfoGender.text = fromDictionary(R.string.reg_person_info_gender)
+            rInfoBtnMale.text = fromDictionary(R.string.reg_person_info_male_gender)
+            rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
+            tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
+            tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
+            tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
+            btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
+        }
     }
 
     companion object {

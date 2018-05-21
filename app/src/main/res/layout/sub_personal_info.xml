@@ -54,7 +54,7 @@
             style="@style/PersonalInfo.EditText"
             android:drawableEnd="@drawable/ic_eye_off"
             android:drawablePadding="@dimen/personal_info_drawable_padding"
-            android:inputType="number" />
+            android:inputType="phone" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout

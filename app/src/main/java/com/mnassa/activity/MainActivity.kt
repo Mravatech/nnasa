@@ -62,7 +62,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             when (reason) {
                 is LogoutReason.NotAuthorized -> { }
                 is LogoutReason.ManualLogout -> { }
-                is LogoutReason.AccountBlocked -> {
+                is LogoutReason.AccountBlocked, is LogoutReason.UserBlocked -> {
                     Toast.makeText(applicationContext, fromDictionary(R.string.blocked_account_message), Toast.LENGTH_LONG).show()
                 }
             }
@@ -125,6 +125,11 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             val toastCountDown: CountDownTimer
             toastCountDown = object : CountDownTimer(COINS_ANIMATION_TOAST_DURATION, COUNT_DOWN_INTERVAL /*Tick duration*/) {
                 override fun onTick(millisUntilFinished: Long) {
+                    /*
+                        todo: hard reproducable crash is here
+                        View android.widget.LinearLayout{7d35078 V.E...... ......I. 0,0-0,0 #7f0a029a app:id/toastRoot}
+                        has already been added to the window manager.
+                     */
                     toast.show()
                 }
 

@@ -48,6 +48,7 @@
                 android:paddingStart="@dimen/spacing_horizontal"
                 android:paddingTop="@dimen/spacing_vertical"
                 android:textSize="17sp"
+                android:autoLink="all"
                 tools:text="Long text" />
 
             <FrameLayout

@@ -23,7 +23,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
-    override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
+    override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id, authorId)
     override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
 
     private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(10)
@@ -60,12 +60,13 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             privacy: PostPrivacyOptions,
             tags: List<TagModel>,
             price: Long?,
+            timeOfExpiration: Long?,
             placeId: String?
     ): PostModel {
         val allImages = uploadedImages + imagesToUpload.map {
             async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
         }.map { it.await() }
-        return postsRepository.createNeed(text, allImages, privacy, createTags(tags), price, placeId)
+        return postsRepository.createNeed(text, allImages, privacy, createTags(tags), price, timeOfExpiration, placeId)
     }
 
     override suspend fun updateNeed(
@@ -192,6 +193,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun updateUserRecommendation(postId: String, accountId: String, text: String) {
         postsRepository.updateUserRecommendation(postId, accountId, text)
     }
+
+    override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()
 
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L

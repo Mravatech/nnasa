@@ -6,6 +6,8 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import com.mnassa.App
 import com.mnassa.R
+import com.mnassa.di.getInstance
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.translation.fromDictionary
 
@@ -37,3 +39,5 @@ val ShortAccountModel.formattedPosition: CharSequence
             else -> ability.name ?: ability.place ?: ""
         }
     }
+
+val ShortAccountModel.isMyProfile: Boolean get() = id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
