@@ -72,9 +72,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 adapter.profileModel = profileModel
 
                 profileModel.avatar?.let { avatar ->
-                    view.ivCropImage.avatarSquare(profileModel.avatar)
+                    view.ivCropImage.avatarSquare(avatar)
                     view.ivCropImage.setOnClickListener {
-                        PhotoPagerActivity.start(view.context, listOf(avatar), 0)
+                        PhotoPagerActivity.start(it.context, listOf(avatar), 0)
                     }
                 }
 
