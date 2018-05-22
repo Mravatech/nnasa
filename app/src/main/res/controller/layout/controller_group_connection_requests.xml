@@ -9,15 +9,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:back_button_enabled="true"
-        app:toolbar_title="@string/groups_title" />
+        app:toolbar_title="@string/groups_requests"/>
 
     <RelativeLayout
         android:id="@+id/rlEmptyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
         android:layout_centerInParent="true"
+        android:layout_below="@id/toolbar"
         android:gravity="center"
         android:visibility="invisible"
         tools:visibility="visible">
@@ -37,27 +36,17 @@
             android:id="@+id/tvEmptyDescription"
             style="@style/EmptyList.Description"
             android:layout_below="@id/tvEmptyTitle"
-            android:text="@string/groups_empty_description" />
+            android:text="@string/groups_empty_description"  />
 
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvAllGroups"
+        android:id="@+id/rvGroupRequests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_connections_all"
-        tools:visibility="visible" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCreateGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/chat_room_base_margin"
-        app:fab_size="normal"
-        app:srcCompat="@drawable/ic_add_white_24dp" />
+        tools:listitem="@layout/item_connection_request"
+        tools:visibility="invisible" />
 
 </RelativeLayout>

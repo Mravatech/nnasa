@@ -4,9 +4,13 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.extensions.toListChannel
+import com.mnassa.data.extensions.toValueChannel
+import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseGroupsApi
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
+import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.GroupType
 import com.mnassa.domain.model.ShortAccountModel
@@ -45,6 +49,42 @@ class GroupsRepositoryImpl(
                 .map { it.map { convertGroup(it) } }
     }
 
+    override suspend fun sendInvite(groupId: String, accountIds: List<String>) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.SEND,
+                groupId = groupId,
+                accounts = accountIds
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun acceptInvite(groupId: String) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.ACCEPT,
+                groupId = groupId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun declineInvite(groupId: String) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.DECLINE,
+                groupId = groupId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun leaveGroup(groupId: String) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.LEAVE,
+                groupId = groupId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?> {
+        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                .document(groupId)
+                .toValueChannel<GroupDbEntity>(exceptionHandler)
+                .map { it?.run { convertGroup(it) } }
+    }
+
     //todo: create converter, which supports suspend functions
     private suspend fun convertGroup(input: GroupDbEntity): GroupModel {
         val currentUserId = userRepository.getAccountIdOrException()
@@ -59,6 +99,7 @@ class GroupsRepositoryImpl(
         return GroupModelImpl(
                 id = input.id,
                 name = input.title ?: "Unnamed group",
+                description = input.description ?: "",
                 avatar = input.avatar,
                 type = GroupType.Private(),
                 admins = input.admins

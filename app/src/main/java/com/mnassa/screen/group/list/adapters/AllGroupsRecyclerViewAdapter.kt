@@ -8,7 +8,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.formattedName
-import com.mnassa.extensions.formattedType
+import com.mnassa.extensions.formattedRole
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.android.synthetic.main.item_connections_all.view.*
@@ -74,7 +74,7 @@ class AllGroupsRecyclerViewAdapter(private val withHeader: Boolean = false) : Ba
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
 
-                tvPosition.text = item.formattedType
+                tvPosition.text = item.formattedRole
                 tvPosition.goneIfEmpty()
 
                 tvEventName.text = ""

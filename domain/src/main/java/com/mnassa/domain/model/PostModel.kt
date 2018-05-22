@@ -27,6 +27,7 @@ interface PostModel : Model {
     val price: Double
     val autoSuggest: PostAutoSuggest
     val repostAuthor: ShortAccountModel?
+    var groupId: String?
 }
 
 interface InfoPostModel: PostModel {

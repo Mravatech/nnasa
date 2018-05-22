@@ -8,7 +8,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formattedName
-import com.mnassa.extensions.formattedType
+import com.mnassa.extensions.formattedRole
 import com.mnassa.extensions.invisibleIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
@@ -89,7 +89,7 @@ class RecommendedGroupsRecyclerViewAdapter : BasePaginationRVAdapter<GroupModel>
                 ivAvatar.avatarSquare(item.avatar)
                 tvUserName.text = item.formattedName
 
-                tvPosition.text = item.formattedType
+                tvPosition.text = item.formattedRole
                 tvPosition.invisibleIfEmpty()
 
                 tvEventName.text = ""

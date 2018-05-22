@@ -21,4 +21,5 @@
         <item name="android:layout_height">3dp</item>
         <item name="android:background">@drawable/shadow_up_down</item>
     </style>
+
 </resources>

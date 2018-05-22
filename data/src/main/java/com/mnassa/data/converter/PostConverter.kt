@@ -52,7 +52,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         val post = input.post
         val id = input.id
         post.id = id
-        return converter.convert(post)
+        return converter.convert(post, token)
     }
 
     private fun convertPostDataToOffer(input: PostData, token: Any?, converter: ConvertersContext): OfferPostModelImpl {
@@ -60,6 +60,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
     }
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+        val additionInfo: PostAdditionInfo = token as PostAdditionInfo
 
         val attachments = input.images.orEmpty().mapIndexed { index, image ->
             val videoUrl = input.videos.orEmpty().getOrNull(index)
@@ -94,7 +95,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
                     recommendedProfile = try { convertAuthor(requireNotNull(input.postedAccount), converter) } catch (e: Exception) { null },
-                    offers = emptyList()
+                    offers = emptyList(),
+                    groupId = additionInfo.groupId
             )
             is PostType.INFO -> InfoPostImpl(
                     id = input.id,
@@ -121,7 +123,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
-                            ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!"))
+                            ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!")),
+                    groupId = additionInfo.groupId
             )
             is PostType.OFFER -> OfferPostModelImpl(
                     id = input.id,
@@ -150,7 +153,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     category = input.category,
                     subCategory = input.subcategory,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
-                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) }
+                    timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
+                    groupId = additionInfo.groupId
             )
             else -> PostModelImpl(
                     id = input.id,
@@ -175,7 +179,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) }
+                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    groupId = additionInfo.groupId
             )
         }
     }

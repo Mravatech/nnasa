@@ -16,10 +16,12 @@ data class PermissionsDbEntity(
         @SerializedName("promoteGeneralPost") override val canPromoteGeneralPost: Boolean = false,
         @SerializedName("promoteNeedPost") override val canPromoteNeedPost: Boolean = false,
         @SerializedName("promoteOfferPost") override val canPromoteOfferPost: Boolean = false,
-        @SerializedName("promoteAccountPost") override val canPromoteAccountPost: Boolean = false
+        @SerializedName("promoteAccountPost") override val canPromoteAccountPost: Boolean = false,
+        @SerializedName("createCommunity") override val canCreateGroup: Boolean = false
 ) : PermissionsModel {
 
     companion object {
         val EMPTY = PermissionsDbEntity()
     }
+
 }

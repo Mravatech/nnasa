@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Group"/>
+    <style name="Group.Profile"/>
+    <style name="Group.Profile.Counter" parent="MnassaHeader1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="Group.Profile.CounterLabel" parent="MnassaTextTiny">
+    </style>
+    <style name="Group.Profile.CounterContainer" >
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingStart">@dimen/spacing_horizontal</item>
+        <item name="android:paddingEnd">@dimen/spacing_horizontal</item>
+    </style>
+
+</resources>

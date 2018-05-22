@@ -15,6 +15,7 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.OfferCategoryModel
 import com.mnassa.domain.model.OfferPostModel
+import com.mnassa.domain.model.RawPostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
 import com.mnassa.helper.DialogHelper
@@ -38,6 +39,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_offer_create
     private val offerId: String? by lazy { args.getString(EXTRA_OFFER_ID) }
+    private val groupId: String? by lazy { args.getString(EXTRA_GROUP_ID) }
     override val viewModel: CreateOfferViewModel by instance(arg = offerId)
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
@@ -68,17 +70,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.createPost(
-                        title = etTitle.text.toString(),
-                        offer = etOffer.text.toString(),
-                        category = (sCategory.selectedItem as? CategoryWrapper)?.category,
-                        subCategory = (sSubCategory.selectedItem as? CategoryWrapper)?.category,
-                        tags = chipTags.getTags(),
-                        placeId = placeId,
-                        price = etPrice.text.toString().toLongOrNull(),
-                        postPrivacyOptions = sharingOptions.asPostPrivacy,
-                        images = attachedImagesAdapter.dataStorage.toList()
-                )
+                viewModel.applyChanges(makePostModel())
             }
             tvShareOptions.setOnClickListener {
                 val post = post
@@ -299,6 +291,26 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
         }
     }
 
+    private fun makePostModel(): RawPostModel {
+        return with(requireNotNull(view)) {
+            val images = attachedImagesAdapter.dataStorage.toList()
+            RawPostModel(
+                    id = offerId,
+                    groupId = groupId,
+                    title = etTitle.text.toString(),
+                    text = etOffer.text.toString(),
+                    category = (sCategory.selectedItem as? CategoryWrapper)?.category,
+                    subCategory = (sSubCategory.selectedItem as? CategoryWrapper)?.category,
+                    tags = chipTags.getTags(),
+                    placeId = placeId,
+                    price = etPrice.text.toString().toLongOrNull(),
+                    privacy = sharingOptions.asPostPrivacy,
+                    imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
+                    uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
+            )
+        }
+    }
+
     private class CategoryWrapper(val category: OfferCategoryModel) {
         override fun toString(): String = category.name.toString()
     }
@@ -306,16 +318,22 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
     companion object {
         private const val EXTRA_OFFER = "EXTRA_OFFER"
         private const val EXTRA_OFFER_ID = "EXTRA_OFFER_ID"
+        private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
         private const val REQUEST_CODE_CROP = 101
         private const val MIN_OFFER_TITLE_LENGTH = 3
         private const val MIN_OFFER_DESCRIPTION_LENGTH = 3
 
-        fun newInstance() = CreateOfferController(Bundle())
+        fun newInstance(groupId: String? = null): CreateOfferController {
+            val args = Bundle()
+            groupId?.let { args.putString(EXTRA_GROUP_ID, it) }
+            return CreateOfferController(args)
+        }
 
         fun newInstance(offer: OfferPostModel): CreateOfferController {
             val args = Bundle()
             args.putSerializable(EXTRA_OFFER, offer)
             args.putString(EXTRA_OFFER_ID, offer.id)
+            args.putString(EXTRA_GROUP_ID, offer.groupId)
             return CreateOfferController(args)
         }
     }

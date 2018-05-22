@@ -1,6 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-</LinearLayout>
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_highlighted"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Light">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolbarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:titleEnabled="false"
+                app:toolbarId="@id/toolbar">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="?attr/actionBarSize"
+                    app:layout_collapseMode="parallax">
+
+                    <ImageView
+                        android:id="@+id/ivGroupAvatar"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="@dimen/spacing_vertical"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        tools:src="@drawable/empty_ava" />
+
+                    <TextView
+                        android:id="@+id/tvGroupTitle"
+                        style="@style/MnassaHeader1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignTop="@id/ivGroupAvatar"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:layout_marginStart="@dimen/spacing_horizontal"
+                        android:layout_toEndOf="@id/ivGroupAvatar"
+                        android:maxLines="2"
+                        tools:text="Title \n2\n3\n4" />
+
+                    <TextView
+                        android:id="@+id/tvGroupSubTitle"
+                        style="@style/MnassaHeader3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/ivGroupAvatar"
+                        android:layout_alignEnd="@id/tvGroupTitle"
+                        android:layout_alignStart="@id/tvGroupTitle"
+                        android:layout_below="@id/tvGroupTitle"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:maxLines="1"
+                        tools:text="Group subtitle" />
+
+                    <View
+                        android:id="@+id/vDivider"
+                        style="@style/MnassaDivider"
+                        android:layout_below="@id/ivGroupAvatar"
+                        android:layout_marginTop="@dimen/spacing_vertical" />
+
+                    <LinearLayout
+                        android:id="@+id/llCounters"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/vDivider"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            style="@style/Group.Profile.CounterContainer"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/tvMembersCount"
+                                style="@style/Group.Profile.Counter"
+                                tools:text="777" />
+
+                            <com.mnassa.widget.MnassaTextView
+                                style="@style/Group.Profile.CounterLabel"
+                                android:text="@string/groups_members_count" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            style="@style/Group.Profile.CounterContainer"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            style="@style/Group.Profile.CounterContainer"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        style="@style/MnassaShadow"
+                        android:layout_below="@id/llCounters" />
+
+                </RelativeLayout>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                    app:theme="@style/ToolbarColoredBackArrow"
+                    app:titleTextColor="@color/white"
+                    tools:title="Title long long long long long long long long long" />
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvGroupPosts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/item_news_feed_need" />
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/fabGroup"
+            style="@style/Fab.Menu"
+            android:layout_alignParentEnd="true"
+            android:paddingBottom="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="@dimen/spacing_vertical"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</FrameLayout>

@@ -1,6 +1,5 @@
 package com.mnassa.domain.interactor.impl
 
-import android.net.Uri
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
@@ -54,99 +53,51 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun resetCounter() = postsRepository.resetCounter()
 
-    override suspend fun createNeed(
-            text: String,
-            imagesToUpload: List<Uri>,
-            uploadedImages: List<String>,
-            privacy: PostPrivacyOptions,
-            tags: List<TagModel>,
-            price: Long?,
-            timeOfExpiration: Long?,
-            placeId: String?
-    ): PostModel {
-        val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
-        return postsRepository.createNeed(text, allImages, privacy, createTags(tags), price, timeOfExpiration, placeId)
+    override suspend fun createNeed(post: RawPostModel): PostModel {
+        return postsRepository.createNeed(post.copy(
+                processedImages = processImages(post),
+                processedTags = processTags(post)
+        ))
     }
 
-    override suspend fun updateNeed(
-            postId: String,
-            text: String,
-            imagesToUpload: List<Uri>,
-            uploadedImages: List<String>,
-            tags: List<TagModel>,
-            price: Long?,
-            placeId: String?) {
-        val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
-        postsRepository.updateNeed(postId, text, allImages, createTags(tags), price, placeId)
+    override suspend fun updateNeed(post: RawPostModel) {
+        postsRepository.updateNeed(post.copy(
+                processedImages = processImages(post),
+                processedTags = processTags(post)))
     }
 
-    override suspend fun createGeneralPost(
-            text: String,
-            imagesToUpload: List<Uri>,
-            uploadedImages: List<String>,
-            privacy: PostPrivacyOptions,
-            tags: List<TagModel>,
-            placeId: String?
-    ): PostModel {
-        val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
-        return postsRepository.createGeneralPost(text, allImages, privacy, createTags(tags), placeId)
+    override suspend fun createGeneralPost(post: RawPostModel): PostModel {
+        return postsRepository.createGeneralPost(post.copy(
+                processedImages = processImages(post),
+                processedTags = processTags(post)))
     }
 
-    override suspend fun updateGeneralPost(
-            postId: String,
-            text: String,
-            imagesToUpload: List<Uri>,
-            uploadedImages: List<String>,
-            tags: List<TagModel>,
-            placeId: String?
-    ) {
-        val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
-        postsRepository.updateGeneralPost(postId, text, allImages, createTags(tags), placeId)
+    override suspend fun updateGeneralPost(post: RawPostModel) {
+
+        postsRepository.updateGeneralPost(post.copy(
+                processedImages = processImages(post),
+                processedTags = processTags(post)))
     }
 
-    override suspend fun createOffer(
-            title: String,
-            offer: String,
-            category: OfferCategoryModel?,
-            subCategory: OfferCategoryModel?,
-            tags: List<TagModel>,
-            imagesToUpload: List<Uri>,
-            uploadedImages: List<String>,
-            placeId: String?,
-            price: Long?,
-            postPrivacyOptions: PostPrivacyOptions
-    ): OfferPostModel {
-        val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
-        return postsRepository.createOffer(title, offer, category, subCategory, createTags(tags), allImages, placeId, price, postPrivacyOptions)
+    override suspend fun createOffer(post: RawPostModel): OfferPostModel {
+
+        return postsRepository.createOffer(post.copy(
+                processedImages = processImages(post),
+                processedTags = processTags(post)))
     }
 
-    override suspend fun updateOffer(
-            postId: String,
-            title: String,
-            offer: String,
-            category: OfferCategoryModel?,
-            subCategory: OfferCategoryModel?,
-            tags: List<TagModel>,
-            imagesToUpload: List<Uri>,
-            uploadedImages: List<String>,
-            placeId: String?,
-            price: Long?,
-            postPrivacyOptions: PostPrivacyOptions
-    ) {
-        val allImages = uploadedImages + imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
-        return postsRepository.updateOffer(postId, title, offer, category, subCategory, createTags(tags), allImages, placeId, price, postPrivacyOptions)
+    override suspend fun updateOffer(post: RawPostModel) {
+        postsRepository.updateOffer(post.copy(
+                processedImages = processImages(post),
+                processedTags = processTags(post)))
+    }
+
+    override suspend fun createUserRecommendation(post: RawRecommendPostModel) {
+        postsRepository.createUserRecommendation(post)
+    }
+
+    override suspend fun updateUserRecommendation(post: RawRecommendPostModel) {
+        postsRepository.updateUserRecommendation(post)
     }
 
     override suspend fun getShareOfferPostPrice(): Long? = postsRepository.getShareOfferPostPrice()
@@ -155,11 +106,14 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun removePost(postId: String) = postsRepository.removePost(postId)
     override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel =
             postsRepository.repostPost(postId, text, privacy)
+
     override suspend fun hideInfoPost(postId: String) = postsRepository.hideInfoPost(postId)
     override suspend fun loadOfferCategories(): List<OfferCategoryModel> = postsRepository.loadOfferCategories()
     override suspend fun promote(post: PostModel) = postsRepository.promote(post)
 
-    private suspend fun createTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
+    private suspend fun processTags(post: RawPostModel): List<String> {
+        val customTagsAndTagsWithIds: List<TagModel> = post.tags
+
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
         val tags = arrayListOf<String>()
@@ -171,11 +125,11 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         return tags
     }
 
-    override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) =
-            postsRepository.createUserRecommendation(accountId, text, privacy)
-
-    override suspend fun updateUserRecommendation(postId: String, accountId: String, text: String) =
-            postsRepository.updateUserRecommendation(postId, accountId, text)
+    private suspend fun processImages(post: RawPostModel): List<String> {
+        return post.uploadedImages + post.imagesToUpload.map {
+            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+        }.map { it.await() }
+    }
 
     override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()
 

@@ -219,4 +219,8 @@
 
     <string name="_android_points_count_INFO">%d Points</string>
 
+    <string name="_android_groups_empty_title_INFO">No groups</string>
+    <string name="_android_groups_empty_description_INFO">You have no groups yet. Just ask sb for invite or create own group</string>
+    <string name="_myGroups_groupCell_isMember_INFO">You are a member</string>
+
 </resources>

@@ -112,6 +112,13 @@ object NetworkContract {
         const val EVENTS = "events"
         const val POSTS = "needs"
     }
+
+    object GroupInviteAction {
+        const val SEND = "send"
+        const val ACCEPT = "accept"
+        const val DECLINE = "decline"
+        const val LEAVE = "leave"
+    }
 }
 
 val PostPrivacyType.stringValue: String

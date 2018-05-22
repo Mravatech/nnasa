@@ -10,6 +10,7 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.RawPostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
 import com.mnassa.helper.DialogHelper
@@ -31,6 +32,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_need_create
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
+    private val groupId: String? by lazy { args.getString(EXTRA_GROUP_ID, null) }
     override val viewModel: CreateNeedViewModel by instance(arg = postId)
     override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
         set(value) {
@@ -63,15 +65,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.createPost(
-                        need = etNeed.text.toString(),
-                        tags = chipTags.getTags(),
-                        images = attachedImagesAdapter.dataStorage.toList(),
-                        placeId = placeId,
-                        price = etPrice.text.toString().toLongOrNull(),
-                        timeOfExpiration = postExpiresIn.millisTo,
-                        postPrivacyOptions = sharingOptions.asPostPrivacy
-                )
+                viewModel.applyChanges(makePostModel())
             }
             tvShareOptions.setOnClickListener {
                 val post = post
@@ -158,6 +152,24 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         super.onDestroyView(view)
     }
 
+    private fun makePostModel(): RawPostModel {
+        with(requireNotNull(view)) {
+            val images = attachedImagesAdapter.dataStorage.toList()
+            return RawPostModel(
+                    id = postId,
+                    groupId = groupId,
+                    text = etNeed.text.toString(),
+                    imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
+                    uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
+                    privacy = sharingOptions.asPostPrivacy,
+                    tags = chipTags.getTags(),
+                    price = etPrice.text.toString().toLongOrNull(),
+                    timeOfExpiration = postExpiresIn.millisTo,
+                    placeId = placeId
+            )
+        }
+    }
+
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
         val permissionsList = when (imageSource) {
             CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -202,12 +214,19 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_POST_TO_EDIT = "EXTRA_POST_TO_EDIT"
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
+        private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
 
-        fun newInstance() = CreateNeedController(Bundle())
+        fun newInstance(groupId: String? = null): CreateNeedController {
+            val args = Bundle()
+            groupId?.let { args.putString(EXTRA_GROUP_ID, it) }
+            return CreateNeedController(args)
+        }
+
         fun newInstanceEditMode(post: PostModel): CreateNeedController {
             val args = Bundle()
             args.putSerializable(EXTRA_POST_TO_EDIT, post)
             args.putString(EXTRA_POST_ID, post.id)
+            args.putString(EXTRA_GROUP_ID, post.groupId)
             return CreateNeedController(args)
         }
     }

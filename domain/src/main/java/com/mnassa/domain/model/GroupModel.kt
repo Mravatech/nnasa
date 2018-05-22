@@ -7,6 +7,7 @@ import java.io.Serializable
  */
 interface GroupModel : Model {
     val name: String
+    val description: String
     val type: GroupType
     val avatar: String?
     val creator: ShortAccountModel

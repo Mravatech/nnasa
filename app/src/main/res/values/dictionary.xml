@@ -530,7 +530,14 @@
     <string name="points_count">_android_points_count</string>
 
     <!-- ============================================ GROUPS ==================================== -->
-    <string name="groups_requests">_connectionsList_groupHeader_requested</string>
-    <string name="groups_all_my">_connectionsList_groupHeader_connected</string>
+    <string name="groups_title">_myGroups_navTitle</string>
+    <string name="groups_requests">_myGroups_sectionInvited_title</string>
+    <string name="groups_all_my">_myGroups_sectionMy_title</string>
+    <string name="groups_empty_title">_android_groups_empty_title</string>
+    <string name="groups_empty_description">_android_groups_empty_description</string>
+    <string name="group_is_admin">_myGroups_groupCell_isAdmin</string>
+    <string name="group_is_member">_myGroups_groupCell_isMember</string>
+    <string name="group_leave">_group_menu_leave</string>
+    <string name="groups_members_count">_community_header_members</string>
 
 </resources>

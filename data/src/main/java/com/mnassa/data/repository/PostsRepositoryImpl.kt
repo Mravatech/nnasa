@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
@@ -79,7 +80,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
                 .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = { mapPost(it) }
+                        mapper = { mapPost(it, groupId) }
                 )
     }
 
@@ -115,153 +116,61 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         return loadById(id, accountId).consume { receive() }
     }
 
-    override suspend fun sendViewed(ids: List<String>) {
-        postApi.viewItems(ViewItemsRequest(ids, NetworkContract.EntityType.POST)).handleException(exceptionHandler)
-    }
+    override suspend fun sendViewed(ids: List<String>) = postApi.viewItems(ViewItemsRequest(ids, NetworkContract.EntityType.POST)).handleException(exceptionHandler).run { Unit }
+    override suspend fun sendOpened(ids: List<String>) = postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler).run { Unit }
+    override suspend fun resetCounter() = postApi.resetCounter(ResetCounterRequest(NetworkContract.ResetCounter.POSTS)).handleException(exceptionHandler).run { Unit }
 
-    override suspend fun sendOpened(ids: List<String>) {
-        postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler)
-    }
+    override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it) }
+    override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post).run { Unit }
+    override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it) }
+    override suspend fun updateGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post).run { Unit }
+    override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it) }
+    override suspend fun updateOffer(post: RawPostModel) = processPost(NetworkContract.PostType.OFFER, post).run { Unit }
 
-    override suspend fun resetCounter() {
-        postApi.resetCounter(ResetCounterRequest(NetworkContract.ResetCounter.POSTS)).handleException(exceptionHandler)
-    }
-
-    override suspend fun createNeed(
-            text: String,
-            uploadedImagesUrls: List<String>,
-            privacy: PostPrivacyOptions,
-            tags: List<String>,
-            price: Long?,
-            timeOfExpiration: Long?,
-            placeId: String?
-    ): PostModel {
-        val result = postApi.createPost(CreatePostRequest(
-                type = NetworkContract.PostType.NEED,
-                text = text,
-                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                privacyType = privacy.privacyType.stringValue,
-                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC,
-                tags = tags,
-                price = price,
-                timeOfExpiration = timeOfExpiration,
-                location = placeId
+    override suspend fun createUserRecommendation(post: RawRecommendPostModel) {
+        postApi.createPost(CreatePostRequest(
+                type = NetworkContract.PostType.ACCOUNT,
+                accountForRecommendation = post.accountId,
+                text = post.text,
+                privacyType = post.privacy.privacyType.stringValue,
+                privacyConnections = post.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                allConnections = post.privacy.privacyType is PostPrivacyType.PUBLIC
         )).handleException(exceptionHandler)
-        return result.data.run { converter.convert(this) }
     }
 
-    override suspend fun updateNeed(
-            postId: String,
-            text: String,
-            uploadedImagesUrls: List<String>,
-            tags: List<String>,
-            price: Long?,
-            placeId: String?
-    ) {
+    override suspend fun updateUserRecommendation(post: RawRecommendPostModel) {
         postApi.changePost(CreatePostRequest(
-                postId = postId,
-                type = NetworkContract.PostType.NEED,
-                text = text,
-                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                tags = tags,
-                price = price,
-                location = placeId
+                type = NetworkContract.PostType.ACCOUNT,
+                accountForRecommendation = post.accountId,
+                text = post.text,
+                postId = post.postId
         )).handleException(exceptionHandler)
     }
 
-    override suspend fun createGeneralPost(
-            text: String,
-            uploadedImagesUrls: List<String>,
-            privacy: PostPrivacyOptions,
-            tags: List<String>,
-            placeId: String?
-    ): PostModel {
-        val result = postApi.createPost(CreatePostRequest(
-                type = NetworkContract.PostType.GENERAL,
-                text = text,
-                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                privacyType = privacy.privacyType.stringValue,
-                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC,
-                tags = tags,
-                location = placeId
-        )).handleException(exceptionHandler)
-        return result.data.run { converter.convert(this) }
-    }
+    private suspend fun processPost(postType: String, postModel: RawPostModel): Any {
+        val request = CreatePostRequest(
+                type = postType,
+                postId = postModel.id,
+                groups = postModel.groupId?.let { listOf(it) },
+                text = postModel.text,
+                location = postModel.placeId,
+                tags = postModel.processedTags.takeIf { it.isNotEmpty() },
+                images = postModel.processedImages.takeIf { it.isNotEmpty() },
+                privacyType = postModel.privacy.privacyType.stringValue,
+                allConnections = postModel.privacy.privacyType is PostPrivacyType.PUBLIC,
+                privacyConnections = postModel.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                price = postModel.price,
+                timeOfExpiration = postModel.timeOfExpiration,
+                //offer:
+                title = postModel.title,
+                category = postModel.category?.name?.engTranslate, //TODO: move to category.id (backend, iOS)
+                subcategory = postModel.subCategory?.name?.engTranslate
+        )
 
-    override suspend fun updateGeneralPost(
-            postId: String,
-            text: String,
-            uploadedImagesUrls: List<String>,
-            tags: List<String>,
-            placeId: String?
-    ) {
-        postApi.changePost(CreatePostRequest(
-                postId = postId,
-                type = NetworkContract.PostType.GENERAL,
-                text = text,
-                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                tags = tags,
-                location = placeId
-        )).handleException(exceptionHandler)
-    }
+        return if (postModel.id == null) {
+            postApi.createPost(request).handleException(exceptionHandler).data
+        } else postApi.changePost(request).handleException(exceptionHandler)
 
-    override suspend fun createOffer(
-            title: String,
-            offer: String,
-            category: OfferCategoryModel?,
-            subCategory: OfferCategoryModel?,
-            tags: List<String>,
-            uploadedImagesUrls: List<String>,
-            placeId: String?,
-            price: Long?,
-            postPrivacyOptions: PostPrivacyOptions
-    ): OfferPostModel {
-        val result = postApi.createPost(CreatePostRequest(
-                title = title,
-                text = offer,
-                type = NetworkContract.PostType.OFFER,
-                category = category?.name?.engTranslate, //TODO: move to category.id (backend, iOS)
-                subcategory = subCategory?.name?.engTranslate,
-                tags = tags,
-                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                location = placeId,
-                price = price,
-                privacyType = postPrivacyOptions.privacyType.stringValue,
-                privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = postPrivacyOptions.privacyType is PostPrivacyType.PUBLIC
-        )).handleException(exceptionHandler)
-        return result.data.run { converter.convert(this) }
-    }
-
-    override suspend fun updateOffer(
-            postId: String,
-            title: String,
-            offer: String,
-            category: OfferCategoryModel?,
-            subCategory: OfferCategoryModel?,
-            tags: List<String>,
-            uploadedImagesUrls: List<String>,
-            placeId: String?,
-            price: Long?,
-            postPrivacyOptions: PostPrivacyOptions
-    ) {
-        postApi.changePost(CreatePostRequest(
-                postId = postId,
-                title = title,
-                text = offer,
-                type = NetworkContract.PostType.OFFER,
-                category = category?.name?.engTranslate, //TODO: move to category.id (backend, iOS)
-                subcategory = subCategory?.name?.engTranslate,
-                tags = tags,
-                images = uploadedImagesUrls.takeIf { it.isNotEmpty() },
-                location = placeId,
-                price = price,
-                privacyType = postPrivacyOptions.privacyType.stringValue,
-                privacyConnections = postPrivacyOptions.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = postPrivacyOptions.privacyType is PostPrivacyType.PUBLIC
-        )).handleException(exceptionHandler)
     }
 
     override suspend fun getShareOfferPostPrice(): Long? {
@@ -287,26 +196,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun promote(post: PostModel) {
         postApi.promote(PromotePostRequest(post.id, converter.convert(post.type))).handleException(exceptionHandler)
-    }
-
-    override suspend fun createUserRecommendation(accountId: String, text: String, privacy: PostPrivacyOptions) {
-        postApi.createPost(CreatePostRequest(
-                type = NetworkContract.PostType.ACCOUNT,
-                accountForRecommendation = accountId,
-                text = text,
-                privacyType = privacy.privacyType.stringValue,
-                privacyConnections = privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = privacy.privacyType is PostPrivacyType.PUBLIC
-        )).handleException(exceptionHandler)
-    }
-
-    override suspend fun updateUserRecommendation(postId: String, accountId: String, text: String) {
-        postApi.changePost(CreatePostRequest(
-                type = NetworkContract.PostType.ACCOUNT,
-                accountForRecommendation = accountId,
-                text = text,
-                postId = postId
-        )).handleException(exceptionHandler)
     }
 
     override suspend fun removePost(postId: String) {
@@ -340,10 +229,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .map { converter.convert(it, OfferCategoryModel::class.java) }
     }
 
-    private suspend fun mapPost(input: PostDbEntity): PostModel {
-        val out: PostModel = converter.convert(input)
+    private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel {
+        val out: PostModel = converter.convert(input, PostAdditionInfo(groupId))
         if (out is RecommendedProfilePostModel) {
-            //TODO: create converter, which supports suspend functions
             val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
             out.offers = offerIds.mapNotNull { tagRepository.get(it) }
         }
