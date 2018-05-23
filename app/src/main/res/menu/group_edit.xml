@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <!-- Titles sets programmatically -->
-
     <item
-        android:id="@+id/action_share_profile"
+        android:id="@+id/action_group_details"
         android:title="" />
     <item
-        android:id="@+id/action_complain_about_profile"
+        android:id="@+id/action_group_edit"
         android:title="" />
     <item
-        android:id="@+id/action_invite_to_group_profile"
+        android:id="@+id/action_invite_members"
         android:title="" />
 </menu>

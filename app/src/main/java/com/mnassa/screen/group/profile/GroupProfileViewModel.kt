@@ -16,4 +16,5 @@ interface GroupProfileViewModel : MnassaViewModel {
     val permissionsChannel: BroadcastChannel<PermissionsModel>
     fun onAttachedToWindow(post: PostModel)
     fun hideInfoPost(post: PostModel)
+    fun leave()
 }

@@ -114,10 +114,13 @@ object NetworkContract {
     }
 
     object GroupInviteAction {
-        const val SEND = "send"
-        const val ACCEPT = "accept"
-        const val DECLINE = "decline"
+        const val INVITE = "invite"
+        const val ACCEPT_INVITE = "acceptInvite"
+        const val DECLINE_INVITE = "declineInvite"
         const val LEAVE = "leave"
+        const val REMOVE = "remove"
+        const val MAKE_ADMIN = "makeAdmin"
+        const val UN_MAKE_ADMIN = "unmakeAdmin"
     }
 }
 

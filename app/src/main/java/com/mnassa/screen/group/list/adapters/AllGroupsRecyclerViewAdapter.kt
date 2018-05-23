@@ -6,17 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.GroupModel
-import com.mnassa.extensions.avatarRound
-import com.mnassa.extensions.formattedName
-import com.mnassa.extensions.formattedRole
-import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.android.synthetic.main.item_connections_all.view.*
 
 /**
  * Created by Peter on 3/7/2018.
  */
-class AllGroupsRecyclerViewAdapter(private val withHeader: Boolean = false) : BasePaginationRVAdapter<GroupModel>(), View.OnClickListener {
+class AllGroupsRecyclerViewAdapter(
+        private val withHeader: Boolean = false,
+        private val withGroupOptions: Boolean = true) : BasePaginationRVAdapter<GroupModel>(), View.OnClickListener {
     var onItemOptionsClickListener = { account: GroupModel, sender: View -> }
     var onItemClickListener = { account: GroupModel -> }
     var onBindHeader = { header: View -> }
@@ -28,7 +27,7 @@ class AllGroupsRecyclerViewAdapter(private val withHeader: Boolean = false) : Ba
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GroupModel> =
-            GroupViewHolder.newInstance(parent, this)
+            GroupViewHolder.newInstance(parent, this, withGroupOptions)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<GroupModel> {
         return if (viewType == TYPE_HEADER && withHeader) HeaderHolder.newInstance(parent) else super.onCreateViewHolder(parent, viewType)
@@ -89,8 +88,9 @@ class AllGroupsRecyclerViewAdapter(private val withHeader: Boolean = false) : Ba
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup, clickListener: View.OnClickListener): GroupViewHolder {
+            fun newInstance(parent: ViewGroup, clickListener: View.OnClickListener, withOptions: Boolean): GroupViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_connections_all, parent, false)
+                view.btnMoreOptions.isGone = !withOptions
                 return GroupViewHolder(view, clickListener)
             }
         }

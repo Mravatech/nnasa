@@ -49,7 +49,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
         newConnectionRequestsAdapter.onItemClickListener = { open(GroupDetailsController.newInstance(it)) }
         newConnectionRequestsAdapter.onShowAllClickListener = { open(GroupConnectionRequestsController.newInstance()) }
 
-        allGroupsAdapter.isLoadingEnabled = savedInstanceState == null
+        allGroupsAdapter.isLoadingEnabled = true
         allGroupsAdapter.onBindHeader = { bindHeader(it) }
         allGroupsAdapter.onItemOptionsClickListener = { item, view -> openGroupItemMenu(item, view) }
         allGroupsAdapter.onItemClickListener = { open(GroupProfileController.newInstance(it)) }
@@ -62,7 +62,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
         }
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.groupConnectionRequestsChannel.consumeEach {
-                newConnectionRequestsAdapter.setWithMaxRange(it, MAX_RECOMMENDED_ITEMS_COUNT)
+                newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTS_COUNT)
             }
         }
 
@@ -162,8 +162,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
     }
 
     companion object {
-        private const val MAX_RECOMMENDED_ITEMS_COUNT = 10
-        private const val MAX_REQUESTED_ITEMS_COUNT = 2
+        private const val MAX_REQUESTS_COUNT = 3
 
         fun newInstance() = GroupListController()
     }

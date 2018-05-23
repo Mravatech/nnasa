@@ -79,7 +79,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view)
+        super.onViewCreated(view, savedInstanceState)
 
         with(view) {
             vpMain.adapter = adapter

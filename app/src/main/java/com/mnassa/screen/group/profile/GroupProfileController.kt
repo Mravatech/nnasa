@@ -9,11 +9,11 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
-import com.mnassa.extensions.avatarRound
-import com.mnassa.extensions.formattedName
-import com.mnassa.extensions.formattedRole
-import com.mnassa.extensions.isGone
+import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.group.create.CreateGroupController
+import com.mnassa.screen.group.details.GroupDetailsController
+import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
@@ -33,10 +33,10 @@ import org.kodein.di.generic.instance
 class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileViewModel>(args) {
     override val layoutId: Int = R.layout.controller_group_profile
     private val groupId: String by lazy { args.getString(EXTRA_GROUP_ID) }
+    private var groupModel: GroupModel = args.getSerializable(EXTRA_GROUP) as GroupModel
+
     override val viewModel: GroupProfileViewModel by instance(arg = groupId)
     private val adapter = PostsRVAdapter()
-    private var groupModel: GroupModel? = null
-
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -59,19 +59,15 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view)
+        super.onViewCreated(view, savedInstanceState)
 
         with(view) {
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-            llGroupMembers.setOnClickListener { groupModel?.let { open(GroupMembersController.newInstance(it)) } }
+            llGroupMembers.setOnClickListener { open(GroupMembersController.newInstance(groupModel)) }
         }
 
-        launchCoroutineUI {
-            viewModel.groupChannel.consumeEach { bindGroup(it, view) }
-        }
-
+        launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-
 
         ///
         view.rvGroupPosts.adapter = adapter
@@ -115,11 +111,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         ///
 
         initFab(view)
-
-        if (args.containsKey(EXTRA_GROUP)) {
-            bindGroup(args.getSerializable(EXTRA_GROUP) as GroupModel, view)
-            args.remove(EXTRA_GROUP)
-        }
+        bindGroup(groupModel, view)
     }
 
     private fun initFab(view: View) {
@@ -198,12 +190,42 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             toolbar.title = tvGroupTitle.text
 
             tvMembersCount.text = group.numberOfParticipants.toString()
+            initToolbar(view)
+        }
+    }
+
+    private fun initToolbar(view: View) {
+        with(view) {
+            toolbar.menu?.clear()
+            if (groupModel.isAdmin) {
+                toolbar.inflateMenu(R.menu.group_edit)
+            } else {
+                toolbar.inflateMenu(R.menu.group_view)
+            }
+
+            toolbar.menu.apply {
+                findItem(R.id.action_group_edit)?.title = fromDictionary(R.string.group_menu_edit)
+                findItem(R.id.action_group_details)?.title = fromDictionary(R.string.group_menu_details)
+                findItem(R.id.action_invite_members)?.title = fromDictionary(R.string.group_menu_invite)
+                findItem(R.id.action_group_leave)?.title = fromDictionary(R.string.group_menu_leave)
+            }
+
+            toolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.action_group_edit -> open(CreateGroupController.newInstance(groupModel))
+                    R.id.action_group_details -> open(GroupDetailsController.newInstance(groupModel))
+                    R.id.action_invite_members -> open(GroupInviteConnectionsController.newInstance(groupModel))
+                    R.id.action_group_leave -> viewModel.leave()
+                }
+                true
+            }
         }
     }
 
     companion object {
         private const val EXTRA_GROUP = "EXTRA_GROUP"
         private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val EXTRA_IS_ADMIN = "EXTRA_IS_ADMIN"
 
         fun newInstance(group: GroupModel): GroupProfileController {
             val args = Bundle()

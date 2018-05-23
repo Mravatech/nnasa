@@ -71,7 +71,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view)
+        super.onViewCreated(view, savedInstanceState)
         playServiceHelper.googleApiClient.connect()
 
         attachedImagesAdapter.onAddImageClickListener = {

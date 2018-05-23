@@ -11,10 +11,14 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface GroupsInteractor {
     suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>>
     suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>>
+
     suspend fun sendInvite(groupId: String, accountIds: List<String>)
     suspend fun acceptInvite(groupId: String)
     suspend fun declineInvite(groupId: String)
     suspend fun leaveGroup(groupId: String)
+    suspend fun removeMember(groupId: String, memberId: String)
+    suspend fun makeAdmin(groupId: String, memberId: String)
+    suspend fun unMakeAdmin(groupId: String, memberId: String)
 
     suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?>
     suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>>

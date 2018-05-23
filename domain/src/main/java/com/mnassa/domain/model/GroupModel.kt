@@ -12,11 +12,11 @@ interface GroupModel : Model {
     val type: GroupType
     val avatar: String?
     val creator: ShortAccountModel
-    val isAdmin: Boolean
     val admins: List<String>
     val numberOfParticipants: Long
     val website: String?
     val locationPlace: LocationPlaceModel?
+    val tags: List<String>
 }
 
 sealed class GroupType : Serializable {
@@ -31,5 +31,8 @@ data class RawGroupModel(
         val placeId: String?,
         val website: String?,
         val avatarToUpload: Uri?,
-        val avatarUploaded: String?
+        val avatarUploaded: String?,
+        val tags: List<TagModel>,
+
+        val processedTags: List<String> = emptyList()
 ): Serializable

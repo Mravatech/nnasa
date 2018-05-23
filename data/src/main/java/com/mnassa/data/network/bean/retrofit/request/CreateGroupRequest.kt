@@ -11,5 +11,6 @@ data class CreateGroupRequest(
         @SerializedName("avatar") val avatar: String?,
         @SerializedName("website") val website: String?,
         @SerializedName("location") val location: String?,
-        @SerializedName("communityId") val communityId: String?
+        @SerializedName("communityId") val communityId: String?,
+        @SerializedName("tags") val tags: List<String>?
 )

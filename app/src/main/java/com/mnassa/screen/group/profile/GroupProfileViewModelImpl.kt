@@ -76,6 +76,15 @@ class GroupProfileViewModelImpl(
         }
     }
 
+    override fun leave() {
+        handleException {
+            withProgressSuspend {
+                groupsInteractor.leaveGroup(groupId)
+            }
+            closeScreenChannel.send(Unit)
+        }
+    }
+
     private fun resetCounter() {
         handleException {
             postsInteractor.resetCounter()

@@ -1,5 +1,6 @@
 package com.mnassa.screen.group.members
 
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -9,4 +10,9 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface GroupMembersViewModel : MnassaViewModel {
     val groupMembersChannel: BroadcastChannel<List<ShortAccountModel>>
+    val groupChannel: BroadcastChannel<GroupModel>
+
+    fun removeMember(member: ShortAccountModel)
+    fun makeAdmin(member: ShortAccountModel)
+    fun unMakeAdmin(member: ShortAccountModel)
 }

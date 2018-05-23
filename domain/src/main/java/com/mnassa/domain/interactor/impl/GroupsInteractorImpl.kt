@@ -2,10 +2,8 @@ package com.mnassa.domain.interactor.impl
 
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.StorageInteractor
-import com.mnassa.domain.model.FOLDER_GROUPS
-import com.mnassa.domain.model.GroupModel
-import com.mnassa.domain.model.RawGroupModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.GroupsRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -14,7 +12,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  * Created by Peter on 5/21/2018.
  */
 class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
-                           private val storageInteractor: StorageInteractor) : GroupsInteractor {
+                           private val storageInteractor: StorageInteractor,
+                           private val tagInteractor: TagInteractor) : GroupsInteractor {
 
     override suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>> = groupsRepository.getMyGroups()
 
@@ -28,13 +27,23 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
 
     override suspend fun leaveGroup(groupId: String) = groupsRepository.leaveGroup(groupId)
 
+    override suspend fun removeMember(groupId: String, memberId: String) = groupsRepository.removeFromGroup(groupId, listOf(memberId))
+
+    override suspend fun makeAdmin(groupId: String, memberId: String) = groupsRepository.makeAdmin(groupId, listOf(memberId))
+
+    override suspend fun unMakeAdmin(groupId: String, memberId: String) = groupsRepository.unMakeAdmin(groupId, listOf(memberId))
+
     override suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?> = groupsRepository.getGroup(groupId)
 
     override suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>> = groupsRepository.getGroupMembers(groupId)
 
-    override suspend fun createGroup(group: RawGroupModel): GroupModel = groupsRepository.createGroup(group.copy(avatarUploaded = uploadAvatar(group)))
+    override suspend fun createGroup(group: RawGroupModel): GroupModel = groupsRepository.createGroup(group.copy(
+            avatarUploaded = uploadAvatar(group),
+            processedTags = processTags(group)))
 
-    override suspend fun updateGroup(group: RawGroupModel) = groupsRepository.updateGroup(group.copy(avatarUploaded = uploadAvatar(group)))
+    override suspend fun updateGroup(group: RawGroupModel) = groupsRepository.updateGroup(group.copy(
+            avatarUploaded = uploadAvatar(group),
+            processedTags = processTags(group)))
 
     private suspend fun uploadAvatar(group: RawGroupModel): String? {
         if (group.avatarToUpload == null) {
@@ -42,5 +51,19 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
         }
 
         return storageInteractor.sendImage(StoragePhotoDataImpl(group.avatarToUpload, FOLDER_GROUPS))
+    }
+
+    private suspend fun processTags(post: RawGroupModel): List<String> {
+        val customTagsAndTagsWithIds: List<TagModel> = post.tags
+
+        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
+        val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
+        val tags = arrayListOf<String>()
+        if (customTags.isNotEmpty()) {
+            val newTags = tagInteractor.createCustomTagIds(customTags)
+            tags.addAll(newTags)
+        }
+        tags.addAll(existsTags)
+        return tags
     }
 }

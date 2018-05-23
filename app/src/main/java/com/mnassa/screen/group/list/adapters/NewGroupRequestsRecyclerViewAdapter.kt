@@ -122,7 +122,7 @@ class NewGroupRequestsRecyclerViewAdapter : BasePaginationRVAdapter<GroupModel>(
         }
 
         fun setMoreCounter(count: Int) {
-            itemView.btnShowMore.text = fromDictionary(R.string.tab_connections_new_requests_more).format(count + 1)
+            itemView.btnShowMore.text = fromDictionary(R.string.group_invites_more).format(count + 1)
         }
 
         companion object {

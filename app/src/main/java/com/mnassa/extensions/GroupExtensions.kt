@@ -21,3 +21,5 @@ val GroupModel.formattedName: CharSequence get() = name
 fun GroupModel.isMyGroup(): Boolean {
     return creator.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
 }
+
+val GroupModel.isAdmin: Boolean get() = admins.contains(App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull())

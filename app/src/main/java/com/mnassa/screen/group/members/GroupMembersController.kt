@@ -5,8 +5,10 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.isInvisible
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.profile.ProfileController
@@ -21,8 +23,10 @@ import org.kodein.di.generic.instance
 class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersViewModel>(args) {
     override val layoutId: Int = R.layout.controller_group_members
     private val groupId by lazy { args.getString(EXTRA_GROUP_ID) }
+    private var group = args.getSerializable(EXTRA_GROUP) as GroupModel
     override val viewModel: GroupMembersViewModel by instance(arg = groupId)
     private val adapter = AllConnectionsRecyclerViewAdapter()
+    private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,7 +38,7 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
             })
         }
 
-        adapter.onItemOptionsClickListener = { shortAccountModel, view ->  }
+        adapter.onItemOptionsClickListener = { shortAccountModel, view -> showGroupMemberMenu(shortAccountModel, view) }
         adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
         adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
@@ -45,6 +49,16 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
                 view.rvGroupConnections.isInvisible = it.isEmpty()
             }
         }
+
+        launchCoroutineUI { viewModel.groupChannel.consumeEach { group = it } }
+    }
+
+    private fun showGroupMemberMenu(account: ShortAccountModel, sender: View) {
+        popupMenuHelper.showGroupMemberMenu(sender, group, account,
+                onRemove = { viewModel.removeMember(account) },
+                onAdmin = { viewModel.makeAdmin(account) },
+                onMember = { viewModel.unMakeAdmin(account) }
+        )
     }
 
     override fun onDestroyView(view: View) {

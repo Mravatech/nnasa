@@ -17,7 +17,8 @@ internal data class GroupDbEntity(
         @SerializedName("admins") val admins: List<String>?,
         @SerializedName("author") val author: ShortAccountDbEntity?,
         @SerializedName("website") val website: String?,
-        @SerializedName("location") var location: LocationDbEntity?
+        @SerializedName("location") var location: LocationDbEntity?,
+        @SerializedName("tags") var tags: List<String>?
 ) : HasId
 
 internal data class GroupCounters(

@@ -12,7 +12,7 @@ import retrofit2.http.*
  */
 interface FirebaseGroupsApi {
 
-    @POST("communityInviteAction")
+    @POST("manageCommunityMembers")
     fun inviteAction(@Body request: GroupConnectionRequest): Deferred<MnassaResponse>
 
     @POST("community")

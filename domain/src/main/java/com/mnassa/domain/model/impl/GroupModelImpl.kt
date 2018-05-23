@@ -14,11 +14,11 @@ data class GroupModelImpl(
         override val description: String,
         override val type: GroupType,
         override val avatar: String?,
-        override val isAdmin: Boolean,
         override val admins: List<String>,
         override val numberOfParticipants: Long,
         override val creator: ShortAccountModel,
         override val website: String?,
-        override val locationPlace: LocationPlaceModel?
+        override val locationPlace: LocationPlaceModel?,
+        override val tags: List<String>
 ) : GroupModel {
 }

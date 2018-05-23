@@ -49,7 +49,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 app:counterEnabled="true"
                 app:counterMaxLength="@integer/max_group_description_length"
                 tools:hint="About group">
@@ -69,7 +68,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 tools:hint="Website">
 
                 <android.support.design.widget.TextInputEditText
@@ -80,6 +78,11 @@
                     android:inputType="textUri" />
             </android.support.design.widget.TextInputLayout>
 
+            <com.mnassa.widget.ChipLayout
+                android:id="@+id/chipTags"
+                style="@style/Registration.ChipLayout"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -175,7 +178,6 @@
                 style="@style/Registration.TextInputLayout"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
                 app:errorEnabled="false"
                 tools:hint="City">
 

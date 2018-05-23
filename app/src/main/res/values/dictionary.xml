@@ -546,5 +546,16 @@
     <string name="group_create_title">_groupEdit_navbarTitle_create</string>
     <string name="group_edit_title">_groupEdit_navbarTitle_edit</string>
     <string name="group_save_changes">_groupEdit_navbar_save</string>
+    <string name="group_menu_details">_groupNewsfeed_menu_details</string>
+    <string name="group_menu_edit">_groupNewsfeed_menu_edit</string>
+    <string name="group_menu_invite">_groupNewsfeed_menu_invite</string>
+    <string name="group_menu_leave">_groupNewsfeed_menu_leave</string>
+    <string name="group_select_title">_groupSelection_navTitle</string>
+    <string name="group_select_apply">_accountSelector_rigthButton_Apply</string>
+    <string name="group_remove_member">_group_member_remove</string>
+    <string name="group_member_admin">_group_member_admin</string>
+    <string name="group_member_un_admin">_group_member_un_admin</string>
+    <string name="group_invites_more">_group_invites_more</string>
+    <string name="group_invite_profile_menu">_profile_menu_inviteToGroup</string>
 
 </resources>

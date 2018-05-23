@@ -51,7 +51,7 @@ class GroupsRepositoryImpl(
 
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) {
         api.inviteAction(GroupConnectionRequest(
-                action = NetworkContract.GroupInviteAction.SEND,
+                action = NetworkContract.GroupInviteAction.INVITE,
                 groupId = groupId,
                 accounts = accountIds
         )).handleException(exceptionHandler)
@@ -59,14 +59,14 @@ class GroupsRepositoryImpl(
 
     override suspend fun acceptInvite(groupId: String) {
         api.inviteAction(GroupConnectionRequest(
-                action = NetworkContract.GroupInviteAction.ACCEPT,
+                action = NetworkContract.GroupInviteAction.ACCEPT_INVITE,
                 groupId = groupId
         )).handleException(exceptionHandler)
     }
 
     override suspend fun declineInvite(groupId: String) {
         api.inviteAction(GroupConnectionRequest(
-                action = NetworkContract.GroupInviteAction.DECLINE,
+                action = NetworkContract.GroupInviteAction.DECLINE_INVITE,
                 groupId = groupId
         )).handleException(exceptionHandler)
     }
@@ -75,6 +75,30 @@ class GroupsRepositoryImpl(
         api.inviteAction(GroupConnectionRequest(
                 action = NetworkContract.GroupInviteAction.LEAVE,
                 groupId = groupId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun removeFromGroup(groupId: String, accountIds: List<String>) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.REMOVE,
+                groupId = groupId,
+                accounts = accountIds
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun makeAdmin(groupId: String, accountIds: List<String>) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.MAKE_ADMIN,
+                groupId = groupId,
+                accounts = accountIds
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun unMakeAdmin(groupId: String, accountIds: List<String>) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.UN_MAKE_ADMIN,
+                groupId = groupId,
+                accounts = accountIds
         )).handleException(exceptionHandler)
     }
 
@@ -120,11 +144,11 @@ class GroupsRepositoryImpl(
                 type = GroupType.Private(),
                 admins = input.admins
                         ?: (if (input.isAdmin == true) listOf(currentUserId) else emptyList()),
-                isAdmin = input.isAdmin == true,
                 numberOfParticipants = input.counters?.numberOfParticipants ?: 0L,
                 creator = creator!!,
                 website = input.website,
-                locationPlace = input.location?.let { converter.convert(it, LocationPlaceModel::class.java) })
+                locationPlace = input.location?.let { converter.convert(it, LocationPlaceModel::class.java) },
+                tags = input.tags ?: emptyList())
     }
 
     private fun makeRequest(group: RawGroupModel): CreateGroupRequest {
@@ -134,7 +158,8 @@ class GroupsRepositoryImpl(
                 title = group.title,
                 website = group.website,
                 location = group.placeId,
-                avatar = group.avatarUploaded
+                avatar = group.avatarUploaded,
+                tags = group.processedTags
         )
     }
 }

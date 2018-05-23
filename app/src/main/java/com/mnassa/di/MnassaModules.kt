@@ -78,6 +78,8 @@ import com.mnassa.screen.group.create.CreateGroupViewModel
 import com.mnassa.screen.group.create.CreateGroupViewModelImpl
 import com.mnassa.screen.group.details.GroupDetailsViewModel
 import com.mnassa.screen.group.details.GroupDetailsViewModelImpl
+import com.mnassa.screen.group.invite.GroupInviteConnectionsViewModel
+import com.mnassa.screen.group.invite.GroupInviteConnectionsViewModelImpl
 import com.mnassa.screen.group.list.GroupListViewModel
 import com.mnassa.screen.group.list.GroupListViewModelImpl
 import com.mnassa.screen.group.members.GroupMembersViewModel
@@ -86,6 +88,8 @@ import com.mnassa.screen.group.profile.GroupProfileViewModel
 import com.mnassa.screen.group.profile.GroupProfileViewModelImpl
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModel
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModelImpl
+import com.mnassa.screen.group.select.SelectGroupViewModel
+import com.mnassa.screen.group.select.SelectGroupViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
 import com.mnassa.screen.invite.InviteViewModel
@@ -185,7 +189,7 @@ private val viewModelsModule = Kodein.Module {
     bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl(instance(), instance()) }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance(), instance()) }
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
-    bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance()) }
+    bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance()) }
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance()) }
@@ -253,8 +257,10 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
     bind<GroupDetailsViewModel>() with provider { GroupDetailsViewModelImpl() }
-    bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance()) }
+    bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance(), instance()) }
+    bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
+    bind<SelectGroupViewModel>() with provider { SelectGroupViewModelImpl(instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -338,7 +344,7 @@ private val interactorModule = Kodein.Module {
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
-    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance()) }
+    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"

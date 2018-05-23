@@ -16,6 +16,9 @@ interface GroupsRepository {
     suspend fun acceptInvite(groupId: String)
     suspend fun declineInvite(groupId: String)
     suspend fun leaveGroup(groupId: String)
+    suspend fun removeFromGroup(groupId: String, accountIds: List<String>)
+    suspend fun makeAdmin(groupId: String, accountIds: List<String>)
+    suspend fun unMakeAdmin(groupId: String, accountIds: List<String>)
     //
     suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?>
     suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>>

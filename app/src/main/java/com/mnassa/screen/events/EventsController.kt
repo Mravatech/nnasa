@@ -48,7 +48,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view)
+        super.onViewCreated(view, savedInstanceState)
 
         view.rvEvents.adapter = adapter
 

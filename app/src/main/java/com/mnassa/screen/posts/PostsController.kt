@@ -57,7 +57,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view)
+        super.onViewCreated(view, savedInstanceState)
 
         view.rvNewsFeed.adapter = adapter
 

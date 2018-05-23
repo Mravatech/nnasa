@@ -20,6 +20,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_group_create.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -72,6 +73,9 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             toolbar.withActionButton(fromDictionary(R.string.group_save_changes)) {
                 viewModel.applyChanges(makeGroupModel())
             }
+
+            chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
+            chipTags.chipSearch = viewModel
         }
 
         launchCoroutineUI { viewModel.closeScreenChanel.consumeEach { close() } }
@@ -110,6 +114,8 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
 
             placeId = group.locationPlace?.placeId
             actvPlace.setText(group.locationPlace?.placeName?.toString())
+
+            launchCoroutineUI { chipTags.setTags(group.tags.mapNotNull { viewModel.getTag(it) }) }
 
             bindAvatar(group.avatar?.let { AttachedImage.UploadedImage(it) }, view)
         }
@@ -158,7 +164,8 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
                     description = etGroupDescription.text.toString().takeIf { it.isNotBlank() },
                     placeId = placeId,
                     avatarToUpload = (avatar as? AttachedImage.LocalImage)?.imageUri,
-                    avatarUploaded = (avatar as? AttachedImage.UploadedImage)?.imageUrl
+                    avatarUploaded = (avatar as? AttachedImage.UploadedImage)?.imageUrl,
+                    tags = chipTags.getTags()
             )
         }
     }
