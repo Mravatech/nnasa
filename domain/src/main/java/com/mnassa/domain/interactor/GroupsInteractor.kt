@@ -1,6 +1,8 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.GroupModel
+import com.mnassa.domain.model.RawGroupModel
+import com.mnassa.domain.model.ShortAccountModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -15,4 +17,8 @@ interface GroupsInteractor {
     suspend fun leaveGroup(groupId: String)
 
     suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?>
+    suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>>
+
+    suspend fun createGroup(group: RawGroupModel): GroupModel
+    suspend fun updateGroup(group: RawGroupModel)
 }

@@ -539,5 +539,12 @@
     <string name="group_is_member">_myGroups_groupCell_isMember</string>
     <string name="group_leave">_group_menu_leave</string>
     <string name="groups_members_count">_community_header_members</string>
+    <string name="group_title_placeholder">_groupEdit_cellTitle_placeholder</string>
+    <string name="group_description_placeholder">_groupEdit_cellInfo_placeholder</string>
+    <string name="group_website_placeholder">_groupEdit_cellWebsite_placeholder</string>
+    <string name="group_place_placeholder">_groupEdit_cellLocation_placeholder</string>
+    <string name="group_create_title">_groupEdit_navbarTitle_create</string>
+    <string name="group_edit_title">_groupEdit_navbarTitle_edit</string>
+    <string name="group_save_changes">_groupEdit_navbar_save</string>
 
 </resources>

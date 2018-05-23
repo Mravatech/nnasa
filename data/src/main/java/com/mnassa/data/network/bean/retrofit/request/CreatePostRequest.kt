@@ -23,5 +23,5 @@ data class CreatePostRequest(
         @SerializedName("category") val category: String? = null, //for offer post
         @SerializedName("subcategory") val subcategory: String? = null, //for offer post
 
-        @SerializedName("communitiesIds") val groups: List<String>? = null
+        @SerializedName("privacyCommunitiesIds") val groups: List<String>? = null
 )

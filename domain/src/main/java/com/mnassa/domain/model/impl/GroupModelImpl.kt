@@ -2,6 +2,7 @@ package com.mnassa.domain.model.impl
 
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.GroupType
+import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.ShortAccountModel
 
 /**
@@ -16,7 +17,8 @@ data class GroupModelImpl(
         override val isAdmin: Boolean,
         override val admins: List<String>,
         override val numberOfParticipants: Long,
-        override val creator: ShortAccountModel
-
+        override val creator: ShortAccountModel,
+        override val website: String?,
+        override val locationPlace: LocationPlaceModel?
 ) : GroupModel {
 }

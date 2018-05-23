@@ -120,11 +120,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun sendOpened(ids: List<String>) = postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler).run { Unit }
     override suspend fun resetCounter() = postApi.resetCounter(ResetCounterRequest(NetworkContract.ResetCounter.POSTS)).handleException(exceptionHandler).run { Unit }
 
-    override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it) }
+    override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it, PostAdditionInfo(post.groupId)) }
     override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post).run { Unit }
-    override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it) }
+    override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it, PostAdditionInfo(post.groupId)) }
     override suspend fun updateGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post).run { Unit }
-    override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it) }
+    override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it, PostAdditionInfo(post.groupId)) }
     override suspend fun updateOffer(post: RawPostModel) = processPost(NetworkContract.PostType.OFFER, post).run { Unit }
 
     override suspend fun createUserRecommendation(post: RawRecommendPostModel) {

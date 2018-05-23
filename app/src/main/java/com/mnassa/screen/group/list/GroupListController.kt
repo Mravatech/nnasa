@@ -15,6 +15,7 @@ import com.mnassa.extensions.setHeaderWithCounter
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.create.CreateGroupController
+import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.list.adapters.AllGroupsRecyclerViewAdapter
 import com.mnassa.screen.group.list.adapters.NewGroupRequestsRecyclerViewAdapter
 import com.mnassa.screen.group.profile.GroupProfileController
@@ -45,7 +46,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
 
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
         newConnectionRequestsAdapter.onDeclineClickListener = { viewModel.decline(it) }
-        newConnectionRequestsAdapter.onItemClickListener = { open(GroupProfileController.newInstance(it)) }
+        newConnectionRequestsAdapter.onItemClickListener = { open(GroupDetailsController.newInstance(it)) }
         newConnectionRequestsAdapter.onShowAllClickListener = { open(GroupConnectionRequestsController.newInstance()) }
 
         allGroupsAdapter.isLoadingEnabled = savedInstanceState == null

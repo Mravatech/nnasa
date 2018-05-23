@@ -250,10 +250,10 @@ private val viewModelsModule = Kodein.Module {
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
     bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
     bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
-    bind<GroupMembersViewModel>() with provider { GroupMembersViewModelImpl() }
+    bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
     bind<GroupDetailsViewModel>() with provider { GroupDetailsViewModelImpl() }
-    bind<CreateGroupViewModel>() with provider { CreateGroupViewModelImpl() }
+    bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance(), instance()) }
 }
 
@@ -338,7 +338,7 @@ private val interactorModule = Kodein.Module {
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
-    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance()) }
+    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"

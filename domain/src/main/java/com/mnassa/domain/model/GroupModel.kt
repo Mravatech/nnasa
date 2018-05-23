@@ -1,5 +1,6 @@
 package com.mnassa.domain.model
 
+import android.net.Uri
 import java.io.Serializable
 
 /**
@@ -14,10 +15,21 @@ interface GroupModel : Model {
     val isAdmin: Boolean
     val admins: List<String>
     val numberOfParticipants: Long
-
+    val website: String?
+    val locationPlace: LocationPlaceModel?
 }
 
 sealed class GroupType : Serializable {
     class Public : GroupType()
     class Private : GroupType()
 }
+
+data class RawGroupModel(
+        val id: String?,
+        val title: String,
+        val description: String?,
+        val placeId: String?,
+        val website: String?,
+        val avatarToUpload: Uri?,
+        val avatarUploaded: String?
+): Serializable

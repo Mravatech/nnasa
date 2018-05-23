@@ -14,6 +14,7 @@ import com.mnassa.extensions.formattedName
 import com.mnassa.extensions.formattedRole
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
@@ -34,6 +35,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     private val groupId: String by lazy { args.getString(EXTRA_GROUP_ID) }
     override val viewModel: GroupProfileViewModel by instance(arg = groupId)
     private val adapter = PostsRVAdapter()
+    private var groupModel: GroupModel? = null
 
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -61,6 +63,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 
         with(view) {
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+            llGroupMembers.setOnClickListener { groupModel?.let { open(GroupMembersController.newInstance(it)) } }
         }
 
         launchCoroutineUI {
@@ -187,6 +190,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     }
 
     private fun bindGroup(group: GroupModel, view: View) {
+        this.groupModel = group
         with(view) {
             ivGroupAvatar.avatarRound(group.avatar)
             tvGroupTitle.text = group.formattedName
