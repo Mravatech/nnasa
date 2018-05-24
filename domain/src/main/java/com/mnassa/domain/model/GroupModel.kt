@@ -11,7 +11,7 @@ interface GroupModel : Model {
     val description: String
     val type: GroupType
     val avatar: String?
-    val creator: ShortAccountModel
+    val creator: ShortAccountModel?
     val admins: List<String>
     val numberOfParticipants: Long
     val website: String?

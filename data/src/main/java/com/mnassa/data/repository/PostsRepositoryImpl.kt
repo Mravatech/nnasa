@@ -120,11 +120,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun sendOpened(ids: List<String>) = postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler).run { Unit }
     override suspend fun resetCounter() = postApi.resetCounter(ResetCounterRequest(NetworkContract.ResetCounter.POSTS)).handleException(exceptionHandler).run { Unit }
 
-    override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it, PostAdditionInfo(post.groupId)) }
+    override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
     override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post).run { Unit }
-    override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it, PostAdditionInfo(post.groupId)) }
+    override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
     override suspend fun updateGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post).run { Unit }
-    override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it, PostAdditionInfo(post.groupId)) }
+    override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
     override suspend fun updateOffer(post: RawPostModel) = processPost(NetworkContract.PostType.OFFER, post).run { Unit }
 
     override suspend fun createUserRecommendation(post: RawRecommendPostModel) {
@@ -134,7 +134,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 text = post.text,
                 privacyType = post.privacy.privacyType.stringValue,
                 privacyConnections = post.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = post.privacy.privacyType is PostPrivacyType.PUBLIC
+                allConnections = post.privacy.privacyType is PostPrivacyType.PUBLIC,
+                groups = post.groupIds.toList().takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
     }
 
@@ -143,7 +144,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 type = NetworkContract.PostType.ACCOUNT,
                 accountForRecommendation = post.accountId,
                 text = post.text,
-                postId = post.postId
+                postId = post.postId,
+                groups = post.groupIds.toList().takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
     }
 
@@ -151,7 +153,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         val request = CreatePostRequest(
                 type = postType,
                 postId = postModel.id,
-                groups = postModel.groupId?.let { listOf(it) },
+                groups = postModel.groupIds.takeIf { it.isNotEmpty() },
                 text = postModel.text,
                 location = postModel.placeId,
                 tags = postModel.processedTags.takeIf { it.isNotEmpty() },
@@ -230,7 +232,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel {
-        val out: PostModel = converter.convert(input, PostAdditionInfo(groupId))
+        val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
         if (out is RecommendedProfilePostModel) {
             val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
             out.offers = offerIds.mapNotNull { tagRepository.get(it) }

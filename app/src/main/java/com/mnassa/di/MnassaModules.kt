@@ -253,10 +253,10 @@ private val viewModelsModule = Kodein.Module {
     bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
     bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
-    bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
+    bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance(), instance()) }
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
-    bind<GroupDetailsViewModel>() with provider { GroupDetailsViewModelImpl() }
+    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance()) }
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance(), instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
@@ -282,7 +282,6 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(EventsConverter())
         converter.registerConverter(NotificationsConverter())
         converter.registerConverter(PushSettingsConverter())
-        converter.registerConverter(GroupsConverter())
         converter
     }
 }

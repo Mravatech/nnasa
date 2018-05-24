@@ -2,6 +2,7 @@ package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import java.io.Serializable
 
 /**
  * Created by Peter on 3/16/2018.
@@ -40,6 +41,10 @@ interface PostsInteractor {
 }
 
 data class PostPrivacyOptions(
-        val privacyType: PostPrivacyType,
-        val privacyConnections: Set<String>
-)
+        var privacyType: PostPrivacyType,
+        var privacyConnections: Set<String>
+): Serializable {
+    companion object {
+        val DEFAULT = PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet())
+    }
+}

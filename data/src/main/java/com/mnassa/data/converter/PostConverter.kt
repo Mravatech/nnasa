@@ -5,10 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.NetworkContract
-import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
-import com.mnassa.data.network.bean.firebase.PostCountersDbEntity
-import com.mnassa.data.network.bean.firebase.PostDbEntity
-import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
+import com.mnassa.data.network.bean.firebase.*
 import com.mnassa.data.network.bean.retrofit.response.PostData
 import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_ACTIVE
 import com.mnassa.data.repository.DatabaseContract.EXPIRATION_TYPE_CLOSED
@@ -24,6 +21,7 @@ import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_NEED
 import com.mnassa.data.repository.DatabaseContract.NEWS_FEED_TYPE_OFFER
 import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.PostAutoSuggest
 import com.mnassa.domain.model.impl.*
 import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
@@ -96,7 +94,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
                     recommendedProfile = try { convertAuthor(requireNotNull(input.postedAccount), converter) } catch (e: Exception) { null },
                     offers = emptyList(),
-                    groupId = additionInfo.groupId
+                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
             is PostType.INFO -> InfoPostImpl(
                     id = input.id,
@@ -124,7 +123,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
                             ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!")),
-                    groupId = additionInfo.groupId
+                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
             is PostType.OFFER -> OfferPostModelImpl(
                     id = input.id,
@@ -154,7 +154,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     subCategory = input.subcategory,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
-                    groupId = additionInfo.groupId
+                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
             else -> PostModelImpl(
                     id = input.id,
@@ -180,9 +181,20 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    groupId = additionInfo.groupId
+                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
         }
+    }
+
+    private fun convertShortGroup(input: GroupDbEntity): GroupModel {
+        return GroupModelImpl(
+                id = input.id,
+                avatar = input.avatar,
+                description = input.description ?: "",
+                name = input.title ?: "Unnamed group"
+
+        )
     }
 
     private fun convertInfoPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): InfoPostImpl {

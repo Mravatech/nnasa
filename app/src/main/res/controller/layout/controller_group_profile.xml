@@ -110,19 +110,35 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
+                        <FrameLayout
+                            android:id="@+id/flInfoSection"
                             style="@style/Group.Profile.CounterContainer"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                        </LinearLayout>
+                            <android.support.v7.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/ic_info_outline"
+                                android:layout_gravity="center"/>
+
+                        </FrameLayout>
 
                     </LinearLayout>
 
                     <View
+                        android:id="@+id/vShadow"
                         style="@style/MnassaShadow"
                         android:layout_below="@id/llCounters" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvGroupTags"
+                        android:layout_below="@id/vShadow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
                 </RelativeLayout>
 

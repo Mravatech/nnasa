@@ -9,7 +9,10 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RawPostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
@@ -17,6 +20,7 @@ import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
@@ -32,9 +36,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_need_create
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
-    private val groupId: String? by lazy { args.getString(EXTRA_GROUP_ID, null) }
+    private val groupIds by lazy { args.getStringArrayList(EXTRA_GROUP_ID) ?: emptyList<String>() }
     override val viewModel: CreateNeedViewModel by instance(arg = postId)
-    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
+    override var sharingOptions = getSharingOptions(args)
         set(value) {
             field = value
             launchCoroutineUI {
@@ -68,6 +72,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 viewModel.applyChanges(makePostModel())
             }
             tvShareOptions.setOnClickListener {
+                if (groupIds.isNotEmpty()) return@setOnClickListener
                 val post = post
                 launchCoroutineUI {
                     open(SharingOptionsController.newInstance(
@@ -157,11 +162,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             val images = attachedImagesAdapter.dataStorage.toList()
             return RawPostModel(
                     id = postId,
-                    groupId = groupId,
+                    groupIds = groupIds,
                     text = etNeed.text.toString(),
                     imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
                     uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                    privacy = sharingOptions.asPostPrivacy,
+                    privacy = sharingOptions,
                     tags = chipTags.getTags(),
                     price = etPrice.text.toString().toLongOrNull(),
                     timeOfExpiration = postExpiresIn.millisTo,
@@ -195,7 +200,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 placeId = post.locationPlace?.placeId
                 actvPlace.setText(post.locationPlace?.placeName?.toString())
                 etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-                sharingOptions.selectedConnections = post.privacyConnections
+                sharingOptions.privacyConnections = post.privacyConnections
                 tvShareOptions.text = sharingOptions.format()
                 //no ability to change sharing options while post changing
                 tvShareOptions.visibility = View.GONE
@@ -215,10 +220,14 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         private const val EXTRA_POST_TO_EDIT = "EXTRA_POST_TO_EDIT"
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
         private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val EXTRA_GROUP = "EXTRA_GROUP"
 
-        fun newInstance(groupId: String? = null): CreateNeedController {
+        fun newInstance(group: GroupModel? = null): CreateNeedController {
             val args = Bundle()
-            groupId?.let { args.putString(EXTRA_GROUP_ID, it) }
+            group?.let {
+                args.putStringArrayList(EXTRA_GROUP_ID, arrayListOf(it.id))
+                args.putSerializable(EXTRA_GROUP, it)
+            }
             return CreateNeedController(args)
         }
 
@@ -226,8 +235,14 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             val args = Bundle()
             args.putSerializable(EXTRA_POST_TO_EDIT, post)
             args.putString(EXTRA_POST_ID, post.id)
-            args.putString(EXTRA_GROUP_ID, post.groupId)
+            args.putStringArrayList(EXTRA_GROUP_ID, post.groupIds.toCollection(ArrayList()))
             return CreateNeedController(args)
+        }
+
+        private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
+            return if (args.containsKey(EXTRA_GROUP)) {
+                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+            } else PostPrivacyOptions.DEFAULT
         }
     }
 }

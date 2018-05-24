@@ -16,6 +16,7 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -107,12 +108,12 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
         eventsApi.saveAttendee(EventAttendeeRequest(eventId, attendees)).handleException(exceptionHandler)
     }
 
-    override suspend fun createEvent(model: CreateOrEditEventModel) {
+    override suspend fun createEvent(model: RawEventModel) {
         val request: CreateOrEditEventRequest = converter.convert(model)
         eventsApi.createEvent(request).handleException(exceptionHandler)
     }
 
-    override suspend fun editEvent(model: CreateOrEditEventModel) {
+    override suspend fun editEvent(model: RawEventModel) {
         val request: CreateOrEditEventRequest = converter.convert(model)
         eventsApi.editEvent(request).handleException(exceptionHandler)
     }

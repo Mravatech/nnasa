@@ -5,12 +5,15 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import com.github.clans.fab.FloatingActionButton
 import com.mnassa.R
+import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.group.create.CreateGroupController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
@@ -19,6 +22,7 @@ import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
@@ -37,6 +41,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 
     override val viewModel: GroupProfileViewModel by instance(arg = groupId)
     private val adapter = PostsRVAdapter()
+    private val tagsAdapter = PostTagRVAdapter()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -49,13 +54,14 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         adapter.onCreateNeedClickListener = {
             launchCoroutineUI {
                 if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
-                    open(CreateNeedController.newInstance(groupId = groupId))
+                    open(CreateNeedController.newInstance(group = groupModel))
                 }
             }
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
+        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,14 +70,16 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         with(view) {
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
             llGroupMembers.setOnClickListener { open(GroupMembersController.newInstance(groupModel)) }
+            flInfoSection.setOnClickListener { open(GroupDetailsController.newInstance(groupModel)) }
+            rvGroupTags.adapter = tagsAdapter
+            rvGroupPosts.adapter = adapter
         }
 
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
+        launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
 
         ///
-        view.rvGroupPosts.adapter = adapter
-
         adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.newsFeedChannel.openSubscription().bufferize(this@GroupProfileController).consumeEach {
@@ -114,6 +122,12 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         bindGroup(groupModel, view)
     }
 
+    override fun onDestroyView(view: View) {
+        view.rvGroupTags.adapter = null
+        view.rvGroupPosts.adapter = null
+        super.onDestroyView(view)
+    }
+
     private fun initFab(view: View) {
         with(view) {
             fabGroup.setClosedOnTouchOutside(true)
@@ -128,25 +142,25 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
                         button.setOnClickListener {
                             fabGroup.close(false)
-                            open(CreateGeneralPostController.newInstance(groupId = groupId))
+                            open(CreateGeneralPostController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
                     }
 
-//                    if (permission.canCreateEvent) {
-//                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
-//                        button.setOnClickListener {
-//                            fabGroup.close(false)
-//                            open(CreateEventController.newInstance(groupId = groupId))
-//                        }
-//                        fabGroup.addMenuButton(button)
-//                    }
+                    if (permission.canCreateEvent) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
+                        button.setOnClickListener {
+                            fabGroup.close(false)
+                            open(CreateEventController.newInstance(group = groupModel))
+                        }
+                        fabGroup.addMenuButton(button)
+                    }
 
                     if (permission.canCreateOfferPost) {
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
                         button.setOnClickListener {
                             fabGroup.close(false)
-                            open(CreateOfferController.newInstance(groupId = groupId))
+                            open(CreateOfferController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
                     }
@@ -155,7 +169,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
                         button.setOnClickListener {
                             fabGroup.close(false)
-                            open(CreateNeedController.newInstance(groupId = groupId))
+                            open(CreateNeedController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
                     }
@@ -167,30 +181,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                                     permission.canCreateGeneralPost)
                 }
             }
-        }
-    }
-
-    private fun View.inflateMenuButton(text: String): FloatingActionButton {
-        val button = FloatingActionButton(context)
-        button.buttonSize = FloatingActionButton.SIZE_MINI
-        button.setImageResource(R.drawable.ic_edit_white_24dp)
-        button.colorNormal = ContextCompat.getColor(context, R.color.accent)
-        button.colorPressed = ContextCompat.getColor(context, R.color.tealish)
-        button.labelText = text
-
-        return button
-    }
-
-    private fun bindGroup(group: GroupModel, view: View) {
-        this.groupModel = group
-        with(view) {
-            ivGroupAvatar.avatarRound(group.avatar)
-            tvGroupTitle.text = group.formattedName
-            tvGroupSubTitle.text = group.formattedRole
-            toolbar.title = tvGroupTitle.text
-
-            tvMembersCount.text = group.numberOfParticipants.toString()
-            initToolbar(view)
         }
     }
 
@@ -222,10 +212,45 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
     }
 
+    private fun View.inflateMenuButton(text: String): FloatingActionButton {
+        val button = FloatingActionButton(context)
+        button.buttonSize = FloatingActionButton.SIZE_MINI
+        button.setImageResource(R.drawable.ic_edit_white_24dp)
+        button.colorNormal = ContextCompat.getColor(context, R.color.accent)
+        button.colorPressed = ContextCompat.getColor(context, R.color.tealish)
+        button.labelText = text
+
+        return button
+    }
+
+    private fun bindGroup(group: GroupModel, view: View) {
+        this.groupModel = group
+        with(view) {
+            val avatar = group.avatar
+            ivGroupAvatar.avatarRound(avatar)
+            if (avatar != null && !avatar.isBlank()) {
+                ivGroupAvatar.setOnClickListener {
+                        PhotoPagerActivity.start(view.context, listOf(avatar), 0)
+                }
+            }
+
+            tvGroupTitle.text = group.formattedName
+            tvGroupSubTitle.text = group.formattedRole
+            toolbar.title = tvGroupTitle.text
+
+            tvMembersCount.text = group.numberOfParticipants.toString()
+            initToolbar(view)
+        }
+    }
+
+    private fun bindTags(tags: List<TagModel>, view: View) {
+        tagsAdapter.set(tags)
+        view.rvGroupTags.isGone = tags.isEmpty()
+    }
+
     companion object {
         private const val EXTRA_GROUP = "EXTRA_GROUP"
         private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
-        private const val EXTRA_IS_ADMIN = "EXTRA_IS_ADMIN"
 
         fun newInstance(group: GroupModel): GroupProfileController {
             val args = Bundle()

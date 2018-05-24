@@ -124,11 +124,12 @@ object NetworkContract {
     }
 }
 
-val PostPrivacyType.stringValue: String
+val PostPrivacyType.stringValue: String?
     get() = when (this) {
         is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
         is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
         is PostPrivacyType.WORLD -> NetworkContract.PostPrivacyType.WORLD
+        is PostPrivacyType.GROUP -> NetworkContract.PostPrivacyType.PUBLIC
     }
 val EventStatus.stringValue: String
     get() = when (this) {

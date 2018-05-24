@@ -9,6 +9,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface GroupProfileViewModel : MnassaViewModel {
     val groupChannel: BroadcastChannel<GroupModel>
+    val tagsChannel: BroadcastChannel<List<TagModel>>
     val closeScreenChannel: BroadcastChannel<Unit>
 
     val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>>

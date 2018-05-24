@@ -1,9 +1,5 @@
 package com.mnassa.screen.posts.viewholder
 
-import android.support.v4.content.ContextCompat
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +8,6 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_profile.view.*
 import kotlinx.android.synthetic.main.recommended_profile.view.*
@@ -20,7 +15,7 @@ import kotlinx.android.synthetic.main.recommended_profile.view.*
 /**
  * Created by Peter on 3/14/2018.
  */
-class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
+class ProfileViewHolder(itemView: View, onClickListener: View.OnClickListener) : BasePostViewHolder(itemView, onClickListener) {
 
     override fun bind(item: PostModel) {
         with(itemView) {
@@ -54,10 +49,11 @@ class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClic
             rlAuthorRoot.tag = this@ProfileViewHolder
 
             bindRepost(item)
+            bindGroup(item)
 
             val recommended = (item as RecommendedProfilePostModel).recommendedProfile
             ivRecommendedUserAvatar.avatarSquare(recommended?.avatar)
-            tvRecommendedUserName.text = recommended?.formattedName ?:  fromDictionary(R.string.deleted_user)
+            tvRecommendedUserName.text = recommended?.formattedName ?: fromDictionary(R.string.deleted_user)
             tvRecommendedUserPosition.text = recommended?.formattedPosition
             tvRecommendedUserPosition.goneIfEmpty()
 
@@ -75,36 +71,17 @@ class ProfileViewHolder(itemView: View, private val onClickListener: View.OnClic
         }
     }
 
-    private fun bindRepost(item: PostModel) {
-        if (!item.isRepost) return
-
-        with(itemView) {
-            val repostedBySpan = SpannableStringBuilder(fromDictionary(R.string.need_item_reposted_by))
-            repostedBySpan.append(" ")
-            val startSpan = repostedBySpan.length
-            repostedBySpan.append(requireNotNull(item.repostAuthor).formattedName)
-            repostedBySpan.setSpan(
-                    ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)),
-                    startSpan,
-                    repostedBySpan.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            tvReplyText.text = repostedBySpan
-            tvReplyTime.text = item.createdAt.toTimeAgo()
-
-            rlRepostRoot.setOnClickListener(onClickListener)
-            rlRepostRoot.tag = this@ProfileViewHolder
-        }
-    }
-
     companion object {
         fun newInstance(
                 parent: ViewGroup,
                 onClickListener: View.OnClickListener,
-                isPromoted: Boolean): ProfileViewHolder {
+                isPromoted: Boolean,
+                fromGroup: Boolean): ProfileViewHolder {
 
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_profile, parent, false)
             view.rlRecommendedProfileRoot.visibility = View.VISIBLE
             view.llPromotedRoot.isGone = !isPromoted
+            view.rlGroupRoot.isGone = !fromGroup
 
             return ProfileViewHolder(view, onClickListener)
         }

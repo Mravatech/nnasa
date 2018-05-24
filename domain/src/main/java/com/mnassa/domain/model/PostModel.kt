@@ -29,7 +29,8 @@ interface PostModel : Model {
     val price: Double
     val autoSuggest: PostAutoSuggest
     val repostAuthor: ShortAccountModel?
-    var groupId: String?
+    var groupIds: Set<String>
+    var groups: List<GroupModel>
 }
 
 interface InfoPostModel: PostModel {
@@ -89,6 +90,7 @@ sealed class PostPrivacyType : Serializable {
     class PUBLIC : PostPrivacyType()
     class PRIVATE : PostPrivacyType()
     class WORLD : PostPrivacyType()
+    class GROUP(val group: GroupModel) : PostPrivacyType()
 }
 
 sealed class EntityType : Serializable {
@@ -105,7 +107,7 @@ sealed class ExpirationType(val text: String) : Serializable {
 
 data class RawPostModel(                            //REQUIRED:
         val id: String? = null,                     //need, general
-        val groupId: String? = null,                //need, general
+        val groupIds: List<String> = emptyList(),   //need, general,offer
         val text: String,                           //need, general,offer
         val imagesToUpload: List<Uri>,              //need, general,offer
         val uploadedImages: List<String>,           //need, general,offer
@@ -124,7 +126,7 @@ data class RawPostModel(                            //REQUIRED:
 
 data class RawRecommendPostModel(
         val postId: String?,
-        val groupId: String? = null,
+        val groupIds: Set<String> = emptySet(),
         val accountId: String,
         val text: String,
         val privacy: PostPrivacyOptions

@@ -139,6 +139,7 @@
     <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
     <string name="need_item_btn_you_can_help">_postCell_youCanHelp</string>
     <string name="need_item_reposted_by">_repost_container_reposted_by</string>
+    <string name="need_item_from_group">_post_item_from_group</string>
 
     <!-- need details -->
     <string name="need_details_title">_android_need_details_title</string>
@@ -557,5 +558,9 @@
     <string name="group_member_un_admin">_group_member_un_admin</string>
     <string name="group_invites_more">_group_invites_more</string>
     <string name="group_invite_profile_menu">_profile_menu_inviteToGroup</string>
+    <string name="group_info_header">_communities_more_information_header</string>
+    <string name="group_website_header">_profileDetails_labelWebsite</string>
+    <string name="group_location_header">_groupEdit_cellLocation_title</string>
+    <string name="group_tags_header">_group_tags_header</string>
 
 </resources>

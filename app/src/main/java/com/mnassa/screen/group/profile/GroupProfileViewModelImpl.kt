@@ -1,8 +1,10 @@
 package com.mnassa.screen.group.profile
 
 import android.os.Bundle
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
@@ -23,17 +25,17 @@ class GroupProfileViewModelImpl(
         private val groupId: String,
         private val groupsInteractor: GroupsInteractor,
         private val postsInteractor: PostsInteractor,
-        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), GroupProfileViewModel {
+        private val userProfileInteractor: UserProfileInteractor,
+        private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), GroupProfileViewModel {
 
     private var resetCounterJob: Job? = null
 
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
 
     override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>>by ProcessAccountChangeArrayBroadcastChannel(
-            beforeReConsume = {
-                it.send(ListItemEvent.Cleared())
-            },
+            beforeReConsume = { it.send(ListItemEvent.Cleared()) },
             receiveChannelProvider = { postsInteractor.loadAllByGroupId(groupId) })
 
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>by ProcessAccountChangeArrayBroadcastChannel(
@@ -50,6 +52,7 @@ class GroupProfileViewModelImpl(
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) {
                     groupChannel.send(it)
+                    tagsChannel.send(loadTags(it.tags))
                 } else {
                     closeScreenChannel.send(Unit)
                 }
@@ -89,5 +92,9 @@ class GroupProfileViewModelImpl(
         handleException {
             postsInteractor.resetCounter()
         }
+    }
+
+    private suspend fun loadTags(tags: List<String>): List<TagModel> {
+        return tags.map { tag -> asyncWorker { tagInteractor.get(tag) } }.mapNotNull { it.await() }
     }
 }

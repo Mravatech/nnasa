@@ -92,7 +92,7 @@ class NewGroupRequestsRecyclerViewAdapter : BasePaginationRVAdapter<GroupModel>(
                 ivAvatar.avatarRound(item.avatar)
                 tvUserName.text = item.formattedName
 
-                tvPosition.text = item.formattedRole
+                tvPosition.text = ""
                 tvPosition.goneIfEmpty()
 
                 tvEventName.text = ""

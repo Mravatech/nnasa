@@ -65,7 +65,6 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
                 newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTS_COUNT)
             }
         }
-
     }
 
     override fun onViewCreated(view: View) {
@@ -146,7 +145,8 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
     private fun openGroupItemMenu(group: GroupModel, sender: View) {
         popupMenuHelper.showGroupItemMenu(
                 view = sender,
-                onLeave = { viewModel.leave(group) }
+                onLeave = { viewModel.leave(group) },
+                onDetails = { open(GroupDetailsController.newInstance(group)) }
         )
     }
 

@@ -6,6 +6,7 @@ import android.view.View
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
@@ -47,8 +48,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     protected val postAuthorId by lazy { requireNotNull(args.getString(EXTRA_POST_AUTHOR_ID)) }
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
-    override var sharingOptions: SharingOptionsController.ShareToOptions = SharingOptionsController.ShareToOptions.DEFAULT
-        set(value) = viewModel.repost(value.asPostPrivacy)
+    override var sharingOptions = PostPrivacyOptions.DEFAULT
+        set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()

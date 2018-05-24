@@ -80,7 +80,6 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     override suspend fun createOffer(post: RawPostModel): OfferPostModel {
-
         return postsRepository.createOffer(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)))
@@ -92,14 +91,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 processedTags = processTags(post)))
     }
 
-    override suspend fun createUserRecommendation(post: RawRecommendPostModel) {
-        postsRepository.createUserRecommendation(post)
-    }
-
-    override suspend fun updateUserRecommendation(post: RawRecommendPostModel) {
-        postsRepository.updateUserRecommendation(post)
-    }
-
+    override suspend fun createUserRecommendation(post: RawRecommendPostModel) = postsRepository.createUserRecommendation(post)
+    override suspend fun updateUserRecommendation(post: RawRecommendPostModel) = postsRepository.updateUserRecommendation(post)
     override suspend fun getShareOfferPostPrice(): Long? = postsRepository.getShareOfferPostPrice()
     override suspend fun getShareOfferPostPerUserPrice(): Long? = postsRepository.getShareOfferPostPerUserPrice()
     override suspend fun getPromotePostPrice(): Long = postsRepository.getPromotePostPrice() ?: 0L

@@ -4,9 +4,9 @@ import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.CreateOrEditEventModel
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -23,7 +23,7 @@ class CreateEventViewModelImpl(private val eventId: String?,
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
 
-    override fun publish(model: CreateOrEditEventModel) {
+    override fun publish(model: RawEventModel) {
         handleException {
             withProgressSuspend {
                 if (model.id == null) {

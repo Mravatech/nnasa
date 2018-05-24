@@ -226,5 +226,8 @@
     <string name="_group_member_admin_INFO">Make admin</string>
     <string name="_group_member_un_admin_INFO">Unmake admin</string>
     <string name="_group_invites_more_INFO">%d groups more</string>
+    <string name="_group_tags_header_INFO">Tags</string>
+
+    <string name="_post_item_from_group_INFO">From</string>
 
 </resources>

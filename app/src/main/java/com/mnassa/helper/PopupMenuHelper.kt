@@ -149,14 +149,16 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
         popup.show()
     }
 
-    fun showGroupItemMenu(view: View, onLeave: () -> Unit) {
+    fun showGroupItemMenu(view: View, onLeave: () -> Unit, onDetails: () -> Unit) {
         val popup = PopupMenu(view.context, view)
         popup.menuInflater.inflate(R.menu.group_item, popup.menu)
         popup.menu.findItem(R.id.action_leave_group).title = fromDictionary(R.string.group_leave)
+        popup.menu.findItem(R.id.action_open_details).title = fromDictionary(R.string.group_menu_details)
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_leave_group -> onLeave()
+                R.id.action_open_details -> onDetails()
             }
             true
         }

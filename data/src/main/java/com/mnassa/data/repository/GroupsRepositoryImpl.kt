@@ -125,7 +125,6 @@ class GroupsRepositoryImpl(
         api.update(makeRequest(group)).handleException(exceptionHandler)
     }
 
-    //todo: create converter, which supports suspend functions
     private suspend fun convertGroup(input: GroupDbEntity): GroupModel {
         val currentUserId = userRepository.getAccountIdOrException()
 
@@ -145,7 +144,7 @@ class GroupsRepositoryImpl(
                 admins = input.admins
                         ?: (if (input.isAdmin == true) listOf(currentUserId) else emptyList()),
                 numberOfParticipants = input.counters?.numberOfParticipants ?: 0L,
-                creator = creator!!,
+                creator = creator,
                 website = input.website,
                 locationPlace = input.location?.let { converter.convert(it, LocationPlaceModel::class.java) },
                 tags = input.tags ?: emptyList())

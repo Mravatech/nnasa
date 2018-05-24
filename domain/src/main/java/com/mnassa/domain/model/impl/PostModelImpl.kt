@@ -28,7 +28,8 @@ open class PostModelImpl(
         override val price: Double,
         override val autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
-        override var groupId: String?
+        override var groupIds: Set<String>,
+        override var groups: List<GroupModel>
 ) : PostModel {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -55,7 +56,7 @@ open class PostModelImpl(
         if (price != other.price) return false
         if (autoSuggest != other.autoSuggest) return false
         if (repostAuthor != other.repostAuthor) return false
-        if (groupId != other.groupId) return false
+        if (groupIds != other.groupIds) return false
 
         return true
     }
@@ -80,12 +81,12 @@ open class PostModelImpl(
         result = 31 * result + price.hashCode()
         result = 31 * result + autoSuggest.hashCode()
         result = 31 * result + (repostAuthor?.hashCode() ?: 0)
-        result = 31 * result + (groupId?.hashCode() ?: 0)
+        result = 31 * result + groupIds.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "PostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, groupId=$groupId)"
+        return "PostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, groupId=$groupIds)"
     }
 }
 
@@ -111,7 +112,8 @@ class InfoPostImpl(
         override val price: Double,
         override val autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
-        override var groupId: String?,
+        override var groupIds: Set<String>,
+        override var groups: List<GroupModel>,
         override val title: String,
         override var isPinned: Boolean = false
 ) : PostModelImpl(
@@ -136,10 +138,12 @@ class InfoPostImpl(
         price,
         autoSuggest,
         repostAuthor,
-        groupId
+        groupIds,
+        groups
 ), InfoPostModel {
+
     override fun toString(): String {
-        return "InfoPostImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', groupId=$groupId)"
+        return "InfoPostImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', groupId=$groupIds)"
     }
 }
 
@@ -165,7 +169,8 @@ class OfferPostModelImpl(
         override val price: Double,
         override val autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
-        override var groupId: String?,
+        override var groupIds: Set<String>,
+        override var groups: List<GroupModel>,
         override val title: String,
         override val category: String?,
         override val subCategory: String?
@@ -191,10 +196,11 @@ class OfferPostModelImpl(
         price,
         autoSuggest,
         repostAuthor,
-        groupId
+        groupIds,
+        groups
 ), OfferPostModel {
     override fun toString(): String {
-        return "OfferPostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', category=$category, subCategory=$subCategory, groupId=$groupId)"
+        return "OfferPostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', category=$category, subCategory=$subCategory, groupId=$groupIds)"
     }
 }
 
@@ -220,7 +226,8 @@ class RecommendedProfilePostModelImpl(
         override val price: Double,
         override val autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
-        override var groupId: String?,
+        override var groupIds: Set<String>,
+        override var groups: List<GroupModel>,
         override val recommendedProfile: ShortAccountModel?,
         override var offers: List<TagModel>
 ) : PostModelImpl(
@@ -245,7 +252,8 @@ class RecommendedProfilePostModelImpl(
         price,
         autoSuggest,
         repostAuthor,
-        groupId
+        groupIds,
+        groups
 ), RecommendedProfilePostModel {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -275,7 +283,7 @@ class RecommendedProfilePostModelImpl(
         if (repostAuthor != other.repostAuthor) return false
         if (recommendedProfile != other.recommendedProfile) return false
         if (offers != other.offers) return false
-        if (groupId != other.groupId) return false
+        if (groupIds != other.groupIds) return false
 
         return true
     }
@@ -303,12 +311,12 @@ class RecommendedProfilePostModelImpl(
         result = 31 * result + (repostAuthor?.hashCode() ?: 0)
         result = 31 * result + (recommendedProfile?.hashCode() ?: 0)
         result = 31 * result + offers.hashCode()
-        result = 31 * result + (groupId?.hashCode() ?: 0)
+        result = 31 * result + groupIds.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "RecommendedProfilePostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, recommendedProfile=$recommendedProfile, offers=$offers, groupId=$groupId)"
+        return "RecommendedProfilePostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, recommendedProfile=$recommendedProfile, offers=$offers, groupId=$groupIds)"
     }
 
 }
