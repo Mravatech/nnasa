@@ -31,7 +31,7 @@ class SelectGroupController : MnassaControllerImpl<SelectGroupViewModel>() {
         adapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.groupChannel.consumeEach {
-                adapter.set(it)
+                adapter.setGroups(it)
                 adapter.isLoadingEnabled = false
 
                 view.rvAllGroups.isInvisible = it.isEmpty()

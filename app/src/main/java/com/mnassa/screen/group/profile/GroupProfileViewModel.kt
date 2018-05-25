@@ -18,4 +18,5 @@ interface GroupProfileViewModel : MnassaViewModel {
     fun onAttachedToWindow(post: PostModel)
     fun hideInfoPost(post: PostModel)
     fun leave()
+    fun removePost(post: PostModel)
 }

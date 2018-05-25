@@ -562,5 +562,10 @@
     <string name="group_website_header">_profileDetails_labelWebsite</string>
     <string name="group_location_header">_groupEdit_cellLocation_title</string>
     <string name="group_tags_header">_group_tags_header</string>
+    <string name="group_role_admin">_group_user_role_admin</string>
+    <string name="group_post_remove">_group_post_remove</string>
+
+    <string name="group_item_header_my">_group_item_header_created_by_me</string>
+    <string name="group_item_header_all">_group_item_header_all</string>
 
 </resources>

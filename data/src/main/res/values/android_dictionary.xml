@@ -227,7 +227,13 @@
     <string name="_group_member_un_admin_INFO">Unmake admin</string>
     <string name="_group_invites_more_INFO">%d groups more</string>
     <string name="_group_tags_header_INFO">Tags</string>
+    <string name="_group_item_header_created_by_me_INFO">Created by me</string>
+    <string name="_group_item_header_all_INFO">All Groups</string>
+    <string name="_group_user_role_admin_INFO">Admin</string>
+    <string name="_group_post_remove_INFO">Remove post</string>
+
 
     <string name="_post_item_from_group_INFO">From</string>
+
 
 </resources>

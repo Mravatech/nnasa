@@ -188,4 +188,19 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
         }
     }
 
+    fun showGroupPostItemMenu(view: View, onRemove: () -> Unit) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.post_item, popup.menu)
+        popup.menu.findItem(R.id.action_post_remove)?.title = fromDictionary(R.string.group_post_remove)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_post_remove -> onRemove()
+            }
+            true
+        }
+        popup.show()
+
+    }
+
 }

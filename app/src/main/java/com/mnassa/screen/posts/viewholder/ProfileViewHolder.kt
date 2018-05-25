@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.viewholder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import com.mnassa.R
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.RecommendedProfilePostModel
@@ -48,6 +49,9 @@ class ProfileViewHolder(itemView: View, onClickListener: View.OnClickListener) :
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@ProfileViewHolder
 
+            btnMoreOptions.setOnClickListener(onClickListener)
+            btnMoreOptions.tag = this@ProfileViewHolder
+
             bindRepost(item)
             bindGroup(item)
 
@@ -76,12 +80,22 @@ class ProfileViewHolder(itemView: View, onClickListener: View.OnClickListener) :
                 parent: ViewGroup,
                 onClickListener: View.OnClickListener,
                 isPromoted: Boolean,
-                fromGroup: Boolean): ProfileViewHolder {
+                fromGroup: Boolean,
+                hasOptions: Boolean): ProfileViewHolder {
 
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_profile, parent, false)
             view.rlRecommendedProfileRoot.visibility = View.VISIBLE
             view.llPromotedRoot.isGone = !isPromoted
             view.rlGroupRoot.isGone = !fromGroup
+            view.btnMoreOptions.isGone = !hasOptions
+
+            val layoutParams = view.tvTime.layoutParams as RelativeLayout.LayoutParams
+            if (view.btnMoreOptions.isGone) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+            } else {
+                layoutParams.addRule(RelativeLayout.START_OF, R.id.btnMoreOptions)
+            }
+            view.tvTime.layoutParams = layoutParams
 
             return ProfileViewHolder(view, onClickListener)
         }

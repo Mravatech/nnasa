@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.viewholder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import com.mnassa.R
 import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
@@ -53,6 +54,9 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@NeedViewHolder
 
+            btnMoreOptions.setOnClickListener(onClickListener)
+            btnMoreOptions.tag = this@NeedViewHolder
+
             bindImages(item)
             bindRepost(item)
             bindGroup(item)
@@ -66,7 +70,8 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
                 imagesCount: Int,
                 isRepost: Boolean,
                 isPromoted: Boolean,
-                fromGroup: Boolean
+                fromGroup: Boolean,
+                hasOptions: Boolean
         ): NeedViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
@@ -75,6 +80,15 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
             view.flImagesRoot.isGone = imagesCount == 0
             view.llPromotedRoot.isGone = !isPromoted
             view.rlGroupRoot.isGone = !fromGroup
+            view.btnMoreOptions.isGone = !hasOptions
+
+            val layoutParams = view.tvTime.layoutParams as RelativeLayout.LayoutParams
+            if (view.btnMoreOptions.isGone) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+            } else {
+                layoutParams.addRule(RelativeLayout.START_OF, R.id.btnMoreOptions)
+            }
+            view.tvTime.layoutParams = layoutParams
 
             if (imagesCount > 0) {
                 val imagesLayout = when (imagesCount) {

@@ -35,7 +35,7 @@ class TagRepositoryImpl(
     }
 
     private fun filter(search: String, list: List<TagModel>) = async {
-        list.filter { it.name.toLowerCase().startsWith(search.toLowerCase()) }
+        list.filter { it.name.toLowerCase().contains(search.toLowerCase()) }
     }
 
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {

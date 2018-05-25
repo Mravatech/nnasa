@@ -25,7 +25,7 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
     private val groupId by lazy { args.getString(EXTRA_GROUP_ID) }
     private var group = args.getSerializable(EXTRA_GROUP) as GroupModel
     override val viewModel: GroupMembersViewModel by instance(arg = groupId)
-    private val adapter = AllConnectionsRecyclerViewAdapter()
+    private val adapter = GroupMembersAdaper()
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
         }
 
         adapter.onItemOptionsClickListener = { shortAccountModel, view -> showGroupMemberMenu(shortAccountModel, view) }
-        adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onItemClickListener = { open(ProfileController.newInstance(it.user)) }
 
         launchCoroutineUI {
             viewModel.groupMembersChannel.consumeEach {
@@ -58,7 +58,8 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
         launchCoroutineUI { viewModel.groupChannel.consumeEach { group = it } }
     }
 
-    private fun showGroupMemberMenu(account: ShortAccountModel, sender: View) {
+    private fun showGroupMemberMenu(member: GroupMemberItem, sender: View) {
+        val account = member.user
         popupMenuHelper.showGroupMemberMenu(sender, group, account,
                 onRemove = { viewModel.removeMember(account) },
                 onAdmin = { viewModel.makeAdmin(account) },

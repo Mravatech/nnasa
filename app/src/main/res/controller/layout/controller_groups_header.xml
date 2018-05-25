@@ -28,20 +28,4 @@
         android:id="@+id/vGroupInvites"
         style="@style/MnassaShadow" />
 
-    <com.mnassa.widget.MnassaTextView
-        android:id="@+id/tvAllGroups"
-        style="@style/MnassaHeader2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/spacing_horizontal"
-        android:layout_marginStart="@dimen/spacing_horizontal"
-        android:layout_marginTop="@dimen/spacing_vertical"
-        android:text="@string/groups_all_my"/>
-
-    <View
-        android:id="@+id/vAllGroups"
-        style="@style/MnassaShadow"
-        android:layout_marginTop="@dimen/spacing_vertical"
-        android:rotation="180" />
-
 </LinearLayout>

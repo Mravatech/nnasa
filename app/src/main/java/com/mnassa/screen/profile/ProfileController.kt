@@ -192,6 +192,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
                 fab.setImageResource(R.drawable.ic_pending)
             }
+            ConnectionStatus.REQUESTED -> {
+                fab.visibility = View.VISIBLE
+                fab.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, accountId)
+                }
+                fab.setImageResource(R.drawable.ic_new_requests)
+            }
             else -> {
                 fab.visibility = View.GONE
                 fab.setOnClickListener(null)

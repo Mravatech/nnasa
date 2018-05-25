@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 5/14/2018.
  */
 interface GroupMembersViewModel : MnassaViewModel {
-    val groupMembersChannel: BroadcastChannel<List<ShortAccountModel>>
+    val groupMembersChannel: BroadcastChannel<List<GroupMemberItem>>
     val groupChannel: BroadcastChannel<GroupModel>
 
     fun removeMember(member: ShortAccountModel)

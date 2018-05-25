@@ -7,11 +7,9 @@ import com.github.clans.fab.FloatingActionButton
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.GroupModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.model.bufferize
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.group.create.CreateGroupController
@@ -42,9 +40,12 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     override val viewModel: GroupProfileViewModel by instance(arg = groupId)
     private val adapter = PostsRVAdapter()
     private val tagsAdapter = PostTagRVAdapter()
+    private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
+
+        adapter.isLoadingEnabled = savedInstanceState == null
 
         adapter.onAttachedToWindow = { post -> viewModel.onAttachedToWindow(post) }
         adapter.onItemClickListener = {
@@ -60,9 +61,9 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
+        adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
-        adapter.isLoadingEnabled = savedInstanceState == null
+        adapter.onMoreItemClickListener = this::showPostMenu
     }
 
     override fun onViewCreated(view: View) {
@@ -225,12 +226,14 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 
     private fun bindGroup(group: GroupModel, view: View) {
         this.groupModel = group
+        adapter.showMoreOptions = group.isAdmin
+
         with(view) {
             val avatar = group.avatar
             ivGroupAvatar.avatarRound(avatar)
             if (avatar != null && !avatar.isBlank()) {
                 ivGroupAvatar.setOnClickListener {
-                        PhotoPagerActivity.start(view.context, listOf(avatar), 0)
+                    PhotoPagerActivity.start(view.context, listOf(avatar), 0)
                 }
             }
 
@@ -246,6 +249,12 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     private fun bindTags(tags: List<TagModel>, view: View) {
         tagsAdapter.set(tags)
         view.rvGroupTags.isGone = tags.isEmpty()
+    }
+
+    private fun showPostMenu(post: PostModel, view: View) {
+        popupMenuHelper.showGroupPostItemMenu(view,
+                onRemove = { viewModel.removePost(post) }
+        )
     }
 
     companion object {

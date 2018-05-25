@@ -57,7 +57,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.myGroupsChannel.consumeEach {
                 allGroupsAdapter.isLoadingEnabled = false
-                allGroupsAdapter.set(it)
+                allGroupsAdapter.setGroups(it)
             }
         }
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -103,7 +103,6 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
         newConnectionRequestsAdapter.saveState(outState)
     }
 
-    private var loadAllConnectionsJob: Job? = null
     private var loadRecommendedConnectionsJob: Job? = null
 
     private fun bindHeader(header: View) {
@@ -116,17 +115,6 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
         }
 
         val headerRef = header.asReference()
-
-        loadAllConnectionsJob?.cancel()
-        loadAllConnectionsJob = launchCoroutineUI {
-            viewModel.myGroupsChannel.consumeEach {
-                with(headerRef()) {
-                    tvAllGroups.setHeaderWithCounter(R.string.tab_connections_all, it.size)
-                    tvAllGroups.isGone = it.isEmpty()
-                    vAllGroups.isGone = it.isEmpty()
-                }
-            }
-        }
 
         loadRecommendedConnectionsJob?.cancel()
         loadRecommendedConnectionsJob = launchCoroutineUI {

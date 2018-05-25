@@ -26,7 +26,8 @@ class MnassaProfileDrawerItem : ProfileDrawerItem() {
         withNameShown(true)
 
         withName(shortAccountModel.formattedName)
-        withEmail(shortAccountModel.formattedPosition.toString().takeIf { it.isNotBlank() } ?: fromDictionary(R.string.position_not_specified))
+        withEmail(shortAccountModel.formattedPosition.toString().takeIf { it.isNotBlank() }
+                ?: fromDictionary(R.string.position_not_specified))
         withIdentifier(shortAccountModel.id.hashCode().toLong())
 
         iconInternal = MnassaImageHolder(shortAccountModel.avatar)
@@ -34,7 +35,8 @@ class MnassaProfileDrawerItem : ProfileDrawerItem() {
         return this
     }
 
-    private class MnassaImageHolder(private val firebaseImage: String?) : ImageHolder(firebaseImage ?: "") {
+    private class MnassaImageHolder(private val firebaseImage: String?) : ImageHolder(firebaseImage
+            ?: "") {
 
         override fun applyTo(imageView: ImageView, tag: String?): Boolean {
             imageView.avatarRound(firebaseImage)

@@ -149,10 +149,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/ivAvatar"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@id/btnMoreOptions"
                     android:layout_alignTop="@id/ivAvatar"
                     android:gravity="center_vertical"
                     tools:text="9 min" />
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/btnMoreOptions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="4dp"
+                    android:tint="@color/gray_cool"
+                    app:srcCompat="@drawable/ic_more_vert_black_24dp" />
             </RelativeLayout>
 
             <include layout="@layout/recommended_profile" />

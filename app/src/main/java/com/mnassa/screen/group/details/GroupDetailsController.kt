@@ -18,7 +18,7 @@ import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_group_details.view.*
-import kotlinx.android.synthetic.main.item_group_member.view.*
+import kotlinx.android.synthetic.main.item_group_member_round.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -99,7 +99,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
 
             val itemsToInflate = minOf(members.size, MAX_MEMBERS_TO_SHOW)
             for (i in 0 until itemsToInflate) {
-                val itemView = inflater.inflate(R.layout.item_group_member, llGroupMembersContainer, false)
+                val itemView = inflater.inflate(R.layout.item_group_member_round, llGroupMembersContainer, false)
                 llGroupMembersContainer.addView(itemView)
 
                 val offset = i.toDouble() * (itemSize.toDouble()* 0.75)

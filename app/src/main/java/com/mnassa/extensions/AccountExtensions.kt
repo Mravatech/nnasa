@@ -33,10 +33,10 @@ val ShortAccountModel.formattedFromEvent: CharSequence
 
 val ShortAccountModel.formattedPosition: CharSequence
     get() {
-        val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return ""
+        val ability = abilities.firstOrNull { it.isMain } ?: abilities.firstOrNull() ?: return fromDictionary(R.string.position_not_specified)
         return when {
             !ability.name.isNullOrBlank() && !ability.place.isNullOrBlank() -> "${ability.name}${fromDictionary(R.string.invite_at_placeholder)}${ability.place}"
-            else -> ability.name ?: ability.place ?: ""
+            else -> ability.name ?: ability.place ?: fromDictionary(R.string.position_not_specified)
         }
     }
 

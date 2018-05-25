@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.viewholder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import com.mnassa.R
 import com.mnassa.domain.model.OfferPostModel
 import com.mnassa.domain.model.PostModel
@@ -38,6 +39,9 @@ class OfferViewHolder(itemView: View, onClickListener: View.OnClickListener) : B
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@OfferViewHolder
 
+            btnMoreOptions.setOnClickListener(onClickListener)
+            btnMoreOptions.tag = this@OfferViewHolder
+
             bindImages(item)
             bindGroup(item)
         }
@@ -49,7 +53,8 @@ class OfferViewHolder(itemView: View, onClickListener: View.OnClickListener) : B
                 onClickListener: View.OnClickListener,
                 imagesCount: Int,
                 isPromoted: Boolean,
-                fromGroup: Boolean
+                fromGroup: Boolean,
+                hasOptions: Boolean
         ): OfferViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
@@ -58,6 +63,15 @@ class OfferViewHolder(itemView: View, onClickListener: View.OnClickListener) : B
             view.vImagesDivider.isGone = imagesCount > 0
             view.llPromotedRoot.isGone = !isPromoted
             view.rlGroupRoot.isGone = !fromGroup
+            view.btnMoreOptions.isGone = !hasOptions
+
+            val layoutParams = view.tvTime.layoutParams as RelativeLayout.LayoutParams
+            if (view.btnMoreOptions.isGone) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+            } else {
+                layoutParams.addRule(RelativeLayout.START_OF, R.id.btnMoreOptions)
+            }
+            view.tvTime.layoutParams = layoutParams
 
             if (imagesCount > 0) {
                 val imagesLayout = when (imagesCount) {
