@@ -39,8 +39,8 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
     private var placeId: String? = null
     private var avatar: AttachedImage? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
 
         with(view) {

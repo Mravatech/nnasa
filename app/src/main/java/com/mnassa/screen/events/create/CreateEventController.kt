@@ -71,8 +71,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val googleMap = StateExecutor<GoogleMap?, GoogleMap>(initState = null, executionPredicate = { it != null })
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
 
         attachedImagesAdapter.onAddImageClickListener = {
@@ -168,7 +168,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             tilCity.hint = fromDictionary(R.string.need_create_city_hint)
             tilLocationDescription.hint = fromDictionary(R.string.event_create_address)
             //
-            mapView.onCreate(savedInstanceState)
+            mapView.onCreate(null) ////TODO: saved state
             mapView.getMapAsync {
                 with(it) {
                     uiSettings.isMapToolbarEnabled = false

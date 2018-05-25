@@ -2,6 +2,7 @@ package com.mnassa.screen.group.profile
 
 import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
@@ -33,17 +34,9 @@ class GroupProfileViewModelImpl(
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
-
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>>by ProcessAccountChangeArrayBroadcastChannel(
-            beforeReConsume = { it.send(ListItemEvent.Cleared()) },
-            receiveChannelProvider = { postsInteractor.loadAllByGroupId(groupId) })
-
-    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>by ProcessAccountChangeArrayBroadcastChannel(
-            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
-
-    override val permissionsChannel: BroadcastChannel<PermissionsModel>by ProcessAccountChangeConflatedBroadcastChannel {
-        userProfileInteractor.getPermissions()
-    }
+    override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> = ConflatedBroadcastChannel()
+    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> = ConflatedBroadcastChannel()
+    override val permissionsChannel: BroadcastChannel<PermissionsModel> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +51,19 @@ class GroupProfileViewModelImpl(
                 }
             }
         }
+
+        handleException {
+            postsInteractor.loadAllByGroupId(groupId).consumeTo(newsFeedChannel)
+        }
+
+        handleException {
+            postsInteractor.loadAllInfoPosts().consumeTo(infoFeedChannel)
+        }
+
+        handleException {
+            userProfileInteractor.getPermissions().consumeTo(permissionsChannel)
+        }
+
     }
 
     override fun onAttachedToWindow(post: PostModel) {

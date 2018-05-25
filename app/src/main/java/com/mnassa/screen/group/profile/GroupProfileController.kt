@@ -62,10 +62,11 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
         adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
+        adapter.isLoadingEnabled = savedInstanceState == null
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         with(view) {
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
@@ -80,7 +81,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
 
         ///
-        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.newsFeedChannel.openSubscription().bufferize(this@GroupProfileController).consumeEach {
                 when (it) {
@@ -137,7 +137,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             viewModel.permissionsChannel.consumeEach { permission ->
                 with(getViewSuspend()) {
                     fabGroup.removeAllMenuButtons()
-
+//TODO: group permissions
                     if (permission.canCreateGeneralPost) {
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
                         button.setOnClickListener {

@@ -28,8 +28,13 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
     private val adapter = AllConnectionsRecyclerViewAdapter()
     private val popupMenuHelper: PopupMenuHelper by instance()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+        adapter.isLoadingEnabled = savedInstanceState == null
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         with(view) {
             rvGroupConnections.adapter = adapter
@@ -40,7 +45,7 @@ class GroupMembersController(args: Bundle) : MnassaControllerImpl<GroupMembersVi
 
         adapter.onItemOptionsClickListener = { shortAccountModel, view -> showGroupMemberMenu(shortAccountModel, view) }
         adapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.isLoadingEnabled = savedInstanceState == null
+
         launchCoroutineUI {
             viewModel.groupMembersChannel.consumeEach {
                 adapter.set(it)

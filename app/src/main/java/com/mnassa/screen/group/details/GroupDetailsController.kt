@@ -32,8 +32,8 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
     override val viewModel: GroupDetailsViewModel by instance(arg = groupId)
     private val tagsAdapter = PostTagRVAdapter()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }

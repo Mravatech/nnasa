@@ -47,8 +47,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+        adapter.isLoadingEnabled = savedInstanceState == null
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         view.rvProfile.adapter = adapter
         view.ivProfileBack.setOnClickListener { close() }
@@ -110,7 +115,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
 
-        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.postChannel.openSubscription().bufferize(this@ProfileController).consumeEach {
                 when (it) {

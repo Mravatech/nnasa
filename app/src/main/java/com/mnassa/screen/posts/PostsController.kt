@@ -56,14 +56,14 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
         adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
+        adapter.isLoadingEnabled = savedInstanceState == null
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         view.rvNewsFeed.adapter = adapter
 
-        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {

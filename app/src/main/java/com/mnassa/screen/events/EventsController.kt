@@ -45,14 +45,14 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
+        adapter.isLoadingEnabled = savedInstanceState == null
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         view.rvEvents.adapter = adapter
 
-        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.eventsFeedChannel.openSubscription().bufferize(this@EventsController).consumeEach {
                 when (it) {

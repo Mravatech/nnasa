@@ -73,6 +73,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         super.onCreated(savedInstanceState)
 
         commentsAdapter = PostCommentsRVAdapter(commentsRewardModel, headerInflater = { inflateHeader(it) }, reverseOrder = false)
+        commentsAdapter.isLoadingEnabled = true
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
@@ -83,8 +84,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onCommentAuthorClick = { open(ProfileController.newInstance(it)) }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         accountsToRecommendAdapter.onDataSourceChangedListener = { accounts ->
             recommendedAccounts = accounts
@@ -109,7 +110,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             viewModel.canWriteCommentsChannel.consumeEach { bindCanWriteComments(it) }
         }
 
-        commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.commentsChannel.consumeEach {
                 commentsAdapter.isLoadingEnabled = false

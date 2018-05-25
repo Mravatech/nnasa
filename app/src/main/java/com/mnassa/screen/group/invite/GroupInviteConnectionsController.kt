@@ -21,8 +21,8 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
     override val viewModel: GroupInviteConnectionsViewModel by instance(arg = groupId)
     private val adapter = BuildNetworkAdapter()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.group_select_apply)) {

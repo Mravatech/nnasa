@@ -1,5 +1,7 @@
 package com.mnassa.screen.group.list
 
+import android.os.Bundle
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -8,6 +10,7 @@ import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 
 /**
  * Created by Peter on 5/14/2018.
@@ -18,16 +21,24 @@ class GroupListViewModelImpl(
 
 ) : MnassaViewModelImpl(), GroupListViewModel {
 
-    override val groupConnectionRequestsChannel: BroadcastChannel<List<GroupModel>> by ProcessAccountChangeConflatedBroadcastChannel {
-        groupsInteractor.getInvitesToGroups()
-    }
+    override val groupConnectionRequestsChannel: BroadcastChannel<List<GroupModel>> = ConflatedBroadcastChannel()
+    override val myGroupsChannel: BroadcastChannel<List<GroupModel>> = ConflatedBroadcastChannel()
+    override val permissionsChannel: BroadcastChannel<PermissionsModel> = ConflatedBroadcastChannel()
 
-    override val myGroupsChannel: BroadcastChannel<List<GroupModel>> by ProcessAccountChangeConflatedBroadcastChannel {
-        groupsInteractor.getMyGroups()
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override val permissionsChannel: BroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
-        userProfileInteractor.getPermissions()
+        handleException {
+            groupsInteractor.getInvitesToGroups().consumeTo(groupConnectionRequestsChannel)
+        }
+
+        handleException {
+            groupsInteractor.getMyGroups().consumeTo(myGroupsChannel)
+        }
+
+        handleException {
+            userProfileInteractor.getPermissions().consumeTo(permissionsChannel)
+        }
     }
 
     override fun leave(group: GroupModel) {

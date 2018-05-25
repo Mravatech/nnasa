@@ -153,12 +153,13 @@ class GroupsRepositoryImpl(
     private fun makeRequest(group: RawGroupModel): CreateGroupRequest {
         return CreateGroupRequest(
                 communityId = group.id,
+                id = group.id,
                 description = group.description,
                 title = group.title,
                 website = group.website,
                 location = group.placeId,
                 avatar = group.avatarUploaded,
-                tags = group.processedTags
+                tags = group.processedTags.takeIf { it.isNotEmpty() }
         )
     }
 }

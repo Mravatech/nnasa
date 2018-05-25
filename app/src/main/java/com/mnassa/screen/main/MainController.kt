@@ -78,15 +78,15 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         with(view) {
             vpMain.adapter = adapter
 
             accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
-                    .withSavedInstance(savedInstanceState)
+//                    .withSavedInstance(savedInstanceState) //TODO: saved state
                     .withTranslucentStatusBar(true)
                     .withAccountHeader(R.layout.drawer_header)
                     .withOnAccountHeaderListener { _: View, profile: IProfile<Any>, _: Boolean ->
@@ -139,7 +139,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                         }
                         true
                     }
-                    .withSavedInstance(savedInstanceState)
+//                    .withSavedInstance(savedInstanceState) //TODO: saved state
                     .buildForFragment()
 
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
