@@ -29,7 +29,7 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
     var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
-        when {
+        val res = when {
             first.createdAt == second.createdAt -> 0
             first.creator == DATE_CREATOR && second.creator == DATE_CREATOR -> {
                 if (first.createdAt == second.createdAt) 0 else first.createdAt.time.compareTo(second.createdAt.time)
@@ -39,6 +39,7 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
             }
             else -> first.createdAt.time.compareTo(second.createdAt.time)
         }
+        res * -1
     }
     override val itemClass: Class<ChatMessageModel> = ChatMessageModel::class.java
 

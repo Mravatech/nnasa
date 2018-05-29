@@ -23,12 +23,14 @@ class StorageRepositoryImpl(private val ref: StorageReference,
         val uploadTask = uploadRef.putFile(uri).await(exceptionHandler)
         val bucket: String? = uploadTask.metadata?.bucket
         val path: String? = uploadTask.metadata?.path
-        Timber.i("STORAGE >>> uploaded file ${uploadPhoto.uri} as >>> gs://$bucket/$path")
-        return "$GS$bucket/$path"
+
+        val uploadedPhotoUrl = "$GS_PREFIX$bucket/$path"
+        Timber.i("STORAGE >>> uploaded file ${uploadPhoto.uri} as >>> $uploadedPhotoUrl")
+        return uploadedPhotoUrl
     }
 
     companion object {
-        const val GS = "gs://"
+        const val GS_PREFIX = "gs://"
     }
 
 }

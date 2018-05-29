@@ -10,9 +10,7 @@ import com.mnassa.domain.model.HasId
  * Date: 4/13/2018
  */
 internal data class NotificationDbEntity(
-        @SerializedName("id")
-        @Nullable
-        override var id: String,
+        @SerializedName("id") @Nullable override var id: String,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("text") var text: String,
         @SerializedName("type") var type: String,

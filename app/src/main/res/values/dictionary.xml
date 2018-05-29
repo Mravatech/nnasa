@@ -91,6 +91,7 @@
     <string name="post_expires_day_s">connections_button_daysLeft</string>
     <string name="post_expires_valid_till">_android_expiration_valid_till</string>
     <string name="post_expires_text_key">_expirationStatusView_</string>
+    <string name="post_promoted_label">_post_cell_promoted_label</string>
 
     <!-- comments -->
     <string name="posts_comment_reply">_commentCell_Reply</string>
@@ -230,6 +231,7 @@
     <string name="reg_add_another_occupation">_android_registration_add_another_occupation</string>
     <string name="reg_person_type_here">_android_registration_type_here</string>
     <string name="reg_person_occupation_label">_cellOccupation_occupationTitle_primary</string>
+    <string name="reg_person_occupation_label_other">_cellOccupation_occupationTitle_other</string>
     <string name="reg_person_occupation_make_primary">_cellOccupation_buttonMakePrimary</string>
     <string name="reg_person_occupation_delete">_cellOccupation_buttonDelete</string>
     <string name="reg_info_email">_accEdit_cellEmail_placeholder</string>
@@ -378,7 +380,7 @@
     <string name="notification_requested_to_connect_with_you">_android_notification_requested_to_connect_with_you</string>
     <string name="notification_thinks">_android_notification_thinks</string>
     <string name="notification_can_help_you_with">_android_notification_can_help_you_with</string>
-    <string name="notification_you_promoted_your_post">_android_notification_you_promoted_your_post</string>
+    <string name="notification_you_promoted_your_post">notification_text_key_promotePost</string>
     <string name="notification_your_post_will_expire_tomorrow">_notification_text_key_oneDayToExpirationOfPost</string>
     <string name="notification_your_post_has_expired">_android_notification_your_post_has_expired</string>
     <string name="notification_was_cancelled_by_organizer">_android_notification_was_cancelled_by_organizer</string>
@@ -522,5 +524,8 @@
     <string name="post_recommend_empty_description">_android_post_recommend_empty_description</string>
 
     <string name="blocked_account_message">message_accIsDisabled</string>
+    <string name="deleted_user">_android_user_was_deleted</string>
+
+    <string name="points_count">_android_points_count</string>
 
 </resources>

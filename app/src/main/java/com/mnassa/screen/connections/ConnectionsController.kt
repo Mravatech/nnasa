@@ -100,23 +100,7 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
                         openArchivedConnectionsScreen = { openArchivedConnectionsScreen() }
                 )
             }
-            allConnectionsAdapter.onAfterSearchListener = {
-                val allSize = allConnectionsAdapter.dataStorage.size
-                tvAllConnections.isGone = allSize == 0
-                tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, allSize)
-            }
-            recommendedConnectionsAdapter.onAfterSearchListener = {
-                val recommendSize = if (it == 0) recommendedConnectionsAdapter.dataStorage.size else it + recommendedConnectionsAdapter.dataStorage.size
-                rvRecommendedConnections.isGone = recommendSize == 0
-                tvRecommendedConnections.isGone = recommendSize == 0
-                tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, recommendSize)
-            }
-            newConnectionRequestsAdapter.onAfterSearchListener = {
-                val newSize = if (it == 0) newConnectionRequestsAdapter.dataStorage.size else it + newConnectionRequestsAdapter.dataStorage.size
-                rvNewConnectionRequests.isGone = newSize == 0
-                tvNewConnectionRequests.isGone = newSize == 0
-                tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, newSize)
-            }
+
             searchView.etSearch.addTextChangedListener(SimpleTextWatcher {
                 allConnectionsAdapter.searchByName(it)
                 recommendedConnectionsAdapter.searchByName(it)
@@ -188,6 +172,25 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
             rvRecommendedConnections.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             rvNewConnectionRequests.layoutManager = BlockedScrollingLayoutManager(context, RecyclerView.VERTICAL, false)
+
+            //
+            allConnectionsAdapter.onAfterSearchListener = {
+                val allSize = allConnectionsAdapter.dataStorage.size
+                tvAllConnections.isGone = allSize == 0
+                tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, allSize)
+            }
+            recommendedConnectionsAdapter.onAfterSearchListener = {
+                val recommendSize = if (it == 0) recommendedConnectionsAdapter.dataStorage.size else it + recommendedConnectionsAdapter.dataStorage.size
+                rvRecommendedConnections.isGone = recommendSize == 0
+                tvRecommendedConnections.isGone = recommendSize == 0
+                tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, recommendSize)
+            }
+            newConnectionRequestsAdapter.onAfterSearchListener = {
+                val newSize = if (it == 0) newConnectionRequestsAdapter.dataStorage.size else it + newConnectionRequestsAdapter.dataStorage.size
+                rvNewConnectionRequests.isGone = newSize == 0
+                tvNewConnectionRequests.isGone = newSize == 0
+                tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, newSize)
+            }
         }
 
         val headerRef = header.asReference()

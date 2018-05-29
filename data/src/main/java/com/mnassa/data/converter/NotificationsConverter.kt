@@ -40,6 +40,9 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
                 convertEvent(input.extra?.event, converter),
                 input.extra?.newInviteNumber
         )
+        if (extra.author == null) {
+            extra.author = extra.post?.author
+        }
         return NotificationModelImpl(
                 id = input.id,
                 createdAt = Date(input.createdAt),

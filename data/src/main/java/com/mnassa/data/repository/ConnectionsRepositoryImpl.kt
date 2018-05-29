@@ -36,7 +36,8 @@ class ConnectionsRepositoryImpl(
         private val converter: ConvertersContext) : ConnectionsRepository {
 
     override suspend fun sendContacts(phoneNumbers: List<String>) {
-        api.sendContacts(SendContactsRequest(phoneNumbers)).handleException(exceptionHandler)
+        val phonesToSend = phoneNumbers.map { it.replace(" ", "") }.filter { it.isNotBlank() }
+        api.sendContacts(SendContactsRequest(phonesToSend)).handleException(exceptionHandler)
     }
 
     override suspend fun getRecommendedConnections(): ReceiveChannel<List<ShortAccountModel>> {

@@ -18,10 +18,12 @@ import kotlinx.coroutines.experimental.channels.consumeEach
  */
 class CommentsWrapperForPostViewModelImpl(
         private val postId: String,
+        private val postAuthorId: String,
         private val commentsInteractor: CommentsInteractor,
         private val postsInteractor: PostsInteractor,
         private val walletInteractor: WalletInteractor
 ) : MnassaViewModelImpl(), CommentsWrapperViewModel {
+
     override val scrollToChannel: ArrayBroadcastChannel<CommentModel> = ArrayBroadcastChannel(1)
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
     override val canReadCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
@@ -31,7 +33,7 @@ class CommentsWrapperForPostViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            postsInteractor.loadById(postId).consumeEach { post ->
+            postsInteractor.loadById(postId, postAuthorId).consumeEach { post ->
                 if (post != null) {
                     loadComments()
                 }

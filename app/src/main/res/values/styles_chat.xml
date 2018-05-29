@@ -43,6 +43,10 @@
         <item name="android:layout_width">@dimen/chat_room_unread_count_size</item>
         <item name="android:layout_height">@dimen/chat_room_unread_count_size</item>
         <item name="android:textSize">@dimen/chat_room_message_size</item>
+        <item name="autoSizeMaxTextSize">@dimen/chat_room_message_size</item>
+        <item name="autoSizeMinTextSize">5sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="autoSizeTextType">uniform</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">normal</item>
         <item name="android:gravity">center</item>

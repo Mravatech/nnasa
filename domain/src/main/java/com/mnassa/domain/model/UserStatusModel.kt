@@ -6,5 +6,4 @@ package com.mnassa.domain.model
 sealed class UserStatusModel {
     class Enabled : UserStatusModel()
     class Disabled : UserStatusModel()
-
 }

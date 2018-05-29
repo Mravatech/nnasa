@@ -3,7 +3,7 @@
     "project_number": "571849293305",
     "firebase_url": "https://mnassa4prod.firebaseio.com",
     "project_id": "mnassa4prod",
-    "storage_bucket": "mnassa4prod.appspot.com"
+    "storage_bucket": "mnassa4prod_eu"
   },
   "client": [
     {
@@ -14,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "571849293305-ps4q618r4f1hfbnmtv3659lr7cmi8an6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mnassa",
+            "certificate_hash": "2520323f66a6e28113da6dde90afe7178c45ef83"
+          }
+        },
         {
           "client_id": "571849293305-2oqmn4qv0q95r0r2sjrml4h94enl9l1e.apps.googleusercontent.com",
           "client_type": 3
@@ -29,8 +37,21 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571849293305-909scf8d1b8d5ssaaohc3s6ldn27a2ob.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mnassa",
+                "app_store_id": "1137168880"
+              }
+            },
+            {
+              "client_id": "571849293305-2oqmn4qv0q95r0r2sjrml4h94enl9l1e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

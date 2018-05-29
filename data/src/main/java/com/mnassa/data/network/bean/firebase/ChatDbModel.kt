@@ -11,9 +11,7 @@ import com.mnassa.domain.model.HasId
  */
 
 internal data class ChatDbModel(
-        @SerializedName("id")
-        @Nullable
-        override var id: String,
+        @SerializedName("id") @Nullable override var id: String,
         @SerializedName("unreadCount") var unreadCount: Int,
         @SerializedName("viewedAtDate") var viewedAtDate: Long,
         @SerializedName("lastMessage") var lastMessage: ChatMessageDbModel?,
@@ -28,7 +26,5 @@ internal data class ChatMessageDbModel(
         @SerializedName("chatID") var chatID: String?,
         @SerializedName("linkedMessageId") var linkedMessageId: String?,
         @SerializedName("linkedPostId") var linkedPostId: String?,
-        @SerializedName("id")
-        @Nullable
-        override var id: String
+        @SerializedName("id") @Nullable override var id: String
 ): HasId

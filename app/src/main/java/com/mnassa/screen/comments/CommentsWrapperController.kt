@@ -1,6 +1,7 @@
 package com.mnassa.screen.comments
 
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,7 +72,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
 
-        commentsAdapter = PostCommentsRVAdapter(commentsRewardModel) { inflateHeader(it) }
+        commentsAdapter = PostCommentsRVAdapter(commentsRewardModel, headerInflater = { inflateHeader(it) }, reverseOrder = false)
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
@@ -79,6 +80,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it.id))
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
+        commentsAdapter.onCommentAuthorClick = { open(ProfileController.newInstance(it)) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -93,6 +95,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
 
         with(view) {
+            rvContent.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             rvContent.adapter = commentsAdapter
             initializeContainer()
             bindToolbar(toolbar)

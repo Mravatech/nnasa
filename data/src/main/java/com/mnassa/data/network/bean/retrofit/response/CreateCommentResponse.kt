@@ -6,8 +6,7 @@ import com.google.gson.annotations.SerializedName
  * Created by Peter on 3/26/2018.
  */
 class CreateCommentResponse : MnassaResponse() {
-    @SerializedName("data")
-    internal var data: CreateCommentData? = null
+    @SerializedName("data") internal var data: CreateCommentData? = null
 
     override fun toString(): String = data.toString()
 }

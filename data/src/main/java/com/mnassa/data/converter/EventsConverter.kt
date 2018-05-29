@@ -34,8 +34,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         return EventModelImpl(
                 id = input.id,
                 author = converter.convert(input.author),
-                commentsCount = input.counters.comments,
-                viewsCount = input.counters.views,
+                commentsCount = input.counters.comments ?: 0,
+                viewsCount = input.counters.views ?: 0,
                 createdAt = Date(input.createdAt),
                 duration = convertDuration(input),
                 startAt = Date(input.eventStartAt),
@@ -84,7 +84,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertFromLocation(input: EventLocationType): String {
-        return when(input) {
+        return when (input) {
             is EventLocationType.Specified -> NetworkContract.EventLocationType.SPECIFY
             is EventLocationType.NotDefined -> NetworkContract.EventLocationType.NOT_DEFINED
             is EventLocationType.Later -> NetworkContract.EventLocationType.LATER
@@ -163,7 +163,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 tags = input.tagIds.takeIf { it.isNotEmpty() }?.toList(),
                 status = input.status.stringValue,
                 locationDescription = (locationType as? EventLocationType.Specified)?.description,
-                allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC
+                allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC,
+                privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList()
         )
     }
 }

@@ -54,7 +54,7 @@
 
     <include layout="@layout/sub_header_personal" />
 
-    <com.sk4atg89.alexander.tattag.OneLineLinear
+    <com.mnassa.widget.linearchip.OneLineLinear
         android:id="@+id/llBottomTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -16,8 +16,8 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_INFO_FEED
 import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
-import com.mnassa.data.repository.DatabaseContract.TABLE_PABLIC_POSTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
+import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.other.LanguageProvider
@@ -25,6 +25,7 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
 
 /**
@@ -63,7 +64,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun loadAllByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
         val userId = requireNotNull(accountId)
-        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PABLIC_POSTS
+        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PUBLIC_POSTS
         return db.child(table)
                 .child(userId)
                 .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
@@ -83,24 +84,25 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                         mapper = { mapPost(it) })
     }
 
-    override suspend fun loadById(id: String): ReceiveChannel<PostModel?> {
-        val userId = requireNotNull(userRepository.getAccountIdOrException())
+    override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> {
+        //load from newsFeed -> if not found load from public posts
+        val newsFeedRef = db.child(TABLE_NEWS_FEED).child(userRepository.getAccountIdOrException()).child(id)
+        val publicPostRef = db.child(TABLE_PUBLIC_POSTS).child(authorId).child(id)
 
-        return db
-                .child(TABLE_NEWS_FEED)
-                .child(userId)
-                .child(id)
+        val isPublicPost = try {
+            publicPostRef.await<PostDbEntity>(exceptionHandler)?.type != null
+        } catch (e: Exception) {
+            false
+        }
+
+        return (if (isPublicPost) publicPostRef else newsFeedRef)
                 .toValueChannel<PostDbEntity>(exceptionHandler)
                 .map { it?.run { mapPost(this) } }
+
     }
 
     override suspend fun loadUserPostById(id: String, accountId: String): PostModel? {
-        return db
-                .child(TABLE_NEWS_FEED)
-                .child(accountId)
-                .child(id)
-                .await<PostDbEntity>(exceptionHandler)
-                ?.run { converter.convert(this, PostModel::class.java) }
+        return loadById(id, accountId).consume { receive() }
     }
 
     override suspend fun sendViewed(ids: List<String>) {

@@ -26,7 +26,7 @@ import java.util.*
  * Created by Peter on 3/19/2018.
  */
 fun Double.formatAsMoneySAR(): String {
-    return formatAsMoney().toString() + " Points"
+    return fromDictionary(R.string.points_count).format(formatAsMoney())
 }
 
 fun Double.formatAsMoney(): Long {
@@ -64,7 +64,7 @@ val PostModel.formattedText: CharSequence?
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.recommend_prefix))
                 spannable.append(" ")
                 val nameStart = spannable.length
-                spannable.append(this.recommendedProfile.formattedName)
+                spannable.append(this.recommendedProfile?.formattedName ?: fromDictionary(R.string.deleted_user))
                 spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(App.context, R.color.accent)), nameStart, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 if (!text.isNullOrBlank()) {
@@ -105,7 +105,13 @@ fun ImageView.image(postAttachment: PostAttachment, crop: Boolean = true) {
     }
 }
 
-fun TextView.bindExpireType(statusOfExpiration: ExpirationType, timeOfExpiration: Date?) {
+fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?) {
+    if (statusOfExpiration == null) {
+        visibility = View.GONE
+        return
+    }
+    visibility = View.VISIBLE
+
     val key: String = resources.getString(R.string.post_expires_text_key)
     if (statusOfExpiration is ExpirationType.ACTIVE) {
         timeOfExpiration?.let {
@@ -124,6 +130,7 @@ fun TextView.bindExpireType(statusOfExpiration: ExpirationType, timeOfExpiration
         is ExpirationType.FULFILLED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_done_black_24dp, null)
         else -> null
     }
+
     setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
     setTextColor(Color.BLACK)
 

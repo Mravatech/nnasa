@@ -21,22 +21,27 @@ import com.mnassa.translation.fromDictionary
  * Created by Peter on 3/23/2018.
  */
 
-class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel, private val headerInflater: (parent: ViewGroup) -> View) : BaseSortedPaginationRVAdapter<CommentModel>(), View.OnClickListener {
+class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel,
+                            private val headerInflater: (parent: ViewGroup) -> View,
+                            reverseOrder: Boolean = false) :
+        BaseSortedPaginationRVAdapter<CommentModel>(reverseOrder), View.OnClickListener {
     var onBindHeader = { header: View -> }
     var onReplyClick = { comment: CommentModel -> }
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
     var onCommentUsefulClick = { comment: CommentModel -> }
     var onRecommendedAccountClick = { view: View, account: ShortAccountModel -> }
+    var onCommentAuthorClick = {  account: ShortAccountModel -> }
 
     fun destroyCallbacks() {
         onBindHeader = { }
         onReplyClick = { }
         onCommentOptionsClick = { _: View, _: CommentModel -> }
         onRecommendedAccountClick = { _: View, _: ShortAccountModel -> }
+        onCommentAuthorClick = {  }
     }
 
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
-        when {
+        val result = when {
             itemsTheSameComparator(first, second) -> 0
             first is CommentReplyModel && second is CommentReplyModel -> {
                 val parentComparingResult = first.parentId.compareTo(second.parentId)
@@ -52,6 +57,7 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             }
             else -> first.id.compareTo(second.id)
         }
+        result * if (reverseOrder) -1 else 1
     }
 
     override val itemClass: Class<CommentModel> = CommentModel::class.java
@@ -86,13 +92,20 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
     }
 
     override fun onClick(view: View) {
-        val position = (view.tag as? RecyclerView.ViewHolder)?.adapterPosition ?: -1
+        var tag = view.tag as? RecyclerView.ViewHolder
+        if (tag == null) {
+            tag = (view.parent as? View)?.tag as? RecyclerView.ViewHolder
+        }
+
+        val position = tag?.adapterPosition ?: -1
 
         when (view.id) {
             R.id.rlClickableRoot -> onRecommendedAccountClick(view, view.tag as ShortAccountModel)
             R.id.btnReply -> if (position >= 0) onReplyClick(getDataItemByAdapterPosition(position))
             R.id.commentRoot -> if (position >= 0) onCommentOptionsClick(view, getDataItemByAdapterPosition(position))
             R.id.btnUseful -> if (position >= 0) onCommentUsefulClick(getDataItemByAdapterPosition(position))
+            R.id.ivAvatar -> if (position >= 0) onCommentAuthorClick(getDataItemByAdapterPosition(position).creator)
+            R.id.tvUserName -> if (position >= 0) onCommentAuthorClick(getDataItemByAdapterPosition(position).creator)
         }
     }
 
@@ -101,7 +114,9 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
         private const val TYPE_COMMENT_REPLY = 2
     }
 
-    private class CommentViewHolder(itemView: View, private val onClickListener: View.OnClickListener, private val commentsRewardModel: CommentsRewardModel) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
+    private class CommentViewHolder(itemView: View,
+                                    private val onClickListener: View.OnClickListener,
+                                    private val commentsRewardModel: CommentsRewardModel) : BaseVH<CommentModel>(itemView), View.OnLongClickListener {
 
         override fun bind(item: CommentModel) {
             //used findViewById because this method is identical for Comment and Reply
@@ -139,6 +154,13 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             }
             commentRoot.tag = this
             commentRoot.setOnLongClickListener(this)
+
+
+            avatar.setOnClickListener(onClickListener)
+            (avatar.parent as? View)?.tag = this
+
+            userName.setOnClickListener(onClickListener)
+            userName.tag = this
         }
 
         private fun handleUseful(item: CommentModel, usefulButton: Button, isMyPost: Boolean) {

@@ -19,7 +19,7 @@ open class PostModelImpl(
         override val privacyType: PostPrivacyType,
         override val tags: List<String>,
         override val text: String?,
-        override val statusOfExpiration: ExpirationType,
+        override val statusOfExpiration: ExpirationType?,
         override var timeOfExpiration: Date?,
         override val updatedAt: Date,
         override val counters: PostCounters,
@@ -99,7 +99,7 @@ class InfoPostImpl(
         override val privacyType: PostPrivacyType,
         override val tags: List<String>,
         override val text: String?,
-        override val statusOfExpiration: ExpirationType,
+        override val statusOfExpiration: ExpirationType?,
         override var timeOfExpiration: Date?,
         override val updatedAt: Date,
         override val counters: PostCounters,
@@ -151,7 +151,7 @@ class OfferPostModelImpl(
         override val privacyType: PostPrivacyType,
         override val tags: List<String>,
         override val text: String?,
-        override val statusOfExpiration: ExpirationType,
+        override val statusOfExpiration: ExpirationType?,
         override var timeOfExpiration: Date?,
         override val updatedAt: Date,
         override val counters: PostCounters,
@@ -204,7 +204,7 @@ class RecommendedProfilePostModelImpl(
         override val privacyType: PostPrivacyType,
         override val tags: List<String>,
         override val text: String?,
-        override val statusOfExpiration: ExpirationType,
+        override val statusOfExpiration: ExpirationType?,
         override var timeOfExpiration: Date?,
         override val updatedAt: Date,
         override val counters: PostCounters,
@@ -213,7 +213,7 @@ class RecommendedProfilePostModelImpl(
         override val price: Double,
         override val autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
-        override val recommendedProfile: ShortAccountModel,
+        override val recommendedProfile: ShortAccountModel?,
         override var offers: List<TagModel>
 ) : PostModelImpl(
         id,
@@ -291,7 +291,7 @@ class RecommendedProfilePostModelImpl(
         result = 31 * result + price.hashCode()
         result = 31 * result + autoSuggest.hashCode()
         result = 31 * result + (repostAuthor?.hashCode() ?: 0)
-        result = 31 * result + recommendedProfile.hashCode()
+        result = 31 * result + (recommendedProfile?.hashCode() ?: 0)
         result = 31 * result + offers.hashCode()
         return result
     }

@@ -8,7 +8,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
@@ -58,7 +58,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             view.etYourEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etPhoneNumber.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }

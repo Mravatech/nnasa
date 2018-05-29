@@ -10,10 +10,12 @@ import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.model.impl.NotificationExtraImpl
 import com.mnassa.domain.model.impl.NotificationModelImpl
+import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.main.OnPageSelected
+import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.notifications.NotificationAdapter.Companion.NEW
 import com.mnassa.screen.notifications.NotificationAdapter.Companion.OLD
 import com.mnassa.screen.notifications.viewholder.*
@@ -28,7 +30,7 @@ import java.util.*
 /**
  * Created by Peter on 3/6/2018.
  */
-class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), OnPageSelected {
+class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), OnPageSelected, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_notifications
     override val viewModel: NotificationsViewModel by instance()
 
@@ -49,7 +51,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
                         adapter.dataStorage.addAll(it.item)
-                        view.llEmptyNotifications.visibility = View.GONE
+                        view.llEmptyNotifications.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
                         handleHeaders(it.item)
                     }
                     is ListItemEvent.Changed -> {
@@ -66,11 +68,10 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                     }
                     is ListItemEvent.Cleared -> {
                         adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = false
-                        view.llEmptyNotifications.visibility = View.VISIBLE
+                        adapter.isLoadingEnabled = true
+                        view.llEmptyNotifications.isInvisible = true
                     }
                 }
-
             }
         }
     }
@@ -92,6 +93,10 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
     }
 
     override fun onPageSelected() {
+        //do nothing here
+    }
+
+    override fun scrollToTop() {
         view?.rvNotifications?.scrollToPosition(0)
     }
 
@@ -143,18 +148,34 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
             viewModel.notificationView(item.id)
         }
 
-        when (item.type) {
-            POST_COMMENT, POST_IS_EXPIRED, POST_PROMOTED, USER_WAS_RECOMMENDED_BY_POST, USER_WAS_RECOMMENDED,
-            GENERAL_POST_BY_ADMIN, I_WAS_RECOMMENDED, AUTO_SUGGEST_YOU_CAN_HELP, ONE_DAY_TO_EXPIRATION_OF_POST -> {
+         when (item.type) {
+            POST_COMMENT,
+            POST_IS_EXPIRED,
+            POST_PROMOTED,
+            USER_WAS_RECOMMENDED_BY_POST,
+            USER_WAS_RECOMMENDED,
+            GENERAL_POST_BY_ADMIN,
+            I_WAS_RECOMMENDED,
+            AUTO_SUGGEST_YOU_CAN_HELP,
+            ONE_DAY_TO_EXPIRATION_OF_POST -> {
                 val postDetailsFactory: PostDetailsFactory by instance()
                 open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
             }
-            NEW_USER_JOINED, POST_REPOST, CONNECTION_REQUEST, CONNECTIONS_REQUEST_ACCEPTED,
-            USER_WAS_RECOMMENDED_TO_YOU, PRIVATE_CHAT_MESSAGE, RESPONSE_CHAT_MESSAGE -> {
+            NEW_USER_JOINED,
+            POST_REPOST,
+            CONNECTION_REQUEST,
+            CONNECTIONS_REQUEST_ACCEPTED,
+            USER_WAS_RECOMMENDED_TO_YOU,
+            PRIVATE_CHAT_MESSAGE,
+            RESPONSE_CHAT_MESSAGE -> {
                 val account = item.extra.recommended ?: item.extra.reffered ?: item.extra.author
                 open(ProfileController.newInstance(requireNotNull(account)))
             }
-            I_WAS_RECOMMENDED_IN_EVENT, USER_WAS_RECOMMENDED_IN_EVENT, NEW_EVENT_BY_ADMIN, NEW_EVENT_ATTENDEE, EVENT_CANCELLING -> {
+            I_WAS_RECOMMENDED_IN_EVENT,
+            USER_WAS_RECOMMENDED_IN_EVENT,
+            NEW_EVENT_BY_ADMIN,
+            NEW_EVENT_ATTENDEE,
+            EVENT_CANCELLING -> {
                 open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
             }
             INVITES_NUMBER_CHANGED -> {

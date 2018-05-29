@@ -21,6 +21,8 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_TOTAL_OUTCOME = "totalOutcome"
     const val TABLE_ACCOUNTS_COL_INVITES_COUNT = "invites"
     const val TABLE_ACCOUNTS_COL_PERMISSIONS = "permissions"
+    const val TABLE_ACCOUNTS_COL_STATE = "state"
+    const val TABLE_ACCOUNTS_COL_STATE_DISABLED = "disabled"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -52,7 +54,7 @@ internal object DatabaseContract {
     const val TABLE_CONNECTIONS_RECOMMENDED_COL_BY_EVENTS = "byEvents"//"byEvents" //
     //
     const val TABLE_POSTS = "posts"
-    const val TABLE_PABLIC_POSTS = "publicPosts"
+    const val TABLE_PUBLIC_POSTS = "publicPosts"
     //
     const val TABLE_NOTIFICATIONS = "notifications"
     const val TABLE_NOTIFICATIONS_OLD = "notificationsOld"

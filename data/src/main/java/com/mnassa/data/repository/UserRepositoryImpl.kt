@@ -1,6 +1,7 @@
 package com.mnassa.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +40,9 @@ class UserRepositoryImpl(
         private val context: Context,
         private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference,
-        private val firebaseAuthApi: FirebaseAuthApi) : UserRepository {
+        firebaseAuthApiLazy: () -> FirebaseAuthApi) : UserRepository {
+
+    private val firebaseAuthApi: FirebaseAuthApi by lazy(firebaseAuthApiLazy)
 
     private val sharedPrefs by lazy { context.getSharedPreferences(EXTRA_PREFS_NAME, Context.MODE_PRIVATE) }
     private var accountIdInternal: String?
@@ -52,6 +55,19 @@ class UserRepositoryImpl(
             }
         }
         set(value) = sharedPrefs.edit().putString(EXTRA_ACCOUNT_ID, value).apply()
+
+    override suspend fun getAccountStatusChannel(accountId: String): ReceiveChannel<UserStatusModel> {
+        return db.child(DatabaseContract.TABLE_ACCOUNTS)
+                .child(accountId)
+                .child(DatabaseContract.TABLE_ACCOUNTS_COL_STATE)
+                .toValueChannel<String>(exceptionHandler)
+                .map {
+                    if (it == DatabaseContract.TABLE_ACCOUNTS_COL_STATE_DISABLED)
+                        UserStatusModel.Disabled()
+                    else
+                        UserStatusModel.Enabled()
+                }
+    }
 
     override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> {
         val uid = getFirebaseUserId() ?: return produce { }
@@ -167,6 +183,7 @@ class UserRepositoryImpl(
                 lastName = account.personalInfo?.lastName,
                 userName = account.userName,
                 showContactEmail = account.showContactEmail,
+                showContactPhone = account.showContactPhone,
                 language = account.language,
                 type = getAccountType(account.accountType),
                 birthday = account.birthday,
@@ -175,7 +192,6 @@ class UserRepositoryImpl(
                 id = getAccountIdOrException(),
                 avatar = account.avatar,
                 firstName = account.personalInfo?.firstName,
-                showContactPhone = account.showContactPhone,
                 contactEmail = account.contactEmail,
                 gender = getGender(account.gender),
                 locationId = account.locationId,
@@ -189,6 +205,7 @@ class UserRepositoryImpl(
                 organizationName = requireNotNull(account.organizationInfo).organizationName,
                 avatar = account.avatar,
                 showContactEmail = account.showContactEmail,
+                showContactPhone = account.showContactPhone,
                 contactEmail = account.contactEmail,
                 userName = account.userName,
                 language = account.language,
@@ -205,7 +222,9 @@ class UserRepositoryImpl(
                 organizationName = requireNotNull(account.organizationInfo).organizationName,
                 avatar = account.avatar,
                 showContactEmail = account.showContactEmail,
+                showContactPhone = account.showContactPhone,
                 contactEmail = account.contactEmail,
+                contactPhone = account.contactPhone,
                 userName = account.userName,
                 language = account.language,
                 type = getAccountType(account.accountType),
@@ -266,7 +285,7 @@ class UserRepositoryImpl(
                 .child(getAccountIdOrException())
                 .child(TABLE_ACCOUNTS_COL_PERMISSIONS)
                 .toValueChannel<PermissionsDbEntity>(exceptionHandler)
-                .map { it ?: PermissionsDbEntity.EMPTY  }
+                .map { it ?: PermissionsDbEntity.EMPTY }
     }
 
     override suspend fun addPushToken() {

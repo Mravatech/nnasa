@@ -91,7 +91,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         chatApi.deleteMessage(MessageFromChatRequest(messageId, chatID, isDeleteForBoth)).handleException(exceptionHandler)
     }
 
-    override suspend fun listOfMessages(chatId: String, accointId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
+    override suspend fun listOfMessages(chatId: String, accountId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
         val myUserId = requireNotNull(userRepository.getAccountIdOrException())
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
@@ -110,7 +110,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         }
                     }
                     it.item.replyPost?.first?.let { first ->
-                        val replyPost: PostModel? = postsRepository.loadUserPostById(first, accointId)
+                        val replyPost: PostModel? = postsRepository.loadUserPostById(first, accountId)
                         replyPost?.let { post ->
                             it.item.replyPost = it.item.replyPost?.copy(second = post)
                         }
@@ -130,9 +130,10 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         mapper = { converter.convert(it, ChatRoomModel::class.java) }
                 )
                 .map {
-                    it.item.account = userRepository
-                            .getAccountById(it.item.members?.first { it != userId }
-                                    ?: "")
+                    val otherUserId = it.item.members?.firstOrNull { it != userId }
+                    if (otherUserId != null) {
+                        it.item.account = userRepository.getAccountById(otherUserId)
+                    }
                     it
                 }
                 .filter {

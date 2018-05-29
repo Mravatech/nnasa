@@ -7,6 +7,7 @@
     android:background="@color/background_highlighted">
 
     <RelativeLayout
+        android:id="@+id/rlClickableRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"

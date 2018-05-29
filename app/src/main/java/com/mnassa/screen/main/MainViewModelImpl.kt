@@ -81,9 +81,14 @@ class MainViewModelImpl(
 
     override fun selectAccount(account: ShortAccountModel) {
         handleException {
-            withProgressSuspend {
-                userProfileInteractor.setCurrentUserAccount(account)
-                delay(1_000) //for animation purpose. Also this time is needed to update all counters
+            try {
+                withProgressSuspend {
+                    userProfileInteractor.setCurrentUserAccount(account)
+                    delay(1_000) //for animation purpose. Also this time is needed to update all counters
+                }
+            } catch (e: Exception) {
+                currentAccountChannel.valueOrNull?.apply { currentAccountChannel.send(this) }
+                throw e
             }
         }
     }

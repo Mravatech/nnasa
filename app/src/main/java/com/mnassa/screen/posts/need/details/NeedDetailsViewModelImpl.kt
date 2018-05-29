@@ -20,11 +20,15 @@ import java.util.concurrent.TimeUnit
  * Created by Peter on 3/19/2018.
  */
 open class NeedDetailsViewModelImpl(
-        private val postId: String,
+        params: NeedDetailsViewModel.ViewModelParams,
         private val postsInteractor: PostsInteractor,
         private val tagInteractor: TagInteractor,
         private val complaintInteractor: ComplaintInteractor
 ) : MnassaViewModelImpl(), NeedDetailsViewModel {
+
+    protected val postId: String = params.postId
+    protected val postAuthorId: String = params.postAuthorId
+
     override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -32,8 +36,9 @@ open class NeedDetailsViewModelImpl(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         handleException {
-            postsInteractor.loadById(postId).consumeEach {
+            postsInteractor.loadById(postId, postAuthorId).consumeEach {
                 if (it != null) {
                     it.timeOfExpiration = getExpiration(it)
                     postChannel.send(it)

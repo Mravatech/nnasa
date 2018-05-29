@@ -1,4 +1,4 @@
-package com.sk4atg89.alexander.tattag
+package com.mnassa.widget.linearchip
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import com.mnassa.widget.SimpleChipView
-import com.mnassa.widget.linearchip.CountChipView
 
 class OneLineLinear : LinearLayout {
 

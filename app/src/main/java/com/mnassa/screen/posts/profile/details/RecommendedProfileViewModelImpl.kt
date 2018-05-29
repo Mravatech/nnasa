@@ -8,6 +8,7 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -16,12 +17,12 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 4/10/2018.
  */
-class RecommendedProfileViewModelImpl(postId: String,
+class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelParams,
                                       postsInteractor: PostsInteractor,
                                       tagInteractor: TagInteractor,
                                       complaintInteractor: ComplaintInteractor,
                                       private val connectionsInteractor: ConnectionsInteractor) : NeedDetailsViewModelImpl(
-        postId,
+        params,
         postsInteractor,
         tagInteractor,
         complaintInteractor
@@ -43,8 +44,11 @@ class RecommendedProfileViewModelImpl(postId: String,
     private fun loadConnectionStatus(recommendedProfilePostModel: RecommendedProfilePostModel) {
         loadConnectionStatusJob?.cancel()
         loadConnectionStatusJob = handleException {
-            connectionsInteractor.getStatusesConnections(recommendedProfilePostModel.recommendedProfile.id).consumeEach {
-                connectionStatusChannel.send(it)
+            val profile = recommendedProfilePostModel.recommendedProfile
+            if (profile != null) {
+                connectionsInteractor.getStatusesConnections(profile.id).consumeEach {
+                    connectionStatusChannel.send(it)
+                }
             }
         }
     }

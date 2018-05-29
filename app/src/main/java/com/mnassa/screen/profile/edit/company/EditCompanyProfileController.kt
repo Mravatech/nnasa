@@ -8,13 +8,12 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
+import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formatted
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
-import com.mnassa.screen.profile.model.ProfileModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
@@ -67,7 +66,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             etCompanyName.setText(accountModel.organizationInfo?.organizationName)
             etCompanyUserName.setText(accountModel.userName)
             etCompanyPhone.setHideMode(accountModel.showContactPhone)
-            etCompanyPhone.setText(accountModel.contactPhone?.replace("+", ""))
+            etCompanyPhone.setText(accountModel.contactPhone)
             etWebSite.setText(accountModel.website)
             vCompanyStatus.setOrganization(accountModel.organizationType)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
@@ -130,7 +129,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             view.etCompanyEmail.error = fromDictionary(R.string.email_is_not_valid)
             return
         }
-        if (!PATTERN_PHONE_TAIL.matcher(phone).matches() && phone.isNotEmpty()) {
+        if (!PATTERN_PHONE.matcher(phone).matches() && phone.isNotEmpty()) {
             view.etCompanyPhone.error = fromDictionary(R.string.phone_is_not_valid)
             return
         }
@@ -176,11 +175,11 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         private const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
         private const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
 
-        fun newInstance(profileModel: ProfileModel): EditCompanyProfileController {
+        fun newInstance(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>): EditCompanyProfileController {
             val params = Bundle()
-            params.putParcelable(EXTRA_PROFILE, profileModel.profile)
-            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, profileModel.interests as ArrayList<out TagModel>)
-            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, profileModel.offers as ArrayList<out TagModel>)
+            params.putParcelable(EXTRA_PROFILE, profile)
+            params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, interests as ArrayList<out TagModel>)
+            params.putParcelableArrayList(EXTRA_TAGS_OFFERS, offers as ArrayList<out TagModel>)
             return EditCompanyProfileController(params)
         }
     }

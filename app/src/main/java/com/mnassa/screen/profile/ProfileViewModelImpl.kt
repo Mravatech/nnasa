@@ -6,10 +6,11 @@ import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
-import com.mnassa.screen.profile.model.ProfileModel
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,6 +18,7 @@ import timber.log.Timber
  * Date: 2/26/2018
  */
 class ProfileViewModelImpl(
+        private val accountId: String,
         private val tagInteractor: TagInteractor,
         private val userProfileInteractor: UserProfileInteractor,
         private val connectionsInteractor: ConnectionsInteractor,
@@ -24,16 +26,48 @@ class ProfileViewModelImpl(
         private val complaintInteractor: ComplaintInteractor
 ) : MnassaViewModelImpl(), ProfileViewModel {
 
-    override val profileChannel: BroadcastChannel<ProfileModel> = BroadcastChannel(10)
-    override val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus> = BroadcastChannel(10)
-    override val postChannel: BroadcastChannel<ListItemEvent<PostModel>> = BroadcastChannel(10)
-
+    override val profileChannel: ConflatedBroadcastChannel<ProfileAccountModel> = ConflatedBroadcastChannel()
+    override val statusesConnectionsChannel: ConflatedBroadcastChannel<ConnectionStatus> = ConflatedBroadcastChannel()
+    override val postChannel: ConflatedBroadcastChannel<ListItemEvent<PostModel>> = ConflatedBroadcastChannel()
+    override val interestsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
+    override val offersChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
+    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleException {
             reportsList = complaintInteractor.getReports()
+        }
+
+        handleException {
+            userProfileInteractor.getProfileByIdChannel(accountId).consumeEach {
+                if (it != null) {
+                    profileChannel.send(it)
+                } else {
+                    closeScreenChannel.send(Unit)
+                }
+            }
+        }
+        handleException {
+            connectionsInteractor.getStatusesConnections(accountId).consumeEach {
+                statusesConnectionsChannel.send(it)
+            }
+        }
+        handleException {
+            postsInteractor.loadAllUserPostByAccountId(accountId).consumeEach {
+                postChannel.send(it)
+            }
+        }
+        handleException {
+            profileChannel.consumeEach { profile ->
+                val interests = profile.interests.map { async { tagInteractor.get(it) } }.mapNotNull { it.await() }
+                interestsChannel.send(interests)
+
+                val offers = profile.offers.map { async { tagInteractor.get(it) } }.mapNotNull { it.await() }
+                offersChannel.send(offers)
+            }
+
         }
     }
 
@@ -43,38 +77,6 @@ class ProfileViewModelImpl(
         reportsList = complaintInteractor.getReports()
         hideProgress()
         return reportsList
-    }
-
-    override fun getProfileWithAccountId(accountId: String) {
-        handleException {
-            showProgress()
-            userProfileInteractor.getProfileByIdChannel(accountId).consumeEach {
-                val profileAccountModel = it
-                Timber.i(profileAccountModel.toString())
-                profileAccountModel?.let {
-                    val profile = ProfileModel(it,
-                            tagInteractor.getTagsByIds(it.interests),
-                            tagInteractor.getTagsByIds(it.offers),
-                            userProfileInteractor.getAccountIdOrNull() == accountId
-                            , connectionsInteractor.getConnectionStatusById(accountId))
-                    profileChannel.send(profile)
-                }
-                hideProgress()
-            }
-        }
-        handleException {
-            connectionsInteractor.getStatusesConnections(accountId).consumeEach {
-                statusesConnectionsChannel.send(it)
-            }
-        }
-    }
-
-    override fun getPostsById(accountId: String) {
-        handleException {
-            postsInteractor.loadAllUserPostByAccountId(accountId).consumeEach {
-                postChannel.send(it)
-            }
-        }
     }
 
     override fun sendComplaint(id: String, reason: String, authorText: String?) {

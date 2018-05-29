@@ -5,7 +5,10 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.delay
 
 /**
  * Created by Peter on 3/6/2018.
@@ -13,6 +16,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : MnassaViewModelImpl(), EventsViewModel {
 
     private var isCounterReset = false
+    private var resetCounterJob: Job? = null
 
     override val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>> by ProcessAccountChangeArrayBroadcastChannel(
             beforeReConsume = {
@@ -21,11 +25,14 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : Mnas
             },
             receiveChannelProvider = { eventsInteractor.getEventsFeedChannel() })
 
+
     override fun onAttachedToWindow(event: EventModel) {
-        handleException {
-            eventsInteractor.onItemViewed(event)
-        }
-        if (!isCounterReset) {
+        handleException { eventsInteractor.onItemViewed(event) }
+
+        //reset counter with debounce
+        resetCounterJob?.cancel()
+        resetCounterJob = async {
+            delay(1_000)
             resetCounter()
         }
     }

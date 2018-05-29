@@ -2,6 +2,7 @@ package com.mnassa.data.extensions
 
 import com.google.android.gms.tasks.Task
 import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.domain.exception.FirebaseMappingException
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 
 /**
@@ -21,3 +22,12 @@ suspend inline fun <reified R> Task<R>.await(exceptionHandler: ExceptionHandler)
     }
     return result
 }
+
+//ignore all mapping exceptions
+internal val Exception.isSuppressed: Boolean
+    get() =
+        this is IllegalArgumentException ||
+                this is IllegalStateException ||
+                this is NullPointerException ||
+                this is FirebaseMappingException ||
+                this is ClassCastException

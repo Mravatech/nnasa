@@ -9,6 +9,5 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class ConnectionDbStatuses(
-        @SerializedName("connectionsStatus")
-        val connectionsStatus: String?
+        @SerializedName("connectionsStatus") val connectionsStatus: String?
 )

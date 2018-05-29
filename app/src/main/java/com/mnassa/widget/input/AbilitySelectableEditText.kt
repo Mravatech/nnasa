@@ -50,7 +50,6 @@ class AbilitySelectableEditText : LinearLayout {
         )
         tvRemoveAbility.text = fromDictionary(R.string.reg_person_occupation_delete)
         tvMakePrimary.text = fromDictionary(R.string.reg_person_occupation_make_primary)
-        tvSelectLabel.text = fromDictionary(R.string.reg_person_occupation_label)
         tvSelectView.setOnClickListener {
             dialogHelper.showChooseOccupationDialog(context, occupations, occupationPositionInList, {
                 tvSelectLabel.visibility = View.VISIBLE
@@ -72,6 +71,11 @@ class AbilitySelectableEditText : LinearLayout {
             parentViewGroup.removeView(this)
             addNewSelectableViewListener.addSelectableViewIsAvailable(true)
         }
+
+        tvSelectLabel.text = if (isFirst)
+            fromDictionary(R.string.reg_person_occupation_label)
+        else fromDictionary(R.string.reg_person_occupation_label_other)
+
         tvMakePrimary.setOnClickListener {
             val parentViewGroup: LinearLayout = parent as LinearLayout
             val abilityView = parentViewGroup.getChildAt(0) as AbilitySelectableEditText

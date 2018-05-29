@@ -3,6 +3,7 @@ package com.mnassa.screen.events
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
+import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
@@ -14,6 +15,8 @@ import com.mnassa.extensions.markAsOpened
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.main.OnPageSelected
+import com.mnassa.screen.main.OnScrollToTop
+import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -24,18 +27,22 @@ import timber.log.Timber
 /**
  * Created by Peter on 3/6/2018.
  */
-class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected {
+class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_events_list
     override val viewModel: EventsViewModel by instance()
     private val languageProvider: LanguageProvider by instance()
     private val userInteractor: UserProfileInteractor by instance()
     private val adapter by lazy { EventsRVAdapter(languageProvider, userInteractor) }
+    private val controllerSelectedExecutor = StateExecutor<Unit, Unit>(initState = Unit) {
+        val parent = parentController
+        parent is PageContainer && parent.isPageSelected(this@EventsController)
+    }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         savedInstanceState?.apply { adapter.restoreState(this) }
 
-        adapter.onAttachedToWindow = { viewModel.onAttachedToWindow(it) }
+        adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
     }
@@ -50,14 +57,11 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             viewModel.eventsFeedChannel.openSubscription().bufferize(this@EventsController).consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
-                            getViewSuspend().rlEmptyView.isInvisible = true
-                        } else {
-                            getViewSuspend().rlEmptyView.isInvisible = !adapter.dataStorage.isEmpty()
                         }
+                        adapter.isLoadingEnabled = false
+                        getViewSuspend().rlEmptyView.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
@@ -72,9 +76,13 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         }
     }
 
-    override fun onPageSelected() {
+    override fun scrollToTop() {
         val recyclerView = view?.rvEvents ?: return
         recyclerView.scrollToPosition(0)
+    }
+
+    override fun onPageSelected() {
+        controllerSelectedExecutor.trigger()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

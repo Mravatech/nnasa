@@ -22,7 +22,7 @@ import java.nio.charset.Charset
 open class NetworkExceptionHandlerImpl(private val gson: Gson, private val context: Context) : NetworkExceptionHandler {
 
     private val networkDisabledMessage by lazy { context.getString(R.string._android_no_internet_connection_INFO) }
-    private val unknownErrorMessage by lazy { context.getString(R.string._android_error_dialog_title_something_went_wrong_INFO) }
+    private val unknownErrorMessage = "" // by lazy { context.getString(R.string._android_error_dialog_title_something_went_wrong_INFO) }
 
 
     override fun handle(throwable: Throwable): Throwable {

@@ -21,7 +21,7 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
     private val eventId by lazy { args.getString(EXTRA_EVENT_ID) }
     private val eventParam by lazy { args[EventDetailsInfoController.EXTRA_EVENT] as EventModel? }
     override val layoutId: Int = R.layout.controller_event_details_participants
-    override val viewModel: EventDetailsParticipantsViewModel by instance(arg = eventId)
+    override val viewModel: EventDetailsParticipantsViewModel by instance(arg = eventParam)
     private val allParticipantsadAdapter = EventParticipantsRVAdapter()
     private val selectParticipantAdapter = EventSelectParticipantsRVAdapter()
 
@@ -49,7 +49,6 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
                 getViewSuspend().rvParticipants.adapter = allParticipantsadAdapter
             }
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -57,11 +56,11 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
         if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
         when (resultCode) {
             SearchActivity.SELECT_PARTICIPANT_RESULT -> {
-               val resultList = data?.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<EventParticipantItem>
+                val resultList = data?.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<EventParticipantItem>
                 selectParticipantAdapter.dataStorage.set(resultList)
             }
             SearchActivity.ALL_PARTICIPANT_RESULT -> {
-               val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN_RESULT) as EventParticipantItem.User
+                val item = data?.getSerializableExtra(SearchActivity.EXTRA_ITEM_TO_OPEN_SCREEN_RESULT) as EventParticipantItem.User
                 open(ProfileController.newInstance(item.user))
             }
         }
@@ -72,17 +71,19 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
         view.rvParticipants.adapter = allParticipantsadAdapter
         selectParticipantAdapter.onSearchClickListener = {
             val intent = SearchActivity.start(view.context, selectParticipantAdapter.dataStorage.toList(), SearchActivity.SELECT_PARTICIPANT_TYPE)
-            startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH) }
+            startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH)
+        }
         allParticipantsadAdapter.onSearchClickListener = {
             val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT_TYPE)
-            startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH) }
+            startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH)
+        }
     }
 
     companion object {
         private const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         private const val EXTRA_EVENT = "EXTRA_EVENT"
 
-        fun newInstance(eventId: String, event: EventModel? = null): EventDetailsParticipantsController {
+        fun newInstance(eventId: String, event: EventModel): EventDetailsParticipantsController {
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, eventId)
             args.putSerializable(EXTRA_EVENT, event)
