@@ -95,8 +95,11 @@ class GroupProfileViewModelImpl(
     }
 
     override fun removePost(post: PostModel) {
-        //TODO:
-        handleException {  }
+        handleException {
+            withProgressSuspend {
+                postsInteractor.removePost(postId = post.id)
+            }
+        }
     }
 
     private fun resetCounter() {

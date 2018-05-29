@@ -12,7 +12,6 @@ import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
-import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sms_code_input.view.*
@@ -30,7 +29,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
     override val viewModel: EnterCodeViewModel by instance()
     private val resendSmsCodeDelay by lazy { resources!!.getInteger(R.integer.validation_code_resend_delay_seconds) }
     private var resendCodeSecondCounter: Int = -1
-    private val verificationResponse by lazy { args.getParcelable<PhoneVerificationModel>(EXTRA_VERIFICATION_CODE_RESPONSE) }
+    private val verificationResponse by lazy { args.getSerializable(EXTRA_VERIFICATION_CODE_RESPONSE) as PhoneVerificationModel }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -117,7 +116,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
 
         fun newInstance(param: PhoneVerificationModel): EnterCodeController {
             val bundle = Bundle()
-            bundle.putParcelable(EXTRA_VERIFICATION_CODE_RESPONSE, param)
+            bundle.putSerializable(EXTRA_VERIFICATION_CODE_RESPONSE, param)
             return EnterCodeController(bundle)
         }
     }

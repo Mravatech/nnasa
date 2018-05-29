@@ -39,7 +39,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             adapter.restoreState(this)
         }
 
-        //todo: send only when page selected
         adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()

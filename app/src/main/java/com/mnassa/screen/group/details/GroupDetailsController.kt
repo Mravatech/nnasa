@@ -52,6 +52,11 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         bindGroup(group, view)
     }
 
+    override fun onDestroyView(view: View) {
+        view.rvGroupTags.adapter = null
+        super.onDestroyView(view)
+    }
+
     private fun bindGroup(group: GroupModel, view: View) {
         this.group = group
         with(view) {
