@@ -53,6 +53,24 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
         allGroupsAdapter.onBindHeader = { bindHeader(it) }
         allGroupsAdapter.onItemOptionsClickListener = { item, view -> openGroupItemMenu(item, view) }
         allGroupsAdapter.onItemClickListener = { open(GroupProfileController.newInstance(it)) }
+        allGroupsAdapter.onSearchClickListener = {
+            view?.let { view ->
+                allGroupsAdapter.withHeader = false
+                allGroupsAdapter.notifyItemChanged(0)
+                val fabVisibility = view.fabCreateGroup.visibility
+                view.fabCreateGroup.isInvisible = true
+
+                view.toolbar?.startSearch(
+                        onSearchCriteriaChanged = { allGroupsAdapter.searchByName(it) },
+                        onSearchDone = {
+                            allGroupsAdapter.withHeader = true
+                            allGroupsAdapter.notifyItemChanged(0)
+                            allGroupsAdapter.finishSearch()
+                            view.fabCreateGroup.visibility = fabVisibility
+                        }
+                )
+            }
+        }
 
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.myGroupsChannel.consumeEach {

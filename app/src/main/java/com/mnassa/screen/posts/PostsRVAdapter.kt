@@ -13,7 +13,7 @@ import com.mnassa.screen.posts.viewholder.*
 /**
  * Created by Peter on 3/14/2018.
  */
-open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
+open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
     var onAttachedToWindow: (item: PostModel) -> Unit = { }
     var onDetachedFromWindow: (item: PostModel) -> Unit = { }
     var onItemClickListener = { item: PostModel -> }
@@ -60,7 +60,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
-        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent, this) else super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER && withHeader) HeaderViewHolder.newInstance(parent, this) else super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PostModel> {

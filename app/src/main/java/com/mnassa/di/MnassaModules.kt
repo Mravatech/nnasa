@@ -84,6 +84,8 @@ import com.mnassa.screen.group.list.GroupListViewModel
 import com.mnassa.screen.group.list.GroupListViewModelImpl
 import com.mnassa.screen.group.members.GroupMembersViewModel
 import com.mnassa.screen.group.members.GroupMembersViewModelImpl
+import com.mnassa.screen.group.permissions.GroupPermissionsViewModel
+import com.mnassa.screen.group.permissions.GroupPermissionsViewModelImpl
 import com.mnassa.screen.group.profile.GroupProfileViewModel
 import com.mnassa.screen.group.profile.GroupProfileViewModelImpl
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModel
@@ -234,9 +236,9 @@ private val viewModelsModule = Kodein.Module {
                         walletInteractor = instance())
             EventDetailsInfoController::class.java ->
                 CommentsWrapperForEventViewModelImpl(
-                    eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
-                    commentsInteractor = instance(),
-                    eventsInteractor = instance())
+                        eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
+                        commentsInteractor = instance(),
+                        eventsInteractor = instance())
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
         } as CommentsWrapperViewModel
     }
@@ -248,7 +250,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PushSettingsViewModel>() with provider { PushSettingsViewModelImpl(instance()) }
     bind<DateTimePickerViewModel>() with provider { DateTimePickerViewModelImpl() }
     bind<ChatConnectionsViewModel>() with provider { ChatConnectionsViewModelImpl(instance()) }
-    bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance())}
+    bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<InfoDetailsViewModel>() with provider { InfoDetailsViewModelImpl(instance()) }
     bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
@@ -261,6 +263,7 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance(), instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
     bind<SelectGroupViewModel>() with provider { SelectGroupViewModelImpl(instance()) }
+    bind<GroupPermissionsViewModel>() with factory { groupId: String -> GroupPermissionsViewModelImpl(groupId, instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -301,7 +304,7 @@ private val repositoryModule = Kodein.Module {
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), { instance() } ) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), { instance() }) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
@@ -326,7 +329,7 @@ private val serviceModule = Kodein.Module {
 }
 
 private val interactorModule = Kodein.Module {
-    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl( { instance() }) }
+    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl({ instance() }) }
     bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }

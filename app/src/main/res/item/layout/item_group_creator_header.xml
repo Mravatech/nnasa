@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -12,12 +13,25 @@
         android:layout_marginEnd="@dimen/spacing_horizontal"
         android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginTop="@dimen/spacing_vertical"
+        android:layout_toStartOf="@id/ivSearch"
         android:text="@string/groups_all_my" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tvGroupCreatorHeader"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/tvGroupCreatorHeader"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:tint="@color/black"
+        app:srcCompat="@drawable/ic_search" />
 
     <View
         android:id="@+id/vAllGroups"
         style="@style/MnassaShadow"
+        android:layout_below="@id/tvGroupCreatorHeader"
         android:layout_marginTop="@dimen/spacing_vertical"
         android:rotation="180" />
 
-</LinearLayout>
+</RelativeLayout>

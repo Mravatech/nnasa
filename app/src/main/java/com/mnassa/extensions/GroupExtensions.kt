@@ -16,7 +16,7 @@ val GroupModel.formattedRole: String
         else fromDictionary(R.string.group_is_member)
 
 val GroupModel.formattedType: CharSequence get() = ""
-val GroupModel.formattedName: CharSequence get() = name
+val GroupModel.formattedName: CharSequence get() = name.replace("\n", "").replace("\r", "")
 
 fun GroupModel.isMyGroup(): Boolean {
     return creator?.id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()

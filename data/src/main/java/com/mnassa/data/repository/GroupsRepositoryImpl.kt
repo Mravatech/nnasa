@@ -38,7 +38,7 @@ class GroupsRepositoryImpl(
                 .document(userRepository.getAccountIdOrException())
                 .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
                 .toListChannel<GroupDbEntity>(exceptionHandler)
-                .map { it.map { convertGroup(it) } }
+                .map { it.map { convertGroup(it, forceMyGroup = true) } }
     }
 
     override suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>> {
@@ -125,12 +125,12 @@ class GroupsRepositoryImpl(
         api.update(makeRequest(group)).handleException(exceptionHandler)
     }
 
-    private suspend fun convertGroup(input: GroupDbEntity): GroupModel {
+    private suspend fun convertGroup(input: GroupDbEntity, forceMyGroup: Boolean = false): GroupModel {
         val currentUserId = userRepository.getAccountIdOrException()
 
         val creator = when {
             input.author != null -> converter.convert(input.author, ShortAccountModel::class.java)
-            input.isAdmin == true -> userRepository.getCurrentAccountOrException()
+            input.isAdmin == true || forceMyGroup -> userRepository.getCurrentAccountOrException()
             input.admins?.isNotEmpty() == true -> userRepository.getProfileByAccountId(input.admins.first())
             else -> ShortAccountModelImpl.EMPTY
         }

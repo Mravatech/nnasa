@@ -1,16 +1,21 @@
 package com.mnassa.widget
 
 import android.content.Context
+import android.os.Build
+import android.support.annotation.RequiresApi
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import com.mnassa.R
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.hideKeyboard
+import com.mnassa.extensions.isInvisible
+import com.mnassa.extensions.showKeyboard
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.red_badge.view.*
-import android.os.Build
-import android.support.annotation.RequiresApi
-import com.mnassa.translation.fromDictionary
 
 /**
  * Created by Peter on 3/13/2018.
@@ -20,9 +25,11 @@ class MnassaToolbar : FrameLayout {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         processAttrs(attrs, 0, 0)
     }
+
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-       processAttrs(attrs, defStyleAttr, 0)
+        processAttrs(attrs, defStyleAttr, 0)
     }
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context?, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
         processAttrs(attrs, defStyleAttr, defStyleRes)
@@ -36,10 +43,8 @@ class MnassaToolbar : FrameLayout {
         addView(innerView)
 
         ivToolbarMore.setOnClickListener { onMoreClickListener?.invoke(it) }
-
-//        val headerRootLayoutParams = rlHeader.layoutParams as MarginLayoutParams
-//        headerRootLayoutParams.topMargin = getStatusBarHeight(context, false)
-//        rlHeader.layoutParams = headerRootLayoutParams
+        btnSearchClose.text = fromDictionary(R.string.search_done)
+        etSearchSearch.hint = fromDictionary(R.string.search_hint)
     }
 
     private fun processAttrs(attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) {
@@ -103,6 +108,7 @@ class MnassaToolbar : FrameLayout {
         btnAction.text = actionText
         btnAction.setOnClickListener { listener(it) }
     }
+
     var actionButtonEnabled: Boolean
         get() = btnAction.visibility == View.VISIBLE
         set(value) {
@@ -113,6 +119,30 @@ class MnassaToolbar : FrameLayout {
         set(value) {
             btnAction.isEnabled = value
         }
+
+    private var searchTextWatcher: TextWatcher? = null
+
+    fun startSearch(onSearchCriteriaChanged: (String) -> Unit, onSearchDone: () -> Unit) {
+        llSearch.isInvisible = false
+        rlHeader.isInvisible = true
+
+        btnSearchClose.setOnClickListener {
+            etSearchSearch.hideKeyboard()
+            searchTextWatcher?.let { etSearchSearch.removeTextChangedListener(it) }
+            etSearchSearch.text = null
+
+            llSearch.isInvisible = true
+            rlHeader.isInvisible = false
+            onSearchCriteriaChanged("")
+            onSearchDone()
+        }
+        searchTextWatcher?.let { etSearchSearch.removeTextChangedListener(it) }
+        searchTextWatcher = SimpleTextWatcher { onSearchCriteriaChanged(it) }
+        etSearchSearch.addTextChangedListener(searchTextWatcher)
+        showKeyboard(etSearchSearch)
+
+        onSearchCriteriaChanged(etSearchSearch.text.toString())
+    }
 }
 
 /**

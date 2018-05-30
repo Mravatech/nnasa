@@ -38,7 +38,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     private var groupModel: GroupModel = args.getSerializable(EXTRA_GROUP) as GroupModel
 
     override val viewModel: GroupProfileViewModel by instance(arg = groupId)
-    private val adapter = PostsRVAdapter()
+    private val adapter = PostsRVAdapter(withHeader = false)
     private val tagsAdapter = PostTagRVAdapter()
     private val popupMenuHelper: PopupMenuHelper by instance()
 
@@ -54,9 +54,10 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
         adapter.onCreateNeedClickListener = {
             launchCoroutineUI {
-                if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
+                //TODO: group permissions
+//                if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
                     open(CreateNeedController.newInstance(group = groupModel))
-                }
+//                }
             }
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
@@ -135,52 +136,52 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
 
         launchCoroutineUI {
-            viewModel.permissionsChannel.consumeEach { permission ->
+//            viewModel.permissionsChannel.consumeEach { permission ->
                 with(getViewSuspend()) {
                     fabGroup.removeAllMenuButtons()
 //TODO: group permissions
-                    if (permission.canCreateGeneralPost) {
-                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
+//                    if (permission.canCreateGeneralPost) {
+                        var button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
                         button.setOnClickListener {
                             fabGroup.close(false)
                             open(CreateGeneralPostController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
-                    }
+//                    }
 
-                    if (permission.canCreateEvent) {
-                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
-                        button.setOnClickListener {
-                            fabGroup.close(false)
-                            open(CreateEventController.newInstance(group = groupModel))
-                        }
-                        fabGroup.addMenuButton(button)
-                    }
+//                    if (permission.canCreateEvent) {
+//                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
+//                        button.setOnClickListener {
+//                            fabGroup.close(false)
+//                            open(CreateEventController.newInstance(group = groupModel))
+//                        }
+//                        fabGroup.addMenuButton(button)
+//                    }
 
-                    if (permission.canCreateOfferPost) {
-                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
+//                    if (permission.canCreateOfferPost) {
+                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
                         button.setOnClickListener {
                             fabGroup.close(false)
                             open(CreateOfferController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
-                    }
+//                    }
 
-                    if (permission.canCreateNeedPost) {
-                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
+//                    if (permission.canCreateNeedPost) {
+                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
                         button.setOnClickListener {
                             fabGroup.close(false)
                             open(CreateNeedController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
-                    }
+//                    }
 
-                    fabGroup.isGone = !(
-                            permission.canCreateNeedPost ||
-                                    permission.canCreateOfferPost ||
-                                    permission.canCreateEvent ||
-                                    permission.canCreateGeneralPost)
-                }
+//                    fabGroup.isGone = !(
+//                            permission.canCreateNeedPost ||
+//                                    permission.canCreateOfferPost ||
+//                                    permission.canCreateEvent ||
+//                                    permission.canCreateGeneralPost)
+//                }
             }
         }
     }
