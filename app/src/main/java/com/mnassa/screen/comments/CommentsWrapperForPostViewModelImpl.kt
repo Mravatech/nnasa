@@ -6,6 +6,7 @@ import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.CommentReplyModel
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.mostParentCommentId
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -76,7 +77,12 @@ class CommentsWrapperForPostViewModelImpl(
     override fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.editPostComment(originalComment.id, text, accountsToRecommend)
+                commentsInteractor.editPostComment(
+                        originalCommentId = originalComment.id,
+                        text = text,
+                        accountsToRecommend = accountsToRecommend,
+                        parentCommentId = (originalComment as? CommentReplyModel)?.parentId
+                )
                 loadComments()
             }
         }
@@ -85,7 +91,7 @@ class CommentsWrapperForPostViewModelImpl(
     override fun deleteComment(commentModel: CommentModel) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.deleteComment(commentModel.id)
+                commentsInteractor.deletePostComment(commentModel)
                 //TODO: remove this when comments counter will be fixed on the server side
                 loadComments()
             }

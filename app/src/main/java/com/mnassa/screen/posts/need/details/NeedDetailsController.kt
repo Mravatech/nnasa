@@ -93,7 +93,6 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     }
 
     override fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>) = commentsWrapper.onRecommendedAccountResult(recommendedAccounts)
-    override val recommendedAccounts: List<ShortAccountModel> get() = commentsWrapper.recommendedAccounts
 
     private fun complainAboutProfile(view: View) {
         launchCoroutineUI {
@@ -188,7 +187,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             }
 
             btnRecommend.text = recommendWithCount
-            btnRecommend.setOnClickListener { openRecommendScreen(post, recommendedAccounts.map { it.id }) }
+            btnRecommend.setOnClickListener { openRecommendScreen(post, commentsWrapper.accountsToRecommend.map { it.id }) }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
         }

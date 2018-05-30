@@ -1,6 +1,7 @@
 package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.CreateCommentRequest
+import com.mnassa.data.network.bean.retrofit.request.DeleteCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.EditCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.GetCommentsRequest
 import com.mnassa.data.network.bean.retrofit.response.CreateCommentResponse
@@ -19,8 +20,9 @@ interface FirebaseCommentsApi {
     @POST("/comment")
     fun createComment(@Body request: CreateCommentRequest): Deferred<CreateCommentResponse>
 
-    @DELETE("/comment/{commentId}")
-    fun deleteComment(@Path("commentId") commentId: String): Deferred<MnassaResponse>
+//    @DELETE("/comment/{commentId}")
+    @HTTP(method = "DELETE", path = "/comment", hasBody = true)
+    fun deleteComment(@Body request: DeleteCommentRequest): Deferred<MnassaResponse>
 
     @PUT("/comment")
     fun editComment(@Body request: EditCommentRequest): Deferred<MnassaResponse>

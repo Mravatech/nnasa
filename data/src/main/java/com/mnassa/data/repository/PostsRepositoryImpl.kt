@@ -100,11 +100,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         val newsFeedRef = db.child(TABLE_NEWS_FEED).child(userRepository.getAccountIdOrException()).child(id)
         val publicPostRef = db.child(TABLE_PUBLIC_POSTS).child(authorId).child(id)
 
-        val isPublicPost = try {
-            publicPostRef.await<PostDbEntity>(exceptionHandler)?.type != null
-        } catch (e: Exception) {
-            false
-        }
+        val isPublicPost = publicPostRef.await<PostDbEntity>(exceptionHandler)?.type != null
 
         return (if (isPublicPost) publicPostRef else newsFeedRef)
                 .toValueChannel<PostDbEntity>(exceptionHandler)

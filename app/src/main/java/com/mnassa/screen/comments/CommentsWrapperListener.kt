@@ -1,5 +1,6 @@
 package com.mnassa.screen.comments
 
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.posts.need.recommend.RecommendController
 
 /**
@@ -7,4 +8,5 @@ import com.mnassa.screen.posts.need.recommend.RecommendController
  */
 interface CommentsWrapperListener : RecommendController.OnRecommendPostResult {
     fun openKeyboardOnComment()
+    val accountsToRecommend: List<ShortAccountModel>
 }
