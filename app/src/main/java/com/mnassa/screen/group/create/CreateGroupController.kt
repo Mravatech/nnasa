@@ -51,6 +51,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             tilPlace.hint = fromDictionary(R.string.group_place_placeholder)
 
             etGroupTitle.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
+            etGroupDescription.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
 
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             actvPlace.setAdapter(placeAutocompleteAdapter)
@@ -188,7 +189,11 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
     }
 
     private fun onInputChanged() {
-        view?.toolbar?.actionButtonClickable = !view?.etGroupTitle?.text.isNullOrBlank() && avatar != null
+        with(view ?: return) {
+            toolbar.actionButtonClickable = !etGroupTitle.text.isNullOrBlank()
+                    && avatar != null
+                    && !etGroupDescription.text.isNullOrBlank()
+        }
     }
 
     companion object {

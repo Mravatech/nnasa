@@ -16,7 +16,7 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: QueryDocument
     if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
 
     val jsonElement: JsonElement = dataSnapshot.data.toJson<T>()
-    Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} >>> $jsonElement")
+    forDebug { Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} >>> $jsonElement") }
 
     return jsonElement.mapTo(dataSnapshot.id, dataSnapshot.reference.path)
 }
@@ -35,7 +35,7 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DocumentSnaps
     if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
 
     val jsonElement: JsonElement = dataSnapshot.data.toJson<T>()
-    Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} >>> $jsonElement")
+    forDebug { Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} >>> $jsonElement") }
 
     return jsonElement.mapTo(dataSnapshot.id, dataSnapshot.reference.path)
 }
@@ -48,7 +48,7 @@ internal inline fun <reified T : Any> mapListValues(dataSnapshot: DocumentSnapsh
 
     dataSnapshot.data?.entries?.forEachIndexed { index, entry ->
         val jsonElement: JsonElement = entry.value.toJson<T>()
-        Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} [$index] >>> ${entry.key} >>> $jsonElement")
+        forDebug { Timber.i("FIRESTORE >>> ${dataSnapshot.reference.path} [$index] >>> ${entry.key} >>> $jsonElement") }
         jsonElement.mapTo<T>(entry.key, dataSnapshot.reference.path)?.apply { resultList += this }
     }
 
