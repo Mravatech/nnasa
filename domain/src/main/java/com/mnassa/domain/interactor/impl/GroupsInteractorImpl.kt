@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.GroupsRepository
@@ -13,7 +14,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
                            private val storageInteractor: StorageInteractor,
-                           private val tagInteractor: TagInteractor) : GroupsInteractor {
+                           private val tagInteractor: TagInteractor,
+                           private val userInteractor: UserProfileInteractor) : GroupsInteractor {
 
     override suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>> = groupsRepository.getMyGroups()
 

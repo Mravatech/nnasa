@@ -15,6 +15,8 @@
         <item name="android:orientation">vertical</item>
         <item name="android:paddingStart">@dimen/spacing_horizontal</item>
         <item name="android:paddingEnd">@dimen/spacing_horizontal</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
 </resources>

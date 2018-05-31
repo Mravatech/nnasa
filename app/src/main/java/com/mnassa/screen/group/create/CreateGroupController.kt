@@ -10,6 +10,7 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
+import com.mnassa.domain.model.GroupPermissions
 import com.mnassa.domain.model.RawGroupModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.image
@@ -76,6 +77,10 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
             chipTags.chipSearch = viewModel
+
+            switchNeed.text = fromDictionary(R.string.group_permissions_need)
+            switchOffer.text = fromDictionary(R.string.group_permissions_offer)
+            switchGeneral.text = fromDictionary(R.string.group_permissions_general)
         }
 
         launchCoroutineUI { viewModel.closeScreenChanel.consumeEach { close() } }
@@ -118,6 +123,11 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             launchCoroutineUI { chipTags.setTags(group.tags.mapNotNull { viewModel.getTag(it) }) }
 
             bindAvatar(group.avatar?.let { AttachedImage.UploadedImage(it) }, view)
+
+            switchGeneral.isChecked = group.permissions.canCreateGeneralPost
+            switchOffer.isChecked = group.permissions.canCreateOfferPost
+            switchNeed.isChecked = group.permissions.canCreateNeedPost
+            //todo: group events
         }
     }
 
@@ -165,7 +175,14 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
                     placeId = placeId,
                     avatarToUpload = (avatar as? AttachedImage.LocalImage)?.imageUri,
                     avatarUploaded = (avatar as? AttachedImage.UploadedImage)?.imageUrl,
-                    tags = chipTags.getTags()
+                    tags = chipTags.getTags(),
+                    permissions = GroupPermissions(
+                            canCreateGeneralPost = switchGeneral.isChecked,
+                            canCreateNeedPost = switchNeed.isChecked,
+                            canCreateOfferPost = switchNeed.isChecked,
+                            canCreateAccountPost = false,
+                            canCreateEvent = false //TODO: group events
+                    )
             )
         }
     }

@@ -108,6 +108,15 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
+                            <TextView
+                                android:id="@+id/tvInvitesCount"
+                                style="@style/Group.Profile.Counter"
+                                tools:text="777" />
+
+                            <com.mnassa.widget.MnassaTextView
+                                style="@style/Group.Profile.CounterLabel"
+                                android:text="@string/groups_invites_count" />
+
                         </LinearLayout>
 
                         <FrameLayout

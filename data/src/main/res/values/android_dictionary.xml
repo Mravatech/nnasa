@@ -231,6 +231,13 @@
     <string name="_group_item_header_all_INFO">All Groups</string>
     <string name="_group_user_role_admin_INFO">Admin</string>
     <string name="_group_post_remove_INFO">Remove post</string>
+    <string name="_group_manage_permissions_INFO">Manage permissions</string>
+    <string name="_group_manage_permissions_title_INFO">Manage %s permissions</string>
+    <string name="_group_create_permissions_hint_INFO">Type of posts available for publishing</string>
+    <string name="_group_permission_need_INFO">I Need posts</string>
+    <string name="_group_permission_offer_INFO">I Offer posts</string>
+    <string name="_group_permission_general_INFO">General posts</string>
+    <string name="_community_header_invites_INFO">Invites</string>
 
 
     <string name="_post_item_from_group_INFO">From</string>

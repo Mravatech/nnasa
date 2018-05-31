@@ -84,8 +84,6 @@ import com.mnassa.screen.group.list.GroupListViewModel
 import com.mnassa.screen.group.list.GroupListViewModelImpl
 import com.mnassa.screen.group.members.GroupMembersViewModel
 import com.mnassa.screen.group.members.GroupMembersViewModelImpl
-import com.mnassa.screen.group.permissions.GroupPermissionsViewModel
-import com.mnassa.screen.group.permissions.GroupPermissionsViewModelImpl
 import com.mnassa.screen.group.profile.GroupProfileViewModel
 import com.mnassa.screen.group.profile.GroupProfileViewModelImpl
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModel
@@ -263,7 +261,6 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance(), instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
     bind<SelectGroupViewModel>() with provider { SelectGroupViewModelImpl(instance()) }
-    bind<GroupPermissionsViewModel>() with factory { groupId: String -> GroupPermissionsViewModelImpl(groupId, instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -346,7 +343,7 @@ private val interactorModule = Kodein.Module {
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
-    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance()) }
+    bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance(), instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"

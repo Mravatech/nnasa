@@ -8,6 +8,7 @@ import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseGroupsApi
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
+import com.mnassa.data.network.bean.firebase.GroupPermissionsEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.request.CreateGroupRequest
 import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
@@ -135,6 +136,15 @@ class GroupsRepositoryImpl(
             else -> ShortAccountModelImpl.EMPTY
         }
 
+        val permissions = input.permissions?.let {
+            GroupPermissions(
+                    canCreateOfferPost = it.canCreateOfferPost,
+                    canCreateNeedPost = it.canCreateNeedPost,
+                    canCreateGeneralPost = it.canCreateGeneralPost,
+                    canCreateEvent = it.canCreateEvent,
+                    canCreateAccountPost = it.canCreateAccountPost)
+        } ?: GroupPermissions.NO_PERMISSIONS
+
         return GroupModelImpl(
                 id = input.id,
                 name = input.title ?: "Unnamed group",
@@ -144,13 +154,23 @@ class GroupsRepositoryImpl(
                 admins = input.admins
                         ?: (if (input.isAdmin == true) listOf(currentUserId) else emptyList()),
                 numberOfParticipants = input.counters?.numberOfParticipants ?: 0L,
+                numberOfInvites = input.counters?.numberOfInvites ?: 0L,
                 creator = creator,
                 website = input.website,
                 locationPlace = input.location?.let { converter.convert(it, LocationPlaceModel::class.java) },
-                tags = input.tags ?: emptyList())
+                tags = input.tags ?: emptyList(),
+                permissions = permissions)
     }
 
     private fun makeRequest(group: RawGroupModel): CreateGroupRequest {
+        val permissions = GroupPermissionsEntity(
+                canCreateEvent = group.permissions.canCreateEvent,
+                canCreateAccountPost = group.permissions.canCreateAccountPost,
+                canCreateOfferPost = group.permissions.canCreateOfferPost,
+                canCreateNeedPost = group.permissions.canCreateNeedPost,
+                canCreateGeneralPost = group.permissions.canCreateGeneralPost
+        )
+
         return CreateGroupRequest(
                 communityId = group.id,
                 id = group.id,
@@ -159,7 +179,8 @@ class GroupsRepositoryImpl(
                 website = group.website,
                 location = group.placeId,
                 avatar = group.avatarUploaded,
-                tags = group.processedTags.takeIf { it.isNotEmpty() }
+                tags = group.processedTags.takeIf { it.isNotEmpty() },
+                permissions = permissions
         )
     }
 }

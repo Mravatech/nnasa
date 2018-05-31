@@ -1,9 +1,6 @@
 package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.model.GroupModel
-import com.mnassa.domain.model.GroupType
-import com.mnassa.domain.model.LocationPlaceModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.*
 
 /**
  * Created by Peter on 5/21/2018.
@@ -16,9 +13,10 @@ data class GroupModelImpl(
         override val avatar: String?,
         override val admins: List<String> = emptyList(),
         override val numberOfParticipants: Long = 0L,
+        override val numberOfInvites: Long = 0L,
         override val creator: ShortAccountModel? = null,
         override val website: String? = null,
         override val locationPlace: LocationPlaceModel? = null,
-        override val tags: List<String> = emptyList()
-) : GroupModel {
-}
+        override val tags: List<String> = emptyList(),
+        override val permissions: GroupPermissions
+) : GroupModel

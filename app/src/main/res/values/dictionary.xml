@@ -540,6 +540,7 @@
     <string name="group_is_member">_myGroups_groupCell_isMember</string>
     <string name="group_leave">_group_menu_leave</string>
     <string name="groups_members_count">_community_header_members</string>
+    <string name="groups_invites_count">_community_header_invites</string>
     <string name="group_title_placeholder">_groupEdit_cellTitle_placeholder</string>
     <string name="group_description_placeholder">_groupEdit_cellInfo_placeholder</string>
     <string name="group_website_placeholder">_groupEdit_cellWebsite_placeholder</string>
@@ -564,6 +565,12 @@
     <string name="group_tags_header">_group_tags_header</string>
     <string name="group_role_admin">_group_user_role_admin</string>
     <string name="group_post_remove">_group_post_remove</string>
+    <string name="group_manage_permissions">_group_manage_permissions</string>
+    <string name="group_manage_permissions_title">_group_manage_permissions_title</string>
+    <string name="group_create_permissions_hint">_group_create_permissions_hint</string>
+    <string name="group_permissions_need">_group_permission_need</string>
+    <string name="group_permissions_offer">_group_permission_offer</string>
+    <string name="group_permissions_general">_group_permission_general</string>
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>
     <string name="group_item_header_all">_group_item_header_all</string>

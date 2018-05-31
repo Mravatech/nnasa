@@ -8,8 +8,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
-import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
-import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
+import com.mnassa.extensions.isAdmin
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
@@ -36,7 +35,7 @@ class GroupProfileViewModelImpl(
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> = ConflatedBroadcastChannel()
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> = ConflatedBroadcastChannel()
-    override val permissionsChannel: BroadcastChannel<PermissionsModel> = ConflatedBroadcastChannel()
+    override val groupPermissionsChannel: BroadcastChannel<GroupPermissions> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +60,9 @@ class GroupProfileViewModelImpl(
         }
 
         handleException {
-            userProfileInteractor.getPermissions().consumeTo(permissionsChannel)
+            groupChannel.consumeEach {
+                groupPermissionsChannel.send(if (it.isAdmin) GroupPermissions.ADMIN_PERMISSIONS else it.permissions)
+            }
         }
 
     }

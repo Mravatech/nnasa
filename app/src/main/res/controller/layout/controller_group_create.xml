@@ -107,7 +107,7 @@
                         android:layout_height="match_parent"
                         android:background="?selectableItemBackground"
                         android:clickable="true"
-                        android:focusable="true"/>
+                        android:focusable="true" />
 
                     <android.support.v7.widget.AppCompatImageView
                         android:layout_width="wrap_content"
@@ -122,9 +122,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="248dp"
                     android:layout_margin="4dp"
+                    android:visibility="gone"
                     app:cardCornerRadius="2dp"
-                    app:cardElevation="3dp"
-                    android:visibility="gone">
+                    app:cardElevation="3dp">
 
                     <ImageView
                         android:id="@+id/ivImage"
@@ -185,6 +185,45 @@
                     android:id="@+id/actvPlace"
                     style="@style/Registration.EditText" />
             </android.support.design.widget.TextInputLayout>
+
+            <com.mnassa.widget.MnassaTextView
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:text="@string/group_create_permissions_hint" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switchNeed"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="Need" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switchOffer"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="Offer" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switchGeneral"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="General" />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

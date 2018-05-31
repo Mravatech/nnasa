@@ -192,8 +192,8 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                 id = input.id,
                 avatar = input.avatar,
                 description = input.description ?: "",
-                name = input.title ?: "Unnamed group"
-
+                name = input.title ?: "Unnamed group",
+                permissions = GroupPermissions.NO_PERMISSIONS
         )
     }
 

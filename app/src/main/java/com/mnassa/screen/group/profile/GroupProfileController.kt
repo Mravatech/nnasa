@@ -11,7 +11,6 @@ import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.group.create.CreateGroupController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
@@ -54,10 +53,9 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
         adapter.onCreateNeedClickListener = {
             launchCoroutineUI {
-                //TODO: group permissions
-//                if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
+                if (viewModel.groupPermissionsChannel.consume { receive() }.canCreateNeedPost) {
                     open(CreateNeedController.newInstance(group = groupModel))
-//                }
+                }
             }
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
@@ -136,19 +134,20 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
 
         launchCoroutineUI {
-//            viewModel.permissionsChannel.consumeEach { permission ->
+            viewModel.groupPermissionsChannel.consumeEach { (_, _, canCreateGeneralPost, canCreateNeedPost, canCreateOfferPost) ->
                 with(getViewSuspend()) {
                     fabGroup.removeAllMenuButtons()
-//TODO: group permissions
-//                    if (permission.canCreateGeneralPost) {
-                        var button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
+
+                    if (canCreateGeneralPost) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_general_post))
                         button.setOnClickListener {
                             fabGroup.close(false)
                             open(CreateGeneralPostController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
-//                    }
+                    }
 
+                    //TODO: uncomment for events in groups
 //                    if (permission.canCreateEvent) {
 //                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
 //                        button.setOnClickListener {
@@ -158,30 +157,30 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 //                        fabGroup.addMenuButton(button)
 //                    }
 
-//                    if (permission.canCreateOfferPost) {
-                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
+                    if (canCreateOfferPost) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
                         button.setOnClickListener {
                             fabGroup.close(false)
                             open(CreateOfferController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
-//                    }
+                    }
 
-//                    if (permission.canCreateNeedPost) {
-                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
+                    if (canCreateNeedPost) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_need))
                         button.setOnClickListener {
                             fabGroup.close(false)
                             open(CreateNeedController.newInstance(group = groupModel))
                         }
                         fabGroup.addMenuButton(button)
-//                    }
+                    }
 
-//                    fabGroup.isGone = !(
-//                            permission.canCreateNeedPost ||
-//                                    permission.canCreateOfferPost ||
-//                                    permission.canCreateEvent ||
-//                                    permission.canCreateGeneralPost)
-//                }
+                    fabGroup.isGone = !(
+                            canCreateNeedPost ||
+                                    canCreateOfferPost ||
+//                                    permission.canCreateEvent || //TODO: uncomment for events in groups
+                                    canCreateGeneralPost)
+                }
             }
         }
     }
@@ -243,6 +242,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             toolbar.title = tvGroupTitle.text
 
             tvMembersCount.text = group.numberOfParticipants.toString()
+            tvInvitesCount.text = group.numberOfInvites.toString()
             initToolbar(view)
         }
     }

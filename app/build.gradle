@@ -22,7 +22,7 @@ android {
         def versionMinor = 0
         def versionPatch = 1
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-        versionCode 401
+        versionCode (versionMajor * 100 + versionMinor * 10 + versionPatch)
 
         multiDexEnabled true
     }

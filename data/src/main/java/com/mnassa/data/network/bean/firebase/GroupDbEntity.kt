@@ -18,9 +18,20 @@ internal data class GroupDbEntity(
         @SerializedName("author") val author: ShortAccountDbEntity?,
         @SerializedName("website") val website: String?,
         @SerializedName("location") var location: LocationDbEntity?,
-        @SerializedName("tags") var tags: List<String>?
+        @SerializedName("tags") var tags: List<String>?,
+
+        @SerializedName("permissions") var permissions: GroupPermissionsEntity?
 ) : HasId
 
 internal data class GroupCounters(
-        @SerializedName("numberOfParticipants") val numberOfParticipants: Long?
+        @SerializedName("numberOfParticipants") val numberOfParticipants: Long?,
+        @SerializedName("numberOfInvites") val numberOfInvites: Long?
+)
+
+data class GroupPermissionsEntity(
+        @SerializedName("createAccountPost") val canCreateAccountPost: Boolean = false,
+        @SerializedName("createEvent") val canCreateEvent: Boolean = false,
+        @SerializedName("createGeneralPost") val canCreateGeneralPost: Boolean = false,
+        @SerializedName("createNeedPost") val canCreateNeedPost: Boolean = false,
+        @SerializedName("createOfferPost") val canCreateOfferPost: Boolean = false
 )
