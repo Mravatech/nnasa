@@ -9,6 +9,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface GroupInviteConnectionsViewModel : MnassaViewModel {
     val connectionsChannel: BroadcastChannel<List<ShortAccountModel>>
+    val alreadyInvitedUsersChannel: BroadcastChannel<Set<String>>
     val closeScreenChannel: BroadcastChannel<Unit>
 
     fun invite(users: List<String>)

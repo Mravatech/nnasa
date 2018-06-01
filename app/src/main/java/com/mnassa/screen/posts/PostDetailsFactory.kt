@@ -33,7 +33,7 @@ class PostDetailsFactory {
 
         val args = Bundle()
         args.putString(EXTRA_POST_ID, post.id)
-        args.putString(EXTRA_POST_AUTHOR_ID, post.author.id)
+        args.putString(EXTRA_POST_AUTHOR_ID, post.repostAuthor?.id ?: post.author.id)
         args.putSerializable(EXTRA_POST_MODEL, post)
 
         val postController = when (post.type) {

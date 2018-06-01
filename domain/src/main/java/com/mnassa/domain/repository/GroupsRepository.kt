@@ -25,4 +25,6 @@ interface GroupsRepository {
     //
     suspend fun createGroup(group: RawGroupModel): GroupModel
     suspend fun updateGroup(group: RawGroupModel)
+
+    suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>>
 }

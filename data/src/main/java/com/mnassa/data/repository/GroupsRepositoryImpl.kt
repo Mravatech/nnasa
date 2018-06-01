@@ -39,7 +39,7 @@ class GroupsRepositoryImpl(
                 .document(userRepository.getAccountIdOrException())
                 .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
                 .toListChannel<GroupDbEntity>(exceptionHandler)
-                .map { it.map { convertGroup(it, forceMyGroup = true) } }
+                .map { it.map { convertGroup(it) } }
     }
 
     override suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>> {
@@ -126,13 +126,19 @@ class GroupsRepositoryImpl(
         api.update(makeRequest(group)).handleException(exceptionHandler)
     }
 
-    private suspend fun convertGroup(input: GroupDbEntity, forceMyGroup: Boolean = false): GroupModel {
+    override suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>> {
+        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                .document(groupId)
+                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_INVITES)
+                .toListChannel<ShortAccountDbEntity>(exceptionHandler)
+                .map { converter.convertCollection(it, ShortAccountModel::class.java).toSet() }
+    }
+
+    private suspend fun convertGroup(input: GroupDbEntity): GroupModel {
         val currentUserId = userRepository.getAccountIdOrException()
 
         val creator = when {
             input.author != null -> converter.convert(input.author, ShortAccountModel::class.java)
-            input.isAdmin == true || forceMyGroup -> userRepository.getCurrentAccountOrException()
-            input.admins?.isNotEmpty() == true -> userRepository.getProfileByAccountId(input.admins.first())
             else -> ShortAccountModelImpl.EMPTY
         }
 

@@ -1,7 +1,6 @@
 package com.mnassa.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.auth.FirebaseAuth

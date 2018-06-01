@@ -9,6 +9,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_invite_connections.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -39,6 +40,12 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
             }
         }
 
+        launchCoroutineUI {
+            viewModel.alreadyInvitedUsersChannel.consumeEach {
+                adapter.setNotUnselectableUsers(it)
+            }
+        }
+
         adapter.onSelectedAccountsChangedListener = { onInputChanged() }
         onInputChanged()
 
@@ -52,7 +59,13 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
     }
 
     private fun onInputChanged() {
-        view?.toolbar?.actionButtonClickable = adapter.selectedAccounts.isNotEmpty()
+        launchCoroutineUI {
+            val selectedAccounts = adapter.selectedAccounts
+            val alreadyInvitedUsers = viewModel.alreadyInvitedUsersChannel.consume { receive() }
+            val usersToInvite = selectedAccounts.filter { !alreadyInvitedUsers.contains(it) }
+
+            getViewSuspend().toolbar.actionButtonClickable = usersToInvite.isNotEmpty()
+        }
     }
 
     companion object {

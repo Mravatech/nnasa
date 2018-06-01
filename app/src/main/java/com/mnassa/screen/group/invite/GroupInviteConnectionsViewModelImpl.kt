@@ -21,6 +21,7 @@ class GroupInviteConnectionsViewModelImpl(
 
     override val connectionsChannel: BroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ConflatedBroadcastChannel()
+    override val alreadyInvitedUsersChannel: BroadcastChannel<Set<String>> = ConflatedBroadcastChannel()
     private val groupMembers = ConflatedBroadcastChannel<Set<String>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,12 +39,22 @@ class GroupInviteConnectionsViewModelImpl(
                 groupMembers.send(members.map { it.id }.toSet())
             }
         }
+
+        handleException {
+            groupsInteractor.getInvitedUsers(groupId).consumeEach {
+                alreadyInvitedUsersChannel.send(it.map { it.id }.toSet())
+            }
+        }
     }
 
     override fun invite(users: List<String>) {
         handleException {
             withProgressSuspend {
-                groupsInteractor.sendInvite(groupId, users)
+                val alreadyInvitedUsers = alreadyInvitedUsersChannel.consume { receive() }
+                val usersToInvite = users.filter { !alreadyInvitedUsers.contains(it) }
+                if (usersToInvite.isEmpty()) return@withProgressSuspend
+
+                groupsInteractor.sendInvite(groupId, usersToInvite)
             }
             closeScreenChannel.send(Unit)
         }

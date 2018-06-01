@@ -46,7 +46,7 @@ data class GroupPermissions(
         val canCreateGeneralPost: Boolean,
         val canCreateNeedPost: Boolean,
         val canCreateOfferPost: Boolean
-) {
+) : Serializable {
     companion object {
         val ADMIN_PERMISSIONS = GroupPermissions(
                 canCreateAccountPost = true,

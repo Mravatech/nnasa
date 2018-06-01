@@ -103,6 +103,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/llGroupInvites"
                             style="@style/Group.Profile.CounterContainer"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"

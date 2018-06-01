@@ -47,6 +47,8 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
             avatarUploaded = uploadAvatar(group),
             processedTags = processTags(group)))
 
+    override suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>> = groupsRepository.getInvitedUsers(groupId)
+
     private suspend fun uploadAvatar(group: RawGroupModel): String? {
         if (group.avatarToUpload == null) {
             return group.avatarUploaded

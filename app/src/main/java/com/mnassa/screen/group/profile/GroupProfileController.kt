@@ -61,7 +61,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
-        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
         adapter.onMoreItemClickListener = this::showPostMenu
     }
 
@@ -72,6 +71,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
             llGroupMembers.setOnClickListener { open(GroupMembersController.newInstance(groupModel)) }
             flInfoSection.setOnClickListener { open(GroupDetailsController.newInstance(groupModel)) }
+            llGroupInvites.setOnClickListener { if (groupModel.isAdmin) open(GroupInviteConnectionsController.newInstance(groupModel)) }
             rvGroupTags.adapter = tagsAdapter
             rvGroupPosts.adapter = adapter
         }
