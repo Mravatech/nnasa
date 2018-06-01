@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbarChatMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/llNoMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_chat_disabled" />
+
+        <TextView
+            android:id="@+id/tvNoMessages"
+            style="@style/ChatRoom.NoContentText"
+            android:layout_marginTop="@dimen/chat_message_base_margin"
+            tools:text="No messages here yet…" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMessages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llBottomContainer"
+        android:layout_below="@+id/toolbarChatMessage"
+        tools:listitem="@layout/item_chat_message_my" />
+
+    <LinearLayout
+        android:id="@+id/llBottomContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlReplyMessageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
+            <TextView
+                android:id="@+id/tvReplyMessageText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/chat_message_half_base_margin"
+                android:layout_toStartOf="@+id/ivReplyClose"
+                android:paddingEnd="@dimen/chat_message_base_padding"
+                android:paddingStart="@dimen/chat_message_base_padding" />
+
+            <ImageView
+                android:id="@+id/ivReplyClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@null"
+                android:padding="@dimen/chat_message_half_base_padding"
+                app:srcCompat="@drawable/ic_close_black_24dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/llCreateMessageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/chat_message_send_container_height">
+
+            <View style="@style/MnassaDivider" />
+
+            <ImageView
+                android:id="@+id/ivAttach"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:paddingEnd="@dimen/chat_message_attach_size"
+                android:paddingStart="@dimen/chat_message_attach_size"
+                app:srcCompat="@drawable/ic_attach" />
+
+            <EditText
+                android:id="@+id/etWriteMessage"
+                style="@style/ChatMessage.EditText"
+                android:layout_toEndOf="@+id/ivAttach"
+                android:layout_toStartOf="@+id/btnSend"
+                android:gravity="center_vertical"
+                tools:hint="Write a message…" />
+
+            <TextView
+                android:id="@+id/btnSend"
+                style="@style/ChatMessage.SendTextView"
+                android:layout_alignParentEnd="true"
+                tools:text="POST" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

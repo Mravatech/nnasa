@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tvNotificationHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingStart="20dp"
+    android:background="@color/background_main"
+    android:paddingTop="16dp"
+    android:fontFamily="@font/roboto_medium"
+    android:textColor="@color/black"
+    android:textSize="14sp"
+    tools:text="Recent Notifications" />

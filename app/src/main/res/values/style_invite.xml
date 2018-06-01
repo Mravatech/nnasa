@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Invite" />
+
+    <style name="Invite.MainContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/background_main</item>
+    </style>
+
+    <style name="Invite.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/invite_toolbar_height</item>
+        <item name="android:background">@color/accent</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Invite.TextSuggest">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/gray_cool</item>
+        <item name="android:textSize">@dimen/invite_text_size</item>
+    </style>
+
+    <style name="Invite.InviteButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_invite_to_mnassa_selector_background</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/blue_pale</item>
+        <item name="android:textSize">@dimen/invite_text_size</item>
+    </style>
+
+    <style name="Invite.SearchContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Invite.SearchEditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black_transparent_40</item>
+        <item name="android:textSize">@dimen/invite_text_size</item>
+    </style>
+
+    <style name="Invite.RecyclerViewInvite">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Invite.ItemViewContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Invite.ItemViewImage">
+        <item name="android:layout_width">@dimen/invite_item_view_image_size</item>
+        <item name="android:layout_height">@dimen/invite_item_view_image_size</item>
+    </style>
+
+    <style name="Invite.ItemViewContactName">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/invite_item_contact_name_text_size</item>
+    </style>
+
+    <style name="Invite.ItemViewContactNumber" parent="Invite.ItemViewContactName">
+        <item name="android:textColor">@color/gray_cool</item>
+        <item name="android:textSize">@dimen/invite_item_phone_number_text_size</item>
+    </style>
+
+    <style name="DialogInvite" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+    </style>
+
+    <style name="DialogInviteHistory" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
+
+    <style name="Invite.DialogInviteWithTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
+        <item name="android:textSize">@dimen/invite_dialog_invite_with_title_text_size</item>
+    </style>
+
+    <style name="Invite.DialogInviteWithSubTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
+        <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
+    </style>
+
+    <style name="Invite.DialogInviteWithLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">
+            @dimen/invite_dialog_invite_with_padding_between_send_buttons
+        </item>
+        <item name="android:paddingBottom">
+            @dimen/invite_dialog_invite_with_padding_between_send_buttons
+        </item>
+        <item name="android:paddingEnd">@dimen/invite_dialog_invite_with_horizontal_indent</item>
+        <item name="android:paddingStart">@dimen/invite_dialog_invite_with_horizontal_indent</item>
+    </style>
+
+    <style name="Invite.DialogInviteImageView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Invite.DialogInviteTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black_transparent_90</item>
+        <item name="android:textSize">@dimen/invite_dialog_invite_with_sub_title_text_size</item>
+    </style>
+
+    <style name="Invite.ItemInviteHistoryRegistration">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <dimen name="invite_dialog_invite_with_horizontal_indent">24dp</dimen>
+    <dimen name="invite_dialog_invite_with_items_indent">16dp</dimen>
+    <dimen name="invite_dialog_invite_with_padding_between_send_buttons">8dp</dimen>
+    <dimen name="invite_dialog_invite_with_title_text_size">20sp</dimen>
+    <dimen name="invite_dialog_invite_with_sub_title_text_size">16sp</dimen>
+
+    <dimen name="invite_dialog_country_padding">16dp</dimen>
+
+    <dimen name="invite_item_view_main_margin">12dp</dimen>
+    <dimen name="invite_item_phone_number_text_size">12sp</dimen>
+    <dimen name="invite_item_contact_name_text_size">16sp</dimen>
+    <dimen name="invite_item_view_image_size">50dp</dimen>
+
+    <dimen name="invite_main_screen_margin">8dp</dimen>
+    <dimen name="invite_toolbar_height">56dp</dimen>
+    <dimen name="invite_main_margin_between_views">16dp</dimen>
+    <dimen name="invite_region_number_margin">24dp</dimen>
+    <dimen name="invite_divider_height">56dp</dimen>
+    <dimen name="invite_toolbar_text_size">24sp</dimen>
+    <dimen name="invite_text_size">14sp</dimen>
+    <dimen name="invite_padding">16dp</dimen>
+</resources>

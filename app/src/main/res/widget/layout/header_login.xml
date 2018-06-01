@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/status_bar_height">
+
+    <LinearLayout
+        style="@style/ScreenHeaderContainer"
+        tools:background="#e9e8e8">
+
+        <TextView
+            android:id="@+id/tvScreenHeader"
+            style="@style/ScreenHeaderTitle"
+            tools:text="Header" />
+
+        <Button
+            android:id="@+id/btnScreenHeaderAction"
+            style="@style/ScreenHeaderButton"
+            android:visibility="gone"
+            tools:text="Action"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pbRegistration"
+        style="@style/ScreenHeaderProgress"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:progress="85" />
+
+</FrameLayout>

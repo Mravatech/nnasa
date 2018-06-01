@@ -19,3 +19,23 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontwarn
+
+#KodeIn
+#Firebase
+-keepattributes Signature
+
+#Coroutines
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}
+
+#UCrop
+-dontwarn com.yalantis.ucrop**
+-keep class com.yalantis.ucrop** { *; }
+-keep interface com.yalantis.ucrop** { *; }
+
+-dontwarn com.beloo.**
+-keep class com.beloo.** { *; }
+

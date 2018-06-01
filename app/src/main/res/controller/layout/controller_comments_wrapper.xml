@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/commentPanel"
+        android:layout_below="@id/toolbar"
+        tools:listitem="@layout/item_comment" />
+
+    <View
+        android:id="@+id/commentPanelShadow"
+        style="@style/MnassaShadow"
+        android:layout_above="@id/commentPanel"
+        android:rotation="180" />
+
+    <LinearLayout
+        android:id="@+id/commentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        tools:background="#ff0900"
+        tools:layout_height="100dp" />
+
+</RelativeLayout>

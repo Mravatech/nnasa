@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="107dp"
+        android:background="@color/background_highlighted"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_vertical"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        tools:background="#fac6c6">
+
+        <com.mnassa.widget.PinView
+            android:id="@+id/pinView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/pbPin"
+            style="@style/ScreenHeaderProgress"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:visibility="visible"
+            tools:progress="85"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+</FrameLayout>

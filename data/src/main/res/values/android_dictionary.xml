@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<string name="_pushSetting_casdfv_ENG">null</string>-->
+    <!--<string name="_pushSetting_casdfv_AR">null</string>-->
+    <!--<string name="_pushSetting_casdfv_INFO">casdfv</string>-->
+
+    <string name="_android_country_saudi_arabia_INFO">Saudi Arabia</string>
+    <string name="_android_country_ukraine_INFO">Ukraine</string>
+    <string name="_android_country_united_states_INFO">United States</string>
+    <string name="_android_country_canada_INFO">Canada</string>
+
+    <string name="_android_cancel_INFO">Cancel</string>
+    <string name="_android_ok_INFO">OK</string>
+
+    <string name="_android_enter_phone_header_welcome_INFO">Welcome!</string>
+    <string name="_android_enter_validation_code_header_INFO">Validation Code</string>
+    <string name="_android_error_dialog_title_something_went_wrong_INFO">Something went wrong</string>
+    <string name="_android_enter_validation_code_hint_INFO">Validation code</string>
+    <string name="_android_no_internet_connection_INFO">No internet connection!</string>
+    <string name="_android_account_type_personal_INFO">Personal</string>
+    <string name="_android_account_type_organization_INFO">Organization</string>
+    <string name="_android_invites_skip_step_INFO">Skip this step</string>
+    <string name="_android_loading_INFO">Loading …</string>
+    <string name="_android_connections_recommended_show_all_INFO">Show all</string>
+    <string name="_android_connections_new_requests_more_INFO">%d peoples more</string>
+    <string name="_android_connections_send_message_INFO">Send message</string>
+    <string name="_android_connections_view_profile_INFO">View profile</string>
+    <string name="_android_connections_disconnect_INFO">Disconnect</string>
+    <string name="_android_connections_rejected_description_INFO">New Requests can be sent again in %d days after they were rejected</string>
+    <string name="_android_connections_rejected_days_left_INFO">%d Days left</string>
+    <string name="_android_registration_type_here_INFO">Type here…</string>
+    <string name="_android_connections_permissions_declined_INFO">Please, allow access to your phone book to manage recommended connections</string>
+    <string name="_android_connections_permissions_declined_button_INFO">Allow</string>
+    <string name="_android_connections_new_requests_empty_description_INFO">You have no new requests yet (description)</string>
+    <string name="_android_connections_archived_empty_description_INFO">You have no rejected users yet (description)</string>
+    <string name="_android_news_feed_title_INFO">News feed</string>
+    <string name="_android_need_details_title_INFO">%s Demands</string>
+    <string name="_android_create_post_promote_title_template_INFO">Promote post (%d points)</string>
+    <string name="_android_create_post_promote_description_INFO">Will be shown to all MNASSA community</string>
+    <string name="_android_create_post_promote_short_INFO">all MNASSA community</string>
+    <string name="_android_create_post_share_to_prefix_INFO">to %s</string>
+    <string name="_android_create_post_replace_photo_INFO">Replace</string>
+    <string name="_android_create_post_delete_photo_INFO">Delete</string>
+    <string name="_android_tab_events_INFO">Events</string>
+    <string name="_android_tab_posts_INFO">Posts</string>
+    <string name="_android_post_details_create_comment_post_btn_INFO">Post</string>
+    <string name="_android_post_comment_edit_INFO">Edit</string>
+    <string name="_android_post_comment_delete_INFO">Delete</string>
+    <string name="_android_post_recommend_other_connections_INFO">Other connections</string>
+    <string name="_android_post_comment_edit_title_INFO">Edit comment</string>
+    <string name="_android_post_comment_edit_button_INFO">Edit</string>
+    <string name="_android_post_share_value_center_INFO">To value center</string>
+    <string name="_android_post_expires_in_INFO">Post expires in</string>
+    <string name="_android_my_wallet_title_INFO">My wallet</string>
+    <string name="_android_my_wallet_balance_INFO">Balance</string>
+    <string name="_android_my_wallet_spent_INFO">Spent</string>
+    <string name="_android_my_wallet_gained_INFO">Gained</string>
+    <string name="_android_my_wallet_balance_after_INFO">Balance: %d points</string>
+    <string name="_android_my_wallet_send_points_INFO">Send points</string>
+    <string name="_android_my_wallet_send_points_action_INFO">Send</string>
+    <string name="_android_my_wallet_send_points_description_INFO">Select the recipient and\nset the amount</string>
+    <string name="_android_my_wallet_send_points_recipient_hint_INFO">Select recipient</string>
+    <string name="_android_my_wallet_send_points_amount_hint_INFO">points</string>
+    <string name="_android_my_wallet_send_points_comments_hint_INFO">Type some comments…</string>
+    <string name="_android_select_recipient_title_INFO">Select recipient</string>
+    <string name="_android_my_wallet_successfully_sent_title_INFO">Success!</string>
+    <string name="_android_my_wallet_successfully_sent_description_INFO">You have successfully transferred</string>
+    <string name="_android_my_wallet_successfully_sent_description_points_INFO">points</string>
+    <string name="_android_my_wallet_successfully_sent_description_to_INFO">to %s</string>
+
+    <string name="_android_welcome_dialog_title_INFO">Welcome!</string>
+    <string name="_android_welcome_dialog_description_INFO">You are a member of MNASSA!</string>
+    <string name="_android_profile_points_given_INFO">Points given</string>
+    <string name="_android_profile_more_info_INFO">MORE INFORMATION</string>
+    <string name="_android_profile_less_info_INFO">LESS INFORMATION</string>
+    <string name="_android_edit_profile_main_info_INFO">Main Information</string>
+    <string name="_android_request_was_sent_INFO">Request was sent</string>
+
+    <string name="_android_registration_skip_INFO">Skip This Step</string>
+    <string name="_android_registration_occupation_header_INFO">Choose occupation</string>
+    <string name="_android_registration_occupation_housewife_INFO">Housewife</string>
+    <string name="_android_registration_custom_occupation_INFO">Custom occupation</string>
+    <string name="_android_registration_add_another_occupation_INFO">Add another occupation</string>
+    <string name="_android_registration_company_title_INFO">Company Info</string>
+    <string name="_android_registration_company_status_commercial_INFO">Commercial</string>
+    <string name="_android_registration_company_status_governmental_INFO">Governmental</string>
+    <string name="_android_registration_company_status_non_profit_INFO">Non Profit</string>
+    <string name="_android_registration_company_name_INFO">Company name</string>
+
+    <string name="_android_email_validation_INFO">Email is not valid</string>
+    <string name="_android_phone_validation_INFO">Phone is not valid</string>
+
+    <string name="_android_invite_enter_phone_number_suggest_INFO">Enter the number of the friend you want to invite\nor choose from them your Phone Book</string>
+    <string name="_android_invite_search_hint_INFO">Search people in Phone Book</string>
+    <string name="_android_invite_send_with_more_INFO">More</string>
+    <string name="_android_invite_send_with_sms_INFO">SMS</string>
+    <string name="_android_invite_send_with_whats_app_INFO">Whats App</string>
+    <string name="_android_invite_select_send_way_INFO">Select a way to send invite</string>
+    <string name="_android_invite_title_invite_INFO">You invite %s</string>
+    <string name="_android_invite_invites_left_INFO">Invite Friends (%s left)</string>
+    <string name="_android_invite_history_registered_INFO">REGISTERED</string>
+    <string name="_android_invite_history_pending_INFO">PENDING</string>
+    <string name="_android_invite_history_invited_in_INFO">Invited in %s</string>
+
+    <string name="_android_chat_today_INFO">Today</string>
+
+    <string name="_android_message_chat_post_INFO">POST</string>
+
+    <string name="_android_position_not_specified_INFO">Position not specified</string>
+
+    <string name="_android_side_menu_profile_INFO">My Profile</string>
+    <string name="_android_side_menu_logout_INFO">Logout</string>
+    <string name="_android_side_menu_add_account_INFO">Add Account</string>
+    <string name="_android_type_your_message_INFO">Type your message…</string>
+    <string name="_android_please_describe_your_reason_INFO">Please describe your reason</string>
+    <string name="_android_send_INFO">SEND</string>
+
+
+    <string name="_android_terms_and_conditions_INFO">Terms and conditions</string>
+
+    <string name="_android_post_recommends_INFO">Recommends</string>
+    <string name="_android_post_recommends_prefix_INFO">I recommend</string>
+    <string name="_android_post_recommends_connect_now_INFO">Connect now</string>
+    <string name="_android_post_recommends_open_profile_INFO">Open profile</string>
+    <string name="_android_post_recommends_message_placeholder_INFO">type your message…</string>
+    <string name="_android_post_recommends_publish_INFO">Publish</string>
+    <string name="_android_post_empty_list_description_INFO">You have no publications yet</string>
+
+    <string name="_android_connected_by_from_INFO">from</string>
+    <string name="_android_notification_receive_INFO">You just receive %i points</string>
+    <string name="_android_notification_spent_INFO">You just spent %i points</string>
+    <string name="_android_notification_i_need_INFO">I need </string>
+    <string name="_android_notification_commented_your_post_INFO">Commented your post</string>
+    <string name="_android_notification_request_to_connect_with_you_INFO">Requested to connect with you</string>
+    <string name="_android_notification_repost_your_post_INFO">reposted your post</string>
+    <string name="_android_notification_become_new_mnassa_user_INFO">become new MNASSA user</string>
+    <string name="_android_notification_recommended_you_in_post_INFO">Recommended you in post</string>
+    <string name="_android_notification_recommended_you_in_event_INFO">Recommended you in event</string>
+    <string name="_android_notification_recommended_you_INFO">Recommended you</string>
+    <string name="_android_notification_for_INFO">for</string>
+    <string name="_android_notification_announced_your_profile_INFO">Announced your profile</string>
+    <string name="_android_notification_put_your_attention_on_post_INFO">Put your attention on post </string>
+    <string name="_android_notification_is_going_to_attend_INFO">is going to attend</string>
+    <string name="_android_notification_it_seems_you_can_help_INFO">It seems you can help.</string>
+    <string name="_android_notification_invited_you_to_INFO">invited you to</string>
+    <string name="_android_notification_you_can_send_INFO">You can send</string>
+    <string name="_android_notification_more_invites_INFO">more invites.</string>
+    <string name="_android_notification_requested_to_connect_with_you_INFO">Requested to connect with you</string>
+    <string name="_android_notification_thinks_INFO">Thinks</string>
+    <string name="_android_notification_can_help_you_with_INFO">can help you with</string>
+    <string name="_android_notification_you_promoted_your_post_INFO">You promoted own post:</string>
+    <string name="_android_notification_your_post_will_expire_tomorrow_INFO">Your post will expire tomorrow. Prolong it or it will be closed.</string>
+    <string name="_android_notification_your_post_has_expired_INFO">Your post has expired</string>
+    <string name="_android_notification_was_cancelled_by_organizer_INFO">was cancelled by organizer.</string>
+    <string name="_android_notification_points_were_returned_INFO">point(s) were returned.</string>
+
+
+
+    <string name="_android_event_tab_info_INFO">Information</string>
+    <string name="_android_event_tab_participants_INFO">Participants</string>
+    <string name="_android_event_duration_day_INFO">Day</string>
+    <string name="_android_event_duration_not_specified_INFO">Not specified</string>
+    <string name="_android_event_points_template_INFO">%d Point(s) / Person</string>
+    <string name="_android_event_bought_by_me_INFO">bought by me</string>
+    <string name="_android_event_buy_more_INFO">Buy More!</string>
+    <string name="_android_event_buy_reached_limit_INFO">You reached the limit!</string>
+    <string name="_android_event_buy_quantity_of_tickets_INFO">Quantity of tickets</string>
+    <string name="_android_event_buy_dialog_people_INFO">people</string>
+
+    <string name="_android_event_participant_header_connection_INFO">Your Connections</string>
+    <string name="_android_event_participant_header_other_INFO">Other Participants</string>
+    <string name="_android_event_participant_guest_INFO">Guest %d</string>
+    <string name="_android_event_empty_list_title_INFO">You have no events yet</string>
+    <string name="_android_event_empty_list_description_INFO">You have no events yet (description)</string>
+
+    <string name="_android_home_button_create_event_INFO">Create Event</string>
+    <string name="_android_home_button_create_general_INFO">Create General Post</string>
+    
+    <string name="_android_event_create_location_placeholder_INFO">Event location</string>
+    <string name="_android_event_date_time_title_INFO">Event date &amp; time</string>
+    <string name="_android_event_date_time_done_INFO">Done</string>
+    <string name="_android_event_time_placeholder_INFO">Select event start time</string>
+    <string name="_android_event_address_INFO">Address</string>
+    <string name="_android_event_description_placeholder_INFO">Enter description</string>
+    <string name="_android_event_status_opened_INFO">Opened</string>
+
+    <string name="_android_offer_button_my_customers_INFO">My customers</string>
+    <string name="_android_offer_button_buy_first_INFO">Buy this offer</string>
+    <string name="_android_offer_button_buy_again_INFO">Buy again</string>
+    <string name="_android_offer_purchase_title_INFO">Purchase</string>
+    <string name="_android_offer_purchase_description_INFO">Transfer points to buy this item</string>
+    <string name="_android_offer_placeholder_INFO">Type your offer here</string>
+
+    <string name="_android_days_INFO">%d days</string>
+    <string name="_android_hours_INFO">%d hours</string>
+    <string name="_android_minutes_INFO">%d minutes</string>
+    <string name="_android_seconds_INFO">%d seconds</string>
+
+    <string name="_android_expiration_valid_till_INFO">Valid till</string>
+
+    <string name="_android_search_done_INFO">Done</string>
+    <string name="_android_search_hint_INFO">Search</string>
+    <string name="_android_general_text_placeholder_INFO">Type your general here</string>
+    <string name="_android_general_post_author_INFO">MNASSA Help</string>
+
+    <string name="_commentCell_usefulButton_INFO">Useful</string>
+
+    <string name="_android_transfer_points_for_comments_INFO">Transfer points for buying\nthis item</string>
+    <string name="_android_transfer_points_new_transaction_INFO">New transaction</string>
+
+    <string name="_android_connections_recommendations_empty_description_INFO">You have no recommendations yet (description)</string>
+    <string name="_android_post_recommend_empty_title_INFO">You have no connections yet</string>
+    <string name="_android_post_recommend_empty_description_INFO">You have no connections yet (description)</string>
+    <string name="_android_connections_sent_empty_title_INFO">You have no sent connection requests yet</string>
+    <string name="_android_connections_sent_empty_description_INFO">You have no sent connection requests yet (description)</string>
+
+    <string name="_android_user_was_deleted_INFO">Deleted user</string>
+
+    <string name="_android_points_count_INFO">%d Points</string>
+
+</resources>

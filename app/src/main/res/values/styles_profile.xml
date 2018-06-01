@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ProfileToolbar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ProfileHeaderItem"></style>
+
+    <style name="Profile"></style>
+
+    <style name="EditProfile"></style>
+
+    <style name="ProfileHeaderItem.MainContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:paddingEnd">@dimen/profile_header_item_main_padding_horizontal</item>
+        <item name="android:paddingStart">@dimen/profile_header_item_main_padding_horizontal</item>
+    </style>
+
+    <style name="ProfileHeaderItem.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ProfileHeaderItem.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:enabled">false</item>
+    </style>
+
+    <style name="ProfileHeaderItem.ViewFaceEditTextBottom">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/bottom_line_height</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+
+    <style name="ProfileHeaderItem.FlowLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ProfileHeaderItem.TextViewLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/chip_edit_text_hint</item>
+        <item name="android:textSize">@dimen/profile_header_item_label_text_size</item>
+    </style>
+
+    <style name="ProfileHeaderItem.TextViewMoreInfo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/chip_edit_text_hint</item>
+        <item name="android:textSize">@dimen/profile_header_item_text_size</item>
+    </style>
+
+    <style name="ProfileHeaderItem.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">@dimen/profile_header_item_main_padding_vertical</item>
+        <item name="android:paddingStart">@dimen/profile_header_item_main_points_padding_start
+        </item>
+        <item name="android:paddingTop">@dimen/profile_header_item_main_padding_vertical</item>
+    </style>
+
+    <style name="ProfileHeaderItem.TextViewMore">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">@dimen/profile_header_item_main_padding_vertical</item>
+        <item name="android:paddingTop">@dimen/profile_header_item_main_padding_vertical</item>
+        <item name="android:textSize">@dimen/profile_header_item_more_text_size</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/blue_turquoise</item>
+    </style>
+
+    <style name="Profile.ToolbarBackView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">@dimen/profile_toolbar_child_padding</item>
+        <item name="android:paddingEnd">@dimen/profile_toolbar_child_padding</item>
+        <item name="android:paddingTop">@dimen/profile_toolbar_child_padding</item>
+    </style>
+
+    <style name="Profile.ToolbarMenuView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:padding">@dimen/profile_toolbar_child_padding</item>
+        <item name="android:paddingTop">@dimen/profile_toolbar_child_padding</item>
+    </style>
+
+    <style name="Profile.ToolbarTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/profile_toolbar_title_text_size</item>
+    </style>
+
+    <style name="EditProfile.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="errorEnabled">true</item>
+    </style>
+
+    <style name="EditProfile.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
+    </style>
+
+    <dimen name="profile_main_image_height">240dp</dimen>
+    <dimen name="profile_toolbar_child_padding">16dp</dimen>
+    <dimen name="profile_toolbar_child_margin">8dp</dimen>
+    <dimen name="profile_toolbar_title_text_size">20sp</dimen>
+    <dimen name="profile_toolbar_title_expanded_text_size">23sp</dimen>
+    <dimen name="profile_toolbar_title_expanded_sub_text_size">15sp</dimen>
+
+    <dimen name="profile_header_item_main_padding_vertical">24dp</dimen>
+    <dimen name="profile_header_item_main_points_padding_start">16dp</dimen>
+    <dimen name="profile_header_item_main_padding_horizontal">24dp</dimen>
+    <dimen name="profile_header_item_margin_fake_til_horizontal">4dp</dimen>
+    <dimen name="profile_header_item_label_text_size">12sp</dimen>
+    <dimen name="profile_header_item_more_text_size">14sp</dimen>
+    <dimen name="profile_header_item_text_size">16sp</dimen>
+    <dimen name="profile_header_item_interests_margin_top">16dp</dimen>
+    <dimen name="profile_header_item_offers_margin_bottom">20dp</dimen>
+    <dimen name="profile_header_item_tags_margin_bottom">8dp</dimen>
+
+</resources>

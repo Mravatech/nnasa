@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MnassaToolbar">
+        <attr name="toolbar_title" format="reference"/>
+        <attr name="shadow_enabled" format="boolean"/>
+        <attr name="back_button_enabled" format="boolean"/>
+        <attr name="drawer_button_enabled" format="boolean"/>
+    </declare-styleable>
+
+</resources>

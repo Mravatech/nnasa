@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileInfo"
+    style="@style/ProfileHeaderItem.MainContainer"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <TextView
+        android:id="@+id/tvProfileLocation"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="24dp"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_location"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:autoLink="all"
+        tools:text="I Can help with" />
+
+    <View
+        android:id="@+id/vTopProfileWeCanHelpWith"
+        style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvProfileWeCanHelpWith"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="I Can help with" />
+
+    <com.mnassa.widget.FlowLayout
+        android:id="@+id/chipProfileWeCanHelpWith"
+        style="@style/ProfileHeaderItem.FlowLayout"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <View
+        android:id="@+id/vTopProfileOurInterestedIn"
+        style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvProfileOurInterestedIn"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="@dimen/profile_header_item_interests_margin_top"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="My Interests" />
+
+    <com.mnassa.widget.FlowLayout
+        android:id="@+id/chipProfileOurInterestWith"
+        style="@style/ProfileHeaderItem.FlowLayout"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <View
+        android:id="@+id/vTopProfileWebSite"
+        style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvLabelProfileWebSite"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Mobile Phone" />
+
+    <TextView
+        android:id="@+id/tvProfileWebSite"
+        style="@style/ProfileHeaderItem.TextViewMoreInfo"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:textColor="@color/blue_turquoise"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:autoLink="all"
+        tools:text="+38 (066) 752 02 65" />
+
+    <View
+        android:id="@+id/vTopProfileEmail"
+        style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvLabelProfileEmail"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Email" />
+
+    <TextView
+        android:id="@+id/tvProfileEmail"
+        style="@style/ProfileHeaderItem.TextViewMoreInfo"
+        android:layout_marginBottom="@dimen/profile_header_item_offers_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:textColor="@color/blue_turquoise"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:autoLink="all"
+        tools:text="calvin@gmail.com" />
+
+    <View
+        android:id="@+id/vTopProfileDateOfFoundation"
+        style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvLabelDateOfFoundation"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Date of Birth" />
+
+    <TextView
+        android:id="@+id/tvDateOfFoundation"
+        style="@style/ProfileHeaderItem.TextViewMoreInfo"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="01 Februrary 1991 (26 years)" />
+
+    <View
+        android:id="@+id/vTopProfilePhone"
+        style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvLabelProfilePhone"
+        style="@style/ProfileHeaderItem.TextViewLabel"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Date of Birth" />
+
+    <TextView
+        android:id="@+id/tvProfilePhone"
+        style="@style/ProfileHeaderItem.TextViewMoreInfo"
+        android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+        android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:autoLink="all"
+        tools:visibility="visible"
+        tools:text="01 Februrary 1991 (26 years)" />
+
+
+</LinearLayout>

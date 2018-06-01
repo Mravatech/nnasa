@@ -1,0 +1,47 @@
+package com.mnassa.screen.splash
+
+import android.os.Bundle
+import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.delay
+
+/**
+ * Created by Peter on 2/20/2018.
+ */
+class SplashViewModelImpl(private val loginInteractor: LoginInteractor) : MnassaViewModelImpl(), SplashViewModel {
+    override val progressChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val showMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val from = savedInstanceState?.getInt(EXTRA_NUMBER, 10) ?: 10
+
+        launchCoroutineUI {
+            (from downTo 0).forEach {
+                progressChannel.send(it)
+                delay(50L)
+            }
+        }
+    }
+
+    override suspend fun isLoggedIn(): Boolean {
+        var isLoggedIn = false
+        handleExceptionsSuspend {
+            isLoggedIn = loginInteractor.isLoggedIn()
+        }
+        return isLoggedIn
+    }
+
+    override fun saveInstanceState(outBundle: Bundle) {
+        super.saveInstanceState(outBundle)
+        progressChannel.valueOrNull?.let { outBundle.putInt(EXTRA_NUMBER, it) }
+    }
+
+    companion object {
+        private const val EXTRA_NUMBER = "EXTRA_NUMBER"
+    }
+}

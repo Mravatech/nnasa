@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MnassaShadow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:background">@drawable/shadow</item>
+    </style>
+
+    <style name="MnassaDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider_width</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+    <style name="MnassaDividerVertical" parent="MnassaDivider">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">@dimen/divider_width</item>
+    </style>
+
+    <style name="MnassaShadowUpDown">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">3dp</item>
+        <item name="android:background">@drawable/shadow_up_down</item>
+    </style>
+</resources>

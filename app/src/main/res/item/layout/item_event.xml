@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_vertical"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@color/background_highlighted">
+
+    <LinearLayout
+        android:id="@+id/rlClickableRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlAuthorRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="@dimen/avatar_post_item"
+                android:layout_height="@dimen/avatar_post_item"
+                tools:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/tvUserName"
+                style="@style/MnassaHeader2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ivAvatar"
+                android:layout_alignTop="@id/ivAvatar"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_toEndOf="@id/ivAvatar"
+                android:layout_toStartOf="@id/tvTime"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textSize="18sp"
+                tools:text="User name\nwwwww" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                style="@style/MnassaTextTiny"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ivAvatar"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/ivAvatar"
+                android:gravity="center_vertical"
+                tools:text="9 min" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/flImagesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical">
+
+            <ImageView
+                android:id="@+id/ivEvent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:foreground="@drawable/avatar_shadow"
+                tools:src="@color/colorPrimary" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivIsTicketsBought"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="@dimen/spacing_vertical"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_toStartOf="@id/tvEventType"
+                app:srcCompat="@drawable/ic_member" />
+
+            <TextView
+                android:id="@+id/tvEventType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ivIsTicketsBought"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/ivIsTicketsBought"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/event_type_background"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center"
+                android:paddingEnd="6dp"
+                android:paddingStart="6dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="Lecture" />
+
+            <FrameLayout
+                android:id="@+id/flEventDisabled"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/ivEventStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    tools:src="@drawable/finished" />
+
+            </FrameLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal">
+
+            <include
+                android:id="@+id/eventDateLayout"
+                layout="@layout/event_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal" />
+
+            <TextView
+                android:id="@+id/tvEventTitle"
+                style="@style/MnassaHeader1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/eventDateLayout"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Event name" />
+
+            <TextView
+                android:id="@+id/tvEventDescription"
+                style="@style/MnassaHeader2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/tvEventTitle"
+                android:layout_toEndOf="@id/eventDateLayout"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                tools:text="Event name" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

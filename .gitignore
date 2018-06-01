@@ -1,7 +1,7 @@
 *.iml
 .gradle
 /local.properties
-/.idea/workspace.xml
+.idea
 /.idea/libraries
 .DS_Store
 /build
@@ -72,7 +72,6 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.zip
@@ -126,7 +125,7 @@ captures/
 # External native build folder generated in Android Studio 2.2 and later
 
 # Google Services (e.g. APIs or Firebase)
-google-services.json
+# app/google-services.json
 
 # Freeline
 freeline.py
@@ -144,5 +143,4 @@ freeline_project_description.json
 # Package Files #
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-/gradle.properties
 /.idea/vcs.xml

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_highlighted"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Light">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolbarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="parallax">
+
+                    <ImageView
+                        android:id="@+id/ivEventImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:foreground="@drawable/avatar_shadow"
+                        android:src="@color/accent" />
+
+                    <TextView
+                        android:id="@+id/tvEventCreator"
+                        style="@style/MnassaHeader2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/ivEventImage"
+                        android:layout_marginBottom="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:layout_marginStart="@dimen/spacing_horizontal"
+                        android:ellipsize="end"
+                        android:maxLines="3"
+                        android:textColor="@color/white"
+                        tools:text="by Ivan Ivanov" />
+
+                    <LinearLayout
+                        android:id="@+id/llEventInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ivEventImage"
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/spacing_vertical"
+                        android:paddingEnd="@dimen/spacing_horizontal"
+                        android:paddingStart="@dimen/spacing_horizontal"
+                        android:paddingTop="@dimen/spacing_vertical">
+
+                        <include layout="@layout/event_date" />
+
+                        <TextView
+                            android:id="@+id/tvEventName"
+                            style="@style/MnassaHeader1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_horizontal"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            tools:text="The Scorpions Grand Tour 2017 (orchestra)" />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/MnassaDivider"
+                        android:layout_below="@id/llEventInfo" />
+
+                </RelativeLayout>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ToolbarColoredBackArrow"
+                    app:title="">
+
+                    <TextView
+                        android:id="@+id/tvTitleCollapsed"
+                        style="@style/MnassaHeader1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:textColor="@color/white"
+                        android:visibility="invisible"
+                        tools:text="Title"
+                        tools:visibility="visible" />
+                </android.support.v7.widget.Toolbar>
+
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tlEventTabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_anchor="@id/appBarLayout"
+                app:layout_anchorGravity="bottom"
+                tools:background="#a9a9a9" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vpEvents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:id="@+id/commentInputContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        tools:background="#0b890b"
+        tools:layout_height="60dp" />
+</FrameLayout>

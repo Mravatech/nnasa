@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/header_login" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/padding_horizontal"
+            android:paddingStart="@dimen/padding_horizontal">
+
+            <TextView
+                android:id="@+id/tvEnterPhoneNumber"
+                style="@style/MnassaText"
+                tools:text="Enter your phone number to receive validation code" />
+
+            <include
+                android:id="@+id/phoneInput"
+                layout="@layout/phone_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <include
+                android:id="@+id/coneInput"
+                layout="@layout/promo_code_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnVerifyMe"
+                style="@style/MnassaButton"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="Verify me" />
+
+            <TextView
+                android:id="@+id/tvTermsAndConditions"
+                style="@style/MnassaTextTiny"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:gravity="center"
+                tools:text="Tapping Verify you agree with Terms &amp; Conditions" />
+
+            <include
+                android:id="@+id/orLayout"
+                layout="@layout/or_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <Button
+                android:id="@+id/btnEnterPromo"
+                style="@style/MnassaTransparentButton"
+                tools:text="Enter promo code" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

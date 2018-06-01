@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MnassaButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@drawable/button_text_color</item>
+        <item name="android:background">@drawable/btn_main</item>
+    </style>
+
+    <style name="MnassaTransparentButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@drawable/button_transparent_text_color</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <dimen name="btn_corner_radius">2dp</dimen>
+    <color name="control_highlight">#1f000000</color>
+    <color name="btn_pressed">@color/cerulean</color>
+    <color name="btn_active">@color/accent</color>
+    <color name="btn_disabled">@color/gray_cool_transparent</color>
+
+</resources>

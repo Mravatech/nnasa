@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.mnassa.widget.search.MnassaSearchView
+        android:id="@+id/searchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/search_toolbar_space_for_close_view"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:background="@color/accent" />
+
+    <RelativeLayout
+        android:id="@+id/rlEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/toolbar"
+        android:gravity="center"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivEmpty"
+            style="@style/EmptyList.Icon"
+            app:srcCompat="@drawable/ic_connections" />
+
+        <TextView
+            android:id="@+id/tvEmptyTitle"
+            style="@style/EmptyList.Title"
+            android:layout_below="@id/ivEmpty"
+            tools:text="EMPTY TITLE" />
+
+        <TextView
+            android:id="@+id/tvEmptyDescription"
+            style="@style/EmptyList.Description"
+            android:layout_below="@id/tvEmptyTitle"
+            tools:text="Empty description" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvAllConnections"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        tools:listitem="@layout/item_connections_all"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:visibility="invisible" />
+
+</RelativeLayout>

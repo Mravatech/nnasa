@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_highlighted"
+    android:orientation="vertical"
+    android:paddingEnd="0dp"
+    android:paddingStart="@dimen/avatar_list_item">
+
+    <RelativeLayout
+        android:id="@+id/rlClickableRootGuest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivGuestAvatar"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            app:srcCompat="@drawable/empty_ava" />
+
+        <TextView
+            android:id="@+id/tvGuestName"
+            style="@style/Connections.UserName"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ivGuestAvatar"
+            android:layout_toStartOf="@id/cbParticipantGuest"
+            tools:text="Guest 1" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cbParticipantGuest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <View style="@style/MnassaDivider" />
+
+</LinearLayout>

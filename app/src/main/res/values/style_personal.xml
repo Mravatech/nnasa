@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="PersonalInfo">
+
+    </style>
+
+    <style name="PersonalInfo.ScrollContainer">
+        <item name="android:background">@color/light_blue_color</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="PersonalInfo.LinearContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PersonalInfo.ImageContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/image_container_height</item>
+    </style>
+
+    <style name="PersonalInfo.Image">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/image_height</item>
+    </style>
+
+    <style name="PersonalInfo.FabAddPhoto">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PersonalInfo.InputContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="PersonalInfo.GenderTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textSize">@dimen/personal_info_text_size</item>
+    </style>
+
+    <style name="PersonalInfo.RadioButtons" >
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PersonalInfo.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="errorEnabled">true</item>
+    </style>
+
+    <style name="PersonalInfo.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
+    </style>
+
+    <style name="PersonalInfo.TextViewSkipThisStep">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/personal_info_text_view_skip_this_step_height</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/gray_cool</item>
+        <item name="android:textSize">@dimen/personal_info_text_view_skip_this_step_text_size</item>
+    </style>
+
+    <style name="PersonalInfo.HeaderTitle" >
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/personal_info_header_text_size</item>
+    </style>
+
+    <style name="PersonalInfo.HeaderNext">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/blue_turquoise</item>
+        <item name="android:textSize">@dimen/personal_info_text_size</item>
+    </style>
+
+    <style name="PersonalInfo.BottomView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/personal_info_bottom_view_height</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/gray_cool</item>
+    </style>
+
+    <style name="PersonalInfo.SelectableTextViewLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black_transparent_40</item>
+        <item name="android:textSize">@dimen/personal_info_label_text_size</item>
+    </style>
+
+    <style name="PersonalInfo.SelectableTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black_transparent_40</item>
+        <item name="android:textSize">@dimen/personal_info_edit_text_text_size</item>
+    </style>
+
+    <dimen name="personal_info_bottom_view_height">1dp</dimen>
+    <dimen name="personal_info_fab_margin_end">16dp</dimen>
+    <dimen name="personal_info_fab_margin_bottom">-28dp</dimen>
+    <dimen name="personal_info_header_text_size">24sp</dimen>
+    <dimen name="personal_info_abilities_container_margin_vertical">16dp</dimen>
+    <dimen name="personal_info_abilities_bottom_view">2dp</dimen>
+    <dimen name="personal_info_abilities_inner_margin">2dp</dimen>
+    <dimen name="personal_info_add_ability_text_size">14sp</dimen>
+    <dimen name="personal_info_label_text_size">12sp</dimen>
+    <dimen name="personal_info_inner_margin_start">4dp</dimen>
+    <dimen name="personal_info_container_padding_horizontal">16dp</dimen>
+    <dimen name="personal_info_inputs_linear_layout_margin_top">12dp</dimen>
+    <dimen name="personal_info_edit_text_text_size">16sp</dimen>
+    <dimen name="personal_info_drawable_padding">8dp</dimen>
+    <dimen name="personal_info_text_view_skip_this_step_height">70dp</dimen>
+    <dimen name="personal_info_text_view_skip_this_step_text_size">14sp</dimen>
+    <dimen name="personal_info_horizontal_main_margin">16dp</dimen>
+    <dimen name="personal_info_radio_button_margin_start">52dp</dimen>
+    <dimen name="personal_info_vertical_main_margin">16dp</dimen>
+    <dimen name="personal_info_text_size">16sp</dimen>
+    <dimen name="image_height">168dp</dimen>
+    <dimen name="image_container_height">196dp</dimen>
+    <dimen name="bottom_view">28dp</dimen>
+    <color name="light_blue_color">@color/background_main</color>
+
+</resources>

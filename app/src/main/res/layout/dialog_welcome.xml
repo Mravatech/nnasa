@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/background_highlighted"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding_vertical"
+    android:paddingTop="@dimen/padding_vertical">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivSuccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="46dp"
+        android:layout_marginTop="46dp"
+        app:srcCompat="@drawable/ic_success_blue_58dp" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/MnassaHeader1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="@dimen/padding_horizontal"
+        android:layout_marginStart="@dimen/padding_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:textSize="24sp"
+        tools:text="Welcome!" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        style="@style/MnassaText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="@dimen/padding_horizontal"
+        android:layout_marginStart="@dimen/padding_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:gravity="center_horizontal"
+        android:textSize="16sp"
+        tools:text="You are a member of MNASSA!" />
+
+    <View
+        style="@style/MnassaDivider"
+        android:layout_marginTop="@dimen/spacing_vertical" />
+
+    <Button
+        android:id="@+id/btnOk"
+        style="@style/MnassaTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingStart="@dimen/padding_horizontal"
+        tools:text="OK" />
+
+</LinearLayout>

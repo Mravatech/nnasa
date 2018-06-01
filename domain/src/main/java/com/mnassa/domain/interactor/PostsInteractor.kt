@@ -1,0 +1,111 @@
+package com.mnassa.domain.interactor
+
+import android.net.Uri
+import com.mnassa.domain.model.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+
+/**
+ * Created by Peter on 3/16/2018.
+ */
+interface PostsInteractor {
+    suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
+    suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?>
+    suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun onItemViewed(item: PostModel)
+    suspend fun onItemOpened(item: PostModel)
+    suspend fun resetCounter()
+
+    suspend fun createNeed(
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<TagModel>,
+            price: Long?,
+            timeOfExpiration: Long?,
+            placeId: String?): PostModel
+
+    suspend fun updateNeed(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            tags: List<TagModel>,
+            price: Long?,
+            placeId: String?)
+
+    suspend fun createGeneralPost(
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            privacy: PostPrivacyOptions,
+            tags: List<TagModel>,
+            placeId: String?): PostModel
+
+    suspend fun updateGeneralPost(
+            postId: String,
+            text: String,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            tags: List<TagModel>,
+            placeId: String?)
+
+    suspend fun createOffer(
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    ): OfferPostModel
+
+    suspend fun updateOffer(
+            postId: String,
+            title: String,
+            offer: String,
+            category: OfferCategoryModel?,
+            subCategory: OfferCategoryModel?,
+            tags: List<TagModel>,
+            imagesToUpload: List<Uri>,
+            uploadedImages: List<String>,
+            placeId: String?,
+            price: Long?,
+            postPrivacyOptions: PostPrivacyOptions
+    )
+
+
+    suspend fun getShareOfferPostPrice(): Long?
+    suspend fun getShareOfferPostPerUserPrice(): Long?
+    suspend fun getPromotePostPrice(): Long
+
+    suspend fun createUserRecommendation(
+            accountId: String,
+            text: String,
+            privacy: PostPrivacyOptions)
+
+    suspend fun updateUserRecommendation(
+            postId: String,
+            accountId: String,
+            text: String)
+
+    suspend fun removePost(postId: String)
+
+    suspend fun getDefaultExpirationDays(): Long
+    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
+
+    suspend fun hideInfoPost(postId: String)
+
+    suspend fun loadOfferCategories(): List<OfferCategoryModel>
+
+    suspend fun promote(post: PostModel)
+}
+
+data class PostPrivacyOptions(
+        val privacyType: PostPrivacyType,
+        val privacyConnections: Set<String>
+)

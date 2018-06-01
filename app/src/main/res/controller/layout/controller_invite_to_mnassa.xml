@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Invite.MainContainer"
+    android:orientation="vertical">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View style="@style/MnassaShadow" />
+
+    <TextView
+        android:id="@+id/tvEnterTextSuggest"
+        style="@style/Invite.TextSuggest"
+        android:layout_margin="@dimen/invite_main_margin_between_views"
+        tools:text="Enter the number of the friend you want to invite
+or choose from them your Phone Book" />
+
+    <include
+        android:id="@+id/phoneInput"
+        layout="@layout/phone_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical" />
+
+    <Button
+        android:id="@+id/btnInvite"
+        style="@style/Invite.InviteButton"
+        android:layout_margin="@dimen/invite_main_screen_margin"
+        android:enabled="false"
+        tools:text="INVITE" />
+
+    <LinearLayout
+        style="@style/Invite.SearchContainer"
+        android:layout_marginEnd="@dimen/invite_main_screen_margin"
+        android:layout_marginStart="@dimen/invite_main_screen_margin"
+        android:layout_marginTop="@dimen/invite_main_margin_between_views">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/invite_main_margin_between_views"
+            android:contentDescription="@null"
+            android:tint="@color/black"
+            app:srcCompat="@drawable/ic_search" />
+
+        <EditText
+            android:id="@+id/etInviteSearch"
+            style="@style/Invite.SearchEditText"
+            android:layout_margin="@dimen/invite_main_margin_between_views"
+            tools:hint="Search people in Phone Book" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvInviteToMnassa"
+        style="@style/Invite.RecyclerViewInvite"
+        android:layout_marginTop="@dimen/invite_main_screen_margin"
+        tools:listitem="@layout/item_invite" />
+</LinearLayout>

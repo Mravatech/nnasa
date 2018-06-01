@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/llNotificationRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivUserIcon"
+            android:layout_width="@dimen/user_icon_in_rv_size"
+            android:layout_height="@dimen/user_icon_in_rv_size"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/empty_ava" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvUserName"
+                style="@style/Notifications.UserName"
+                tools:text="Gordon Baker" />
+
+            <TextView
+                android:id="@+id/tvNotificationInfo"
+                style="@style/Notifications.Info"
+                tools:text="Recommended you in post." />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvNotificationCame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_vertical"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:fontFamily="@font/roboto"
+            android:gravity="end"
+            android:textColor="@color/gray_cool"
+            android:textSize="14sp"
+            tools:text="9 min" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+</FrameLayout>

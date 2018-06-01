@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="country_saudi_arabia">_android_country_saudi_arabia</string>
+    <string name="country_ukraine">_android_country_ukraine</string>
+    <string name="country_united_states">_android_country_united_states</string>
+    <string name="country_canada">_android_country_canada</string>
+
+    <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
+    <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
+
+    <string name="connected_by_from">_android_connected_by_from</string>
+    <string name="general_yes">_pin_cancel_yes</string>
+    <string name="general_no">_pin_cancel_no</string>
+
+
+    <!-- ===================================== LOGIN ==================================== -->
+    <string name="login_header_welcome">_android_enter_phone_header_welcome</string>
+    <string name="login_enter_phone_title">_login_label_title</string>
+    <string name="login_verify_me">_login_button_verify</string>
+    <string name="login_terms_part_1">_login_label_termsInfo</string>
+    <string name="login_terms_part_2">_login_label_termsInfoSuffix</string>
+    <string name="login_your_phone">_login_phone_placeholder</string>
+    <string name="login_enter_code_title">_pin_label_title</string>
+    <string name="login_enter_code_resend_after">_pin_resendingTextMask</string>
+    <string name="login_enter_code_resend_code">_pin_resendingText</string>
+    <string name="login_or">_privacy_cons_or_title</string>
+    <string name="login_enter_promo">_login_label_promoCode</string>
+    <string name="login_your_code">_login_promo_placeholder</string>
+    <string name="login_validation_code_header">_android_enter_validation_code_header</string>
+    <string name="login_validation_code_hint">_android_enter_validation_code_hint</string>
+
+    <string name="choose_profile_title">profileChoosing_labelTitle</string>
+
+    <!-- ===================================== REGISTRATION ==================================== -->
+    <string name="reg_title">_newAcc_navTitle</string>
+    <string name="reg_personal_info_title">_newAccDetails_navTitle</string>
+    <string name="reg_personal_first_name">_newAcc_cellFirstName_title</string>
+    <string name="reg_personal_last_name">_newAcc_cellLastName_title</string>
+    <string name="reg_personal_user_name">_accEdit_cellUsername_placeholder</string>
+    <string name="reg_personal_city">_accEdit_cellCity_title</string>
+    <string name="reg_next">_newAccDetails_navItem_Next</string>
+    <string name="reg_account_type_personal">_android_account_type_personal</string>
+    <string name="reg_account_type_organization">_android_account_type_organization</string>
+    <string name="reg_account_can_help_with">_accEdit_cellOffers_placeholder</string>
+    <string name="reg_account_interested_in">_accEdit_cellInterests_placeholder</string>
+    <string name="reg_account_company_name">_android_registration_company_name</string>
+
+    <!-- ==================================== BUILD NETWORK (INVITE) =========================== -->
+    <string name="invite_title">_newAccNetwork_navTitle</string>
+    <string name="invite_description">_newAccNetwork_labelHeader</string>
+    <string name="invite_at_placeholder">_occupation_separator</string>
+    <string name="invite_title_action">_newAccNetwork_navItem_Invite</string>
+    <string name="invite_skip_step">_android_invites_skip_step</string>
+
+    <!-- ===================================== TAB HOME ======================================== -->
+    <string name="tab_home_posts_title">_android_tab_posts</string>
+    <string name="tab_home_events_title">_android_tab_events</string>
+    <string name="tab_home_title">_android_news_feed_title</string>
+    <string name="tab_home_button_create_need">_post_type_need_Info</string>
+    <string name="tab_home_button_create_offer">_post_type_offer_Info</string>
+    <string name="tab_home_button_create_event">_android_home_button_create_event</string>
+    <string name="tab_home_button_create_general_post">_android_home_button_create_general</string>
+
+    <!-- ========================================= POSTS ======================================== -->
+    <string name="need_prefix">_post_type_need_Info</string>
+    <string name="recommend_prefix">_android_post_recommends_prefix</string>
+    <string name="recommend_title">_profile_menu_recommendUser</string>
+    <string name="recommend_connect_now">_android_post_recommends_connect_now</string>
+    <string name="recommend_open_profile">_android_post_recommends_open_profile</string>
+    <string name="recommend_message_placeholder">_android_post_recommends_message_placeholder</string>
+    <string name="recommend_publish_button">_android_post_recommends_publish</string>
+
+    <string name="general_post_title">_nav_title_general</string>
+
+    <string name="posts_header_need">_posts_header_iNeed</string>
+    <string name="posts_header_type">_posts_header_type_your_need</string>
+    <string name="posts_recommends">_android_post_recommends</string>
+    <string name="posts_recommends_skills_prefix">_accEdit_cellSkills_placeholder</string>
+
+    <string name="posts_empty_list_title">_profile_emptyTablePlaceholder</string>
+    <string name="posts_empty_list_description">_android_post_empty_list_description</string>
+
+
+    <string name="post_delete_dialog_title">_question_postDeleting_title</string>
+    <string name="post_delete_dialog_description">_question_postDeleting_message</string>
+    <string name="post_delete_dialog_yes">_question_postDeleting_ok</string>
+    <string name="post_delete_dialog_no">_question_postDeleting_cancel</string>
+
+    <string name="post_expires_in">_android_post_expires_in</string>
+    <string name="post_expires_day_s">connections_button_daysLeft</string>
+    <string name="post_expires_valid_till">_android_expiration_valid_till</string>
+    <string name="post_expires_text_key">_expirationStatusView_</string>
+    <string name="post_promoted_label">_post_cell_promoted_label</string>
+
+    <!-- comments -->
+    <string name="posts_comment_reply">_commentCell_Reply</string>
+    <string name="posts_comment_create">_android_post_details_create_comment_post_btn</string>
+    <string name="posts_comment_placeholder">_post_details_write_comment</string>
+    <string name="posts_comment_reply_to">_replyingIndicator_title</string>
+    <string name="posts_comment_edit">_android_post_comment_edit</string>
+    <string name="posts_comment_delete">_android_post_comment_delete</string>
+
+    <string name="posts_comment_edit_title">_android_post_comment_edit_title</string>
+    <string name="posts_comment_edit_button">_android_post_comment_edit_button</string>
+    <string name="posts_sharing_value_centre">_android_post_share_value_center</string>
+
+    <string name="comment_useful">_commentCell_usefulButton</string>
+    <string name="rewarding_for_comment">_android_my_wallet_send_points_amount_hint</string>
+    <string name="rewarding_info">_android_transfer_points_for_comments</string>
+    <string name="rewarding_title">_android_transfer_points_new_transaction</string>
+    <string name="rewarding_send">_android_send</string>
+    <string name="rewarding_you_can_add_comment">_newTransaction_commentCell_placeholder</string>
+
+    <!-- recommend -->
+    <string name="posts_recommend_title">_postProfile_navTitle</string>
+    <string name="posts_recommend_best_matches">_accountsSelector_bestSuggest_title</string>
+    <string name="posts_recommend_other_connections">_android_post_recommend_other_connections</string>
+    <string name="posts_recommend_subtitle">_suggestionFromNewsfeed_startRecommendation</string>
+    <string name="posts_recommend_button">_post_details_recommend</string>
+
+    <!-- create need -->
+    <string name="need_create_title">_posts_header_iNeed</string>
+    <string name="need_create_prefix">_post_type_need_Info</string>
+    <string name="need_create_action_button">_new_post_navbar_title_newPost</string>
+    <string name="need_create_share_to_prefix">_android_create_post_share_to_prefix</string>
+    <string name="need_create_to_all_mnassa">_android_create_post_promote_short</string>
+    <string name="need_create_to_newsfeed">_share_to_in_newsfeed</string>
+    <string name="need_create_to_connections_other">_share_to_and_more_than</string>
+    <string name="need_create_need_placeholder">_posts_header_type_your_need</string>
+    <string name="need_create_city_hint">_new_post_extra_details_city_placeholder</string>
+    <string name="need_create_tags_hint">_new_post_tags_placeholder</string>
+    <string name="need_create_extra">_new_post_extra_details</string>
+    <string name="need_create_price_hint">_new_post_extra_details_price_placeholder</string>
+    <string name="need_create_replace_photo">_android_create_post_replace_photo</string>
+    <string name="need_create_delete_photo">_android_create_post_delete_photo</string>
+
+    <string name="need_item_btn_you_and_connections_can_help">_postCell_youAndFriendsCanHelp</string>
+    <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
+    <string name="need_item_btn_you_can_help">_postCell_youCanHelp</string>
+    <string name="need_item_reposted_by">_repost_container_reposted_by</string>
+
+    <!-- need details -->
+    <string name="need_details_title">_android_need_details_title</string>
+    <string name="need_views_count">_post_details_numOfViews</string>
+    <string name="need_comment_button">_post_details_comment</string>
+    <string name="need_recommend_button">_post_details_recommend</string>
+    <string name="need_action_repost">_post_details_alert_repost</string>
+    <string name="need_action_report">_post_details_alert_report</string>
+    <string name="need_action_edit">_post_details_alert_edit_post</string>
+    <string name="need_action_delete">_android_create_post_delete_photo</string>
+    <string name="need_comments_count">_post_details_comments_header</string>
+
+    <!-- sharing options -->
+    <string name="sharing_options_title">_privacy_connections_nav_title</string>
+    <string name="sharing_options_button">_accountSelector_rigthButton_Apply</string>
+    <string name="sharing_options_promote_title">_android_create_post_promote_title_template</string>
+    <string name="sharing_options_promote_description">_android_create_post_promote_description</string>
+    <string name="sharing_options_newsfeed_title">_share_to_in_newsfeed</string>
+    <string name="sharing_options_connections_title">_connectionsList_navTitle_connections</string>
+
+    <string name="post_promote_menu">_event_details_alert_promote_post</string>
+    <string name="post_promote_dialog_title">_promotion_willCostMaskpromotePost</string>
+    <string name="post_promote_dialog_no">_post_details_alert_cancel</string>
+    <string name="post_promote_dialog_yes">_android_ok</string>
+
+    <!-- ========================================== OFFER ======================================= -->
+    <string name="offer_prefix">_post_type_offer_Info</string>
+
+    <!-- ===================================== TAB CONNECTIONS ================================== -->
+    <string name="tab_connections_title">_connectionsList_navTitle_connections</string>
+    <string name="tab_connections_new_requests">_connections_group_header_sent</string>
+    <string name="tab_connections_recommended">_connections_header_recommended_conns</string>
+    <string name="tab_connections_all">_connectionsList_groupHeader_connected</string>
+    <string name="tab_connections_recommended_connect">connection_button_connect</string>
+    <string name="tab_connections_recommended_show_all">_android_connections_recommended_show_all</string>
+    <string name="tab_connections_rejected">_connectionsList_groupHeader_rejected</string>
+    <string name="tab_connections_new_requests_more">_android_connections_new_requests_more</string>
+
+    <string name="tab_connections_contact_permissions_description">_android_connections_permissions_declined</string>
+    <string name="tab_connections_contact_permissions_button">_android_connections_permissions_declined_button</string>
+
+    <!-- connections - all -->
+    <string name="tab_connections_all_item_send_message">_android_connections_send_message</string>
+    <string name="tab_connections_all_item_view_profile">_android_connections_view_profile</string>
+    <string name="tab_connections_all_item_disconnect">_android_connections_disconnect</string>
+
+
+    <!-- new requests -->
+    <string name="new_requests_title">_connections_header_new_requests</string>
+    <string name="new_requests_empty_title">_connectionsList_empty_newRequests</string>
+    <string name="new_requests_empty_description">_android_connections_new_requests_empty_description</string>
+    <string name="new_requests_decline">_connectionAction_declineMessageTitle</string>
+    <string name="new_requests_decline_available">_connectionAction_declineMessage</string>
+
+    <!-- recommended -->
+    <string name="recommended_connections_title">_connections_header_recommended_conns</string>
+    <string name="recommended_connections_by_phone">recommendedByPhone</string>
+    <string name="recommended_connections_by_event">recommendedByEvent</string>
+    <string name="recommended_connections_by_refer">recommendedByRefer</string>
+    <string name="recommended_connections_btn_connect">connection_button_connect</string>
+
+    <!-- sent -->
+    <string name="sent_connection_requests_title">_connections_group_header_sent</string>
+
+    <!-- rejected -->
+    <string name="archived_connections_title">_connections_header_rejected</string>
+    <string name="archived_connections_connect_btn">connection_button_connect</string>
+    <string name="archived_connections_description">_android_connections_rejected_description</string>
+    <string name="archived_connections_days_left">_android_connections_rejected_days_left</string>
+    <string name="archived_connections_empty_title">_connectionsList_empty_rejects</string>
+    <string name="archived_connections_empty_description">_android_connections_archived_empty_description</string>
+
+    <!-- ====================================== REG =================================== -->
+    <string name="reg_person_info_birthday">_newAcc_cellBirthday_title</string>
+    <string name="reg_person_info_at">_cellOccupation_placeTitle</string>
+    <string name="reg_person_info_title">_newAccDetails_navTitle</string>
+    <string name="reg_person_info_female_gender">_cellGender_Female</string>
+    <string name="reg_person_info_male_gender">_cellGender_male</string>
+    <string name="reg_person_info_gender">_cellGender_title</string>
+    <string name="reg_info_skip">_android_registration_skip</string>
+    <string name="reg_info_next">_newAcc_navItem_Next</string>
+    <string name="reg_dialog_other">_paccountsSelector_other_title</string>
+    <string name="reg_dialog_business_owner">_occupation_BusinessOwner</string>
+    <string name="reg_dialog_student">_occupation_Student</string>
+    <string name="reg_dialog_housewife">_android_registration_occupation_housewife</string>
+    <string name="reg_dialog_employee">_occupation_Employee</string>
+    <string name="reg_dialog_header">_android_registration_occupation_header</string>
+    <string name="reg_dialog_custom_occupation">_android_registration_custom_occupation</string>
+    <string name="reg_occupation_edit_text_place_holder">_cellOccupation_occupationPlaceholder</string>
+    <string name="reg_add_another_occupation">_android_registration_add_another_occupation</string>
+    <string name="reg_person_type_here">_android_registration_type_here</string>
+    <string name="reg_person_occupation_label">_cellOccupation_occupationTitle_primary</string>
+    <string name="reg_person_occupation_label_other">_cellOccupation_occupationTitle_other</string>
+    <string name="reg_person_occupation_make_primary">_cellOccupation_buttonMakePrimary</string>
+    <string name="reg_person_occupation_delete">_cellOccupation_buttonDelete</string>
+    <string name="reg_info_email">_accEdit_cellEmail_placeholder</string>
+    <string name="reg_info_phone_number">_accEdit_cellPhone_title</string>
+    <string name="reg_company_title">_android_registration_company_title</string>
+    <string name="reg_company_website">_accEdit_cellWebsite_placeholder</string>
+    <string name="reg_company_name">_accEdit_cellOrganizationName_placeholder</string>
+    <string name="reg_company_founded">_accEdit_cellOrganizationFounded_title</string>
+    <string name="reg_company_status_label">_accEdit_cellOrganizationType_title</string>
+    <string name="reg_company_status">_accEdit_cellOrganizationType_placeholder</string>
+    <string name="reg_company_status_commercial">_android_registration_company_status_commercial</string>
+    <string name="reg_company_status_governmental">_android_registration_company_status_governmental</string>
+    <string name="reg_company_status_non_profit">_android_registration_company_status_non_profit</string>
+
+    <!-- ========================================= PROFILE ====================================== -->
+    <string name="profile_connections">_connectionsList_navTitle_connections</string>
+    <string name="profile_points_given">_android_profile_points_given</string>
+    <string name="profile_date_of_birth">_profileDetails_birthdayPersonal</string>
+    <string name="profile_mobile_phone">_profileDetails_labelMobile</string>
+    <string name="profile_website">_profileDetails_labelWebsite</string>
+    <string name="profile_email">_profileDetails_labelEmail</string>
+    <string name="profile_more_information">_android_profile_more_info</string>
+    <string name="profile_less_information">_android_profile_less_info</string>
+    <string name="profile_date_of_foundation">_profileDetails_birthdayOrganization</string>
+    <string name="profile_request_was_sent">_android_request_was_sent</string>
+    <string name="user_profile_connection_connected">_connections_group_header_connected</string>
+    <string name="user_profile_connection_connect">connections_button_connect</string>
+    <string name="user_profile_connection_pending">_profile_cellHeader_button_pending</string>
+    <string name="user_profile_you_want_to_disconnect">_connectionAction_disconnectMessageTitle</string>
+
+    <string name="edit_profile_title">_profile_cellHeader_button_edit</string>
+    <string name="edit_profile_main_info">_android_edit_profile_main_info</string>
+    <string name="edit_profile_city">_new_post_offer_city_title</string>
+    <string name="edit_save">accEdit_navItem_save</string>
+
+    <!-- ======================================= WALLET ======================================== -->
+    <string name="wallet_title">_android_my_wallet_title</string>
+    <string name="wallet_balance">_android_my_wallet_balance</string>
+    <string name="wallet_spent">_android_my_wallet_spent</string>
+    <string name="wallet_gained">_android_my_wallet_gained</string>
+    <string name="wallet_balance_after">_android_my_wallet_balance_after</string>
+
+    <!-- Send points -->
+    <string name="send_points_title">_android_my_wallet_send_points</string>
+    <string name="send_points_action">_android_my_wallet_send_points_action</string>
+    <string name="send_points_description">_android_my_wallet_send_points_description</string>
+    <string name="send_points_recipient_hint">_android_my_wallet_send_points_recipient_hint</string>
+    <string name="send_points_amount_hint">_android_my_wallet_send_points_amount_hint</string>
+    <string name="send_points_comments_hint">_android_my_wallet_send_points_comments_hint</string>
+    <string name="send_points_success_title">_android_my_wallet_successfully_sent_title</string>
+    <string name="send_points_success_description">_android_my_wallet_successfully_sent_description</string>
+    <string name="send_points_success_description_points">_android_my_wallet_successfully_sent_description_points</string>
+    <string name="send_points_success_description_to">_android_my_wallet_successfully_sent_description_to</string>
+
+    <!-- ================================= SELECT RECIPIENT =================================== -->
+    <string name="select_recipient_title">_android_select_recipient_title</string>
+
+    <!-- ========================================= OTHER ====================================== -->
+    <string name="email_is_not_valid">_android_email_validation</string>
+    <string name="phone_is_not_valid">_android_phone_validation</string>
+    <string name="error_dialog_title">_android_error_dialog_title_something_went_wrong</string>
+    <string name="error_no_internet">_android_no_internet_connection</string>
+    <string name="loading">_android_loading</string>
+
+    <string name="welcome_dialog_title">_android_welcome_dialog_title</string>
+    <string name="welcome_dialog_description">_android_welcome_dialog_description</string>
+
+    <!-- ========================================= TERMS AND CONDITIONS ====================================== -->
+    <string name="terms_and_conditions">_android_terms_and_conditions</string>
+
+    <!-- ========================================= CHAT ====================================== -->
+
+    <string name="chats_no_conversation">_chats_controller_empty_state_title</string>
+    <string name="chats_no_messages">_chat_controller_empty_state_title</string>
+    <string name="chats_send_messages_post">_android_message_chat_post</string>
+    <string name="chats_send_messages_write">_chat_controller_message_placeholder</string>
+    <string name="chats_title">_chats_controller_list_option_chats</string>
+    <string name="chats_today_message">_android_chat_today</string>
+    <string name="chats_delete_for_me">_chatMessage_actionRemoveForMe</string>
+    <string name="chats_delete_for_all">_chatMessage_actionRemoveForAll</string>
+    <string name="chats_copy">_chatMessage_actionCopy</string>
+    <string name="chats_reply">_chatMessage_actionReply</string>
+    <string name="chats_cancel">_android_cancel</string>
+
+    <string name="position_not_specified">_android_position_not_specified</string>
+    <string name="support_chat_with">_chat_controllet_empty_nav_title</string>
+
+    <!-- ========================================= INVITE ====================================== -->
+    <string name="invite_text_suggest">_android_invite_enter_phone_number_suggest</string>
+    <string name="invite_search_hint">_android_invite_search_hint</string>
+    <string name="invite_phone_number_hint">_accEdit_cellPhone_title</string>
+    <string name="invite_invite_button_text">_newAccNetwork_navItem_Invite</string>
+    <string name="invite_invite_header">_settings_row_inviteFriends</string>
+    <string name="invite_invite_send_with_sms">_android_invite_send_with_sms</string>
+    <string name="invite_invite_send_with_more">_android_invite_send_with_more</string>
+    <string name="invite_invite_send_with_whats_app">_android_invite_send_with_whats_app</string>
+    <string name="invite_invite_select_way_to_send">_android_invite_select_send_way</string>
+    <string name="invite_invite_you_invite">_android_invite_title_invite</string>
+    <string name="invite_invite_you_invite_unknown_name">_inviteSharing_title_unknownName</string>
+    <string name="invite_invite_massage_whats_app">_inviteSharing_whatsappDefMessage</string>
+    <string name="invite_invite_massage_email">_inviteSharing_emailDefMessage</string>
+    <string name="invite_invite_invites_left">_android_invite_invites_left</string>
+    <string name="invite_invite_history_pending">_android_invite_history_pending</string>
+    <string name="invite_invite_history_registered">_android_invite_history_registered</string>
+    <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
+
+    <!-- ======================================== COMPLAINT ===================================== -->
+    <string name="complaint_other_title">_profile_menu_complaint</string>
+    <string name="complaint_type_message">_android_type_your_message</string>
+    <string name="complaint_describe_reason">_android_please_describe_your_reason</string>
+    <string name="complaint_send">_android_send</string>
+
+    <!-- ======================================== SIDE MENU ===================================== -->
+    <string name="side_menu_profile">_android_side_menu_profile</string>
+    <string name="side_menu_wallet">_sidemenu_wallet</string>
+    <string name="side_menu_invite">_sidemenu_invite</string>
+    <string name="side_menu_settings">_sidemenu_settings</string>
+    <string name="side_menu_help">_sidemenu_helpsupp</string>
+    <string name="side_menu_terms">_sidemenu_termsandcond</string>
+    <string name="side_menu_logout">_android_side_menu_logout</string>
+    <string name="side_menu_add_account">_android_side_menu_add_account</string>
+
+    <!-- ======================================== NOTIFICATIONS ===================================== -->
+    <string name="notifications_title">_notifications_header_title</string>
+    <string name="notifications_no_notifications">_notifications_empty_state_title</string>
+    <string name="notifications_new">_notifications_new_section_title</string>
+    <string name="notifications_old">_notifications_recent_section_title</string>
+    <string name="notifications_receive">_android_notification_receive</string>
+    <string name="notifications_spent">_android_notification_spent</string>
+    <string name="notifications_i_need">_android_notification_i_need</string>
+    <string name="notifications_commented_your_post">_android_notification_commented_your_post</string>
+    <string name="notification_request_to_connect_with_you">_android_notification_request_to_connect_with_you</string>
+    <string name="notification_repost_your_post">_android_notification_repost_your_post</string>
+    <string name="notification_become_new_mnassa_user">_android_notification_become_new_mnassa_user</string>
+    <string name="notification_recommended_you_in_post">_android_notification_recommended_you_in_post</string>
+    <string name="notification_recommended_you_in_event">_android_notification_recommended_you_in_event</string>
+    <string name="notification_recommended_you">_android_notification_recommended_you</string>
+    <string name="notification_for">_android_notification_for</string>
+    <string name="notification_announced_your_profile">_android_notification_announced_your_profile</string>
+    <string name="notification_put_your_attention_on_post">_android_notification_put_your_attention_on_post</string>
+    <string name="notification_is_going_to_attend">_android_notification_is_going_to_attend</string>
+    <string name="notification_it_seems_you_can_help">_android_notification_it_seems_you_can_help</string>
+    <string name="notification_invited_you_to">_android_notification_invited_you_to</string>
+    <string name="notification_you_can_send">_android_notification_you_can_send</string>
+    <string name="notification_more_invites">_android_notification_more_invites</string>
+    <string name="notification_requested_to_connect_with_you">_android_notification_requested_to_connect_with_you</string>
+    <string name="notification_thinks">_android_notification_thinks</string>
+    <string name="notification_can_help_you_with">_android_notification_can_help_you_with</string>
+    <string name="notification_you_promoted_your_post">notification_text_key_promotePost</string>
+    <string name="notification_your_post_will_expire_tomorrow">_notification_text_key_oneDayToExpirationOfPost</string>
+    <string name="notification_your_post_has_expired">_android_notification_your_post_has_expired</string>
+    <string name="notification_was_cancelled_by_organizer">_android_notification_was_cancelled_by_organizer</string>
+    <string name="notification_points_were_returned">_android_notification_points_were_returned</string>
+    <string name="notification_commented_post">_notification_text_key_commented_post</string>
+    <string name="notification_request_connect">_notification_text_key_requested_connect</string>
+    <string name="notification_reposted_post">_notification_text_key_reposted_post</string>
+    <string name="notification_become_mnassa_user">_notification_text_key_become_mnassa_user</string>
+    <string name="notification_recommend_you_in_post">_notification_text_key_recommended_you_in_post</string>
+    <string name="notification_recommend_you_in_event">_notification_text_key_recommended_you_in_event</string>
+    <string name="notification_recommend_you">_notification_text_key_recommended_you</string>
+    <string name="notification_for_">_notification_text_key_for</string>
+    <string name="notification_announced_you">_notification_text_key_announcedYou</string>
+    <string name="notification_general_post_by_admin">_notification_text_key_generalPostByAdmin</string>
+    <string name="notification_new_event_attendee">_notification_text_key_newEventAttendee</string>
+    <string name="notification_you_can_help">_notification_text_key_youCanHelp</string>
+    <string name="notification_invite_to_event">_notification_text_key_inviteToEvent</string>
+    <string name="notification_number_of_invitations">_notification_text_key_numberOfInvitations</string>
+    <string name="notification_number_of_invitations_tail">_notification_text_key_numberOfInvitationsTail</string>
+    <string name="notification_connection_request_was_accepted">_notification_text_key_connectionRequestWasAccepted</string>
+    <string name="notification_user_was_recommended_to_you">_notification_text_key_userWasRecommendedToYou</string>
+    <string name="notification_user_was_recommended_to_you_in_event">_notification_text_key_userWasRecommendedToYouInEvent</string>
+    <string name="notification_user_was_recommended_to_you_in_event2">_notification_text_key_userWasRecommendedToYouInEvent2</string>
+    <string name="notification_event_was_cancelled">_notification_text_key_eventWasCancelled</string>
+    <string name="notification_event_was_cancelled_points_returning">_notification_text_key_eventWasCancelledPointsReturning</string>
+    <string name="notification_base_key">_notification_text_key</string>
+
+    <!-- ========================================== EVENTS ===================================== -->
+    <string name="event_lecture">lecture</string>
+    <string name="event_discussion">discussion</string>
+    <string name="event_workshop">workshop</string>
+    <string name="event_exercise">exercise</string>
+    <string name="event_activity">activity</string>
+    <!-- ========================================== SETTINGS ===================================== -->
+    <string name="settings_title">_settings_navTitle</string>
+    <string name="push_settings_title">_settings_row_pushNotifications</string>
+    <string name="settings_push_row">_settings_row_pushNotifications</string>
+    <string name="settings_language_row">_settings_row_language</string>
+    <string name="settings_language_change_title">_question_languageChanging_title</string>
+    <string name="settings_language_change_message">_question_languageChanging_message</string>
+
+    <string name="event_details_by">_event_details_by</string>
+
+    <string name="event_tab_info">_android_event_tab_info</string>
+    <string name="event_tab_participants">_android_event_tab_participants</string>
+    <string name="event_location_not_defined">_event_details_location_notDefined</string>
+    <string name="event_location_later">_event_details_location_willBeAnnouncedLater</string>
+    <string name="event_location_specify">_new_event_specify_location</string>
+    <string name="event_duration">_event_details_duration</string>
+    <string name="event_duration_minute">_event_details_durationType_minute</string>
+    <string name="event_duration_hour">_event_details_durationType_hour</string>
+    <string name="event_duration_day">_android_event_duration_day</string>
+    <string name="event_price_template">_android_event_points_template</string>
+    <string name="event_tickets">_event_details_tickets_left</string>
+    <string name="event_tickets_from">_event_details_tickets_from</string>
+    <string name="event_buy_button_active">event_buy_now_title</string>
+    <string name="event_buy_button_free_suffix">_event_price_free</string>
+    <string name="event_buy_button_reached_limit">_android_event_buy_reached_limit</string>
+    <string name="event_tickets_bought_by_me">_android_event_bought_by_me</string>
+    <string name="event_tickets_buy_more">_android_event_buy_more</string>
+    <string name="event_tickets_buy_annulled">annulled</string>
+    <string name="event_tickets_buy_closed">_event_tickets_closed</string>
+    <string name="event_tickets_buy_sold_out">_event_tickets_sold_out</string>
+    <string name="event_tickets_buy_suspended">_event_tickets_suspended</string>
+    <string name="event_tickets_buy_dialog_title">_buy_ticket_title</string>
+    <string name="event_tickets_buy_dialog_quantity">_android_event_buy_quantity_of_tickets</string>
+    <string name="event_tickets_buy_dialog_points">_buy_ticket_points</string>
+    <string name="event_tickets_buy_dialog_people">_android_event_buy_dialog_people</string>
+    <string name="event_tickets_buy_dialog_buy_now">_buy_ticket_buy_now</string>
+    <string name="event_tickets_buy_dialog_cancel">_buy_ticket_cancel</string>
+    <string name="event_participant_header_connection">_android_event_participant_header_connection</string>
+    <string name="event_participant_header_other">_android_event_participant_header_other</string>
+    <string name="event_participant_save">_navItem_Save</string>
+    <string name="event_participant_guest">_android_event_participant_guest</string>
+    <string name="event_duration_not_specified">_android_event_duration_not_specified</string>
+    <string name="event_empty_title">_android_event_empty_list_title</string>
+    <string name="event_empty_description">_android_event_empty_list_description</string>
+
+    <!-- ======================================= CREATE EVENT ================================== -->
+    <string name="event_create_title_placeholder">create_event_your_title</string>
+    <string name="event_create_date_placeholder">_date_selection_date_time</string>
+    <string name="event_create_location_placeholder">_android_event_create_location_placeholder</string>
+    <string name="event_date_time_title">_android_event_date_time_title</string>
+    <string name="event_date_time_button">_android_event_date_time_done</string>
+    <string name="event_date_placeholder">_new_event_date_select</string>
+    <string name="event_time_placeholder">_android_event_time_placeholder</string>
+    <string name="event_duration_placeholder">_date_selection_duration</string>
+    <string name="event_create_address">_android_event_address</string>
+    <string name="event_create_type">create_event_type</string>
+    <string name="event_paid_text">_new_event_paid_event_switch</string>
+    <string name="event_points_placeholder">_buy_ticket_points</string>
+    <string name="event_limit_tickets_per_person_placeholder">_new_event_quantity_tickets_per_account</string>
+    <string name="event_tickets_quantity_placeholder">_new_event_quantity_ticket_placeholder</string>
+    <string name="event_ticket_price_placeholder">_new_event_price_placeholder</string>
+    <string name="event_description_placeholder">_android_event_description_placeholder</string>
+    <string name="event_post_button">_new_post_navbar_title_newPost</string>
+    <string name="event_edit_title">_new_event_navbar_title_edit</string>
+    <string name="event_menu_edit">_event_details_edit_event</string>
+    <string name="event_menu_change_status">_event_details_change_status_of_event</string>
+    <string name="event_status_annulled">annulled</string>
+    <string name="event_status_opened">_android_event_status_opened</string>
+    <string name="event_status_closed">closed</string>
+    <string name="event_status_suspended">suspended</string>
+    <string name="event_promote_menu">_post_details_alert_promote</string>
+
+    <!-- ========================================== CREATE GENERAL ============================= -->
+    <string name="general_text_placeholder">_android_general_text_placeholder</string>
+    <string name="general_create_title">_new_post_navbar_title_create_general</string>
+    <string name="general_edit_title">_new_post_navbar_title_edit_general</string>
+    <string name="general_publish">_new_post_navbar_title_newPost</string>
+    <string name="general_thanks_got_it">_post_info_got_it</string>
+    <string name="general_author">_android_general_post_author</string>
+    <string name="general_details_got_it">_right_button_post_got_it</string>
+
+    <!-- ============================================== OFFERS ================================= -->
+    <string name="offer_button_buy_first">_android_offer_button_buy_first</string>
+    <string name="offer_button_buy_second">_android_offer_button_buy_again</string>
+    <string name="offer_button_customers">_android_offer_button_my_customers</string>
+    <string name="offer_purchase_title">_android_offer_purchase_title</string>
+    <string name="offer_purchase_description">_android_offer_purchase_description</string>
+    <string name="offer_create_title">_new_post_navbar_title_create_offer</string>
+    <string name="offer_edit_title">_new_post_navbar_title_edit_offer</string>
+    <string name="offer_title_placeholder">create_offer_your_title</string>
+    <string name="offer_description_placeholder">_android_offer_placeholder</string>
+    <string name="offer_price_placeholder">_new_post_offer_price_placeholder</string>
+    <string name="offer_place_placeholder">_new_post_offer_city_title</string>
+
+    <string name="days_count">_android_days</string>
+    <string name="hours_count">_android_hours</string>
+    <string name="minutes_count">_android_minutes</string>
+    <string name="seconds_count">_android_seconds</string>
+
+    <string name="search_done">_android_search_done</string>
+    <string name="search_hint">_android_search_hint</string>
+
+    <string name="connections_recommended_empty_title">_connectionsList_empty_recommendations</string>
+    <string name="connections_recommended_empty_description">_android_connections_recommendations_empty_description</string>
+    <string name="connections_sent_requests_empty_title">_android_connections_sent_empty_title</string>
+    <string name="connections_sent_requests_empty_description">_android_connections_sent_empty_description</string>
+    <string name="post_recommend_empty_title">_android_post_recommend_empty_title</string>
+    <string name="post_recommend_empty_description">_android_post_recommend_empty_description</string>
+
+    <string name="blocked_account_message">message_accIsDisabled</string>
+    <string name="deleted_user">_android_user_was_deleted</string>
+
+    <string name="points_count">_android_points_count</string>
+
+</resources>
