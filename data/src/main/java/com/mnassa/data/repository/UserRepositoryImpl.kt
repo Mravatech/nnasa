@@ -35,13 +35,14 @@ import kotlinx.coroutines.experimental.channels.produce
  * Created by Peter on 2/21/2018.
  */
 class UserRepositoryImpl(
-        private val converter: ConvertersContext,
+        converterLazy: () -> ConvertersContext,
         private val context: Context,
         private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference,
         firebaseAuthApiLazy: () -> FirebaseAuthApi) : UserRepository {
 
     private val firebaseAuthApi: FirebaseAuthApi by lazy(firebaseAuthApiLazy)
+    private val converter: ConvertersContext by lazy(converterLazy)
 
     private val sharedPrefs by lazy { context.getSharedPreferences(EXTRA_PREFS_NAME, Context.MODE_PRIVATE) }
     private var accountIdInternal: String?

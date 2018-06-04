@@ -1,6 +1,7 @@
 package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
+import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.extensions.toListChannel
@@ -8,15 +9,13 @@ import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseGroupsApi
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
-import com.mnassa.data.network.bean.firebase.GroupPermissionsEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
-import com.mnassa.data.network.bean.retrofit.request.CreateGroupRequest
 import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.domain.model.*
-import com.mnassa.domain.model.impl.GroupModelImpl
-import com.mnassa.domain.model.impl.ShortAccountModelImpl
+import com.mnassa.domain.model.GroupModel
+import com.mnassa.domain.model.RawGroupModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.repository.GroupsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -39,7 +38,7 @@ class GroupsRepositoryImpl(
                 .document(userRepository.getAccountIdOrException())
                 .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
                 .toListChannel<GroupDbEntity>(exceptionHandler)
-                .map { it.map { convertGroup(it) } }
+                .map { converter.convertCollection(it, GroupModel::class.java) }
     }
 
     override suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>> {
@@ -47,7 +46,7 @@ class GroupsRepositoryImpl(
                 .document(userRepository.getAccountIdOrException())
                 .collection(DatabaseContract.TABLE_GROUPS_COL_INVITES)
                 .toListChannel<GroupDbEntity>(exceptionHandler)
-                .map { it.map { convertGroup(it) } }
+                .map { converter.convertCollection(it, GroupModel::class.java) }
     }
 
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) {
@@ -107,7 +106,7 @@ class GroupsRepositoryImpl(
         return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                 .document(groupId)
                 .toValueChannel<GroupDbEntity>(exceptionHandler)
-                .map { it?.run { convertGroup(it) } }
+                .map { it?.let { converter.convert(it, GroupModel::class.java) } }
     }
 
     override suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>> {
@@ -119,11 +118,11 @@ class GroupsRepositoryImpl(
     }
 
     override suspend fun createGroup(group: RawGroupModel): GroupModel {
-        return api.create(makeRequest(group)).handleException(exceptionHandler).group.let { convertGroup(it) }
+        return api.create(converter.convert(group)).handleException(exceptionHandler).group.let { converter.convert(it, GroupModel::class.java) }
     }
 
     override suspend fun updateGroup(group: RawGroupModel) {
-        api.update(makeRequest(group)).handleException(exceptionHandler)
+        api.update(converter.convert(group)).handleException(exceptionHandler)
     }
 
     override suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>> {
@@ -134,59 +133,5 @@ class GroupsRepositoryImpl(
                 .map { converter.convertCollection(it, ShortAccountModel::class.java).toSet() }
     }
 
-    private suspend fun convertGroup(input: GroupDbEntity): GroupModel {
-        val currentUserId = userRepository.getAccountIdOrException()
 
-        val creator = when {
-            input.author != null -> converter.convert(input.author, ShortAccountModel::class.java)
-            else -> ShortAccountModelImpl.EMPTY
-        }
-
-        val permissions = input.permissions?.let {
-            GroupPermissions(
-                    canCreateOfferPost = it.canCreateOfferPost,
-                    canCreateNeedPost = it.canCreateNeedPost,
-                    canCreateGeneralPost = it.canCreateGeneralPost,
-                    canCreateEvent = it.canCreateEvent,
-                    canCreateAccountPost = it.canCreateAccountPost)
-        } ?: GroupPermissions.NO_PERMISSIONS
-
-        return GroupModelImpl(
-                id = input.id,
-                name = input.title ?: "Unnamed group",
-                description = input.description ?: "",
-                avatar = input.avatar,
-                type = GroupType.Private(),
-                admins = input.admins
-                        ?: (if (input.isAdmin == true) listOf(currentUserId) else emptyList()),
-                numberOfParticipants = input.counters?.numberOfParticipants ?: 0L,
-                numberOfInvites = input.counters?.numberOfInvites ?: 0L,
-                creator = creator,
-                website = input.website,
-                locationPlace = input.location?.let { converter.convert(it, LocationPlaceModel::class.java) },
-                tags = input.tags ?: emptyList(),
-                permissions = permissions)
-    }
-
-    private fun makeRequest(group: RawGroupModel): CreateGroupRequest {
-        val permissions = GroupPermissionsEntity(
-                canCreateEvent = group.permissions.canCreateEvent,
-                canCreateAccountPost = group.permissions.canCreateAccountPost,
-                canCreateOfferPost = group.permissions.canCreateOfferPost,
-                canCreateNeedPost = group.permissions.canCreateNeedPost,
-                canCreateGeneralPost = group.permissions.canCreateGeneralPost
-        )
-
-        return CreateGroupRequest(
-                communityId = group.id,
-                id = group.id,
-                description = group.description,
-                title = group.title,
-                website = group.website,
-                location = group.placeId,
-                avatar = group.avatarUploaded,
-                tags = group.processedTags.takeIf { it.isNotEmpty() },
-                permissions = permissions
-        )
-    }
 }

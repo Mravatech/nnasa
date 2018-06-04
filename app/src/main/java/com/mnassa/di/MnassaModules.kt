@@ -282,6 +282,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(EventsConverter())
         converter.registerConverter(NotificationsConverter())
         converter.registerConverter(PushSettingsConverter())
+        converter.registerConverter(GroupConverter({ instance() }))
         converter
     }
 }
@@ -301,7 +302,7 @@ private val repositoryModule = Kodein.Module {
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
-    bind<UserRepository>() with singleton { UserRepositoryImpl(instance(), instance(), instance(), instance(), { instance() }) }
+    bind<UserRepository>() with singleton { UserRepositoryImpl({ instance() }, instance(), instance(), instance(), { instance() }) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }

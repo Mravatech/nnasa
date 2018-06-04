@@ -145,6 +145,9 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 val text = "$eventName $canceled $totalPrice $pointsReturns"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, eventName, totalPrice, Color.BLACK)
             }
+//            INVITED_TO_GROUP -> {
+//
+//            }
             else -> itemView.tvNotificationInfo.text = item.text
         }
     }
@@ -208,3 +211,4 @@ const val USER_WAS_RECOMMENDED_IN_EVENT = "userWasRecommendedInEvent"
 const val POST_PROMOTED = "promotePost"
 const val ONE_DAY_TO_EXPIRATION_OF_POST = "oneDayToExpirationOfPost"
 const val POST_IS_EXPIRED = "postIsExpired"
+const val INVITED_TO_GROUP = "youWasInvitedToCommunity"

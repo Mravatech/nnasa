@@ -11,6 +11,7 @@ import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
@@ -122,6 +123,9 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
             }
             INVITES_NUMBER_CHANGED -> {
                 open(InviteController.newInstance())
+            }
+            INVITED_TO_GROUP -> {
+                open(GroupListController.newInstance())
             }
             else -> {
                 when {
