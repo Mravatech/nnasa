@@ -171,6 +171,7 @@ sealed class AttachedImage(val typeId: Int) : Serializable {
     class UploadedImage(val imageUrl: String) : AttachedImage(TYPE_UPLOADED) {
         constructor(postAttachment: PostAttachment) : this((postAttachment as PostAttachment.PostPhotoAttachment).photoUrl)
     }
+
     class LocalImage(val imageUri: Uri) : AttachedImage(TYPE_LOCAL)
     object AddImage : AttachedImage(TYPE_ADD)
 

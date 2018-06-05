@@ -1,6 +1,8 @@
 package com.mnassa.screen.comments
 
+import android.net.Uri
 import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.RawCommentModel
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -14,8 +16,9 @@ interface CommentsWrapperViewModel : MnassaViewModel {
     val canReadCommentsChannel: BroadcastChannel<Boolean>
     val canWriteCommentsChannel: BroadcastChannel<Boolean>
 
-    fun createComment(text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)
-    fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String> = emptyList(), replyTo: CommentModel? = null)
+    fun createComment(comment: RawCommentModel)
+    fun editComment(comment: RawCommentModel)
     fun deleteComment(commentModel: CommentModel)
     fun sendPointsForComment(rewardModel: RewardModel) {}
+    fun preloadImage(imageFile: Uri)
 }

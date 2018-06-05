@@ -12,6 +12,7 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.CommentReplyModel
+import com.mnassa.domain.model.RawCommentModel
 import com.mnassa.domain.repository.CommentsRepository
 
 /**
@@ -26,26 +27,28 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
         return converter.convert(result)
     }
 
-    override suspend fun writePostComment(postId: String, text: String?, accountsToRecommend: List<String>): CommentModel {
+    override suspend fun writePostComment(comment: RawCommentModel): CommentModel {
         val result = commentsApi.createComment(CreateCommentRequest(
-                postId = postId,
-                text = text,
-                accountIds = accountsToRecommend,
+                postId = requireNotNull(comment.postId),
+                text = comment.text,
+                accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.POST,
-                commentId = null
+                commentId = null,
+                images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
         return converter.convert(result, Unit, CommentModel::class.java)
     }
 
-    override suspend fun replyToPostComment(postId: String, commentId: String, text: String, accountsToRecommend: List<String>): CommentModel {
+    override suspend fun replyToPostComment(comment: RawCommentModel): CommentModel {
         val result = commentsApi.createComment(CreateCommentRequest(
-                postId = postId,
-                text = text,
-                accountIds = accountsToRecommend,
+                postId = requireNotNull(comment.postId),
+                text = comment.text,
+                accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.POST,
-                commentId = commentId
+                commentId = comment.parentCommentId,
+                images = comment.uploadedImages
         )).handleException(exceptionHandler)
-        return converter.convert(result, commentId, CommentModel::class.java)
+        return converter.convert(result, comment.parentCommentId, CommentModel::class.java)
     }
 
     override suspend fun deletePostComment(comment: CommentModel) {
@@ -64,23 +67,25 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
         )).handleException(exceptionHandler)
     }
 
-    override suspend fun editPostComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>, parentCommentId: String?) {
+    override suspend fun editPostComment(comment: RawCommentModel) {
         commentsApi.editComment(EditCommentRequest(
-                commentId = originalCommentId,
-                text = text,
+                commentId = requireNotNull(comment.id),
+                text = comment.text,
                 entityType = NetworkContract.EntityType.POST,
-                accountIds = accountsToRecommend,
-                parentCommentId = parentCommentId
+                accountIds = comment.accountsToRecommend,
+                parentCommentId = comment.parentCommentId,
+                images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
     }
 
-    override suspend fun editEventComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>, parentCommentId: String?) {
+    override suspend fun editEventComment(comment: RawCommentModel) {
         commentsApi.editComment(EditCommentRequest(
-                commentId = originalCommentId,
-                text = text,
+                commentId = requireNotNull(comment.id),
+                text = comment.text,
                 entityType = NetworkContract.EntityType.EVENT,
-                accountIds = accountsToRecommend,
-                parentCommentId = parentCommentId
+                accountIds = comment.accountsToRecommend,
+                parentCommentId = comment.parentCommentId,
+                images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
     }
 
@@ -92,26 +97,27 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
         return converter.convert(result)
     }
 
-    override suspend fun writeEventComment(eventId: String, text: String?, accountsToRecommend: List<String>): CommentModel {
+    override suspend fun writeEventComment(comment: RawCommentModel): CommentModel {
         val result = commentsApi.createComment(CreateCommentRequest(
-                postId = eventId,
-                text = text,
-                accountIds = accountsToRecommend,
+                postId = requireNotNull(comment.postId),
+                text = comment.text,
+                accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.EVENT,
-                commentId = null
+                commentId = null,
+                images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
         return converter.convert(result, Unit, CommentModel::class.java)
     }
 
-    override suspend fun replyToEventComment(eventId: String, commentId: String, text: String, accountsToRecommend: List<String>): CommentModel {
+    override suspend fun replyToEventComment(comment: RawCommentModel): CommentModel {
         val result = commentsApi.createComment(CreateCommentRequest(
-                postId = eventId,
-                text = text,
-                accountIds = accountsToRecommend,
+                postId = requireNotNull(comment.postId),
+                text = comment.text,
+                accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.EVENT,
-                commentId = commentId
+                commentId = comment.parentCommentId,
+                images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
-        return converter.convert(result, commentId, CommentModel::class.java)
+        return converter.convert(result, comment.parentCommentId, CommentModel::class.java)
     }
-
 }

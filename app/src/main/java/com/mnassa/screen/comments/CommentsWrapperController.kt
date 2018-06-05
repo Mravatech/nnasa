@@ -1,5 +1,9 @@
 package com.mnassa.screen.comments
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -9,18 +13,21 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.needAttach
 import com.mnassa.R
+import com.mnassa.activity.CropActivity
+import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.await
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.CommentModel
-import com.mnassa.domain.model.RewardModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.rewarding.RewardingController
+import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.posts.PostDetailsFactory
+import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
 import com.mnassa.screen.posts.need.recommend.RecommendController
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
@@ -30,12 +37,14 @@ import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.comment_panels.view.*
 import kotlinx.android.synthetic.main.controller_comments_wrapper.view.*
 import kotlinx.android.synthetic.main.panel_comment.view.*
+import kotlinx.android.synthetic.main.panel_comment_attachments.view.*
 import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
+import timber.log.Timber
 
 /**
  * Created by Peter on 4/17/2018.
@@ -51,6 +60,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     private val wrappedController = StateExecutor<Controller?, CommentsWrapperCallback>(null) { it is CommentsWrapperCallback }
     //
     private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialogHelper: DialogHelper by instance()
     //
     private lateinit var commentsAdapter: PostCommentsRVAdapter
     private val accountsToRecommendAdapter = SelectedAccountRVAdapter()
@@ -64,8 +74,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             field = value
             updatePostCommentButtonState()
             bindEditedComment(value, true)
-            value?.let { bindRecommendedAccounts(it.recommends) }
+            value?.let {
+                bindRecommendedAccounts(it.recommends)
+                bindCommentAttachments(it.images.map(AttachedImage::UploadedImage))
+            }
         }
+    private val attachmentsAdapter = CommentAttachmentsAdapter()
 
     override fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>) = bindRecommendedAccounts(recommendedAccounts)
     override val accountsToRecommend: List<ShortAccountModel> get() = accountsToRecommendAdapter.dataStorage.toList()
@@ -83,10 +97,26 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
         commentsAdapter.onCommentAuthorClick = { open(ProfileController.newInstance(it)) }
+        commentsAdapter.onImageClickListener = { comment, position ->
+            view?.context?.let { context ->
+                PhotoPagerActivity.start(
+                        context = context,
+                        images = comment.images,
+                        selectedItem = position
+                )
+            }
+        }
 
         accountsToRecommendAdapter.onDataSourceChangedListener = { accounts ->
             launchCoroutineUI {
                 getCommentsContainer().recommendPanel?.isGone = accounts.isEmpty()
+                updatePostCommentButtonState()
+            }
+        }
+
+        attachmentsAdapter.onDataSourceChangedListener = { images ->
+            launchCoroutineUI {
+                getCommentsContainer().attachmentsPanel?.isGone = images.isEmpty()
                 updatePostCommentButtonState()
             }
         }
@@ -100,6 +130,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             rvContent.adapter = commentsAdapter
             initializeContainer()
             bindToolbar(toolbar)
+
         }
 
         launchCoroutineUI {
@@ -130,6 +161,23 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_CODE_CROP) return
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                val uri: Uri? = data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
+                uri?.let {
+                    attachmentsAdapter.dataStorage.add(AttachedImage.LocalImage(it))
+                    viewModel.preloadImage(it)
+                }
+            }
+            CropActivity.GET_PHOTO_ERROR -> {
+                Timber.e("CropActivity.GET_PHOTO_ERROR")
+            }
+        }
+    }
+
     override fun onApplyReward(rewardModel: RewardModel) {
         viewModel.sendPointsForComment(rewardModel)
     }
@@ -145,9 +193,13 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
             with(container) {
                 rvAccountsToRecommend.adapter = accountsToRecommendAdapter
+                rvCommentAttachments.adapter = attachmentsAdapter
 
                 btnCommentPost.setOnClickListener { onPostCommentClick() }
                 ivCommentRecommend.setOnClickListener { openRecommendScreen() }
+                ivCommentAttach.setOnClickListener {
+                    dialogHelper.showSelectImageSourceDialog(it.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+                }
                 updatePostCommentButtonState()
 
                 etCommentText.hint = fromDictionary(R.string.posts_comment_placeholder)
@@ -161,6 +213,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             bindEditedComment(editedComment, false)
             bindReplyTo(replyTo)
             getCommentsContainer().recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
+            getCommentsContainer().attachmentsPanel?.isGone = attachmentsAdapter.dataStorage.isEmpty()
         }
     }
 
@@ -228,19 +281,28 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         with(view ?: return) {
             val editedCommentLocal = editedComment
             if (editedCommentLocal != null) {
-                viewModel.editComment(
-                        originalComment = editedCommentLocal,
-                        text = etCommentText.text.toString(),
-                        accountsToRecommend = accountsToRecommend.map { it.id },
-                        replyTo = replyTo)
-            } else viewModel.createComment(
-                    text = etCommentText.text.toString(),
-                    accountsToRecommend = accountsToRecommend.map { it.id },
-                    replyTo = replyTo)
+                viewModel.editComment(makeCommentModel())
+            } else viewModel.createComment(makeCommentModel())
             etCommentText.text = null
             replyTo = null
             editedComment = null
             bindRecommendedAccounts(emptyList())
+            bindCommentAttachments(emptyList())
+        }
+    }
+
+    private fun makeCommentModel(): RawCommentModel {
+        return with(requireNotNull(view)) {
+            RawCommentModel(
+                    id = editedComment?.id,
+                    parentCommentId = replyTo?.mostParentCommentId,
+                    text = etCommentText.text.toString(),
+                    accountsToRecommend = accountsToRecommend.map { it.id },
+                    uploadedImages = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.UploadedImage::class.java).map { it.imageUrl },
+                    imagesToUpload = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.LocalImage::class.java).map { it.imageUri },
+                    postId = wrappedControllerParams.getString(PostDetailsFactory.EXTRA_POST_ID, null)
+                            ?: wrappedControllerParams.getString(EventDetailsController.EXTRA_EVENT_ID)
+            )
         }
     }
 
@@ -284,6 +346,14 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
+    private fun bindCommentAttachments(value: List<AttachedImage>) {
+        attachmentsAdapter.set(value)
+
+        launchCoroutineUI {
+            getCommentsContainer().attachmentsPanel?.isGone = value.isEmpty()
+        }
+    }
+
     private fun bindReplyTo(value: CommentModel?) {
         launchCoroutineUI {
             with(getCommentsContainer()) {
@@ -321,17 +391,21 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     private val canPostComment: Boolean
-        get() = (view?.etCommentText?.text?.isNotBlank()
-                ?: false) || accountsToRecommendAdapter.dataStorage.size > 0
+        get() = (view?.etCommentText?.text?.isNotBlank() ?: false)
+                || !accountsToRecommendAdapter.dataStorage.isEmpty()
+                || !attachmentsAdapter.dataStorage.isEmpty()
 
     private fun updatePostCommentButtonState() {
         val text = when {
             editedComment != null -> fromDictionary(R.string.posts_comment_edit_button)
             else -> fromDictionary(R.string.posts_comment_create)
         }
-        view?.btnCommentPost?.let {
-            it.text = text
-            it.isEnabled = canPostComment
+
+        with(view ?: return) {
+            btnCommentPost.text = text
+            btnCommentPost.isEnabled = canPostComment
+
+            ivCommentAttach.isGone = attachmentsAdapter.dataStorage.size >= MAX_ATTACHED_IMAGES_COUNT
         }
     }
 
@@ -340,10 +414,27 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         return wrappedController.getCommentInputContainer(this@CommentsWrapperController)
     }
 
+    private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
+        val permissionsList = when (imageSource) {
+            CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        val permissionResult = permissions.requestPermissions(permissionsList)
+        if (permissionResult.isAllGranted) {
+            activity?.let {
+                val intent = CropActivity.start(imageSource, it)
+                startActivityForResult(intent, REQUEST_CODE_CROP)
+            }
+        }
+    }
+
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
     override fun close(self: Controller) = mnassaRouter.close(self)
 
     companion object {
+        private const val REQUEST_CODE_CROP = 101
+        private const val MAX_ATTACHED_IMAGES_COUNT = 5
+
         private const val EXTRA_CONTROLLER_CLASS = "EXTRA_CONTROLLER_CLASS"
         private const val EXTRA_CONTROLLER_ARGS = "EXTRA_CONTROLLER_ARGS"
         private const val EXTRA_COMMENT_TEXT = "EXTRA_COMMENT_TEXT"
@@ -359,6 +450,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     interface CommentsWrapperCallback : CommentInputContainer {
+
         fun bindToolbar(toolbar: MnassaToolbar) {
             toolbar.isGone = true
         }
