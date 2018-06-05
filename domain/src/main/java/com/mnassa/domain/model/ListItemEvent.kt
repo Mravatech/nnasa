@@ -28,7 +28,8 @@ sealed class ListItemEvent<T : Any>() {
 
 suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
         subscriptionContainer: SubscriptionContainer,
-        bufferizationTimeMillis: Long = 2_000L
+        bufferizationTimeMillis: Long = 2000L,
+        maxBufferSize: Int = 5
 ): ReceiveChannel<ListItemEvent<List<E>>> {
     val srcChannel = this
     var sendItemsJob: Job? = null
@@ -72,7 +73,7 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
                 is ListItemEvent.Added -> {
                     addItemsCache.add(it.item)
 
-                    if (System.currentTimeMillis() - lastItemsSentAt < bufferizationTimeMillis) {
+                    if (System.currentTimeMillis() - lastItemsSentAt < bufferizationTimeMillis && addItemsCache.size < maxBufferSize) {
                         sendItemsJob?.cancel()
                         sendItemsJob = subscriptionContainer.launchCoroutineUI {
                             delay(bufferizationTimeMillis)

@@ -571,6 +571,7 @@
     <string name="group_permissions_need">_group_permission_need</string>
     <string name="group_permissions_offer">_group_permission_offer</string>
     <string name="group_permissions_general">_group_permission_general</string>
+    <string name="group_delete_menu">_groupNewsfeed_menu_delete</string>
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>
     <string name="group_item_header_all">_group_item_header_all</string>

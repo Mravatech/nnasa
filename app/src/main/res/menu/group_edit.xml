@@ -10,4 +10,7 @@
     <item
         android:id="@+id/action_invite_members"
         android:title="" />
+    <item
+        android:id="@+id/action_group_delete"
+        android:title="" />
 </menu>

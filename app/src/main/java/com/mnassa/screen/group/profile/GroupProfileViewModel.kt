@@ -19,4 +19,5 @@ interface GroupProfileViewModel : MnassaViewModel {
     fun hideInfoPost(post: PostModel)
     fun leave()
     fun removePost(post: PostModel)
+    fun delete()
 }

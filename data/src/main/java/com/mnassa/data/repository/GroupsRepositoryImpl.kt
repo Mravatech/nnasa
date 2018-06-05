@@ -33,6 +33,10 @@ class GroupsRepositoryImpl(
         private val api: FirebaseGroupsApi
 ) : GroupsRepository {
 
+    override suspend fun deleteGroup(groupId: String) {
+        api.delete(groupId).handleException(exceptionHandler)
+    }
+
     override suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>> {
         return firestore.collection(DatabaseContract.TABLE_GROUPS)
                 .document(userRepository.getAccountIdOrException())

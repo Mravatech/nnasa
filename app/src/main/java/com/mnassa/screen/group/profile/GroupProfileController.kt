@@ -199,6 +199,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                 findItem(R.id.action_group_details)?.title = fromDictionary(R.string.group_menu_details)
                 findItem(R.id.action_invite_members)?.title = fromDictionary(R.string.group_menu_invite)
                 findItem(R.id.action_group_leave)?.title = fromDictionary(R.string.group_menu_leave)
+                findItem(R.id.action_group_delete)?.title = fromDictionary(R.string.group_delete_menu)
             }
 
             toolbar.setOnMenuItemClickListener {
@@ -207,6 +208,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                     R.id.action_group_details -> open(GroupDetailsController.newInstance(groupModel))
                     R.id.action_invite_members -> open(GroupInviteConnectionsController.newInstance(groupModel))
                     R.id.action_group_leave -> viewModel.leave()
+                    R.id.action_group_delete -> viewModel.delete()
                 }
                 true
             }

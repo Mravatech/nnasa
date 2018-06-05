@@ -17,6 +17,8 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
                            private val tagInteractor: TagInteractor,
                            private val userInteractor: UserProfileInteractor) : GroupsInteractor {
 
+    override suspend fun deleteGroup(groupId: String) = groupsRepository.deleteGroup(groupId)
+
     override suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>> = groupsRepository.getMyGroups()
 
     override suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>> = groupsRepository.getInvitesToGroups()

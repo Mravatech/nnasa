@@ -103,6 +103,15 @@ class GroupProfileViewModelImpl(
         }
     }
 
+    override fun delete() {
+        handleException {
+            withProgressSuspend {
+                groupsInteractor.deleteGroup(groupId)
+            }
+            closeScreenChannel.send(Unit)
+        }
+    }
+
     private fun resetCounter() {
         handleException {
             postsInteractor.resetCounter()
