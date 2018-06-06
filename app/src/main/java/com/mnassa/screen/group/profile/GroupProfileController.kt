@@ -9,6 +9,7 @@ import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.create.CreateGroupController
@@ -40,6 +41,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     private val adapter = PostsRVAdapter(withHeader = false)
     private val tagsAdapter = PostTagRVAdapter()
     private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialogHelper: DialogHelper by instance()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -208,7 +210,13 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                     R.id.action_group_details -> open(GroupDetailsController.newInstance(groupModel))
                     R.id.action_invite_members -> open(GroupInviteConnectionsController.newInstance(groupModel))
                     R.id.action_group_leave -> viewModel.leave()
-                    R.id.action_group_delete -> viewModel.delete()
+                    R.id.action_group_delete -> {
+                        dialogHelper.showYesNoDialog(
+                                context,
+                                fromDictionary(R.string.group_delete_dialog),
+                                onOkClick = { viewModel.delete() }
+                        )
+                    }
                 }
                 true
             }

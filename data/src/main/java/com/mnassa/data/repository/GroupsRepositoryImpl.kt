@@ -10,6 +10,7 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseGroupsApi
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
+import com.mnassa.data.network.bean.retrofit.request.DeleteGroupRequest
 import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
@@ -34,7 +35,7 @@ class GroupsRepositoryImpl(
 ) : GroupsRepository {
 
     override suspend fun deleteGroup(groupId: String) {
-        api.delete(groupId).handleException(exceptionHandler)
+        api.delete(DeleteGroupRequest(groupId)).handleException(exceptionHandler)
     }
 
     override suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>> {
