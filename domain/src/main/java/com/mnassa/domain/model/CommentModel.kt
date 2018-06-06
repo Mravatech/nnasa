@@ -19,17 +19,18 @@ interface CommentReplyModel : CommentModel {
     val parentId: String
 }
 
-val CommentModel.mostParentCommentId: String
-    get() {
-        return (this as? CommentReplyModel)?.parentId ?: id
-    }
+val CommentModel.parentCommentId: String? get() = (this as? CommentReplyModel)?.parentId
 
-data class RawCommentModel(
+class RawCommentModel(
         var id: String? = null,
         var postId: String? = null,
         var text: String?,
         var accountsToRecommend: List<String>,
         var uploadedImages: List<String>,
         var imagesToUpload: List<Uri>,
-        var parentCommentId: String? = null
-)
+        parentCommentId: String? = null
+) {
+    var parentCommentId: String? = parentCommentId
+        get() = field.takeIf { it != id }
+
+}

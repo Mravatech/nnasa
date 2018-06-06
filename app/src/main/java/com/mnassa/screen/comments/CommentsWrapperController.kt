@@ -295,7 +295,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         return with(requireNotNull(view)) {
             RawCommentModel(
                     id = editedComment?.id,
-                    parentCommentId = replyTo?.mostParentCommentId,
+                    parentCommentId = replyTo?.id ?: editedComment?.parentCommentId,
                     text = etCommentText.text.toString(),
                     accountsToRecommend = accountsToRecommend.map { it.id },
                     uploadedImages = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.UploadedImage::class.java).map { it.imageUrl },

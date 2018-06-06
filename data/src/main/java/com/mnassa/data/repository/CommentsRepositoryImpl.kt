@@ -33,7 +33,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
                 text = comment.text,
                 accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.POST,
-                commentId = null,
+                parentCommentId = null,
                 images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
         return converter.convert(result, Unit, CommentModel::class.java)
@@ -45,7 +45,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
                 text = comment.text,
                 accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.POST,
-                commentId = comment.parentCommentId,
+                parentCommentId = comment.parentCommentId,
                 images = comment.uploadedImages
         )).handleException(exceptionHandler)
         return converter.convert(result, comment.parentCommentId, CommentModel::class.java)
@@ -103,7 +103,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
                 text = comment.text,
                 accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.EVENT,
-                commentId = null,
+                parentCommentId = null,
                 images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
         return converter.convert(result, Unit, CommentModel::class.java)
@@ -115,7 +115,7 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
                 text = comment.text,
                 accountIds = comment.accountsToRecommend,
                 entityType = NetworkContract.EntityType.EVENT,
-                commentId = comment.parentCommentId,
+                parentCommentId = comment.parentCommentId,
                 images = comment.uploadedImages.takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
         return converter.convert(result, comment.parentCommentId, CommentModel::class.java)

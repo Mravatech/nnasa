@@ -11,5 +11,8 @@ data class CreateCommentRequest(
         @SerializedName("entityType") val entityType: String,
         @SerializedName("accountIds") val accountIds: List<String>,
         @SerializedName("images") val images: List<String>?,
-        @SerializedName("commentId") val commentId: String? = null
-)
+        @SerializedName("parentCommentId") val parentCommentId: String? = null
+) {
+    @SerializedName("commentId")
+    val commentId: String? = parentCommentId
+}
