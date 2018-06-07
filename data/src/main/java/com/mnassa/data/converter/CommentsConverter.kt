@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.data.extensions.isSuppressed
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.retrofit.response.CommentResponseEntity
@@ -15,6 +16,7 @@ import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.CommentModelImpl
 import com.mnassa.domain.model.impl.CommentReplyModelImpl
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -34,8 +36,15 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
         }
 
         return input.data.data?.entries?.flatMap { (mainCommentId, commentBody) ->
-            commentBody.id = mainCommentId
-            converter.convert(commentBody, token, List::class.java) as List<CommentModel>
+            try {
+                commentBody.id = mainCommentId
+                converter.convert(commentBody, token, List::class.java) as List<CommentModel>
+            } catch (e: Exception) {
+                Timber.e(e)
+
+                //ignore server side errors & try to load only valid comment models
+                if (e.isSuppressed) emptyList<CommentModel>() else throw e
+            }
         } ?: emptyList()
     }
 
@@ -66,7 +75,8 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
                     recommends = convertUser(input.recommendedAccounts
                             ?: emptyMap(), converter),
                     parentId = parentItemId,
-                    isRewarded = input.isRewarded
+                    isRewarded = input.isRewarded,
+                    images = input.images ?: emptyList()
             )
             else -> CommentModelImpl(
                     id = input.id,
@@ -74,20 +84,29 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
                     creator = convertUser(input.creator, converter).first(),
                     text = input.text,
                     recommends = convertUser(input.recommendedAccounts ?: emptyMap(), converter),
-                    isRewarded = input.isRewarded
+                    isRewarded = input.isRewarded,
+                    images = input.images ?: emptyList()
             )
         }
 
-        val tail = (input.replies ?: emptyMap()).entries.map { (replyId, commentBody) ->
-            CommentReplyModelImpl(
-                    id = replyId,
-                    createdAt = Date(commentBody.createdAt),
-                    creator = convertUser(commentBody.creator, converter).first(),
-                    text = commentBody.text,
-                    recommends = convertUser(commentBody.recommendedAccounts ?: emptyMap(), converter),
-                    parentId = head.id,
-                    isRewarded = input.isRewarded
-            )
+        val tail = (input.replies ?: emptyMap()).entries.mapNotNull { (replyId, commentBody) ->
+            try {
+                CommentReplyModelImpl(
+                        id = replyId,
+                        createdAt = Date(commentBody.createdAt),
+                        creator = convertUser(commentBody.creator, converter).first(),
+                        text = commentBody.text,
+                        recommends = convertUser(commentBody.recommendedAccounts
+                                ?: emptyMap(), converter),
+                        parentId = head.id,
+                        isRewarded = commentBody.isRewarded,
+                        images = commentBody.images ?: emptyList()
+                )
+            } catch (e: Exception) {
+                Timber.e(e)
+                //ignore server side errors & try to load valid comment models
+                null
+            }
         }
 
         val result: MutableList<CommentModel> = ArrayList(tail.size + 1)

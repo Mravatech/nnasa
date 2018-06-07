@@ -24,7 +24,8 @@ internal data class CommentResponseEntity(
         @SerializedName("isRewarded") var isRewarded: Boolean = false,
         @SerializedName("replies") var replies: Map<String, CommentResponseEntity>?,
         @SerializedName("text") var text: String?,
-        @SerializedName("accounts") var recommendedAccounts: Map<String, ShortAccountDbEntity>?
+        @SerializedName("accounts") var recommendedAccounts: Map<String, ShortAccountDbEntity>?,
+        @SerializedName("images") var images: List<String>?
 ) {
     lateinit var id: String
     var parentItemId: String? = null

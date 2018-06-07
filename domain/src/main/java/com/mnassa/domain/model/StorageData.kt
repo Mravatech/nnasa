@@ -29,9 +29,11 @@ const val FOLDER_PERSONAL = 1
 const val FOLDER_POSTS = 2
 const val FOLDER_EVENTS = 3
 const val FOLDER_GROUPS = 4
+const val FOLDER_COMMENTS = 5
 
 const val AVATARS = "avatars/"
 const val PERSONAL = "personal/"
 const val POSTS = "posts/"
 const val EVENTS = "events/"
 const val GROUPS = "communities/avatars/"
+const val COMMENTS = "comments/"

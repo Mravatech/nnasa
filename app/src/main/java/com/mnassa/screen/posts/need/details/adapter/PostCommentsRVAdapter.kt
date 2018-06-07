@@ -30,14 +30,16 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
     var onCommentOptionsClick = { view: View, comment: CommentModel -> }
     var onCommentUsefulClick = { comment: CommentModel -> }
     var onRecommendedAccountClick = { view: View, account: ShortAccountModel -> }
-    var onCommentAuthorClick = {  account: ShortAccountModel -> }
+    var onCommentAuthorClick = { account: ShortAccountModel -> }
+    var onImageClickListener = { comment: CommentModel, imagePosition: Int -> }
 
     fun destroyCallbacks() {
         onBindHeader = { }
         onReplyClick = { }
         onCommentOptionsClick = { _: View, _: CommentModel -> }
         onRecommendedAccountClick = { _: View, _: ShortAccountModel -> }
-        onCommentAuthorClick = {  }
+        onCommentAuthorClick = { }
+        onImageClickListener = { comment: CommentModel, imagePosition: Int -> }
     }
 
     override val itemsComparator: (item1: CommentModel, item2: CommentModel) -> Int = { first, second ->
@@ -68,10 +70,22 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
         contentTheSameComparator = { first, second -> first == second }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> = when (viewType) {
-        TYPE_COMMENT -> CommentViewHolder.newInstanceComment(parent, this, commentsRewardModel)
-        TYPE_COMMENT_REPLY -> CommentViewHolder.newInstanceReply(parent, this, commentsRewardModel)
-        else -> throw IllegalArgumentException("Illegal view type $viewType")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<CommentModel> {
+        return when {
+            viewType.hasFlag(TYPE_COMMENT) -> CommentViewHolder.newInstanceComment(
+                    parent = parent,
+                    onClickListener = this,
+                    commentRewardModel = commentsRewardModel,
+                    imagesCount = viewType.getImagesCount()
+            )
+            viewType.hasFlag(TYPE_COMMENT_REPLY) -> CommentViewHolder.newInstanceReply(
+                    parent = parent,
+                    onClickListener = this,
+                    commentRewardModel = commentsRewardModel,
+                    imagesCount = viewType.getImagesCount()
+            )
+            else -> throw IllegalArgumentException("Illegal view type $viewType")
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<CommentModel> {
@@ -86,9 +100,32 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
         else super.onBindViewHolder(holder, position)
     }
 
-    override fun getViewType(position: Int): Int = when (dataStorage[position]) {
-        is CommentReplyModel -> TYPE_COMMENT_REPLY
-        else -> TYPE_COMMENT
+    override fun getViewType(position: Int): Int {
+        val item = dataStorage[position]
+        var type = when (item) {
+            is CommentReplyModel -> TYPE_COMMENT_REPLY
+            else -> TYPE_COMMENT
+        }
+
+        type = type or when (item.images.size) {
+            0 -> 0
+            1 -> IMAGE_1
+            2 -> IMAGE_2
+            3 -> IMAGE_3
+            else -> IMAGE_MORE
+        }
+
+        type = type or when (item.recommends.size) {
+            0 -> 0
+            1 -> RECOMMEND_1
+            2 -> RECOMMEND_2
+            3 -> RECOMMEND_3
+            4 -> RECOMMEND_4
+            5 -> RECOMMEND_5
+            else -> RECOMMEND_MORE
+        }
+
+        return type
     }
 
     override fun onClick(view: View) {
@@ -106,12 +143,37 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             R.id.btnUseful -> if (position >= 0) onCommentUsefulClick(getDataItemByAdapterPosition(position))
             R.id.ivAvatar -> if (position >= 0) onCommentAuthorClick(getDataItemByAdapterPosition(position).creator)
             R.id.tvUserName -> if (position >= 0) onCommentAuthorClick(getDataItemByAdapterPosition(position).creator)
+            R.id.ivOne -> if (position >= 0) onImageClickListener(getDataItemByAdapterPosition(position), 0)
+            R.id.ivTwo -> if (position >= 0) onImageClickListener(getDataItemByAdapterPosition(position), 1)
+            R.id.ivThree -> if (position >= 0) onImageClickListener(getDataItemByAdapterPosition(position), 2)
         }
     }
 
     companion object {
-        private const val TYPE_COMMENT = 1
-        private const val TYPE_COMMENT_REPLY = 2
+        private const val TYPE_COMMENT = 1 shl 1
+        private const val TYPE_COMMENT_REPLY = 1 shl 2
+
+        private const val IMAGE_1 = 1 shl 7
+        private const val IMAGE_2 = 1 shl 8
+        private const val IMAGE_3 = 1 shl 9
+        private const val IMAGE_MORE = 1 shl 10
+
+        private const val RECOMMEND_1 = 1 shl 11
+        private const val RECOMMEND_2 = 1 shl 12
+        private const val RECOMMEND_3 = 1 shl 13
+        private const val RECOMMEND_4 = 1 shl 14
+        private const val RECOMMEND_5 = 1 shl 15
+        private const val RECOMMEND_MORE = 1 shl 16
+
+        private fun Int.hasFlag(flag: Int) = this and flag == flag
+
+        private fun Int.getImagesCount() = when {
+            hasFlag(IMAGE_1) -> 1
+            hasFlag(IMAGE_2) -> 2
+            hasFlag(IMAGE_3) -> 3
+            hasFlag(IMAGE_MORE) -> 4
+            else -> 0
+        }
     }
 
     private class CommentViewHolder(itemView: View,
@@ -155,6 +217,7 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             commentRoot.tag = this
             commentRoot.setOnLongClickListener(this)
 
+            bindImages(item)
 
             avatar.setOnClickListener(onClickListener)
             (avatar.parent as? View)?.tag = this
@@ -200,6 +263,40 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             adapter.onItemClickListener = onClickListener
         }
 
+        protected fun bindImages(item: CommentModel) {
+            val attachments = item.images
+
+            with(itemView) {
+                if (attachments.isNotEmpty()) {
+                    itemView.findViewById<ImageView>(R.id.ivOne).let {
+                        it.image(attachments[0])
+                        (it.parent as View).tag = this@CommentViewHolder
+                        it.setOnClickListener(onClickListener)
+                    }
+                }
+
+                if (attachments.size >= 2) {
+                    itemView.findViewById<ImageView>(R.id.ivTwo).let {
+                        it.image(attachments[1])
+                        (it.parent as View).tag = this@CommentViewHolder
+                        it.setOnClickListener(onClickListener)
+                    }
+                }
+
+                if (attachments.size >= 3) {
+                    itemView.findViewById<ImageView>(R.id.ivThree).let {
+                        it.image(attachments[2])
+                        (it.parent as View).tag = this@CommentViewHolder
+                        it.setOnClickListener(onClickListener)
+                    }
+                }
+
+                if (attachments.size > 3) {
+                    itemView.findViewById<TextView>(R.id.tvCountMore).text = "+${attachments.size - 2}"
+                }
+            }
+        }
+
         override fun onLongClick(view: View): Boolean {
             onClickListener.onClick(view)
             return true
@@ -208,13 +305,56 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
         companion object {
             private const val FIRST_ITEM_POSITION = 1
 
-            fun newInstanceComment(parent: ViewGroup, onClickListener: View.OnClickListener, commentRewardModel: CommentsRewardModel): CommentViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
+            fun newInstanceComment(
+                    parent: ViewGroup,
+                    onClickListener: View.OnClickListener,
+                    commentRewardModel: CommentsRewardModel,
+                    imagesCount: Int
+            ): CommentViewHolder {
+                val inflater = LayoutInflater.from(parent.context)
+
+                val view = inflater.inflate(R.layout.item_comment, parent, false)
+                val flImagesRoot = view.findViewById<ViewGroup>(R.id.flImagesRoot)
+
+
+                if (imagesCount > 0) {
+                    val imagesLayout = when (imagesCount) {
+                        1 -> R.layout.item_image_one
+                        2 -> R.layout.item_image_two
+                        3 -> R.layout.item_image_three
+                        else -> R.layout.item_image_more
+                    }
+                    inflater.inflate(imagesLayout, flImagesRoot, true)
+                }
+
+                flImagesRoot.isGone = imagesCount == 0
+
                 return CommentViewHolder(view, onClickListener, commentRewardModel)
             }
 
-            fun newInstanceReply(parent: ViewGroup, onClickListener: View.OnClickListener, commentRewardModel: CommentsRewardModel): CommentViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment_reply, parent, false)
+            fun newInstanceReply(
+                    parent: ViewGroup,
+                    onClickListener: View.OnClickListener,
+                    commentRewardModel: CommentsRewardModel,
+                    imagesCount: Int
+            ): CommentViewHolder {
+                val inflater = LayoutInflater.from(parent.context)
+
+                val view = inflater.inflate(R.layout.item_comment_reply, parent, false)
+                val flImagesRoot = view.findViewById<ViewGroup>(R.id.flImagesRoot)
+
+                if (imagesCount > 0) {
+                    val imagesLayout = when (imagesCount) {
+                        1 -> R.layout.item_image_one
+                        2 -> R.layout.item_image_two
+                        3 -> R.layout.item_image_three
+                        else -> R.layout.item_image_more
+                    }
+                    inflater.inflate(imagesLayout, flImagesRoot, true)
+                }
+
+                flImagesRoot.isGone = imagesCount == 0
+
                 return CommentViewHolder(view, onClickListener, commentRewardModel)
             }
         }

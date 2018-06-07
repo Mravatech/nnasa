@@ -14,7 +14,8 @@ data class CommentModelImpl(
         override val creator: ShortAccountModel,
         override val text: String?,
         override val recommends: List<ShortAccountModel>,
-        override val isRewarded: Boolean
+        override val isRewarded: Boolean,
+        override val images: List<String>
 ) : CommentModel
 
 data class CommentReplyModelImpl(
@@ -24,5 +25,6 @@ data class CommentReplyModelImpl(
         override val text: String?,
         override val recommends: List<ShortAccountModel>,
         override val parentId: String,
-        override val isRewarded: Boolean
+        override val isRewarded: Boolean,
+        override val images: List<String>
 ) : CommentReplyModel

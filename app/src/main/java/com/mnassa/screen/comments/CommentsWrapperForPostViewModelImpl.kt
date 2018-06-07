@@ -1,15 +1,17 @@
 package com.mnassa.screen.comments
 
+import android.net.Uri
 import android.os.Bundle
 import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.CommentModel
-import com.mnassa.domain.model.CommentReplyModel
+import com.mnassa.domain.model.RawCommentModel
 import com.mnassa.domain.model.RewardModel
-import com.mnassa.domain.model.mostParentCommentId
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -29,6 +31,7 @@ class CommentsWrapperForPostViewModelImpl(
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
     override val canReadCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
     override val canWriteCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
+    private val preloadedImages = HashMap<Uri, Deferred<String>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,38 +54,25 @@ class CommentsWrapperForPostViewModelImpl(
         }
     }
 
-    override fun createComment(text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
+    override fun createComment(comment: RawCommentModel) {
         handleException {
             withProgressSuspend {
-                val createdComment: CommentModel = when (replyTo) {
-                    null -> commentsInteractor.writePostComment(
-                            postId = postId,
-                            text = text,
-                            accountsToRecommend = accountsToRecommend
-                    )
-                    else -> commentsInteractor.replyToPostComment(
-                            postId = postId,
-                            text = text,
-                            accountsToRecommend = accountsToRecommend,
-                            commentId = replyTo.mostParentCommentId
-                    )
+                comment.uploadImages()
+                val createdComment: CommentModel = when (comment.parentCommentId) {
+                    null -> commentsInteractor.writePostComment(comment)
+                    else -> commentsInteractor.replyToPostComment(comment)
                 }
-
                 commentsChannel.send((commentsChannel.valueOrNull ?: emptyList()) + createdComment)
                 scrollToChannel.send(createdComment)
             }
         }
     }
 
-    override fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
+    override fun editComment(comment: RawCommentModel) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.editPostComment(
-                        originalCommentId = originalComment.id,
-                        text = text,
-                        accountsToRecommend = accountsToRecommend,
-                        parentCommentId = (originalComment as? CommentReplyModel)?.parentId
-                )
+                comment.uploadImages()
+                commentsInteractor.editPostComment(comment)
                 loadComments()
             }
         }
@@ -98,6 +88,14 @@ class CommentsWrapperForPostViewModelImpl(
         }
     }
 
+    override fun preloadImage(imageFile: Uri) {
+        handleException {
+            uploadImageIfNeeded(imageFile)
+        }
+    }
+
+    private suspend fun uploadImageIfNeeded(imageFile: Uri) = preloadedImages.getOrPut(imageFile) { async { commentsInteractor.preloadCommentImage(imageFile) } }
+
     private suspend fun loadComments() {
         try {
             commentsChannel.send(commentsInteractor.getCommentsByPost(postId))
@@ -105,5 +103,12 @@ class CommentsWrapperForPostViewModelImpl(
             canReadCommentsChannel.send(e.canReadComments)
             canWriteCommentsChannel.send(e.canWriteComments)
         }
+    }
+
+    private suspend fun RawCommentModel.uploadImages() {
+        val uploadedImagesResult = ArrayList(uploadedImages)
+        uploadedImagesResult += imagesToUpload.map { uploadImageIfNeeded(it) }.map { it.await() }
+        uploadedImages = uploadedImagesResult
+        imagesToUpload = emptyList()
     }
 }
