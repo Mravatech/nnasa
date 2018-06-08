@@ -13,7 +13,7 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  * User: okli
  * Date: 3/28/2018
  */
-interface EditCompanyProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface EditCompanyProfileViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: ArrayBroadcastChannel<CompanyScreenCommander>
     fun saveLocallyAvatarUri(uri: Uri)
     fun updateCompanyAccount(

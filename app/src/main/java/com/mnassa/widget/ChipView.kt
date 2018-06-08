@@ -16,15 +16,15 @@ import kotlinx.android.synthetic.main.view_chip.view.*
 
 @SuppressLint("ViewConstructor")
 class ChipView(
-    context: Context,
-    tagModel: TagModel,
-    private val key: Long,
-    private val onChipListener: OnChipListener
+        context: Context,
+        tagModel: TagModel,
+        private val key: Long,
+        private val onChipListener: OnChipListener
 ) : FrameLayout(context) {
 
     init {
         inflate(context, R.layout.view_chip, this)
-        tvChipText.text = tagModel.name
+        tvChipText.text = tagModel.name.toString()
         tvChipText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 if (event.rawX >= (right - tvChipText.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {

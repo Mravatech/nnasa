@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.mnassa.di.getInstance
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
@@ -12,10 +14,8 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 
 class ChipsAdapter(
-    context: Context,
-    private val chipListener: ChipListener,
-    private val chipSearch: ChipSearch
-)
+        context: Context,
+        private val chipListener: ChipListener)
     : ArrayAdapter<TagModel>(context,
         android.R.layout.simple_expandable_list_item_1,
         android.R.id.text1) {
@@ -27,8 +27,7 @@ class ChipsAdapter(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val row = super.getView(position, convertView, parent)
         val item = getItem(position)
-        val textView1 = row.findViewById<TextView>(android.R.id.text1)
-        textView1.text = item.name
+        row.findViewById<TextView>(android.R.id.text1).text = item.name.toString()
         row.setOnClickListener { chipListener.onChipClick(item) }
         return row
     }
@@ -40,7 +39,7 @@ class ChipsAdapter(
         searchJob?.cancel()
         searchJob = launch(UI) {
             delay(USER_STOP_TYPING)
-            resultList = chipSearch.search(text)
+            resultList = searchTags(text)
             if (resultList.isEmpty()) {
                 chipListener.onEmptySearchResult()
             }
@@ -48,13 +47,11 @@ class ChipsAdapter(
         }
     }
 
+    private suspend fun searchTags(text: String): List<TagModel> = context.getInstance<TagInteractor>().search(text)
+
     interface ChipListener {
         fun onChipClick(tagModel: TagModel)
         fun onEmptySearchResult()
-    }
-
-    interface ChipSearch {
-        suspend fun search(search: String): List<TagModel>
     }
 
     companion object {

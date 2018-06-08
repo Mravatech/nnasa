@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.TagDbEntity
 import com.mnassa.domain.model.impl.TagModelImpl
+import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.LanguageProvider
 
 /**
@@ -12,23 +13,25 @@ import com.mnassa.domain.other.LanguageProvider
  * User: okli
  * Date: 3/13/2018
  */
-class TagConverter(languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
+class TagConverter(private val languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
 
-//    private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
-    private val isArabian = languageProvider.isArabian
     override fun register(convertersContext: ConvertersContext) {
-        if (isArabian) {
-            convertersContext.registerConverter(this::convertTagAr)
-        } else {
-            convertersContext.registerConverter(this::convertTagEn)
-        }
+        convertersContext.registerConverter(this::convertTag)
     }
 
-    private fun convertTagEn(input: TagDbEntity): TagModelImpl {
-        return TagModelImpl(input.status, input.en, input.id)
+    private fun convertTag(input: TagDbEntity): TagModelImpl {
+        return TagModelImpl(
+                status = input.status,
+                name = TranslatedWordModelImpl(
+                        languageProvider = languageProvider,
+                        id = input.id,
+                        info = input.en ?: input.ar
+                        ?: "",
+                        engTranslate = input.en,
+                        arabicTranslate = input.ar
+                ),
+                id = input.id
+        )
     }
 
-    private fun convertTagAr(input: TagDbEntity): TagModelImpl {
-        return TagModelImpl(input.status, input.ar, input.id)
-    }
 }

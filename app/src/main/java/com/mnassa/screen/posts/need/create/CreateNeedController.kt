@@ -95,7 +95,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             onNeedTextUpdated()
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
+            chipTags.autodetectTagsFrom(etNeed)
 
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             actvPlace.setAdapter(placeAutocompleteAdapter)

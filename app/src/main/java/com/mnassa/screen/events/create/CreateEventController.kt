@@ -196,7 +196,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             }
             //
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
+            chipTags.autodetectTagsFrom(etEventDescription)
             //
             rvImages.adapter = attachedImagesAdapter
             //

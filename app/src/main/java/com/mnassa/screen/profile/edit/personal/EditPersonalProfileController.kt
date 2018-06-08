@@ -74,9 +74,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             etYourEmail.setHideMode(accountModel.showContactEmail)
             addPhoto(fabInfoAddPhoto)
             etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
-            chipPersonInterests.chipSearch = viewModel
             chipPersonInterests.setTags(interests)
-            chipPersonOffers.chipSearch = viewModel
             chipPersonOffers.setTags(offers)
             etPersonFirstName.setText(accountModel.personalInfo?.firstName)
             etPersonSecondName.setText(accountModel.personalInfo?.lastName)

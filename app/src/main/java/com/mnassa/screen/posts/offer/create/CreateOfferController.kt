@@ -103,7 +103,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             onOfferChanged()
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
+            chipTags.autodetectTagsFrom(etOffer)
 
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             actvPlace.setAdapter(placeAutocompleteAdapter)

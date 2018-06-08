@@ -38,7 +38,6 @@ class CreateEventViewModelImpl(private val eventId: String?,
 
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun search(search: String): List<TagModel> = tagInteractor.search(search)
     override suspend fun canPromoteEvents(): Boolean = userProfileInteractor.getPermissions().consume { receive() }.canPromoteEvent
     override suspend fun getPromoteEventPrice(): Long  = eventsInteractor.getPromotePostPrice()
 }

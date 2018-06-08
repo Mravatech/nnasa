@@ -13,7 +13,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 /**
  * Created by Peter on 5/3/2018.
  */
-interface CreateOfferViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface CreateOfferViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val closeScreenChannel: BroadcastChannel<Unit>
 
     suspend fun getTag(tagId: String): TagModel?

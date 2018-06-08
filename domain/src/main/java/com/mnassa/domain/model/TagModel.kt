@@ -10,6 +10,6 @@ import java.io.Serializable
  */
 interface TagModel : Parcelable, Serializable {
     var status: String?
-    var name: String
+    var name: TranslatedWordModel
     var id: String?
 }

@@ -82,7 +82,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
             onGeneralTextUpdated()
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
+            chipTags.autodetectTagsFrom(etGeneralPost)
 
             initPlaceAutoComplete(view)
 

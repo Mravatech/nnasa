@@ -70,9 +70,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             etWebSite.setText(accountModel.website)
             vCompanyStatus.setOrganization(accountModel.organizationType)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-            chipCompanyOffers.chipSearch = viewModel
             chipCompanyOffers.setTags(offers)
-            chipCompanyInterests.chipSearch = viewModel
             chipCompanyInterests.setTags(interests)
             addPhoto(fabInfoAddPhoto)
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)

@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 /**
  * Created by Peter on 4/30/2018.
  */
-interface CreateGeneralPostViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface CreateGeneralPostViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
 
     val closeScreenChannel: BroadcastChannel<Unit>
 

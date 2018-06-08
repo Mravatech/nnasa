@@ -57,16 +57,12 @@ class RegistrationViewModelImpl(
         return placeFinderInteractor.getReqieredPlaces(constraint)
     }
 
-    override suspend fun search(search: String): List<TagModel> {
-        return tagInteractor.search(search)
-    }
-
     private suspend fun getFilteredTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
         val tags = arrayListOf<String>()
         if (customTags.isNotEmpty()) {
-            val newTags = tagInteractor.createCustomTagIds(customTags)
+            val newTags = tagInteractor.createCustomTagIds(customTags.map { it.toString() })
             tags.addAll(newTags)
         }
         tags.addAll(existsTags)

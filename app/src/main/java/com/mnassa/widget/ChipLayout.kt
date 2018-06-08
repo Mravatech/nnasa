@@ -13,17 +13,30 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import android.widget.TextView
 import androidx.util.isEmpty
 import androidx.util.valueIterator
 import com.mnassa.R
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.TagModelImpl
+import com.mnassa.domain.model.impl.TranslatedWordModelImpl
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +44,9 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
  * Date: 3/12/2018
  */
 
-class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListener {
+class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListener, KodeinAware {
+
+    override val kodein: Kodein by closestKodein(context)
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -39,11 +54,25 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private lateinit var listPopupWindow: ListPopupWindow
     private lateinit var adapter: ChipsAdapter
-    private val chips = LongSparseArray<TagModel>()
-    lateinit var chipSearch: ChipsAdapter.ChipSearch
+    private val manuallyAddedTags = LongSparseArray<TagModel>()
+    private val allTagsWithEngTranslate: Deferred<List<TagModel>>
+    private val allTagsWithArTranslate: Deferred<List<TagModel>>
+    private val languageProvider: LanguageProvider by instance()
+    private val tagInteractor: TagInteractor by instance()
     var onChipsChangeListener = { }
 
     init {
+        allTagsWithEngTranslate = async {
+            tagInteractor.getAll().sortedBy {
+                it.name.engTranslate ?: it.name.toString()
+            }
+        }
+        allTagsWithArTranslate = async {
+            allTagsWithEngTranslate.await().sortedBy {
+                it.name.arabicTranslate ?: it.name.toString()
+            }
+        }
+
         View.inflate(context, R.layout.chip_layout, this)
         etChipInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -74,6 +103,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             inputMethodManager.showSoftInput(etChipInput, InputMethodManager.SHOW_IMPLICIT)
         }
         etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+        tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
     }
 
     override fun onChipClick(tagModel: TagModel) {
@@ -81,7 +111,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     override fun onViewRemoved(key: Long) {
-        chips.remove(key)
+        manuallyAddedTags.remove(key)
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
@@ -110,16 +140,88 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     fun getTags(): List<TagModel> {
-        if (chips.isEmpty()) return emptyList()
-        val tags = ArrayList<TagModel>(chips.size())
-        for (tag in chips.valueIterator()) {
+        if (manuallyAddedTags.isEmpty()) return emptyList()
+        val tags = ArrayList<TagModel>(manuallyAddedTags.size())
+        for (tag in manuallyAddedTags.valueIterator()) {
             tags.add(tag)
         }
         return tags
     }
 
+    private var scanForTagsJob: Job? = null
+    private val autoDetectTextWatcher = SimpleTextWatcher { text ->
+        scanForTagsJob?.cancel()
+        scanForTagsJob = launch(UI) {
+            val tags = async { scanForTags(text) }
+            addDetectedTags(tags.await())
+        }
+    }
+
+    fun autodetectTagsFrom(editText: EditText) {
+        editText.removeTextChangedListener(autoDetectTextWatcher)
+        editText.addTextChangedListener(autoDetectTextWatcher)
+    }
+
+    private suspend fun scanForTags(text: String): List<TagModel> {
+        val result = ArrayList<TagModel>()
+        val words = text.toLowerCase().split("(?=[,.])|\\s+")
+        val searchPhrase = StringBuilder()
+
+        for (i in 0 until words.size) {
+            val word = words[i]
+            searchPhrase.setLength(0)
+            searchPhrase.append(word)
+
+            var tag = findTagWhichStartsWith(searchPhrase.toString()) ?: continue
+            if (tag.isTheSame(searchPhrase.toString())) {
+                result += tag
+            }
+
+            for (j in (i + 1) until words.size) {
+                val nextWord = words[j]
+                searchPhrase.append(" ")
+                searchPhrase.append(nextWord)
+
+                tag = findTagWhichStartsWith(searchPhrase.toString()) ?: break
+                if (tag.isTheSame(searchPhrase.toString())) {
+                    result += tag
+                }
+            }
+        }
+
+        return result
+    }
+
+    private suspend fun addDetectedTags(tags: List<TagModel>) {
+
+    }
+
+    private suspend fun findTagWhichStartsWith(prefix: String): TagModel? {
+        val eng = findTagWhichStartsWith(prefix, allTagsWithEngTranslate.await())
+        val ar = findTagWhichStartsWith(prefix, allTagsWithArTranslate.await())
+
+        return eng ?: ar
+    }
+
+    private suspend fun findTagWhichStartsWith(prefix: String, tags: List<TagModel>): TagModel? {
+        val index = tags.binarySearch {
+            val name = it.name.toString()
+            if (name.startsWith(prefix)) 0 else {
+                name.compareTo(prefix)
+            }
+        }
+        return if (index >= 0) {
+            tags[index]
+        } else null
+    }
+
+    private suspend fun TagModel.isTheSame(phrase: String): Boolean {
+        return name.toString().toLowerCase() == phrase.toLowerCase()
+    }
+
+
     private fun focusLeftView() {
-        if (etChipInput.text.toString().isEmpty() && chips.isEmpty()) {
+        if (etChipInput.text.toString().isEmpty() && manuallyAddedTags.isEmpty()) {
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
             animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
         }
@@ -140,13 +242,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
                 etChipInput.text = null
                 return
             }
-            TagModelImpl(null, etChipInput.text.toString(), null)
+            TagModelImpl(null, TranslatedWordModelImpl(languageProvider, etChipInput.text.toString()), null)
         }
         val key = System.currentTimeMillis()
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
         val chipView = createChipView(tagModelTemp, key)
         flChipContainer.addView(chipView, position)
-        chips.append(key, tagModelTemp)
+        manuallyAddedTags.append(key, tagModelTemp)
         etChipInput.text = null
         onChipsChangeListener()
     }
@@ -193,7 +295,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private fun showPopup() {
         if (!this::listPopupWindow.isInitialized) {
-            adapter = ChipsAdapter(context, this, chipSearch)
+            adapter = ChipsAdapter(context, this)
             listPopupWindow = ListPopupWindow(context)
             listPopupWindow.setAdapter(adapter)
             listPopupWindow.anchorView = etChipInput

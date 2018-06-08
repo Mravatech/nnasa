@@ -30,10 +30,6 @@ class EditCompanyProfileViewModelImpl(
         this.avatarUri = uri
     }
 
-    override suspend fun search(search: String): List<TagModel> {
-        return tagInteractor.search(search)
-    }
-
     override fun updateCompanyAccount(
             profileAccountModel: ProfileAccountModel,
             userName: String,
