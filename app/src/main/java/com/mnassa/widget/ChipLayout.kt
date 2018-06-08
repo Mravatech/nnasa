@@ -164,7 +164,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private suspend fun scanForTags(text: String): List<TagModel> {
         val result = ArrayList<TagModel>()
-        val words = text.toLowerCase().split("(?=[,.])|\\s+")
+        val words = text.toLowerCase().split(" ", ",", ".", "#", ";")
         val searchPhrase = StringBuilder()
 
         for (i in 0 until words.size) {
