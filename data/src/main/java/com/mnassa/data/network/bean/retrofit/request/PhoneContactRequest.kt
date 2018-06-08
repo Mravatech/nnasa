@@ -10,9 +10,13 @@ import com.google.gson.annotations.SerializedName
 data class PhoneContactRequest(
         @SerializedName("phone") val phone: String,
         @SerializedName("description") val description: String?,
-        @SerializedName("avatar") val avatar: String?
+        @SerializedName("avatar") val avatar: String?,
+        @SerializedName("type") val type: String?,
+        @SerializedName("id") val id: String?
 )
 
 data class ContactsRequest(
         @SerializedName("phones") val phones: List<PhoneContactRequest>
-)
+) {
+    constructor(request: PhoneContactRequest) : this(listOf(request))
+}

@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
@@ -13,6 +14,8 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.notifications.viewholder.*
@@ -122,6 +125,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                 open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
             }
             INVITES_NUMBER_CHANGED -> {
+                requireNotNull(applicationContext).getInstance<InviteSourceHolder>().source = InviteSource.Notification()
                 open(InviteController.newInstance())
             }
             INVITED_TO_GROUP -> {

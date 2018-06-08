@@ -2,7 +2,6 @@ package com.mnassa.screen.invite
 
 import android.Manifest
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
@@ -11,6 +10,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.formattedText
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.helper.CountryHelper
 import com.mnassa.helper.DialogHelper
@@ -60,8 +60,12 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                     val packageManager = activity?.packageManager
                     val intent = intentHelper.getWhatsAppIntent(EMPTY_STRING, EMPTY_STRING)
                     val name = adapter.getNameByNumber(view.etPhoneNumberTail.text.toString())
-                    dialog.chooseSendInviteWith(view.context, name, intent.resolveActivity(packageManager) != null,
-                            { inviteWith -> handleInviteWith(inviteWith, phoneNumber) })
+                    dialog.chooseSendInviteWith(
+                            context = view.context,
+                            name = name,
+                            isWhatsAppInstalled = intent.resolveActivity(packageManager) != null,
+                            onInviteWithClick = { inviteWith -> handleInviteWith(inviteWith, phoneNumber) }
+                    )
                 }
             }
         }
@@ -71,11 +75,11 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             }
         }
         adapter.onItemClickListener = {
-            view.btnInvite.background = ContextCompat.getDrawable(view.context, R.drawable.button_invite_to_mnassa_enabled_background)
             var number = it.phoneNumber
             if (number.startsWith(countryCodePhrase)) {
                 number = number.replaceFirst(countryCodePhrase, "")
             }
+            number = number.replace(" ", "")
             view.etPhoneNumberTail.setText(number)
         }
     }
@@ -118,7 +122,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             }
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
                 view.btnInvite.isEnabled = validateInput()
-                adapter.searchByNumber(it)
+                adapter.searchByNameOrNumber(it)
             })
             btnInvite.setOnClickListener {
                 viewModel.checkPhoneContact(PhoneContactImpl(
@@ -127,14 +131,10 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                                 ?: EMPTY_STRING, null))
             }
             etInviteSearch.addTextChangedListener(
-                    SimpleTextWatcher { searchWord ->
-                        adapter.searchByName(searchWord)
-                    }
+                    SimpleTextWatcher { searchWord -> adapter.searchByNameOrNumber(searchWord) }
             )
             toolbar.ivToolbarMore.setImageResource(R.drawable.ic_archive)
-            toolbar.onMoreClickListener = {
-                open(HistoryController.newInstance())
-            }
+            toolbar.onMoreClickListener = { open(HistoryController.newInstance()) }
         }
     }
 
@@ -146,33 +146,43 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
         with(view ?: return) {
             btnInvite.isEnabled = validateInput()
             etPhoneNumberTail.error = null
-            adapter.searchByNumber(countryCodePhrase + etPhoneNumberTail.text.toString())
+            adapter.searchByNameOrNumber(etPhoneNumberTail.text.toString())
         }
     }
 
     private fun handleInviteWith(inviteWith: Int, number: String) {
+        val inviteSourceHolder: InviteSourceHolder by instance()
+        val inviteSource = inviteSourceHolder.source
+        val message = when (inviteSource) {
+            is InviteSource.Post -> fromDictionary(R.string.invite_invite_from_post).format(inviteSource.post.formattedText)
+            is InviteSource.Event -> fromDictionary(R.string.invite_invite_from_event).format(inviteSource.event.title)
+            is InviteSource.Group -> fromDictionary(R.string.invite_invite_from_group).format(inviteSource.group.name)
+            else -> if (inviteWith == INVITE_WITH_WHATS_APP) fromDictionary(R.string.invite_invite_massage_whats_app)
+            else fromDictionary(R.string.invite_invite_massage_email)
+        }
+
         when (inviteWith) {
-            INVITE_WITH_WHATS_APP -> sendWithWhatsApp(number)
-            INVITE_WITH_SMS -> sendWithSMS(number)
-            INVITE_WITH_SHARE -> shareInvite()
+            INVITE_WITH_WHATS_APP -> sendWithWhatsApp(number, message)
+            INVITE_WITH_SMS -> sendWithSMS(number, message)
+            INVITE_WITH_SHARE -> shareInvite(message)
         }
     }
 
-    private fun sendWithWhatsApp(number: String) {
+    private fun sendWithWhatsApp(number: String, message: String) {
         val packageManager = activity?.packageManager
-        val intent = intentHelper.getWhatsAppIntent(fromDictionary(R.string.invite_invite_massage_whats_app), number)
+        val intent = intentHelper.getWhatsAppIntent(message, number)
         if (intent.resolveActivity(packageManager) != null) {
             activity?.startActivity(intent)
         }
     }
 
-    private fun sendWithSMS(number: String) {
-        val intent = intentHelper.getSMSIntent(fromDictionary(R.string.invite_invite_massage_email), number)
+    private fun sendWithSMS(number: String, message: String) {
+        val intent = intentHelper.getSMSIntent(message, number)
         startActivity(intent)
     }
 
-    private fun shareInvite() {
-        val intent = intentHelper.getShareIntent(fromDictionary(R.string.invite_invite_massage_email))
+    private fun shareInvite(message: String) {
+        val intent = intentHelper.getShareIntent(message)
         startActivity(intent)
     }
 
@@ -181,6 +191,8 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
         const val INVITE_WITH_WHATS_APP = 1
         const val INVITE_WITH_SMS = 2
         const val INVITE_WITH_SHARE = 3
+
         fun newInstance() = InviteController()
+
     }
 }

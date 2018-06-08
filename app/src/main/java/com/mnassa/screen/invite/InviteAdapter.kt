@@ -19,8 +19,6 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.InviteHolder>() {
     private var data: List<PhoneContact> = emptyList()
     var onItemClickListener = { item: PhoneContact -> }
     private var filtered: List<PhoneContact> = data
-    private var numberPhrase = ""
-    private var namePhrase = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             InviteHolder(LayoutInflater.from(parent.context)
@@ -38,20 +36,17 @@ class InviteAdapter : RecyclerView.Adapter<InviteAdapter.InviteHolder>() {
         notifyDataSetChanged()
     }
 
-    fun searchByName(text: String) {
-        namePhrase = text
-        filtered = data.filter { it.fullName.toLowerCase().startsWith(text.toLowerCase()) && it.phoneNumber.startsWith(numberPhrase) }
-        notifyDataSetChanged()
-    }
+    fun searchByNameOrNumber(text: String) {
+        val query = text.toLowerCase().replace(" ", "")
 
-    fun searchByNumber(text: String) {
-        numberPhrase = text
-        filtered = data.filter { it.phoneNumber.startsWith(text) && it.fullName.toLowerCase().startsWith(namePhrase.toLowerCase()) }
+        filtered = data.filter {
+            it.fullName.toLowerCase().contains(query) || it.phoneNumber.replace(" ", "").contains(query)
+        }
         notifyDataSetChanged()
     }
 
     fun getNameByNumber(text: String): String? {
-        return data.firstOrNull { it.phoneNumber.endsWith(text) }?.fullName
+        return data.firstOrNull { it.phoneNumber.replace(" ", "").endsWith(text) }?.fullName
     }
 
     inner class InviteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

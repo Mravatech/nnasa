@@ -7,6 +7,9 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
+import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_invite_connections.view.*
 import kotlinx.coroutines.experimental.channels.consume
@@ -21,6 +24,7 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
     private val groupId by lazy { args.getString(EXTRA_GROUP_ID) }
     override val viewModel: GroupInviteConnectionsViewModel by instance(arg = groupId)
     private val adapter = BuildNetworkAdapter()
+    private var groupModel = args[EXTRA_GROUP] as GroupModel
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -30,6 +34,13 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
                 viewModel.invite(adapter.selectedAccounts.toList())
             }
             rvGroupInvite.adapter = adapter
+
+            btnInvite.text = fromDictionary(R.string.invite_new_connection)
+            btnInvite.setOnClickListener {
+                val inviteSourceHolder: InviteSourceHolder by instance()
+                inviteSourceHolder.source = InviteSource.Group(groupModel)
+                open(InviteController.newInstance())
+            }
         }
 
         adapter.isLoadingEnabled = true
