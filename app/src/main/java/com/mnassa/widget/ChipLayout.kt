@@ -5,7 +5,6 @@ import android.support.annotation.ColorRes
 import android.support.annotation.FloatRange
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
-import android.util.LongSparseArray
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -17,11 +16,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import android.widget.TextView
-import androidx.util.isEmpty
-import androidx.util.valueIterator
 import com.mnassa.R
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.impl.AutoTagModelImpl
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.LanguageProvider
@@ -54,7 +52,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private lateinit var listPopupWindow: ListPopupWindow
     private lateinit var adapter: ChipsAdapter
-    private val manuallyAddedTags = LongSparseArray<TagModel>()
+    private val allTags = HashMap<Long, TagModel>()
     private val allTagsWithEngTranslate: Deferred<List<TagModel>>
     private val allTagsWithArTranslate: Deferred<List<TagModel>>
     private val languageProvider: LanguageProvider by instance()
@@ -111,7 +109,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     override fun onViewRemoved(key: Long) {
-        manuallyAddedTags.remove(key)
+        allTags.remove(key)
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
@@ -123,6 +121,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     fun setTags(tags: List<TagModel>) {
+        while (allTags.isNotEmpty()) {
+            removeLastChip()
+        }
+        addTags(tags)
+    }
+
+    fun addTags(tags: List<TagModel>) {
         val observer = tvChipHeader.viewTreeObserver
         observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -139,14 +144,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         tags.forEach { addChip(it) }
     }
 
-    fun getTags(): List<TagModel> {
-        if (manuallyAddedTags.isEmpty()) return emptyList()
-        val tags = ArrayList<TagModel>(manuallyAddedTags.size())
-        for (tag in manuallyAddedTags.valueIterator()) {
-            tags.add(tag)
-        }
-        return tags
-    }
+    fun getTags(): List<TagModel> = allTags.values.toList()
 
     private var scanForTagsJob: Job? = null
     private val autoDetectTextWatcher = SimpleTextWatcher { text ->
@@ -164,7 +162,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private suspend fun scanForTags(text: String): List<TagModel> {
         val result = ArrayList<TagModel>()
-        val words = text.toLowerCase().split(" ", ",", ".", "#", ";")
+        val words = text.toLowerCase().split(" ", ",", ".", "#", ";").filter { it.isNotBlank() }
         val searchPhrase = StringBuilder()
 
         for (i in 0 until words.size) {
@@ -189,11 +187,17 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             }
         }
 
-        return result
+        return result.map { AutoTagModelImpl(it.status, it.name, it.id) }
     }
 
-    private suspend fun addDetectedTags(tags: List<TagModel>) {
+    private suspend fun removeAllDetectedTags() {
+        val manualTags = allTags.filterNot { it.value is AutoTagModelImpl }
+        setTags(manualTags.values.toList())
+    }
 
+    private suspend fun addDetectedTags(detectedTags: List<TagModel>) {
+        removeAllDetectedTags()
+        setTags(allTags.values + detectedTags)
     }
 
     private suspend fun findTagWhichStartsWith(prefix: String): TagModel? {
@@ -221,7 +225,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
 
     private fun focusLeftView() {
-        if (etChipInput.text.toString().isEmpty() && manuallyAddedTags.isEmpty()) {
+        if (etChipInput.text.toString().isEmpty() && allTags.isEmpty()) {
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
             animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
         }
@@ -248,7 +252,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
         val chipView = createChipView(tagModelTemp, key)
         flChipContainer.addView(chipView, position)
-        manuallyAddedTags.append(key, tagModelTemp)
+        allTags.put(key, tagModelTemp)
         etChipInput.text = null
         onChipsChangeListener()
     }

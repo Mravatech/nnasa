@@ -38,7 +38,8 @@ class ChipsAdapter(
     fun search(text: String) {
         searchJob?.cancel()
 
-        val newList = resultList.filter { it.name.toLowerCase().contains(text.toLowerCase()) }
+        val query = text.toLowerCase()
+        val newList = resultList.filter { it.name.toString().toLowerCase().contains(query) }
         if (newList.size != resultList.size) {
             resultList = newList
             notifyDataSetChanged()

@@ -16,3 +16,10 @@ data class TagModelImpl(
         override var name: TranslatedWordModel,
         override var id: String?
 ) : TagModel
+
+@Parcelize
+data class AutoTagModelImpl(
+        override var status: String?,
+        override var name: TranslatedWordModel,
+        override var id: String?
+) : TagModel

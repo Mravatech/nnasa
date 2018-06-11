@@ -77,7 +77,6 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             }
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
 
             switchNeed.text = fromDictionary(R.string.group_permissions_need)
             switchOffer.text = fromDictionary(R.string.group_permissions_offer)
