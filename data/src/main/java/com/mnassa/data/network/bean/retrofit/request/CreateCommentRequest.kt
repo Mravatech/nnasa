@@ -10,5 +10,9 @@ data class CreateCommentRequest(
         @SerializedName("text") val text: String?,
         @SerializedName("entityType") val entityType: String,
         @SerializedName("accountIds") val accountIds: List<String>,
-        @SerializedName("commentId") val commentId: String? = null
-)
+        @SerializedName("images") val images: List<String>?,
+        @SerializedName("parentCommentId") val parentCommentId: String? = null
+) {
+    @SerializedName("commentId")
+    val commentId: String? = parentCommentId
+}

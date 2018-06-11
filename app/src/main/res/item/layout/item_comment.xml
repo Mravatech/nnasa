@@ -61,6 +61,16 @@
             tools:listitem="@layout/item_comment_recommended_account"
             tools:visibility="visible" />
 
+        <FrameLayout
+            android:id="@+id/flImagesRoot"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignEnd="@id/tvUserName"
+            android:layout_alignStart="@id/tvUserName"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:layout_below="@id/rvRecommendedAccounts"
+            tools:background="#0ac" />
+
         <TextView
             android:id="@+id/tvCreationTime"
             style="@style/MnassaTextTiny"
@@ -69,7 +79,6 @@
             android:layout_alignBottom="@id/btnUseful"
             android:layout_alignStart="@id/tvUserName"
             android:layout_alignTop="@id/btnUseful"
-            android:layout_marginTop="@dimen/spacing_vertical"
             android:layout_toStartOf="@id/btnUseful"
             android:gravity="center_vertical"
             tools:text="17 minutes ago" />
@@ -79,7 +88,7 @@
             style="@style/MnassaTransparentButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/rvRecommendedAccounts"
+            android:layout_below="@id/flImagesRoot"
             android:layout_toStartOf="@+id/btnReply"
             android:textColor="@drawable/button_transparent_text_color"
             android:visibility="invisible"
@@ -92,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/tvUserName"
-            android:layout_below="@id/rvRecommendedAccounts"
+            android:layout_below="@id/flImagesRoot"
             tools:text="Reply" />
 
         <View
