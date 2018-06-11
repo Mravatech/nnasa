@@ -17,7 +17,6 @@ interface PostsInteractor {
     suspend fun onItemOpened(item: PostModel)
     suspend fun resetCounter()
 
-    //
     suspend fun createNeed(post: RawPostModel): PostModel
     suspend fun updateNeed(post: RawPostModel)
     suspend fun createGeneralPost(post: RawPostModel): PostModel
@@ -27,7 +26,7 @@ interface PostsInteractor {
     suspend fun createUserRecommendation(post: RawRecommendPostModel)
     suspend fun updateUserRecommendation(post: RawRecommendPostModel)
     suspend fun removePost(postId: String)
-    //
+
     suspend fun getShareOfferPostPrice(): Long?
     suspend fun getShareOfferPostPerUserPrice(): Long?
     suspend fun getPromotePostPrice(): Long

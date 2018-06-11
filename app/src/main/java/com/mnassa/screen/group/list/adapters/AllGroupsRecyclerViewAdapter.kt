@@ -12,19 +12,19 @@ import kotlinx.android.synthetic.main.item_connections_all.view.*
 import kotlinx.android.synthetic.main.item_group_creator_header.view.*
 import java.io.Serializable
 
-typealias GI = AllGroupsRecyclerViewAdapter.GroupItem
+typealias GroupItem = AllGroupsRecyclerViewAdapter.GroupItem
 
 /**
  * Created by Peter on 3/7/2018.
  */
 class AllGroupsRecyclerViewAdapter(
         var withHeader: Boolean = false,
-        private val withGroupOptions: Boolean = true) : BasePaginationRVAdapter<GI>(), View.OnClickListener {
+        private val withGroupOptions: Boolean = true) : BasePaginationRVAdapter<GroupItem>(), View.OnClickListener {
     var onItemOptionsClickListener = { account: GroupModel, sender: View -> }
     var onItemClickListener = { account: GroupModel -> }
     var onBindHeader = { header: View -> }
     var onSearchClickListener = { }
-    private var originalData: List<GI> = emptyList()
+    private var originalData: List<GroupItem> = emptyList()
 
     fun destroyCallbacks() {
         onItemOptionsClickListener = { _, _ -> }
@@ -34,15 +34,15 @@ class AllGroupsRecyclerViewAdapter(
     }
 
     fun setGroups(items: List<GroupModel>) {
-        val result = ArrayList<GI>(items.size + 2)
+        val result = ArrayList<GroupItem>(items.size + 2)
         val createdByMeGroups = items.filter { it.isMyGroup() }
         if (createdByMeGroups.isNotEmpty()) {
             result += GroupItemHeader(true, createdByMeGroups.size)
-            result += createdByMeGroups.map { GI(it, true) }
+            result += createdByMeGroups.map { GroupItem(it, true) }
         }
 
         result += GroupItemHeader(false, items.size)
-        result += items.map { GI(it, false) }
+        result += items.map { GroupItem(it, false) }
         originalData = result
         set(result)
     }
@@ -57,7 +57,7 @@ class AllGroupsRecyclerViewAdapter(
 
     fun finishSearch() = set(originalData)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GI> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GroupItem> {
         return when (viewType) {
             HEADER_ALL_GROUPS -> GroupCreatorHeaderHolder.newInstance(parent, this)
             HEADER_MY_GROUPS -> GroupCreatorHeaderHolder.newInstance(parent, this)
@@ -65,7 +65,7 @@ class AllGroupsRecyclerViewAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<GI> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<GroupItem> {
         return if (viewType == TYPE_HEADER && withHeader) HeaderHolder.newInstance(parent)
         else super.onCreateViewHolder(parent, viewType)
     }
@@ -78,22 +78,22 @@ class AllGroupsRecyclerViewAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: BaseVH<GI>, position: Int) {
+    override fun onBindViewHolder(holder: BaseVH<GroupItem>, position: Int) {
         if (holder is HeaderHolder) {
             onBindHeader(holder.itemView)
         } else super.onBindViewHolder(holder, position)
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.btnMoreOptions -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
-                    getDataItemByAdapterPosition(position).group?.let { onItemOptionsClickListener(it, v) }
+                    getDataItemByAdapterPosition(position).group?.let { onItemOptionsClickListener(it, view) }
                 }
             }
             R.id.rvConnectionRoot -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     getDataItemByAdapterPosition(position).group?.let(onItemClickListener)
                 }
@@ -122,8 +122,8 @@ class AllGroupsRecyclerViewAdapter(
         }
     }
 
-    private class GroupCreatorHeaderHolder(itemView: View) : BaseVH<GI>(itemView) {
-        override fun bind(item: GI) {
+    private class GroupCreatorHeaderHolder(itemView: View) : BaseVH<GroupItem>(itemView) {
+        override fun bind(item: GroupItem) {
             item as GroupItemHeader
             if (item.isMyGroup) {
                 itemView.tvGroupCreatorHeader.setHeaderWithCounter(R.string.group_item_header_my, item.count)
@@ -145,15 +145,15 @@ class AllGroupsRecyclerViewAdapter(
         }
     }
 
-    private class GroupViewHolder(itemView: View, private val clickListener: View.OnClickListener) : BaseVH<GI>(itemView) {
+    private class GroupViewHolder(itemView: View, private val clickListener: View.OnClickListener) : BaseVH<GroupItem>(itemView) {
 
-        override fun bind(item: GI) {
-            val item = requireNotNull(item.group)
+        override fun bind(item: GroupItem) {
+            val groupItem = requireNotNull(item.group)
             with(itemView) {
-                ivAvatar.avatarRound(item.avatar)
-                tvUserName.text = item.formattedName
+                ivAvatar.avatarRound(groupItem.avatar)
+                tvUserName.text = groupItem.formattedName
 
-                tvPosition.text = item.formattedRole
+                tvPosition.text = groupItem.formattedRole
                 tvPosition.goneIfEmpty()
 
                 tvEventName.text = ""

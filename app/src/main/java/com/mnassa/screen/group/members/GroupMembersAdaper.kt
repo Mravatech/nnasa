@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
-import com.mnassa.extensions.formattedFromEvent
 import com.mnassa.extensions.formattedPosition
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
@@ -45,16 +44,16 @@ class GroupMembersAdaper : BasePaginationRVAdapter<GroupMemberItem>(), View.OnCl
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GroupMemberItem> =
             UserViewHolder.newInstance(parent, this)
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.btnMoreOptions -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
-                    onItemOptionsClickListener(getDataItemByAdapterPosition(position), v)
+                    onItemOptionsClickListener(getDataItemByAdapterPosition(position), view)
                 }
             }
             R.id.rvConnectionRoot -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     onItemClickListener(getDataItemByAdapterPosition(position))
                 }

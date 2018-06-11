@@ -145,9 +145,9 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 val text = "$eventName $canceled $totalPrice $pointsReturns"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, eventName, totalPrice, Color.BLACK)
             }
-//            INVITED_TO_GROUP -> {
-//
-//            }
+            INVITED_TO_GROUP -> {
+                itemView.tvNotificationInfo.text = item.text
+            }
             else -> itemView.tvNotificationInfo.text = item.text
         }
     }

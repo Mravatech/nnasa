@@ -30,11 +30,11 @@ class NewGroupRequestsRecyclerViewAdapter : BasePaginationRVAdapter<GroupModel>(
     }
 
     fun setWithMaxRange(list: List<GroupModel>, maxItemsCount: Int) {
-        val maxItemsCount = maxItemsCount + 1
+        val maxItemsCountWithCounter = maxItemsCount + 1
 
-        moreItemsCount = maxOf(list.size - maxItemsCount, 0)
-        if (list.size > maxItemsCount) {
-            super.set(list.subList(0, maxItemsCount))
+        moreItemsCount = maxOf(list.size - maxItemsCountWithCounter, 0)
+        if (list.size > maxItemsCountWithCounter) {
+            super.set(list.subList(0, maxItemsCountWithCounter))
         } else {
             super.set(list)
         }
@@ -54,22 +54,22 @@ class NewGroupRequestsRecyclerViewAdapter : BasePaginationRVAdapter<GroupModel>(
         } else TYPE_ITEM
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.btnAccept -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     onAcceptClickListener(getDataItemByAdapterPosition(position))
                 }
             }
             R.id.btnDecline -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     onDeclineClickListener(getDataItemByAdapterPosition(position))
                 }
             }
             R.id.rlClickableRoot -> {
-                val position = (v.tag as RecyclerView.ViewHolder).adapterPosition
+                val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
                 if (position >= 0) {
                     onItemClickListener(getDataItemByAdapterPosition(position))
                 }

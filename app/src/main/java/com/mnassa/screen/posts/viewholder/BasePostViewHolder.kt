@@ -37,7 +37,8 @@ abstract class BasePostViewHolder(itemView: View, val onClickListener: View.OnCl
             }
 
             if (item.attachments.size > 3) {
-                itemView.findViewById<TextView>(R.id.tvCountMore).text = "+${item.attachments.size - 2}"
+
+                itemView.findViewById<TextView>(R.id.tvCountMore).text = String.format("+%s", item.attachments.size - 2)
             }
         }
     }

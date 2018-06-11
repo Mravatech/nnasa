@@ -168,7 +168,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             tilCity.hint = fromDictionary(R.string.need_create_city_hint)
             tilLocationDescription.hint = fromDictionary(R.string.event_create_address)
             //
-            mapView.onCreate(null) ////TODO: saved state
+            mapView.onCreate(null)
             mapView.getMapAsync {
                 with(it) {
                     uiSettings.isMapToolbarEnabled = false

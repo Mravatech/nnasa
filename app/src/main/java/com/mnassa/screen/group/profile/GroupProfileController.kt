@@ -117,9 +117,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                 }
             }
         }
-
-        ///
-
+        
         initFab(view)
         bindGroup(groupModel, view)
     }

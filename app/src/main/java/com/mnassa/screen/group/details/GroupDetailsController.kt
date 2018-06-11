@@ -107,7 +107,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                 val itemView = inflater.inflate(R.layout.item_group_member_round, llGroupMembersContainer, false)
                 llGroupMembersContainer.addView(itemView)
 
-                val offset = i.toDouble() * (itemSize.toDouble()* 0.75)
+                val offset = i.toDouble() * (itemSize.toDouble()* GROUP_MEMBERS_ITEMS_DISTANCE)
                 val layoutParams = itemView.layoutParams as ViewGroup.MarginLayoutParams
                 layoutParams.marginStart = offset.toInt()
                 itemView.layoutParams = layoutParams
@@ -137,6 +137,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
         private const val EXTRA_GROUP = "EXTRA_GROUP"
         private const val MAX_MEMBERS_TO_SHOW = 5
+        private const val GROUP_MEMBERS_ITEMS_DISTANCE = 0.75
 
         fun newInstance(group: GroupModel): GroupDetailsController {
             val args = Bundle()

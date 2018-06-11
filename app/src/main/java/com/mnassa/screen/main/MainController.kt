@@ -86,7 +86,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
 
             accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
-//                    .withSavedInstance(savedInstanceState) //TODO: saved state
                     .withTranslucentStatusBar(true)
                     .withAccountHeader(R.layout.drawer_header)
                     .withOnAccountHeaderListener { _: View, profile: IProfile<Any>, _: Boolean ->
@@ -139,7 +138,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                         }
                         true
                     }
-//                    .withSavedInstance(savedInstanceState) //TODO: saved state
                     .buildForFragment()
 
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE

@@ -3,7 +3,6 @@ package com.mnassa.screen.group.requests
 import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -13,9 +12,7 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
  * Created by Peter on 5/22/2018.
  */
 class GroupConnectionRequestsViewModelImpl(
-        private val groupsInteractor: GroupsInteractor,
-        private val userProfileInteractor: UserProfileInteractor
-) : MnassaViewModelImpl(), GroupConnectionRequestsViewModel {
+        private val groupsInteractor: GroupsInteractor) : MnassaViewModelImpl(), GroupConnectionRequestsViewModel {
 
     override val groupConnectionRequestsChannel: BroadcastChannel<List<GroupModel>> = ConflatedBroadcastChannel()
 

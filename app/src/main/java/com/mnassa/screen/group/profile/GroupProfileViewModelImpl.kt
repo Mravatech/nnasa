@@ -6,7 +6,6 @@ import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.isAdmin
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -25,7 +24,6 @@ class GroupProfileViewModelImpl(
         private val groupId: String,
         private val groupsInteractor: GroupsInteractor,
         private val postsInteractor: PostsInteractor,
-        private val userProfileInteractor: UserProfileInteractor,
         private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), GroupProfileViewModel {
 
     private var resetCounterJob: Job? = null

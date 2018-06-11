@@ -22,7 +22,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        view.tvApplicationName.text = "${appInfoProvider.appName} ${appInfoProvider.versionName}"
+        view.tvApplicationName.text = String.format("%s %s", appInfoProvider.appName, appInfoProvider.versionName)
 
         launchCoroutineUI {
             viewModel.progressChannel.consumeEach {
