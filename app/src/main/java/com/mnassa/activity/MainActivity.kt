@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.Toast
@@ -60,8 +59,10 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
 
         onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe { reason ->
             when (reason) {
-                is LogoutReason.NotAuthorized -> { }
-                is LogoutReason.ManualLogout -> { }
+                is LogoutReason.NotAuthorized -> {
+                }
+                is LogoutReason.ManualLogout -> {
+                }
                 is LogoutReason.AccountBlocked, is LogoutReason.UserBlocked -> {
                     Toast.makeText(applicationContext, fromDictionary(R.string.blocked_account_message), Toast.LENGTH_LONG).show()
                 }
@@ -122,31 +123,12 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
             toast.setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
             toast.duration = Toast.LENGTH_LONG
             toast.view = layout
-            val toastCountDown: CountDownTimer
-            toastCountDown = object : CountDownTimer(COINS_ANIMATION_TOAST_DURATION, COUNT_DOWN_INTERVAL /*Tick duration*/) {
-                override fun onTick(millisUntilFinished: Long) {
-                    /*
-                        todo: hard reproducable crash is here
-                        View android.widget.LinearLayout{7d35078 V.E...... ......I. 0,0-0,0 #7f0a029a app:id/toastRoot}
-                        has already been added to the window manager.
-                     */
-                    toast.show()
-                }
-
-                override fun onFinish() {
-                    toast.cancel()
-                }
-            }
-            // Show the toast and starts the countdown
             toast.show()
-            toastCountDown.start()
         }
     }
 
     companion object {
-        const val COINS_ANIMATION_TOAST_DURATION = 6000L
-        const val COUNT_DOWN_INTERVAL = 1000L
-        const val START_OFFSET = 0
+        private const val START_OFFSET = 0
     }
 
 }

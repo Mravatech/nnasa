@@ -139,6 +139,7 @@
     <string name="need_item_btn_connections_can_help">_postCell_friendsCanHelp</string>
     <string name="need_item_btn_you_can_help">_postCell_youCanHelp</string>
     <string name="need_item_reposted_by">_repost_container_reposted_by</string>
+    <string name="need_item_from_group">_post_item_from_group</string>
 
     <!-- need details -->
     <string name="need_details_title">_android_need_details_title</string>
@@ -346,6 +347,7 @@
 
     <!-- ======================================== SIDE MENU ===================================== -->
     <string name="side_menu_profile">_android_side_menu_profile</string>
+    <string name="side_menu_groups">_sidemenu_groups</string>
     <string name="side_menu_wallet">_sidemenu_wallet</string>
     <string name="side_menu_invite">_sidemenu_invite</string>
     <string name="side_menu_settings">_sidemenu_settings</string>
@@ -527,5 +529,52 @@
     <string name="deleted_user">_android_user_was_deleted</string>
 
     <string name="points_count">_android_points_count</string>
+
+    <!-- ============================================ GROUPS ==================================== -->
+    <string name="groups_title">_myGroups_navTitle</string>
+    <string name="groups_requests">_myGroups_sectionInvited_title</string>
+    <string name="groups_all_my">_myGroups_sectionMy_title</string>
+    <string name="groups_empty_title">_android_groups_empty_title</string>
+    <string name="groups_empty_description">_android_groups_empty_description</string>
+    <string name="group_is_admin">_myGroups_groupCell_isAdmin</string>
+    <string name="group_is_member">_myGroups_groupCell_isMember</string>
+    <string name="group_leave">_group_menu_leave</string>
+    <string name="groups_members_count">_community_header_members</string>
+    <string name="groups_invites_count">_community_header_invites</string>
+    <string name="group_title_placeholder">_groupEdit_cellTitle_placeholder</string>
+    <string name="group_description_placeholder">_groupEdit_cellInfo_placeholder</string>
+    <string name="group_website_placeholder">_groupEdit_cellWebsite_placeholder</string>
+    <string name="group_place_placeholder">_groupEdit_cellLocation_placeholder</string>
+    <string name="group_create_title">_groupEdit_navbarTitle_create</string>
+    <string name="group_edit_title">_groupEdit_navbarTitle_edit</string>
+    <string name="group_save_changes">_groupEdit_navbar_save</string>
+    <string name="group_menu_details">_groupNewsfeed_menu_details</string>
+    <string name="group_menu_edit">_groupNewsfeed_menu_edit</string>
+    <string name="group_menu_invite">_groupNewsfeed_menu_invite</string>
+    <string name="group_menu_leave">_groupNewsfeed_menu_leave</string>
+    <string name="group_select_title">_groupSelection_navTitle</string>
+    <string name="group_select_apply">_accountSelector_rigthButton_Apply</string>
+    <string name="group_remove_member">_group_member_remove</string>
+    <string name="group_member_admin">_group_member_admin</string>
+    <string name="group_member_un_admin">_group_member_un_admin</string>
+    <string name="group_invites_more">_group_invites_more</string>
+    <string name="group_invite_profile_menu">_profile_menu_inviteToGroup</string>
+    <string name="group_info_header">_communities_more_information_header</string>
+    <string name="group_website_header">_profileDetails_labelWebsite</string>
+    <string name="group_location_header">_groupEdit_cellLocation_title</string>
+    <string name="group_tags_header">_group_tags_header</string>
+    <string name="group_role_admin">_group_user_role_admin</string>
+    <string name="group_post_remove">_group_post_remove</string>
+    <string name="group_manage_permissions">_group_manage_permissions</string>
+    <string name="group_manage_permissions_title">_group_manage_permissions_title</string>
+    <string name="group_create_permissions_hint">_group_create_permissions_hint</string>
+    <string name="group_permissions_need">_group_permission_need</string>
+    <string name="group_permissions_offer">_group_permission_offer</string>
+    <string name="group_permissions_general">_group_permission_general</string>
+    <string name="group_delete_menu">_groupNewsfeed_menu_delete</string>
+    <string name="group_delete_dialog">_group_delete</string>
+
+    <string name="group_item_header_my">_group_item_header_created_by_me</string>
+    <string name="group_item_header_all">_group_item_header_all</string>
 
 </resources>

@@ -120,7 +120,6 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
 
     interface OnRecommendPostResult {
         fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>)
-        val recommendedAccounts: List<ShortAccountModel>
     }
 
     companion object {
@@ -129,10 +128,10 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         private const val EXTRA_EXCLUDED_ACCOUNTS = "EXTRA_EXCLUDED_ACCOUNTS"
 
         fun <T> newInstance(
-            bestMatchesAccounts: List<String> = emptyList(),
-            selectedAccounts: List<String> = emptyList(),
-            excludedAccounts: List<String> = emptyList(),
-            listener: T
+                bestMatchesAccounts: List<String> = emptyList(),
+                selectedAccounts: List<String> = emptyList(),
+                excludedAccounts: List<String> = emptyList(),
+                listener: T
         ): RecommendController where T : OnRecommendPostResult, T : Controller {
 
             val args = Bundle()

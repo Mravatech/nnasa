@@ -6,11 +6,12 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.domain.model.RecommendedProfilePostModel
-import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_recommend_user.view.*
 import kotlinx.coroutines.experimental.Job
@@ -25,9 +26,10 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
     override val layoutId: Int = R.layout.controller_recommend_user
     private val recommendedUser by lazy { args[EXTRA_ACCOUNT] as ShortAccountModel }
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
+    private val groupIds by lazy { args.getStringArrayList(EXTRA_GROUP_ID) ?: listOf<String>() }
     override val viewModel: RecommendUserViewModel by instance(arg = postId)
     private var waitForResumeJob: Job? = null
-    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
+    override var sharingOptions = getSharingOptions(args)
         set(value) {
             field = value
 
@@ -43,13 +45,17 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.recommend_publish_button)) {
-                viewModel.createPost(
-                        postPrivacyOptions = sharingOptions.asPostPrivacy,
+                viewModel.applyChanges(RawRecommendPostModel(
+                        postId = postId,
+                        groupIds = groupIds.toSet(),
+                        privacy = sharingOptions,
                         text = etRecommend.text.toString(),
-                        recommendedUser = recommendedUser
-                )
+                        accountId = recommendedUser.id
+                ))
             }
             tvShareOptions.setOnClickListener {
+                if (groupIds.isNotEmpty()) return@setOnClickListener
+
                 launchCoroutineUI {
                     open(SharingOptionsController.newInstance(
                             options = sharingOptions,
@@ -88,14 +94,19 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
     companion object {
         private const val MIN_TEXT_LENGTH = 0
-        private const val MAX_SHARE_TO_USERNAMES = 2
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
+        private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val EXTRA_GROUP = "EXTRA_GROUP"
         private const val EXTRA_POST_TO_EDIT = "EXTRA_POST_TO_EDIT"
 
-        fun newInstance(account: ShortAccountModel): RecommendUserController {
+        fun newInstance(account: ShortAccountModel, group: GroupModel? = null): RecommendUserController {
             val args = Bundle()
             args.putSerializable(EXTRA_ACCOUNT, account)
+            group?.let {
+                args.putSerializable(EXTRA_GROUP, it)
+                args.putStringArrayList(EXTRA_GROUP_ID, arrayListOf(it.id))
+            }
 
             return RecommendUserController(args)
         }
@@ -104,9 +115,16 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
             val args = Bundle()
             args.putSerializable(EXTRA_ACCOUNT, post.recommendedProfile)
             args.putString(EXTRA_POST_ID, post.id)
+            args.putStringArrayList(EXTRA_GROUP_ID, post.groupIds.toCollection(ArrayList()))
             args.putSerializable(EXTRA_POST_TO_EDIT, post)
 
             return RecommendUserController(args)
+        }
+
+        private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
+            return if (args.containsKey(EXTRA_GROUP)) {
+                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+            } else PostPrivacyOptions.DEFAULT
         }
     }
 }

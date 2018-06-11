@@ -10,7 +10,11 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.PostPrivacyType
+import com.mnassa.domain.model.RawPostModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
@@ -18,6 +22,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.posts.need.create.AttachedImagesRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
@@ -32,9 +37,10 @@ import timber.log.Timber
 class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGeneralPostViewModel>(args),
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_general_post_create
+    private val groupIds by lazy { args.getStringArrayList(EXTRA_GROUP_ID) ?: emptyList<String>() }
     private val postId by lazy { args.getString(EXTRA_POST_ID, null) }
     override val viewModel: CreateGeneralPostViewModel by instance(arg = postId)
-    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
+    override var sharingOptions = getSharingOptions(args)
         set(value) {
             field = value
             applyShareOptionsChanges()
@@ -55,15 +61,10 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.general_publish)) {
-                viewModel.createPost(
-                        text = etGeneralPost.text.toString(),
-                        tags = chipTags.getTags(),
-                        images = attachedImagesAdapter.dataStorage.toList(),
-                        placeId = placeId,
-                        postPrivacyOptions = sharingOptions.asPostPrivacy
-                )
+                viewModel.applyChanges(makePostModel())
             }
             tvShareOptions.setOnClickListener {
+                if (groupIds.isNotEmpty()) return@setOnClickListener
                 val post = post
                 launchCoroutineUI {
                     open(SharingOptionsController.newInstance(
@@ -187,7 +188,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
                 placeId = post.locationPlace?.placeId
                 actvPlace.setText(post.locationPlace?.placeName?.toString())
-                sharingOptions.selectedConnections = post.privacyConnections
+                sharingOptions.privacyConnections = post.privacyConnections
                 applyShareOptionsChanges()
                 //no ability to change sharing options while post changing
                 tvShareOptions.visibility = View.GONE
@@ -207,6 +208,21 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
         }
     }
 
+    private fun makePostModel(): RawPostModel {
+        with(requireNotNull(view)) {
+            val images = attachedImagesAdapter.dataStorage.toList()
+            return RawPostModel(
+                    id = postId,
+                    groupIds = groupIds,
+                    text = etGeneralPost.text.toString(),
+                    tags = chipTags.getTags(),
+                    imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
+                    uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
+                    privacy = sharingOptions,
+                    placeId = placeId)
+        }
+    }
+
 
     companion object {
         private const val MIN_GENERAL_POST_TEXT_LENGTH = 3
@@ -214,13 +230,30 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
         private const val REQUEST_CODE_CROP = 101
         private const val EXTRA_POST_ID = "EXTRA_POST_ID"
         private const val EXTRA_POST = "EXTRA_POST"
+        private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val EXTRA_GROUP = "EXTRA_GROUP"
 
-        fun newInstance() = CreateGeneralPostController(Bundle())
+        fun newInstance(group: GroupModel? = null): CreateGeneralPostController {
+            val args = Bundle()
+            group?.let {
+                args.putStringArrayList(EXTRA_GROUP_ID, arrayListOf(it.id))
+                args.putSerializable(EXTRA_GROUP, it)
+            }
+            return CreateGeneralPostController(args)
+        }
+
         fun newInstance(post: PostModel): CreateGeneralPostController {
             val args = Bundle()
             args.putString(EXTRA_POST_ID, post.id)
+            args.putStringArrayList(EXTRA_GROUP_ID, post.groupIds.toCollection(ArrayList()))
             args.putSerializable(EXTRA_POST, post)
             return CreateGeneralPostController(args)
+        }
+
+        private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
+            return if (args.containsKey(EXTRA_GROUP)) {
+                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+            } else PostPrivacyOptions.DEFAULT
         }
 
     }

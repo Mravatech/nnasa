@@ -54,4 +54,6 @@
 
     <dimen name="profile_bottom_space">56dp</dimen>
     <dimen name="search_toolbar_space_for_close_view">56dp</dimen>
+
+    <dimen name="group_details_member_avatar_size">35dp</dimen>
 </resources>

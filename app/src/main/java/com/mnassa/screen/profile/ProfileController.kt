@@ -16,6 +16,8 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
+import com.mnassa.screen.group.profile.GroupProfileController
+import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
@@ -34,7 +36,9 @@ import org.kodein.di.generic.instance
  * Date: 2/26/2018
  */
 
-class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data), ComplaintOtherController.OnComplaintResult {
+class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data),
+        ComplaintOtherController.OnComplaintResult,
+        SelectGroupController.OnGroupSelectedListener {
 
     override val layoutId: Int = R.layout.controller_profile
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
@@ -43,7 +47,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private var adapter = ProfileAdapter()
     private val dialog: DialogHelper by instance()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+        adapter.isLoadingEnabled = savedInstanceState == null
+    }
+
+    override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvProfile.adapter = adapter
@@ -66,6 +75,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
 
         launchCoroutineUI {
             viewModel.profileChannel.consumeEach { profileModel ->
@@ -105,7 +115,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
 
-        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.postChannel.openSubscription().bufferize(this@ProfileController).consumeEach {
                 when (it) {
@@ -183,6 +192,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
                 fab.setImageResource(R.drawable.ic_pending)
             }
+            ConnectionStatus.REQUESTED -> {
+                fab.visibility = View.VISIBLE
+                fab.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, accountId)
+                }
+                fab.setImageResource(R.drawable.ic_new_requests)
+            }
             else -> {
                 fab.visibility = View.GONE
                 fab.setOnClickListener(null)
@@ -195,14 +211,20 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         popup.menuInflater.inflate(R.menu.user_profile_item, popup.menu)
         popup.menu.findItem(R.id.action_share_profile).title = "Share Profile" //todo set from dict
         popup.menu.findItem(R.id.action_complain_about_profile).title = "Complain about Profile" //todo set from dict
+        popup.menu.findItem(R.id.action_invite_to_group_profile).title = fromDictionary(R.string.group_invite_profile_menu)
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
                 R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
+                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this))
             }
             true
         }
         popup.show()
+    }
+
+    override fun onGroupSelected(group: GroupModel) {
+        viewModel.inviteToGroup(group)
     }
 
     private fun complainAboutProfile(profileModel: ProfileAccountModel, view: View) {

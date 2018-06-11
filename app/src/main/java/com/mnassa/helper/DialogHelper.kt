@@ -43,6 +43,16 @@ import java.util.*
 
 class DialogHelper {
 
+    fun showYesNoDialog(context: Context, text: String, onOkClick: () -> Unit, onCancelClick: () -> Unit = {}) {
+        MaterialDialog.Builder(context)
+                .title(text)
+                .positiveText(fromDictionary(R.string.general_yes))
+                .negativeText(fromDictionary(R.string.general_no))
+                .onPositive { dialog, which -> onOkClick() }
+                .onNegative { dialog, which -> onCancelClick() }
+                .show()
+    }
+
     fun showSelectImageSourceDialog(context: Context, listener: (CropActivity.ImageSource) -> Unit) {
         MaterialDialog.Builder(context)
                 .items(

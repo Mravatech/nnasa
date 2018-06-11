@@ -74,7 +74,9 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
             startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH)
         }
         allParticipantsadAdapter.onSearchClickListener = {
-            val intent = SearchActivity.start(view.context, allParticipantsadAdapter.dataStorage.toList(), SearchActivity.ALL_PARTICIPANT_TYPE)
+            val intent = SearchActivity.start(view.context,
+                    allParticipantsadAdapter.dataStorage.toList(),
+                    SearchActivity.ALL_PARTICIPANT_TYPE)
             startActivityForResult(intent, SearchActivity.REQUEST_CODE_SEARCH)
         }
     }

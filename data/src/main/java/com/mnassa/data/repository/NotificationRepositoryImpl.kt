@@ -35,12 +35,10 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                 .child(myUserId)
                 .toValueChannelWithChangesHandling<NotificationDbEntity, NotificationModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = { converter.convert(it, NotificationModel::class.java) }
+                        mapper = {
+                            converter.convert(it, NotificationModel::class.java).also { it.isOld = false }
+                        }
                 )
-                .map {
-                    it.item.isOld = false
-                    it
-                }
     }
 
     override suspend fun loadNotificationsOld(): ReceiveChannel<ListItemEvent<NotificationModel>> {
@@ -49,7 +47,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                 .child(myUserId)
                 .toValueChannelWithChangesHandling<NotificationDbEntity, NotificationModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = { converter.convert(it, NotificationModel::class.java) }
+                        mapper = { converter.convert(it, NotificationModel::class.java).also { it.isOld = true } }
                 )
     }
 

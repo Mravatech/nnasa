@@ -33,6 +33,7 @@ interface EventModel : Model {
     val type: EventType
     val updatedAt: Date
     val participants: List<String>
+    val groupIds: Set<String>
 }
 
 interface EventTicketModel : Model {

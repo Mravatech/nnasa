@@ -38,7 +38,11 @@ internal data class PostDbEntity(
         @SerializedName("title") var title: String?, //offer post
         //offer post
         @SerializedName("category") val category: String?,
-        @SerializedName("subcategory") val subcategory: String?
+        @SerializedName("subcategory") val subcategory: String?,
+
+        //for groups
+        @SerializedName("privacyCommunitiesIds") val groupIds: Set<String>?,
+        @SerializedName("privacyCommunitiesInfo") val groups: List<GroupDbEntity>?
 
 ) : HasId
 

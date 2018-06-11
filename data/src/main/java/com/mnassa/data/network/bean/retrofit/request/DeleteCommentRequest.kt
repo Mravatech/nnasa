@@ -5,4 +5,8 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by Peter on 3/27/2018.
  */
-data class DeleteCommentRequest(@SerializedName("commentId") val commentId: String)
+data class DeleteCommentRequest(
+        @SerializedName("commentId") val commentId: String,
+        @SerializedName("entityType") val entityType: String,
+        @SerializedName("parentCommentId") val parentCommentId: String?
+)

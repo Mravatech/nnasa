@@ -9,6 +9,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
@@ -38,7 +39,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             adapter.restoreState(this)
         }
 
-        //todo: send only when page selected
         adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
@@ -54,14 +54,15 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
+        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
+        adapter.isLoadingEnabled = savedInstanceState == null
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvNewsFeed.adapter = adapter
 
-        adapter.isLoadingEnabled = savedInstanceState == null
         launchCoroutineUI {
             viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
                 when (it) {

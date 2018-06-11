@@ -22,7 +22,7 @@ fun fromDictionary(key: String): String {
 
 fun fromDictionary(key: String, defaultValue: String): String {
     val result = fromDictionary(key)
-    if (result.isBlank()){
+    if (result.isBlank()) {
         return defaultValue
     }
     return result

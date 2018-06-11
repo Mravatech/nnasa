@@ -1,28 +1,21 @@
 package com.mnassa.screen.posts.viewholder
 
-import android.support.v4.content.ContextCompat
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.RelativeLayout
 import com.mnassa.R
 import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_need.view.*
-import kotlinx.android.synthetic.main.item_promoted_panel.view.*
 
 /**
  * Created by Peter on 3/14/2018.
  */
-class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
+class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : BasePostViewHolder(itemView, onClickListener) {
 
     override fun bind(item: PostModel) {
         with(itemView) {
@@ -61,49 +54,12 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@NeedViewHolder
 
+            btnMoreOptions.setOnClickListener(onClickListener)
+            btnMoreOptions.tag = this@NeedViewHolder
+
             bindImages(item)
             bindRepost(item)
-        }
-    }
-
-    private fun bindImages(item: PostModel) {
-        with(itemView) {
-            if (item.attachments.isNotEmpty()) {
-                itemView.findViewById<ImageView>(R.id.ivOne).image(item.attachments[0])
-            }
-
-            if (item.attachments.size >= 2) {
-                itemView.findViewById<ImageView>(R.id.ivTwo).image(item.attachments[1])
-            }
-
-            if (item.attachments.size >= 3) {
-                itemView.findViewById<ImageView>(R.id.ivThree).image(item.attachments[2])
-            }
-
-            if (item.attachments.size > 3) {
-                itemView.findViewById<TextView>(R.id.tvCountMore).text = "+${item.attachments.size - 2}"
-            }
-        }
-    }
-
-    private fun bindRepost(item: PostModel) {
-        if (!item.isRepost) return
-
-        with(itemView) {
-            val repostedBySpan = SpannableStringBuilder(fromDictionary(R.string.need_item_reposted_by))
-            repostedBySpan.append(" ")
-            val startSpan = repostedBySpan.length
-            repostedBySpan.append(requireNotNull(item.repostAuthor).formattedName)
-            repostedBySpan.setSpan(
-                    ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)),
-                    startSpan,
-                    repostedBySpan.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            tvReplyText.text = repostedBySpan
-            tvReplyTime.text = item.createdAt.toTimeAgo()
-
-            rlRepostRoot.setOnClickListener(onClickListener)
-            rlRepostRoot.tag = this@NeedViewHolder
+            bindGroup(item)
         }
     }
 
@@ -113,7 +69,9 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
                 onClickListener: View.OnClickListener,
                 imagesCount: Int,
                 isRepost: Boolean,
-                isPromoted: Boolean
+                isPromoted: Boolean,
+                fromGroup: Boolean,
+                hasOptions: Boolean
         ): NeedViewHolder {
 
             val inflater = LayoutInflater.from(parent.context)
@@ -121,6 +79,16 @@ class NeedViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             view.rlRepostRoot.isGone = !isRepost
             view.flImagesRoot.isGone = imagesCount == 0
             view.llPromotedRoot.isGone = !isPromoted
+            view.rlGroupRoot.isGone = !fromGroup
+            view.btnMoreOptions.isGone = !hasOptions
+
+            val layoutParams = view.tvTime.layoutParams as RelativeLayout.LayoutParams
+            if (view.btnMoreOptions.isGone) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+            } else {
+                layoutParams.addRule(RelativeLayout.START_OF, R.id.btnMoreOptions)
+            }
+            view.tvTime.layoutParams = layoutParams
 
             if (imagesCount > 0) {
                 val imagesLayout = when (imagesCount) {

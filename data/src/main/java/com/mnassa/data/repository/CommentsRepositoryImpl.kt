@@ -5,11 +5,13 @@ import com.androidkotlincore.entityconverter.convert
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseCommentsApi
 import com.mnassa.data.network.bean.retrofit.request.CreateCommentRequest
+import com.mnassa.data.network.bean.retrofit.request.DeleteCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.EditCommentRequest
 import com.mnassa.data.network.bean.retrofit.request.GetCommentsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.CommentReplyModel
 import com.mnassa.domain.repository.CommentsRepository
 
 /**
@@ -46,16 +48,39 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
         return converter.convert(result, commentId, CommentModel::class.java)
     }
 
-    override suspend fun deleteComment(commentId: String) {
-        commentsApi.deleteComment(commentId).handleException(exceptionHandler)
+    override suspend fun deletePostComment(comment: CommentModel) {
+        commentsApi.deleteComment(DeleteCommentRequest(
+                commentId = comment.id,
+                entityType = NetworkContract.EntityType.POST,
+                parentCommentId = (comment as? CommentReplyModel)?.parentId
+        )).handleException(exceptionHandler)
     }
 
-    override suspend fun editPostComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>) {
+    override suspend fun deleteEventComment(comment: CommentModel) {
+        commentsApi.deleteComment(DeleteCommentRequest(
+                commentId = comment.id,
+                entityType = NetworkContract.EntityType.EVENT,
+                parentCommentId = (comment as? CommentReplyModel)?.parentId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun editPostComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>, parentCommentId: String?) {
         commentsApi.editComment(EditCommentRequest(
                 commentId = originalCommentId,
                 text = text,
                 entityType = NetworkContract.EntityType.POST,
-                accountIds = accountsToRecommend
+                accountIds = accountsToRecommend,
+                parentCommentId = parentCommentId
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun editEventComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>, parentCommentId: String?) {
+        commentsApi.editComment(EditCommentRequest(
+                commentId = originalCommentId,
+                text = text,
+                entityType = NetworkContract.EntityType.EVENT,
+                accountIds = accountsToRecommend,
+                parentCommentId = parentCommentId
         )).handleException(exceptionHandler)
     }
 
@@ -89,12 +114,4 @@ class CommentsRepositoryImpl(private val converter: ConvertersContext,
         return converter.convert(result, commentId, CommentModel::class.java)
     }
 
-    override suspend fun editEventComment(originalCommentId: String, text: String?, accountsToRecommend: List<String>) {
-        commentsApi.editComment(EditCommentRequest(
-                commentId = originalCommentId,
-                text = text,
-                entityType = NetworkContract.EntityType.EVENT,
-                accountIds = accountsToRecommend
-        )).handleException(exceptionHandler)
-    }
 }

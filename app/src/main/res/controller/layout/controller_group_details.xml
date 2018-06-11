@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_title="@string/group_info_header" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/spacing_vertical">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivGroupAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                tools:src="@drawable/ic_empty_ava" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal">
+
+                <TextView
+                    android:id="@+id/tvGroupTitle"
+                    style="@style/MnassaHeader1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Group title" />
+
+                <TextView
+                    android:id="@+id/tvGroupSubTitle"
+                    style="@style/MnassaHeader3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    tools:text='You are a member' />
+
+                <View
+                    android:id="@+id/vGroupDescriptionDivider"
+                    style="@style/MnassaDivider"
+                    android:layout_marginTop="@dimen/spacing_vertical" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvGroupDescriptionHeader"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:text="@string/group_description_placeholder" />
+
+                <TextView
+                    android:id="@+id/tvGroupDescription"
+                    style="@style/MnassaText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    tools:text="Group description" />
+
+                <View
+                    android:id="@+id/vGroupMembersDivider"
+                    style="@style/MnassaDivider"
+                    android:layout_marginTop="@dimen/spacing_vertical" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvGroupMembersHeader"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:text="@string/groups_members_count" />
+
+                <LinearLayout
+                    android:id="@+id/llGroupMembers"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/group_details_member_avatar_size"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:orientation="horizontal"
+                    tools:background="#0f0">
+
+                    <FrameLayout
+                        android:id="@+id/llGroupMembersContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        tools:background="#00f"
+                        tools:layout_width="200dp" />
+
+                    <TextView
+                        android:id="@+id/tvGroupMembersCounter"
+                        style="@style/MnassaText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/spacing_horizontal"
+                        android:gravity="center_vertical"
+                        tools:text="+666" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/vGroupWebsiteDivider"
+                    style="@style/MnassaDivider"
+                    android:layout_marginTop="@dimen/spacing_vertical" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvGroupWebsiteHeader"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:text="@string/group_website_header" />
+
+                <TextView
+                    android:id="@+id/tvGroupWebsite"
+                    style="@style/MnassaText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:autoLink="web"
+                    tools:text="http://web.com" />
+
+                <View
+                    android:id="@+id/vGroupLocationDivider"
+                    style="@style/MnassaDivider"
+                    android:layout_marginTop="@dimen/spacing_vertical" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvGroupLocationHeader"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:text="@string/group_location_header" />
+
+                <TextView
+                    android:id="@+id/tvGroupLocation"
+                    style="@style/MnassaText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:autoLink="all"
+                    tools:text="Ukraine" />
+
+                <View
+                    android:id="@+id/vGroupTagsDivider"
+                    style="@style/MnassaDivider"
+                    android:layout_marginTop="@dimen/spacing_vertical" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvGroupTagsHeader"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:text="@string/group_tags_header" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvGroupTags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_horizontal"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    tools:background="#00a"
+                    tools:layout_height="60dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>

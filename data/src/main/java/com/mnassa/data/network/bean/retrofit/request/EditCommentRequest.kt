@@ -9,5 +9,6 @@ data class EditCommentRequest(
         @SerializedName("commentId") val commentId: String,
         @SerializedName("text") val text: String?,
         @SerializedName("entityType") val entityType: String,
-        @SerializedName("accountIds") val accountIds: List<String>?
+        @SerializedName("accountIds") val accountIds: List<String>?,
+        @SerializedName("parentCommentId") val parentCommentId: String?
 )

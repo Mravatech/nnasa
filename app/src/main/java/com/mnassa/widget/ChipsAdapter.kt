@@ -12,11 +12,10 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 
 class ChipsAdapter(
-    context: Context,
-    private val chipListener: ChipListener,
-    private val chipSearch: ChipSearch
-)
-    : ArrayAdapter<TagModel>(context,
+        context: Context,
+        private val chipListener: ChipListener,
+        private val chipSearch: ChipSearch
+) : ArrayAdapter<TagModel>(context,
         android.R.layout.simple_expandable_list_item_1,
         android.R.id.text1) {
 
@@ -38,6 +37,14 @@ class ChipsAdapter(
     private var searchJob: Job? = null
     fun search(text: String) {
         searchJob?.cancel()
+
+        val newList = resultList.filter { it.name.toLowerCase().contains(text.toLowerCase()) }
+        if (newList.size != resultList.size) {
+            resultList = newList
+            notifyDataSetChanged()
+            if (newList.isNotEmpty()) return
+        }
+
         searchJob = launch(UI) {
             delay(USER_STOP_TYPING)
             resultList = chipSearch.search(text)

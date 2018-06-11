@@ -9,4 +9,7 @@
     <item
         android:id="@+id/action_complain_about_profile"
         android:title="" />
+    <item
+        android:id="@+id/action_invite_to_group_profile"
+        android:title="" />
 </menu>

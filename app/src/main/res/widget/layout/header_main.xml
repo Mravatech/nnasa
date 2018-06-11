@@ -51,9 +51,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_vertical"
-            android:layout_marginTop="@dimen/padding_vertical"
-            android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/padding_vertical"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
@@ -94,6 +94,46 @@
             android:textColor="@drawable/button_text_color"
             android:visibility="gone"
             tools:text="Action"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/rlHeader"
+        android:layout_alignTop="@id/rlHeader"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <EditText
+            android:id="@+id/etSearchSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_vertical"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/padding_vertical"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textColorHighlight="@color/white"
+            android:textColorHint="@color/blue_powder"
+            android:textColorLink="@color/white"
+            tools:hint="Search" />
+
+        <Button
+            android:id="@+id/btnSearchClose"
+            style="@style/MnassaTransparentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@drawable/button_text_color"
+            tools:text="CLOSE"
             tools:visibility="visible" />
 
     </LinearLayout>

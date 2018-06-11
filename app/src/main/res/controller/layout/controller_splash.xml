@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/accent"
-    android:gravity="center">
+    android:background="@drawable/gradinet_splash">
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/ivLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         app:srcCompat="@drawable/ic_mnassa_logo" />
 
 
     <TextView
-        android:id="@+id/textView"
-        style="@style/MnassaHeader1"
+        android:id="@+id/tvApplicationName"
+        style="@style/MnassaTextTiny"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ivLogo"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="@string/app_name"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="32sp" />
+        android:layout_marginBottom="@dimen/spacing_vertical"
+        android:textIsSelectable="false"
+        tools:text="Mnassa Version" />
 </RelativeLayout>

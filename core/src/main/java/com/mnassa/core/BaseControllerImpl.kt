@@ -72,7 +72,6 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
 
             override fun postCreateView(controller: Controller, view: View) {
                 onViewCreated(view)
-                onViewCreated(view, savedInstanceState)
             }
 
             override fun preDestroyView(controller: Controller, view: View) {
@@ -127,9 +126,6 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
     }
 
     open fun onViewCreated(view: View) {
-    }
-
-    open fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     }
 
     open fun onViewDestroyed(view: View) {

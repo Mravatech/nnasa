@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by Peter on 4/26/2018.
  */
-data class CreateOrEditEventRequest (
+data class CreateOrEditEventRequest(
         @SerializedName("id") val id: String? = null,
         @SerializedName("type") val type: String,
         @SerializedName("title") val title: String,
@@ -13,7 +13,7 @@ data class CreateOrEditEventRequest (
         @SerializedName("locationId") val locationId: String?,
         @SerializedName("locationType") val locationType: String,
         @SerializedName("locationDescription") val locationDescription: String?,
-        @SerializedName("privacyType") val privacyType: String,
+        @SerializedName("privacyType") val privacyType: String?,
         @SerializedName("ticketsPerAccount") val ticketsPerAccount: Int,
         @SerializedName("price") val price: Long,
         @SerializedName("ticketsTotal") val ticketsTotal: Int,
@@ -24,7 +24,8 @@ data class CreateOrEditEventRequest (
         @SerializedName("tags") val tags: List<String>?,
         @SerializedName("status") val status: String,
         @SerializedName("allConnections") val allConnections: Boolean,
-        @SerializedName("privacyConnections") val privacyConnections: List<String>? = null
+        @SerializedName("privacyConnections") val privacyConnections: List<String>? = null,
+        @SerializedName("privacyCommunitiesIds") val groups: List<String>? = null
 )
 
 data class EventDuration(

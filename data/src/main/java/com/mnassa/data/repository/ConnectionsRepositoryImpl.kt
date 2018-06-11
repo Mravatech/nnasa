@@ -49,9 +49,8 @@ class ConnectionsRepositoryImpl(
                 .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .toValueChannel<DataSnapshot>(exceptionHandler)
                 .map {
-                    if (it == null) {
-                        RecommendedConnectionsImpl(mapOf())
-                    } else converter.convert(it, RecommendedConnections::class.java)
+                    if (it == null) RecommendedConnectionsImpl(mapOf())
+                    else converter.convert(it, RecommendedConnections::class.java)
                 }
     }
 
