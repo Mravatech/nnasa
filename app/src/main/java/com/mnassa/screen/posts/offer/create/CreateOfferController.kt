@@ -13,8 +13,8 @@ import android.widget.ArrayAdapter
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.OfferCategoryModel
-import com.mnassa.domain.model.OfferPostModel
+import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
 import com.mnassa.helper.DialogHelper
@@ -23,6 +23,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.posts.need.create.AttachedImagesRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
@@ -38,8 +39,9 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
         SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_offer_create
     private val offerId: String? by lazy { args.getString(EXTRA_OFFER_ID) }
+    private val groupIds by lazy { args.getStringArrayList(EXTRA_GROUP_ID) ?: emptyList<String>() }
     override val viewModel: CreateOfferViewModel by instance(arg = offerId)
-    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
+    override var sharingOptions = getSharingOptions(args)
         set(value) {
             field = value
             applyShareOptionsChanges()
@@ -68,19 +70,10 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.createPost(
-                        title = etTitle.text.toString(),
-                        offer = etOffer.text.toString(),
-                        category = (sCategory.selectedItem as? CategoryWrapper)?.category,
-                        subCategory = (sSubCategory.selectedItem as? CategoryWrapper)?.category,
-                        tags = chipTags.getTags(),
-                        placeId = placeId,
-                        price = etPrice.text.toString().toLongOrNull(),
-                        postPrivacyOptions = sharingOptions.asPostPrivacy,
-                        images = attachedImagesAdapter.dataStorage.toList()
-                )
+                viewModel.applyChanges(makePostModel())
             }
             tvShareOptions.setOnClickListener {
+                if (groupIds.isNotEmpty()) return@setOnClickListener
                 val post = post
                 launchCoroutineUI {
                     open(SharingOptionsController.newInstance(
@@ -242,7 +235,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             actvPlace.setText(offer.locationPlace?.placeName?.toString())
 
             etPrice.setText(if (offer.price > 0.0) offer.price.formatAsMoney().toString() else null)
-            sharingOptions.selectedConnections = offer.privacyConnections
+            sharingOptions.privacyConnections = offer.privacyConnections
             applyShareOptionsChanges()
             //no ability to change sharing options while post changing
             tvShareOptions.visibility = View.GONE
@@ -293,9 +286,29 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             if (perPost != null) {
                 getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} ($perPost)"
             } else {
-                getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} (${perPerson * sharingOptions.selectedConnections.size})"
+                getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} (${perPerson * sharingOptions.privacyConnections.size})"
             }
 
+        }
+    }
+
+    private fun makePostModel(): RawPostModel {
+        return with(requireNotNull(view)) {
+            val images = attachedImagesAdapter.dataStorage.toList()
+            RawPostModel(
+                    id = offerId,
+                    groupIds = groupIds,
+                    title = etTitle.text.toString(),
+                    text = etOffer.text.toString(),
+                    category = (sCategory.selectedItem as? CategoryWrapper)?.category,
+                    subCategory = (sSubCategory.selectedItem as? CategoryWrapper)?.category,
+                    tags = chipTags.getTags(),
+                    placeId = placeId,
+                    price = etPrice.text.toString().toLongOrNull(),
+                    privacy = sharingOptions,
+                    imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
+                    uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
+            )
         }
     }
 
@@ -306,17 +319,33 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
     companion object {
         private const val EXTRA_OFFER = "EXTRA_OFFER"
         private const val EXTRA_OFFER_ID = "EXTRA_OFFER_ID"
+        private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val EXTRA_GROUP = "EXTRA_GROUP"
         private const val REQUEST_CODE_CROP = 101
         private const val MIN_OFFER_TITLE_LENGTH = 3
         private const val MIN_OFFER_DESCRIPTION_LENGTH = 3
 
-        fun newInstance() = CreateOfferController(Bundle())
+        fun newInstance(group: GroupModel? = null): CreateOfferController {
+            val args = Bundle()
+            group?.let {
+                args.putStringArrayList(EXTRA_GROUP_ID, arrayListOf(it.id))
+                args.putSerializable(EXTRA_GROUP, it)
+            }
+            return CreateOfferController(args)
+        }
 
         fun newInstance(offer: OfferPostModel): CreateOfferController {
             val args = Bundle()
             args.putSerializable(EXTRA_OFFER, offer)
             args.putString(EXTRA_OFFER_ID, offer.id)
+            args.putStringArrayList(EXTRA_GROUP_ID, offer.groupIds.toCollection(ArrayList()))
             return CreateOfferController(args)
+        }
+
+        private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
+            return if (args.containsKey(EXTRA_GROUP)) {
+                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+            } else PostPrivacyOptions.DEFAULT
         }
     }
 }

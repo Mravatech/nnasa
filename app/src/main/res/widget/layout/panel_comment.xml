@@ -35,6 +35,7 @@
             android:imeOptions="actionDone"
             android:maxLength="1000"
             android:maxLines="4"
+            android:freezesText="true"
             tools:text="a1\na2\na3\n14\na5\na6" />
 
         <Button

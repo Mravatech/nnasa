@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.experimental.async
@@ -47,7 +48,7 @@ class EventsInteractorImpl(
 
     override suspend fun resetCounter() = eventsRepository.resetCounter()
 
-    override suspend fun createEvent(model: CreateOrEditEventModel) {
+    override suspend fun createEvent(model: RawEventModel) {
         val allImages = model.uploadedImages + model.imagesToUpload.map {
             async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
         }.map { it.await() }
@@ -59,7 +60,7 @@ class EventsInteractorImpl(
         return eventsRepository.createEvent(model)
     }
 
-    override suspend fun editEvent(model: CreateOrEditEventModel) {
+    override suspend fun editEvent(model: RawEventModel) {
         val allImages = model.uploadedImages + model.imagesToUpload.map {
             async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
         }.map { it.await() }
@@ -72,7 +73,8 @@ class EventsInteractorImpl(
     }
 
     override suspend fun changeStatus(event: EventModel, status: EventStatus) {
-        val model = CreateOrEditEventModel(
+
+        val model = RawEventModel(
                 id = event.id,
                 status = status,
                 tagModels = emptyList(),
@@ -88,7 +90,8 @@ class EventsInteractorImpl(
                 imagesToUpload = emptyList(),
                 durationMillis = event.duration?.toMillis() ?: 0L,
                 startDateTime = event.startAt,
-                description = event.text
+                description = event.text,
+                groupIds = event.groupIds
         )
 
         return eventsRepository.editEvent(model)

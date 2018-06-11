@@ -5,6 +5,7 @@ import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.CommentModel
+import com.mnassa.domain.model.CommentReplyModel
 import com.mnassa.domain.model.mostParentCommentId
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -63,7 +64,12 @@ class CommentsWrapperForEventViewModelImpl(
     override fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.editPostComment(originalComment.id, text, accountsToRecommend)
+                commentsInteractor.editEventComment(
+                        originalCommentId = originalComment.id,
+                        text = text,
+                        accountsToRecommend = accountsToRecommend,
+                        parentCommentId = (originalComment as? CommentReplyModel)?.parentId
+                )
                 loadComments()
             }
         }
@@ -72,7 +78,7 @@ class CommentsWrapperForEventViewModelImpl(
     override fun deleteComment(commentModel: CommentModel) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.deleteComment(commentModel.id)
+                commentsInteractor.deleteEventComment(commentModel)
                 //TODO: remove this when comments counter will be fixed on the server side
                 loadComments()
             }

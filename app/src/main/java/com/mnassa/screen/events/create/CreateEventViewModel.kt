@@ -1,7 +1,7 @@
 package com.mnassa.screen.events.create
 
-import com.mnassa.domain.model.CreateOrEditEventModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -13,7 +13,7 @@ interface CreateEventViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
     val closeScreenChannel: BroadcastChannel<Unit>
 
     suspend fun getTag(tagId: String): TagModel?
-    fun publish(model: CreateOrEditEventModel)
+    fun publish(model: RawEventModel)
     suspend fun canPromoteEvents(): Boolean
     suspend fun getPromoteEventPrice(): Long
 }

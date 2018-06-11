@@ -30,8 +30,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/avatar_post_item"
-                android:clickable="true"
-                android:focusable="true"
                 android:paddingEnd="0dp"
                 android:paddingStart="@dimen/spacing_horizontal"
                 android:visibility="gone"
@@ -62,6 +60,36 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@id/tvReplyText"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlGroupRoot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/avatar_post_item"
+                android:paddingEnd="0dp"
+                android:paddingStart="@dimen/spacing_horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tvGroupText"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:text="From group XXX" />
+
+                <View
+                    style="@style/MnassaDivider"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@id/tvGroupText"
                     android:layout_marginBottom="4dp"
                     android:layout_marginTop="4dp" />
 
@@ -104,10 +132,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/ivAvatar"
-                    android:layout_alignParentEnd="true"
                     android:layout_alignTop="@id/ivAvatar"
+                    android:layout_toStartOf="@id/btnMoreOptions"
                     android:gravity="center_vertical"
                     tools:text="9 min" />
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/btnMoreOptions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="4dp"
+                    android:tint="@color/gray_cool"
+                    app:srcCompat="@drawable/ic_more_vert_black_24dp" />
             </RelativeLayout>
 
             <TextView
@@ -118,11 +160,11 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:autoLink="all"
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto"
                 android:maxLines="2"
                 android:textSize="17sp"
-                android:autoLink="all"
                 tools:text="I need text \n second need text line \n third" />
 
             <FrameLayout

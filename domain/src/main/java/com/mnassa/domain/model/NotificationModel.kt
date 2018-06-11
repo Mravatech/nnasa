@@ -21,6 +21,7 @@ interface NotificationExtra : Serializable {
     val post: PostModel?
     var reffered: ShortAccountModel?
     var recommended: ShortAccountModel?
+    var group: GroupModel?
     val eventName: String?
     val ticketsPrice: String?
     val totalPrice: String?

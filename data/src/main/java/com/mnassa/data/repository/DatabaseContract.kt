@@ -119,4 +119,13 @@ internal object DatabaseContract {
     const val EXPIRATION_TYPE_EXPIRED = "expired"
     const val EXPIRATION_TYPE_CLOSED = "closed"
     const val EXPIRATION_TYPE_FULFILLED = "fulfilled"
+
+    //communities
+    const val TABLE_GROUPS = "communities"
+    const val TABLE_GROUPS_COL_MY = "myCommunities"
+    const val TABLE_GROUPS_COL_INVITES = "invitesToCommunities"
+    const val TABLE_GROUPS_ALL = "allCommunities"
+    const val TABLE_GROUPS_ALL_COL_FEED = "postFeed"
+    const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
+    const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
 }

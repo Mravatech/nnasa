@@ -2,10 +2,6 @@ package com.mnassa.domain.interactor
 
 import android.Manifest
 import android.support.annotation.RequiresPermission
-import com.mnassa.domain.model.DeclinedShortAccountModel
-import com.mnassa.domain.model.PhoneContact
-import com.mnassa.domain.model.RecommendedConnections
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
@@ -29,7 +25,8 @@ interface ConnectionsInteractor {
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     suspend fun sendPhoneContacts()
-    suspend fun retrievePhoneContacts():List<PhoneContact>
+
+    suspend fun retrievePhoneContacts(): List<PhoneContact>
 
     suspend fun actionConnect(userAccountIds: List<String>)
     suspend fun actionAccept(userAccountIds: List<String>)

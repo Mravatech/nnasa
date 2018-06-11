@@ -100,9 +100,9 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                     }
                     if (view.llNoMessages.visibility == View.VISIBLE) {
                         view.llNoMessages.visibility = View.GONE
-                        viewModel.resetChatUnreadCount()
                     }
                     view.rvMessages.scrollToPosition(0)
+                    viewModel.resetChatUnreadCount()
                 }
             }
         }

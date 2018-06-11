@@ -1,7 +1,11 @@
 package com.mnassa.screen.posts.need.create
 
-import com.mnassa.domain.interactor.*
+import com.mnassa.domain.interactor.PlaceFinderInteractor
+import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.GeoPlaceModel
+import com.mnassa.domain.model.RawPostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -13,49 +17,23 @@ import kotlinx.coroutines.experimental.channels.consume
  * Created by Peter on 3/19/2018.
  */
 class CreateNeedViewModelImpl(
-    private val postId: String?,
-    private val postsInteractor: PostsInteractor,
-    private val tagInteractor: TagInteractor,
-    private val placeFinderInteractor: PlaceFinderInteractor,
-    private val userInteractor: UserProfileInteractor
+        private val postId: String?,
+        private val postsInteractor: PostsInteractor,
+        private val tagInteractor: TagInteractor,
+        private val placeFinderInteractor: PlaceFinderInteractor,
+        private val userInteractor: UserProfileInteractor
 ) : MnassaViewModelImpl(), CreateNeedViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
 
-    override fun createPost(
-            need: String,
-            tags: List<TagModel>,
-            images: List<AttachedImage>,
-            placeId: String?,
-            price: Long?,
-            timeOfExpiration: Long?,
-            postPrivacyOptions: PostPrivacyOptions
-    ) {
+    override fun applyChanges(post: RawPostModel) {
         handleException {
             withProgressSuspend {
                 if (postId == null) {
-                    postsInteractor.createNeed(
-                            text = need,
-                            imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
-                            uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                            privacy = postPrivacyOptions,
-                            tags = tags,
-                            price = price,
-                            timeOfExpiration = timeOfExpiration,
-                            placeId = placeId
-                    )
+                    postsInteractor.createNeed(post)
                 } else {
-                    postsInteractor.updateNeed(
-                            postId = postId,
-                            text = need,
-                            imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
-                            uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                            tags = tags,
-                            price = price,
-                            placeId = placeId
-                    )
+                    postsInteractor.updateNeed(post)
                 }
-
                 closeScreenChannel.send(Unit)
             }
         }

@@ -37,6 +37,14 @@ class ChipsAdapter(
     private var searchJob: Job? = null
     fun search(text: String) {
         searchJob?.cancel()
+
+        val newList = resultList.filter { it.name.toLowerCase().contains(text.toLowerCase()) }
+        if (newList.size != resultList.size) {
+            resultList = newList
+            notifyDataSetChanged()
+            if (newList.isNotEmpty()) return
+        }
+
         searchJob = launch(UI) {
             delay(USER_STOP_TYPING)
             resultList = searchTags(text)

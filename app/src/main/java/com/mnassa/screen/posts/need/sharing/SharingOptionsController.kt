@@ -14,6 +14,7 @@ import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.extensions.formattedName
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
@@ -21,7 +22,6 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_sharing_options.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
-import java.io.Serializable
 
 /**
  * Created by Peter on 3/21/2018.
@@ -44,7 +44,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         }
 
         if (args.containsKey(EXTRA_PREDEFINED_OPTIONS)) {
-            setSelection(args.getSerializable(EXTRA_PREDEFINED_OPTIONS) as ShareToOptions)
+            setSelection(args.getSerializable(EXTRA_PREDEFINED_OPTIONS) as PostPrivacyOptions)
             args.remove(EXTRA_PREDEFINED_OPTIONS)
         }
 
@@ -133,30 +133,30 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         }
     }
 
-    private fun getSelection(): ShareToOptions {
+    private fun getSelection(): PostPrivacyOptions {
         with(requireNotNull(view)) {
-            return ShareToOptions(
+            return PostPrivacyOptions(
                     privacyType = when {
                         rbPromotePost.isChecked -> PostPrivacyType.WORLD()
                         rbMyNewsFeed.isChecked -> PostPrivacyType.PUBLIC()
                         else -> PostPrivacyType.PRIVATE()
                     },
-                    selectedConnections = notUnselectableAccounts + adapter.selectedAccounts
+                    privacyConnections = notUnselectableAccounts + adapter.selectedAccounts
             )
         }
     }
 
-    private fun setSelection(options: ShareToOptions) {
-        if (options.selectedConnections.isEmpty() && options.privacyType is PostPrivacyType.PRIVATE) {
+    private fun setSelection(options: PostPrivacyOptions) {
+        if (options.privacyConnections.isEmpty() && options.privacyType is PostPrivacyType.PRIVATE) {
             //server side logic bug
-            setSelection(ShareToOptions.DEFAULT)
+            setSelection(PostPrivacyOptions.DEFAULT)
             return
         }
 
         with(view ?: return) {
             rbPromotePost.isChecked = options.privacyType is PostPrivacyType.WORLD
             rbMyNewsFeed.isChecked = options.privacyType is PostPrivacyType.PUBLIC
-            val selectedAccounts = options.selectedConnections.toSet()
+            val selectedAccounts = options.privacyConnections.toSet()
             adapter.selectedAccounts = selectedAccounts
 
             if (restrictShareReduction) {
@@ -184,7 +184,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
         fun <T> newInstance(
                 accountsToExclude: List<String>,
-                options: ShareToOptions = ShareToOptions.DEFAULT,
+                options: PostPrivacyOptions = PostPrivacyOptions.DEFAULT,
                 listener: T,
                 restrictShareReduction: Boolean,
                 canBePromoted: Boolean,
@@ -194,7 +194,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             args.putStringArrayList(EXTRA_EXCLUDED_ACCOUNTS, accountsToExclude.toCollection(ArrayList()))
             args.putBoolean(EXTRA_RESTRICT_SHARE_REDUCTION, restrictShareReduction)
             if (restrictShareReduction) {
-                args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, options.selectedConnections.toCollection(ArrayList()))
+                args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, options.privacyConnections.toCollection(ArrayList()))
             } else {
                 args.putStringArrayList(EXTRA_NOT_UNSELECTEBLE_ACCOUNTS, ArrayList())
             }
@@ -208,47 +208,29 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     interface OnSharingOptionsResult {
-        var sharingOptions: ShareToOptions
+        var sharingOptions: PostPrivacyOptions
     }
+}
 
-    class ShareToOptions(
-            var privacyType: PostPrivacyType,
-            var selectedConnections: Set<String>
-    ) : Serializable {
-
-
-        val asPostPrivacy: PostPrivacyOptions
-            get() {
-                return PostPrivacyOptions(
-                        privacyType = privacyType,
-                        privacyConnections = selectedConnections
-                )
-            }
-
-        suspend fun format(): CharSequence {
-            return fromDictionary(R.string.need_create_share_to_prefix).format(
-                    when {
-                        privacyType is PostPrivacyType.WORLD -> fromDictionary(R.string.need_create_to_all_mnassa)
-                        privacyType is PostPrivacyType.PUBLIC -> fromDictionary(R.string.need_create_to_newsfeed)
-                        selectedConnections.isNotEmpty() -> {
-                            val userInteractor: UserProfileInteractor = App.context.getInstance()
-                            val usernames = selectedConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.userName }
-                            if (selectedConnections.size <= 2) {
-                                usernames
-                            } else {
-                                val tail = fromDictionary(R.string.need_create_to_connections_other).format(selectedConnections.size - 2)
-                                "$usernames $tail"
-                            }
-                        }
-                        else -> fromDictionary(R.string.posts_sharing_value_centre)
+private const val MAX_SHARE_TO_USERNAMES = 2
+suspend fun PostPrivacyOptions.format(): CharSequence {
+    val privacyType = privacyType
+    return fromDictionary(R.string.need_create_share_to_prefix).format(
+            when {
+                privacyType is PostPrivacyType.WORLD -> fromDictionary(R.string.need_create_to_all_mnassa)
+                privacyType is PostPrivacyType.PUBLIC -> fromDictionary(R.string.need_create_to_newsfeed)
+                privacyType is PostPrivacyType.GROUP -> privacyType.group.formattedName
+                privacyConnections.isNotEmpty() -> {
+                    val userInteractor: UserProfileInteractor = App.context.getInstance()
+                    val usernames = privacyConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.userName }
+                    if (privacyConnections.size <= 2) {
+                        usernames
+                    } else {
+                        val tail = fromDictionary(R.string.need_create_to_connections_other).format(privacyConnections.size - 2)
+                        "$usernames $tail"
                     }
-            )
-        }
-
-        companion object {
-            private const val MAX_SHARE_TO_USERNAMES = 2
-
-            val DEFAULT = ShareToOptions(PostPrivacyType.PUBLIC(), emptySet())
-        }
-    }
+                }
+                else -> fromDictionary(R.string.posts_sharing_value_centre)
+            }
+    )
 }

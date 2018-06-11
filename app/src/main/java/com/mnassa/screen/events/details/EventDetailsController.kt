@@ -44,20 +44,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     override val layoutId: Int = R.layout.controller_event_details
     override val viewModel: EventDetailsViewModel by instance(arg = eventId)
     private val dialogHelper: DialogHelper by instance()
-    private var nullableEventModel: EventModel? = null
-    private var eventModel: EventModel
-        set(value) {
-            /*do nothing*/
-        }
-        get() {
-            var eventInternal = nullableEventModel
-            if (eventInternal == null) {
-                eventInternal = args[EXTRA_EVENT] as EventModel
-
-            }
-            nullableEventModel = eventInternal
-            return eventInternal
-        }
+    private var eventModel: EventModel = args[EXTRA_EVENT] as EventModel
 
     override var onComplaint: String = ""
         set(value) {
@@ -105,7 +92,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             viewModel.eventChannel.consumeEach { bindEvent(it) }
         }
 
-        launchCoroutineUI { eventModel?.apply { bindEvent(this) } }
+        launchCoroutineUI { eventModel.apply { bindEvent(this) } }
     }
 
     override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {

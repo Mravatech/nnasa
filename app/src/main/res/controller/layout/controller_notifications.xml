@@ -18,7 +18,10 @@
         android:id="@+id/rvNotifications"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbarNotification" />
+        android:layout_below="@+id/toolbarNotification"
+        android:orientation="vertical"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_notifications" />
 
     <LinearLayout
         android:id="@+id/llEmptyNotifications"
@@ -26,9 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone"
-        tools:visibility="visible"
-        android:orientation="vertical">
+        tools:visibility="visible">
 
         <ImageView
             android:layout_width="wrap_content"

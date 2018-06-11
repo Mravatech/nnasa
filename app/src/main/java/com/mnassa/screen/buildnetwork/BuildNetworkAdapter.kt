@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.item_build_network.view.*
  */
 class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
 
+    private val blockedSelectedUsers = HashSet<String>()
     private val selectedAccountsInternal: MutableSet<String> = HashSet()
     var onSelectedAccountsChangedListener = { selectedAccountIds: Set<String> -> }
     var selectedAccounts: Set<String>
@@ -46,8 +47,14 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
         onSelectedAccountsChangedListener = { }
     }
 
+    fun setNotUnselectableUsers(userIds: Set<String>) {
+        blockedSelectedUsers.clear()
+        blockedSelectedUsers.addAll(userIds)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
-        return InviteViewHolder.newInstance(parent, this, selectedAccountsInternal)
+        return InviteViewHolder.newInstance(parent, this, selectedAccountsInternal, blockedSelectedUsers)
     }
 
     override fun onClick(view: View) {
@@ -66,7 +73,11 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
         }
     }
 
-    private class InviteViewHolder(private val selectedAccount: Set<String>, itemView: View) : BaseVH<ShortAccountModel>(itemView) {
+    private class InviteViewHolder(
+            private val selectedAccounts: Set<String>,
+            private val blockedSelectedAccounts: Set<String>,
+            itemView: View) : BaseVH<ShortAccountModel>(itemView) {
+
         override fun bind(item: ShortAccountModel) {
             with(itemView) {
                 ivAvatar.avatarRound(item.avatar)
@@ -75,15 +86,21 @@ class BuildNetworkAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.O
                 tvPosition.goneIfEmpty()
                 tvEventName.text = item.formattedFromEvent
                 tvEventName.goneIfEmpty()
-                cbInvite.isChecked = selectedAccount.contains(item.id)
+                cbInvite.isChecked = selectedAccounts.contains(item.id)
+                if (blockedSelectedAccounts.contains(item.id)) {
+                    cbInvite.isChecked = true
+                    cbInvite.isEnabled = false
+                } else {
+                    cbInvite.isEnabled = true
+                }
             }
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, selectedAccount: Set<String>): InviteViewHolder {
+            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, selectedAccount: Set<String>, blockedSelectedAccounts: Set<String>): InviteViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_build_network, parent, false)
 
-                val viewHolder = InviteViewHolder(selectedAccount, view)
+                val viewHolder = InviteViewHolder(selectedAccount, blockedSelectedAccounts, view)
                 view.tag = viewHolder
                 view.cbInvite.tag = viewHolder
 

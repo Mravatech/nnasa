@@ -15,4 +15,6 @@ interface PermissionsModel {
     val canPromoteNeedPost: Boolean
     val canPromoteOfferPost: Boolean
     val canPromoteAccountPost: Boolean
+    //
+    val canCreateGroup: Boolean
 }

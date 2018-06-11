@@ -63,16 +63,18 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         set(value) {
             field = value
             updatePostCommentButtonState()
-            bindEditedComment(value)
-            value?.let { recommendedAccounts = it.recommends }
+            bindEditedComment(value, true)
+            value?.let { bindRecommendedAccounts(it.recommends) }
         }
-    override var recommendedAccounts: List<ShortAccountModel> = emptyList()
+
     override fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>) = bindRecommendedAccounts(recommendedAccounts)
+    override val accountsToRecommend: List<ShortAccountModel> get() = accountsToRecommendAdapter.dataStorage.toList()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
 
         commentsAdapter = PostCommentsRVAdapter(commentsRewardModel, headerInflater = { inflateHeader(it) }, reverseOrder = false)
+        commentsAdapter.isLoadingEnabled = true
 
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
@@ -81,18 +83,17 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
         commentsAdapter.onCommentAuthorClick = { open(ProfileController.newInstance(it)) }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         accountsToRecommendAdapter.onDataSourceChangedListener = { accounts ->
-            recommendedAccounts = accounts
             launchCoroutineUI {
                 getCommentsContainer().recommendPanel?.isGone = accounts.isEmpty()
                 updatePostCommentButtonState()
             }
         }
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
 
         with(view) {
             rvContent.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -109,7 +110,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             viewModel.canWriteCommentsChannel.consumeEach { bindCanWriteComments(it) }
         }
 
-        commentsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.commentsChannel.consumeEach {
                 commentsAdapter.isLoadingEnabled = false
@@ -158,9 +158,9 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                 editPanel.ivEditCancel.setOnClickListener { editedComment = null }
             }
 
-            bindEditedComment(editedComment)
+            bindEditedComment(editedComment, false)
             bindReplyTo(replyTo)
-            bindRecommendedAccounts(recommendedAccounts)
+            getCommentsContainer().recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
         }
     }
 
@@ -182,7 +182,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     override fun onDestroyView(view: View) {
-        accountsToRecommendAdapter.destroyCallbacks()
         wrappedController.clear()
         view.rvContent.adapter = null
         view.rvAccountsToRecommend.adapter = null
@@ -232,11 +231,11 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                 viewModel.editComment(
                         originalComment = editedCommentLocal,
                         text = etCommentText.text.toString(),
-                        accountsToRecommend = recommendedAccounts.map { it.id },
+                        accountsToRecommend = accountsToRecommend.map { it.id },
                         replyTo = replyTo)
             } else viewModel.createComment(
                     text = etCommentText.text.toString(),
-                    accountsToRecommend = recommendedAccounts.map { it.id },
+                    accountsToRecommend = accountsToRecommend.map { it.id },
                     replyTo = replyTo)
             etCommentText.text = null
             replyTo = null
@@ -257,7 +256,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
-    private fun bindEditedComment(value: CommentModel?) {
+    private fun bindEditedComment(value: CommentModel?, setText: Boolean) {
         launchCoroutineUI {
             with(getViewSuspend()) {
                 editPanel.isGone = value == null
@@ -268,15 +267,16 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
                 editPanel.tvEditText.text = value.text
                 editPanel.tvEditText.goneIfEmpty()
-                commentPanel.etCommentText.setText(value.text)
-                commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
+                if (setText) {
+                    commentPanel.etCommentText.setText(value.text)
+                    commentPanel.etCommentText.setSelection(value.text?.length ?: 0)
+                }
                 showKeyboard(commentPanel.etCommentText)
             }
         }
     }
 
     private fun bindRecommendedAccounts(value: List<ShortAccountModel>) {
-        this.recommendedAccounts = value
         accountsToRecommendAdapter.set(value)
 
         launchCoroutineUI {
@@ -317,7 +317,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     private fun openRecommendScreen() {
-        wrappedController.invoke { it.openRecommendScreen(recommendedAccounts.map { it.id }, this) }
+        wrappedController.invoke { it.openRecommendScreen(accountsToRecommend.map { it.id }, this) }
     }
 
     private val canPostComment: Boolean

@@ -12,6 +12,7 @@ import com.mnassa.data.network.stringValue
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.EventModelImpl
 import com.mnassa.domain.model.impl.EventTicketModelImpl
+import com.mnassa.domain.model.impl.RawEventModel
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -58,7 +59,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 ticketsTotal = input.ticketsTotal,
                 type = converter.convert(input.type),
                 updatedAt = Date(input.updatedAt),
-                participants = input.participants ?: emptyList())
+                participants = input.participants ?: emptyList(),
+                groupIds = input.privacyCommunitiesIds ?: emptySet())
     }
 
     private fun convertDuration(input: EventDbEntity?): EventDuration? {
@@ -142,7 +144,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         )
     }
 
-    private fun convertCreateEvent(input: CreateOrEditEventModel): CreateOrEditEventRequest {
+    private fun convertCreateEvent(input: RawEventModel): CreateOrEditEventRequest {
         val locationType = input.locationType
 
         return CreateOrEditEventRequest(
@@ -164,7 +166,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 status = input.status.stringValue,
                 locationDescription = (locationType as? EventLocationType.Specified)?.description,
                 allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC,
-                privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList()
+                privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                groups = input.groupIds.toList().takeIf { it.isNotEmpty() }
         )
     }
 }
