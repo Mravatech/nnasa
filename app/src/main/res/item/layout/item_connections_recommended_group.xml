@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,14 +11,28 @@
         style="@style/MnassaHeader2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/spacing_vertical"
-        android:paddingEnd="@dimen/spacing_horizontal"
-        android:paddingStart="@dimen/spacing_horizontal"
-        android:paddingTop="@dimen/spacing_vertical"
-        tools:text="Connections group" />
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:layout_toStartOf="@id/ivSearch"
+        tools:text="Group name" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tvGroupName"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/tvGroupName"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:tint="@color/black"
+        app:srcCompat="@drawable/ic_search" />
 
     <View
+        android:id="@+id/vAllGroups"
         style="@style/MnassaShadow"
+        android:layout_below="@id/tvGroupName"
+        android:layout_marginTop="@dimen/spacing_vertical"
         android:rotation="180" />
 
-</LinearLayout>
+</RelativeLayout>

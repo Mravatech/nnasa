@@ -338,6 +338,9 @@
     <string name="invite_invite_history_pending">_android_invite_history_pending</string>
     <string name="invite_invite_history_registered">_android_invite_history_registered</string>
     <string name="invite_invite_history_invited_in">_android_invite_history_invited_in</string>
+    <string name="invite_invite_from_post">_inviteSharing_fromPostMask</string>
+    <string name="invite_invite_from_event">_inviteSharing_fromEventMask</string>
+    <string name="invite_invite_from_group">_inviteSharing_fromGroupMask</string>
 
     <!-- ======================================== COMPLAINT ===================================== -->
     <string name="complaint_other_title">_profile_menu_complaint</string>
@@ -576,5 +579,7 @@
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>
     <string name="group_item_header_all">_group_item_header_all</string>
+
+    <string name="invite_new_connection">_privacy_cons_invitationButton</string>
 
 </resources>

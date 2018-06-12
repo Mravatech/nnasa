@@ -1,22 +1,21 @@
 package com.mnassa.screen.posts.need.recommend
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
-import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
-import com.mnassa.screen.posts.need.recommend.adapter.GroupedAccount
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_post_recommend.view.*
-import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -43,41 +42,35 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         with(view) {
             toolbar.title = fromDictionary(R.string.posts_recommend_title)
 
+            toolbar.withActionButton(fromDictionary(R.string.posts_recommend_button)) {
+                resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())
+                close()
+            }
+            toolbar.actionButtonClickable = !allAccountsAdapter.dataStorage.isEmpty()
+
+
             rvAccountsToRecommend.layoutManager = LinearLayoutManager(context)
             rvAccountsToRecommend.adapter = allAccountsAdapter
 
             rvSelectedAccounts.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             rvSelectedAccounts.adapter = selectedAccountsAdapter
 
-            btnRecommend.text = fromDictionary(R.string.posts_recommend_button)
             allAccountsAdapter.onSelectedAccountsChangedListener = {
-                btnRecommend.isEnabled = it.isNotEmpty()
-                btnRecommend.text = fromDictionary(R.string.posts_recommend_button) + " (${it.size})"
+                toolbar.actionButtonClickable = it.isNotEmpty()
                 //
                 selectedAccountsAdapter.set(it)
                 rvSelectedAccounts.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
             }
+            allAccountsAdapter.onSearchClickListener = { onSearchClick(view) }
             selectedAccountsAdapter.onDataSourceChangedListener = {
                 allAccountsAdapter.selectedAccounts = it.toSet()
             }
-            btnRecommend.isEnabled = false
             rvSelectedAccounts.visibility = if (selectedAccountsAdapter.dataStorage.size == 0) View.GONE else View.VISIBLE
 
-            btnRecommend.setOnClickListener {
-                resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())
-                close()
-            }
-            toolbar.onMoreClickListener = {
-                startActivityForResult(SearchActivity.start(
-                        context,
-                        allAccountsAdapter.dataStorage.toList(),
-                        SearchActivity.GROUPED_ACCOUNT_TYPE,
-                        allAccountsAdapter.selectedAccounts,
-                        bestMatchesAccounts), SearchActivity.REQUEST_CODE_SEARCH)
-            }
-            toolbar.ivToolbarMore.setImageResource(R.drawable.ic_search)
-
             tvRecommendHeader.text = fromDictionary(R.string.posts_recommend_subtitle)
+
+            btnInvite.text = fromDictionary(R.string.invite_new_connection)
+            btnInvite.setOnClickListener { open(InviteController.newInstance()) }
         }
 
         allAccountsAdapter.isLoadingEnabled = true
@@ -86,7 +79,6 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
                 allAccountsAdapter.setAccounts(it)
                 allAccountsAdapter.isLoadingEnabled = false
                 view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
-                view.btnRecommend.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
 
                 if (args.containsKey(EXTRA_SELECTED_ACCOUNTS)) {
                     allAccountsAdapter.selectedAccounts = args.getStringArrayList(EXTRA_SELECTED_ACCOUNTS).mapNotNull { id -> it.firstOrNull { it.id == id } }.toSet()
@@ -104,18 +96,11 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         super.onDestroyView(view)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
-        when (resultCode) {
-            SearchActivity.GROUPED_ACCOUNT_RESULT -> {
-                val data = data ?: return
-                val resultCheckBoxes = data.getSerializableExtra(SearchActivity.EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT) as ArrayList<ShortAccountModel>
-                val resultList = data.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<GroupedAccount>
-                allAccountsAdapter.selectedAccounts = HashSet(resultCheckBoxes)
-                allAccountsAdapter.dataStorage.set(resultList)
-            }
-        }
+    private fun onSearchClick(view: View) {
+        view.toolbar.startSearch(
+                onSearchCriteriaChanged = allAccountsAdapter::searchByName,
+                onSearchDone = {}
+        )
     }
 
     interface OnRecommendPostResult {

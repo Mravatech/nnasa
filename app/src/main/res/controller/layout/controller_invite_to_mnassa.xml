@@ -28,7 +28,7 @@ or choose from them your Phone Book" />
 
     <Button
         android:id="@+id/btnInvite"
-        style="@style/Invite.InviteButton"
+        style="@style/MnassaButton"
         android:layout_margin="@dimen/invite_main_screen_margin"
         android:enabled="false"
         tools:text="INVITE" />
@@ -51,6 +51,9 @@ or choose from them your Phone Book" />
             android:id="@+id/etInviteSearch"
             style="@style/Invite.SearchEditText"
             android:layout_margin="@dimen/invite_main_margin_between_views"
+            android:maxLines="1"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
             tools:hint="Search people in Phone Book" />
     </LinearLayout>
 
