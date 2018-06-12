@@ -26,11 +26,8 @@ import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -52,24 +49,14 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private lateinit var listPopupWindow: ListPopupWindow
     private lateinit var adapter: ChipsAdapter
-    private val allTags = HashMap<Long, TagModel>()
-    private val allTagsWithEngTranslate: Deferred<List<TagModel>>
-    private val allTagsWithArTranslate: Deferred<List<TagModel>>
+    private val allVisibleTags = HashMap<Long, TagModel>()
+    private val allAvailableTags: Deferred<List<TagModel>>
     private val languageProvider: LanguageProvider by instance()
     private val tagInteractor: TagInteractor by instance()
     var onChipsChangeListener = { }
 
     init {
-        allTagsWithEngTranslate = async {
-            tagInteractor.getAll().sortedBy {
-                it.name.engTranslate ?: it.name.toString()
-            }
-        }
-        allTagsWithArTranslate = async {
-            allTagsWithEngTranslate.await().sortedBy {
-                it.name.arabicTranslate ?: it.name.toString()
-            }
-        }
+        allAvailableTags = async { tagInteractor.getAll() }
 
         View.inflate(context, R.layout.chip_layout, this)
         etChipInput.setOnEditorActionListener { _, actionId, _ ->
@@ -109,7 +96,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     override fun onViewRemoved(key: Long) {
-        allTags.remove(key)
+        allVisibleTags.remove(key)
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
@@ -121,7 +108,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     fun setTags(tags: List<TagModel>) {
-        while (allTags.isNotEmpty()) {
+        while (allVisibleTags.isNotEmpty()) {
             removeLastChip()
         }
         addTags(tags)
@@ -144,7 +131,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         tags.forEach { addChip(it) }
     }
 
-    fun getTags(): List<TagModel> = allTags.values.toList()
+    fun getTags(): List<TagModel> = allVisibleTags.values.toList()
 
     private var scanForTagsJob: Job? = null
     private val autoDetectTextWatcher = SimpleTextWatcher { text ->
@@ -162,7 +149,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private suspend fun scanForTags(text: String): List<TagModel> {
         val result = ArrayList<TagModel>()
-        val words = text.toLowerCase().split(" ", ",", ".", "#", ";").filter { it.isNotBlank() }
+        val words = text.toLowerCase().split(" ", ",", ".", "#", ";").filter { it.isNotBlank() }.distinct()
         val searchPhrase = StringBuilder()
 
         for (i in 0 until words.size) {
@@ -191,32 +178,21 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     private suspend fun removeAllDetectedTags() {
-        val manualTags = allTags.filterNot { it.value is AutoTagModelImpl }
+        val manualTags = allVisibleTags.filterNot { it.value is AutoTagModelImpl }
         setTags(manualTags.values.toList())
     }
 
     private suspend fun addDetectedTags(detectedTags: List<TagModel>) {
         removeAllDetectedTags()
-        setTags(allTags.values + detectedTags)
+        setTags(allVisibleTags.values + detectedTags)
     }
 
     private suspend fun findTagWhichStartsWith(prefix: String): TagModel? {
-        val eng = findTagWhichStartsWith(prefix, allTagsWithEngTranslate.await())
-        val ar = findTagWhichStartsWith(prefix, allTagsWithArTranslate.await())
-
-        return eng ?: ar
-    }
-
-    private suspend fun findTagWhichStartsWith(prefix: String, tags: List<TagModel>): TagModel? {
-        val index = tags.binarySearch {
-            val name = it.name.toString()
-            if (name.startsWith(prefix)) 0 else {
-                name.compareTo(prefix)
-            }
+        return allAvailableTags.await().firstOrNull {
+            it.name.toString().startsWith(prefix, ignoreCase = true) ||
+                    it.name.engTranslate?.startsWith(prefix, ignoreCase = true) == true ||
+                    it.name.arabicTranslate?.startsWith(prefix, ignoreCase = true) == true
         }
-        return if (index >= 0) {
-            tags[index]
-        } else null
     }
 
     private suspend fun TagModel.isTheSame(phrase: String): Boolean {
@@ -225,7 +201,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
 
     private fun focusLeftView() {
-        if (etChipInput.text.toString().isEmpty() && allTags.isEmpty()) {
+        if (etChipInput.text.toString().isEmpty() && allVisibleTags.isEmpty()) {
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
             animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
         }
@@ -252,7 +228,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
         val chipView = createChipView(tagModelTemp, key)
         flChipContainer.addView(chipView, position)
-        allTags.put(key, tagModelTemp)
+        allVisibleTags[key] = tagModelTemp
         etChipInput.text = null
         onChipsChangeListener()
     }

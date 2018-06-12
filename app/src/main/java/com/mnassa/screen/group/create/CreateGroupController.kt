@@ -179,7 +179,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
                     permissions = GroupPermissions(
                             canCreateGeneralPost = switchGeneral.isChecked,
                             canCreateNeedPost = switchNeed.isChecked,
-                            canCreateOfferPost = switchNeed.isChecked,
+                            canCreateOfferPost = switchOffer.isChecked,
                             canCreateAccountPost = false,
                             canCreateEvent = false //TODO: group events
                     )
