@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
+import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseWalletApi
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
 import com.mnassa.data.network.bean.firebase.PriceDbEntity
@@ -16,6 +17,7 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.repository.WalletRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -70,10 +72,18 @@ class WalletRepositoryImpl(
                 .await<PriceDbEntity>(exceptionHandler)?.amount ?: 0L
     }
 
-    override suspend fun sendPoints(amount: Long, recipientId: String, description: String?) {
+    override suspend fun sendPoints(amount: Long, sender: TransactionSideModel, recipient: TransactionSideModel, description: String?) {
+        val type: String = when {
+            sender.isAccount && recipient.isAccount -> NetworkContract.TransactionType.USER_TO_USER
+            sender.isGroup && recipient.isGroup -> NetworkContract.TransactionType.GROUP_TO_GROUP
+            sender.isGroup && recipient.isAccount -> NetworkContract.TransactionType.GROUP_TO_USER
+            sender.isAccount && recipient.isGroup -> NetworkContract.TransactionType.USER_TO_GROUP
+            else -> throw IllegalArgumentException("Invalid transaction type")
+        }
         walletApi.sendPoints(SendPointsRequest(
-                fromAid = requireNotNull(userRepository.getAccountIdOrException()),
-                toAid = recipientId,
+                fromAid = sender.id,
+                toAid = recipient.id,
+                type = type,
                 amount = amount,
                 userDescription = description
         )).handleException(exceptionHandler)
@@ -89,16 +99,22 @@ class WalletRepositoryImpl(
         )).handleException(exceptionHandler)
     }
 
-    override suspend fun getGroupBalance(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map { it?.visiblePoints ?: 0 }
+    override suspend fun getGroupBalance(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map {
+        it?.points ?: 0
+    }
 
-    override suspend fun getGroupSpentPointsCount(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map { it?.totalOutcome ?: 0 }
+    override suspend fun getGroupSpentPointsCount(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map {
+        it?.totalOutcome ?: 0
+    }
 
-    override suspend fun getGroupGainedPointsCount(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map { it?.totalIncome ?: 0 }
+    override suspend fun getGroupGainedPointsCount(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map {
+        it?.totalIncome ?: 0
+    }
 
     override suspend fun getGroupTransactions(groupId: String): ReceiveChannel<List<TransactionModel>> {
-        //TODO
-        return db.child(DatabaseContract.TABLE_TRANSACTIONS)
-                .child(groupId)
+        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                .document(groupId)
+                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_WALLET)
                 .toListChannel<TransactionDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
     }

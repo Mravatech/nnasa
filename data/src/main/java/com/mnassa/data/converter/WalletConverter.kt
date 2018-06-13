@@ -2,13 +2,12 @@ package com.mnassa.data.converter
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
-import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
+import com.mnassa.data.network.bean.firebase.TransactionMemberDbEntity
 import com.mnassa.domain.interactor.DictionaryInteractor
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.domain.model.impl.TransactionModelImpl
 import java.util.*
 
@@ -35,10 +34,15 @@ class WalletConverter(private val lazyDictionaryInteractor: () -> DictionaryInte
         )
     }
 
-    private fun convertUser(input: Map<String, ShortAccountDbEntity>, converter: ConvertersContext): ShortAccountModel? {
-        return input.entries.map { (userId, userBody) ->
-            userBody.id = userId
-            converter.convert<ShortAccountModel>(userBody)
+    private fun convertUser(input: Map<String, TransactionMemberDbEntity>, converter: ConvertersContext): TransactionSideModel? {
+        return input.entries.map { (userOrGroupId, userBody) ->
+            TransactionSideModel(
+                    id = userOrGroupId,
+                    name = userBody.title ?: userBody.organizationName
+                    ?: (userBody.firstName + " " + userBody.lastName),
+                    isGroup = !userBody.title.isNullOrBlank(),
+                    isAccount = userBody.title.isNullOrBlank()
+            )
         }.firstOrNull()
     }
 

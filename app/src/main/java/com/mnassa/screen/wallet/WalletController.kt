@@ -10,9 +10,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.formattedName
+import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.wallet.send.SendPointsController
@@ -37,7 +35,9 @@ class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(arg
             rvTransactions.adapter = transactionsAdapter
 
             btnCreateTransaction.setOnClickListener {
-                open(SendPointsController.newInstance(this@WalletController))
+                launchCoroutineUI {
+                    open(SendPointsController.newInstance(this@WalletController, viewModel.getTransactionSide()))
+                }
             }
         }
 
@@ -72,8 +72,8 @@ class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(arg
         super.onDestroyView(view)
     }
 
-    override fun onPointsSent(amount: Long, recipient: ShortAccountModel) = onPointsSent(amount, recipient.formattedName)
-    override fun onPointsSent(amount: Long, recipient: GroupModel) = onPointsSent(amount, recipient.formattedName)
+    override fun onPointsSent(amount: Long, sender: TransactionSideModel, recipient: TransactionSideModel, description: String?) =
+            onPointsSent(amount, recipient.formattedName)
 
     private fun onPointsSent(amount: Long, recipient: String) {
         launchCoroutineUI {

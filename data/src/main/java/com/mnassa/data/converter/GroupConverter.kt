@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
 import com.mnassa.data.network.bean.firebase.GroupPermissionsEntity
 import com.mnassa.data.network.bean.retrofit.request.CreateGroupRequest
+import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.GroupModelImpl
 import com.mnassa.domain.model.impl.ShortAccountModelImpl
@@ -14,8 +15,8 @@ import com.mnassa.domain.repository.UserRepository
 /**
  * Created by Peter on 6/4/2018.
  */
-class GroupConverter(userRepositoryLazy: () -> UserRepository) : ConvertersContextRegistrationCallback {
-    private val userRepository: UserRepository by lazy(userRepositoryLazy)
+class GroupConverter(userInteractorLazy: () -> UserProfileInteractor) : ConvertersContextRegistrationCallback {
+    private val userRepository by lazy(userInteractorLazy)
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertGroup)

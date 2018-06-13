@@ -128,6 +128,13 @@ object NetworkContract {
         const val POST = "post"
         const val EVENT = "event"
     }
+
+    object TransactionType {
+        const val USER_TO_USER = "user2User"
+        const val GROUP_TO_GROUP = "community2Community"
+        const val GROUP_TO_USER = "community2User"
+        const val USER_TO_GROUP = "user2Community"
+    }
 }
 
 val PostPrivacyType.stringValue: String?

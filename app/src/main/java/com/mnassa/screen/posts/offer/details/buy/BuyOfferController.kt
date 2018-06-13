@@ -5,6 +5,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
@@ -56,7 +57,7 @@ class BuyOfferController(args: Bundle) : MnassaControllerImpl<BuyOfferViewModel>
     }
 
     interface OnSentPointsResultListener {
-        fun onPointsSent(amount: Long, recipient: ShortAccountModel)
+        fun onPointsSent(amount: Long, recipient: TransactionSideModel)
     }
 
     companion object {

@@ -2,6 +2,7 @@ package com.mnassa.screen.wallet
 
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import java.io.Serializable
@@ -15,6 +16,7 @@ interface WalletViewModel : MnassaViewModel {
     val gainedPointsChannel: BroadcastChannel<Long>
     val transactionsChannel: BroadcastChannel<List<TransactionModel>>
     val screenTitleChannel: BroadcastChannel<String>
+    suspend fun getTransactionSide(): TransactionSideModel
 
     open class WalletSource : Serializable {
         class User : WalletSource()

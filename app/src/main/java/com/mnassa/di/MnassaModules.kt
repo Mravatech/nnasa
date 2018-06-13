@@ -219,7 +219,7 @@ private val viewModelsModule = Kodein.Module {
     bind<WalletViewModel>() with factory { args: WalletViewModel.WalletSource ->
         val result: WalletViewModel = when (args) {
             is WalletViewModel.WalletSource.Group -> GroupWalletViewModelImpl(args.group, instance())
-            else -> UserWalletViewModelImpl(instance())
+            else -> UserWalletViewModelImpl(instance(), instance())
         }
         result
     }
@@ -259,7 +259,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateGeneralPostViewModel>() with factory { postId: String? -> CreateGeneralPostViewModelImpl(postId, instance(), instance(), instance(), instance()) }
     bind<InfoDetailsViewModel>() with provider { InfoDetailsViewModelImpl(instance()) }
     bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
-    bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance()) }
+    bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance(), instance()) }
     bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
     bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
@@ -327,7 +327,7 @@ private val repositoryModule = Kodein.Module {
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), { instance() }, instance(), { instance() }, instance()) }
 }
 
 private val serviceModule = Kodein.Module {

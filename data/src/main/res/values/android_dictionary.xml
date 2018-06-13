@@ -247,6 +247,8 @@ Check it in http://MNASSA.com</string>
 
 
     <string name="_post_item_from_group_INFO">From</string>
+    <string name="_transaction_recipient_user_INFO">To User</string>
+    <string name="_transaction_recipient_group_INFO">To Group</string>
 
 
 </resources>

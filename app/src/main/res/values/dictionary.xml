@@ -584,4 +584,7 @@
 
     <string name="invite_new_connection">_privacy_cons_invitationButton</string>
 
+    <string name="transaction_recipient_group">_transaction_recipient_group</string>
+    <string name="transaction_recipient_user">_transaction_recipient_user</string>
+
 </resources>

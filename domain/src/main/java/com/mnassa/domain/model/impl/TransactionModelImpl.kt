@@ -1,7 +1,7 @@
 package com.mnassa.domain.model.impl
 
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.model.TransactionSideModel
 import java.util.*
 
 /**
@@ -13,9 +13,9 @@ data class TransactionModelImpl(
         override val type: String,
         override val amount: Long,
         override val afterBalance: Long,
-        override val byAccount: ShortAccountModel?,
-        override val fromAccount: ShortAccountModel?,
-        override val toAccount: ShortAccountModel?,
+        override val byAccount: TransactionSideModel?,
+        override val fromAccount: TransactionSideModel?,
+        override val toAccount: TransactionSideModel?,
         override val description: String?
 ) : TransactionModel {
 }
