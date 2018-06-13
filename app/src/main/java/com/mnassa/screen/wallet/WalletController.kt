@@ -1,29 +1,32 @@
 package com.mnassa.screen.wallet
 
 import android.graphics.Typeface
+import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.formattedName
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.wallet.send.SendPointsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_wallet.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/29/2018.
  */
-class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsController.OnSentPointsResultListener {
+class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(args), SendPointsController.OnSentPointsResultListener {
     override val layoutId: Int = R.layout.controller_wallet
-    override val viewModel: WalletViewModel by instance()
+    override val viewModel: WalletViewModel by instance(arg = getParams(args))
     private val transactionsAdapter = WalletRVAdapter()
     private val dialogHelper: DialogHelper by instance()
 
@@ -31,7 +34,6 @@ class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsCont
         super.onViewCreated(view)
 
         with(view) {
-            tvBalanceLabel.text = fromDictionary(R.string.wallet_balance)
             rvTransactions.adapter = transactionsAdapter
 
             btnCreateTransaction.setOnClickListener {
@@ -39,17 +41,20 @@ class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsCont
             }
         }
 
-        val viewRef = view.asReference()
         launchCoroutineUI {
-            viewModel.currentBalanceChannel.consumeEach { viewRef().tvBalance.text = it.toString() }
+            viewModel.screenTitleChannel.consumeEach { view.toolbar.title = it }
         }
 
         launchCoroutineUI {
-            viewModel.spentPointsChannel.consumeEach { viewRef().tvSpent.text = it.toString() }
+            viewModel.currentBalanceChannel.consumeEach { view.tvBalance.text = it.toString() }
         }
 
         launchCoroutineUI {
-            viewModel.gainedPointsChannel.consumeEach { viewRef().tvGained.text = it.toString() }
+            viewModel.spentPointsChannel.consumeEach { view.tvSpent.text = it.toString() }
+        }
+
+        launchCoroutineUI {
+            viewModel.gainedPointsChannel.consumeEach { view.tvGained.text = it.toString() }
         }
 
         transactionsAdapter.isLoadingEnabled = true
@@ -67,10 +72,11 @@ class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsCont
         super.onDestroyView(view)
     }
 
-    override fun onPointsSent(amount: Long, recipient: ShortAccountModel) {
-        launchCoroutineUI {
-            val view = getViewSuspend()
+    override fun onPointsSent(amount: Long, recipient: ShortAccountModel) = onPointsSent(amount, recipient.formattedName)
+    override fun onPointsSent(amount: Long, recipient: GroupModel) = onPointsSent(amount, recipient.formattedName)
 
+    private fun onPointsSent(amount: Long, recipient: String) {
+        launchCoroutineUI {
             val message = SpannableStringBuilder(fromDictionary(R.string.send_points_success_description))
             val spanStart = message.length
             message.append(" ")
@@ -79,16 +85,30 @@ class WalletController : MnassaControllerImpl<WalletViewModel>(), SendPointsCont
             message.append(fromDictionary(R.string.send_points_success_description_points))
             message.setSpan(StyleSpan(Typeface.BOLD), spanStart, message.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             message.append(" ")
-            message.append(fromDictionary(R.string.send_points_success_description_to).format(recipient.formattedName))
+            message.append(fromDictionary(R.string.send_points_success_description_to).format(recipient))
 
             dialogHelper.showSuccessDialog(
-                    view.context,
+                    getViewSuspend().context,
                     fromDictionary(R.string.send_points_success_title),
                     message)
         }
     }
 
     companion object {
-        fun newInstance() = WalletController()
+        private const val EXTRA_GROUP = "EXTRA_GROUP"
+
+        fun newInstance() = WalletController(Bundle())
+
+        fun newInstanceGorup(group: GroupModel): WalletController {
+            val args = Bundle()
+            args.putSerializable(EXTRA_GROUP, group)
+            return WalletController(args)
+        }
+
+        fun getParams(args: Bundle): WalletViewModel.WalletSource {
+            val group = args[EXTRA_GROUP] as GroupModel?
+            return group?.let { WalletViewModel.WalletSource.Group(it) }
+                    ?: WalletViewModel.WalletSource.User()
+        }
     }
 }

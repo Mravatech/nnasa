@@ -29,13 +29,15 @@ class DictionaryRepositoryImpl(
         converterLazy: () -> ConvertersContext,
         private val dictionaryApi: FirebaseDictionaryApi,
         private val exceptionHandler: ExceptionHandler,
-        private val languageProvider: LanguageProvider,
+        languageProviderLazy: () -> LanguageProvider,
         context: Context,
         appInfoProvider: AppInfoProvider) : DictionaryRepository {
 
     private val converter by lazy(converterLazy)
-    private val dictionaryPreferences = DictionaryPreferences(context, languageProvider)
-    private val dictionaryResources = DictionaryResources(context, appInfoProvider, languageProvider)
+    private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
+    private val dictionaryPreferences by lazy { DictionaryPreferences(context, languageProvider) }
+    private val dictionaryResources by lazy { DictionaryResources(context, appInfoProvider, languageProvider) }
+
 
     override fun getMobileUiVersion(): ReceiveChannel<Int> {
         return databaseReference

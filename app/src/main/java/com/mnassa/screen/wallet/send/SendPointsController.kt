@@ -4,6 +4,7 @@ import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.SimpleTextWatcher
@@ -83,5 +84,6 @@ class SendPointsController : MnassaControllerImpl<SendPointsViewModel>(), Select
 
     interface OnSentPointsResultListener {
         fun onPointsSent(amount: Long, recipient: ShortAccountModel)
+        fun onPointsSent(amount: Long, recipient: GroupModel)
     }
 }

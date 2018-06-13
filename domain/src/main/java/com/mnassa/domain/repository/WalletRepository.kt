@@ -16,4 +16,9 @@ interface WalletRepository {
 
     suspend fun sendPoints(amount: Long, recipientId: String, description: String?)
     suspend fun sendPointsForComment(rewardModel: RewardModel)
+
+    suspend fun getGroupBalance(groupId: String): ReceiveChannel<Long>
+    suspend fun getGroupSpentPointsCount(groupId: String): ReceiveChannel<Long>
+    suspend fun getGroupGainedPointsCount(groupId: String): ReceiveChannel<Long>
+    suspend fun getGroupTransactions(groupId: String): ReceiveChannel<List<TransactionModel>>
 }

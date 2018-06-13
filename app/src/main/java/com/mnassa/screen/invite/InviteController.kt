@@ -75,12 +75,23 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             }
         }
         adapter.onItemClickListener = {
-            var number = it.phoneNumber
-            if (number.startsWith(countryCodePhrase)) {
-                number = number.replaceFirst(countryCodePhrase, "")
+            val numberWithoutPlus = it.phoneNumber.replace("+", "")
+            //set country code
+            var suggestedCountyCode: String? = null
+            for (countryIndex in 0 until countryHelper.countries.size) {
+                val countryCode = countryHelper.countries[countryIndex].phonePrefix.code.replace("+", "")
+                if (numberWithoutPlus.startsWith(countryCode)) {
+                    view.spinnerPhoneCode.setSelection(countryIndex)
+                    suggestedCountyCode = countryCode
+                    break
+                }
             }
-            number = number.replace(" ", "")
-            view.etPhoneNumberTail.setText(number)
+
+            if (suggestedCountyCode != null) {
+                view.etPhoneNumberTail.setText(numberWithoutPlus.substring(startIndex = suggestedCountyCode.length))
+            } else {
+                view.etPhoneNumberTail.setText(numberWithoutPlus)
+            }
         }
     }
 

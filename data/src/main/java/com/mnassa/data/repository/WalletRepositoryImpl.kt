@@ -2,10 +2,12 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseWalletApi
+import com.mnassa.data.network.bean.firebase.GroupDbEntity
 import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
 import com.mnassa.data.network.bean.retrofit.request.RewardForCommentRequest
@@ -27,6 +29,7 @@ class WalletRepositoryImpl(
         private val converter: ConvertersContext,
         private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference,
+        private val firestore: FirebaseFirestore,
         private val walletApi: FirebaseWalletApi
 ) : WalletRepository {
 
@@ -85,4 +88,22 @@ class WalletRepositoryImpl(
                 commentId = rewardModel.commentId
         )).handleException(exceptionHandler)
     }
+
+    override suspend fun getGroupBalance(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map { it?.visiblePoints ?: 0 }
+
+    override suspend fun getGroupSpentPointsCount(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map { it?.totalOutcome ?: 0 }
+
+    override suspend fun getGroupGainedPointsCount(groupId: String): ReceiveChannel<Long> = getGroupChannel(groupId).map { it?.totalIncome ?: 0 }
+
+    override suspend fun getGroupTransactions(groupId: String): ReceiveChannel<List<TransactionModel>> {
+        //TODO
+        return db.child(DatabaseContract.TABLE_TRANSACTIONS)
+                .child(groupId)
+                .toListChannel<TransactionDbEntity>(exceptionHandler)
+                .map { converter.convertCollection(it, TransactionModel::class.java) }
+    }
+
+    private fun getGroupChannel(groupId: String) = firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+            .document(groupId)
+            .toValueChannel<GroupDbEntity>(exceptionHandler)
 }

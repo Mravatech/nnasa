@@ -52,6 +52,7 @@
     <string name="_android_post_share_value_center_INFO">To value center</string>
     <string name="_android_post_expires_in_INFO">Post expires in</string>
     <string name="_android_my_wallet_title_INFO">My wallet</string>
+    <string name="_android_group_wallet_title_INFO">%s wallet</string>
     <string name="_android_my_wallet_balance_INFO">Balance</string>
     <string name="_android_my_wallet_spent_INFO">Spent</string>
     <string name="_android_my_wallet_gained_INFO">Gained</string>
@@ -242,6 +243,7 @@
 %@
 
 Check it in http://MNASSA.com</string>
+    <string name="_groupNewsfeed_menu_wallet_INFO">Group wallet</string>
 
 
     <string name="_post_item_from_group_INFO">From</string>

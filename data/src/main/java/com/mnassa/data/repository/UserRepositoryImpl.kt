@@ -258,7 +258,8 @@ class UserRepositoryImpl(
 
     override suspend fun getFirebaseToken(): String? {
         val user = FirebaseAuth.getInstance().currentUser ?: return null
-        return user.getIdToken(false).await(exceptionHandler).token
+        val forceRefresh = accountIdInternal == null
+        return user.getIdToken(forceRefresh).await(exceptionHandler).token
     }
 
     override suspend fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid

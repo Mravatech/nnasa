@@ -92,7 +92,6 @@ import com.mnassa.screen.group.select.SelectGroupViewModel
 import com.mnassa.screen.group.select.SelectGroupViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
-import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.invite.InviteViewModel
 import com.mnassa.screen.invite.InviteViewModelImpl
@@ -156,8 +155,9 @@ import com.mnassa.screen.splash.SplashViewModel
 import com.mnassa.screen.splash.SplashViewModelImpl
 import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModel
 import com.mnassa.screen.termsandconditions.TermsAndConditionsViewModelImpl
+import com.mnassa.screen.wallet.GroupWalletViewModelImpl
+import com.mnassa.screen.wallet.UserWalletViewModelImpl
 import com.mnassa.screen.wallet.WalletViewModel
-import com.mnassa.screen.wallet.WalletViewModelImpl
 import com.mnassa.screen.wallet.send.SendPointsViewModel
 import com.mnassa.screen.wallet.send.SendPointsViewModelImpl
 import com.mnassa.translation.LanguageProviderImpl
@@ -216,7 +216,13 @@ private val viewModelsModule = Kodein.Module {
     bind<RecommendViewModel>() with factory { args: RecommendViewModel.RecommendViewModelParams -> RecommendViewModelImpl(args, instance(), instance()) }
     bind<EditPersonalProfileViewModel>() with provider { EditPersonalProfileViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EditCompanyProfileViewModel>() with provider { EditCompanyProfileViewModelImpl(instance(), instance(), instance(), instance()) }
-    bind<WalletViewModel>() with provider { WalletViewModelImpl(instance()) }
+    bind<WalletViewModel>() with factory { args: WalletViewModel.WalletSource ->
+        val result: WalletViewModel = when (args) {
+            is WalletViewModel.WalletSource.Group -> GroupWalletViewModelImpl(args.group, instance())
+            else -> UserWalletViewModelImpl(instance())
+        }
+        result
+    }
     bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
     bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
@@ -306,7 +312,7 @@ private val repositoryModule = Kodein.Module {
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
     bind<UserRepository>() with singleton { UserRepositoryImpl({ instance() }, instance(), instance(), instance(), { instance() }) }
     bind<TagRepository>() with singleton { TagRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance(), instance()) }
+    bind<DictionaryRepository>() with singleton { DictionaryRepositoryImpl(instance(), { instance() }, instance(), instance(), { instance() }, instance(), instance()) }
     bind<StorageRepository>() with singleton { StorageRepositoryImpl(instance(), instance()) }
     bind<ConnectionsRepository>() with singleton { ConnectionsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ContactsRepository>() with singleton { PhoneContactRepositoryImpl(instance(), instance()) }
@@ -315,7 +321,7 @@ private val repositoryModule = Kodein.Module {
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
-    bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
@@ -353,7 +359,7 @@ private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
 
 private val networkModule = Kodein.Module {
     bind<Gson>() with singleton { Gson() }
-    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }, { instance() }) }
+    bind<RetrofitConfig>() with singleton { RetrofitConfig({ instance() }, { instance() }, { instance() }, { instance() }) }
     bind<Retrofit>() with singleton { instance<RetrofitConfig>().makeRetrofit() }
 
     //firebase functions API

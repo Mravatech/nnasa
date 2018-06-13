@@ -15,7 +15,7 @@ import java.util.*
 /**
  * Created by Peter on 3/30/2018.
  */
-class WalletConverter(private val lazyDictionaryRepository: () -> DictionaryInteractor) : ConvertersContextRegistrationCallback {
+class WalletConverter(private val lazyDictionaryInteractor: () -> DictionaryInteractor) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertTransaction)
@@ -43,7 +43,7 @@ class WalletConverter(private val lazyDictionaryRepository: () -> DictionaryInte
     }
 
     private fun fromDictionary(key: String): String {
-        val result: String by lazyDictionaryRepository().getWord(key)
+        val result: String by lazyDictionaryInteractor().getWord(key)
         return result.replace("%i", "%d")
     }
 }

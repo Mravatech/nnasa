@@ -20,7 +20,13 @@ internal data class GroupDbEntity(
         @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
 
-        @SerializedName("permissions") var permissions: GroupPermissionsEntity?
+        @SerializedName("permissions") var permissions: GroupPermissionsEntity?,
+
+        @SerializedName("points") val points: Long? = null,
+        @SerializedName("totalIncome") val totalIncome: Long? = null,
+        @SerializedName("totalOutcome") val totalOutcome: Long? = null,
+        @SerializedName("visiblePoints") val visiblePoints: Long? = null
+
 ) : HasId
 
 internal data class GroupCounters(

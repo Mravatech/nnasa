@@ -23,6 +23,7 @@ import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_profile.view.*
 import kotlinx.coroutines.experimental.channels.consume
@@ -200,6 +201,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                 findItem(R.id.action_invite_members)?.title = fromDictionary(R.string.group_menu_invite)
                 findItem(R.id.action_group_leave)?.title = fromDictionary(R.string.group_menu_leave)
                 findItem(R.id.action_group_delete)?.title = fromDictionary(R.string.group_delete_menu)
+                findItem(R.id.action_group_wallet)?.title = fromDictionary(R.string.group_wallet_menu)
             }
 
             toolbar.setOnMenuItemClickListener {
@@ -215,6 +217,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                                 onOkClick = { viewModel.delete() }
                         )
                     }
+                    R.id.action_group_wallet -> open(WalletController.newInstanceGorup(groupModel))
                 }
                 true
             }

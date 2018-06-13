@@ -270,6 +270,7 @@
 
     <!-- ======================================= WALLET ======================================== -->
     <string name="wallet_title">_android_my_wallet_title</string>
+    <string name="wallet_title_group">_android_group_wallet_title</string>
     <string name="wallet_balance">_android_my_wallet_balance</string>
     <string name="wallet_spent">_android_my_wallet_spent</string>
     <string name="wallet_gained">_android_my_wallet_gained</string>
@@ -575,6 +576,7 @@
     <string name="group_permissions_offer">_group_permission_offer</string>
     <string name="group_permissions_general">_group_permission_general</string>
     <string name="group_delete_menu">_groupNewsfeed_menu_delete</string>
+    <string name="group_wallet_menu">_groupNewsfeed_menu_wallet</string>
     <string name="group_delete_dialog">_group_delete</string>
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>

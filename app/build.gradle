@@ -33,7 +33,10 @@ android {
         encoding "UTF-8"
     }
 
-    kotlin { experimental { coroutines 'enable' } }
+    kotlin {
+        experimental { coroutines 'enable' }
+        androidExtensions { experimental = true }
+    }
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
