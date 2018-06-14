@@ -161,7 +161,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private suspend fun scanForTags(text: String): List<TagModel> {
         val result = ArrayList<TagModel>()
-        val words = text.toLowerCase().split(" ", ",", ".", "#", ";").filter { it.isNotBlank() }.distinct()
+        val words = text.toLowerCase().split(" ", ",", ".", ";").filter { it.isNotBlank() }.distinct()
         val searchPhrase = StringBuilder()
 
         for (i in 0 until words.size) {
@@ -199,14 +199,14 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private suspend fun findTagWhichStartsWith(prefix: String): List<TagModel> {
         return allAvailableTags.await().filter {
-            it.name.toString().startsWith(prefix, ignoreCase = true) ||
-                    it.name.engTranslate?.startsWith(prefix, ignoreCase = true) == true ||
-                    it.name.arabicTranslate?.startsWith(prefix, ignoreCase = true) == true
+            it.name.toString().replace("#", "").startsWith(prefix, ignoreCase = true) ||
+                    it.name.engTranslate?.replace("#", "")?.startsWith(prefix, ignoreCase = true) == true ||
+                    it.name.arabicTranslate?.replace("#", "")?.startsWith(prefix, ignoreCase = true) == true
         }
     }
 
     private suspend fun TagModel.isTheSame(phrase: String): Boolean {
-        return name.toString().toLowerCase() == phrase.toLowerCase()
+        return name.toString().replace("#", "").toLowerCase() == phrase.toLowerCase()
     }
 
 

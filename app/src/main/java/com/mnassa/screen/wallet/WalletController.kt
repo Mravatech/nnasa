@@ -99,7 +99,7 @@ class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(arg
 
         fun newInstance() = WalletController(Bundle())
 
-        fun newInstanceGorup(group: GroupModel): WalletController {
+        fun newInstanceGroup(group: GroupModel): WalletController {
             val args = Bundle()
             args.putSerializable(EXTRA_GROUP, group)
             return WalletController(args)

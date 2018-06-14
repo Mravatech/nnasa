@@ -92,6 +92,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
         }
+        launchCoroutineUI {
+            viewModel.hasPersonalAccountChannel.consumeEach { hasPersonalAccount ->
+                view.llAccountTypePersonal.isEnabled = !hasPersonalAccount
+                if (hasPersonalAccount) {
+                    view.vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
+                }
+            }
+        }
     }
 
     private fun updateAccountTypeSwitch() {
@@ -276,7 +284,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             city.setAdapter(placeAutocompleteAdapter)
-            city.setOnItemClickListener({ _, _, i, _ ->
+            city.setOnItemClickListener { _, _, i, _ ->
                 val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 if (isPerson) {
                     personSelectedPlaceId = item.placeId
@@ -287,7 +295,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                     companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                     city.setText(companySelectedPlaceName ?: "")
                 }
-            })
+            }
         }
     }
 }
