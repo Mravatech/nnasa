@@ -25,16 +25,15 @@ class ComplaintOtherController : MnassaControllerImpl<ComplaintOtherViewModel>()
             tvInfoComplaint.text = fromDictionary(R.string.complaint_describe_reason)
             tilComplaintMessage.hint = fromDictionary(R.string.complaint_type_message)
             tlbrComplaint.actionButtonClickable = false
-            tlbrComplaint.withActionButton(fromDictionary(R.string.complaint_send), {
+            tlbrComplaint.withActionButton(fromDictionary(R.string.complaint_send)) {
                 resultListener.onComplaint = etComplaintMessage.text.toString()
                 close()
-            })
-            etComplaintMessage.addTextChangedListener(SimpleTextWatcher{
+            }
+            etComplaintMessage.addTextChangedListener(SimpleTextWatcher {
                 tlbrComplaint.actionButtonClickable = it.isNotBlank()
             })
         }
     }
-
 
     interface OnComplaintResult {
         var onComplaint: String

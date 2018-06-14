@@ -28,12 +28,14 @@ import kotlinx.coroutines.experimental.channels.map
  */
 class WalletRepositoryImpl(
         private val userRepository: UserRepository,
-        private val converter: ConvertersContext,
+        converterLazy:  () -> ConvertersContext,
         private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference,
         private val firestore: FirebaseFirestore,
         private val walletApi: FirebaseWalletApi
 ) : WalletRepository {
+
+    private val converter by lazy(converterLazy)
 
     override suspend fun getBalance(): ReceiveChannel<Long> {
         return db.child(DatabaseContract.TABLE_ACCOUNTS)

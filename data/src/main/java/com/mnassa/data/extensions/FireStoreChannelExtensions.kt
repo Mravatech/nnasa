@@ -2,7 +2,6 @@ package com.mnassa.data.extensions
 
 import com.google.firebase.firestore.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
-import com.mnassa.domain.exception.FirebaseMappingException
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.channels.*

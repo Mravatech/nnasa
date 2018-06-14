@@ -209,7 +209,6 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         return name.toString().replace("#", "").toLowerCase() == phrase.toLowerCase()
     }
 
-
     private fun focusLeftView() {
         if (etChipInput.text.toString().isEmpty() && allVisibleTags.isEmpty()) {
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
