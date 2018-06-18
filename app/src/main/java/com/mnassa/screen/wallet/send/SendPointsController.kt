@@ -25,6 +25,7 @@ import org.kodein.di.generic.instance
  */
 class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewModel>(args), SelectConnectionController.OnProfileSelectedListener, SelectGroupController.OnGroupSelectedListener {
     override val layoutId: Int = R.layout.controller_send_points
+    private val sender = args[EXTRA_SENDER] as TransactionSideModel
     override val viewModel: SendPointsViewModel by instance()
     override var selectedAccount: ShortAccountModel? = null
         set(value) {
@@ -54,8 +55,6 @@ class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewMo
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        val sender = args[EXTRA_SENDER] as TransactionSideModel
-
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.send_points_action)) {
                 val recipient = selectedGroup?.let { TransactionSideModel(it) }
@@ -72,7 +71,14 @@ class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewMo
 
             etRecipient.setOnClickListener {
                 when (tlRecipientType.selectedTabPosition) {
-                    RECIPIENT_USER -> open(SelectConnectionController.newInstance(this@SendPointsController))
+                    RECIPIENT_USER -> {
+                        val controller = if (sender.isGroup) {
+                            SelectConnectionController.newInstanceWithCommunityMembers(this@SendPointsController, communityId = sender.id)
+                        } else {
+                            SelectConnectionController.newInstance(this@SendPointsController)
+                        }
+                        open(controller)
+                    }
                     RECIPIENT_GROUP -> open(SelectGroupController.newInstance(this@SendPointsController))
                 }
             }

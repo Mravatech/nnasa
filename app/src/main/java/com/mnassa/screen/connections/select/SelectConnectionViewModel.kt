@@ -9,4 +9,9 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface SelectConnectionViewModel : MnassaViewModel {
     val allConnectionsChannel: BroadcastChannel<List<ShortAccountModel>>
+
+    sealed class AdditionalData {
+        class Empty : AdditionalData()
+        class IncludeGroupMembers(val groupId: String) : AdditionalData()
+    }
 }
