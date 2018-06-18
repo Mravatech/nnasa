@@ -224,6 +224,7 @@
     <string name="_android_groups_empty_description_INFO">You have no groups yet. Just ask sb for invite or create own group</string>
     <string name="_myGroups_groupCell_isMember_INFO">You are a member</string>
     <string name="_group_member_remove_INFO">Remove</string>
+    <string name="_group_member_invite_remove_INFO">Remove</string>
     <string name="_group_member_admin_INFO">Make admin</string>
     <string name="_group_member_un_admin_INFO">Unmake admin</string>
     <string name="_group_invites_more_INFO">%d groups more</string>
@@ -249,6 +250,9 @@ Check it in http://MNASSA.com</string>
     <string name="_post_item_from_group_INFO">From</string>
     <string name="_transaction_recipient_user_INFO">To User</string>
     <string name="_transaction_recipient_group_INFO">To Group</string>
+
+    <string name="_group_member_invite_send_INFO">Invite</string>
+    <string name="_group_member_invite_revoke_INFO">Revoke</string>
 
 
 </resources>

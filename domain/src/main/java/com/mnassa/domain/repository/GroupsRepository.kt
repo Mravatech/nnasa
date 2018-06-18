@@ -14,6 +14,7 @@ interface GroupsRepository {
     suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>>
     //
     suspend fun sendInvite(groupId: String, accountIds: List<String>)
+    suspend fun revokeInvite(groupId: String, accountIds: List<String>)
     suspend fun acceptInvite(groupId: String)
     suspend fun declineInvite(groupId: String)
     suspend fun leaveGroup(groupId: String)

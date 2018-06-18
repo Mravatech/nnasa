@@ -47,16 +47,19 @@ class GroupInviteConnectionsViewModelImpl(
         }
     }
 
-    override fun invite(users: List<String>) {
+    override fun sendInvite(user: ShortAccountModel) {
         handleException {
             withProgressSuspend {
-                val alreadyInvitedUsers = alreadyInvitedUsersChannel.consume { receive() }
-                val usersToInvite = users.filter { !alreadyInvitedUsers.contains(it) }
-                if (usersToInvite.isEmpty()) return@withProgressSuspend
-
-                groupsInteractor.sendInvite(groupId, usersToInvite)
+                groupsInteractor.sendInvite(groupId, listOf(user.id))
             }
-            closeScreenChannel.send(Unit)
+        }
+    }
+
+    override fun revokeInvite(user: ShortAccountModel) {
+        handleException {
+            withProgressSuspend {
+                groupsInteractor.revokeInvite(groupId, listOf(user.id))
+            }
         }
     }
 }

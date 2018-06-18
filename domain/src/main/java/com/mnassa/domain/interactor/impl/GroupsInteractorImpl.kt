@@ -25,6 +25,8 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
 
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) = groupsRepository.sendInvite(groupId, accountIds)
 
+    override suspend fun revokeInvite(groupId: String, accountIds: List<String>) = groupsRepository.revokeInvite(groupId, accountIds)
+
     override suspend fun acceptInvite(groupId: String) = groupsRepository.acceptInvite(groupId)
 
     override suspend fun declineInvite(groupId: String) = groupsRepository.declineInvite(groupId)

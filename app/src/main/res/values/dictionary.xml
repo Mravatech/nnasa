@@ -589,4 +589,7 @@
 
     <string name="server_maintenance_error">_maintenance_maintenanceMessage</string>
 
+    <string name="group_member_invite_send">_group_member_invite_send</string>
+    <string name="group_member_invite_revoke">_group_member_invite_revoke</string>
+
 </resources>
