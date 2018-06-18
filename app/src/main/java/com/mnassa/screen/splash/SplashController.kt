@@ -33,6 +33,8 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
         }
     }
 
+    override fun subscribeToServerMaintenanceStatus() = closeServerMaintenanceDialog()
+
     private suspend fun openNextScreen() {
         val nextScreen = when {
             viewModel.isLoggedIn() -> MainController.newInstance()

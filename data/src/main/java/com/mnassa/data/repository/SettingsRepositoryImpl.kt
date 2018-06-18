@@ -3,6 +3,7 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseSettingsApi
 import com.mnassa.data.network.bean.firebase.PushSettingDbEntity
 import com.mnassa.data.network.bean.retrofit.request.PushSettingsRequest
@@ -15,6 +16,8 @@ import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.domain.model.impl.PushSettingModelImpl
 import com.mnassa.domain.repository.SettingsRepository
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,7 +51,7 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
         val notification = mapOf(setting.name to PushSettingsRequest(setting.isActive, setting.withSound))
         val result = firebaseSettingsApi.accountNotifications(notification).handleException(exceptionHandler)
         val keys = result.data.accountPushSettings.keys
-        return keys.mapTo(mutableListOf<PushSettingModel>()){
+        return keys.mapTo(mutableListOf<PushSettingModel>()) {
             val data = requireNotNull(result.data.accountPushSettings[it])
             PushSettingModelImpl(
                     isActive = data.isActive,
@@ -56,5 +59,12 @@ class SettingsRepositoryImpl(private val db: DatabaseReference,
                     name = it
             )
         }
+    }
+
+    override suspend fun getMaintenanceServerStatus(): ReceiveChannel<Boolean> {
+        return db.child(DatabaseContract.TABLE_CLIENT_DATA)
+                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_MAINTENANCE)
+                .toValueChannel<Boolean>(exceptionHandler)
+                .map { it ?: false }
     }
 }

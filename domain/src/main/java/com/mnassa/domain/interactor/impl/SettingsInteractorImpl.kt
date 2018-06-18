@@ -3,6 +3,7 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.domain.interactor.SettingsInteractor
 import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.domain.repository.SettingsRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,4 +14,6 @@ class SettingsInteractorImpl(private val settingsRepository: SettingsRepository)
     override suspend fun getUserPushSettings(): List<PushSettingModel> = settingsRepository.getUserPushSettings()
 
     override suspend fun changeSetting(setting: PushSettingModel) = settingsRepository.changeSetting(setting)
+
+    override suspend fun getMaintenanceServerStatus(): ReceiveChannel<Boolean> = settingsRepository.getMaintenanceServerStatus()
 }

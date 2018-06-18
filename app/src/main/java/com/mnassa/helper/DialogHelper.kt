@@ -12,6 +12,7 @@ import android.support.v7.widget.AppCompatRadioButton
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -427,10 +428,23 @@ class DialogHelper {
 
         MaterialDialog.Builder(context)
                 .items(statuses.map { it.formatted })
-                .itemsCallbackSingleChoice(index, { _, _, which, _ ->
+                .itemsCallbackSingleChoice(index) { _, _, which, _ ->
                     onStatusSelected(statuses[which])
                     true
-                })
+                }
                 .show()
+    }
+
+    fun showServerIsUnderMaintenanceDialog(context: Context, onLogoutClick: () -> Unit): Dialog {
+        val dialog = MaterialDialog.Builder(context)
+                .title(context.getString(R.string._android_error_dialog_title_something_went_wrong_INFO))
+                .content(fromDictionary(R.string.server_maintenance_error))
+                .cancelable(false)
+                .positiveText(fromDictionary(R.string.side_menu_logout))
+                .onPositive { _, _ -> onLogoutClick() }
+                .show()
+        val textView = dialog.view.findViewById<TextView>(com.afollestad.materialdialogs.R.id.md_content)
+        Linkify.addLinks(textView, Linkify.ALL)
+        return dialog
     }
 }

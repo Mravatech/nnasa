@@ -10,6 +10,9 @@ import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
+import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.SettingsInteractor
+import com.mnassa.domain.model.LogoutReason
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
@@ -20,6 +23,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinTrigger
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
+import java.lang.ref.WeakReference
 
 /**
  * Created by Peter on 2/20/2018.
@@ -30,6 +34,10 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         val parentKodein by closestKodein(requireNotNull(applicationContext))
         extend(parentKodein, allowOverride = true)
     }
+    private val settingsInteractor: SettingsInteractor by instance()
+    private val loginInteractor: LoginInteractor by instance()
+    private val dialogHelper: DialogHelper by instance()
+    private var serverMaintenanceDialog = WeakReference<Dialog>(null)
 
     constructor(params: Bundle) : super(params)
     constructor() : super()
@@ -44,6 +52,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         super.onViewCreated(view)
         subscribeToProgressEvents()
         subscribeToErrorEvents()
+        subscribeToServerMaintenanceStatus()
     }
 
     override fun onDestroyView(view: View) {
@@ -75,6 +84,30 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
                 }
             }
         }
+    }
+
+    protected open fun subscribeToServerMaintenanceStatus() {
+        val isMostParentController = parentController == null
+        if (!isMostParentController) return
+
+        launchCoroutineUI {
+            settingsInteractor.getMaintenanceServerStatus().consumeEach { isUnderMaintenance ->
+                closeServerMaintenanceDialog()
+                if (isUnderMaintenance) {
+                    val dialog = dialogHelper.showServerIsUnderMaintenanceDialog(getViewSuspend().context) {
+                        launchCoroutineUI { loginInteractor.signOut(LogoutReason.ManualLogout()) }
+                    }
+                    serverMaintenanceDialog = WeakReference(dialog)
+                }
+            }
+        }.invokeOnCompletion {
+            closeServerMaintenanceDialog()
+        }
+    }
+
+    protected fun closeServerMaintenanceDialog() {
+        serverMaintenanceDialog.get()?.dismiss()
+        serverMaintenanceDialog.clear()
     }
 
     private var progressDialog: Dialog? = null
