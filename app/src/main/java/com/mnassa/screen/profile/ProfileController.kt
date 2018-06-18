@@ -216,7 +216,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             when (item.itemId) {
                 R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
                 R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
-                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this))
+                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
             }
             true
         }

@@ -79,7 +79,7 @@ class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewMo
                         }
                         open(controller)
                     }
-                    RECIPIENT_GROUP -> open(SelectGroupController.newInstance(this@SendPointsController))
+                    RECIPIENT_GROUP -> open(SelectGroupController.newInstance(this@SendPointsController, onlyAdmin = false))
                 }
             }
             etRecipient.hint = fromDictionary(R.string.send_points_recipient_hint)

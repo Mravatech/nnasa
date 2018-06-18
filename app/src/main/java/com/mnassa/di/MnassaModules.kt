@@ -268,7 +268,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
-    bind<SelectGroupViewModel>() with provider { SelectGroupViewModelImpl(instance()) }
+    bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
 }
 
 private val convertersModule = Kodein.Module {
