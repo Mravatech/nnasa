@@ -6,18 +6,24 @@ import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.bean.firebase.TagDbEntity
+import com.mnassa.data.network.bean.retrofit.request.AddTagsDialogShowingTimeRequest
 import com.mnassa.data.network.bean.retrofit.request.CustomTagsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
+import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.async
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class TagRepositoryImpl(
+        private val db: DatabaseReference,
         private val converter: ConvertersContext,
         private val databaseReference: DatabaseReference,
         private val exceptionHandler: ExceptionHandler,
-        private val firebaseTagsApi: FirebaseTagsApi
+        private val firebaseTagsApi: FirebaseTagsApi,
+        private val userRepository: UserRepository
 ) : TagRepository {
 
     override suspend fun get(id: String): TagModel? {
@@ -55,6 +61,26 @@ class TagRepositoryImpl(
                 .apply { keepSynced(true) }
                 .awaitList<TagDbEntity>(exceptionHandler)
         return filterById(ids, tags).await()
+    }
+
+    override suspend fun getAddTagsDialogInterval(): Long? {
+        val hours = db.child(DatabaseContract.TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD)
+                .await<Long>(exceptionHandler)
+        return hours?.let { TimeUnit.HOURS.toMillis(it) }
+    }
+
+    override suspend fun getAddTagsDialogLastShowingTime(): Date? {
+        val timestamp = db.child(DatabaseContract.TABLE_ACCOUNTS)
+                .child(userRepository.getAccountIdOrException())
+                .child(DatabaseContract.TABLE_ACCOUNTS_COL_TAG_REMINDER_TIME)
+                .await<Long>(exceptionHandler)
+        return timestamp?.let { Date(it) }
+    }
+
+    override suspend fun setAddTagsDialogShowingTime(time: Date) {
+        firebaseTagsApi.setAddTagsDialogShowingTime(
+                AddTagsDialogShowingTimeRequest(userRepository.getAccountIdOrException(), time.time))
+                .handleException(exceptionHandler)
     }
 
     private fun filterById(ids: List<String>, tags: List<TagDbEntity>) = async {

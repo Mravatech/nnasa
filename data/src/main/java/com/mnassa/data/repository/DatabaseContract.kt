@@ -23,6 +23,7 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_PERMISSIONS = "permissions"
     const val TABLE_ACCOUNTS_COL_STATE = "state"
     const val TABLE_ACCOUNTS_COL_STATE_DISABLED = "disabled"
+    const val TABLE_ACCOUNTS_COL_TAG_REMINDER_TIME = "tagReminderShowedAt"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -32,6 +33,7 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME = "parameters/defaultExpirationTime"
     const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
     const val TABLE_CLIENT_DATA_COL_MAINTENANCE = "maintenance"
+    const val TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD = "$TABLE_CLIENT_DATA/parameters/tagsReminder"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
@@ -130,4 +132,5 @@ internal object DatabaseContract {
     const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
     const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
     const val TABLE_GROUPS_ALL_COL_WALLET = "wallet"
+
 }

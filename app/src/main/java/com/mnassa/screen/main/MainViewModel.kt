@@ -1,6 +1,8 @@
 package com.mnassa.screen.main
 
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
@@ -17,6 +19,11 @@ interface MainViewModel : MnassaViewModel {
 
     val currentAccountChannel: BroadcastChannel<ShortAccountModel>
     val availableAccountsChannel: BroadcastChannel<List<ShortAccountModel>>
+
+    val showAddTagsDialog: BroadcastChannel<Unit>
+    suspend fun getInterests(): List<TagModel>
+    suspend fun getOffers(): List<TagModel>
+    suspend fun getProfile(): ProfileAccountModel?
 
     fun selectAccount(account: ShortAccountModel)
     fun logout()

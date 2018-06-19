@@ -58,7 +58,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
     }
 
     private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
-        val additionInfo: PostAdditionInfo = token as PostAdditionInfo
+        val additionInfo: PostAdditionInfo? = token as? PostAdditionInfo
 
         val attachments = input.images.orEmpty().mapIndexed { index, image ->
             val videoUrl = input.videos.orEmpty().getOrNull(index)
@@ -94,7 +94,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
                     recommendedProfile = try { convertAuthor(requireNotNull(input.postedAccount), converter) } catch (e: Exception) { null },
                     offers = emptyList(),
-                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
             is PostType.INFO -> InfoPostImpl(
@@ -123,7 +123,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
                             ?: throw FirebaseMappingException("info post ${input.id}", RuntimeException("Title is NULL!")),
-                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
             is PostType.OFFER -> OfferPostModelImpl(
@@ -154,7 +154,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     subCategory = input.subcategory,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
-                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
             else -> PostModelImpl(
@@ -181,7 +181,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    groupIds = input.groupIds ?: additionInfo.groupIds,
+                    groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
         }

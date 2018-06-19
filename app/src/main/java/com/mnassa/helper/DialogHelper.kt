@@ -16,6 +16,7 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
@@ -30,6 +31,7 @@ import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_add_tags.*
 import kotlinx.android.synthetic.main.dialog_buy_ticket.view.*
 import kotlinx.android.synthetic.main.dialog_company_status.*
 import kotlinx.android.synthetic.main.dialog_delete_chat_message.*
@@ -446,5 +448,19 @@ class DialogHelper {
         val textView = dialog.view.findViewById<TextView>(com.afollestad.materialdialogs.R.id.md_content)
         Linkify.addLinks(textView, Linkify.ALL)
         return dialog
+    }
+
+    fun showAddTagsDialog(context: Context, onAddTagsClick: () -> Unit) {
+        val dialog = Dialog(context, R.style.DefaultDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_add_tags)
+        dialog.btnAddTagsLate.text = fromDictionary(R.string.add_tags_dialog_late)
+        dialog.btnAddTagsLate.setOnClickListener { dialog.dismiss() }
+        dialog.btnAddTagsNow.text = fromDictionary(R.string.add_tags_dialog_now)
+        dialog.btnAddTagsNow.setOnClickListener {
+            onAddTagsClick()
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 }
