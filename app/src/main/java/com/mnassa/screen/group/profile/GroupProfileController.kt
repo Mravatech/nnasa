@@ -63,6 +63,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onMoreItemClickListener = this::showPostMenu
     }
