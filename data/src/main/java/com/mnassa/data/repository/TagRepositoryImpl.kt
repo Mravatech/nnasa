@@ -64,9 +64,9 @@ class TagRepositoryImpl(
     }
 
     override suspend fun getAddTagsDialogInterval(): Long? {
-        val hours = db.child(DatabaseContract.TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD)
+        val days = db.child(DatabaseContract.TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD)
                 .await<Long>(exceptionHandler)
-        return hours?.let { TimeUnit.HOURS.toMillis(it) }
+        return days?.let { TimeUnit.DAYS.toMillis(it) }
     }
 
     override suspend fun getAddTagsDialogLastShowingTime(): Date? {
