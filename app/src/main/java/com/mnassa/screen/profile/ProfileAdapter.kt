@@ -40,7 +40,7 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
     var connectionStatus: ConnectionStatus? = null
         set(value) {
             field = value
-            notifyItemChanged(0)
+            notifyDataSetChanged()
         }
 
 

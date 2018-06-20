@@ -56,6 +56,7 @@ class ConnectionsRepositoryImpl(
 
     override suspend fun actionConnectionStatus(connectionAction: ConnectionAction, aids: List<String>) {
         firebaseConnectionsApi.connectionAction(ConnectionStatusRequest(getConnectionAction(connectionAction), aids))
+                .handleException(exceptionHandler)
     }
 
     override suspend fun getConnectionRequests(): ReceiveChannel<List<ShortAccountModel>> {
@@ -143,7 +144,7 @@ class ConnectionsRepositoryImpl(
                 .handleException(exceptionHandler)
     }
 
-    private suspend fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
+    private fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
                 .child(requireNotNull(userRepository.getAccountIdOrException()))
                 .child(columnName)

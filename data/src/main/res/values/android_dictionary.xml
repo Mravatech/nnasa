@@ -263,5 +263,6 @@ Check it in http://MNASSA.com</string>
     <string name="_profile_delete_tag_penalty_title_INFO">Delete tags?</string>
     <string name="_profile_delete_tag_penalty_description_prefix_INFO">Are you sure you want to delete this tag?</string>
     <string name="_profile_delete_tag_penalty_description_suffix_INFO">The system takes away -%d points</string>
+    <string name="_profile_connect_button_INFO">Connect</string>
 
 </resources>

@@ -1,7 +1,6 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import com.mnassa.R
@@ -93,7 +92,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
                 if (!profileModel.isMyProfile) {
-                    handleFab(connectionStatus, view.fabProfile)
+                    handleConnectionStatus(connectionStatus, view)
                 }
             }
         }
@@ -110,7 +109,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
                 val profile = viewModel.profileChannel.consume { receive() }
                 if (!profile.isMyProfile) {
-                    handleFab(connectionStatus, view.fabProfile)
+                    handleConnectionStatus(connectionStatus, view)
                 }
             }
         }
@@ -167,41 +166,28 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         super.onDestroyView(view)
     }
 
-    private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
+    private fun handleConnectionStatus(connectionStatus: ConnectionStatus, view: View) {
+        adapter.connectionStatus = connectionStatus
+
+        val fab = view.fabProfile
+        fab.visibility = View.VISIBLE
+        fab.setOnClickListener {
+            adapter.profileModel?.let {
+                open(ChatMessageController.newInstance(it))
+            }
+        }
+        fab.setImageResource(R.drawable.ic_chat)
+
         when (connectionStatus) {
-            ConnectionStatus.CONNECTED -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
-                    adapter.profileModel?.let {
-                        open(ChatMessageController.newInstance(it))
-                    }
-                }
-                fab.setImageResource(R.drawable.ic_chat)
-            }
-            ConnectionStatus.RECOMMENDED -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
+            ConnectionStatus.REQUESTED, ConnectionStatus.RECOMMENDED -> {
+                view.rlConnectContainer.visibility = View.VISIBLE
+                view.btnConnectUser.setOnClickListener {
                     viewModel.sendConnectionStatus(connectionStatus, accountId)
                 }
-                fab.setImageResource(R.drawable.ic_new_requests)
-            }
-            ConnectionStatus.SENT -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
-                    viewModel.sendConnectionStatus(connectionStatus, accountId)
-                }
-                fab.setImageResource(R.drawable.ic_pending)
-            }
-            ConnectionStatus.REQUESTED -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
-                    viewModel.sendConnectionStatus(connectionStatus, accountId)
-                }
-                fab.setImageResource(R.drawable.ic_new_requests)
             }
             else -> {
-                fab.visibility = View.GONE
-                fab.setOnClickListener(null)
+                view.rlConnectContainer.visibility = View.GONE
+                view.btnConnectUser.setOnClickListener(null)
             }
         }
     }
@@ -254,7 +240,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                         AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
                     })
                 }
-
             }
         } else {
             view.ivProfileMenu.visibility = View.VISIBLE
