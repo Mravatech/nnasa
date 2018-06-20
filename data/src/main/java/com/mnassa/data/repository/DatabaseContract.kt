@@ -42,6 +42,7 @@ internal object DatabaseContract {
     const val TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT ="paymentTypes/rewardForComment"
     const val TABLE_DICTIONARY_COL_REWARD_FOR_PROFILE_TAG = "paymentTypes/addTagInProfile"
     const val TABLE_DICTIONARY_COL_PENALTY_FOR_PROFILE_TAG = "paymentTypes/removeTagInProfile"
+    const val TABLE_DICTIONARY_COL_REWARD_INVITE_USER = "paymentTypes/inviteOutsideUser"
     //
     const val TABLE_CONNECTIONS = "connections"
 

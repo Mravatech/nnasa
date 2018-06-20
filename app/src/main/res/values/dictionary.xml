@@ -600,5 +600,6 @@
     <string name="delete_tags_penalty_title">_profile_delete_tag_penalty_title</string>
     <string name="delete_tags_penalty_description_prefix">_profile_delete_tag_penalty_description_prefix</string>
     <string name="delete_tags_penalty_description_suffix">_profile_delete_tag_penalty_description_suffix</string>
+    <string name="invite_reward">_invites_rewardInfoMask</string>
 
 </resources>

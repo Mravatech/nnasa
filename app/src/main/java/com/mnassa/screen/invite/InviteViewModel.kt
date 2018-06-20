@@ -15,4 +15,6 @@ interface InviteViewModel : MnassaViewModel {
     val invitesCountChannel: BroadcastChannel<Int>
     fun retrievePhoneContacts()
     fun checkPhoneContact(contact: PhoneContact)
+
+    suspend fun getInviteReward(): Long?
 }
