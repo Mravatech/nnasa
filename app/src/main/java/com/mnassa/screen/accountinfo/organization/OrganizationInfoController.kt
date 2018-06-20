@@ -22,7 +22,6 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
 
     override val layoutId: Int = R.layout.controller_organization_info
     override val viewModel: OrganizationInfoViewModel by instance()
-    private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -34,7 +33,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             etCompanyPhone.setHideMode(false)
             etCompanyPhone.setText(accountModel.contactPhone)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-            btnHeaderNext.setOnClickListener { proccesProfile(this) }
+            btnHeaderNext.setOnClickListener { view -> launchCoroutineUI { processProfile(view) } }
             tvSkipThisStep.setOnClickListener {
                 viewModel.skipThisStep()
             }
@@ -56,7 +55,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
         viewModel.saveLocallyAvatarUri(uri)
     }
 
-    override fun proccesProfile(view: View) {
+    override suspend fun processProfile(view: View) {
         val email = view.etCompanyEmail.text.toString()
         val phone = view.etCompanyPhone.text.toString()
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotEmpty()) {

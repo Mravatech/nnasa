@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.network.api.FirebaseTagsApi
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.TagDbEntity
 import com.mnassa.data.network.bean.retrofit.request.AddTagsDialogShowingTimeRequest
 import com.mnassa.data.network.bean.retrofit.request.CustomTagsRequest
@@ -81,6 +82,22 @@ class TagRepositoryImpl(
         firebaseTagsApi.setAddTagsDialogShowingTime(
                 AddTagsDialogShowingTimeRequest(userRepository.getAccountIdOrException(), time.time))
                 .handleException(exceptionHandler)
+    }
+
+    override suspend fun getAddTagPrice(): Long? {
+        return db.child(DatabaseContract.TABLE_DICTIONARY)
+                .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_FOR_PROFILE_TAG)
+                .await<PriceDbEntity>(exceptionHandler)
+                .takeIf { it?.state == true }
+                ?.amount
+    }
+
+    override suspend fun getRemoveTagPrice(): Long? {
+        return db.child(DatabaseContract.TABLE_DICTIONARY)
+                .child(DatabaseContract.TABLE_DICTIONARY_COL_PENALTY_FOR_PROFILE_TAG)
+                .await<PriceDbEntity>(exceptionHandler)
+                .takeIf { it?.state == true }
+                ?.amount
     }
 
     private fun filterById(ids: List<String>, tags: List<TagDbEntity>) = async {

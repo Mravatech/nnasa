@@ -31,9 +31,6 @@ import org.kodein.di.generic.instance
 class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController<EditCompanyProfileViewModel>(data) {
     override val layoutId = R.layout.controller_edit_company_profile
     override val viewModel: EditCompanyProfileViewModel by instance()
-    private val accountModel: ProfileAccountModel by lazy { args.getParcelable(EXTRA_PROFILE) as ProfileAccountModel }
-    private val interests: java.util.ArrayList<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_INTERESTS) as java.util.ArrayList<TagModel> }
-    private val offers: java.util.ArrayList<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_OFFERS) as java.util.ArrayList<TagModel> }
     private val playServiceHelper: PlayServiceHelper by instance()
 
     private var companySelectedPlaceName: String? = null
@@ -125,7 +122,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         viewModel.saveLocallyAvatarUri(uri)
     }
 
-    override fun proccesProfile(view: View) {
+    override suspend fun processProfile(view: View) {
         val email = view.etCompanyEmail.text.toString()
         val phone = view.etCompanyPhone.text.toString()
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
@@ -149,10 +146,14 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
                 website = view.etWebSite.text.toString(),
                 foundedDate = view.etFoundation.text.toString(),
                 locationId = companySelectedPlaceId,
-                interests = view.chipCompanyInterests.getTags(),
-                offers = view.chipCompanyOffers.getTags()
+                interests = getEnteredInterests(),
+                offers = getEnteredOffers()
         )
     }
+
+    override suspend fun getEnteredInterests(): List<TagModel> = getViewSuspend().chipCompanyInterests.getTags()
+
+    override suspend fun getEnteredOffers(): List<TagModel> = getViewSuspend().chipCompanyOffers.getTags()
 
     private fun setupView(view: View) {
         with(view) {
@@ -160,10 +161,13 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
             tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
             tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
+            launchCoroutineUI {
+                chipCompanyOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
+                chipCompanyInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
+            }
+
             chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-            chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
             chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-            chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
             tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
             tilWebSite.hint = fromDictionary(R.string.reg_company_website)
             tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
@@ -173,9 +177,6 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     }
 
     companion object {
-        private const val EXTRA_PROFILE = "EXTRA_PROFILE"
-        private const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
-        private const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
 
         fun newInstance(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>): EditCompanyProfileController {
             val params = Bundle()

@@ -6,16 +6,23 @@ import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.content.ContextCompat
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.ProfileAccountModel
+import com.mnassa.domain.model.TagModel
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
+import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.text.DateFormatSymbols
@@ -26,7 +33,11 @@ import java.util.*
  * User: okli
  * Date: 3/29/2018
  */
-abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle) : MnassaControllerImpl<VM>(data) {
+abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(data: Bundle) : MnassaControllerImpl<VM>(data) {
+
+    protected val accountModel: ProfileAccountModel by lazy { args.getParcelable(EXTRA_PROFILE) as ProfileAccountModel }
+    protected val interests: List<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_INTERESTS) as java.util.ArrayList<TagModel> }
+    protected val offers: List<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_OFFERS) as java.util.ArrayList<TagModel> }
 
     protected val dialog: DialogHelper by instance()
     protected var birthday: Long? = null
@@ -104,15 +115,49 @@ abstract class BaseEditableProfileController<VM : MnassaViewModel>(data: Bundle)
 
     protected fun setToolbar(toolbar: MnassaToolbar, view: View) {
         toolbar.backButtonEnabled = true
-        toolbar.withActionButton(fromDictionary(R.string.edit_save)){
-            proccesProfile(view)
+        toolbar.withActionButton(fromDictionary(R.string.edit_save)) {
+            launchCoroutineUI { preProcessProfile(view) }
         }
     }
 
-    abstract fun proccesProfile(view: View)
+    protected suspend fun formatTagLabel(prefix: String): CharSequence {
+        val reward = viewModel.addTagRewardChannel.consume { receive() } ?: return prefix
+        val result = SpannableString(fromDictionary(R.string.add_tags_reward_suffix).format(prefix, reward))
+        result.setSpan(ForegroundColorSpan(ContextCompat.getColor(getViewSuspend().context, R.color.accent)), prefix.length, result.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return result
+    }
+
+    private suspend fun preProcessProfile(view: View) {
+        val interestsDiff = maxOf(interests.size - getEnteredInterests().size, 0)
+        val offersDiff = maxOf(offers.size - getEnteredOffers().size, 0)
+
+        if (interestsDiff > 0 || offersDiff > 0) {
+            val price = viewModel.calculateDeleteTagsPrice(interestsDiff + offersDiff)
+            if (price != null) {
+                val dialogResult = suspendCancellableCoroutine<Int> { continuation ->
+                    dialog.showDeleteProfileTagsDialog(view.context, price, onConfirm = {
+                        continuation.resume(OK_CLICK)
+                    }, onCancel = { continuation.resume(CANCEL_CLICK) })
+                }
+                if (dialogResult == CANCEL_CLICK) return
+            }
+        }
+
+        processProfile(view)
+    }
+
+    abstract suspend fun processProfile(view: View)
     abstract fun photoResult(uri: Uri, view: View)
+    open suspend fun getEnteredInterests(): List<TagModel> = emptyList()
+    open suspend fun getEnteredOffers(): List<TagModel> = emptyList()
 
     companion object {
         private const val REQUEST_CODE_CROP = 101
+        private const val OK_CLICK = 1
+        private const val CANCEL_CLICK = -1
+
+        const val EXTRA_PROFILE = "EXTRA_PROFILE"
+        const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
+        const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
     }
 }

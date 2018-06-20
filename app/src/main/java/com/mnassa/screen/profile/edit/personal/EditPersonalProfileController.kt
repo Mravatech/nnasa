@@ -33,9 +33,6 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
 
     override val layoutId = R.layout.controller_edit_personal_profile
     override val viewModel: EditPersonalProfileViewModel by instance()
-    private val accountModel: ProfileAccountModel by lazy { args.getParcelable(EXTRA_PROFILE) as ProfileAccountModel }
-    private val interests: ArrayList<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_INTERESTS) as ArrayList<TagModel> }
-    private val offers: ArrayList<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_OFFERS) as ArrayList<TagModel> }
     private val playServiceHelper: PlayServiceHelper by instance()
     private var personSelectedPlaceName: String? = null
     private var personSelectedPlaceId: String? = null
@@ -122,7 +119,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         viewModel.saveLocallyAvatarUri(uri)
     }
 
-    override fun proccesProfile(view: View) {
+    override suspend fun processProfile(view: View) {
         val email = view.etYourEmail.text.toString()
         val phone = view.etPhoneNumber.text.toString()
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
@@ -147,18 +144,26 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 locationId = personSelectedPlaceId,
                 isMale = view.rInfoBtnMale.isChecked,
                 abilities = view.containerSelectOccupation.getAllAbilities(),
-                interests = view.chipPersonInterests.getTags(),
-                offers = view.chipPersonOffers.getTags()
+                interests = getEnteredInterests(),
+                offers = getEnteredOffers()
         )
     }
+
+    override suspend fun getEnteredInterests(): List<TagModel> = getViewSuspend().chipPersonInterests.getTags()
+
+    override suspend fun getEnteredOffers(): List<TagModel> = getViewSuspend().chipPersonOffers.getTags()
 
     private fun setupViews(view: View) {
         with(view) {
             toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
             tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
-            chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
+
+            launchCoroutineUI {
+                chipPersonOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
+                chipPersonInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
+            }
+
             chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-            chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
             chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
             tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
             tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
@@ -175,12 +180,9 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
             tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
         }
-    }
+    }//
 
     companion object {
-        private const val EXTRA_PROFILE = "EXTRA_PROFILE"
-        private const val EXTRA_TAGS_INTERESTS = "EXTRA_TAGS_INTERESTS"
-        private const val EXTRA_TAGS_OFFERS = "EXTRA_TAGS_OFFERS"
 
         fun newInstance(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>): EditPersonalProfileController {
             val params = Bundle()

@@ -16,4 +16,6 @@ interface TagRepository {
     suspend fun getAddTagsDialogInterval(): Long?
     suspend fun getAddTagsDialogLastShowingTime(): Date?
     suspend fun setAddTagsDialogShowingTime(time: Date)
+    suspend fun getAddTagPrice(): Long?
+    suspend fun getRemoveTagPrice(): Long?
 }

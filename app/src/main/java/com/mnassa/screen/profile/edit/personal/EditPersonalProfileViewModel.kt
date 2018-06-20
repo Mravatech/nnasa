@@ -4,7 +4,7 @@ import android.net.Uri
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.screen.base.MnassaViewModel
+import com.mnassa.screen.profile.edit.BaseEditableProfileViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
@@ -13,7 +13,7 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  * User: okli
  * Date: 3/26/2018
  */
-interface EditPersonalProfileViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface EditPersonalProfileViewModel : BaseEditableProfileViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: ArrayBroadcastChannel<PersonalScreenCommander>
     fun saveLocallyAvatarUri(uri: Uri)
     fun updatePersonalAccount(

@@ -249,7 +249,7 @@
 
     <!-- ========================================= PROFILE ====================================== -->
     <string name="profile_connections">_connectionsList_navTitle_connections</string>
-    <string name="profile_points_given">_android_profile_points_given</string>
+    <string name="profile_points_given">_profile_cellHeader_labelPoints	</string>
     <string name="profile_date_of_birth">_profileDetails_birthdayPersonal</string>
     <string name="profile_mobile_phone">_profileDetails_labelMobile</string>
     <string name="profile_website">_profileDetails_labelWebsite</string>
@@ -596,5 +596,9 @@
     <string name="add_tags_dialog_description">_add_tags_dialog_description</string>
     <string name="add_tags_dialog_now">_add_tags_dialog_btn_now</string>
     <string name="add_tags_dialog_late">_add_tags_dialog_btn_late</string>
+    <string name="add_tags_reward_suffix">_profile_add_tag_reward_suffix</string>
+    <string name="delete_tags_penalty_title">_profile_delete_tag_penalty_title</string>
+    <string name="delete_tags_penalty_description_prefix">_profile_delete_tag_penalty_description_prefix</string>
+    <string name="delete_tags_penalty_description_suffix">_profile_delete_tag_penalty_description_suffix</string>
 
 </resources>
