@@ -10,7 +10,9 @@ import com.mnassa.domain.model.PhoneContact
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,13 +24,17 @@ class InviteViewModelImpl(
         private val inviteInteractor: InviteInteractor
 ) : MnassaViewModelImpl(), InviteViewModel {
 
-    override val invitesCountChannel: BroadcastChannel<Int> = BroadcastChannel(10)
-    override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = BroadcastChannel(10)
+    override val invitesCountChannel: BroadcastChannel<Int> = ConflatedBroadcastChannel()
+    override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = ConflatedBroadcastChannel()
     override val checkPhoneContactChannel: BroadcastChannel<Boolean> = BroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        subscribeToInvites()
+        handleException {
+            inviteInteractor.getInvitesCountChannel().consumeEach {
+                invitesCountChannel.send(it)
+            }
+        }
     }
 
     private var retrievePhoneJob: Job? = null
@@ -47,18 +53,16 @@ class InviteViewModelImpl(
         checkPhoneContactJob?.cancel()
         checkPhoneContactJob = handleException {
             withProgressSuspend {
-                inviteInteractor.inviteContact(contact)
-                checkPhoneContactChannel.send(true)
-            }
-        }
-    }
+                val inviteSourceHolder: InviteSourceHolder by instance()
+                val inviteSource = inviteSourceHolder.source
+                when (inviteSource) {
+                    is InviteSource.Post -> inviteInteractor.inviteContactToPost(contact, inviteSource.post.id)
+                    is InviteSource.Event -> inviteInteractor.inviteContactToEvent(contact, inviteSource.event.id)
+                    is InviteSource.Group -> inviteInteractor.inviteContactToGroup(contact, inviteSource.group.id)
+                    else -> inviteInteractor.inviteContact(contact)
+                }
 
-    private var subscribeToInvitesJob: Job? = null
-    private fun subscribeToInvites() {
-        subscribeToInvitesJob?.cancel()
-        subscribeToInvitesJob = handleException {
-            inviteInteractor.getInvitesCountChannel().consumeEach {
-                invitesCountChannel.send(it)
+                checkPhoneContactChannel.send(true)
             }
         }
     }

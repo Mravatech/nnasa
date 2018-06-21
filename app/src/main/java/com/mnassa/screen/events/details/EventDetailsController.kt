@@ -15,6 +15,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
@@ -27,6 +28,8 @@ import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details.view.*
 import kotlinx.android.synthetic.main.event_date.view.*
@@ -76,6 +79,8 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+        requireNotNull(applicationContext).getInstance<InviteSourceHolder>().source = InviteSource.Event(eventModel)
 
         with(view) {
             tlEventTabs.setupWithViewPager(vpEvents)

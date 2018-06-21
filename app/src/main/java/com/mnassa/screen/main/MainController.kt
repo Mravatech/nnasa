@@ -18,6 +18,7 @@ import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -27,6 +28,8 @@ import com.mnassa.screen.connections.ConnectionsController
 import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
@@ -92,7 +95,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                         val innerProfile = profile as IProfile<ProfileDrawerItem>
                         when {
                             innerProfile is MnassaProfileDrawerItem -> {
-                                val account =  innerProfile.account
+                                val account = innerProfile.account
                                 drawer?.closeDrawer()
                                 activeAccountId = account.id
                                 viewModel.selectAccount(account)
@@ -130,7 +133,10 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                             PROFILE -> open(ProfileController.newInstance(activeAccountId))
                             GROUPS -> open(GroupListController.newInstance())
                             WALLET -> open(WalletController.newInstance())
-                            INVITE -> open(InviteController.newInstance())
+                            INVITE -> {
+                                requireNotNull(applicationContext).getInstance<InviteSourceHolder>().source = InviteSource.Manual()
+                                open(InviteController.newInstance())
+                            }
                             SETTINGS -> open(SettingsController.newInstance())
                             HELP -> open(ChatMessageController.newInstance())
                             TERMS -> open(TermsAndConditionsController.newInstance())

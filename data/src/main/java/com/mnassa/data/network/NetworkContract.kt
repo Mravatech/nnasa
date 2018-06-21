@@ -122,6 +122,12 @@ object NetworkContract {
         const val MAKE_ADMIN = "makeAdmin"
         const val UN_MAKE_ADMIN = "unmakeAdmin"
     }
+
+    object InviteType {
+        const val COMMUNITY = "community"
+        const val POST = "post"
+        const val EVENT = "event"
+    }
 }
 
 val PostPrivacyType.stringValue: String?

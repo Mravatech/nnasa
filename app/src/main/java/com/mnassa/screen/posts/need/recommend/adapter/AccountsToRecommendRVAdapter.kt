@@ -26,6 +26,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 
     private val selectedAccountsInternal: MutableSet<ShortAccountModel> = TreeSet(Comparator { first, second -> first.id.compareTo(second.id) })
     var onSelectedAccountsChangedListener = { selectedAccountIds: List<ShortAccountModel> -> }
+    var onSearchClickListener = { }
     var selectedAccounts: Set<ShortAccountModel>
         get() = selectedAccountsInternal
         set(value) {
@@ -58,6 +59,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 
     fun destroyCallbacks() {
         onSelectedAccountsChangedListener = {}
+        onSearchClickListener = {}
     }
 
     fun setAccounts(accounts: List<ShortAccountModel>) {
@@ -79,6 +81,12 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
     }
 
     override fun onClick(view: View) {
+        if (view.id == R.id.ivSearch) {
+            onSearchClickListener()
+            return
+        }
+
+
         val viewHolder = view.tag as? AccountViewHolder
                 ?: return
         val position = viewHolder.adapterPosition
@@ -102,7 +110,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GroupedAccount> =
             when (viewType) {
                 TYPE_ITEM -> AccountViewHolder.newInstance(parent, this, selectedAccounts)
-                TYPE_GROUP -> GroupViewHolder.newInstance(parent)
+                TYPE_GROUP -> GroupViewHolder.newInstance(parent, this)
                 else -> throw IllegalArgumentException("Illegal view type $viewType")
             }
 
@@ -117,9 +125,12 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup): GroupViewHolder {
+            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): GroupViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_connections_recommended_group, parent, false)
-                return GroupViewHolder(view)
+                val viewHolder = GroupViewHolder(view)
+                view.ivSearch.setOnClickListener(onClickListener)
+                view.ivSearch.tag = viewHolder
+                return viewHolder
             }
         }
     }
@@ -162,7 +173,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
     }
 }
 
-sealed class GroupedAccount: Serializable {
+sealed class GroupedAccount : Serializable {
     data class Group(val name: String) : GroupedAccount()
     data class Recommendation(val account: ShortAccountModel) : GroupedAccount()
 }

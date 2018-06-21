@@ -92,6 +92,8 @@ import com.mnassa.screen.group.select.SelectGroupViewModel
 import com.mnassa.screen.group.select.SelectGroupViewModelImpl
 import com.mnassa.screen.home.HomeViewModel
 import com.mnassa.screen.home.HomeViewModelImpl
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.invite.InviteViewModel
 import com.mnassa.screen.invite.InviteViewModelImpl
 import com.mnassa.screen.invite.history.HistoryViewModel
@@ -394,4 +396,5 @@ private val otherModule = Kodein.Module {
     bind<CountryHelper>() with singleton { CountryHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
     bind<PostDetailsFactory>() with singleton { PostDetailsFactory() }
+    bind<InviteSourceHolder>() with singleton { InviteSourceHolder() }
 }

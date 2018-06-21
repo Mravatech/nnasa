@@ -12,6 +12,10 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 interface InviteInteractor {
     suspend fun inviteContact(phoneContact: PhoneContact)
+    suspend fun inviteContactToGroup(phoneContact: PhoneContact, communityId: String)
+    suspend fun inviteContactToPost(phoneContact: PhoneContact, postId: String)
+    suspend fun inviteContactToEvent(phoneContact: PhoneContact, eventId: String)
+
     suspend fun getInvitedContacts(): List<PhoneContactInvited>
     suspend fun getInvitesCountChannel(): ReceiveChannel<Int>
 }
