@@ -3,18 +3,16 @@ package com.mnassa.screen.main
 import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.exception.NotAuthorizedException
-import com.mnassa.domain.interactor.CountersInteractor
-import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.NotificationInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.LogoutReason
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TagModel
+import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -24,8 +22,10 @@ class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
         private val userProfileInteractor: UserProfileInteractor,
         private val notificationInteractor: NotificationInteractor,
-        private val countersInteractor: CountersInteractor
+        private val countersInteractor: CountersInteractor,
+        private val tagInteractor: TagInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
+
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
 
     override val unreadChatsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
@@ -53,6 +53,13 @@ class MainViewModelImpl(
         }
     }
     override val availableAccountsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
+    override val showAddTagsDialog: BroadcastChannel<Unit> by ProcessAccountChangeArrayBroadcastChannel(
+            receiveChannelProvider = {
+                produce {
+                    if (tagInteractor.shouldShowAddTagsDialog()) send(Unit)
+                }
+            }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,5 +110,22 @@ class MainViewModelImpl(
         handleException {
             notificationInteractor.notificationView(true, true, emptyList())
         }
+    }
+
+    override suspend fun getInterests(): List<TagModel> {
+        return handleExceptionsSuspend { getProfile()?.interests?.map { async { tagInteractor.get(it) } }?.mapNotNull { it.await() } }
+                ?: emptyList()
+    }
+
+    override suspend fun getOffers(): List<TagModel> {
+        return handleExceptionsSuspend { getProfile()?.offers?.map { async { tagInteractor.get(it) } }?.mapNotNull { it.await() } }
+                ?: emptyList()
+    }
+
+    override suspend fun getProfile(): ProfileAccountModel? {
+        return handleExceptionsSuspend {
+            userProfileInteractor.getProfileByIdChannel(userProfileInteractor.getAccountIdOrException()).consume { receive() }
+        }
+
     }
 }

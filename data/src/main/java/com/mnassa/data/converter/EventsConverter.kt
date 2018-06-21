@@ -155,7 +155,6 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 price = input.price ?: 0L,
                 ticketsTotal = input.ticketsTotal,
                 ticketsPerAccount = input.ticketsPerAccount,
-                isPromoted = false,
                 eventStartAt = input.startDateTime.time,
                 duration = com.mnassa.data.network.bean.retrofit.request.EventDuration("minute", TimeUnit.MILLISECONDS.toMinutes(input.durationMillis)),
                 pictures = input.uploadedImages.toList().takeIf { it.isNotEmpty() },
@@ -166,7 +165,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 status = input.status.stringValue,
                 locationDescription = (locationType as? EventLocationType.Specified)?.description,
                 allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC,
-                privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
+                privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() && input.privacy.privacyType is PostPrivacyType.PRIVATE }?.toList(),
                 groups = input.groupIds.toList().takeIf { it.isNotEmpty() }
         )
     }

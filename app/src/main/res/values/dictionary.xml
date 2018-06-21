@@ -592,4 +592,9 @@
     <string name="group_member_invite_send">_group_member_invite_send</string>
     <string name="group_member_invite_revoke">_group_member_invite_revoke</string>
 
+    <string name="add_tags_dialog_title">_add_tags_dialog_title</string>
+    <string name="add_tags_dialog_description">_add_tags_dialog_description</string>
+    <string name="add_tags_dialog_now">_add_tags_dialog_btn_now</string>
+    <string name="add_tags_dialog_late">_add_tags_dialog_btn_late</string>
+
 </resources>

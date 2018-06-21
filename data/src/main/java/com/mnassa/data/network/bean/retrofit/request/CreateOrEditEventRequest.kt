@@ -18,7 +18,6 @@ data class CreateOrEditEventRequest(
         @SerializedName("price") val price: Long,
         @SerializedName("ticketsTotal") val ticketsTotal: Int,
         @SerializedName("eventStartAt") val eventStartAt: Long,
-        @SerializedName("isPromoted") val isPromoted: Boolean,
         @SerializedName("duration") val duration: EventDuration,
         @SerializedName("pictures") val pictures: List<String>?,
         @SerializedName("tags") val tags: List<String>?,

@@ -254,5 +254,9 @@ Check it in http://MNASSA.com</string>
     <string name="_group_member_invite_send_INFO">Invite</string>
     <string name="_group_member_invite_revoke_INFO">Revoke</string>
 
+    <string name="_add_tags_dialog_title_INFO">Add Tags!</string>
+    <string name="_add_tags_dialog_description_INFO">Specifying tags about yourself allows you to collaborate with Mnassa community more effectively. Besides,you will be rewarded for each added tag.</string>
+    <string name="_add_tags_dialog_btn_late_INFO">Late</string>
+    <string name="_add_tags_dialog_btn_now_INFO">Let\'s do it!</string>
 
 </resources>

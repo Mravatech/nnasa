@@ -55,7 +55,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = {
-                            val post = converter.convert(it, Unit, InfoPostModel::class.java)
+                            val post = converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
                             post.isPinned = true
                             post
                         }

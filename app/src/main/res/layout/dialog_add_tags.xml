@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/add_tags_dialog_width"
+    android:layout_height="@dimen/add_tags_dialog_height"
+    android:layout_gravity="center"
+    android:background="@drawable/tags"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/spacing_vertical"
+    android:paddingEnd="@dimen/spacing_horizontal"
+    android:paddingStart="@dimen/spacing_horizontal">
+
+    <com.mnassa.widget.MnassaTextView
+        android:id="@+id/tvAddTagsTitle"
+        style="@style/MnassaHeader1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="145dp"
+        android:text="@string/add_tags_dialog_title" />
+
+    <com.mnassa.widget.MnassaTextView
+        style="@style/MnassaText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btnAddTagsNow"
+        android:layout_below="@id/tvAddTagsTitle"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:text="@string/add_tags_dialog_description"
+        android:textSize="16sp"
+        tools:text="Specifying tags about yourself allows you to collaborate with Mnassa community more effectively. Besides,you will be rewarded for each added tag." />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnAddTagsNow"
+        style="@style/MnassaTransparentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:padding="4dp"
+        tools:text="Lets do it!" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnAddTagsLate"
+        style="@style/MnassaTransparentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/btnAddTagsNow"
+        android:layout_toStartOf="@id/btnAddTagsNow"
+        android:padding="4dp"
+        android:textColor="@color/gray_cool"
+        tools:text="Late" />
+
+</RelativeLayout>

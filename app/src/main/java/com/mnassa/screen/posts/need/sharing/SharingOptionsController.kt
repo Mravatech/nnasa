@@ -170,7 +170,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 }
             }
 
-            tvConnections.visibility = rvAllConnections.visibility
+            rlConnectionsHeader.visibility = rvAllConnections.visibility
         }
     }
 

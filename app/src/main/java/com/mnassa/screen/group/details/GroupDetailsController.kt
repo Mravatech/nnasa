@@ -20,6 +20,8 @@ import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_group_details.view.*
 import kotlinx.android.synthetic.main.item_group_member_round.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
 
 /**
