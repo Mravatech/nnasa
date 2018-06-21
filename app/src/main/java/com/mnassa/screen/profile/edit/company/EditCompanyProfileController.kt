@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.controller_edit_company_profile.view.*
 import kotlinx.android.synthetic.main.sub_company_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -93,18 +94,21 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         }
     }
 
+    private var onOrganizationChangedJob: Job? = null
     private fun onOrganizationChanged() {
-        val view = view ?: return
-        view.toolbarEditProfile.actionButtonEnabled = canCreateOrganizationInfo()
+        onOrganizationChangedJob?.cancel()
+        onOrganizationChangedJob = launchCoroutineUI {
+            getViewSuspend().toolbarEditProfile.actionButtonEnabled = canCreateOrganizationInfo()
+        }
     }
 
-    private fun canCreateOrganizationInfo(): Boolean {
+    private suspend fun canCreateOrganizationInfo(): Boolean {
         with(view ?: return false) {
             if (etCompanyName.text.isBlank()) return false
             if (etCompanyUserName.text.isBlank()) return false
             if (companySelectedPlaceId == null) return false
-            if (chipCompanyOffers.getTags().isEmpty()) return false
-            if (chipCompanyInterests.getTags().isEmpty()) return false
+            if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false
         }
         return true
     }

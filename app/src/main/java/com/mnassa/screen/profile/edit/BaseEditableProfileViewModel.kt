@@ -9,4 +9,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface BaseEditableProfileViewModel : MnassaViewModel {
     val addTagRewardChannel: BroadcastChannel<Long?>
     suspend fun calculateDeleteTagsPrice(tagsCount: Int): Long?
+
+    suspend fun isInterestsMandatory(): Boolean
+    suspend fun isOffersMandatory(): Boolean
 }

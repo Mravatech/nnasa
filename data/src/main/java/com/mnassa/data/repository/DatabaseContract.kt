@@ -34,6 +34,8 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
     const val TABLE_CLIENT_DATA_COL_MAINTENANCE = "maintenance"
     const val TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD = "$TABLE_CLIENT_DATA/parameters/tagsReminder"
+    const val TABLE_CLIENT_DATA_COL_INTERESTS_MANDATORY = "parameters/interestsMandatory"
+    const val TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY = "parameters/offersMandatory"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"

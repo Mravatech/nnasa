@@ -29,7 +29,7 @@ sealed class ListItemEvent<T : Any>() {
 suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
         subscriptionContainer: SubscriptionContainer,
         bufferizationTimeMillis: Long = 2000L,
-        maxBufferSize: Int = 5
+        maxBufferSize: Int = 500
 ): ReceiveChannel<ListItemEvent<List<E>>> {
     val srcChannel = this
     var sendItemsJob: Job? = null

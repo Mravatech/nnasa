@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.controller_edit_personal_profile.view.*
 import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.util.*
@@ -89,19 +90,22 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         }
     }
 
+    private var onPersonChangedJob: Job? = null
     private fun onPersonChanged() {
-        val view = view ?: return
-        view.toolbarEditProfile.actionButtonEnabled = canCreatePersonInfo()
+        onPersonChangedJob?.cancel()
+        onPersonChangedJob = launchCoroutineUI {
+            getViewSuspend().toolbarEditProfile.actionButtonEnabled = canCreatePersonInfo()
+        }
     }
 
-    private fun canCreatePersonInfo(): Boolean {
+    private suspend fun canCreatePersonInfo(): Boolean {
         with(view ?: return false) {
             if (etPersonFirstName.text.isBlank()) return false
             if (etPersonSecondName.text.isBlank()) return false
             if (etPersonUserName.text.isBlank()) return false
             if (personSelectedPlaceId == null) return false
-            if (chipPersonOffers.getTags().isEmpty()) return false
-            if (chipPersonInterests.getTags().isEmpty()) return false
+            if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
         }
         return true
     }

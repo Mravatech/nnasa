@@ -50,4 +50,8 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
     override suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long? {
         return tagRepository.getRemoveTagPrice()?.let { removedTagsCount * it }
     }
+
+    override suspend fun isInterestsMandatory(): Boolean = tagRepository.isInterestsMandatory()
+
+    override suspend fun isOffersMandatory(): Boolean = tagRepository.isOffersMandatory()
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 
@@ -15,6 +16,8 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 abstract class BaseEditableProfileViewModelImpl(private val tagInteractor: TagInteractor) : BaseEditableProfileViewModel, MnassaViewModelImpl() {
 
     override val addTagRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
+    private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
+    private val isOffersMandatory = async { tagInteractor.isOffersMandatory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,4 +41,8 @@ abstract class BaseEditableProfileViewModelImpl(private val tagInteractor: TagIn
 
 
     override suspend fun calculateDeleteTagsPrice(tagsCount: Int): Long? = tagInteractor.calculateRemoveTagPrice(tagsCount)
+
+    override suspend fun isInterestsMandatory(): Boolean = isInterestsMandatory.await()
+
+    override suspend fun isOffersMandatory(): Boolean = isOffersMandatory.await()
 }
