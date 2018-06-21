@@ -71,7 +71,7 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
         if (input == null) return null
         val entity = input.values.first()
         entity.id = input.keys.first()
-        return converter.convert(entity)
+        return converter.convert(entity, PostAdditionInfo(emptySet()), PostModel::class.java)
     }
 
     private fun convertGroup(input: Map<String, GroupDbEntity>?, converter: ConvertersContext): GroupModel? {

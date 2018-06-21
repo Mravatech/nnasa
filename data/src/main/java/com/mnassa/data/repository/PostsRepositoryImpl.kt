@@ -38,8 +38,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val tagRepository: TagRepository,
                           private val exceptionHandler: ExceptionHandler,
                           private val converter: ConvertersContext,
-                          private val postApi: FirebasePostApi,
-                          private val languageProvider: LanguageProvider) : PostsRepository {
+                          private val postApi: FirebasePostApi) : PostsRepository {
 
     override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
         return db.child(TABLE_NEWS_FEED)

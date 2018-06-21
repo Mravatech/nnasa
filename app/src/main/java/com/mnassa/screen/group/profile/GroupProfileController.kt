@@ -217,7 +217,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                                 onOkClick = { viewModel.delete() }
                         )
                     }
-                    R.id.action_group_wallet -> open(WalletController.newInstanceGorup(groupModel))
+                    R.id.action_group_wallet -> open(WalletController.newInstanceGroup(groupModel))
                 }
                 true
             }

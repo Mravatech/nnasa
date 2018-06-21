@@ -41,8 +41,8 @@ class UserRepositoryImpl(
         private val db: DatabaseReference,
         firebaseAuthApiLazy: () -> FirebaseAuthApi) : UserRepository {
 
-    private val firebaseAuthApi: FirebaseAuthApi by lazy(firebaseAuthApiLazy)
-    private val converter: ConvertersContext by lazy(converterLazy)
+    private val firebaseAuthApi by lazy(firebaseAuthApiLazy)
+    private val converter by lazy(converterLazy)
 
     private val sharedPrefs by lazy { context.getSharedPreferences(EXTRA_PREFS_NAME, Context.MODE_PRIVATE) }
     private var accountIdInternal: String?

@@ -10,6 +10,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface RegistrationViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: BroadcastChannel<RegistrationViewModel.OpenScreenCommand>
+    val hasPersonalAccountChannel: BroadcastChannel<Boolean>
 
     fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>)
     fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModel>, interests: List<TagModel>)

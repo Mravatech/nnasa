@@ -56,7 +56,7 @@ class MnassaGlideModule : AppGlideModule() {
 
         override fun buildLoadData(model: String, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream> {
             val glideUrl: GlideUrl = when {
-                model.isBlank() -> GlideUrl(wrongUrl)
+                model.isNullOrEmpty() -> GlideUrl(wrongUrl)
                 else -> GlideUrl(model)
             }
 

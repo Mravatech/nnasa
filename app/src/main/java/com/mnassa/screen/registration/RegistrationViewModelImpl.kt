@@ -1,23 +1,41 @@
 package com.mnassa.screen.registration
 
+import android.os.Bundle
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 /**
  * Created by Peter on 2/26/2018.
  */
 class RegistrationViewModelImpl(
-    private val userProfileInteractor: UserProfileInteractor,
-    private val tagInteractor: TagInteractor,
-    private val placeFinderInteractor: PlaceFinderInteractor
+        private val userProfileInteractor: UserProfileInteractor,
+        private val tagInteractor: TagInteractor,
+        private val placeFinderInteractor: PlaceFinderInteractor
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val hasPersonalAccountChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        handleException {
+            userProfileInteractor.getAllAccounts().consumeEach {
+                hasPersonalAccountChannel.send(it.any { it.accountType == AccountType.PERSONAL })
+            }
+        }
+    }
+
+
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
         handleException {
             withProgressSuspend {

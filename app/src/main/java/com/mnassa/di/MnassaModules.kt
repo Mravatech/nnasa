@@ -284,13 +284,13 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(AbilityConverter())
         converter.registerConverter(PostConverter(instance()))
         converter.registerConverter(CommentsConverter())
-        converter.registerConverter(WalletConverter({ instance() }))
+        converter.registerConverter(WalletConverter { instance() })
         converter.registerConverter(InvitationConverter())
         converter.registerConverter(ChatConverter())
         converter.registerConverter(EventsConverter())
         converter.registerConverter(NotificationsConverter())
         converter.registerConverter(PushSettingsConverter())
-        converter.registerConverter(GroupConverter({ instance() }))
+        converter.registerConverter(GroupConverter { instance() })
         converter
     }
 }
@@ -319,9 +319,9 @@ private val repositoryModule = Kodein.Module {
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
-    bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
     bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
