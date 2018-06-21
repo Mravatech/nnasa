@@ -44,4 +44,10 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
         }
         return false
     }
+
+    override suspend fun getAddTagPrice(): Long? = tagRepository.getAddTagPrice()
+
+    override suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long? {
+        return tagRepository.getRemoveTagPrice()?.let { removedTagsCount * it }
+    }
 }

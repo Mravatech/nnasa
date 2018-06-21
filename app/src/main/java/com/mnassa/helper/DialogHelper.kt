@@ -7,16 +7,18 @@ import android.app.ProgressDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatRadioButton
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
@@ -462,5 +464,26 @@ class DialogHelper {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    fun showDeleteProfileTagsDialog(context: Context, tagsCount: Long, onConfirm: () -> Unit, onCancel: () -> Unit) {
+        val description = SpannableStringBuilder(fromDictionary(R.string.delete_tags_penalty_description_prefix))
+        description.append(" ")
+        val spanStart = description.length
+        description.append(fromDictionary(R.string.delete_tags_penalty_description_suffix).format(tagsCount))
+        description.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.red)), spanStart, description.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        val okText = SpannableString(fromDictionary(R.string.general_yes))
+        okText.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.red)), 0, okText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        MaterialDialog.Builder(context)
+                .title(fromDictionary(R.string.delete_tags_penalty_title))
+                .content(description)
+                .positiveText(okText)
+                .negativeText(fromDictionary(R.string.general_no))
+                .onPositive { dialog, which -> onConfirm(); dialog.dismiss() }
+                .onNegative { dialog, which -> dialog.cancel() }
+                .cancelListener { onCancel() }
+                .show()
     }
 }

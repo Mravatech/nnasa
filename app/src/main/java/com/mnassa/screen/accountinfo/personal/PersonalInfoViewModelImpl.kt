@@ -3,6 +3,7 @@ package com.mnassa.screen.accountinfo.personal
 import android.net.Uri
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.FOLDER_AVATARS
@@ -10,12 +11,13 @@ import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.PersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
-import com.mnassa.screen.base.MnassaViewModelImpl
+import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor,
-                                private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), PersonalInfoViewModel {
+                                private val userProfileInteractor: UserProfileInteractor,
+                                tagInteractor: TagInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), PersonalInfoViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
 

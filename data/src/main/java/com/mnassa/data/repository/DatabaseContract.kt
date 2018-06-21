@@ -40,6 +40,9 @@ internal object DatabaseContract {
     const val TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_EVENT = "paymentTypes/promoteEvent"
     const val TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_POST = "paymentTypes/promotePost"
     const val TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT ="paymentTypes/rewardForComment"
+    const val TABLE_DICTIONARY_COL_REWARD_FOR_PROFILE_TAG = "paymentTypes/addTagInProfile"
+    const val TABLE_DICTIONARY_COL_PENALTY_FOR_PROFILE_TAG = "paymentTypes/removeTagInProfile"
+    const val TABLE_DICTIONARY_COL_REWARD_INVITE_USER = "paymentTypes/inviteOutsideUser"
     //
     const val TABLE_CONNECTIONS = "connections"
 
@@ -132,5 +135,4 @@ internal object DatabaseContract {
     const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
     const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
     const val TABLE_GROUPS_ALL_COL_WALLET = "wallet"
-
 }

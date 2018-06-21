@@ -2,11 +2,13 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseInviteApi
 import com.mnassa.data.network.bean.firebase.InvitationDbEntity
+import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.retrofit.request.ContactsRequest
 import com.mnassa.data.network.bean.retrofit.request.PhoneContactRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
@@ -78,6 +80,14 @@ class InviteRepositoryImpl(
                 .child(userRepository.getAccountIdOrException())
                 .child(DatabaseContract.TABLE_ACCOUNTS_COL_INVITES_COUNT)
                 .toValueChannel<Int>(exceptionHandler).map { it ?: 0 }
+    }
+
+    override suspend fun getRewardPerInvite(): Long? {
+        return db.child(DatabaseContract.TABLE_DICTIONARY)
+                .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_INVITE_USER)
+                .await<PriceDbEntity>(exceptionHandler)
+                .takeIf { it?.state == true }
+                ?.amount
     }
 
     private fun PhoneContact.toInviteRequest(): PhoneContactRequest {

@@ -15,4 +15,7 @@ interface TagInteractor{
     suspend fun createCustomTagIds(tags: List<String>): List<String>
     suspend fun getTagsByIds(ids: List<String>): List<TagModel>
     suspend fun shouldShowAddTagsDialog(): Boolean
+
+    suspend fun getAddTagPrice(): Long?
+    suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long?
 }

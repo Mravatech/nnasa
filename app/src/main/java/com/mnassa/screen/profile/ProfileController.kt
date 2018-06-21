@@ -139,7 +139,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun handleCollapsingToolbar(view: View, connectionStatus: ConnectionStatus, profileModel: ProfileAccountModel) {
 
-        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+        view.appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val shouldShowFab = (connectionStatus == ConnectionStatus.CONNECTED ||
                     connectionStatus == ConnectionStatus.RECOMMENDED ||
                     connectionStatus == ConnectionStatus.SENT)
@@ -154,7 +154,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     view.fabProfile.show()
                 }
             }
-        })
+        }
     }
 
     override var onComplaint: String = ""

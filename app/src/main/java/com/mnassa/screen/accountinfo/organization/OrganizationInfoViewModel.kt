@@ -2,13 +2,13 @@ package com.mnassa.screen.accountinfo.organization
 
 import android.net.Uri
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.screen.base.MnassaViewModel
+import com.mnassa.screen.profile.edit.BaseEditableProfileViewModel
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 /**
  * Created by Peter on 2/28/2018.
  */
-interface OrganizationInfoViewModel : MnassaViewModel {
+interface OrganizationInfoViewModel : BaseEditableProfileViewModel {
     val openScreenChannel: ArrayBroadcastChannel<OrganizationInfoViewModel.OpenScreenCommand>
     fun saveLocallyAvatarUri(uri: Uri)
     fun skipThisStep()

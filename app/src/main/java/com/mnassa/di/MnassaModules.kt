@@ -188,9 +188,9 @@ private val viewModelsModule = Kodein.Module {
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
-    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl(instance(), instance()) }
+    bind<OrganizationInfoViewModel>() with provider { OrganizationInfoViewModelImpl(instance(), instance(), instance()) }
     bind<EnterPromoViewModel>() with provider { EnterPromoViewModelImpl(instance(), instance()) }
-    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance()) }
+    bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
     bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance()) }
