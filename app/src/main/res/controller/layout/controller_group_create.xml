@@ -82,7 +82,9 @@
                 android:id="@+id/chipTags"
                 style="@style/Registration.ChipLayout"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal" />
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <FrameLayout
                 android:layout_width="match_parent"

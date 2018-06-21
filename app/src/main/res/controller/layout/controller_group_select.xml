@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
-        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:gravity="center"
         android:visibility="invisible"
         tools:visibility="visible">
@@ -48,6 +48,6 @@
         android:layout_below="@id/toolbar"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/item_connections_all"
-        tools:visibility="visible" />
+        tools:visibility="invisible" />
 
 </RelativeLayout>

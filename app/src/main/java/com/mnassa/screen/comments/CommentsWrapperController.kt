@@ -299,7 +299,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             RawCommentModel(
                     id = editedComment?.id,
                     parentCommentId = replyTo?.id ?: editedComment?.parentCommentId,
-                    text = etCommentText.text.toString(),
+                    text = etCommentText.text.toString().takeIf { it.isNotBlank() },
                     accountsToRecommend = accountsToRecommend.map { it.id },
                     uploadedImages = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.UploadedImage::class.java).map { it.imageUrl },
                     imagesToUpload = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.LocalImage::class.java).map { it.imageUri },

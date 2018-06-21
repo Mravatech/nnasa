@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.TransactionModel
-import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter

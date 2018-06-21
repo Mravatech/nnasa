@@ -2,6 +2,7 @@ package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.model.TransactionSideModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -14,6 +15,11 @@ interface WalletRepository {
     suspend fun getTransactions(): ReceiveChannel<List<TransactionModel>>
     suspend fun getDefaultRewardingPoints(): Long
 
-    suspend fun sendPoints(amount: Long, recipientId: String, description: String?)
+    suspend fun sendPoints(amount: Long, sender: TransactionSideModel, recipient: TransactionSideModel, description: String?)
     suspend fun sendPointsForComment(rewardModel: RewardModel)
+
+    suspend fun getGroupBalance(groupId: String): ReceiveChannel<Long>
+    suspend fun getGroupSpentPointsCount(groupId: String): ReceiveChannel<Long>
+    suspend fun getGroupGainedPointsCount(groupId: String): ReceiveChannel<Long>
+    suspend fun getGroupTransactions(groupId: String): ReceiveChannel<List<TransactionModel>>
 }

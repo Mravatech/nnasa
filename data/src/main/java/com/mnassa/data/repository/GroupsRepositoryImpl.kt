@@ -27,12 +27,14 @@ import kotlinx.coroutines.experimental.channels.map
  */
 class GroupsRepositoryImpl(
         private val firestore: FirebaseFirestore,
-        private val userRepository: UserRepository,
+        userRepositoryLazy: () -> UserRepository,
         private val exceptionHandler: ExceptionHandler,
-        private val converter: ConvertersContext,
-        private val db: DatabaseReference,
+        converterLazy: () -> ConvertersContext,
         private val api: FirebaseGroupsApi
 ) : GroupsRepository {
+
+    private val converter by lazy(converterLazy)
+    private val userRepository by lazy(userRepositoryLazy)
 
     override suspend fun deleteGroup(groupId: String) {
         api.delete(DeleteGroupRequest(groupId)).handleException(exceptionHandler)
