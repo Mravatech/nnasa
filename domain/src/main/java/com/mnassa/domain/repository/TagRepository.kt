@@ -18,4 +18,7 @@ interface TagRepository {
     suspend fun setAddTagsDialogShowingTime(time: Date)
     suspend fun getAddTagPrice(): Long?
     suspend fun getRemoveTagPrice(): Long?
+
+    suspend fun isInterestsMandatory(): Boolean
+    suspend fun isOffersMandatory(): Boolean
 }

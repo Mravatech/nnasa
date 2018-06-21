@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -131,37 +132,43 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onDestroy()
     }
 
-    private fun canCreatePersonInfo(): Boolean {
+    private suspend fun canCreatePersonInfo(): Boolean {
         with(view ?: return false) {
             if (vpRegistration.etPersonFirstName.text.isBlank()) return false
             if (vpRegistration.etPersonSecondName.text.isBlank()) return false
             if (vpRegistration.etPersonUserName.text.isBlank()) return false
             if (registrationAdapter.personSelectedPlaceId == null) return false
-            if (vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
-            if (vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
+            if (viewModel.isOffersMandatory() && vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
         }
         return true
     }
 
-    private fun canCreateOrganizationInfo(): Boolean {
+    private suspend fun canCreateOrganizationInfo(): Boolean {
         with(view ?: return false) {
             if (vpRegistration.etCompanyName.text.isBlank()) return false
             if (vpRegistration.etCompanyUserName.text.isBlank()) return false
             if (registrationAdapter.companySelectedPlaceId == null) return false
-            if (vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
-            if (vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
+            if (viewModel.isOffersMandatory() && vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
         }
         return true
     }
 
+    private var onInfoChangedJob: Job? = null
     private fun onPersonChanged() {
-        val view = view ?: return
-        view.btnScreenHeaderAction.isEnabled = canCreatePersonInfo()
+        onInfoChangedJob?.cancel()
+        onInfoChangedJob = launchCoroutineUI {
+            getViewSuspend().btnScreenHeaderAction.isEnabled = canCreatePersonInfo()
+        }
+
     }
 
     private fun onOrganizationChanged() {
-        val view = view ?: return
-        view.btnScreenHeaderAction.isEnabled = canCreateOrganizationInfo()
+        onInfoChangedJob?.cancel()
+        onInfoChangedJob = launchCoroutineUI {
+            getViewSuspend().btnScreenHeaderAction.isEnabled = canCreateOrganizationInfo()
+        }
     }
 
     private fun processRegisterClick() {

@@ -100,6 +100,18 @@ class TagRepositoryImpl(
                 ?.amount
     }
 
+    override suspend fun isInterestsMandatory(): Boolean {
+        return db.child(DatabaseContract.TABLE_CLIENT_DATA)
+                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_INTERESTS_MANDATORY)
+                .await(exceptionHandler) ?: false
+    }
+
+    override suspend fun isOffersMandatory(): Boolean {
+        return db.child(DatabaseContract.TABLE_CLIENT_DATA)
+                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY)
+                .await(exceptionHandler) ?: false
+    }
+
     private fun filterById(ids: List<String>, tags: List<TagDbEntity>) = async {
         val result = mutableListOf<TagModel>()
         for (tag in tags) {

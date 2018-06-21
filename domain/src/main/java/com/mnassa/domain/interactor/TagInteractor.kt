@@ -18,4 +18,8 @@ interface TagInteractor{
 
     suspend fun getAddTagPrice(): Long?
     suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long?
+
+    suspend fun isInterestsMandatory(): Boolean
+    suspend fun isOffersMandatory(): Boolean
+
 }
