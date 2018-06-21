@@ -587,4 +587,6 @@
     <string name="transaction_recipient_group">_transaction_recipient_group</string>
     <string name="transaction_recipient_user">_transaction_recipient_user</string>
 
+    <string name="server_maintenance_error">_maintenance_maintenanceMessage</string>
+
 </resources>

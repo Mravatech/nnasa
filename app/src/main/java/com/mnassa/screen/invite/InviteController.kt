@@ -47,7 +47,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode
                     ?: return EMPTY_STRING
             countryCodePhrase = countryCode.phonePrefix.code.replace("+", EMPTY_STRING)
-            return countryCodePhrase + view.etPhoneNumberTail.text.toString()
+            return countryCodePhrase + view.etPhoneNumberTail.text.toString().replace(" ", "")
         }
 
     override fun onViewCreated(view: View) {

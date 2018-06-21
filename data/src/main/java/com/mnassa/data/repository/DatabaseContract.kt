@@ -31,6 +31,7 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"
     const val TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME = "parameters/defaultExpirationTime"
     const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
+    const val TABLE_CLIENT_DATA_COL_MAINTENANCE = "maintenance"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
