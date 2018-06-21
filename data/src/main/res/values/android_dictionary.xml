@@ -52,6 +52,7 @@
     <string name="_android_post_share_value_center_INFO">To value center</string>
     <string name="_android_post_expires_in_INFO">Post expires in</string>
     <string name="_android_my_wallet_title_INFO">My wallet</string>
+    <string name="_android_group_wallet_title_INFO">%s wallet</string>
     <string name="_android_my_wallet_balance_INFO">Balance</string>
     <string name="_android_my_wallet_spent_INFO">Spent</string>
     <string name="_android_my_wallet_gained_INFO">Gained</string>
@@ -109,6 +110,7 @@
     <string name="_android_position_not_specified_INFO">Position not specified</string>
 
     <string name="_android_side_menu_profile_INFO">My Profile</string>
+    <string name="_android_side_menu_groups_INFO">Groups</string>
     <string name="_android_side_menu_logout_INFO">Logout</string>
     <string name="_android_side_menu_add_account_INFO">Add Account</string>
     <string name="_android_type_your_message_INFO">Type your message…</string>
@@ -217,5 +219,40 @@
     <string name="_android_user_was_deleted_INFO">Deleted user</string>
 
     <string name="_android_points_count_INFO">%d Points</string>
+
+    <string name="_android_groups_empty_title_INFO">No groups</string>
+    <string name="_android_groups_empty_description_INFO">You have no groups yet. Just ask sb for invite or create own group</string>
+    <string name="_myGroups_groupCell_isMember_INFO">You are a member</string>
+    <string name="_group_member_remove_INFO">Remove</string>
+    <string name="_group_member_invite_remove_INFO">Remove</string>
+    <string name="_group_member_admin_INFO">Make admin</string>
+    <string name="_group_member_un_admin_INFO">Unmake admin</string>
+    <string name="_group_invites_more_INFO">%d groups more</string>
+    <string name="_group_tags_header_INFO">Tags</string>
+    <string name="_group_item_header_created_by_me_INFO">Created by me</string>
+    <string name="_group_item_header_all_INFO">All Groups</string>
+    <string name="_group_user_role_admin_INFO">Admin</string>
+    <string name="_group_post_remove_INFO">Remove post</string>
+    <string name="_group_manage_permissions_INFO">Manage permissions</string>
+    <string name="_group_manage_permissions_title_INFO">Manage %s permissions</string>
+    <string name="_group_create_permissions_hint_INFO">Type of posts available for publishing</string>
+    <string name="_group_permission_need_INFO">I Need posts</string>
+    <string name="_group_permission_offer_INFO">I Offer posts</string>
+    <string name="_group_permission_general_INFO">General posts</string>
+    <string name="_community_header_invites_INFO">Invites</string>
+    <string name="_inviteSharing_fromGroupMask_INFO">I think this community can be useful for you.
+%@
+
+Check it in http://MNASSA.com</string>
+    <string name="_groupNewsfeed_menu_wallet_INFO">Group wallet</string>
+
+
+    <string name="_post_item_from_group_INFO">From</string>
+    <string name="_transaction_recipient_user_INFO">To User</string>
+    <string name="_transaction_recipient_group_INFO">To Group</string>
+
+    <string name="_group_member_invite_send_INFO">Invite</string>
+    <string name="_group_member_invite_revoke_INFO">Revoke</string>
+
 
 </resources>

@@ -3,7 +3,6 @@ package com.mnassa.data.network
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
@@ -21,13 +20,11 @@ class RetrofitConfig(
         appInfoProviderLazy: () -> AppInfoProvider,
         languageProviderLazy: () -> LanguageProvider,
         userProfileInteractorLazy: () -> UserProfileInteractor,
-        loginInteractorLazy: () -> LoginInteractor,
         gsonLazy: () -> Gson) {
 
     private val appInfoProvider: AppInfoProvider by lazy(appInfoProviderLazy)
     private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
     private val userProfileInteractor: UserProfileInteractor by lazy(userProfileInteractorLazy)
-    private val loginInteractor: LoginInteractor by lazy (loginInteractorLazy)
     private val gson: Gson by lazy(gsonLazy)
 
     fun makeRetrofit(): Retrofit {

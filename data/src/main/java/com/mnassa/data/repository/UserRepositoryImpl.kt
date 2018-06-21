@@ -1,7 +1,6 @@
 package com.mnassa.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.auth.FirebaseAuth
@@ -36,13 +35,14 @@ import kotlinx.coroutines.experimental.channels.produce
  * Created by Peter on 2/21/2018.
  */
 class UserRepositoryImpl(
-        private val converter: ConvertersContext,
+        converterLazy: () -> ConvertersContext,
         private val context: Context,
         private val exceptionHandler: ExceptionHandler,
         private val db: DatabaseReference,
         firebaseAuthApiLazy: () -> FirebaseAuthApi) : UserRepository {
 
-    private val firebaseAuthApi: FirebaseAuthApi by lazy(firebaseAuthApiLazy)
+    private val firebaseAuthApi by lazy(firebaseAuthApiLazy)
+    private val converter by lazy(converterLazy)
 
     private val sharedPrefs by lazy { context.getSharedPreferences(EXTRA_PREFS_NAME, Context.MODE_PRIVATE) }
     private var accountIdInternal: String?
@@ -258,7 +258,8 @@ class UserRepositoryImpl(
 
     override suspend fun getFirebaseToken(): String? {
         val user = FirebaseAuth.getInstance().currentUser ?: return null
-        return user.getIdToken(false).await(exceptionHandler).token
+        val forceRefresh = accountIdInternal == null
+        return user.getIdToken(forceRefresh).await(exceptionHandler).token
     }
 
     override suspend fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid

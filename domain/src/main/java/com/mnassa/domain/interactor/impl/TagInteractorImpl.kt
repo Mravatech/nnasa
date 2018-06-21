@@ -10,11 +10,11 @@ import com.mnassa.domain.repository.TagRepository
  * Date: 3/7/2018
  */
 
-class TagInteractorImpl(
-        private val tagRepository: TagRepository
-        ) : TagInteractor {
+class TagInteractorImpl(private val tagRepository: TagRepository) : TagInteractor {
 
     override suspend fun get(id: String): TagModel? = tagRepository.get(id)
+
+    override suspend fun getAll(): List<TagModel> = tagRepository.getAll()
 
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
         return tagRepository.createCustomTagIds(tags)

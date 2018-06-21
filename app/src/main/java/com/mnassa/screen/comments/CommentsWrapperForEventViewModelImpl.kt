@@ -1,12 +1,15 @@
 package com.mnassa.screen.comments
 
+import android.net.Uri
 import android.os.Bundle
 import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.CommentModel
-import com.mnassa.domain.model.mostParentCommentId
+import com.mnassa.domain.model.RawCommentModel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -23,6 +26,7 @@ class CommentsWrapperForEventViewModelImpl(
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
     override val canReadCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
     override val canWriteCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
+    private val preloadedImages = HashMap<Uri, Deferred<String>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,21 +41,13 @@ class CommentsWrapperForEventViewModelImpl(
         }
     }
 
-    override fun createComment(text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
+    override fun createComment(comment: RawCommentModel) {
         handleException {
             withProgressSuspend {
-                val createdComment: CommentModel = when (replyTo) {
-                    null -> commentsInteractor.writeEventComment(
-                            eventId = eventId,
-                            text = text,
-                            accountsToRecommend = accountsToRecommend
-                    )
-                    else -> commentsInteractor.replyToEventComment(
-                            eventId = eventId,
-                            text = text,
-                            accountsToRecommend = accountsToRecommend,
-                            commentId = replyTo.mostParentCommentId
-                    )
+                comment.uploadImages()
+                val createdComment: CommentModel = when (comment.parentCommentId) {
+                    null -> commentsInteractor.writeEventComment(comment)
+                    else -> commentsInteractor.replyToEventComment(comment)
                 }
 
                 commentsChannel.send((commentsChannel.valueOrNull ?: emptyList()) + createdComment)
@@ -60,10 +56,11 @@ class CommentsWrapperForEventViewModelImpl(
         }
     }
 
-    override fun editComment(originalComment: CommentModel, text: String, accountsToRecommend: List<String>, replyTo: CommentModel?) {
+    override fun editComment(comment: RawCommentModel) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.editPostComment(originalComment.id, text, accountsToRecommend)
+                comment.uploadImages()
+                commentsInteractor.editEventComment(comment)
                 loadComments()
             }
         }
@@ -72,12 +69,20 @@ class CommentsWrapperForEventViewModelImpl(
     override fun deleteComment(commentModel: CommentModel) {
         handleException {
             withProgressSuspend {
-                commentsInteractor.deleteComment(commentModel.id)
+                commentsInteractor.deleteEventComment(commentModel)
                 //TODO: remove this when comments counter will be fixed on the server side
                 loadComments()
             }
         }
     }
+
+    override fun preloadImage(imageFile: Uri) {
+        handleException {
+            uploadImageIfNeeded(imageFile)
+        }
+    }
+
+    private suspend fun uploadImageIfNeeded(imageFile: Uri) = preloadedImages.getOrPut(imageFile) { async { commentsInteractor.preloadCommentImage(imageFile) } }
 
     private suspend fun loadComments() {
         try {
@@ -86,5 +91,12 @@ class CommentsWrapperForEventViewModelImpl(
             canReadCommentsChannel.send(e.canReadComments)
             canWriteCommentsChannel.send(e.canWriteComments)
         }
+    }
+
+    private suspend fun RawCommentModel.uploadImages() {
+        val uploadedImagesResult = ArrayList(uploadedImages)
+        uploadedImagesResult += imagesToUpload.map { uploadImageIfNeeded(it) }.map { it.await() }
+        uploadedImages = uploadedImagesResult
+        imagesToUpload = emptyList()
     }
 }

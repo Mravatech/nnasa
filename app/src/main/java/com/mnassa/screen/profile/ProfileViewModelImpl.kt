@@ -23,7 +23,8 @@ class ProfileViewModelImpl(
         private val userProfileInteractor: UserProfileInteractor,
         private val connectionsInteractor: ConnectionsInteractor,
         private val postsInteractor: PostsInteractor,
-        private val complaintInteractor: ComplaintInteractor
+        private val complaintInteractor: ComplaintInteractor,
+        private val groupsInteractor: GroupsInteractor
 ) : MnassaViewModelImpl(), ProfileViewModel {
 
     override val profileChannel: ConflatedBroadcastChannel<ProfileAccountModel> = ConflatedBroadcastChannel()
@@ -103,6 +104,14 @@ class ProfileViewModelImpl(
                     else -> throw IllegalArgumentException("Wrong connection status")
                 }
                 connectionsInteractor.actionConnectionStatus(action, listOf(aid))
+            }
+        }
+    }
+
+    override fun inviteToGroup(group: GroupModel) {
+        handleException {
+            withProgressSuspend {
+                groupsInteractor.sendInvite(groupId = group.id, accountIds = listOf(accountId))
             }
         }
     }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_title="@string/group_select_title" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvGroupInvite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnInvite"
+        android:layout_below="@id/toolbar"
+        android:layout_marginEnd="@dimen/spacing_horizontal"
+        android:layout_marginStart="@dimen/spacing_horizontal"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_group_invite" />
+
+    <View
+        style="@style/MnassaShadow"
+        android:layout_above="@id/btnInvite"
+        android:rotation="180" />
+
+    <Button
+        android:id="@+id/btnInvite"
+        style="@style/MnassaTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/background_highlighted"
+        tools:text="Invite new connections" />
+</RelativeLayout>

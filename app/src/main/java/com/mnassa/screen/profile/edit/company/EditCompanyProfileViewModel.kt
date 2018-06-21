@@ -5,7 +5,6 @@ import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
-import com.mnassa.widget.ChipsAdapter
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
 /**
@@ -13,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  * User: okli
  * Date: 3/28/2018
  */
-interface EditCompanyProfileViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface EditCompanyProfileViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: ArrayBroadcastChannel<CompanyScreenCommander>
     fun saveLocallyAvatarUri(uri: Uri)
     fun updateCompanyAccount(

@@ -42,7 +42,6 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
 
             tvInviteUsersToBuildNetwork.text = formatSubTitle()
 
-            rvInvite.layoutManager = LinearLayoutManager(view.context)
             rvInvite.adapter = adapter
 
             adapter.onSelectedAccountsChangedListener = { selectedAccounts ->

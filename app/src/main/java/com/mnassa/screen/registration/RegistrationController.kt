@@ -92,6 +92,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
         }
+        launchCoroutineUI {
+            viewModel.hasPersonalAccountChannel.consumeEach { hasPersonalAccount ->
+                view.llAccountTypePersonal.isEnabled = !hasPersonalAccount
+                if (hasPersonalAccount) {
+                    view.vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
+                }
+            }
+        }
     }
 
     private fun updateAccountTypeSwitch() {
@@ -244,9 +252,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-                chipPersonOffers.chipSearch = viewModel
                 chipPersonOffers.setTags(emptyList())
-                chipPersonInterests.chipSearch = viewModel
                 chipPersonInterests.setTags(emptyList())
                 etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
                 etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
@@ -267,8 +273,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-                chipCompanyOffers.chipSearch = viewModel
-                chipCompanyInterests.chipSearch = viewModel
                 etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
@@ -280,7 +284,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             city.setAdapter(placeAutocompleteAdapter)
-            city.setOnItemClickListener({ _, _, i, _ ->
+            city.setOnItemClickListener { _, _, i, _ ->
                 val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 if (isPerson) {
                     personSelectedPlaceId = item.placeId
@@ -291,7 +295,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                     companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                     city.setText(companySelectedPlaceName ?: "")
                 }
-            })
+            }
         }
     }
 }

@@ -50,13 +50,13 @@ class MnassaGlideModule : AppGlideModule() {
 //====================================== STRING URL LOADER =========================================
 
     internal class OkHttpStringUrlLoader private constructor(private val client: Call.Factory) : ModelLoader<String, InputStream> {
-        private val wrongUrl = "http://wrong.url/i.jpg"
+        private val wrongUrl = ""
 
         override fun handles(url: String): Boolean = true
 
         override fun buildLoadData(model: String, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream> {
             val glideUrl: GlideUrl = when {
-                model.isBlank() -> GlideUrl(wrongUrl)
+                model.isNullOrEmpty() -> GlideUrl(wrongUrl)
                 else -> GlideUrl(model)
             }
 

@@ -84,7 +84,7 @@ enum class Gender {
 
 val ShortAccountModel.formattedName: String
     get () {
-        return when (accountType) {
+        return (when (accountType) {
             AccountType.PERSONAL -> {
                 val info = requireNotNull(personalInfo)
                 info.firstName + " " + info.lastName
@@ -92,7 +92,7 @@ val ShortAccountModel.formattedName: String
             AccountType.ORGANIZATION -> {
                 requireNotNull(organizationInfo?.organizationName)
             }
-        }
+        }).replace("\n", "").replace("\r", "")
     }
 
 fun ShortAccountModel.mainAbility(atPlaceholder: String): String? {

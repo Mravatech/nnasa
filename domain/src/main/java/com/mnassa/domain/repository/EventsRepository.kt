@@ -1,6 +1,7 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.RawEventModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -18,8 +19,8 @@ interface EventsRepository {
     suspend fun getAttendedUsers(eventId: String): List<EventAttendee>
     suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>>
     suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>)
-    suspend fun createEvent(model: CreateOrEditEventModel)
-    suspend fun editEvent(model: CreateOrEditEventModel)
+    suspend fun createEvent(model: RawEventModel)
+    suspend fun editEvent(model: RawEventModel)
     suspend fun getPromoteEventPrice(): Long?
     suspend fun promote(id: String)
 }

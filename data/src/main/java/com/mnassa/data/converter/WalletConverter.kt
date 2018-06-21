@@ -2,20 +2,20 @@ package com.mnassa.data.converter
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
-import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity
 import com.mnassa.data.network.bean.firebase.TransactionDbEntity
+import com.mnassa.data.network.bean.firebase.TransactionMemberDbEntity
 import com.mnassa.domain.interactor.DictionaryInteractor
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.domain.model.impl.TransactionModelImpl
+import com.mnassa.domain.repository.DictionaryRepository
 import java.util.*
 
 /**
  * Created by Peter on 3/30/2018.
  */
-class WalletConverter(private val lazyDictionaryRepository: () -> DictionaryInteractor) : ConvertersContextRegistrationCallback {
+class WalletConverter(private val lazyDictionaryInteractor: () -> DictionaryInteractor) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertTransaction)
@@ -35,15 +35,20 @@ class WalletConverter(private val lazyDictionaryRepository: () -> DictionaryInte
         )
     }
 
-    private fun convertUser(input: Map<String, ShortAccountDbEntity>, converter: ConvertersContext): ShortAccountModel? {
-        return input.entries.map { (userId, userBody) ->
-            userBody.id = userId
-            converter.convert<ShortAccountModel>(userBody)
+    private fun convertUser(input: Map<String, TransactionMemberDbEntity>, converter: ConvertersContext): TransactionSideModel? {
+        return input.entries.map { (userOrGroupId, userBody) ->
+            TransactionSideModel(
+                    id = userOrGroupId,
+                    name = userBody.title ?: userBody.organizationName
+                    ?: (userBody.firstName + " " + userBody.lastName),
+                    isGroup = !userBody.title.isNullOrBlank(),
+                    isAccount = userBody.title.isNullOrBlank()
+            )
         }.firstOrNull()
     }
 
     private fun fromDictionary(key: String): String {
-        val result: String by lazyDictionaryRepository().getWord(key)
+        val result: String by lazyDictionaryInteractor().getWord(key)
         return result.replace("%i", "%d")
     }
 }

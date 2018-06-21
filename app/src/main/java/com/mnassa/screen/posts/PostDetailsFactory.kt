@@ -2,12 +2,16 @@ package com.mnassa.screen.posts
 
 import android.os.Bundle
 import com.bluelinelabs.conductor.Controller
+import com.mnassa.App
+import com.mnassa.di.getInstance
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
-import com.mnassa.extensions.markAsOpened
 import com.mnassa.extensions.isMyPost
+import com.mnassa.extensions.markAsOpened
 import com.mnassa.screen.comments.CommentsRewardModel
 import com.mnassa.screen.comments.CommentsWrapperController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.posts.general.details.GeneralPostController
 import com.mnassa.screen.posts.info.details.InfoDetailsController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
@@ -31,9 +35,11 @@ class PostDetailsFactory {
             }
         }
 
+        App.context.getInstance<InviteSourceHolder>().source = InviteSource.Post(post)
+
         val args = Bundle()
         args.putString(EXTRA_POST_ID, post.id)
-        args.putString(EXTRA_POST_AUTHOR_ID, post.author.id)
+        args.putString(EXTRA_POST_AUTHOR_ID, post.repostAuthor?.id ?: post.author.id)
         args.putSerializable(EXTRA_POST_MODEL, post)
 
         val postController = when (post.type) {

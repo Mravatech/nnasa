@@ -11,12 +11,14 @@ import com.mnassa.domain.model.*
 
 data class StoragePhotoDataImpl(override val uri: Uri, override val folderType: Int) : StoragePhotoData {
 
-    override fun getFolder(): String{
-        return when(folderType){
+    override fun getFolder(): String {
+        return when (folderType) {
             FOLDER_AVATARS -> AVATARS
             FOLDER_PERSONAL -> PERSONAL
             FOLDER_POSTS -> POSTS
             FOLDER_EVENTS -> EVENTS
+            FOLDER_GROUPS -> GROUPS
+            FOLDER_COMMENTS -> COMMENTS
             else -> ""
         }
     }

@@ -16,6 +16,7 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.notifications.NotificationAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_notifications.view.*
 
@@ -24,9 +25,10 @@ import kotlinx.android.synthetic.main.item_notifications.view.*
  * User: okli
  * Date: 4/13/2018
  */
-class NotificationHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<NotificationModel>(itemView) {
+class NotificationHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<NotificationAdapter.NotificationItem>(itemView) {
 
-    override fun bind(item: NotificationModel) {
+    override fun bind(item: NotificationAdapter.NotificationItem) {
+        val item = (item as NotificationAdapter.NotificationItem.ContentItem).content
 
         if (item.extra.author != null) {
             itemView.tvUserName.text = item.extra.author?.formattedName
@@ -143,6 +145,9 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 val text = "$eventName $canceled $totalPrice $pointsReturns"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, eventName, totalPrice, Color.BLACK)
             }
+            INVITED_TO_GROUP -> {
+                itemView.tvNotificationInfo.text = item.text
+            }
             else -> itemView.tvNotificationInfo.text = item.text
         }
     }
@@ -183,7 +188,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         }
     }
 }
-
+//TODO: remove this
 const val PRIVATE_CHAT_MESSAGE = "privateChatMessage"
 const val RESPONSE_CHAT_MESSAGE = "responseChatMessage"
 const val POST_COMMENT = "postComment"
@@ -206,3 +211,4 @@ const val USER_WAS_RECOMMENDED_IN_EVENT = "userWasRecommendedInEvent"
 const val POST_PROMOTED = "promotePost"
 const val ONE_DAY_TO_EXPIRATION_OF_POST = "oneDayToExpirationOfPost"
 const val POST_IS_EXPIRED = "postIsExpired"
+const val INVITED_TO_GROUP = "youWasInvitedToCommunity"

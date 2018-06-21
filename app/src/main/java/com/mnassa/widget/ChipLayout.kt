@@ -5,7 +5,6 @@ import android.support.annotation.ColorRes
 import android.support.annotation.FloatRange
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
-import android.util.LongSparseArray
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -13,17 +12,27 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import android.widget.TextView
-import androidx.util.isEmpty
-import androidx.util.valueIterator
 import com.mnassa.R
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.impl.AutoTagModelImpl
 import com.mnassa.domain.model.impl.TagModelImpl
+import com.mnassa.domain.model.impl.TranslatedWordModelImpl
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.UI
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
+import java.util.LinkedHashSet
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +40,9 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
  * Date: 3/12/2018
  */
 
-class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListener {
+class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListener, KodeinAware {
+
+    override val kodein: Kodein by closestKodein(context)
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -39,16 +50,31 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private lateinit var listPopupWindow: ListPopupWindow
     private lateinit var adapter: ChipsAdapter
-    private val chips = LongSparseArray<TagModel>()
-    lateinit var chipSearch: ChipsAdapter.ChipSearch
+    private val allVisibleTags = LinkedHashSet<TagModel>()
+    private val allAvailableTags: Deferred<List<TagModel>>
+    private val languageProvider: LanguageProvider by instance()
+    private val tagInteractor: TagInteractor by instance()
     var onChipsChangeListener = { }
 
     init {
+        allAvailableTags = async { tagInteractor.getAll() }
+
         View.inflate(context, R.layout.chip_layout, this)
         etChipInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (etChipInput.text.toString().length >= MIN_SYMBOLS_TO_ADD_TAGS)
-                    addChip(null)
+                if (etChipInput.text.toString().length >= MIN_SYMBOLS_TO_ADD_TAGS) {
+                    if (etChipInput.text.toString().isBlank()) {
+                        etChipInput.text = null
+                        return@setOnEditorActionListener true
+                    }
+                    val tag = TagModelImpl(
+                            status = null,
+                            name = TranslatedWordModelImpl(languageProvider, etChipInput.text.toString()),
+                            id = null,
+                            localId = System.nanoTime()
+                    )
+                    addChip(tag)
+                }
             }
             true
         }
@@ -74,6 +100,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             inputMethodManager.showSoftInput(etChipInput, InputMethodManager.SHOW_IMPLICIT)
         }
         etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+        tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
     }
 
     override fun onChipClick(tagModel: TagModel) {
@@ -81,7 +108,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     override fun onViewRemoved(key: Long) {
-        chips.remove(key)
+        allVisibleTags.firstOrNull { it.localId == key }?.also { allVisibleTags.remove(it) }
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
@@ -93,6 +120,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     fun setTags(tags: List<TagModel>) {
+        while (allVisibleTags.isNotEmpty()) {
+            removeLastChip()
+        }
+        addTags(tags.distinctBy { it.name.toString() + it.id })
+    }
+
+    fun addTags(tags: List<TagModel>) {
         val observer = tvChipHeader.viewTreeObserver
         observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -109,17 +143,74 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         tags.forEach { addChip(it) }
     }
 
-    fun getTags(): List<TagModel> {
-        if (chips.isEmpty()) return emptyList()
-        val tags = ArrayList<TagModel>(chips.size())
-        for (tag in chips.valueIterator()) {
-            tags.add(tag)
+    fun getTags(): List<TagModel> = allVisibleTags.toList()
+
+    private var scanForTagsJob: Job? = null
+    private val autoDetectTextWatcher = SimpleTextWatcher { text ->
+        scanForTagsJob?.cancel()
+        scanForTagsJob = launch(UI) {
+            val tags = async { scanForTags(text) }
+            addDetectedTags(tags.await())
         }
-        return tags
+    }
+
+    fun autodetectTagsFrom(editText: EditText) {
+        editText.removeTextChangedListener(autoDetectTextWatcher)
+        editText.addTextChangedListener(autoDetectTextWatcher)
+    }
+
+    private suspend fun scanForTags(text: String): List<TagModel> {
+        val result = ArrayList<TagModel>()
+        val words = text.toLowerCase().split(" ", ",", ".", ";").filter { it.isNotBlank() }.distinct()
+        val searchPhrase = StringBuilder()
+
+        for (i in 0 until words.size) {
+            val word = words[i]
+            searchPhrase.setLength(0)
+            searchPhrase.append(word)
+
+            var tags = findTagWhichStartsWith(searchPhrase.toString())
+            if (tags.isEmpty()) continue
+            result += tags.filter { it.isTheSame(searchPhrase.toString()) }
+
+            for (j in (i + 1) until words.size) {
+                val nextWord = words[j]
+                searchPhrase.append(" ")
+                searchPhrase.append(nextWord)
+
+                tags = findTagWhichStartsWith(searchPhrase.toString())
+                if (tags.isEmpty()) break
+                result += tags.filter { it.isTheSame(searchPhrase.toString()) }
+            }
+        }
+
+        return result.map { AutoTagModelImpl(status = it.status, name = it.name, id = it.id, localId = it.localId) }
+    }
+
+    private suspend fun removeAllDetectedTags() {
+        val manualTags = allVisibleTags.filterNot { it is AutoTagModelImpl }
+        setTags(manualTags.toList())
+    }
+
+    private suspend fun addDetectedTags(detectedTags: List<TagModel>) {
+        removeAllDetectedTags()
+        setTags(allVisibleTags.toList() + detectedTags)
+    }
+
+    private suspend fun findTagWhichStartsWith(prefix: String): List<TagModel> {
+        return allAvailableTags.await().filter {
+            it.name.toString().replace("#", "").startsWith(prefix, ignoreCase = true) ||
+                    it.name.engTranslate?.replace("#", "")?.startsWith(prefix, ignoreCase = true) == true ||
+                    it.name.arabicTranslate?.replace("#", "")?.startsWith(prefix, ignoreCase = true) == true
+        }
+    }
+
+    private suspend fun TagModel.isTheSame(phrase: String): Boolean {
+        return name.toString().replace("#", "").toLowerCase() == phrase.toLowerCase()
     }
 
     private fun focusLeftView() {
-        if (etChipInput.text.toString().isEmpty() && chips.isEmpty()) {
+        if (etChipInput.text.toString().isEmpty() && allVisibleTags.isEmpty()) {
             val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
             animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
         }
@@ -132,21 +223,11 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         colorViews(tvChipHeader, vChipBottomLine, R.color.accent)
     }
 
-    private fun addChip(value: TagModel?) {
-        val tagModelTemp = if (value != null) {
-            value
-        } else {
-            if (etChipInput.text.toString().isBlank()) {
-                etChipInput.text = null
-                return
-            }
-            TagModelImpl(null, etChipInput.text.toString(), null)
-        }
-        val key = System.currentTimeMillis()
+    private fun addChip(value: TagModel) {
         val position = flChipContainer.childCount - EDIT_TEXT_RESERVE
-        val chipView = createChipView(tagModelTemp, key)
+        val chipView = createChipView(value, value.localId)
         flChipContainer.addView(chipView, position)
-        chips.append(key, tagModelTemp)
+        allVisibleTags.add(value)
         etChipInput.text = null
         onChipsChangeListener()
     }
@@ -158,13 +239,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             timeET: Long,
             @FloatRange(from = 0.0, to = 1.0) scaleTV: Float
     ) {
-        etChipInput.animate().setDuration(timeET).scaleX(scale)
-        etChipInput.animate().setDuration(timeET).scaleY(scale)
-        val transit = tvChipHeader.width / HALF_VIEW_WIDTH * scaleTV - tvChipHeader.width / HALF_VIEW_WIDTH
-        tvChipHeader.animate().setDuration(TV_HEADER_TRANSITION_X_DURATION).translationX(transit)
-        tvChipHeader.animate().setDuration(timeTV).translationY(transition)
-        tvChipHeader.animate().setDuration(timeTV).scaleX(scaleTV)
-        tvChipHeader.animate().setDuration(timeTV).scaleY(scaleTV)
+//        etChipInput.animate().setDuration(timeET).scaleX(scale)
+//        etChipInput.animate().setDuration(timeET).scaleY(scale)
+//        val transit = tvChipHeader.width / HALF_VIEW_WIDTH * scaleTV - tvChipHeader.width / HALF_VIEW_WIDTH
+//        tvChipHeader.animate().setDuration(TV_HEADER_TRANSITION_X_DURATION).translationX(transit)
+//        tvChipHeader.animate().setDuration(timeTV).translationY(transition)
+//        tvChipHeader.animate().setDuration(timeTV).scaleX(scaleTV)
+//        tvChipHeader.animate().setDuration(timeTV).scaleY(scaleTV)
     }
 
     private fun colorViews(tvText: TextView, vBottomDivider: View, @ColorRes color: Int) {
@@ -193,7 +274,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
 
     private fun showPopup() {
         if (!this::listPopupWindow.isInitialized) {
-            adapter = ChipsAdapter(context, this, chipSearch)
+            adapter = ChipsAdapter(context, this)
             listPopupWindow = ListPopupWindow(context)
             listPopupWindow.setAdapter(adapter)
             listPopupWindow.anchorView = etChipInput

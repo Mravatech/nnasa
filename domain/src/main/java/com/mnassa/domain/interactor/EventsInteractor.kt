@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.RawEventModel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -9,8 +10,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface EventsInteractor {
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>>
 
-    suspend fun createEvent(model: CreateOrEditEventModel)
-    suspend fun editEvent(model: CreateOrEditEventModel)
+    suspend fun createEvent(model: RawEventModel)
+    suspend fun editEvent(model: RawEventModel)
     suspend fun changeStatus(event: EventModel, status: EventStatus)
     suspend fun promote(id: String)
     suspend fun getPromotePostPrice(): Long

@@ -1,8 +1,8 @@
 package com.mnassa.screen.posts.profile.create
 
-import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.RawRecommendPostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -20,15 +20,14 @@ class RecommendUserViewModelImpl(
 
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userInteractor.getAccountByIdChannel(userId).consume { receive() } }
 
-    override fun createPost(recommendedUser: ShortAccountModel, text: String, postPrivacyOptions: PostPrivacyOptions) {
+    override fun applyChanges(post: RawRecommendPostModel) {
         handleException {
             withProgressSuspend {
                 if (postId == null) {
-                    postsInteractor.createUserRecommendation(recommendedUser.id, text, postPrivacyOptions)
+                    postsInteractor.createUserRecommendation(post)
                 } else {
-                    postsInteractor.updateUserRecommendation(postId, recommendedUser.id, text)
+                    postsInteractor.updateUserRecommendation(post)
                 }
-
                 closeScreenChannel.send(Unit)
             }
         }

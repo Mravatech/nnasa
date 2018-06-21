@@ -13,7 +13,7 @@ import com.mnassa.screen.posts.viewholder.*
 /**
  * Created by Peter on 3/14/2018.
  */
-open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
+open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
     var onAttachedToWindow: (item: PostModel) -> Unit = { }
     var onDetachedFromWindow: (item: PostModel) -> Unit = { }
     var onItemClickListener = { item: PostModel -> }
@@ -21,6 +21,14 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     var onRepostedByClickListener = { account: ShortAccountModel -> }
     var onPostedByClickListener = { account: ShortAccountModel -> }
     var onHideInfoPostClickListener = { post: PostModel -> }
+    var onGroupClickListener = { group: GroupModel -> }
+    var onMoreItemClickListener = { item: PostModel, view: View -> }
+
+    var showMoreOptions: Boolean = false
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     fun destroyCallbacks() {
         onAttachedToWindow = {}
@@ -30,6 +38,8 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         onRepostedByClickListener = {}
         onPostedByClickListener = {}
         onHideInfoPostClickListener = { }
+        onGroupClickListener = { }
+        onMoreItemClickListener = { item: PostModel, view: View -> }
     }
 
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->
@@ -50,7 +60,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
-        return if (viewType == TYPE_HEADER) HeaderViewHolder.newInstance(parent, this) else super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER && withHeader) HeaderViewHolder.newInstance(parent, this) else super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PostModel> {
@@ -60,18 +70,24 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
                     onClickListener = this,
                     imagesCount = viewType.getImagesCount(),
                     isRepost = viewType.hasFlag(REPOST),
-                    isPromoted = viewType.hasFlag(PROMOTED)
+                    isPromoted = viewType.hasFlag(PROMOTED),
+                    fromGroup = viewType.hasFlag(FROM_GROUP),
+                    hasOptions = viewType.hasFlag(HAS_OPTIONS)
             )
             viewType.hasFlag(OFFER) -> OfferViewHolder.newInstance(
                     parent = parent,
                     imagesCount = viewType.getImagesCount(),
                     onClickListener = this,
-                    isPromoted = viewType.hasFlag(PROMOTED)
+                    isPromoted = viewType.hasFlag(PROMOTED),
+                    fromGroup = viewType.hasFlag(FROM_GROUP),
+                    hasOptions = viewType.hasFlag(HAS_OPTIONS)
             )
             viewType.hasFlag(PROFILE) -> ProfileViewHolder.newInstance(
                     parent = parent,
                     onClickListener = this,
-                    isPromoted = viewType.hasFlag(PROMOTED)
+                    isPromoted = viewType.hasFlag(PROMOTED),
+                    fromGroup = viewType.hasFlag(FROM_GROUP),
+                    hasOptions = viewType.hasFlag(HAS_OPTIONS)
             )
             viewType.hasFlag(INFO) -> InfoViewHolder.newInstance(
                     parent = parent,
@@ -138,11 +154,25 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
             type = type or PROMOTED
         }
 
+        if (item.groups.isNotEmpty()) {
+            type = type or FROM_GROUP
+        }
+
+        if (showMoreOptions) {
+            type = type or HAS_OPTIONS
+        }
+
         return type
     }
 
     override fun onClick(view: View) {
-        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        val tag = view.tag
+        if (tag is GroupModel) {
+            onGroupClickListener(tag)
+            return
+        }
+
+        val position = (tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
         when (view.id) {
             R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
@@ -150,6 +180,7 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
             R.id.rlRepostRoot -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
             R.id.rlAuthorRoot -> onPostedByClickListener(getDataItemByAdapterPosition(position).author)
             R.id.btnHidePost -> onHideInfoPostClickListener(getDataItemByAdapterPosition(position))
+            R.id.btnMoreOptions -> onMoreItemClickListener(getDataItemByAdapterPosition(position), view)
         }
     }
 
@@ -169,6 +200,8 @@ open class PostsRVAdapter : BaseSortedPaginationRVAdapter<PostModel>(), View.OnC
         private const val REPOST = 1 shl 11
         private const val PINNED = 1 shl 12
         private const val PROMOTED = 1 shl 13
+        private const val FROM_GROUP = 1 shl 14
+        private const val HAS_OPTIONS = 1 shl 15
 
         private fun Int.hasFlag(flag: Int) = this and flag == flag
 

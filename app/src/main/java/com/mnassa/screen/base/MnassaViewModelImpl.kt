@@ -62,7 +62,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         } catch (e: NetworkDisableException) {
             Timber.d(e)
             errorMessageChannel.send(fromDictionary(R.string.error_no_internet))
-        } catch(e: AccountDisabledException) {
+        } catch (e: AccountDisabledException) {
             Timber.d(e)
             errorMessageChannel.send(fromDictionary(R.string.blocked_account_message))
         } catch (e: NotAuthorizedException) {

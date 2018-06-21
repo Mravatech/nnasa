@@ -21,4 +21,6 @@ interface ProfileViewModel : MnassaViewModel {
 
     fun sendComplaint(id: String, reason: String, authorText: String?)
     suspend fun retrieveComplaints(): List<TranslatedWordModel>
+
+    fun inviteToGroup(group: GroupModel)
 }

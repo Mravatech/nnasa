@@ -12,6 +12,7 @@ import com.mnassa.domain.model.impl.PhoneContactInvitedImpl
  * Date: 3/21/2018
  */
 class InvitationConverter : ConvertersContextRegistrationCallback {
+
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convert)
     }

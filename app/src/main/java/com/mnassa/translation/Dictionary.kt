@@ -17,12 +17,12 @@ fun fromDictionary(key: String): String {
     val kodein by closestKodein(App.context)
     val dictionaryInteractor: DictionaryInteractor by kodein.instance()
     val result: String by dictionaryInteractor.getWord(key)
-    return result.replace("%i", "%d")
+    return result.replace("%i", "%d").replace("%@", "%s")
 }
 
 fun fromDictionary(key: String, defaultValue: String): String {
     val result = fromDictionary(key)
-    if (result.isBlank()){
+    if (result.isBlank()) {
         return defaultValue
     }
     return result

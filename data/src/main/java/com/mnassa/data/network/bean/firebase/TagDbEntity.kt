@@ -8,8 +8,8 @@ import com.mnassa.domain.model.HasId
  */
 internal data class TagDbEntity(
         @SerializedName("id") override var id: String,
-        @SerializedName("ar") val ar: String,
-        @SerializedName("en") val en: String,
+        @SerializedName("ar") val ar: String?,
+        @SerializedName("en") val en: String?,
         @SerializedName("status") val status: String) : HasId {
     constructor() : this("", "", "", "")
 }

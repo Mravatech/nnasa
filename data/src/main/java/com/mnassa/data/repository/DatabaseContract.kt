@@ -31,6 +31,7 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_COL_DISCONNECT_TIMEOUT = "parameters/disconnectTimeout"
     const val TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME = "parameters/defaultExpirationTime"
     const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
+    const val TABLE_CLIENT_DATA_COL_MAINTENANCE = "maintenance"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
@@ -119,4 +120,14 @@ internal object DatabaseContract {
     const val EXPIRATION_TYPE_EXPIRED = "expired"
     const val EXPIRATION_TYPE_CLOSED = "closed"
     const val EXPIRATION_TYPE_FULFILLED = "fulfilled"
+
+    //communities
+    const val TABLE_GROUPS = "communities"
+    const val TABLE_GROUPS_COL_MY = "myCommunities"
+    const val TABLE_GROUPS_COL_INVITES = "invitesToCommunities"
+    const val TABLE_GROUPS_ALL = "allCommunities"
+    const val TABLE_GROUPS_ALL_COL_FEED = "postFeed"
+    const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
+    const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
+    const val TABLE_GROUPS_ALL_COL_WALLET = "wallet"
 }

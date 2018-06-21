@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 data class SendPointsRequest(
         @SerializedName("fromAid") val fromAid: String,
         @SerializedName("toAid") val toAid: String,
-        @SerializedName("type") val type: String = "user2User",
+        @SerializedName("type") val type: String,
         @SerializedName("amount") val amount: Long,
         @SerializedName("userDescription") val userDescription: String?
 )

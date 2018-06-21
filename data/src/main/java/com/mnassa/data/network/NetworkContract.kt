@@ -112,13 +112,37 @@ object NetworkContract {
         const val EVENTS = "events"
         const val POSTS = "needs"
     }
+
+    object GroupInviteAction {
+        const val INVITE = "invite"
+        const val ACCEPT_INVITE = "acceptInvite"
+        const val DECLINE_INVITE = "declineInvite"
+        const val LEAVE = "leave"
+        const val REMOVE = "remove"
+        const val MAKE_ADMIN = "makeAdmin"
+        const val UN_MAKE_ADMIN = "unmakeAdmin"
+    }
+
+    object InviteType {
+        const val COMMUNITY = "community"
+        const val POST = "post"
+        const val EVENT = "event"
+    }
+
+    object TransactionType {
+        const val USER_TO_USER = "user2User"
+        const val GROUP_TO_GROUP = "community2Community"
+        const val GROUP_TO_USER = "community2User"
+        const val USER_TO_GROUP = "user2Community"
+    }
 }
 
-val PostPrivacyType.stringValue: String
+val PostPrivacyType.stringValue: String?
     get() = when (this) {
         is PostPrivacyType.PUBLIC -> NetworkContract.PostPrivacyType.PUBLIC
         is PostPrivacyType.PRIVATE -> NetworkContract.PostPrivacyType.PRIVATE
         is PostPrivacyType.WORLD -> NetworkContract.PostPrivacyType.WORLD
+        is PostPrivacyType.GROUP -> NetworkContract.PostPrivacyType.PUBLIC
     }
 val EventStatus.stringValue: String
     get() = when (this) {

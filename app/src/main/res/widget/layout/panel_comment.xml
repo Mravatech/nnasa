@@ -35,7 +35,19 @@
             android:imeOptions="actionDone"
             android:maxLength="1000"
             android:maxLines="4"
+            android:freezesText="true"
             tools:text="a1\na2\na3\n14\na5\na6" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivCommentAttach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/spacing_vertical"
+            app:srcCompat="@drawable/ic_attach" />
 
         <Button
             android:id="@+id/btnCommentPost"

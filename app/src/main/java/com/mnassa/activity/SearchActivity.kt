@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.activity_search.*
  * Date: 5/8/2018
  */
 
+//TODO: rewrite search logic
+@Deprecated(message = "Will be removed")
 class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -174,8 +176,6 @@ class SearchActivity : AppCompatActivity() {
             intent.putExtras(bundle)
             return intent
         }
-
-
     }
 
 }

@@ -15,6 +15,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
@@ -27,6 +28,8 @@ import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsController
+import com.mnassa.screen.invite.InviteSource
+import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details.view.*
 import kotlinx.android.synthetic.main.event_date.view.*
@@ -44,20 +47,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     override val layoutId: Int = R.layout.controller_event_details
     override val viewModel: EventDetailsViewModel by instance(arg = eventId)
     private val dialogHelper: DialogHelper by instance()
-    private var nullableEventModel: EventModel? = null
-    private var eventModel: EventModel
-        set(value) {
-            /*do nothing*/
-        }
-        get() {
-            var eventInternal = nullableEventModel
-            if (eventInternal == null) {
-                eventInternal = args[EXTRA_EVENT] as EventModel
-
-            }
-            nullableEventModel = eventInternal
-            return eventInternal
-        }
+    private var eventModel: EventModel = args[EXTRA_EVENT] as EventModel
 
     override var onComplaint: String = ""
         set(value) {
@@ -90,6 +80,8 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        requireNotNull(applicationContext).getInstance<InviteSourceHolder>().source = InviteSource.Event(eventModel)
+
         with(view) {
             tlEventTabs.setupWithViewPager(vpEvents)
             vpEvents.adapter = adapter
@@ -105,7 +97,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             viewModel.eventChannel.consumeEach { bindEvent(it) }
         }
 
-        launchCoroutineUI { eventModel?.apply { bindEvent(this) } }
+        launchCoroutineUI { eventModel.apply { bindEvent(this) } }
     }
 
     override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {

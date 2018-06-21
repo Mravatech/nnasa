@@ -4,14 +4,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
+import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.extensions.PATTERN_PHONE
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.extensions.avatarSquare
-import com.mnassa.extensions.formatted
+import com.mnassa.extensions.*
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.profile.edit.BaseEditableProfileController
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
@@ -70,9 +68,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             etWebSite.setText(accountModel.website)
             vCompanyStatus.setOrganization(accountModel.organizationType)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-            chipCompanyOffers.chipSearch = viewModel
             chipCompanyOffers.setTags(offers)
-            chipCompanyInterests.chipSearch = viewModel
             chipCompanyInterests.setTags(interests)
             addPhoto(fabInfoAddPhoto)
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
@@ -90,6 +86,13 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
             chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
             chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
+
+            tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
+            tvProfilePersonalInfo.text = fromDictionary(R.string.reg_person_info_title)
+            tilCompanyNameNotEditable.isGone = true
+            val layoutParams = vCompanyStatus.layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.spacing_vertical)
+            vCompanyStatus.layoutParams = layoutParams
         }
     }
 
@@ -154,7 +157,6 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     private fun setupView(view: View) {
         with(view) {
             toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
-            tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
             tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
             tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
             tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)

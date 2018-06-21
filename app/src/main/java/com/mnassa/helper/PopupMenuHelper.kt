@@ -7,10 +7,13 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.mnassa.R
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.canBePromoted
 import com.mnassa.extensions.canBeShared
 import com.mnassa.extensions.getPromotionPrice
+import com.mnassa.extensions.isAdmin
 import com.mnassa.translation.fromDictionary
 
 /**
@@ -130,4 +133,74 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
 
         popup.show()
     }
+
+    fun showGroupsMenu(view: View, openRequests: () -> Unit) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.groups, popup.menu)
+        popup.menu.findItem(R.id.action_group_requests).title = fromDictionary(R.string.groups_requests)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_group_requests -> openRequests()
+            }
+            true
+        }
+
+        popup.show()
+    }
+
+    fun showGroupItemMenu(view: View, onLeave: () -> Unit, onDetails: () -> Unit) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.group_item, popup.menu)
+        popup.menu.findItem(R.id.action_leave_group).title = fromDictionary(R.string.group_leave)
+        popup.menu.findItem(R.id.action_open_details).title = fromDictionary(R.string.group_menu_details)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_leave_group -> onLeave()
+                R.id.action_open_details -> onDetails()
+            }
+            true
+        }
+
+        popup.show()
+    }
+
+    fun showGroupMemberMenu(view: View, group: GroupModel, account: ShortAccountModel, onRemove: () -> Unit, onAdmin: () -> Unit, onMember: () -> Unit) {
+        if (group.isAdmin) {
+            val isAdminAccount = group.admins.contains(account.id)
+
+            val popup = PopupMenu(view.context, view)
+            popup.menuInflater.inflate(R.menu.group_member, popup.menu)
+            popup.menu.findItem(R.id.action_group_member_remove)?.title = fromDictionary(R.string.group_remove_member)
+            popup.menu.findItem(R.id.action_group_member_admin)?.title = if (isAdminAccount)
+                fromDictionary(R.string.group_member_un_admin) else fromDictionary(R.string.group_member_admin)
+
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_group_member_remove -> onRemove()
+                    R.id.action_group_member_admin -> if (isAdminAccount) onMember() else onAdmin()
+                }
+                true
+            }
+
+            popup.show()
+        }
+    }
+
+    fun showGroupPostItemMenu(view: View, onRemove: () -> Unit) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.post_item, popup.menu)
+        popup.menu.findItem(R.id.action_post_remove)?.title = fromDictionary(R.string.group_post_remove)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_post_remove -> onRemove()
+            }
+            true
+        }
+        popup.show()
+
+    }
+
 }

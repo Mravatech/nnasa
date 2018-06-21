@@ -2,7 +2,6 @@ package com.mnassa.screen.events.create
 
 import android.Manifest
 import android.app.Activity
-import android.arch.lifecycle.Lifecycle
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -18,9 +17,10 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.await
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.core.events.awaitFirst
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.LocationPlaceModelImpl
+import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
@@ -29,11 +29,11 @@ import com.mnassa.screen.events.create.date.DateTimePickerController
 import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.posts.need.create.AttachedImagesRVAdapter
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_event_create.view.*
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -45,9 +45,10 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         DateTimePickerController.OnDatePickerResultListener {
     override val layoutId: Int = R.layout.controller_event_create
     private val eventId: String? by lazy { args.getString(EXTRA_EVENT_ID, null) }
+    private val groupIds by lazy { args.getStringArrayList(EXTRA_GROUP_ID) ?: emptyList<String>() }
     private var event: EventModel? = null
     override val viewModel: CreateEventViewModel by instance(arg = eventId)
-    override var sharingOptions = SharingOptionsController.ShareToOptions.DEFAULT
+    override var sharingOptions = getSharingOptions(args)
         set(value) {
             field = value
             launchCoroutineUI {
@@ -70,7 +71,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val googleMap = StateExecutor<GoogleMap?, GoogleMap>(initState = null, executionPredicate = { it != null })
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
 
@@ -90,7 +91,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
                 val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
 
-                val model = CreateOrEditEventModel(
+                val model = RawEventModel(
                         id = eventId,
                         title = etEventTitle.text.toString(),
                         description = etEventDescription.text.toString(),
@@ -99,17 +100,19 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         durationMillis = requireNotNull(dateTime).durationMillis,
                         imagesToUpload = imagesToUpload,
                         uploadedImages = uploadedImages.toMutableSet(),
-                        privacy = sharingOptions.asPostPrivacy,
+                        privacy = sharingOptions,
                         ticketsTotal = etTicketsQuantity.text.toString().toInt(),
                         ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
                         price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
                         locationType = getLocationType(),
                         tagModels = chipTags.getTags(),
-                        status = eventStatus
+                        status = eventStatus,
+                        groupIds = groupIds.toSet()
                 )
                 viewModel.publish(model)
             }
             tvShareOptions.setOnClickListener {
+                if (groupIds.isNotEmpty()) return@setOnClickListener
                 val event = event
                 launchCoroutineUI {
                     open(SharingOptionsController.newInstance(
@@ -165,7 +168,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             tilCity.hint = fromDictionary(R.string.need_create_city_hint)
             tilLocationDescription.hint = fromDictionary(R.string.event_create_address)
             //
-            mapView.onCreate(savedInstanceState)
+            mapView.onCreate(null)
             mapView.getMapAsync {
                 with(it) {
                     uiSettings.isMapToolbarEnabled = false
@@ -196,7 +199,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             }
             //
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
+            chipTags.autodetectTagsFrom(etEventDescription)
             //
             rvImages.adapter = attachedImagesAdapter
             //
@@ -343,7 +346,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 }
             }
 
-            sharingOptions = SharingOptionsController.ShareToOptions(event.privacyType, event.privacyConnections)
+            sharingOptions = PostPrivacyOptions(event.privacyType, event.privacyConnections)
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -434,6 +437,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     companion object {
         private const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         private const val EXTRA_EVENT = "EXTRA_EVENT"
+        private const val EXTRA_GROUP = "EXTRA_GROUP"
+        private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
         private const val REQUEST_CODE_CROP = 101
 
         private const val EVENT_LOCATION_SPECIFY = 0
@@ -441,13 +446,27 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         private const val EVENT_LOCATION_LATER = 2
 
 
-        fun newInstance(): CreateEventController = CreateEventController(Bundle())
+        fun newInstance(group: GroupModel? = null): CreateEventController {
+            val args = Bundle()
+            group?.let {
+                args.putStringArrayList(EXTRA_GROUP_ID, arrayListOf(it.id))
+                args.putSerializable(EXTRA_GROUP, it)
+            }
+            return CreateEventController(args)
+        }
 
         fun newInstance(event: EventModel): CreateEventController {
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, event.id)
             args.putSerializable(EXTRA_EVENT, event)
+            args.putStringArrayList(EXTRA_GROUP_ID, event.groupIds.toCollection(ArrayList()))
             return CreateEventController(args)
+        }
+
+        private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
+            return if (args.containsKey(EXTRA_GROUP)) {
+                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+            } else PostPrivacyOptions.DEFAULT
         }
     }
 }

@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             app:contentScrim="@color/blue_turquoise"
             app:expandedTitleTextAppearance="@color/white"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <FrameLayout
                 android:layout_width="match_parent"

@@ -1,13 +1,12 @@
 package com.mnassa.screen.posts.offer.create
 
 import android.os.Bundle
-import com.mnassa.domain.interactor.*
-import com.mnassa.domain.model.GeoPlaceModel
-import com.mnassa.domain.model.OfferCategoryModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.interactor.PlaceFinderInteractor
+import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
-import com.mnassa.screen.posts.need.create.AttachedImage
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
@@ -62,47 +61,12 @@ class CreateOfferViewModelImpl(private val offerId: String?,
 
     override suspend fun getShareOfferPostPerUserPrice(): Long? = postsInteractor.getShareOfferPostPerUserPrice()
 
-    override fun createPost(
-            title: String,
-            offer: String,
-            category: OfferCategoryModel?,
-            subCategory: OfferCategoryModel?,
-            tags: List<TagModel>,
-            images: List<AttachedImage>,
-            placeId: String?,
-            price: Long?,
-            postPrivacyOptions: PostPrivacyOptions
-    ) {
+    override fun applyChanges(post: RawPostModel) {
         handleException {
             withProgressSuspend {
                 if (offerId == null) {
-                    postsInteractor.createOffer(
-                            title = title,
-                            imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
-                            uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                            subCategory = subCategory,
-                            category = category,
-                            postPrivacyOptions = postPrivacyOptions,
-                            price = price,
-                            placeId = placeId,
-                            tags = tags,
-                            offer = offer
-                    )
-                } else {
-                    postsInteractor.updateOffer(
-                            postId = offerId,
-                            title = title,
-                            imagesToUpload = images.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri },
-                            uploadedImages = images.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl },
-                            subCategory = subCategory,
-                            category = category,
-                            postPrivacyOptions = postPrivacyOptions,
-                            price = price,
-                            placeId = placeId,
-                            tags = tags,
-                            offer = offer
-                    )
-                }
+                    postsInteractor.createOffer(post)
+                } else postsInteractor.updateOffer(post)
             }
             closeScreenChannel.send(Unit)
         }
@@ -111,7 +75,6 @@ class CreateOfferViewModelImpl(private val offerId: String?,
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountByIdChannel(userId).consume { receive() } }
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun search(search: String): List<TagModel> = tagInteractor.search(search)
     override suspend fun canPromotePost(): Boolean = userRepository.getPermissions().consume { receive() }.canPromoteOfferPost
     override suspend fun getPromotePostPrice(): Long = postsInteractor.getPromotePostPrice()
 }

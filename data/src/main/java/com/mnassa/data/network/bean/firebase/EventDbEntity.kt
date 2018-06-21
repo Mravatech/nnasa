@@ -35,7 +35,8 @@ internal data class EventDbEntity(
         @SerializedName("updatedAt") val updatedAt: Long,
         @SerializedName("participants") val participants: List<String>?,
         @SerializedName("privacyConnections") val privacyConnections: List<String>?,
-        @SerializedName("locationDescription") val locationDescription: String?
+        @SerializedName("locationDescription") val locationDescription: String?,
+        @SerializedName("privacyCommunitiesIds") val privacyCommunitiesIds: Set<String>?
 ) : HasId {
 }
 

@@ -27,6 +27,12 @@ class TagRepositoryImpl(
                 ?.run { converter.convert(this, TagModel::class.java) }
     }
 
+    override suspend fun getAll(): List<TagModel> {
+        return databaseReference.child(DatabaseContract.TABLE_TAGS)
+                .awaitList<TagDbEntity>(exceptionHandler)
+                .run { converter.convertCollection(this, TagModel::class.java) }
+    }
+
     override suspend fun search(searchKeyword: String): List<TagModel> {
         val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
                 .apply { keepSynced(true) }
@@ -35,7 +41,8 @@ class TagRepositoryImpl(
     }
 
     private fun filter(search: String, list: List<TagModel>) = async {
-        list.filter { it.name.toLowerCase().startsWith(search.toLowerCase()) }
+        val search = search.toLowerCase()
+        list.filter { it.name.toString().toLowerCase().contains(search) }
     }
 
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {

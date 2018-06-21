@@ -3,21 +3,20 @@ package com.mnassa.screen.posts.viewholder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.mnassa.R
 import com.mnassa.domain.model.InfoPostModel
 import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.formattedName
-import com.mnassa.extensions.*
-import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.extensions.formattedText
+import com.mnassa.extensions.goneIfEmpty
+import com.mnassa.extensions.isGone
+import com.mnassa.extensions.toTimeAgo
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_info.view.*
 
 /**
  * Created by Peter on 4/30/2018.
  */
-class InfoViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
+class InfoViewHolder(itemView: View, onClickListener: View.OnClickListener) : BasePostViewHolder(itemView, onClickListener) {
 
     override fun bind(item: PostModel) {
         item as InfoPostModel
@@ -41,26 +40,6 @@ class InfoViewHolder(itemView: View, private val onClickListener: View.OnClickLi
             rlAuthorRoot.tag = this@InfoViewHolder
 
             bindImages(item)
-        }
-    }
-
-    private fun bindImages(item: PostModel) {
-        with(itemView) {
-            if (item.attachments.isNotEmpty()) {
-                itemView.findViewById<ImageView>(R.id.ivOne).image(item.attachments[0])
-            }
-
-            if (item.attachments.size >= 2) {
-                itemView.findViewById<ImageView>(R.id.ivTwo).image(item.attachments[1])
-            }
-
-            if (item.attachments.size >= 3) {
-                itemView.findViewById<ImageView>(R.id.ivThree).image(item.attachments[2])
-            }
-
-            if (item.attachments.size > 3) {
-                itemView.findViewById<TextView>(R.id.tvCountMore).text = "+${item.attachments.size - 2}"
-            }
         }
     }
 
