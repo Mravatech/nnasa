@@ -10,7 +10,9 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.clans.fab.FloatingActionButton
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.AccountType
 import com.mnassa.extensions.isGone
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsController
@@ -22,6 +24,8 @@ import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.offer.create.CreateOfferController
+import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
+import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -33,6 +37,7 @@ import org.kodein.di.generic.instance
 class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPageSelected, PageContainer, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_home
     override val viewModel: HomeViewModel by instance()
+    private val dialogHelper: DialogHelper by instance()
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -76,6 +81,24 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                     tlHome.setBadgeText(HomePage.NEEDS.ordinal, it.takeIf { it > 0 }?.toString())
                 }
             }
+
+            launchCoroutineUI {
+                viewModel.showAddTagsDialog.consumeEach {
+                    dialogHelper.showAddTagsDialog(getViewSuspend().context) {
+                        launchCoroutineUI {
+                            val offers = viewModel.getOffers()
+                            val interests = viewModel.getInterests()
+                            val profileModel = viewModel.getProfile() ?: return@launchCoroutineUI
+
+                            open(when (profileModel.accountType) {
+                                AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)
+                                AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
+                            })
+                        }
+                    }
+                }
+            }
+
             initFab(this)
         }
     }

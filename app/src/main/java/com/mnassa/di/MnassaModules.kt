@@ -184,7 +184,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
@@ -193,13 +193,13 @@ private val viewModelsModule = Kodein.Module {
     bind<PersonalInfoViewModel>() with provider { PersonalInfoViewModelImpl(instance(), instance(), instance()) }
     bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
-    bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance()) }
+    bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance(), instance()) }
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl(instance()) }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
-    bind<ChatMessageViewModel>() with provider { ChatMessageViewModelImpl(instance(), instance()) }
+    bind<ChatMessageViewModel>() with factory { accountId: String -> ChatMessageViewModelImpl(userAccountId = accountId, chatInteractor = instance(), userProfileInteractor = instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }

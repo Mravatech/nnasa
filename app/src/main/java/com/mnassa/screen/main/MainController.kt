@@ -57,7 +57,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     private var accountHeader: AccountHeader? = null
     private var activeAccountId: String = ""
     private var previousSelectedPage = 0
-    private val dialogHelper: DialogHelper by instance()
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -221,23 +220,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
             viewModel.currentAccountChannel.consumeEach {
                 activeAccountId = it.id
                 accountHeader?.setActiveProfile(activeAccountId.hashCode().toLong())
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.showAddTagsDialog.consumeEach {
-                dialogHelper.showAddTagsDialog(getViewSuspend().context) {
-                    launchCoroutineUI {
-                        val offers = viewModel.getOffers()
-                        val interests = viewModel.getInterests()
-                        val profileModel = viewModel.getProfile() ?: return@launchCoroutineUI
-
-                        open(when (profileModel.accountType) {
-                            AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)
-                            AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
-                        })
-                    }
-                }
             }
         }
     }

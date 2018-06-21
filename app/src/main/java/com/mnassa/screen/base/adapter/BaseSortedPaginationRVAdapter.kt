@@ -10,7 +10,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
     abstract val itemsComparator: (item1: ITEM, item2: ITEM) -> Int
     abstract val itemClass: Class<ITEM>
 
-    open class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> {
+    open class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>, private val onDataChangedListener: () -> Unit = {}) : DataStorage<ITEM> {
         val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 
         override fun clear() {
@@ -18,6 +18,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
                 wrappedList.beginBatchedUpdates()
                 wrappedList.clear()
                 wrappedList.endBatchedUpdates()
+                onDataChangedListener()
             }
         }
 
@@ -26,6 +27,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
                 wrappedList.beginBatchedUpdates()
                 wrappedList.add(element)
                 wrappedList.endBatchedUpdates()
+                onDataChangedListener()
             }
 
             return true
@@ -36,6 +38,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
                 wrappedList.beginBatchedUpdates()
                 wrappedList.addAll(elements)
                 wrappedList.endBatchedUpdates()
+                onDataChangedListener()
             }
             return true
         }
@@ -45,6 +48,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
                 wrappedList.beginBatchedUpdates()
                 wrappedList.remove(element)
                 wrappedList.endBatchedUpdates()
+                onDataChangedListener()
             }
             return true
         }
@@ -54,6 +58,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
                 wrappedList.beginBatchedUpdates()
                 wrappedList.replaceAll(elements)
                 wrappedList.endBatchedUpdates()
+                onDataChangedListener()
             }
         }
 
@@ -64,6 +69,8 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
                     wrappedList.remove(it)
                 }
                 wrappedList.endBatchedUpdates()
+
+                onDataChangedListener()
             }
             return true
         }

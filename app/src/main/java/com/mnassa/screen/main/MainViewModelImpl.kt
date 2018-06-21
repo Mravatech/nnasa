@@ -22,8 +22,7 @@ class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
         private val userProfileInteractor: UserProfileInteractor,
         private val notificationInteractor: NotificationInteractor,
-        private val countersInteractor: CountersInteractor,
-        private val tagInteractor: TagInteractor
+        private val countersInteractor: CountersInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
@@ -53,13 +52,6 @@ class MainViewModelImpl(
         }
     }
     override val availableAccountsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val showAddTagsDialog: BroadcastChannel<Unit> by ProcessAccountChangeArrayBroadcastChannel(
-            receiveChannelProvider = {
-                produce {
-                    if (tagInteractor.shouldShowAddTagsDialog()) send(Unit)
-                }
-            }
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,22 +102,5 @@ class MainViewModelImpl(
         handleException {
             notificationInteractor.notificationView(true, true, emptyList())
         }
-    }
-
-    override suspend fun getInterests(): List<TagModel> {
-        return handleExceptionsSuspend { getProfile()?.interests?.map { async { tagInteractor.get(it) } }?.mapNotNull { it.await() } }
-                ?: emptyList()
-    }
-
-    override suspend fun getOffers(): List<TagModel> {
-        return handleExceptionsSuspend { getProfile()?.offers?.map { async { tagInteractor.get(it) } }?.mapNotNull { it.await() } }
-                ?: emptyList()
-    }
-
-    override suspend fun getProfile(): ProfileAccountModel? {
-        return handleExceptionsSuspend {
-            userProfileInteractor.getProfileByIdChannel(userProfileInteractor.getAccountIdOrException()).consume { receive() }
-        }
-
     }
 }

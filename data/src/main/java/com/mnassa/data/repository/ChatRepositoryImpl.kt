@@ -49,30 +49,6 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         return chatApi.addSupprotyChat().await().data.chatID
     }
 
-
-    override suspend fun listOfSupportMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
-        val myUserId = requireNotNull(userRepository.getAccountIdOrException())
-        return db.child(TABLE_CHAT)
-                .child(TABLE_CHAT_MESSAGES)
-                .child(TABLE_CHAT_TYPE_PRIVATE)
-                .child(myUserId)
-                .child(chatId)
-                .apply { keepSynced(true) }
-                .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { converter.convert(it, ChatMessageModel::class.java) }
-                )
-                .map {
-                    it.item.replyMessage?.first?.let { first ->
-                        val replyMessage: ChatMessageDbModel? = getReplyMessage(myUserId, chatId, first)
-                        replyMessage?.let { _ ->
-                            it.item.replyMessage = it.item.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
-                        }
-                    }
-                    it
-                }
-    }
-
     override suspend fun resetChatUnreadCount(chatId: String) {
         chatApi.resetChatUnreadCount(ChatUnreadCountRequest(chatId)).handleException(exceptionHandler)
     }
@@ -91,8 +67,8 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         chatApi.deleteMessage(MessageFromChatRequest(messageId, chatID, isDeleteForBoth)).handleException(exceptionHandler)
     }
 
-    override suspend fun listOfMessages(chatId: String, accountId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
-        val myUserId = requireNotNull(userRepository.getAccountIdOrException())
+    override suspend fun listOfMessages(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
+        val myUserId = userRepository.getAccountIdOrException()
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
                 .child(TABLE_CHAT_TYPE_PRIVATE)
@@ -109,8 +85,8 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                             it.item.replyMessage = it.item.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
                         }
                     }
-                    it.item.replyPost?.first?.let { first ->
-                        val replyPost: PostModel? = postsRepository.loadUserPostById(first, accountId)
+                    it.item.replyPost?.first?.takeIf { accountId != null }?.let { first ->
+                        val replyPost: PostModel? = postsRepository.loadUserPostById(first, accountId!!)
                         replyPost?.let { post ->
                             it.item.replyPost = it.item.replyPost?.copy(second = post)
                         }
@@ -149,6 +125,4 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                     .child(chatId)
                     .child(first)
                     .await(exceptionHandler)
-
-
 }

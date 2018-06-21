@@ -21,12 +21,14 @@ import kotlin.collections.HashMap
  * Date: 4/2/2018
  */
 
-class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.OnClickListener, View.OnLongClickListener {
+class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.OnClickListener, View.OnLongClickListener {
 
     lateinit var accountId: String
     var onMyMessageLongClick = { item: ChatMessageModel -> }
     var onUserMessageLongClick = { item: ChatMessageModel -> }
     var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
+    private val localOnDataChangedListener = { onDataChangedListener() }
+    var onDataChangedListener = { }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
         val res = when {
@@ -47,6 +49,13 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
         itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second -> first == second }
         dataStorage = ChatDataStorage(this)
+    }
+
+    fun destroyCallbacks() {
+        onMyMessageLongClick = {}
+        onUserMessageLongClick = {}
+        onReplyClick = { _, _ -> }
+        onDataChangedListener = {}
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ChatMessageModel> {
@@ -103,8 +112,8 @@ class MessagesAdapter() : BaseSortedPaginationRVAdapter<ChatMessageModel>(), Vie
         const val TEXT_TYPE = "text"
     }
 
-    class ChatDataStorage(adapter: BaseSortedPaginationRVAdapter<ChatMessageModel>) :
-            SortedDataStorage<ChatMessageModel>(ChatMessageModel::class.java, adapter), DataStorage<ChatMessageModel> {
+    class ChatDataStorage(adapter: MessagesAdapter) :
+            SortedDataStorage<ChatMessageModel>(ChatMessageModel::class.java, adapter, adapter.localOnDataChangedListener), DataStorage<ChatMessageModel> {
         private val dateMessages = HashMap<Date, ChatMessageModel>()
 
         override fun addAll(elements: Collection<ChatMessageModel>): Boolean {
