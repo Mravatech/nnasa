@@ -601,5 +601,6 @@
     <string name="delete_tags_penalty_description_prefix">_profile_delete_tag_penalty_description_prefix</string>
     <string name="delete_tags_penalty_description_suffix">_profile_delete_tag_penalty_description_suffix</string>
     <string name="invite_reward">_invites_rewardInfoMask</string>
+    <string name="profile_connect_button">_profile_connect_button</string>
 
 </resources>
