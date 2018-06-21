@@ -24,7 +24,7 @@ class ChipView(
 
     init {
         inflate(context, R.layout.view_chip, this)
-        tvChipText.text = tagModel.name
+        tvChipText.text = tagModel.name.toString()
         tvChipText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 if (event.rawX >= (right - tvChipText.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {

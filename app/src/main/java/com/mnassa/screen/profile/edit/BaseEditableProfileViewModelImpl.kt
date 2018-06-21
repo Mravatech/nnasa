@@ -16,7 +16,7 @@ abstract class BaseEditableProfileViewModelImpl(private val tagInteractor: TagIn
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
         val tags = arrayListOf<String>()
         if (customTags.isNotEmpty()) {
-            val newTags = tagInteractor.createCustomTagIds(customTags)
+            val newTags = tagInteractor.createCustomTagIds(customTags.map { it.toString() })
             tags.addAll(newTags)
         }
         tags.addAll(existsTags)

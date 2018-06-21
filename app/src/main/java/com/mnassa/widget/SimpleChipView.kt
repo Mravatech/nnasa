@@ -21,7 +21,7 @@ class SimpleChipView(
 
     init {
         inflate(context, R.layout.view_simple_chip, this)
-        tvChipText.text = tagModel.name
+        tvChipText.text = tagModel.name.toString()
     }
 
 }

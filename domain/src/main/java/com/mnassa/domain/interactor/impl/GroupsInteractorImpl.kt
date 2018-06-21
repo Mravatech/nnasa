@@ -62,7 +62,7 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
     private suspend fun processTags(post: RawGroupModel): List<String> {
         val customTagsAndTagsWithIds: List<TagModel> = post.tags
 
-        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }
+        val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name.toString() }
         val existsTags = customTagsAndTagsWithIds.mapNotNull { it.id }
         val tags = arrayListOf<String>()
         if (customTags.isNotEmpty()) {

@@ -34,6 +34,4 @@ class CreateGroupViewModelImpl(private val groupId: String?,
     }
 
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
-
-    override suspend fun search(search: String): List<TagModel> = tagInteractor.search(search)
 }

@@ -77,7 +77,6 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             }
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
-            chipTags.chipSearch = viewModel
 
             switchNeed.text = fromDictionary(R.string.group_permissions_need)
             switchOffer.text = fromDictionary(R.string.group_permissions_offer)
@@ -180,7 +179,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
                     permissions = GroupPermissions(
                             canCreateGeneralPost = switchGeneral.isChecked,
                             canCreateNeedPost = switchNeed.isChecked,
-                            canCreateOfferPost = switchNeed.isChecked,
+                            canCreateOfferPost = switchOffer.isChecked,
                             canCreateAccountPost = false,
                             canCreateEvent = false //TODO: group events
                     )

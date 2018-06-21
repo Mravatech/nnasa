@@ -244,9 +244,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-                chipPersonOffers.chipSearch = viewModel
                 chipPersonOffers.setTags(emptyList())
-                chipPersonInterests.chipSearch = viewModel
                 chipPersonInterests.setTags(emptyList())
                 etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
                 etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
@@ -267,8 +265,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
                 chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
-                chipCompanyOffers.chipSearch = viewModel
-                chipCompanyInterests.chipSearch = viewModel
                 etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }

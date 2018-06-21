@@ -10,8 +10,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 /**
  * Created by Peter on 5/22/2018.
  */
-interface CreateGroupViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener,
-        ChipsAdapter.ChipSearch {
+interface CreateGroupViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val closeScreenChanel: BroadcastChannel<Unit>
 
     fun applyChanges(group: RawGroupModel)

@@ -21,7 +21,7 @@ class PostTagRVAdapter : BasePaginationRVAdapter<TagModel>() {
 
         override fun bind(item: TagModel) {
             with(itemView) {
-                tvTagName.text = item.name
+                tvTagName.text = item.name.toString()
             }
         }
 

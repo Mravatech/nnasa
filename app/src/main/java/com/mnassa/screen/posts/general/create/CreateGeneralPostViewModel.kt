@@ -5,13 +5,12 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
-import com.mnassa.widget.ChipsAdapter
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/30/2018.
  */
-interface CreateGeneralPostViewModel : MnassaViewModel, ChipsAdapter.ChipSearch, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
+interface CreateGeneralPostViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
 
     val closeScreenChannel: BroadcastChannel<Unit>
 

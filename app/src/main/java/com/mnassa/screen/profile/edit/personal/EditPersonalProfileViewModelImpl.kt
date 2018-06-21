@@ -78,10 +78,6 @@ class EditPersonalProfileViewModelImpl(
         }
     }
 
-    override suspend fun search(search: String): List<TagModel> {
-        return tagInteractor.search(search)
-    }
-
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
         return placeFinderInteractor.getReqieredPlaces(constraint)
     }

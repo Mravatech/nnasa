@@ -40,7 +40,6 @@ class CreateGeneralPostViewModelImpl(private val postId: String?,
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userProfileInteractor.getAccountByIdChannel(userId).consume { receive() } }
     override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun search(search: String): List<TagModel> = tagInteractor.search(search)
     override suspend fun canPromotePost(): Boolean = userProfileInteractor.getPermissions().consume { receive() }.canPromoteGeneralPost
     override suspend fun getPromotePostPrice(): Long = postsInteractor.getPromotePostPrice()
 }

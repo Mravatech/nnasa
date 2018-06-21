@@ -65,7 +65,7 @@ class ProfileViewHolder(itemView: View, onClickListener: View.OnClickListener) :
                 val prefix = fromDictionary(R.string.posts_recommends_skills_prefix)
                 tvUserTags.text = prefix
                 tvUserTags.append(" ")
-                tvUserTags.append(item.offers.joinToString { it.name })
+                tvUserTags.append(item.offers.joinToString { it.name.toString() })
             } else {
                 tvUserTags.text = null
             }
