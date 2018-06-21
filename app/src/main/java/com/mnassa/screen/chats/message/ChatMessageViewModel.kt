@@ -10,7 +10,6 @@ interface ChatMessageViewModel : MnassaViewModel {
     val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>>
     val currentUserAccountId: String
 
-    fun resetChatUnreadCount()
     fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?)
     fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean)
 }

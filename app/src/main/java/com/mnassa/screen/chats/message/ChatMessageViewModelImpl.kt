@@ -2,17 +2,17 @@ package com.mnassa.screen.chats.message
 
 import android.os.Bundle
 import com.mnassa.core.addons.asyncUI
-import com.mnassa.core.addons.consumeTo
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ChatInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import java.util.*
+import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 
 class ChatMessageViewModelImpl(
         private val userAccountId: String?, //if null - this is chat with admin
@@ -23,17 +23,23 @@ class ChatMessageViewModelImpl(
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
     private val chatId = asyncUI { chatInteractor.getChatIdByUserId(userAccountId) }
+    private var resetCounterJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         handleException {
-            chatInteractor.listOfMessages(chatId.await(), userAccountId).consumeTo(messageChannel)
+            chatInteractor.listOfMessages(chatId.await(), userAccountId).consumeEach {
+                messageChannel.send(it)
+                resetChatUnreadCount()
+            }
         }
     }
 
-    override fun resetChatUnreadCount() {
-        launchCoroutineUI {
+    private fun resetChatUnreadCount() {
+        resetCounterJob?.cancel()
+        resetCounterJob = launchCoroutineUI {
+            delay(1_000)
             chatInteractor.resetChatUnreadCount(chatId.await())
         }
     }
@@ -47,18 +53,6 @@ class ChatMessageViewModelImpl(
                     linkedMessageId = linkedMessage?.id,
                     linkedPostId = linkedPost?.id)
         }
-
-//        handleException {
-//            messageChannel.send(ListItemEvent.Added(
-//                    ChatMessageModelImpl(
-//                            id = "TEST",
-//                            createdAt = Date(),
-//                            creator = currentUserAccountId,
-//                            text = text,
-//                            replyMessage =
-//                            )
-//            ))
-//        }
     }
 
     override fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean) {
