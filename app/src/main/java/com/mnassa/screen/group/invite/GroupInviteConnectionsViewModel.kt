@@ -12,5 +12,6 @@ interface GroupInviteConnectionsViewModel : MnassaViewModel {
     val alreadyInvitedUsersChannel: BroadcastChannel<Set<String>>
     val closeScreenChannel: BroadcastChannel<Unit>
 
-    fun invite(users: List<String>)
+    fun sendInvite(user: ShortAccountModel)
+    fun revokeInvite(user: ShortAccountModel)
 }

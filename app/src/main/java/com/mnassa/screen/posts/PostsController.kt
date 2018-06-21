@@ -9,7 +9,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.group.profile.GroupProfileController
+import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
@@ -53,8 +53,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onHideInfoPostClickListener = { viewModel.hideInfoPost(it) }
-        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
+        adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
+        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.isLoadingEnabled = savedInstanceState == null
     }
 

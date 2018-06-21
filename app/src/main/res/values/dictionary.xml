@@ -563,7 +563,7 @@
     <string name="group_member_un_admin">_group_member_un_admin</string>
     <string name="group_invites_more">_group_invites_more</string>
     <string name="group_invite_profile_menu">_profile_menu_inviteToGroup</string>
-    <string name="group_info_header">_communities_more_information_header</string>
+    <string name="group_info_header">_groupDetails_navTitle</string>
     <string name="group_website_header">_profileDetails_labelWebsite</string>
     <string name="group_location_header">_groupEdit_cellLocation_title</string>
     <string name="group_tags_header">_group_tags_header</string>
@@ -588,5 +588,8 @@
     <string name="transaction_recipient_user">_transaction_recipient_user</string>
 
     <string name="server_maintenance_error">_maintenance_maintenanceMessage</string>
+
+    <string name="group_member_invite_send">_group_member_invite_send</string>
+    <string name="group_member_invite_revoke">_group_member_invite_revoke</string>
 
 </resources>

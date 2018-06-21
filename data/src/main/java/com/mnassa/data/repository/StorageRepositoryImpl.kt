@@ -19,7 +19,7 @@ class StorageRepositoryImpl(private val ref: StorageReference,
 
     override suspend fun uploadPhotoToStorage(uploadPhoto: StoragePhotoData, token: String, accountId: String): String {
         val uri = uploadPhoto.uri
-        val location = "${uploadPhoto.getFolder()}$token/${accountId}_${System.nanoTime()}"
+        val location = "${uploadPhoto.getFolder()}$token/${accountId}_${System.nanoTime()}.jpg"
         val uploadRef = ref.child(location)
         val uploadTask = uploadRef.putFile(uri).await(exceptionHandler)
         val bucket: String? = uploadTask.metadata?.bucket

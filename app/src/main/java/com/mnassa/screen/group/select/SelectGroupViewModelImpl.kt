@@ -12,7 +12,8 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 /**
  * Created by Peter on 5/23/2018.
  */
-class SelectGroupViewModelImpl(private val groupsInteractor: GroupsInteractor) : MnassaViewModelImpl(), SelectGroupViewModel {
+class SelectGroupViewModelImpl(private val params: SelectGroupViewModel.Params,
+                               private val groupsInteractor: GroupsInteractor) : MnassaViewModelImpl(), SelectGroupViewModel {
     override val groupChannel: BroadcastChannel<List<GroupModel>> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +21,8 @@ class SelectGroupViewModelImpl(private val groupsInteractor: GroupsInteractor) :
 
         handleException {
             groupsInteractor.getMyGroups().consumeEach {
-                groupChannel.send(it.filter { it.isAdmin })
+                val result = if (params.adminOnly) it.filter { it.isAdmin } else it
+                groupChannel.send(result)
             }
         }
     }

@@ -9,4 +9,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface SelectGroupViewModel : MnassaViewModel {
     val groupChannel: BroadcastChannel<List<GroupModel>>
+
+    data class Params(val adminOnly: Boolean)
 }

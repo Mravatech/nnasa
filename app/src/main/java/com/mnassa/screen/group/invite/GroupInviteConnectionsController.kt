@@ -6,13 +6,11 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_invite_connections.view.*
-import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -23,16 +21,13 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
     override val layoutId: Int = R.layout.controller_group_invite_connections
     private val groupId by lazy { args.getString(EXTRA_GROUP_ID) }
     override val viewModel: GroupInviteConnectionsViewModel by instance(arg = groupId)
-    private val adapter = BuildNetworkAdapter()
+    private val adapter = InviteToGroupAdapter()
     private var groupModel = args[EXTRA_GROUP] as GroupModel
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         with(view) {
-            toolbar.withActionButton(fromDictionary(R.string.group_select_apply)) {
-                viewModel.invite(adapter.selectedAccounts.toList())
-            }
             rvGroupInvite.adapter = adapter
 
             btnInvite.text = fromDictionary(R.string.invite_new_connection)
@@ -42,6 +37,9 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
                 open(InviteController.newInstance())
             }
         }
+
+        adapter.onSendInviteClick = viewModel::sendInvite
+        adapter.onRevokeInviteClick = viewModel::revokeInvite
 
         adapter.isLoadingEnabled = true
         launchCoroutineUI {
@@ -57,9 +55,6 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
             }
         }
 
-        adapter.onSelectedAccountsChangedListener = { onInputChanged() }
-        onInputChanged()
-
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
     }
 
@@ -67,16 +62,6 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
         view.rvGroupInvite.adapter = null
         adapter.destroyCallbacks()
         super.onDestroyView(view)
-    }
-
-    private fun onInputChanged() {
-        launchCoroutineUI {
-            val selectedAccounts = adapter.selectedAccounts
-            val alreadyInvitedUsers = viewModel.alreadyInvitedUsersChannel.consume { receive() }
-            val usersToInvite = selectedAccounts.filter { !alreadyInvitedUsers.contains(it) }
-
-            getViewSuspend().toolbar.actionButtonClickable = usersToInvite.isNotEmpty()
-        }
     }
 
     companion object {

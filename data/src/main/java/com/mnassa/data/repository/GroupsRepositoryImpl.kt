@@ -2,7 +2,6 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
@@ -59,6 +58,14 @@ class GroupsRepositoryImpl(
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) {
         api.inviteAction(GroupConnectionRequest(
                 action = NetworkContract.GroupInviteAction.INVITE,
+                groupId = groupId,
+                accounts = accountIds
+        )).handleException(exceptionHandler)
+    }
+
+    override suspend fun revokeInvite(groupId: String, accountIds: List<String>) {
+        api.inviteAction(GroupConnectionRequest(
+                action = NetworkContract.GroupInviteAction.DECLINE_INVITE,
                 groupId = groupId,
                 accounts = accountIds
         )).handleException(exceptionHandler)

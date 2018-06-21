@@ -224,7 +224,7 @@ private val viewModelsModule = Kodein.Module {
         result
     }
     bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
-    bind<SelectConnectionViewModel>() with provider { SelectConnectionViewModelImpl(instance()) }
+    bind<SelectConnectionViewModel>() with factory { additionalData: SelectConnectionViewModel.AdditionalData -> SelectConnectionViewModelImpl(additionalData, instance(), instance()) }
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }
     bind<TermsAndConditionsViewModel>() with provider { TermsAndConditionsViewModelImpl() }
@@ -268,7 +268,7 @@ private val viewModelsModule = Kodein.Module {
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
-    bind<SelectGroupViewModel>() with provider { SelectGroupViewModelImpl(instance()) }
+    bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
 }
 
 private val convertersModule = Kodein.Module {
