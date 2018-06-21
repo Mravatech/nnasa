@@ -45,7 +45,13 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
 
 
     override fun onClick(view: View) {
-        val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
+        val tag = view.tag
+        if (tag is GroupModel) {
+            onGroupClickListener(tag)
+            return
+        }
+
+        val position = (tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
         when (view.id) {
             R.id.tvProfileConnections -> onConnectionsClickListener()
@@ -55,6 +61,8 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
             R.id.flCreateNeed -> onCreateNeedClickListener()
             R.id.rlRepostRoot -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
             R.id.rlAuthorRoot -> onPostedByClickListener(getDataItemByAdapterPosition(position).author)
+            R.id.btnHidePost -> onHideInfoPostClickListener(getDataItemByAdapterPosition(position))
+            R.id.btnMoreOptions -> onMoreItemClickListener(getDataItemByAdapterPosition(position), view)
         }
     }
 
