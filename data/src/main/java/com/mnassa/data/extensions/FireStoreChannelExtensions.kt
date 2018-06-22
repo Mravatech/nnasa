@@ -4,8 +4,10 @@ import com.google.firebase.firestore.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
 /**
@@ -35,7 +37,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
         launch {
             try {
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
-                val outModel = mapper(dbEntity)
+                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) }
                 val result: ListItemEvent<OutType> = when (eventType) {
                     MOVED -> ListItemEvent.Moved(outModel, previousChildName)
                     CHANGED -> ListItemEvent.Changed(outModel, previousChildName)
