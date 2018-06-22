@@ -190,8 +190,6 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
                 actvPlace.setText(post.locationPlace?.placeName?.toString())
                 sharingOptions.privacyConnections = post.privacyConnections
                 applyShareOptionsChanges()
-                //no ability to change sharing options while post changing
-                tvShareOptions.visibility = View.GONE
             }
         }
     }

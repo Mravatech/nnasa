@@ -237,8 +237,6 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             etPrice.setText(if (offer.price > 0.0) offer.price.formatAsMoney().toString() else null)
             sharingOptions.privacyConnections = offer.privacyConnections
             applyShareOptionsChanges()
-            //no ability to change sharing options while post changing
-            tvShareOptions.visibility = View.GONE
         }
     }
 
