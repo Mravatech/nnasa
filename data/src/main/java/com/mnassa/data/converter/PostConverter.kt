@@ -77,7 +77,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
@@ -106,7 +106,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
@@ -135,7 +135,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
@@ -166,7 +166,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = Date(input.originalCreatedAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
                     originalId = input.originalId,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),

@@ -1,6 +1,7 @@
 package com.mnassa.screen.profile.edit
 
 import android.os.Bundle
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -23,7 +24,7 @@ abstract class BaseEditableProfileViewModelImpl(private val tagInteractor: TagIn
         super.onCreate(savedInstanceState)
 
         handleException {
-            addTagRewardChannel.send(tagInteractor.getAddTagPrice())
+            tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
         }
     }
 

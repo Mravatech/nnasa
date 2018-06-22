@@ -4,6 +4,8 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
 import java.util.*
 
 /**
@@ -45,10 +47,10 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
         return false
     }
 
-    override suspend fun getAddTagPrice(): Long? = tagRepository.getAddTagPrice()
+    override suspend fun getAddTagPrice(): ReceiveChannel<Long?> = tagRepository.getAddTagPrice()
 
     override suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long? {
-        return tagRepository.getRemoveTagPrice()?.let { removedTagsCount * it }
+        return tagRepository.getRemoveTagPrice().consume { receive() }?.let { removedTagsCount * it }
     }
 
     override suspend fun isInterestsMandatory(): Boolean = tagRepository.isInterestsMandatory()
