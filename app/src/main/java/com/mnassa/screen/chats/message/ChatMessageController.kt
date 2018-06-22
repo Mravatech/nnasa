@@ -9,6 +9,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
+import com.mnassa.extensions.isInvisible
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.PostDetailsFactory
@@ -27,14 +28,37 @@ import org.kodein.di.generic.instance
 
 class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageViewModel>(data) {
     override val layoutId: Int = R.layout.controller_chat_message
-    override val viewModel: ChatMessageViewModel by instance()
-    private val accountModel: ShortAccountModel? by lazy { args.getSerializable(CHAT_ACCOUNT) as ShortAccountModel? }
+    private val accountModel by lazy { args.getSerializable(CHAT_ACCOUNT) as ShortAccountModel? }
+    override val viewModel: ChatMessageViewModel by instance(arg = accountModel?.id)
     private val postModel: PostModel? by lazy { args.getSerializable(CHAT_POST) as PostModel? }
     private val dialog: DialogHelper by instance()
 
     private val adapter = MessagesAdapter()
     private var replyMessageModel: ChatMessageModel? = null
     private var replyPostModel: PostModel? = null
+
+    override fun onCreated(savedInstanceState: Bundle?) {
+        super.onCreated(savedInstanceState)
+
+        adapter.isLoadingEnabled = savedInstanceState == null
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.messageChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Added, is ListItemEvent.Changed, is ListItemEvent.Moved -> {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.add(it.item)
+                    }
+                    is ListItemEvent.Removed -> {
+                        adapter.dataStorage.remove(it.item)
+                    }
+                    is ListItemEvent.Cleared -> {
+                        adapter.dataStorage.clear()
+                        adapter.isLoadingEnabled = true
+                    }
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -47,21 +71,12 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             rvMessages.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
             rvMessages.adapter = adapter
         }
-        launchCoroutineUI {
-            val accountId = viewModel.retrieveMyAccount()
-            adapter.accountId = accountId
-            accountModel?.let {
-                viewModel.retrieveChatId(it.id)
-            } ?: run {
-                viewModel.retrieveChatWithAdmin()
-            }
-        }
         postModel?.let {
             view.rlReplyMessageContainer.visibility = View.VISIBLE
             view.tvReplyMessageText.text = it.text
             replyPostModel = postModel
         }
-        consumeMessages(view)
+        adapter.accountId = viewModel.currentUserAccountId
         adapter.onUserMessageLongClick = { callDialog(view, false, it) }
         adapter.onMyMessageLongClick = { callDialog(view, true, it) }
         adapter.onReplyClick = { chatMessageModel, post ->
@@ -73,39 +88,22 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                 view.rvMessages.scrollToPosition(position)
             }
         }
+
+        view.postDelayed({
+            adapter.isLoadingEnabled = false
+            view?.llNoMessages?.isInvisible = !adapter.dataStorage.isEmpty()
+        }, WAIT_FOR_LOADING_DELAY)
+
+        adapter.onDataChangedListener = {
+            view.llNoMessages.isInvisible = !adapter.dataStorage.isEmpty()
+            view.rvMessages.scrollToPosition(0)
+        }
     }
 
-    private fun consumeMessages(view: View) {
-        launchCoroutineUI {
-            viewModel.messageChannel.openSubscription().bufferize(this@ChatMessageController).consumeEach {
-                if (it.item.isNotEmpty()) {
-                    when (it) {
-                        is ListItemEvent.Added -> {
-                            adapter.isLoadingEnabled = false
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                        is ListItemEvent.Changed -> {
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                        is ListItemEvent.Moved -> {
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                        is ListItemEvent.Removed -> {
-                            adapter.dataStorage.removeAll(it.item)
-                        }
-                        is ListItemEvent.Cleared -> {
-                            adapter.dataStorage.clear()
-                            adapter.isLoadingEnabled = true
-                        }
-                    }
-                    if (view.llNoMessages.visibility == View.VISIBLE) {
-                        view.llNoMessages.visibility = View.GONE
-                    }
-                    view.rvMessages.scrollToPosition(0)
-                    viewModel.resetChatUnreadCount()
-                }
-            }
-        }
+    override fun onDestroyView(view: View) {
+        adapter.destroyCallbacks()
+        view.rvMessages.adapter = null
+        super.onDestroyView(view)
     }
 
     private fun callDialog(view: View, isMyMessageClicked: Boolean, item: ChatMessageModel) {
@@ -137,7 +135,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         view.btnSend.setOnClickListener {
             val text = view.etWriteMessage.text.toString().trim()
             if (text.isNotBlank()) {
-                viewModel.sendMessage(text, MessagesAdapter.TEXT_TYPE, replyMessageModel?.id, replyPostModel?.id)
+                viewModel.sendMessage(text, MessagesAdapter.TEXT_TYPE, replyMessageModel, replyPostModel)
                 view.etWriteMessage.text = null
                 view.ivReplyClose.callOnClick()
             }
@@ -153,6 +151,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     companion object {
         private const val CHAT_ACCOUNT = "CHAT_ACCOUNT"
         private const val CHAT_POST = "CHAT_POST"
+        private const val WAIT_FOR_LOADING_DELAY = 4000L
 
         fun newInstance(): ChatMessageController {
             val params = Bundle()

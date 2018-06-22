@@ -20,11 +20,8 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
     override suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>> =
             chatRepository.listOfChats()
 
-    override suspend fun listOfMessages(chatId: String, accointId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> =
-            chatRepository.listOfMessages(chatId, accointId)
-
-    override suspend fun listOfSupportMessages(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> =
-            chatRepository.listOfSupportMessages(chatId)
+    override suspend fun listOfMessages(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<ChatMessageModel>> =
+            chatRepository.listOfMessages(chatId, accountId)
 
     override suspend fun sendMessage(chatID: String, text: String, type: String, linkedMessageId: String?, linkedPostId: String?) {
         val postPair = linkedPostId?.let { Pair(it, null) }?:kotlin.run { null }
@@ -45,11 +42,8 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
         chatRepository.deleteMessage(messageId, chatID, isDeleteForBoth)
     }
 
-    override suspend fun getChatIdByUserId(accountId: String): String =
-            chatRepository.getChatIdByUserId(accountId)
-
-    override suspend fun getSupportChat(): String  =
-            chatRepository.getSupportChat()
+    override suspend fun getChatIdByUserId(accountId: String?): String =
+            accountId?.run { chatRepository.getChatIdByUserId(this) } ?: chatRepository.getSupportChat()
 
     override suspend fun resetChatUnreadCount(chatId: String) {
         chatRepository.resetChatUnreadCount(chatId)
