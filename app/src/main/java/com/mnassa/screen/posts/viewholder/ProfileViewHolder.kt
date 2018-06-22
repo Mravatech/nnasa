@@ -79,11 +79,13 @@ class ProfileViewHolder(itemView: View, onClickListener: View.OnClickListener) :
         fun newInstance(
                 parent: ViewGroup,
                 onClickListener: View.OnClickListener,
+                isRepost: Boolean,
                 isPromoted: Boolean,
                 fromGroup: Boolean,
                 hasOptions: Boolean): ProfileViewHolder {
 
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_news_feed_profile, parent, false)
+            view.rlRepostRoot.isGone = !isRepost
             view.rlRecommendedProfileRoot.visibility = View.VISIBLE
             view.llPromotedRoot.isGone = !isPromoted
             view.rlGroupRoot.isGone = !fromGroup
