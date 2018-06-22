@@ -1,5 +1,6 @@
 package com.mnassa.screen.chats.message
 
+import android.support.v7.util.SortedList
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.extensions.getStartOfDay
 import com.mnassa.extensions.isTheSameDay
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
+import com.mnassa.screen.chats.message.MessagesAdapter.Companion.DATE_CREATOR
 import com.mnassa.screen.chats.message.viewholder.*
 import java.util.*
 import kotlin.collections.HashMap
@@ -154,19 +156,22 @@ class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.
 
         override fun remove(element: ChatMessageModel): Boolean {
             val position = wrappedList.indexOf(element)
-            val size = wrappedList.size()
-            if (position == size - 1) {
-                val prev = wrappedList.get(position - 1)
-                if (prev.creator == DATE_CREATOR) {
-                    super.remove(prev)
-                }
-            } else {
-                val next = wrappedList.get(position + 1)
-                val prev = wrappedList.get(position - 1)
-                if (next.creator == DATE_CREATOR && prev.creator == DATE_CREATOR) {
-                    super.remove(prev)
-                }
+            if (position < 0) return false
+
+            // # positions
+            // (size-1) -- always header       | must never happen; just remove element
+            // 2        -- header or message   | if prev. AND nex message is header - remove prev. header & element
+            // 1        -- header or message   | if prev. AND nex message is header - remove prev. header & element
+            // 0        -- always message      | if prev. message is header         - remove prev. header & element
+
+            val previousElement = wrappedList.getOrNull(position + 1)
+            val nextElement = wrappedList.getOrNull(position - 1)
+
+            if (previousElement != null && (nextElement == null && previousElement.isHeader || previousElement.isHeader && nextElement.isHeader)) {
+                dateMessages.remove(previousElement.createdAt.getStartOfDay())
+                super.remove(previousElement)
             }
+
             return super.remove(element)
         }
 
@@ -189,4 +194,11 @@ class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.
                 )
     }
 }
+
+fun <T> SortedList<T>.getOrNull(position: Int): T? {
+    if (position >= 0 && position < size()) return get(position)
+    return null
+}
+
+inline val ChatMessageModel?.isHeader: Boolean get() = this != null && creator == DATE_CREATOR
 

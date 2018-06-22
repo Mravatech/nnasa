@@ -21,7 +21,6 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
-import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
