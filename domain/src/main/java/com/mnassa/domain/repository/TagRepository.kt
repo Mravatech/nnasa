@@ -1,6 +1,7 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.TagModel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import java.util.*
 
 /**
@@ -16,8 +17,8 @@ interface TagRepository {
     suspend fun getAddTagsDialogInterval(): Long?
     suspend fun getAddTagsDialogLastShowingTime(): Date?
     suspend fun setAddTagsDialogShowingTime(time: Date)
-    suspend fun getAddTagPrice(): Long?
-    suspend fun getRemoveTagPrice(): Long?
+    suspend fun getAddTagPrice(): ReceiveChannel<Long?>
+    suspend fun getRemoveTagPrice(): ReceiveChannel<Long?>
 
     suspend fun isInterestsMandatory(): Boolean
     suspend fun isOffersMandatory(): Boolean

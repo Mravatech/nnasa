@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseTagsApi
 import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.firebase.TagDbEntity
@@ -15,6 +16,8 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.map
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -84,20 +87,20 @@ class TagRepositoryImpl(
                 .handleException(exceptionHandler)
     }
 
-    override suspend fun getAddTagPrice(): Long? {
+    override suspend fun getAddTagPrice(): ReceiveChannel<Long?> {
         return db.child(DatabaseContract.TABLE_DICTIONARY)
                 .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_FOR_PROFILE_TAG)
-                .await<PriceDbEntity>(exceptionHandler)
-                .takeIf { it?.state == true }
-                ?.amount
+                .also { it.keepSynced(true) }
+                .toValueChannel<PriceDbEntity>(exceptionHandler)
+                .map { it?.takeIf { it.state }?.amount }
     }
 
-    override suspend fun getRemoveTagPrice(): Long? {
+    override suspend fun getRemoveTagPrice(): ReceiveChannel<Long?> {
         return db.child(DatabaseContract.TABLE_DICTIONARY)
                 .child(DatabaseContract.TABLE_DICTIONARY_COL_PENALTY_FOR_PROFILE_TAG)
-                .await<PriceDbEntity>(exceptionHandler)
-                .takeIf { it?.state == true }
-                ?.amount
+                .also { it.keepSynced(true) }
+                .toValueChannel<PriceDbEntity>(exceptionHandler)
+                .map { it?.takeIf { it.state }?.amount }
     }
 
     override suspend fun isInterestsMandatory(): Boolean {
