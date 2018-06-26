@@ -85,6 +85,7 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
             viewType.hasFlag(PROFILE) -> ProfileViewHolder.newInstance(
                     parent = parent,
                     onClickListener = this,
+                    isRepost = viewType.hasFlag(REPOST),
                     isPromoted = viewType.hasFlag(PROMOTED),
                     fromGroup = viewType.hasFlag(FROM_GROUP),
                     hasOptions = viewType.hasFlag(HAS_OPTIONS)
