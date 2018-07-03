@@ -190,7 +190,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
 
         fun newInstance(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>): EditPersonalProfileController {
             val params = Bundle()
-            params.putParcelable(EXTRA_PROFILE, profile)
+            params.putSerializable(EXTRA_PROFILE, profile)
             params.putParcelableArrayList(EXTRA_TAGS_INTERESTS, interests as ArrayList<out TagModel>)
             params.putParcelableArrayList(EXTRA_TAGS_OFFERS, offers as ArrayList<out TagModel>)
             return EditPersonalProfileController(params)

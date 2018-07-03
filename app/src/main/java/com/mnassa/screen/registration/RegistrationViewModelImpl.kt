@@ -52,7 +52,8 @@ class RegistrationViewModelImpl(
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
-                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(shortAccountModel))
+                val profile = userProfileInteractor.getProfileById(shortAccountModel.id) ?: return@withProgressSuspend
+                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(profile))
             }
         }
     }
@@ -69,7 +70,8 @@ class RegistrationViewModelImpl(
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
-                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(shortAccountModel))
+                val profile = userProfileInteractor.getProfileById(shortAccountModel.id) ?: return@withProgressSuspend
+                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(profile))
             }
         }
     }

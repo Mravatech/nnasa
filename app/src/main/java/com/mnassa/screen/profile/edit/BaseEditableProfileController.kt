@@ -35,7 +35,10 @@ import java.util.*
  */
 abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(data: Bundle) : MnassaControllerImpl<VM>(data) {
 
-    protected val accountModel: ProfileAccountModel by lazy { args.getParcelable(EXTRA_PROFILE) as ProfileAccountModel }
+    protected val accountModel: ProfileAccountModel by lazy {
+        val x = args.getSerializable(EXTRA_PROFILE) as ProfileAccountModel
+        x
+    }
     protected val interests: List<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_INTERESTS) as java.util.ArrayList<TagModel> }
     protected val offers: List<TagModel> by lazy { args.getParcelableArrayList<TagModel>(EXTRA_TAGS_OFFERS) as java.util.ArrayList<TagModel> }
 
