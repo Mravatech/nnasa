@@ -66,6 +66,29 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onMoreItemClickListener = this::showPostMenu
+        adapter.onDataChangedListener = { itemsCount ->
+//            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
+
+        launchCoroutineUI {
+            viewModel.newsFeedChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        if (it.item.isNotEmpty()) {
+                            adapter.dataStorage.addAll(it.item)
+                        }
+                        adapter.isLoadingEnabled = false
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.isLoadingEnabled = true
+                        adapter.dataStorage.clear()
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View) {
@@ -83,42 +106,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
         launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-
-        ///
-        launchCoroutineUI {
-            viewModel.newsFeedChannel.openSubscription().bufferize(this@GroupProfileController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                        adapter.isLoadingEnabled = it.item.isEmpty() && adapter.dataStorage.isEmpty()
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
-                    }
-                }
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.infoFeedChannel.openSubscription().bufferize(this@GroupProfileController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                }
-            }
-        }
         
         initFab(view)
         bindGroup(groupModel, view)

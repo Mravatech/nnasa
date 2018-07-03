@@ -21,8 +21,11 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
             executionPredicate = { it != null })
 
     inline fun postUpdate(crossinline update: (() -> Unit)) {
-        recyclerView.invoke {
-            it.post { update() }
+        `access$recyclerView`.invoke {
+            it.post {
+                update()
+                onDataChangedListener(dataStorage.size)
+            }
         }
     }
 
@@ -41,6 +44,7 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 postUpdate { notifyItemChanged(itemCount - 1) }
             }
         }
+    var onDataChangedListener = { itemsCount: Int -> }
 
     /////////////////////////////////// BASIC DATASET OPERATIONS ///////////////////////////////////
     open fun clear() = run { dataStorage.clear() }
@@ -160,13 +164,12 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
 
     ////////////////////////////////////////// DATA STORAGE ////////////////////////////////////////
 
-    open inner class SimpleDataProviderImpl(private val onDataChangedListener: () -> Unit = { }) : ArrayList<ITEM>(), DataStorage<ITEM> {
+    open inner class SimpleDataProviderImpl : ArrayList<ITEM>(), DataStorage<ITEM> {
         override fun clear() {
             postUpdate {
                 val previousSize = size
                 super.clear()
                 if (previousSize != 0) notifyItemRangeRemoved(emptyHeaderItemsCount, previousSize)
-                onDataChangedListener()
             }
         }
 
@@ -174,7 +177,6 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
             postUpdate {
                 super.add(element)
                 notifyItemInserted(itemCount - emptyBottomItemsCount - 1)
-                onDataChangedListener()
             }
             return true
         }
@@ -188,7 +190,6 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
             return true
         }
@@ -199,7 +200,6 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(elements)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
         }
 
@@ -212,7 +212,6 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
             return true
         }
@@ -226,7 +225,6 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
             return true
         }
@@ -366,4 +364,11 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
         const val TYPE_LOADING_ENABLED = 777888
         const val TYPE_LOADING_DISABLED = -888777
     }
+
+    @PublishedApi
+    internal var `access$recyclerView`: WeakStateExecutor<RecyclerView?, RecyclerView>
+        get() = recyclerView
+        set(value) {
+            recyclerView = value
+        }
 }

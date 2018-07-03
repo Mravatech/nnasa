@@ -8,6 +8,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  * Created by Peter on 4/13/2018.
  */
 interface EventsInteractor {
+    suspend fun loadAllImmediately(): List<EventModel>
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>>
 
     suspend fun createEvent(model: RawEventModel)

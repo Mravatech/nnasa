@@ -13,8 +13,7 @@ interface GroupProfileViewModel : MnassaViewModel {
     val closeScreenChannel: BroadcastChannel<Unit>
     val groupPermissionsChannel: BroadcastChannel<GroupPermissions>
 
-    val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>>
-    val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>
+    val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
     fun onAttachedToWindow(post: PostModel)
     fun hideInfoPost(post: PostModel)
     fun leave()

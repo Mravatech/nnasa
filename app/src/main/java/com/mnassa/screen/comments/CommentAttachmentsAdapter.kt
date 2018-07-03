@@ -22,9 +22,7 @@ class CommentAttachmentsAdapter : BasePaginationRVAdapter<AttachedImage>(), View
     }
 
     init {
-        dataStorage = SimpleDataProviderImpl {
-            onDataSourceChangedListener(dataStorage.toList())
-        }
+        dataStorage = SimpleDataProviderImpl()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<AttachedImage> {

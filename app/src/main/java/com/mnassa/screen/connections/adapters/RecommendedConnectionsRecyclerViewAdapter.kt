@@ -26,11 +26,11 @@ class RecommendedConnectionsRecyclerViewAdapter : BasePaginationRVAdapter<ShortA
     var onShowAllClickListener = {}
     override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
-    private var onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
     var onAfterSearchListener = { size: Int ->  }
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener))
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
         searchListener = dataStorage as SearchListener<ShortAccountModel>
+        onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
     }
 
     fun searchByName(searchText: String) {

@@ -25,13 +25,13 @@ class NewConnectionRequestsRecyclerViewAdapter : BasePaginationRVAdapter<ShortAc
     var onDeclineClickListener = { account: ShortAccountModel -> }
     var onItemClickListener = { account: ShortAccountModel -> }
     var onShowAllClickListener = { }
-    private var onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
     var onAfterSearchListener = { size: Int ->  }
 
     override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener))
+        onDataChangedListener = { onAfterSearchListener(moreItemsCount) }
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
         searchListener = dataStorage as SearchListener<ShortAccountModel>
     }
 

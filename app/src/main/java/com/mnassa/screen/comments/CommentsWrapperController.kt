@@ -110,9 +110,10 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             }
         }
 
-        accountsToRecommendAdapter.onDataSourceChangedListener = { accounts ->
+        accountsToRecommendAdapter.onDataChangedListener = {
             launchCoroutineUI {
-                getCommentsContainer().recommendPanel?.isGone = accounts.isEmpty()
+
+                getCommentsContainer().recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
                 updatePostCommentButtonState()
             }
         }

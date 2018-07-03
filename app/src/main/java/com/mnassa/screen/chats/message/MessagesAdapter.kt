@@ -29,8 +29,7 @@ class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.
     var onMyMessageLongClick = { item: ChatMessageModel -> }
     var onUserMessageLongClick = { item: ChatMessageModel -> }
     var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
-    private val localOnDataChangedListener = { onDataChangedListener() }
-    var onDataChangedListener = { }
+    private val localOnDataChangedListener = { onDataChangedListener(dataStorage.size) }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
         val res = when {

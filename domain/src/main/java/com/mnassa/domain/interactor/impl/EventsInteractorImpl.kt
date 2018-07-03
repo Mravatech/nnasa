@@ -117,21 +117,15 @@ class EventsInteractorImpl(
         return tags
     }
 
-    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
-        return eventsRepository.getEventsFeedChannel()
-    }
+    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> = eventsRepository.getEventsFeedChannel()
 
-    override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> {
-        return eventsRepository.getEventsChannel(eventId)
-    }
+    override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.loadAllImmediately()
 
-    override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> {
-        return eventsRepository.getTicketsChannel(eventId)
-    }
+    override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> = eventsRepository.getEventsChannel(eventId)
 
-    override suspend fun getTickets(eventId: String): List<EventTicketModel> {
-        return eventsRepository.getTickets(eventId)
-    }
+    override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> = eventsRepository.getTicketsChannel(eventId)
+
+    override suspend fun getTickets(eventId: String): List<EventTicketModel> = eventsRepository.getTickets(eventId)
 
     override suspend fun getBoughtTicketsCount(eventId: String): Long {
         val userId = userProfileInteractor.getAccountIdOrNull() ?: return 0L
@@ -144,21 +138,13 @@ class EventsInteractorImpl(
         return counter
     }
 
-    override suspend fun buyTickets(eventId: String, ticketsCount: Long) {
-        eventsRepository.buyTickets(eventId, ticketsCount)
-    }
+    override suspend fun buyTickets(eventId: String, ticketsCount: Long) = eventsRepository.buyTickets(eventId, ticketsCount)
 
-    override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> {
-        return eventsRepository.getAttendedUsers(eventId)
-    }
+    override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> = eventsRepository.getAttendedUsers(eventId)
 
-    override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
-        return eventsRepository.getAttendedUsersChannel(eventId)
-    }
+    override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> = eventsRepository.getAttendedUsersChannel(eventId)
 
-    override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
-        eventsRepository.saveAttendedUsers(eventId, presentUsers, notPresentUsers)
-    }
+    override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) = eventsRepository.saveAttendedUsers(eventId, presentUsers, notPresentUsers)
 
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L

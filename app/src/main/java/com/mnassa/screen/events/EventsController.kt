@@ -46,34 +46,35 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
         adapter.isLoadingEnabled = savedInstanceState == null
-    }
 
-    override fun onViewCreated(view: View) {
-        super.onViewCreated(view)
-
-        view.rvEvents.adapter = adapter
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
 
         launchCoroutineUI {
-            viewModel.eventsFeedChannel.openSubscription().bufferize(this@EventsController).consumeEach {
+            viewModel.eventsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         if (it.item.isNotEmpty()) {
                             adapter.dataStorage.addAll(it.item)
                         }
                         adapter.isLoadingEnabled = false
-                        getViewSuspend().rlEmptyView.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
                     is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
                         adapter.isLoadingEnabled = true
-                        getViewSuspend().rlEmptyView.isInvisible = true
+                        adapter.dataStorage.clear()
                     }
                 }
             }
         }
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        view.rvEvents.adapter = adapter
     }
 
     override fun scrollToTop() {

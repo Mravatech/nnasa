@@ -89,7 +89,7 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChannelWithPagination(
         databaseReference: DatabaseReference,
         exceptionHandler: ExceptionHandler,
-        noinline mapper: suspend (input: DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (input: DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT
 ): Channel<OutType> {
     val channel = ArrayChannel<OutType>(limit)
@@ -99,7 +99,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
             while (true) {
                 val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
                 latestId = portion.lastOrNull()?.id
-                portion.forEach { channel.send(mapper(it)) }
+                portion.forEach { mapper(it)?.apply { channel.send(this) } }
                 if (portion.size < limit) {
                     channel.close()
                     break
@@ -117,7 +117,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
 
 internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithPagination(
         exceptionHandler: ExceptionHandler,
-        noinline mapper: suspend (input: DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (input: DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<OutType> {
     return getValueChannelWithPagination(this, exceptionHandler, mapper, limit)
 }
@@ -131,7 +131,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
 //}
 internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseReference.toValueChannelWithChangesHandling(
         exceptionHandler: ExceptionHandler,
-        noinline mapper: suspend (DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
@@ -147,7 +147,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
         launch {
             try {
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
-                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) }
+                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
                 val result: ListItemEvent<OutType> = when (eventType) {
                     MOVED -> ListItemEvent.Moved(outModel, previousChildName)
                     CHANGED -> ListItemEvent.Changed(outModel, previousChildName)

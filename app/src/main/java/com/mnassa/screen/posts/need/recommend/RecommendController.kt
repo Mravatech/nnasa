@@ -62,8 +62,8 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
                 rvSelectedAccounts.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
             }
             allAccountsAdapter.onSearchClickListener = { onSearchClick(view) }
-            selectedAccountsAdapter.onDataSourceChangedListener = {
-                allAccountsAdapter.selectedAccounts = it.toSet()
+            selectedAccountsAdapter.onDataChangedListener = {
+                allAccountsAdapter.selectedAccounts = selectedAccountsAdapter.dataStorage.toSet()
             }
             rvSelectedAccounts.visibility = if (selectedAccountsAdapter.dataStorage.size == 0) View.GONE else View.VISIBLE
 
@@ -90,7 +90,6 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
 
     override fun onDestroyView(view: View) {
         allAccountsAdapter.destroyCallbacks()
-        selectedAccountsAdapter.destroyCallbacks()
         view.rvAccountsToRecommend.adapter = null
         view.rvSelectedAccounts.adapter = null
         super.onDestroyView(view)

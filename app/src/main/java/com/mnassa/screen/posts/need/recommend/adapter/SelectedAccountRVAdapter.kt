@@ -15,18 +15,6 @@ import kotlinx.android.synthetic.main.item_selected_account.view.*
  */
 class SelectedAccountRVAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
 
-    var onDataSourceChangedListener = { items: List<ShortAccountModel> -> }
-
-    fun destroyCallbacks() {
-        onDataSourceChangedListener = { items: List<ShortAccountModel> -> }
-    }
-
-    init {
-        dataStorage = SimpleDataProviderImpl {
-            onDataSourceChangedListener(dataStorage.toList())
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
         return AccountViewHolder.newInstance(parent, this)
     }

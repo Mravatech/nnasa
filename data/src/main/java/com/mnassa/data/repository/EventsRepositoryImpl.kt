@@ -33,6 +33,15 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val eventsApi: FirebaseEventsApi,
                            private val db: DatabaseReference) : EventsRepository {
 
+    override suspend fun loadAllImmediately(): List<EventModel> {
+        return firestore
+                .collection(DatabaseContract.TABLE_EVENTS)
+                .document(userRepository.getAccountIdOrException())
+                .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                .awaitList<EventDbEntity>()
+                .map { converter.convert(it, EventModel::class.java) }
+    }
+
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
         return firestore
                 .collection(DatabaseContract.TABLE_EVENTS)
