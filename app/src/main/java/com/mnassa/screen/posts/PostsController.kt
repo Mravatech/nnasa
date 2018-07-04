@@ -63,9 +63,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             viewModel.newsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
+                        adapter.dataStorage.addAll(it.item)
                         adapter.isLoadingEnabled = false
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)

@@ -9,6 +9,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formattedPosition
+import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.isMyProfile
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -51,16 +52,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.isLoadingEnabled = savedInstanceState == null
 
         adapter.onDataChangedListener = { itemsCount ->
-            //            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
         launchCoroutineUI {
             viewModel.postChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
+                        adapter.dataStorage.addAll(it.item)
                         adapter.isLoadingEnabled = false
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)

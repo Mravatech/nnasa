@@ -67,16 +67,14 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onMoreItemClickListener = this::showPostMenu
         adapter.onDataChangedListener = { itemsCount ->
-//            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
         launchCoroutineUI {
             viewModel.newsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
+                        adapter.dataStorage.addAll(it.item)
                         adapter.isLoadingEnabled = false
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
