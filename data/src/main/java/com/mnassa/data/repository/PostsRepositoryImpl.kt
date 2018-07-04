@@ -80,6 +80,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
+    override suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel> {
+        val userId = requireNotNull(accountId)
+        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PUBLIC_POSTS
+        return db.child(table)
+                .child(userId)
+                .awaitList<PostDbEntity>(exceptionHandler)
+                .mapNotNull { mapPost(it) }
+    }
+
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
         return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                 .document(groupId)

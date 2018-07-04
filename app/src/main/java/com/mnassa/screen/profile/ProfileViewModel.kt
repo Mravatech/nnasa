@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface ProfileViewModel : MnassaViewModel {
     val profileChannel: BroadcastChannel<ProfileAccountModel>
     val statusesConnectionsChannel: BroadcastChannel<ConnectionStatus>
-    val postChannel: BroadcastChannel<ListItemEvent<PostModel>>
+    val postChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
     val interestsChannel: BroadcastChannel<List<TagModel>>
     val offersChannel: BroadcastChannel<List<TagModel>>
     val closeScreenChannel: BroadcastChannel<Unit>

@@ -15,12 +15,6 @@ import kotlinx.android.synthetic.main.item_comment_attached_image.view.*
  */
 class CommentAttachmentsAdapter : BasePaginationRVAdapter<AttachedImage>(), View.OnClickListener {
 
-    var onDataSourceChangedListener = { items: List<AttachedImage> -> }
-
-    fun destroyCallbacks() {
-        onDataSourceChangedListener = { items: List<AttachedImage> -> }
-    }
-
     init {
         dataStorage = SimpleDataProviderImpl()
     }

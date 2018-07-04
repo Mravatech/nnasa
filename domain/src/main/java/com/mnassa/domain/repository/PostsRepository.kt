@@ -12,6 +12,7 @@ interface PostsRepository {
     suspend fun loadAllImmediately(): List<PostModel>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadAllByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel>
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel>
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>

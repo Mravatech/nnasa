@@ -25,6 +25,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id, authorId)
     override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
+    override suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel> = postsRepository.loadAllUserPostByAccountIdImmediately(accountId)
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.loadAllByGroupIdImmediately(groupId)
 

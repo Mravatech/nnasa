@@ -10,8 +10,6 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 
 /**

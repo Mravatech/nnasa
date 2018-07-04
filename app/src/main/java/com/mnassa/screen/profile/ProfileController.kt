@@ -49,6 +49,30 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         adapter.isLoadingEnabled = savedInstanceState == null
+
+        adapter.onDataChangedListener = { itemsCount ->
+            //            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
+
+        launchCoroutineUI {
+            viewModel.postChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        if (it.item.isNotEmpty()) {
+                            adapter.dataStorage.addAll(it.item)
+                        }
+                        adapter.isLoadingEnabled = false
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.isLoadingEnabled = true
+                        adapter.dataStorage.clear()
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View) {
@@ -110,23 +134,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 val profile = viewModel.profileChannel.consume { receive() }
                 if (!profile.isMyProfile) {
                     handleConnectionStatus(connectionStatus, view)
-                }
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.postChannel.openSubscription().bufferize(this@ProfileController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.isLoadingEnabled = false
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> adapter.dataStorage.clear()
                 }
             }
         }
