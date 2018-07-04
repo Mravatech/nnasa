@@ -9,11 +9,12 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.extensions.isMyEvent
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.withContext
 import java.util.concurrent.ConcurrentSkipListSet
 
 /**
@@ -73,9 +74,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
         loadTicketsJob?.cancel()
         loadTicketsJob = handleException {
             eventsInteractor.getTicketsChannel(eventId).consumeEach {
-                async {
-                    val attendedUsers = eventsInteractor.getAttendedUsers(eventId).mapNotNullTo(HashSet()) { it.takeIf { it.isPresent }?.user?.id }
-
+                withContext(DefaultDispatcher) {
                     var hasConnections = false
                     var hasOtherUsers = false
                     val participants = it.mapNotNullTo(ArrayList<EventParticipantItem>(it.size)) {
@@ -92,7 +91,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                         participants += EventParticipantItem.OtherHeader(!hasConnections && event.isMyEvent())
                     }
                     participantsChannel.send(participants)
-                }.await()
+                }
             }
         }
     }
