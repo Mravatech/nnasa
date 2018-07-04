@@ -10,67 +10,60 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
     abstract val itemsComparator: (item1: ITEM, item2: ITEM) -> Int
     abstract val itemClass: Class<ITEM>
 
-    open class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>, private val onDataChangedListener: () -> Unit = {}) : DataStorage<ITEM> {
+    open class SortedDataStorage<ITEM>(itemClass: Class<ITEM>, private val adapter: BaseSortedPaginationRVAdapter<ITEM>) : DataStorage<ITEM> {
         val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 
         override fun clear() {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.clear()
                 wrappedList.endBatchedUpdates()
-                onDataChangedListener()
             }
         }
 
         override fun add(element: ITEM): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.add(element)
                 wrappedList.endBatchedUpdates()
-                onDataChangedListener()
             }
 
             return true
         }
 
         override fun addAll(elements: Collection<ITEM>): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.addAll(elements)
                 wrappedList.endBatchedUpdates()
-                onDataChangedListener()
             }
             return true
         }
 
         override fun remove(element: ITEM): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.remove(element)
                 wrappedList.endBatchedUpdates()
-                onDataChangedListener()
             }
             return true
         }
 
         override fun set(elements: List<ITEM>) {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.replaceAll(elements)
                 wrappedList.endBatchedUpdates()
-                onDataChangedListener()
             }
         }
 
         override fun removeAll(elements: Collection<ITEM>): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
                     wrappedList.remove(it)
                 }
                 wrappedList.endBatchedUpdates()
-
-                onDataChangedListener()
             }
             return true
         }

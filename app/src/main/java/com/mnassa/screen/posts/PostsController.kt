@@ -44,7 +44,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             open(postDetailsFactory.newInstance(it))
         }
         adapter.onCreateNeedClickListener = {
-            launchCoroutineUI {
+            controllerSubscriptionContainer.launchCoroutineUI {
                 if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
                     open(CreateNeedController.newInstance())
                 }
@@ -59,7 +59,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.newsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
@@ -77,7 +77,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             }
         }
 
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.infoFeedChannel.openSubscription().consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> adapter.dataStorage.add(it.item)

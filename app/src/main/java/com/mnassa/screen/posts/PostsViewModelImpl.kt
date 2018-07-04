@@ -2,7 +2,10 @@ package com.mnassa.screen.posts
 
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.InfoPostModel
+import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.PermissionsModel
+import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -10,7 +13,10 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
+import kotlin.system.measureTimeMillis
 
 /**
  * Created by Peter on 3/6/2018.
@@ -28,7 +34,9 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                 it.send(ListItemEvent.Cleared())
                 it.send(ListItemEvent.Added(getNewsFeed()))
             },
-            receiveChannelProvider = { postsInteractor.loadAll().bufferize(this@PostsViewModelImpl) })
+            receiveChannelProvider = {
+                postsInteractor.loadAll().map { it.toBatched() }
+            })
 
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
             receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
@@ -63,5 +71,10 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         }
     }
 
-    private suspend fun getNewsFeed(): List<PostModel> = handleExceptionsSuspend { postsInteractor.loadAllImmediately() } ?: emptyList()
+    private suspend fun getNewsFeed(): List<PostModel> {
+        val start = System.currentTimeMillis()
+        val result = handleExceptionsSuspend { postsInteractor.loadAllImmediately() } ?: emptyList()
+        Timber.e("NewsFeed loading time = ${System.currentTimeMillis() - start}")
+        return result
+    }
 }

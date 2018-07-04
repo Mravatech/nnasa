@@ -55,7 +55,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             open(postDetailsFactory.newInstance(it))
         }
         adapter.onCreateNeedClickListener = {
-            launchCoroutineUI {
+            controllerSubscriptionContainer.launchCoroutineUI {
                 if (viewModel.groupPermissionsChannel.consume { receive() }.canCreateNeedPost) {
                     open(CreateNeedController.newInstance(group = groupModel))
                 }
@@ -70,7 +70,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.newsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {

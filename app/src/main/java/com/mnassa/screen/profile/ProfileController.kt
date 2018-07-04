@@ -55,7 +55,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.postChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {

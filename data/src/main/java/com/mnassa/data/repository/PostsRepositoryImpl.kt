@@ -1,5 +1,6 @@
 package com.mnassa.data.repository
 
+import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
@@ -28,6 +29,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
 import timber.log.Timber
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by Peter on 3/15/2018.
@@ -250,12 +252,14 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .map { converter.convert(it, OfferCategoryModel::class.java) }
     }
 
+    private val tagsCache = ConcurrentHashMap<String, TagModel>()
     private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
         return try {
             val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
             if (out is RecommendedProfilePostModel) {
                 val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
-                out.offers = offerIds.mapNotNull { tagRepository.get(it) }
+                //todo: performance issue
+//                out.offers = offerIds.map { async { tagsCache.getOrPut(it) { tagRepository.get(it) } } }.mapNotNull { it.await() }
             }
             out
         } catch (e: Exception) {

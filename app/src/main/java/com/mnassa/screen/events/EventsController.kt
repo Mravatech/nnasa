@@ -51,7 +51,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        launchCoroutineUI {
+        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.eventsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
