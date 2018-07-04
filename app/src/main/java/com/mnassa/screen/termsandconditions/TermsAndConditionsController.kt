@@ -35,10 +35,13 @@ class TermsAndConditionsController : MnassaControllerImpl<TermsAndConditionsView
         view.wvTermsAndConditions.loadUrl("${BuildConfig.TERMS_AND_CONDITIONS}$end")
         view.wvTermsAndConditions.webViewClient = object : WebViewClient() {
             @SuppressWarnings("deprecation")
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean = true
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                view.loadUrl(url)
+                return false
+            }
 
             @RequiresApi(Build.VERSION_CODES.N)
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = true
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = false
         }
     }
 
