@@ -51,9 +51,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         super.onCreated(savedInstanceState)
         adapter.isLoadingEnabled = savedInstanceState == null
 
-        adapter.onDataChangedListener = { itemsCount ->
-            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
-        }
+//        adapter.onDataChangedListener = { itemsCount ->
+////            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+//        }
 
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.postChannel.consumeEach {

@@ -10,6 +10,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.formatted
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_header_profile_company_view.view.*
 import kotlinx.android.synthetic.main.sub_header_company.view.*

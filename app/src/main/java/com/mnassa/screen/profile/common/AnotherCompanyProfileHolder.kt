@@ -10,6 +10,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.formatted
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_header_another_profile_company_view.view.*
 import kotlinx.android.synthetic.main.sub_header_company.view.*
@@ -56,14 +57,13 @@ class AnotherCompanyProfileHolder(
                         areThereTags = profile.offers.isNotEmpty())
             }
             vBottomDivider.visibility = if (profile.offers.isEmpty()) View.VISIBLE else View.GONE
-
         }
     }
 
     override fun bindOffers(offers: List<TagModel>) {
         with(itemView) {
-            setCheckedTags(tvProfileWeCanHelpWith, chipProfileWeCanHelpWith, vTopProfileWeCanHelpWith, offers, fromDictionary(R.string.reg_account_can_help_with))
             llBottomTags.setTags(offers)
+            setCheckedTags(tvProfileWeCanHelpWith, chipProfileWeCanHelpWith, vTopProfileWeCanHelpWith, offers, fromDictionary(R.string.reg_account_can_help_with))
         }
     }
 

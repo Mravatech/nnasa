@@ -10,6 +10,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.formatted
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_header_profile_personal_view.view.*
 import kotlinx.android.synthetic.main.sub_header_personal.view.*
@@ -25,6 +26,7 @@ class PersonalProfileViewHolder(
         itemView: View,
         private val onClickListener: View.OnClickListener,
         item: ProfileAccountModel) : BaseProfileHolder(itemView) {
+
     override fun bind(item: PostModel) {
     }
 
@@ -64,8 +66,8 @@ class PersonalProfileViewHolder(
 
     override fun bindOffers(offers: List<TagModel>) {
         with(itemView) {
-            setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, vTopProfileCanHelpWith, offers, fromDictionary(R.string.reg_account_can_help_with))
             llBottomTags.setTags(offers)
+            setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, vTopProfileCanHelpWith, offers, fromDictionary(R.string.reg_account_can_help_with))
         }
     }
 

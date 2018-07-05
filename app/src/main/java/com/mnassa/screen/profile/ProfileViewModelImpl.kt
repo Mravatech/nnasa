@@ -8,10 +8,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -58,7 +55,7 @@ class ProfileViewModelImpl(
         }
         handleException {
             postsInteractor.loadAllUserPostByAccountIdImmediately(accountId).apply { postChannel.send(ListItemEvent.Added(this)) }
-            postsInteractor.loadAllUserPostByAccountId(accountId).bufferize(this).consumeTo(postChannel)
+            postsInteractor.loadAllUserPostByAccountId(accountId).map { it.toBatched() }.consumeTo(postChannel)
         }
         handleException {
             profileChannel.consumeEach { profile ->

@@ -15,6 +15,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.FlowLayout
 import com.mnassa.widget.SimpleChipView
@@ -27,6 +28,8 @@ import java.util.*
  * Date: 3/28/2018
  */
 abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseVH<PostModel>(itemView) {
+
+    protected var bottomTagsAdapter = PostTagRVAdapter()
 
     abstract fun bindProfile(profile: ProfileAccountModel)
     abstract fun bindOffers(offers: List<TagModel>)

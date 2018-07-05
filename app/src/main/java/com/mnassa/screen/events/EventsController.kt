@@ -8,7 +8,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.bufferize
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
