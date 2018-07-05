@@ -11,6 +11,7 @@ import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.screen.splash.SplashController
+import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 
 /**
  * Created by Peter on 3/12/2018.
@@ -50,7 +51,7 @@ class MnassaRouterDelegate : MnassaRouter {
             controller is MainController -> false
             controller is EnterPromoController -> true
             self is SplashController -> false
-            self is EnterPhoneController -> false
+            self is EnterPhoneController -> controller is TermsAndConditionsController
             self is EnterPromoController -> false
             self is EnterCodeController -> false
             self is RegistrationController -> false

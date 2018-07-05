@@ -55,10 +55,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             viewModel.eventsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
                         adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)

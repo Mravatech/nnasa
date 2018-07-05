@@ -74,8 +74,8 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             viewModel.newsFeedChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
-                        adapter.dataStorage.addAll(it.item)
                         adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)

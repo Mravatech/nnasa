@@ -1,6 +1,7 @@
 package com.mnassa.screen.registration
 
 import android.os.Bundle
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -25,6 +26,7 @@ class RegistrationViewModelImpl(
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
     override val hasPersonalAccountChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
+    override val addTagRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
 
     private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
     private val isOffersMandatory = async { tagInteractor.isOffersMandatory() }
@@ -36,6 +38,10 @@ class RegistrationViewModelImpl(
             userProfileInteractor.getAllAccounts().consumeEach {
                 hasPersonalAccountChannel.send(it.any { it.accountType == AccountType.PERSONAL })
             }
+        }
+
+        handleException {
+            tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
         }
     }
 
