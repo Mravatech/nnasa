@@ -67,10 +67,10 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile "$System.env.STORE_FILE_LOCATION" as File
-            storePassword "$System.env.STORE_PASSWORD"
-            keyAlias "$System.env.KEY_ALIAS"
-            keyPassword "$System.env.KEY_PASSWORD"
+            storeFile file("../keystore/mnassa-keystore.jks")
+            storePassword 'NMO2pG5IoskkbX5gL5c'
+            keyAlias 'ftqtGs0cD3VS9DVqbgA'
+            keyPassword 'UWPb27M8XNOcn5XPtn8'
         }
     }
 
