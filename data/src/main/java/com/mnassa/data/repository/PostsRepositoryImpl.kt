@@ -1,6 +1,5 @@
 package com.mnassa.data.repository
 
-import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
@@ -25,6 +24,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
@@ -258,8 +258,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
             if (out is RecommendedProfilePostModel) {
                 val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
-                //todo: performance issue
-//                out.offers = offerIds.map { async { tagsCache.getOrPut(it) { tagRepository.get(it) } } }.mapNotNull { it.await() }
+                out.offers = offerIds.map { async { tagsCache.getOrPut(it) { tagRepository.get(it) } } }.mapNotNull { it.await() }
             }
             out
         } catch (e: Exception) {

@@ -23,21 +23,21 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
     var onWalletClickListener = {}
     var onConnectionStatusClickListener = { item: ConnectionStatus? -> }
 
-    var profileModel: ProfileAccountModel? = null
-        set(value) {
-            field = value
-            notifyItemChanged(0)
-        }
-    var offers: List<TagModel> = emptyList()
-        set(value) {
-            field = value
-            notifyItemChanged(0)
-        }
-    var interests: List<TagModel> = emptyList()
-        set(value) {
-            field = value
-            notifyItemChanged(0)
-        }
+//    var profileModel: ProfileAccountModel? = null
+//        set(value) {
+//            field = value
+//            notifyItemChanged(0)
+//        }
+//    var offers: List<TagModel> = emptyList()
+//        set(value) {
+//            field = value
+//            notifyItemChanged(0)
+//        }
+//    var interests: List<TagModel> = emptyList()
+//        set(value) {
+//            field = value
+//            notifyItemChanged(0)
+//        }
     var connectionStatus: ConnectionStatus? = null
         set(value) {
             field = value
@@ -72,32 +72,32 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
     }
 
     override fun onBindViewHolder(holder: BaseVH<PostModel>, position: Int) {
-        super.onBindViewHolder(holder, position)
-        if (holder is BaseProfileHolder) {
-            profileModel?.let { holder.bindProfile(it) }
-            holder.bindOffers(offers)
-            holder.bindInterests(interests)
-            connectionStatus?.let { holder.bindConnectionStatus(it) }
-            holder.itemView.findViewById<View>(R.id.rlEmptyView).isGone = !dataStorage.isEmpty()
-        }
+//        super.onBindViewHolder(holder, position)
+//        if (holder is BaseProfileHolder) {
+//            profileModel?.let { holder.bindProfile(it) }
+//            holder.bindOffers(offers)
+//            holder.bindInterests(interests)
+//            connectionStatus?.let { holder.bindConnectionStatus(it) }
+//            holder.itemView.findViewById<View>(R.id.rlEmptyView).isGone = !dataStorage.isEmpty()
+//        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
-        val profile = profileModel
-        return if (viewType == TYPE_HEADER) {
-            val item = if (profile == null) {
-                UnsupportedTypeViewHolder.newInstance(parent, this)
-            } else when {
-                profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
-                profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
-                !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
-                !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
-                else -> throw IllegalArgumentException("Wrong account type!")
-            }
-            item.setIsRecyclable(false)
-            item
-        } else {
-            super.onCreateViewHolder(parent, viewType)
-        }
-    }
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
+//        val profile = profileModel
+//        return if (viewType == TYPE_HEADER) {
+//            val item = if (profile == null) {
+//                UnsupportedTypeViewHolder.newInstance(parent, this)
+//            } else when {
+//                profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
+//                profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
+//                !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
+//                !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
+//                else -> throw IllegalArgumentException("Wrong account type!")
+//            }
+//            item.setIsRecyclable(false)
+//            item
+//        } else {
+//            super.onCreateViewHolder(parent, viewType)
+//        }
+//    }
 }

@@ -19,6 +19,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 class TagRepositoryImpl(
@@ -30,11 +31,15 @@ class TagRepositoryImpl(
         private val userRepository: UserRepository
 ) : TagRepository {
 
+    private val tagsCache = ConcurrentHashMap<String, TagModel>()
+
     override suspend fun get(id: String): TagModel? {
-        return databaseReference.child(DatabaseContract.TABLE_TAGS)
-                .child(id)
-                .await<TagDbEntity>(exceptionHandler)
-                ?.run { converter.convert(this, TagModel::class.java) }
+        return tagsCache.getOrPut(id) {
+            databaseReference.child(DatabaseContract.TABLE_TAGS)
+                    .child(id)
+                    .await<TagDbEntity>(exceptionHandler)
+                    ?.run { converter.convert(this, TagModel::class.java) }
+        }
     }
 
     override suspend fun getAll(): List<TagModel> {

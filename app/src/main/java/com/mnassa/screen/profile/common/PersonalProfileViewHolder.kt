@@ -32,6 +32,7 @@ class PersonalProfileViewHolder(
 
     init {
         bindProfile(item)
+        itemView.rvBottomTags.adapter = bottomTagsAdapter
     }
 
     override fun bindProfile(profile: ProfileAccountModel) {
@@ -50,7 +51,7 @@ class PersonalProfileViewHolder(
             tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
             flMoreInformation.setOnClickListener {
                 onMoreClick(profileInfo = profileInfo,
-                        llBottomTags = llBottomTags,
+                        llBottomTags = rvBottomTags,
                         tvMoreInformation = tvMoreInformation,
                         vBottomDivider = vBottomDivider,
                         areThereTags = profile.offers.isNotEmpty())
@@ -65,8 +66,8 @@ class PersonalProfileViewHolder(
     }
 
     override fun bindOffers(offers: List<TagModel>) {
+        super.bindOffers(offers)
         with(itemView) {
-            llBottomTags.setTags(offers)
             setCheckedTags(tvProfileCanHelpWith, chipProfileCanHelpWith, vTopProfileCanHelpWith, offers, fromDictionary(R.string.reg_account_can_help_with))
         }
     }

@@ -10,7 +10,6 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.formatted
-import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_header_profile_company_view.view.*
 import kotlinx.android.synthetic.main.sub_header_company.view.*
@@ -29,6 +28,7 @@ class CompanyProfileViewHolder(
 
     init {
         bindProfile(item)
+        itemView.rvBottomTags.adapter = bottomTagsAdapter
     }
 
     override fun bindProfile(profile: ProfileAccountModel) {
@@ -47,7 +47,7 @@ class CompanyProfileViewHolder(
             tvMoreInformation.text = fromDictionary(R.string.profile_more_information)
             flMoreInformation.setOnClickListener {
                 onMoreClick(profileInfo = profileInfo,
-                        llBottomTags = llBottomTags,
+                        llBottomTags = rvBottomTags,
                         tvMoreInformation = tvMoreInformation,
                         vBottomDivider = vBottomDivider,
                         areThereTags = profile.offers.isNotEmpty())
@@ -62,8 +62,8 @@ class CompanyProfileViewHolder(
     }
 
     override fun bindOffers(offers: List<TagModel>) {
+        super.bindOffers(offers)
         with(itemView) {
-            llBottomTags.setTags(offers)
             setCheckedTags(tvProfileWeCanHelpWith, chipProfileWeCanHelpWith, vTopProfileWeCanHelpWith, offers, fromDictionary(R.string.reg_account_can_help_with))
         }
     }
@@ -79,7 +79,6 @@ class CompanyProfileViewHolder(
     companion object {
         fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, profileModel: ProfileAccountModel): CompanyProfileViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_header_profile_company_view, parent, false)
-
             return CompanyProfileViewHolder(view, onClickListener, profileModel)
         }
     }
