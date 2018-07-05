@@ -13,15 +13,19 @@ import com.mnassa.extensions.isGone
 import com.mnassa.extensions.isMyProfile
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.complaintother.ComplaintOtherController
+import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.group.select.SelectGroupController
+import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.common.*
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
+import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import kotlinx.coroutines.experimental.channels.consume
@@ -77,42 +81,16 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         super.onViewCreated(view)
 
         view.rvProfile.adapter = adapter
-        view.ivProfileBack.setOnClickListener { close() }
+        view.toolbarProfile.setNavigationOnClickListener { close() }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
+        }
 
-//        adapter.onConnectionStatusClickListener = {
-//            when (it) {
-//                ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
-//                    viewModel.sendConnectionStatus(it, accountId)
-//                }
-//                ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
-//                    viewModel.sendConnectionStatus(it, accountId)
-//            }
-//        }
-//        adapter.onWalletClickListener = { open(WalletController.newInstance()) }
-//        adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
-//        adapter.onItemClickListener = {
-//            val postDetailsFactory: PostDetailsFactory by instance()
-//            open(postDetailsFactory.newInstance(it))
-//        }
+
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
-
-//        launchCoroutineUI {
-//            viewModel.profileChannel.consumeEach { profileModel ->
-//                adapter.profileModel = profileModel
-//
-//
-//            }
-//        }
-
-//        launchCoroutineUI {
-//            viewModel.offersChannel.consumeEach { adapter.offers = it }
-//        }
-//
-//        launchCoroutineUI {
-//            viewModel.interestsChannel.consumeEach { adapter.interests = it }
-//        }
 
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
@@ -180,8 +158,25 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    override fun onClick(v: View?) {
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.tvPointsGiven -> open(WalletController.newInstance())
+            R.id.tvProfileConnections -> open(AllConnectionsController.newInstance())
+            R.id.tvConnectionStatus -> {
+                launchCoroutineUI {
+                    val connectionStatus = viewModel.statusesConnectionsChannel.consume { receive() }
+                    when (connectionStatus) {
+                        ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                            viewModel.sendConnectionStatus(connectionStatus, accountId)
+                        }
+                        ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
+                            viewModel.sendConnectionStatus(connectionStatus, accountId)
+                    }
+                }
 
+            }
+
+        }
     }
 
     private fun handleCollapsingToolbar(view: View, connectionStatus: ConnectionStatus, profileModel: ProfileAccountModel) {
@@ -190,13 +185,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             val shouldShowFab = (connectionStatus == ConnectionStatus.CONNECTED ||
                     connectionStatus == ConnectionStatus.RECOMMENDED ||
                     connectionStatus == ConnectionStatus.SENT)
-            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                view.tvTitleCollapsed.visibility = View.VISIBLE
+
+            val offset = view.resources.getDimensionPixelSize(R.dimen.profile_main_image_height)
+
+            if (appBarLayout.totalScrollRange - Math.abs(verticalOffset) < offset) {
                 if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.hide()
                 }
             } else {
-                view.tvTitleCollapsed.visibility = View.GONE
                 if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.show()
                 }
@@ -215,29 +211,27 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleConnectionStatus(connectionStatus: ConnectionStatus, view: View) {
-//        adapter.connectionStatus = connectionStatus
-//
-//        val fab = view.fabProfile
-//        fab.visibility = View.VISIBLE
-//        fab.setOnClickListener {
-//            adapter.profileModel?.let {
-//                open(ChatMessageController.newInstance(it))
-//            }
-//        }
-//        fab.setImageResource(R.drawable.ic_chat)
-//
-//        when (connectionStatus) {
-//            ConnectionStatus.REQUESTED, ConnectionStatus.RECOMMENDED -> {
-//                view.rlConnectContainer.visibility = View.VISIBLE
-//                view.btnConnectUser.setOnClickListener {
-//                    viewModel.sendConnectionStatus(connectionStatus, accountId)
-//                }
-//            }
-//            else -> {
-//                view.rlConnectContainer.visibility = View.GONE
-//                view.btnConnectUser.setOnClickListener(null)
-//            }
-//        }
+        val fab = view.fabProfile
+        fab.visibility = View.VISIBLE
+        fab.setOnClickListener {
+            launchCoroutineUI {
+                viewModel.profileChannel.consume { receive() }.apply { open(ChatMessageController.newInstance(this)) }
+            }
+        }
+        fab.setImageResource(R.drawable.ic_chat)
+
+        when (connectionStatus) {
+            ConnectionStatus.REQUESTED, ConnectionStatus.RECOMMENDED -> {
+                view.rlConnectContainer.visibility = View.VISIBLE
+                view.btnConnectUser.setOnClickListener {
+                    viewModel.sendConnectionStatus(connectionStatus, accountId)
+                }
+            }
+            else -> {
+                view.rlConnectContainer.visibility = View.GONE
+                view.btnConnectUser.setOnClickListener(null)
+            }
+        }
     }
 
     private fun onSettingsClick(profileModel: ProfileAccountModel, view: View) {
@@ -301,11 +295,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         if (profileModel.accountType == AccountType.PERSONAL) {
             view.profileName.text = profileModel.formattedName
             view.profileSubName.text = profileModel.formattedPosition
-            view.tvTitleCollapsed.text = profileModel.formattedName
         } else {
             view.profileName.text = profileModel.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.organizationType
-            view.tvTitleCollapsed.text = profileModel.organizationInfo?.organizationName
         }
     }
 

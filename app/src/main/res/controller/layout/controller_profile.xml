@@ -15,7 +15,6 @@
             android:id="@+id/profileCollapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="@color/blue_turquoise"
             app:expandedTitleTextAppearance="@color/white"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
@@ -23,7 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <FrameLayout
+                <RelativeLayout
+                    android:id="@+id/flProfilePicture"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -40,9 +40,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/ivCropImage"
                         android:layout_gravity="bottom"
-                        android:layout_margin="@dimen/activity_margin_size"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingBottom="@dimen/spacing_vertical"
+                        android:paddingEnd="@dimen/spacing_horizontal"
+                        android:paddingStart="@dimen/spacing_horizontal">
 
                         <TextView
                             android:id="@+id/profileName"
@@ -67,12 +70,12 @@
                         android:id="@+id/flSecondHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="240dp"
-                        android:background="@color/accent">
+                        android:layout_marginTop="@dimen/profile_main_image_height"
+                        tools:background="@color/accent"
+                        tools:layout_height="100dp" />
 
-                    </FrameLayout>
 
-                </FrameLayout>
+                </RelativeLayout>
 
             </android.support.v4.widget.NestedScrollView>
 
@@ -82,25 +85,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:expandedTitleTextAppearance="@android:color/black"
-                app:layout_collapseMode="pin">
+                app:layout_collapseMode="parallax"
+                app:navigationIcon="@drawable/ic_arrow_back_white_24dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/ivProfileBack"
-                        style="@style/Profile.ToolbarBackView"
-                        android:contentDescription="@null"
-                        app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
-
-                    <TextView
-                        android:id="@+id/tvTitleCollapsed"
-                        style="@style/Profile.ToolbarTitle"
-                        android:layout_toEndOf="@+id/ivProfileBack"
-                        android:layout_toStartOf="@+id/flContainer"
-                        tools:text="Grinch" />
 
                     <FrameLayout
                         android:id="@+id/flContainer"
@@ -138,7 +129,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:visibility="gone"
         app:fabSize="normal"
-        app:layout_anchor="@id/profileCollapsing"
+        app:layout_anchor="@id/ivCropImage"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_chat"
         tools:visibility="visible" />
