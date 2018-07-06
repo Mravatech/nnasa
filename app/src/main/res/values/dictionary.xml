@@ -164,6 +164,8 @@
     <string name="post_promote_dialog_title">_promotion_willCostMaskpromotePost</string>
     <string name="post_promote_dialog_no">_post_details_alert_cancel</string>
     <string name="post_promote_dialog_yes">_android_ok</string>
+    <string name="post_close">_post_details_alert_expirationStatusTo_closed</string>
+    <string name="post_fulfill">_post_details_alert_expirationStatusTo_fulfilled</string>
 
     <!-- ========================================== OFFER ======================================= -->
     <string name="offer_prefix">_post_type_offer_Info</string>

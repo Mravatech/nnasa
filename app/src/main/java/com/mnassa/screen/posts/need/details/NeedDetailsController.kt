@@ -112,7 +112,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 post = post,
                 onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
                 onDeletePost = { viewModel.delete() },
-                onPromotePost = { viewModel.promote() }
+                onPromotePost = { viewModel.promote() },
+                changeStatus = { viewModel.changeStatus(it) }
         )
     }
 

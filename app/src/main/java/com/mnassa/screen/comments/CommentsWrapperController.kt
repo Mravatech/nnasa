@@ -58,6 +58,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     private val wrappedControllerParams by lazy { args.getBundle(EXTRA_CONTROLLER_ARGS) }
     private val commentsRewardModel by lazy { args.getSerializable(EXTRA_COMMENT_OWNER) as CommentsRewardModel }
     private val wrappedController = StateExecutor<Controller?, CommentsWrapperCallback>(null) { it is CommentsWrapperCallback }
+    private val initializedContainer = StateExecutor<Unit?, Unit>(null) { it != null}
     //
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
@@ -161,6 +162,11 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
+    override fun onViewDestroyed(view: View) {
+        initializedContainer.value = null
+        super.onViewDestroyed(view)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != REQUEST_CODE_CROP) return
@@ -212,8 +218,9 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
             bindEditedComment(editedComment, false)
             bindReplyTo(replyTo)
-            getCommentsContainer().recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
-            getCommentsContainer().attachmentsPanel?.isGone = attachmentsAdapter.dataStorage.isEmpty()
+            container.recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
+            container.attachmentsPanel?.isGone = attachmentsAdapter.dataStorage.isEmpty()
+            initializedContainer.value = Unit
         }
     }
 
@@ -249,6 +256,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     suspend fun bindCanRecommend(canRecommend: Boolean) {
+        //
+        initializedContainer.await()
         getCommentsContainer().ivCommentRecommend.isGone = !canRecommend
     }
 

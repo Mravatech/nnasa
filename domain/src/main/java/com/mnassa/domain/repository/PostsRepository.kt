@@ -27,6 +27,8 @@ interface PostsRepository {
     //
     suspend fun createNeed(post: RawPostModel): PostModel
     suspend fun updateNeed(post: RawPostModel)
+    suspend fun changeStatus(id: String, status: ExpirationType)
+
     suspend fun createGeneralPost(post: RawPostModel): PostModel
     suspend fun updateGeneralPost(post: RawPostModel)
     suspend fun createOffer(post: RawPostModel): OfferPostModel

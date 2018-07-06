@@ -143,6 +143,16 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
     override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post).run { Unit }
+    override suspend fun changeStatus(id: String, status: ExpirationType) {
+        val statusString = when(status) {
+            is ExpirationType.ACTIVE -> DatabaseContract.EXPIRATION_TYPE_ACTIVE
+            is ExpirationType.FULFILLED -> DatabaseContract.EXPIRATION_TYPE_FULFILLED
+            is ExpirationType.CLOSED -> DatabaseContract.EXPIRATION_TYPE_CLOSED
+            is ExpirationType.EXPIRED -> DatabaseContract.EXPIRATION_TYPE_EXPIRED
+        }
+        postApi.changePostStatus(ChangePostStatusRequest(id, statusString)).handleException(exceptionHandler)
+    }
+
     override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
     override suspend fun updateGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post).run { Unit }
     override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }

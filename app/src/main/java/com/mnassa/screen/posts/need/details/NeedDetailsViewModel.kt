@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts.need.details
 
 import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
@@ -21,6 +22,7 @@ interface NeedDetailsViewModel : MnassaViewModel {
     fun repost(sharingOptions: PostPrivacyOptions)
     fun promote()
     fun sendComplaint(id: String, reason: String, authorText: String?)
+    fun changeStatus(status: ExpirationType)
 
     data class ViewModelParams(val postId: String, val postAuthorId: String)
 }

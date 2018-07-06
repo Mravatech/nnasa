@@ -144,6 +144,10 @@ val PostModel.canBeShared: Boolean get() = privacyType !is PostPrivacyType.PRIVA
 
 val PostModel.canRecommend: Boolean get() = statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE
 
+val PostModel.canBeEdited: Boolean get() = isMyPost() && (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE)
+
+val PostModel.statusCanBeChanged: Boolean get() = canBeEdited && type is PostType.NEED
+
 suspend fun PostModel?.canBePromoted(): Boolean {
     if (this?.privacyType is PostPrivacyType.WORLD) return false
     if (this?.isMyPost() == false) return false

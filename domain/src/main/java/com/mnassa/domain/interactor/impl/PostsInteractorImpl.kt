@@ -69,6 +69,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 processedTags = processTags(post)))
     }
 
+    override suspend fun changeStatus(id: String, status: ExpirationType) {
+        postsRepository.changeStatus(id, status)
+    }
+
     override suspend fun createGeneralPost(post: RawPostModel): PostModel {
         return postsRepository.createGeneralPost(post.copy(
                 processedImages = processImages(post),
