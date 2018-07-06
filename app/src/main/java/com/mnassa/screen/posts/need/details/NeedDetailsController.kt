@@ -7,10 +7,7 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -172,6 +169,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvViewsCount.text = fromDictionary(R.string.need_views_count).format(post.counters.views)
             ivRepost.setOnClickListener { openSharingOptionsScreen() }
             tvRepostsCount.text = post.counters.reposts.toString()
+            ivRepost.isInvisible = !post.canBeShared
+            tvRepostsCount.visibility = ivRepost.visibility
 
             //expiration
             tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)
@@ -190,6 +189,13 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             btnRecommend.setOnClickListener { openRecommendScreen(post, commentsWrapper.accountsToRecommend.map { it.id }) }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
+
+            val parentController = parentController
+            if (parentController is CommentsWrapperController) {
+                launchCoroutineUI {
+                    parentController.bindCanRecommend(post.canRecommend)
+                }
+            }
         }
     }
 
@@ -220,7 +226,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                                 viewModel.postChannel.consume { receive() })
                     }
                 }
-                makePostActionsVisible()
+                if (post.canRecommend) makePostActionsVisible()
+                else makePostActionsGone()
             }
         }
     }

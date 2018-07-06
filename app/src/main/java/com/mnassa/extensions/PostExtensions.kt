@@ -139,7 +139,10 @@ fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiratio
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
 
-val PostModel.canBeShared: Boolean get() = privacyType !is PostPrivacyType.PRIVATE && !isMyPost()
+val PostModel.canBeShared: Boolean get() = privacyType !is PostPrivacyType.PRIVATE && !isMyPost() &&
+        (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE)
+
+val PostModel.canRecommend: Boolean get() = statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE
 
 suspend fun PostModel?.canBePromoted(): Boolean {
     if (this?.privacyType is PostPrivacyType.WORLD) return false

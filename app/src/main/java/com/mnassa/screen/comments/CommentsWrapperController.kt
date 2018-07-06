@@ -131,7 +131,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             rvContent.adapter = commentsAdapter
             initializeContainer()
             bindToolbar(toolbar)
-
         }
 
         launchCoroutineUI {
@@ -249,6 +248,10 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
     }
 
+    suspend fun bindCanRecommend(canRecommend: Boolean) {
+        getCommentsContainer().ivCommentRecommend.isGone = !canRecommend
+    }
+
     private fun inflateHeader(parent: ViewGroup): View {
         val container = LayoutInflater.from(parent.context).inflate(R.layout.recycler_header_container, parent, false)
         container as ViewGroup
@@ -275,7 +278,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         val emptyParamConstructor = wrappedControllerClass.constructors.firstOrNull { it.parameterTypes.isEmpty() }
         val oneParamConstructor = wrappedControllerClass.constructors.firstOrNull { it.parameterTypes.size == 1 && it.parameterTypes[0] == Bundle::class.java }
 
-        return (if (emptyParamConstructor != null) emptyParamConstructor.newInstance() else requireNotNull(oneParamConstructor).newInstance(wrappedControllerParams)) as Controller
+        return (if (emptyParamConstructor != null) emptyParamConstructor.newInstance()
+        else requireNotNull(oneParamConstructor).newInstance(wrappedControllerParams)) as Controller
     }
 
     private fun onPostCommentClick() {
