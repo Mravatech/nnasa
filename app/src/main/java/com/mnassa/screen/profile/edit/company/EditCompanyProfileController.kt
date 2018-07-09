@@ -98,7 +98,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     private fun onOrganizationChanged() {
         onOrganizationChangedJob?.cancel()
         onOrganizationChangedJob = launchCoroutineUI {
-            getViewSuspend().toolbarEditProfile.actionButtonEnabled = canCreateOrganizationInfo()
+            getViewSuspend().toolbarEditProfile.actionButtonClickable = canCreateOrganizationInfo()
         }
     }
 

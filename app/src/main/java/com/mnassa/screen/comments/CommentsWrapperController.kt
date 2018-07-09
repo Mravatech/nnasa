@@ -258,7 +258,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     suspend fun bindCanRecommend(canRecommend: Boolean) {
         //
         initializedContainer.await()
-        getCommentsContainer().ivCommentRecommend.isGone = !canRecommend
+        getCommentsContainer().ivCommentRecommend?.isGone = !canRecommend
     }
 
     private fun inflateHeader(parent: ViewGroup): View {

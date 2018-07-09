@@ -94,7 +94,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     private fun onPersonChanged() {
         onPersonChangedJob?.cancel()
         onPersonChangedJob = launchCoroutineUI {
-            getViewSuspend().toolbarEditProfile.actionButtonEnabled = canCreatePersonInfo()
+            getViewSuspend().toolbarEditProfile.actionButtonClickable = canCreatePersonInfo()
         }
     }
 
