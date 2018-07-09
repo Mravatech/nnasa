@@ -91,7 +91,8 @@ class EventsInteractorImpl(
                 durationMillis = event.duration?.toMillis() ?: 0L,
                 startDateTime = event.startAt,
                 description = event.text,
-                groupIds = event.groupIds
+                groupIds = event.groupIds,
+                needPush = null
         )
 
         return eventsRepository.editEvent(model)

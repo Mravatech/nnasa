@@ -493,6 +493,7 @@
     <string name="event_status_closed">closed</string>
     <string name="event_status_suspended">suspended</string>
     <string name="event_promote_menu">_post_details_alert_promote</string>
+    <string name="event_need_notification">_new_event_is_need_push</string>
 
     <!-- ========================================== CREATE GENERAL ============================= -->
     <string name="general_text_placeholder">_android_general_text_placeholder</string>
