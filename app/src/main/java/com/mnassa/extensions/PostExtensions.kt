@@ -140,7 +140,8 @@ fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiratio
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
 
 val PostModel.canBeShared: Boolean get() = privacyType !is PostPrivacyType.PRIVATE && !isMyPost() &&
-        (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE)
+        (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE) &&
+        this !is OfferPostModel
 
 val PostModel.canRecommend: Boolean get() = statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE
 
