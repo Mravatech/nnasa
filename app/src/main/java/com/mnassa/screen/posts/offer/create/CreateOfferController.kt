@@ -235,7 +235,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             actvPlace.setText(offer.locationPlace?.placeName?.toString())
 
             etPrice.setText(if (offer.price > 0.0) offer.price.formatAsMoney().toString() else null)
-            sharingOptions.privacyConnections = offer.privacyConnections
+            sharingOptions = PostPrivacyOptions(offer.privacyType, offer.privacyConnections)
             applyShareOptionsChanges()
         }
     }

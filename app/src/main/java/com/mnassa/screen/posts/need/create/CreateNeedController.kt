@@ -200,7 +200,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 placeId = post.locationPlace?.placeId
                 actvPlace.setText(post.locationPlace?.placeName?.toString())
                 etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-                sharingOptions.privacyConnections = post.privacyConnections
+                sharingOptions = PostPrivacyOptions(post.privacyType, post.privacyConnections)
                 tvShareOptions.text = sharingOptions.format()
             }
         }

@@ -188,7 +188,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
                 placeId = post.locationPlace?.placeId
                 actvPlace.setText(post.locationPlace?.placeName?.toString())
-                sharingOptions.privacyConnections = post.privacyConnections
+                sharingOptions = PostPrivacyOptions(post.privacyType, post.privacyConnections)
                 applyShareOptionsChanges()
             }
         }
