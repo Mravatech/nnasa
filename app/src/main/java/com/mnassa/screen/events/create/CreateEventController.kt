@@ -365,6 +365,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             etTicketsQuantity.setText(event.ticketsTotal.toString())
             sEventType.setSelection(event.type.position)
             onEventChanged()
+            cbSendNotification.isGone = true
         }
     }
 
