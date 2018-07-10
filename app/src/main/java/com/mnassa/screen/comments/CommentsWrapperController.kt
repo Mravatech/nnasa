@@ -58,7 +58,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     private val wrappedControllerParams by lazy { args.getBundle(EXTRA_CONTROLLER_ARGS) }
     private val commentsRewardModel by lazy { args.getSerializable(EXTRA_COMMENT_OWNER) as CommentsRewardModel }
     private val wrappedController = StateExecutor<Controller?, CommentsWrapperCallback>(null) { it is CommentsWrapperCallback }
-    private val initializedContainer = StateExecutor<Unit?, Unit>(null) { it != null}
+    private val initializedContainer = StateExecutor<Unit?, Unit>(null) { it != null }
     //
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
@@ -294,14 +294,18 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     private fun onPostCommentClick() {
         with(view ?: return) {
             val editedCommentLocal = editedComment
-            if (editedCommentLocal != null) {
-                viewModel.editComment(makeCommentModel())
-            } else viewModel.createComment(makeCommentModel())
-            etCommentText.text = null
-            replyTo = null
-            editedComment = null
-            bindRecommendedAccounts(emptyList())
-            bindCommentAttachments(emptyList())
+            launchCoroutineUI {
+                val result = if (editedCommentLocal != null) {
+                    viewModel.editComment(makeCommentModel())
+                } else viewModel.createComment(makeCommentModel())
+                if (result) {
+                    etCommentText.text = null
+                    replyTo = null
+                    editedComment = null
+                    bindRecommendedAccounts(emptyList())
+                    bindCommentAttachments(emptyList())
+                }
+            }
         }
     }
 
