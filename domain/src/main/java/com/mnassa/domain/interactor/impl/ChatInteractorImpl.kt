@@ -20,6 +20,8 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
     override suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>> =
             chatRepository.listOfChats()
 
+    override suspend fun listOfChatsImmediately(): List<ChatRoomModel> = chatRepository.listOfChatsImmediately()
+
     override suspend fun listOfMessages(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<ChatMessageModel>> =
             chatRepository.listOfMessages(chatId, accountId)
 

@@ -3,6 +3,7 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
+import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.network.api.FirebaseChatApi
 import com.mnassa.data.network.bean.firebase.ChatDbModel
@@ -113,7 +114,27 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                     it
                 }
                 .filter {
-                    it.item.account != null && it.item.chatMessageModel != null
+                    it.item.account != null /*&& it.item.chatMessageModel != null*/
+                }
+    }
+
+    override suspend fun listOfChatsImmediately(): List<ChatRoomModel> {
+        val userId = userRepository.getAccountIdOrException()
+        return db.child(TABLE_CHAT)
+                .child(TABLE_CHAT_LIST)
+                .child(TABLE_CHAT_TYPE_PRIVATE)
+                .child(userId)
+                .awaitList<ChatDbModel>(exceptionHandler)
+                .map {
+                    val item =  converter.convert(it, ChatRoomModel::class.java)
+                    val otherUserId = item.members?.firstOrNull { it != userId }
+                    if (otherUserId != null) {
+                        item.account = userRepository.getAccountById(otherUserId)
+                    }
+                    item
+                }
+                .filter { item ->
+                    item.account != null /*&& item.chatMessageModel != null*/
                 }
     }
 

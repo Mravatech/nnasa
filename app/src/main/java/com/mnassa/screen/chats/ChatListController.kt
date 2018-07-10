@@ -12,7 +12,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -42,22 +41,23 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
             adapter.restoreState(this)
         }
         adapter.isLoadingEnabled = savedInstanceState == null
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.llEmptyMessages?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
+
         controllerSubscriptionContainer.launchCoroutineUI {
-            val view = getViewSuspend()
-            viewModel.listMessagesChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
+            viewModel.listMessagesChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false
                         adapter.dataStorage.addAll(it.item)
-                        view.llEmptyMessages.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
                     }
                     is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
                     is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
                     is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
                         adapter.isLoadingEnabled = true
-                        view.llEmptyMessages.isInvisible = true
+                        adapter.dataStorage.clear()
                     }
                 }
             }

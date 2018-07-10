@@ -14,6 +14,7 @@ import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import kotlinx.android.synthetic.main.item_chat_room.view.*
+import java.util.*
 
 
 /**
@@ -27,7 +28,10 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
     var onItemClickListener = { item: ChatRoomModel -> }
 
     override val itemsComparator: (item1: ChatRoomModel, item2: ChatRoomModel) -> Int = { first, second ->
-        requireNotNull(first.chatMessageModel).createdAt.compareTo(requireNotNull(second.chatMessageModel).createdAt) * -1
+        val firstMessageDate = first.chatMessageModel?.createdAt ?: Date(0L)
+        val secondMessageDate = second.chatMessageModel?.createdAt ?: Date(0L)
+
+        firstMessageDate.compareTo(secondMessageDate) * -1
     }
     override val itemClass: Class<ChatRoomModel> = ChatRoomModel::class.java
 
@@ -84,7 +88,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
                 itemView.tvUserName.setTypeface(itemView.tvUserName.typeface, Typeface.NORMAL)
                 itemView.tvLastMessage.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_cool))
             }
-            val ago = requireNotNull(item.chatMessageModel).createdAt.toTimeAgo()
+            val ago = item.chatMessageModel?.createdAt?.toTimeAgo() ?: ""
             itemView.tvMessageCame.text = ago
         }
 

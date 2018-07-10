@@ -85,7 +85,8 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                 open(postDetailsFactory.newInstance(post))
             } else {
                 val position = adapter.dataStorage.indexOf(chatMessageModel)
-                view.rvMessages.scrollToPosition(position)
+                if (position >= 0)
+                view.rvMessages.scrollToPosition(position + 1)
             }
         }
 

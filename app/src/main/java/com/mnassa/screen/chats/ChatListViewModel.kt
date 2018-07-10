@@ -10,5 +10,5 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface ChatListViewModel : MnassaViewModel {
 
-    val listMessagesChannel: BroadcastChannel<ListItemEvent<ChatRoomModel>>
+    val listMessagesChannel: BroadcastChannel<ListItemEvent<List<ChatRoomModel>>>
 }
