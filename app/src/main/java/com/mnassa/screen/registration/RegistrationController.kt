@@ -1,23 +1,18 @@
 package com.mnassa.screen.registration
 
-import android.content.Context
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
-import com.mnassa.extensions.hideKeyboard
+import com.mnassa.extensions.isGone
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
@@ -42,35 +37,30 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     override val layoutId: Int = R.layout.controller_registration
     override val viewModel: RegistrationViewModel by instance()
     private val playServiceHelper: PlayServiceHelper by instance()
-
-    private lateinit var registrationAdapter: RegistrationAdapter
+    private var personSelectedPlaceId: String? = null
+    private var companySelectedPlaceId: String? = null
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
-        registrationAdapter = RegistrationAdapter(view.context)
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
             pbRegistration.visibility = View.VISIBLE
 
             tvScreenHeader.text = fromDictionary(R.string.reg_title)
-            vpRegistration.adapter = registrationAdapter
-            vpRegistration.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-                override fun onPageSelected(position: Int) {
-                    updateAccountTypeSwitch()
-                    hideKeyboard()
-                    when (position) {
-                        PAGE_PERSON_INFO -> onPersonChanged()
-                        PAGE_ORGANIZATION_INFO -> onOrganizationChanged()
-                    }
-                }
-            })
+
             updateAccountTypeSwitch()
             llAccountTypePersonal.setOnClickListener {
-                vpRegistration.currentItem = PAGE_PERSON_INFO
+                llPersonal.isGone = false
+                llOrganization.isGone = true
+                updateAccountTypeSwitch()
+                onPersonChanged()
             }
             llAccountTypeOrganization.setOnClickListener {
-                vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
+                llPersonal.isGone = true
+                llOrganization.isGone = false
+                updateAccountTypeSwitch()
+                onOrganizationChanged()
             }
             btnScreenHeaderAction.text = fromDictionary(R.string.reg_next)
             btnScreenHeaderAction.visibility = View.VISIBLE
@@ -78,6 +68,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             tvOr.text = fromDictionary(R.string.login_or)
             tvAccountTypePersonal.text = fromDictionary(R.string.reg_account_type_personal)
             tvAccountTypeOrganization.text = fromDictionary(R.string.reg_account_type_organization)
+            bindPersonalPage(this)
+            bindOrganizationPage(this)
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -98,12 +90,10 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             }
         }
         launchCoroutineUI {
-            viewModel.hasPersonalAccountChannel.consumeEach { hasPersonalAccount ->
-                view.llAccountTypePersonal.isEnabled = !hasPersonalAccount
-                if (hasPersonalAccount) {
-                    view.vpRegistration.currentItem = PAGE_ORGANIZATION_INFO
-                }
-            }
+            val hasPersonalAccount = viewModel.hasPersonalAccountChannel()
+            view.llAccountTypePersonal.isEnabled = !hasPersonalAccount
+            if (hasPersonalAccount) view.llAccountTypeOrganization.performClick()
+            else view.llAccountTypePersonal.performClick()
         }
     }
 
@@ -113,14 +103,14 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         val grayColor = ContextCompat.getColor(view.context, R.color.gray_cool)
         val blackColor = ContextCompat.getColor(view.context, R.color.black)
 
-        when (view.vpRegistration.currentItem) {
-            PAGE_PERSON_INFO -> {
+        when {
+            view.llPersonal.visibility == View.VISIBLE -> {
                 view.ivAccountTypeOrganization.disable()
                 view.ivAccountTypePersonal.enable()
                 view.tvAccountTypePersonal.setTextColor(blackColor)
                 view.tvAccountTypeOrganization.setTextColor(grayColor)
             }
-            PAGE_ORGANIZATION_INFO -> {
+            view.llOrganization.visibility == View.VISIBLE -> {
                 view.ivAccountTypeOrganization.enable()
                 view.ivAccountTypePersonal.disable()
                 view.tvAccountTypePersonal.setTextColor(grayColor)
@@ -138,23 +128,23 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private suspend fun canCreatePersonInfo(): Boolean {
         with(view ?: return false) {
-            if (vpRegistration.etPersonFirstName.text.isBlank()) return false
-            if (vpRegistration.etPersonSecondName.text.isBlank()) return false
-            if (vpRegistration.etPersonUserName.text.isBlank()) return false
-            if (registrationAdapter.personSelectedPlaceId == null) return false
-            if (viewModel.isOffersMandatory() && vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
-            if (viewModel.isInterestsMandatory() && vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
+            if (etPersonFirstName.text.isBlank()) return false
+            if (etPersonSecondName.text.isBlank()) return false
+            if (etPersonUserName.text.isBlank()) return false
+            if (personSelectedPlaceId == null) return false
+            if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
         }
         return true
     }
 
     private suspend fun canCreateOrganizationInfo(): Boolean {
         with(view ?: return false) {
-            if (vpRegistration.etCompanyName.text.isBlank()) return false
-            if (vpRegistration.etCompanyUserName.text.isBlank()) return false
-            if (registrationAdapter.companySelectedPlaceId == null) return false
-            if (viewModel.isOffersMandatory() && vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
-            if (viewModel.isInterestsMandatory() && vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
+            if (etCompanyName.text.isBlank()) return false
+            if (etCompanyUserName.text.isBlank()) return false
+            if (companySelectedPlaceId == null) return false
+            if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false
         }
         return true
     }
@@ -165,7 +155,6 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         onInfoChangedJob = launchCoroutineUI {
             getViewSuspend().btnScreenHeaderAction.isEnabled = canCreatePersonInfo()
         }
-
     }
 
     private fun onOrganizationChanged() {
@@ -177,141 +166,89 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private fun processRegisterClick() {
         with(requireNotNull(view)) {
-            when (vpRegistration.currentItem) {
-                PAGE_PERSON_INFO -> viewModel.registerPerson(
+            when {
+                llPersonal.visibility == View.VISIBLE -> viewModel.registerPerson(
                         firstName = etPersonFirstName.text.toString(),
                         secondName = etPersonSecondName.text.toString(),
                         userName = etPersonUserName.text.toString(),
-                        city = registrationAdapter.personSelectedPlaceId ?: "",
+                        city = personSelectedPlaceId ?: "",
                         offers = chipPersonOffers.getTags(),
                         interests = chipPersonInterests.getTags())
-                PAGE_ORGANIZATION_INFO -> viewModel.registerOrganization(
+                llOrganization.visibility == View.VISIBLE -> viewModel.registerOrganization(
                         companyName = etCompanyName.text.toString(),
                         userName = etCompanyUserName.text.toString(),
-                        city = registrationAdapter.companySelectedPlaceId ?: "",
+                        city = companySelectedPlaceId ?: "",
                         offers = chipCompanyOffers.getTags(),
                         interests = chipCompanyInterests.getTags()
                 )
-                else -> throw IllegalArgumentException("Invalid page position $vpRegistration.currentItem")
+                else -> throw IllegalArgumentException("Invalid page position!")
+            }
+        }
+    }
+
+    private fun bindPersonalPage(view: View) {
+        with(view) {
+            tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
+            tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
+            tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+            tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
+            chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            launchCoroutineUI {
+                chipPersonOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
+                chipPersonInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
+            }
+            chipPersonOffers.setTags(emptyList())
+            chipPersonInterests.setTags(emptyList())
+            etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            chipPersonOffers.onChipsChangeListener = { onPersonChanged() }
+            chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
+        }
+        onPersonChanged()
+        setupAutoComplete(view.actvPersonCity, true)
+    }
+
+    private fun bindOrganizationPage(view: View) {
+        with(view) {
+            view.tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
+            view.tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
+            view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
+            chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
+            launchCoroutineUI {
+                chipCompanyOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
+                chipCompanyInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
+            }
+            etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
+            etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
+            chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
+            chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
+        }
+        onOrganizationChanged()
+        setupAutoComplete(view.actvCompanyCity, false)
+    }
+
+    private fun setupAutoComplete(city: AutoCompleteTextView, isPerson: Boolean) {
+        val placeAutocompleteAdapter = PlaceAutocompleteAdapter(city.context, viewModel)
+        city.setAdapter(placeAutocompleteAdapter)
+        city.setOnItemClickListener { _, _, i, _ ->
+            val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+            if (isPerson) {
+                personSelectedPlaceId = item.placeId
+                val personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
+                city.setText(personSelectedPlaceName)
+            } else {
+                companySelectedPlaceId = item.placeId
+                val companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
+                city.setText(companySelectedPlaceName)
             }
         }
     }
 
     companion object {
-        private const val PAGE_PERSON_INFO = 0
-        private const val PAGE_ORGANIZATION_INFO = 1
-
         fun newInstance() = RegistrationController()
-    }
-
-    inner class RegistrationAdapter(
-            private val context: Context
-    ) : PagerAdapter() {
-
-        private var companySelectedPlaceName: String? = null
-        private var personSelectedPlaceName: String? = null
-        var companySelectedPlaceId: String? = null
-            set(value) {
-                field = value
-                onOrganizationChanged()
-            }
-        var personSelectedPlaceId: String? = null
-            set(value) {
-                field = value
-                onPersonChanged()
-            }
-
-        override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val layoutId = when (position) {
-                PAGE_PERSON_INFO -> R.layout.controller_registration_personal
-                PAGE_ORGANIZATION_INFO -> R.layout.controller_registration_organization
-                else -> throw IllegalArgumentException("Invalid page position $position")
-            }
-            val view = LayoutInflater.from(container.context).inflate(layoutId, container, false)
-            container.addView(view)
-            when (position) {
-                PAGE_PERSON_INFO -> onPersonalPageCreated(view)
-                PAGE_ORGANIZATION_INFO -> onOrganizationPageCreated(view)
-                else -> throw IllegalArgumentException("Invalid page position $position")
-            }
-            return view
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            container.removeView(`object` as View)
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            return when (position) {
-                PAGE_PERSON_INFO -> fromDictionary(R.string.reg_personal_info_title)
-                PAGE_ORGANIZATION_INFO -> "Organization" //TODO: add translate
-                else -> throw IllegalArgumentException("Invalid page position $position")
-            }
-        }
-
-        override fun getCount(): Int = 2
-
-        private fun onPersonalPageCreated(view: View) {
-            with(view) {
-                tilPersonFirstName.hint = fromDictionary(R.string.reg_personal_first_name)
-                tilPersonSecondName.hint = fromDictionary(R.string.reg_personal_last_name)
-                tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
-                tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
-                chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                launchCoroutineUI {
-                    chipPersonOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
-                    chipPersonInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
-                }
-                chipPersonOffers.setTags(emptyList())
-                chipPersonInterests.setTags(emptyList())
-                etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
-                etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
-                etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
-                chipPersonOffers.onChipsChangeListener = { onPersonChanged() }
-                chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
-            }
-            onPersonChanged()
-            setAdapter(view.actvPersonCity, true)
-        }
-
-        private fun onOrganizationPageCreated(view: View) {
-            with(view) {
-                view.tilCompanyName.hint = fromDictionary(R.string.reg_account_company_name)
-                view.tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
-                view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
-                chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                launchCoroutineUI {
-                    chipCompanyOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
-                    chipCompanyInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
-                }
-                etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
-                etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
-                chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
-                chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
-            }
-            setAdapter(view.actvCompanyCity, false)
-        }
-
-        private fun setAdapter(city: AutoCompleteTextView, isPerson: Boolean) {
-            val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
-            city.setAdapter(placeAutocompleteAdapter)
-            city.setOnItemClickListener { _, _, i, _ ->
-                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-                if (isPerson) {
-                    personSelectedPlaceId = item.placeId
-                    personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                    city.setText(personSelectedPlaceName ?: "")
-                } else {
-                    companySelectedPlaceId = item.placeId
-                    companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                    city.setText(companySelectedPlaceName ?: "")
-                }
-            }
-        }
     }
 
     private suspend fun formatTagLabel(prefix: String): CharSequence {
