@@ -17,7 +17,7 @@ internal data class PostDbEntity(
         @SerializedName("videos") var videos: List<String>?,
         @SerializedName("itemType") var itemType: String,
         @SerializedName("type") var type: String,
-        @SerializedName("originalCreatedAt") var originalCreatedAt: Long,
+        @SerializedName("originalCreatedAt") var originalCreatedAt: Long?,
         @SerializedName("originalId", alternate = arrayOf("originalPostId")) var originalId: String,
         @SerializedName("privacyConnections") var privacyConnections: List<String>?,
         @SerializedName("privacyType") var privacyType: String,

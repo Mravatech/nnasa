@@ -66,4 +66,6 @@ class InviteViewModelImpl(
             }
         }
     }
+
+    override suspend fun getInviteReward(): Long? = inviteInteractor.getRewardPerInvite()
 }

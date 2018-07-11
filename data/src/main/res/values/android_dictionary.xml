@@ -254,5 +254,15 @@ Check it in http://MNASSA.com</string>
     <string name="_group_member_invite_send_INFO">Invite</string>
     <string name="_group_member_invite_revoke_INFO">Revoke</string>
 
+    <string name="_add_tags_dialog_title_INFO">Add Tags!</string>
+    <string name="_add_tags_dialog_description_INFO">Specifying tags about yourself allows you to collaborate with Mnassa community more effectively. Besides,you will be rewarded for each added tag.</string>
+    <string name="_add_tags_dialog_btn_late_INFO">Late</string>
+    <string name="_add_tags_dialog_btn_now_INFO">Let\'s do it!</string>
+    
+    <string name="_profile_add_tag_reward_suffix_INFO">%s (Get +%d points per tag)</string>
+    <string name="_profile_delete_tag_penalty_title_INFO">Delete tags?</string>
+    <string name="_profile_delete_tag_penalty_description_prefix_INFO">Are you sure you want to delete this tag?</string>
+    <string name="_profile_delete_tag_penalty_description_suffix_INFO">The system takes away -%d points</string>
+    <string name="_profile_connect_button_INFO">Connect</string>
 
 </resources>

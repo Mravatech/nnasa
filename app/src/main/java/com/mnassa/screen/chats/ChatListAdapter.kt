@@ -109,7 +109,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         }
 
         override fun add(element: ChatRoomModel): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 val oldEntity = idToModel[element.id]
                 if (oldEntity != null && wrappedList.indexOf(oldEntity) != -1) {

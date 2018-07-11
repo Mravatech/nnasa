@@ -6,6 +6,7 @@ import android.util.Patterns
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
@@ -22,7 +23,6 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
 
     override val layoutId: Int = R.layout.controller_organization_info
     override val viewModel: OrganizationInfoViewModel by instance()
-    private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -34,7 +34,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             etCompanyPhone.setHideMode(false)
             etCompanyPhone.setText(accountModel.contactPhone)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-            btnHeaderNext.setOnClickListener { proccesProfile(this) }
+            btnHeaderNext.setOnClickListener { launchCoroutineUI { processProfile(getViewSuspend()) } }
             tvSkipThisStep.setOnClickListener {
                 viewModel.skipThisStep()
             }
@@ -56,7 +56,7 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
         viewModel.saveLocallyAvatarUri(uri)
     }
 
-    override fun proccesProfile(view: View) {
+    override suspend fun processProfile(view: View) {
         val email = view.etCompanyEmail.text.toString()
         val phone = view.etCompanyPhone.text.toString()
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotEmpty()) {
@@ -93,11 +93,9 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
     }
 
     companion object {
-        private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
-
-        fun newInstance(account: ShortAccountModel): OrganizationInfoController {
+        fun newInstance(account: ProfileAccountModel): OrganizationInfoController {
             val params = Bundle()
-            params.putSerializable(EXTRA_ACCOUNT, account)
+            params.putSerializable(EXTRA_PROFILE, account)
             return OrganizationInfoController(params)
         }
     }

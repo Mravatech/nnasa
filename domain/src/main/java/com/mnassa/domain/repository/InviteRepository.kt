@@ -17,4 +17,6 @@ interface InviteRepository {
 
     suspend fun getInvitedContacts(userId: String): List<PhoneContactInvited>
     suspend fun getInvitesCountChannel(): ReceiveChannel<Int>
+
+    suspend fun getRewardPerInvite(): Long?
 }

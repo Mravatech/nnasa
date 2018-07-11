@@ -19,7 +19,9 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
+import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
@@ -33,6 +35,8 @@ import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.main.MainController.DrawerItem.*
 import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
+import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.screen.settings.SettingsController
 import com.mnassa.screen.termsandconditions.TermsAndConditionsController

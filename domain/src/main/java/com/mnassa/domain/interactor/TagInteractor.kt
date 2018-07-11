@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.TagModel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,4 +15,12 @@ interface TagInteractor{
     suspend fun search(searchKeyword: String): List<TagModel>
     suspend fun createCustomTagIds(tags: List<String>): List<String>
     suspend fun getTagsByIds(ids: List<String>): List<TagModel>
+    suspend fun shouldShowAddTagsDialog(): Boolean
+
+    suspend fun getAddTagPrice(): ReceiveChannel<Long?>
+    suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long?
+
+    suspend fun isInterestsMandatory(): Boolean
+    suspend fun isOffersMandatory(): Boolean
+
 }

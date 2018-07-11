@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.*
+import com.mnassa.extensions.isGone
 import com.mnassa.extensions.isMyProfile
 import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.viewholder.UnsupportedTypeViewHolder
@@ -40,8 +41,12 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
     var connectionStatus: ConnectionStatus? = null
         set(value) {
             field = value
-            notifyItemChanged(0)
+            notifyDataSetChanged()
         }
+
+    init {
+        onDataChangedListener = { notifyItemChanged(0) }
+    }
 
 
     override fun onClick(view: View) {
@@ -73,6 +78,7 @@ class ProfileAdapter : PostsRVAdapter(), View.OnClickListener {
             holder.bindOffers(offers)
             holder.bindInterests(interests)
             connectionStatus?.let { holder.bindConnectionStatus(it) }
+            holder.itemView.findViewById<View>(R.id.rlEmptyView).isGone = !dataStorage.isEmpty()
         }
     }
 

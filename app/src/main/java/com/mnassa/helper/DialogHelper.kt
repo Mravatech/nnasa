@@ -7,10 +7,13 @@ import android.app.ProgressDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatRadioButton
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.util.Linkify
 import android.view.LayoutInflater
@@ -30,6 +33,7 @@ import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SHARE
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_SMS
 import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.dialog_add_tags.*
 import kotlinx.android.synthetic.main.dialog_buy_ticket.view.*
 import kotlinx.android.synthetic.main.dialog_company_status.*
 import kotlinx.android.synthetic.main.dialog_delete_chat_message.*
@@ -446,5 +450,40 @@ class DialogHelper {
         val textView = dialog.view.findViewById<TextView>(com.afollestad.materialdialogs.R.id.md_content)
         Linkify.addLinks(textView, Linkify.ALL)
         return dialog
+    }
+
+    fun showAddTagsDialog(context: Context, onAddTagsClick: () -> Unit) {
+        val dialog = Dialog(context, R.style.DefaultDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_add_tags)
+        dialog.btnAddTagsLate.text = fromDictionary(R.string.add_tags_dialog_late)
+        dialog.btnAddTagsLate.setOnClickListener { dialog.dismiss() }
+        dialog.btnAddTagsNow.text = fromDictionary(R.string.add_tags_dialog_now)
+        dialog.btnAddTagsNow.setOnClickListener {
+            onAddTagsClick()
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun showDeleteProfileTagsDialog(context: Context, tagsCount: Long, onConfirm: () -> Unit, onCancel: () -> Unit) {
+        val description = SpannableStringBuilder(fromDictionary(R.string.delete_tags_penalty_description_prefix))
+        description.append(" ")
+        val spanStart = description.length
+        description.append(fromDictionary(R.string.delete_tags_penalty_description_suffix).format(tagsCount))
+        description.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.red)), spanStart, description.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        val okText = SpannableString(fromDictionary(R.string.general_yes))
+        okText.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.red)), 0, okText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        MaterialDialog.Builder(context)
+                .title(fromDictionary(R.string.delete_tags_penalty_title))
+                .content(description)
+                .positiveText(okText)
+                .negativeText(fromDictionary(R.string.general_no))
+                .onPositive { dialog, which -> onConfirm(); dialog.dismiss() }
+                .onNegative { dialog, which -> dialog.cancel() }
+                .cancelListener { onCancel() }
+                .show()
     }
 }

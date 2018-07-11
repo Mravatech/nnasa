@@ -7,6 +7,7 @@ import android.util.Patterns
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
@@ -24,8 +25,6 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     override val layoutId: Int = R.layout.controller_personal_info
     override val viewModel: PersonalInfoViewModel by instance()
 
-    private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel }
-
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -37,7 +36,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             tvSkipThisStep.setOnClickListener { viewModel.skipThisStep() }
             setCalendarEditText(etDateOfBirthday)
             addPhoto(fabInfoAddPhoto)
-            btnHeaderNext.setOnClickListener { proccesProfile(this) }
+            btnHeaderNext.setOnClickListener { launchCoroutineUI { processProfile(getViewSuspend())  }}
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -51,7 +50,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
         }
     }
 
-    override fun proccesProfile(view: View) {
+    override suspend fun processProfile(view: View) {
         val email = view.etYourEmail.text.toString()
         val phone = view.etPhoneNumber.text.toString()
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()) {
@@ -94,11 +93,10 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     }
 
     companion object {
-        private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
 
-        fun newInstance(account: ShortAccountModel): PersonalInfoController {
+        fun newInstance(account: ProfileAccountModel): PersonalInfoController {
             val params = Bundle()
-            params.putSerializable(EXTRA_ACCOUNT, account)
+            params.putSerializable(EXTRA_PROFILE, account)
             return PersonalInfoController(params)
         }
     }

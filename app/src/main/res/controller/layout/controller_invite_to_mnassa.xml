@@ -16,6 +16,7 @@
         android:id="@+id/tvEnterTextSuggest"
         style="@style/Invite.TextSuggest"
         android:layout_margin="@dimen/invite_main_margin_between_views"
+        android:textColor="@color/accent"
         tools:text="Enter the number of the friend you want to invite
 or choose from them your Phone Book" />
 

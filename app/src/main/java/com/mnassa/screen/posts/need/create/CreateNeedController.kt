@@ -202,8 +202,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
                 sharingOptions.privacyConnections = post.privacyConnections
                 tvShareOptions.text = sharingOptions.format()
-                //no ability to change sharing options while post changing
-                tvShareOptions.visibility = View.GONE
             }
         }
     }

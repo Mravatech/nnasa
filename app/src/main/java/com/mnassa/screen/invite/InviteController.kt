@@ -121,7 +121,13 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
 
     private fun initViews(view: View) {
         with(view) {
-            tvEnterTextSuggest.text = fromDictionary(R.string.invite_text_suggest)
+            launchCoroutineUI {
+                val reward = viewModel.getInviteReward()
+                tvEnterTextSuggest.text = if (reward == null) fromDictionary(R.string.invite_text_suggest)
+                else fromDictionary(R.string.invite_reward).format(reward)
+            }
+
+
             toolbar.title = fromDictionary(R.string.invite_invite_header)
             etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
             etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)

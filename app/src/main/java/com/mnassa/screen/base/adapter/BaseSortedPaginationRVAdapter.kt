@@ -14,7 +14,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
         val wrappedList = SortedList<ITEM>(itemClass, SortedDataStorageCallback(adapter))
 
         override fun clear() {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.clear()
                 wrappedList.endBatchedUpdates()
@@ -22,7 +22,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
         }
 
         override fun add(element: ITEM): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.add(element)
                 wrappedList.endBatchedUpdates()
@@ -32,7 +32,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
         }
 
         override fun addAll(elements: Collection<ITEM>): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.addAll(elements)
                 wrappedList.endBatchedUpdates()
@@ -41,7 +41,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
         }
 
         override fun remove(element: ITEM): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.remove(element)
                 wrappedList.endBatchedUpdates()
@@ -50,7 +50,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
         }
 
         override fun set(elements: List<ITEM>) {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 wrappedList.replaceAll(elements)
                 wrappedList.endBatchedUpdates()
@@ -58,7 +58,7 @@ abstract class BaseSortedPaginationRVAdapter<ITEM>(reverseOrder: Boolean = false
         }
 
         override fun removeAll(elements: Collection<ITEM>): Boolean {
-            adapter.postUpdate {
+            adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 elements.forEach {
                     wrappedList.remove(it)

@@ -1,5 +1,6 @@
 package com.mnassa.data.repository
 
+import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
@@ -21,13 +22,14 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
-import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
+import timber.log.Timber
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by Peter on 3/15/2018.
@@ -49,13 +51,20 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
+    override suspend fun loadAllImmediately(): List<PostModel> {
+        return db.child(TABLE_NEWS_FEED)
+                .child(userRepository.getAccountIdOrException())
+                .awaitList<PostDbEntity>(exceptionHandler)
+                .mapNotNull { mapPost(it) }
+    }
+
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
         return db.child(TABLE_INFO_FEED)
                 .child(userRepository.getAccountIdOrException())
                 .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = {
-                            val post = converter.convert(it, Unit, InfoPostModel::class.java)
+                            val post = converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
                             post.isPinned = true
                             post
                         }
@@ -73,6 +82,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
+    override suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel> {
+        val userId = requireNotNull(accountId)
+        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PUBLIC_POSTS
+        return db.child(table)
+                .child(userId)
+                .awaitList<PostDbEntity>(exceptionHandler)
+                .mapNotNull { mapPost(it) }
+    }
+
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
         return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                 .document(groupId)
@@ -81,6 +99,14 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                         exceptionHandler = exceptionHandler,
                         mapper = { mapPost(it, groupId) }
                 )
+    }
+
+    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> {
+        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                .document(groupId)
+                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
+                .awaitList<PostDbEntity>()
+                .mapNotNull { mapPost(it, groupId) }
     }
 
     override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> {
@@ -226,12 +252,19 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .map { converter.convert(it, OfferCategoryModel::class.java) }
     }
 
-    private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel {
-        val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
-        if (out is RecommendedProfilePostModel) {
-            val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
-            out.offers = offerIds.mapNotNull { tagRepository.get(it) }
+    private val tagsCache = ConcurrentHashMap<String, TagModel>()
+    private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
+        return try {
+            val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
+            if (out is RecommendedProfilePostModel) {
+                val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
+                //todo: performance issue
+//                out.offers = offerIds.map { async { tagsCache.getOrPut(it) { tagRepository.get(it) } } }.mapNotNull { it.await() }
+            }
+            out
+        } catch (e: Exception) {
+            Timber.e(e, "Error while mapping post ${input.id}; groupId = $groupId")
+            null
         }
-        return out
     }
 }

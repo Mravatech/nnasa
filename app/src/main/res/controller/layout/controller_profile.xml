@@ -119,11 +119,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="gone"
-        tools:visibility="visible"
         app:fabSize="normal"
         app:layout_anchor="@id/profileCollapsing"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/ic_chat" />
+        app:srcCompat="@drawable/ic_chat"
+        tools:visibility="visible" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvProfile"
@@ -131,5 +131,50 @@
         android:layout_height="match_parent"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <LinearLayout
+        android:id="@+id/rlConnectContainer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <View style="@style/MnassaShadow"
+            android:rotation="180"/>
+
+        <RelativeLayout
+            android:id="@+id/btnConnectUser"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/accent"
+            android:foreground="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/ivConnect"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                app:srcCompat="@drawable/ic_new_requests"/>
+
+            <com.mnassa.widget.MnassaTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/ivConnect"
+                android:textAllCaps="true"
+                style="@style/MnassaHeader3"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:textColor="@color/white"
+                android:text="@string/profile_connect_button"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -6,7 +6,6 @@ import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.details.GroupDetailsController
@@ -45,7 +44,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             open(postDetailsFactory.newInstance(it))
         }
         adapter.onCreateNeedClickListener = {
-            launchCoroutineUI {
+            controllerSubscriptionContainer.launchCoroutineUI {
                 if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
                     open(CreateNeedController.newInstance())
                 }
@@ -56,49 +55,44 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.isLoadingEnabled = savedInstanceState == null
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
+
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.newsFeedChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.isLoadingEnabled = true
+                        adapter.dataStorage.clear()
+                    }
+                }
+            }
+        }
+
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.infoFeedChannel.openSubscription().consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> adapter.dataStorage.add(it.item)
+                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvNewsFeed.adapter = adapter
-
-        launchCoroutineUI {
-            viewModel.newsFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                        adapter.isLoadingEnabled = false
-                        getViewSuspend().rlEmptyView.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
-                        getViewSuspend().rlEmptyView.isInvisible = true
-                    }
-                }
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.infoFeedChannel.openSubscription().bufferize(this@PostsController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                }
-            }
-        }
     }
 
     override fun scrollToTop() {

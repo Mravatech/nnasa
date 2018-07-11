@@ -23,6 +23,7 @@ internal object DatabaseContract {
     const val TABLE_ACCOUNTS_COL_PERMISSIONS = "permissions"
     const val TABLE_ACCOUNTS_COL_STATE = "state"
     const val TABLE_ACCOUNTS_COL_STATE_DISABLED = "disabled"
+    const val TABLE_ACCOUNTS_COL_TAG_REMINDER_TIME = "tagReminderShowedAt"
     //
     const val TABLE_ACCOUNT_LINKS = "accountLinks"
     //
@@ -32,12 +33,18 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME = "parameters/defaultExpirationTime"
     const val TABLE_CLIENT_DATA_PUSH_TYPES = "pushTypes"
     const val TABLE_CLIENT_DATA_COL_MAINTENANCE = "maintenance"
+    const val TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD = "$TABLE_CLIENT_DATA/parameters/tagsReminder"
+    const val TABLE_CLIENT_DATA_COL_INTERESTS_MANDATORY = "parameters/interestsMandatory"
+    const val TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY = "parameters/offersMandatory"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
     const val TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_EVENT = "paymentTypes/promoteEvent"
     const val TABLE_DICTIONARY_COL_PAYMENT_TYPES_PROMOTE_POST = "paymentTypes/promotePost"
     const val TABLE_DICTIONARY_COL_REWARD_FOR_COMMENT ="paymentTypes/rewardForComment"
+    const val TABLE_DICTIONARY_COL_REWARD_FOR_PROFILE_TAG = "paymentTypes/addTagInProfile"
+    const val TABLE_DICTIONARY_COL_PENALTY_FOR_PROFILE_TAG = "paymentTypes/removeTagInProfile"
+    const val TABLE_DICTIONARY_COL_REWARD_INVITE_USER = "paymentTypes/inviteOutsideUser"
     //
     const val TABLE_CONNECTIONS = "connections"
 

@@ -1,6 +1,7 @@
 package com.mnassa.screen.registration
 
 import android.os.Bundle
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -8,6 +9,7 @@ import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
@@ -24,6 +26,10 @@ class RegistrationViewModelImpl(
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
     override val hasPersonalAccountChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
+    override val addTagRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
+
+    private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
+    private val isOffersMandatory = async { tagInteractor.isOffersMandatory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +39,11 @@ class RegistrationViewModelImpl(
                 hasPersonalAccountChannel.send(it.any { it.accountType == AccountType.PERSONAL })
             }
         }
-    }
 
+        handleException {
+            tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
+        }
+    }
 
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
         handleException {
@@ -49,7 +58,8 @@ class RegistrationViewModelImpl(
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
-                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(shortAccountModel))
+                val profile = userProfileInteractor.getProfileById(shortAccountModel.id) ?: return@withProgressSuspend
+                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(profile))
             }
         }
     }
@@ -66,14 +76,17 @@ class RegistrationViewModelImpl(
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
-                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(shortAccountModel))
+                val profile = userProfileInteractor.getProfileById(shortAccountModel.id) ?: return@withProgressSuspend
+                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(profile))
             }
         }
     }
 
-    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> {
-        return placeFinderInteractor.getReqieredPlaces(constraint)
-    }
+    override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
+
+    override suspend fun isInterestsMandatory(): Boolean = isInterestsMandatory.await()
+
+    override suspend fun isOffersMandatory(): Boolean = isOffersMandatory.await()
 
     private suspend fun getFilteredTags(customTagsAndTagsWithIds: List<TagModel>): List<String> {
         val customTags = customTagsAndTagsWithIds.filter { it.id == null }.map { it.name }

@@ -3,13 +3,14 @@ package com.mnassa.screen.accountinfo.organization
 import android.net.Uri
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
+import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.FOLDER_AVATARS
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.CompanyInfoModelImpl
 import com.mnassa.domain.model.impl.OrganizationAccountDiffModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
-import com.mnassa.screen.base.MnassaViewModelImpl
+import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 
@@ -18,7 +19,8 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  */
 class OrganizationInfoViewModelImpl(
         private val storageInteractor: StorageInteractor,
-        private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), OrganizationInfoViewModel {
+        private val userProfileInteractor: UserProfileInteractor,
+        tagInteractor: TagInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), OrganizationInfoViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<OrganizationInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
 

@@ -9,6 +9,6 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 3/6/2018.
  */
 interface EventsViewModel : MnassaViewModel {
-    val eventsFeedChannel: BroadcastChannel<ListItemEvent<EventModel>>
+    val eventsFeedChannel: BroadcastChannel<ListItemEvent<List<EventModel>>>
     fun onAttachedToWindow(event: EventModel)
 }

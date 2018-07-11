@@ -20,12 +20,12 @@ import kotlinx.android.synthetic.main.item_connections_all.view.*
 class GroupMembersAdaper : BasePaginationRVAdapter<GroupMemberItem>(), View.OnClickListener {
     var onItemOptionsClickListener = { account: GroupMemberItem, sender: View -> }
     var onItemClickListener = { account: GroupMemberItem -> }
-    private var onDataChangedListener = { onAfterSearchListener() }
     var onAfterSearchListener = { }
     override var filterPredicate: (item: GroupMemberItem) -> Boolean = { it.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
     init {
-        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl(onDataChangedListener))
+        onDataChangedListener = { onAfterSearchListener() }
+        dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
         searchListener = dataStorage as SearchListener<GroupMemberItem>
         itemsTheSameComparator = { first, second -> first.user.id == second.user.id }
         contentTheSameComparator = { first, second -> first.isAdmin == second.isAdmin }

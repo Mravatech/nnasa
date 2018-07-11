@@ -5,6 +5,9 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +29,8 @@ import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -131,37 +136,43 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         super.onDestroy()
     }
 
-    private fun canCreatePersonInfo(): Boolean {
+    private suspend fun canCreatePersonInfo(): Boolean {
         with(view ?: return false) {
             if (vpRegistration.etPersonFirstName.text.isBlank()) return false
             if (vpRegistration.etPersonSecondName.text.isBlank()) return false
             if (vpRegistration.etPersonUserName.text.isBlank()) return false
             if (registrationAdapter.personSelectedPlaceId == null) return false
-            if (vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
-            if (vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
+            if (viewModel.isOffersMandatory() && vpRegistration.chipPersonOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && vpRegistration.chipPersonInterests.getTags().isEmpty()) return false
         }
         return true
     }
 
-    private fun canCreateOrganizationInfo(): Boolean {
+    private suspend fun canCreateOrganizationInfo(): Boolean {
         with(view ?: return false) {
             if (vpRegistration.etCompanyName.text.isBlank()) return false
             if (vpRegistration.etCompanyUserName.text.isBlank()) return false
             if (registrationAdapter.companySelectedPlaceId == null) return false
-            if (vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
-            if (vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
+            if (viewModel.isOffersMandatory() && vpRegistration.chipCompanyOffers.getTags().isEmpty()) return false
+            if (viewModel.isInterestsMandatory() && vpRegistration.chipCompanyInterests.getTags().isEmpty()) return false
         }
         return true
     }
 
+    private var onInfoChangedJob: Job? = null
     private fun onPersonChanged() {
-        val view = view ?: return
-        view.btnScreenHeaderAction.isEnabled = canCreatePersonInfo()
+        onInfoChangedJob?.cancel()
+        onInfoChangedJob = launchCoroutineUI {
+            getViewSuspend().btnScreenHeaderAction.isEnabled = canCreatePersonInfo()
+        }
+
     }
 
     private fun onOrganizationChanged() {
-        val view = view ?: return
-        view.btnScreenHeaderAction.isEnabled = canCreateOrganizationInfo()
+        onInfoChangedJob?.cancel()
+        onInfoChangedJob = launchCoroutineUI {
+            getViewSuspend().btnScreenHeaderAction.isEnabled = canCreateOrganizationInfo()
+        }
     }
 
     private fun processRegisterClick() {
@@ -249,9 +260,11 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 tilPersonUserName.hint = fromDictionary(R.string.reg_personal_user_name)
                 tilPersonCity.hint = fromDictionary(R.string.reg_personal_city)
                 chipPersonOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                chipPersonOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipPersonInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                chipPersonInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+                launchCoroutineUI {
+                    chipPersonOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
+                    chipPersonInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
+                }
                 chipPersonOffers.setTags(emptyList())
                 chipPersonInterests.setTags(emptyList())
                 etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
@@ -270,9 +283,11 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 view.tilCompanyUserName.hint = fromDictionary(R.string.reg_personal_user_name)
                 view.tilCompanyCity.hint = fromDictionary(R.string.reg_personal_city)
                 chipCompanyOffers.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                chipCompanyOffers.tvChipHeader.text = fromDictionary(R.string.reg_account_can_help_with)
                 chipCompanyInterests.etChipInput.hint = fromDictionary(R.string.reg_person_type_here)
-                chipCompanyInterests.tvChipHeader.text = fromDictionary(R.string.reg_account_interested_in)
+                launchCoroutineUI {
+                    chipCompanyOffers.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_can_help_with))
+                    chipCompanyInterests.tvChipHeader.text = formatTagLabel(fromDictionary(R.string.reg_account_interested_in))
+                }
                 etCompanyName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 etCompanyUserName.addTextChangedListener(SimpleTextWatcher { onOrganizationChanged() })
                 chipCompanyOffers.onChipsChangeListener = { onOrganizationChanged() }
@@ -297,5 +312,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
                 }
             }
         }
+    }
+
+    private suspend fun formatTagLabel(prefix: String): CharSequence {
+        val reward = viewModel.addTagRewardChannel.consume { receive() } ?: return prefix
+        val result = SpannableString(fromDictionary(R.string.add_tags_reward_suffix).format(prefix, reward))
+        result.setSpan(ForegroundColorSpan(ContextCompat.getColor(getViewSuspend().context, R.color.accent)), prefix.length, result.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return result
     }
 }

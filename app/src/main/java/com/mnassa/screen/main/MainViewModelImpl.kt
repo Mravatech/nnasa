@@ -26,6 +26,7 @@ class MainViewModelImpl(
         private val notificationInteractor: NotificationInteractor,
         private val countersInteractor: CountersInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
+
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
 
     override val unreadChatsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {

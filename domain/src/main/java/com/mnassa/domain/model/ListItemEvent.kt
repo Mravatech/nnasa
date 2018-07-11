@@ -15,21 +15,37 @@ sealed class ListItemEvent<T : Any>() {
         this.item = item
     }
 
-    class Added<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item)
-    class Moved<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item)
-    class Changed<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item)
-    class Removed<T : Any>(item: T) : ListItemEvent<T>(item)
-    class Cleared<T : Any> : ListItemEvent<T>()
+    class Added<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item) {
+        override fun toBatched(): ListItemEvent<List<T>> = Added(listOf(item))
+    }
+
+    class Moved<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item) {
+        override fun toBatched(): ListItemEvent<List<T>> = Moved(listOf(item))
+    }
+
+    class Changed<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item) {
+        override fun toBatched(): ListItemEvent<List<T>> = Changed(listOf(item))
+    }
+
+    class Removed<T : Any>(item: T) : ListItemEvent<T>(item) {
+        override fun toBatched(): ListItemEvent<List<T>> = Removed(listOf(item))
+    }
+
+    class Cleared<T : Any> : ListItemEvent<T>() {
+        override fun toBatched(): ListItemEvent<List<T>> = Cleared()
+    }
 
     override fun toString(): String {
         return "${super.toString()}; item: ${if (this::item.isInitialized) item else "_UNINITIALIZED_"}"
     }
+
+    abstract fun toBatched(): ListItemEvent<List<T>>
 }
 
 suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
         subscriptionContainer: SubscriptionContainer,
         bufferizationTimeMillis: Long = 2000L,
-        maxBufferSize: Int = 5
+        maxBufferSize: Int = 500
 ): ReceiveChannel<ListItemEvent<List<E>>> {
     val srcChannel = this
     var sendItemsJob: Job? = null
@@ -58,14 +74,19 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
             sendItemsJob?.cancel()
             sendItemsJob = subscriptionContainer.launchCoroutineUI {
                 delay(bufferizationTimeMillis)
-                sendItems()
+                if (isActive) {
+                    sendItems()
+                }
             }
         }
 
         //emit empty list when no items consumed
         sendItemsJob = subscriptionContainer.launchCoroutineUI {
             delay(bufferizationTimeMillis)
-            sendItems()
+            if (this.isActive) {
+                sendItems()
+            }
+
         }
 
         consumeEach {

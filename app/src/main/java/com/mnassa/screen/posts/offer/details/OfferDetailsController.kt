@@ -35,7 +35,6 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
         }
     }
 
-
     override fun bindPost(post: PostModel, view: View) {
         super.bindPost(post, view)
         post as OfferPostModel

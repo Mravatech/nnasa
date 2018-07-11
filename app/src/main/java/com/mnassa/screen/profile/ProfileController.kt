@@ -1,7 +1,6 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import com.mnassa.R
@@ -10,6 +9,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.extensions.formattedPosition
+import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.isMyProfile
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -50,6 +50,28 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         adapter.isLoadingEnabled = savedInstanceState == null
+
+//        adapter.onDataChangedListener = { itemsCount ->
+////            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+//        }
+
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.postChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.isLoadingEnabled = true
+                        adapter.dataStorage.clear()
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View) {
@@ -93,7 +115,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 setTitle(profileModel, view)
                 onEditProfile(profileModel, view)
                 if (!profileModel.isMyProfile) {
-                    handleFab(connectionStatus, view.fabProfile)
+                    handleConnectionStatus(connectionStatus, view)
                 }
             }
         }
@@ -110,24 +132,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
                 val profile = viewModel.profileChannel.consume { receive() }
                 if (!profile.isMyProfile) {
-                    handleFab(connectionStatus, view.fabProfile)
-                }
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.postChannel.openSubscription().bufferize(this@ProfileController).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        if (it.item.isNotEmpty()) {
-                            adapter.isLoadingEnabled = false
-                            adapter.dataStorage.addAll(it.item)
-                        }
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> adapter.dataStorage.clear()
+                    handleConnectionStatus(connectionStatus, view)
                 }
             }
         }
@@ -139,7 +144,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun handleCollapsingToolbar(view: View, connectionStatus: ConnectionStatus, profileModel: ProfileAccountModel) {
 
-        view.appBarLayout.addOnOffsetChangedListener({ appBarLayout, verticalOffset ->
+        view.appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val shouldShowFab = (connectionStatus == ConnectionStatus.CONNECTED ||
                     connectionStatus == ConnectionStatus.RECOMMENDED ||
                     connectionStatus == ConnectionStatus.SENT)
@@ -154,7 +159,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     view.fabProfile.show()
                 }
             }
-        })
+        }
     }
 
     override var onComplaint: String = ""
@@ -167,41 +172,28 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         super.onDestroyView(view)
     }
 
-    private fun handleFab(connectionStatus: ConnectionStatus, fab: FloatingActionButton) {
+    private fun handleConnectionStatus(connectionStatus: ConnectionStatus, view: View) {
+        adapter.connectionStatus = connectionStatus
+
+        val fab = view.fabProfile
+        fab.visibility = View.VISIBLE
+        fab.setOnClickListener {
+            adapter.profileModel?.let {
+                open(ChatMessageController.newInstance(it))
+            }
+        }
+        fab.setImageResource(R.drawable.ic_chat)
+
         when (connectionStatus) {
-            ConnectionStatus.CONNECTED -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
-                    adapter.profileModel?.let {
-                        open(ChatMessageController.newInstance(it))
-                    }
-                }
-                fab.setImageResource(R.drawable.ic_chat)
-            }
-            ConnectionStatus.RECOMMENDED -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
+            ConnectionStatus.REQUESTED, ConnectionStatus.RECOMMENDED -> {
+                view.rlConnectContainer.visibility = View.VISIBLE
+                view.btnConnectUser.setOnClickListener {
                     viewModel.sendConnectionStatus(connectionStatus, accountId)
                 }
-                fab.setImageResource(R.drawable.ic_new_requests)
-            }
-            ConnectionStatus.SENT -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
-                    viewModel.sendConnectionStatus(connectionStatus, accountId)
-                }
-                fab.setImageResource(R.drawable.ic_pending)
-            }
-            ConnectionStatus.REQUESTED -> {
-                fab.visibility = View.VISIBLE
-                fab.setOnClickListener {
-                    viewModel.sendConnectionStatus(connectionStatus, accountId)
-                }
-                fab.setImageResource(R.drawable.ic_new_requests)
             }
             else -> {
-                fab.visibility = View.GONE
-                fab.setOnClickListener(null)
+                view.rlConnectContainer.visibility = View.GONE
+                view.btnConnectUser.setOnClickListener(null)
             }
         }
     }
@@ -254,7 +246,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                         AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
                     })
                 }
-
             }
         } else {
             view.ivProfileMenu.visibility = View.VISIBLE
