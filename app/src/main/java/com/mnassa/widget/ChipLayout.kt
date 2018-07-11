@@ -1,8 +1,8 @@
 package com.mnassa.widget
 
 import android.content.Context
+import android.os.Parcelable
 import android.support.annotation.ColorRes
-import android.support.annotation.FloatRange
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -25,14 +25,31 @@ import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.chip_layout.view.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import java.util.LinkedHashSet
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.distinct
+import kotlin.collections.distinctBy
+import kotlin.collections.filter
+import kotlin.collections.filterNot
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
+import kotlin.collections.plus
+import kotlin.collections.plusAssign
+import kotlin.collections.toList
 
 /**
  * Created by IntelliJ IDEA.
@@ -103,6 +120,21 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
     }
 
+    override fun onSaveInstanceState(): Parcelable {
+        return ChipLayoutState(getTags(), allVisibleTags.toList(), super.onSaveInstanceState())
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is ChipLayoutState) {
+            super.onRestoreInstanceState(state.superState)
+            setTags(state.tags)
+            allVisibleTags.clear()
+            allVisibleTags.addAll(state.allVisibleTags)
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
     override fun onChipClick(tagModel: TagModel) {
         addChip(tagModel)
     }
@@ -131,13 +163,6 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 tvChipHeader.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                if (tags.isEmpty()) {
-                    val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
-                    animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, INIT_DURATION, INIT_DURATION, ANIMATION_TEXT_VIEW_SCALE_BIG)
-                } else {
-                    val transition = -etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical) * MARGIN_COUNT
-                    animateViews(ANIMATION_EDIT_TEXT_SCALE_SHOW, transition, INIT_DURATION, INIT_DURATION, ANIMATION_TEXT_VIEW_SCALE_SMALL)
-                }
             }
         })
         tags.forEach { addChip(it) }
@@ -210,16 +235,10 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     private fun focusLeftView() {
-        if (etChipInput.text.toString().isEmpty() && allVisibleTags.isEmpty()) {
-            val transition = etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical)
-            animateViews(ANIMATION_EDIT_TEXT_SCALE_HIDE, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_HIDE, ANIMATION_TEXT_VIEW_SCALE_BIG)
-        }
         colorViews(tvChipHeader, vChipBottomLine, R.color.chip_edit_text_hint)
     }
 
     private fun focusOnView() {
-        val transition = -etChipInput.height.toFloat() + resources.getDimension(R.dimen.chip_et_margin_vertical) * MARGIN_COUNT
-        animateViews(ANIMATION_EDIT_TEXT_SCALE_SHOW, transition, ANIMATION_DURATION, EDIT_TEXT_SHOW_DURATION, ANIMATION_TEXT_VIEW_SCALE_SMALL)
         colorViews(tvChipHeader, vChipBottomLine, R.color.accent)
     }
 
@@ -230,22 +249,6 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         allVisibleTags.add(value)
         etChipInput.text = null
         onChipsChangeListener()
-    }
-
-    private fun animateViews(
-            @FloatRange(from = 0.0, to = 1.0) scale: Float,
-            transition: Float,
-            timeTV: Long,
-            timeET: Long,
-            @FloatRange(from = 0.0, to = 1.0) scaleTV: Float
-    ) {
-//        etChipInput.animate().setDuration(timeET).scaleX(scale)
-//        etChipInput.animate().setDuration(timeET).scaleY(scale)
-//        val transit = tvChipHeader.width / HALF_VIEW_WIDTH * scaleTV - tvChipHeader.width / HALF_VIEW_WIDTH
-//        tvChipHeader.animate().setDuration(TV_HEADER_TRANSITION_X_DURATION).translationX(transit)
-//        tvChipHeader.animate().setDuration(timeTV).translationY(transition)
-//        tvChipHeader.animate().setDuration(timeTV).scaleX(scaleTV)
-//        tvChipHeader.animate().setDuration(timeTV).scaleY(scaleTV)
     }
 
     private fun colorViews(tvText: TextView, vBottomDivider: View, @ColorRes color: Int) {
@@ -296,21 +299,13 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         }
     }
 
+    @Parcelize
+    private class ChipLayoutState(val tags: List<TagModel>, val allVisibleTags: List<TagModel>, val superState: Parcelable?): Parcelable
+
     companion object {
         private const val EDIT_TEXT_RESERVE = 1
-        private const val HALF_VIEW_WIDTH = 2
         private const val PRE_LAST_VIEW_IN_FLOW_LAYOUT = 2
         private const val MIN_SYMBOLS_TO_START_SEARCH = 3
         private const val MIN_SYMBOLS_TO_ADD_TAGS = 3
-        private const val MARGIN_COUNT = 3
-        private const val ANIMATION_DURATION = 200L
-        private const val ANIMATION_EDIT_TEXT_SCALE_SHOW = 1f
-        private const val ANIMATION_EDIT_TEXT_SCALE_HIDE = 0f
-        private const val ANIMATION_TEXT_VIEW_SCALE_BIG = 1f
-        private const val ANIMATION_TEXT_VIEW_SCALE_SMALL = 0.75f
-        private const val EDIT_TEXT_SHOW_DURATION = 300L
-        private const val EDIT_TEXT_SHOW_HIDE = 100L
-        private const val TV_HEADER_TRANSITION_X_DURATION = 50L
-        private const val INIT_DURATION = 0L
     }
 }

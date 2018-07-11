@@ -262,13 +262,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .map { converter.convert(it, OfferCategoryModel::class.java) }
     }
 
-    private val tagsCache = ConcurrentHashMap<String, TagModel>()
     private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
         return try {
             val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
             if (out is RecommendedProfilePostModel) {
                 val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
-                out.offers = offerIds.map { async { tagsCache.getOrPut(it) { tagRepository.get(it) } } }.mapNotNull { it.await() }
+                out.offers = offerIds.map { async { tagRepository.get(it) } }.mapNotNull { it.await() }
             }
             out
         } catch (e: Exception) {
