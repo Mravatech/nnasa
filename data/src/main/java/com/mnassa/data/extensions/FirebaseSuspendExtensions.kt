@@ -69,30 +69,13 @@ internal suspend inline fun <reified T : HasId> loadPortion(
         exceptionHandler: ExceptionHandler): List<T> {
 
     val query = if (offset == null) {
-        databaseReference.orderByKey().limitToFirst(limit)
+        databaseReference.orderByKey().limitToLast(limit)
     } else {
         //ignore first element (to avoid duplicates)
-        databaseReference.orderByKey().startAt(offset).limitToFirst(limit + 1)
+        databaseReference.orderByKey().endAt(offset).limitToLast(limit + 1)
     }
 
-    val result = suspendCancellableCoroutine<List<T>> { continuation ->
-        val listener = object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) =
-                    continuation.resumeWithException(exceptionHandler.handle(error.toException()))
-
-            override fun onDataChange(snapshot: DataSnapshot?) {
-                try {
-                    val result = snapshot.mapList<T>()
-                            .filterIndexed { index, _ -> !(index == 0 && offset != null) }
-                    continuation.resume(result)
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    continuation.resumeWithException(exceptionHandler.handle(e))
-                }
-            }
-        }
-        query.addListenerForSingleValueEvent(listener)
-        continuation.invokeOnCompletion { query.removeEventListener(listener) }
-    }
-    return result
+    return query.awaitList<T>(exceptionHandler)
+            .asReversed()
+            .takeLast(limit)
 }

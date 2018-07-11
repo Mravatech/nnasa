@@ -1,10 +1,13 @@
 package com.mnassa.data.repository
 
+import android.arch.persistence.room.Room
+import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.converter.PostAdditionInfo
+import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
@@ -40,7 +43,13 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val tagRepository: TagRepository,
                           private val exceptionHandler: ExceptionHandler,
                           private val converter: ConvertersContext,
-                          private val postApi: FirebasePostApi) : PostsRepository {
+                          private val postApi: FirebasePostApi,
+                          private val context: Context) : PostsRepository {
+
+    private val roomDb by lazy {
+        Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
+            .fallbackToDestructiveMigration()
+            .build() }
 
     override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
         return db.child(TABLE_NEWS_FEED)

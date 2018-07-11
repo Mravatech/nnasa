@@ -36,8 +36,16 @@ deps.support = support
 //============================================= ARCH COMPONENTS ====================================
 
 def archComponents = [:]
-archComponents.viewModel = "android.arch.lifecycle:viewmodel:1.1.0"
-archComponents.paging = "android.arch.paging:runtime:1.0.0-alpha5"
+
+versions.archComponents = '1.1.1'
+versions.room_version = "1.0.0"
+
+archComponents.viewModel = "android.arch.lifecycle:viewmodel:$versions.archComponents"
+archComponents.roomRuntime = "android.arch.persistence.room:runtime:$versions.archComponents"
+archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions.archComponents"
+archComponents.roomRuntime = "android.arch.persistence.room:runtime:$versions.room_version"
+archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions.room_version"
+
 deps.archComponents = archComponents
 
 //============================================= PLAY SERVICES ======================================

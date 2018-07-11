@@ -8,7 +8,7 @@ import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 /**
  * Created by Peter on 2/26/2018.
  */
-const val DEFAULT_LIMIT = 100
+const val DEFAULT_LIMIT = 5
 
 suspend inline fun <reified R> Task<R>.await(exceptionHandler: ExceptionHandler): R {
     val result = suspendCancellableCoroutine<R> { continuation ->

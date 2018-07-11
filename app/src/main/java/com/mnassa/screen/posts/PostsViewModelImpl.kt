@@ -13,6 +13,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
@@ -27,22 +28,26 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
-            invokeReConsumeFirstly = true,
-            beforeReConsume = {
-                isCounterReset = false
-                it.send(ListItemEvent.Cleared())
-                it.send(ListItemEvent.Added(getNewsFeed()))
-            },
-            receiveChannelProvider = {
-                postsInteractor.loadAll().map { it.toBatched() }
-            })
-
-    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
-            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
+//    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
+//            invokeReConsumeFirstly = true,
+//            beforeReConsume = {
+//                isCounterReset = false
+//                it.send(ListItemEvent.Cleared())
+//                it.send(ListItemEvent.Added(getNewsFeed()))
+//            },
+//            receiveChannelProvider = {
+//                postsInteractor.loadAll().map { it.toBatched() }
+//            })
+//
+//    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
+//            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
 
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()
+    }
+
+    override suspend fun loadFeedWithPagination(): ReceiveChannel<PostModel> {
+        return postsInteractor.loadAllWithPagination()
     }
 
     override fun onAttachedToWindow(post: PostModel) {

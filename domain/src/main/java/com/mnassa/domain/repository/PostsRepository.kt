@@ -8,6 +8,11 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  * Created by Peter on 3/13/2018.
  */
 interface PostsRepository {
+    //
+    suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
+    //
+
+
     suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllImmediately(): List<PostModel>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
@@ -15,7 +20,7 @@ interface PostsRepository {
     suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel>
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel>
-    suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
+
     suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?>
     suspend fun loadUserPostById(id: String, accountId: String): PostModel?
     suspend fun sendViewed(ids: List<String>)

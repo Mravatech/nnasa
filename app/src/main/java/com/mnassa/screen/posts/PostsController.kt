@@ -5,8 +5,9 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.extensions.isInvisible
+import com.mnassa.extensions.isNewItemsNeeded
+import com.mnassa.extensions.waitForNewItems
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.main.OnPageSelected
@@ -16,7 +17,7 @@ import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.consumeEachIndexed
 import org.kodein.di.generic.instance
 
 /**
@@ -59,40 +60,55 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.newsFeedChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
-                }
-            }
-        }
+//        controllerSubscriptionContainer.launchCoroutineUI {
+//            viewModel.newsFeedChannel.consumeEach {
+//                when (it) {
+//                    is ListItemEvent.Added -> {
+//                        adapter.isLoadingEnabled = false
+//                        adapter.dataStorage.addAll(it.item)
+//                    }
+//                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+//                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+//                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+//                    is ListItemEvent.Cleared -> {
+//                        adapter.isLoadingEnabled = true
+//                        adapter.dataStorage.clear()
+//                    }
+//                }
+//            }
+//        }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.infoFeedChannel.openSubscription().consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
-                }
-            }
-        }
+//        controllerSubscriptionContainer.launchCoroutineUI {
+//            viewModel.infoFeedChannel.openSubscription().consumeEach {
+//                when (it) {
+//                    is ListItemEvent.Added -> adapter.dataStorage.add(it.item)
+//                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
+//                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
+//                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+//                }
+//            }
+//        }
     }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvNewsFeed.adapter = adapter
+
+        launchCoroutineUI {
+            viewModel.loadFeedWithPagination().consumeEachIndexed {
+                adapter.dataStorage.add(it.value)
+
+                if (view.rvNewsFeed.isNewItemsNeeded(adapter.emptyItemCount)) {
+                    adapter.isLoadingEnabled = true
+                } else {
+                    adapter.isLoadingEnabled = false
+                    view.rvNewsFeed.waitForNewItems(adapter.emptyItemCount)
+                }
+            }
+        }.invokeOnCompletion {
+            adapter.isLoadingEnabled = false
+        }
     }
 
     override fun scrollToTop() {

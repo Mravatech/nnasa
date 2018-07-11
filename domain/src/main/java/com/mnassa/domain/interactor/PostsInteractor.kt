@@ -8,6 +8,9 @@ import java.io.Serializable
  * Created by Peter on 3/16/2018.
  */
 interface PostsInteractor {
+    //
+    suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
+    //
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllImmediately(): List<PostModel>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
