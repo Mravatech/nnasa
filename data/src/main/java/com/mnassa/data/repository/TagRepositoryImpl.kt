@@ -106,12 +106,14 @@ class TagRepositoryImpl(
     override suspend fun isInterestsMandatory(): Boolean {
         return db.child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_INTERESTS_MANDATORY)
+                .also { it.keepSynced(true) }
                 .await(exceptionHandler) ?: false
     }
 
     override suspend fun isOffersMandatory(): Boolean {
         return db.child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY)
+                .also { it.keepSynced(true) }
                 .await(exceptionHandler) ?: false
     }
 

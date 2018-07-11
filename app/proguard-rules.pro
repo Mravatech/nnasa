@@ -39,3 +39,5 @@
 -dontwarn com.beloo.**
 -keep class com.beloo.** { *; }
 
+-keep class org.apache.http.** {*;}
+-keep class android.net.http.** {*;}

@@ -7,6 +7,7 @@ import android.util.Patterns
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
@@ -35,7 +36,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             tvSkipThisStep.setOnClickListener { viewModel.skipThisStep() }
             setCalendarEditText(etDateOfBirthday)
             addPhoto(fabInfoAddPhoto)
-            btnHeaderNext.setOnClickListener { view -> launchCoroutineUI { processProfile(view)  }}
+            btnHeaderNext.setOnClickListener { launchCoroutineUI { processProfile(getViewSuspend())  }}
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -92,11 +93,10 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     }
 
     companion object {
-        private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
 
-        fun newInstance(account: ShortAccountModel): PersonalInfoController {
+        fun newInstance(account: ProfileAccountModel): PersonalInfoController {
             val params = Bundle()
-            params.putSerializable(EXTRA_ACCOUNT, account)
+            params.putSerializable(EXTRA_PROFILE, account)
             return PersonalInfoController(params)
         }
     }

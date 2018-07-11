@@ -20,9 +20,19 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
             initState = null,
             executionPredicate = { it != null })
 
-    inline fun postUpdate(crossinline update: (() -> Unit)) {
-        recyclerView.invoke {
-            it.post { update() }
+    inline fun postDataUpdate(crossinline update: (() -> Unit)) {
+        `access$recyclerView`.invoke {
+            it.post {
+                update()
+                onDataChangedListener(dataStorage.size)
+            }
+        }
+    }
+    inline fun postRecyclerViewUpdate(crossinline update: (() -> Unit)) {
+        `access$recyclerView`.invoke {
+            it.post {
+                update()
+            }
         }
     }
 
@@ -31,16 +41,18 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
     var dataStorage: DataStorage<ITEM> = SimpleDataProviderImpl()
         set(value) {
             field = value
-            postUpdate { notifyDataSetChanged() }
+            postRecyclerViewUpdate { notifyDataSetChanged() }
         }
 
     var isLoadingEnabled: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
-                postUpdate { notifyItemChanged(itemCount - 1) }
+                postRecyclerViewUpdate { notifyItemChanged(itemCount - 1) }
             }
         }
+    var onDataChangedListener = { itemsCount: Int -> }
+
 
     /////////////////////////////////// BASIC DATASET OPERATIONS ///////////////////////////////////
     open fun clear() = run { dataStorage.clear() }
@@ -160,27 +172,25 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
 
     ////////////////////////////////////////// DATA STORAGE ////////////////////////////////////////
 
-    open inner class SimpleDataProviderImpl(private val onDataChangedListener: () -> Unit = { }) : ArrayList<ITEM>(), DataStorage<ITEM> {
+    open inner class SimpleDataProviderImpl : ArrayList<ITEM>(), DataStorage<ITEM> {
         override fun clear() {
-            postUpdate {
+            postDataUpdate {
                 val previousSize = size
                 super.clear()
                 if (previousSize != 0) notifyItemRangeRemoved(emptyHeaderItemsCount, previousSize)
-                onDataChangedListener()
             }
         }
 
         override fun add(element: ITEM): Boolean {
-            postUpdate {
+            postDataUpdate {
                 super.add(element)
                 notifyItemInserted(itemCount - emptyBottomItemsCount - 1)
-                onDataChangedListener()
             }
             return true
         }
 
         override fun addAll(elements: Collection<ITEM>): Boolean {
-            postUpdate {
+            postDataUpdate {
                 val newDataList = ArrayList(this)
                 newDataList.addAll(elements)
 
@@ -188,23 +198,21 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
             return true
         }
 
         override fun set(elements: List<ITEM>) {
-            postUpdate {
+            postDataUpdate {
                 val diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(this, ReadOnlyDataStorageWrapper(elements)), true)
                 super.clear()
                 super.addAll(elements)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
         }
 
         override fun remove(element: ITEM): Boolean {
-            postUpdate {
+            postDataUpdate {
                 val newDataList = ArrayList(this)
                 newDataList.remove(element)
 
@@ -212,13 +220,12 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
             return true
         }
 
         override fun removeAll(elements: Collection<ITEM>): Boolean {
-            postUpdate {
+            postDataUpdate {
                 val newDataList = ArrayList(this)
                 newDataList.removeAll(elements)
 
@@ -226,7 +233,6 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
                 super.clear()
                 super.addAll(newDataList)
                 diffResult.dispatchUpdatesTo(this@BasePaginationRVAdapter)
-                onDataChangedListener()
             }
             return true
         }
@@ -366,4 +372,11 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
         const val TYPE_LOADING_ENABLED = 777888
         const val TYPE_LOADING_DISABLED = -888777
     }
+
+    @PublishedApi
+    internal var `access$recyclerView`: WeakStateExecutor<RecyclerView?, RecyclerView>
+        get() = recyclerView
+        set(value) {
+            recyclerView = value
+        }
 }

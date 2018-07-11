@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.domain.model.TagModel
 import com.mnassa.widget.SimpleChipView
 
+@Deprecated("Use RecyclerView with PostTagRVAdapter instead!")
 class OneLineLinear : LinearLayout {
 
     constructor(context: Context?) : super(context)

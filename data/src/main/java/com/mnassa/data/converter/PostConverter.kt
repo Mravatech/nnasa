@@ -57,7 +57,7 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         return convertPostData(input, token, converter) as OfferPostModelImpl
     }
 
-    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+    internal fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
         val additionInfo: PostAdditionInfo? = token as? PostAdditionInfo
 
         val attachments = input.images.orEmpty().mapIndexed { index, image ->

@@ -5,6 +5,7 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.yield
 import org.kodein.di.generic.instance
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -25,7 +26,8 @@ abstract class ReConsumableBroadcastChannel<T>(
         private val beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = {},
         private val reConsumableEvent: suspend (viewModel: MnassaViewModelImpl) -> Unit,
         private val onEachEvent: suspend (event: T) -> Unit = {},
-        private val receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReadOnlyProperty<MnassaViewModelImpl, BroadcastChannel<T>> {
+        private val receiveChannelProvider: suspend () -> ReceiveChannel<T>,
+        private val invokeReConsumeFirstly: Boolean = false) : ReadOnlyProperty<MnassaViewModelImpl, BroadcastChannel<T>> {
 
     private val outputChannel = outputChannelInstanceCreator()
     private var previousConsumeJob: Job? = null
@@ -36,6 +38,7 @@ abstract class ReConsumableBroadcastChannel<T>(
         previousWaitForReConsumeJob?.cancel()
         previousWaitForReConsumeJob = thisRef.handleException {
             while (true) {
+                yield()
                 reConsumableEvent(thisRef)
                 reConsume(thisRef)
             }
@@ -50,7 +53,7 @@ abstract class ReConsumableBroadcastChannel<T>(
         val wasConsumedBefore = previousConsumeJob != null
 
         previousConsumeJob = thisRef.handleException {
-            if (wasConsumedBefore) beforeReConsume(outputChannel)
+            if (wasConsumedBefore || invokeReConsumeFirstly) beforeReConsume(outputChannel)
             val inputChannel = receiveChannelProvider()
             previousReceiveChannel = inputChannel
             inputChannel.consumeEach {
@@ -63,6 +66,7 @@ abstract class ReConsumableBroadcastChannel<T>(
 }
 
 class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
+                                                   invokeReConsumeFirstly: Boolean = false,
                                                    onEachEvent: suspend (event: T) -> Unit = {},
                                                    receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
         outputChannelInstanceCreator = { ArrayBroadcastChannel(100) },
@@ -72,7 +76,8 @@ class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (out
         reConsumableEvent = { viewModel ->
             val userProfileInteractor: UserProfileInteractor by viewModel.instance()
             userProfileInteractor.onAccountChangedListener.awaitFirst()
-        }
+        },
+        invokeReConsumeFirstly = invokeReConsumeFirstly
 ) {
     override fun getValue(thisRef: MnassaViewModelImpl, property: KProperty<*>): ArrayBroadcastChannel<T> {
         return super.getValue(thisRef, property) as ArrayBroadcastChannel
@@ -80,6 +85,7 @@ class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (out
 }
 
 class ProcessAccountChangeConflatedBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
+                                                       invokeReConsumeFirstly: Boolean = false,
                                                        onEachEvent: suspend (event: T) -> Unit = {},
                                                        receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
         outputChannelInstanceCreator = { ConflatedBroadcastChannel() },
@@ -89,7 +95,8 @@ class ProcessAccountChangeConflatedBroadcastChannel<T>(beforeReConsume: suspend 
         reConsumableEvent = { viewModel ->
             val userProfileInteractor: UserProfileInteractor by viewModel.instance()
             userProfileInteractor.onAccountChangedListener.awaitFirst()
-        }
+        },
+        invokeReConsumeFirstly = invokeReConsumeFirstly
 ) {
     override fun getValue(thisRef: MnassaViewModelImpl, property: KProperty<*>): ConflatedBroadcastChannel<T> {
         return super.getValue(thisRef, property) as ConflatedBroadcastChannel

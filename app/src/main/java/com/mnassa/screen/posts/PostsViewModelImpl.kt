@@ -13,7 +13,10 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
+import kotlin.system.measureTimeMillis
 
 /**
  * Created by Peter on 3/6/2018.
@@ -24,12 +27,16 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> by ProcessAccountChangeArrayBroadcastChannel(
+    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
+            invokeReConsumeFirstly = true,
             beforeReConsume = {
                 isCounterReset = false
                 it.send(ListItemEvent.Cleared())
+                it.send(ListItemEvent.Added(getNewsFeed()))
             },
-            receiveChannelProvider = { postsInteractor.loadAll() })
+            receiveChannelProvider = {
+                postsInteractor.loadAll().map { it.toBatched() }
+            })
 
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
             receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
@@ -62,5 +69,12 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             postsInteractor.resetCounter()
             isCounterReset = true
         }
+    }
+
+    private suspend fun getNewsFeed(): List<PostModel> {
+        val start = System.currentTimeMillis()
+        val result = handleExceptionsSuspend { postsInteractor.loadAllImmediately() } ?: emptyList()
+        Timber.e("NewsFeed loading time = ${System.currentTimeMillis() - start}")
+        return result
     }
 }

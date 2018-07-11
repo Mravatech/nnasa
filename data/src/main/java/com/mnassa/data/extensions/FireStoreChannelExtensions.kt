@@ -22,7 +22,7 @@ import timber.log.Timber
 //}
 internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionReference.toValueChannelWithChangesHandling(
         exceptionHandler: ExceptionHandler,
-        noinline mapper: suspend (DbType) -> OutType = { it as OutType },
+        noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
@@ -37,7 +37,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
         launch {
             try {
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
-                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) }
+                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
                 val result: ListItemEvent<OutType> = when (eventType) {
                     MOVED -> ListItemEvent.Moved(outModel, previousChildName)
                     CHANGED -> ListItemEvent.Changed(outModel, previousChildName)

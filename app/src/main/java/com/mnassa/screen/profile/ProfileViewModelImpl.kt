@@ -1,16 +1,14 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
+import com.mnassa.core.addons.consumeTo
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +27,7 @@ class ProfileViewModelImpl(
 
     override val profileChannel: ConflatedBroadcastChannel<ProfileAccountModel> = ConflatedBroadcastChannel()
     override val statusesConnectionsChannel: ConflatedBroadcastChannel<ConnectionStatus> = ConflatedBroadcastChannel()
-    override val postChannel: ConflatedBroadcastChannel<ListItemEvent<PostModel>> = ConflatedBroadcastChannel()
+    override val postChannel: ConflatedBroadcastChannel<ListItemEvent<List<PostModel>>> = ConflatedBroadcastChannel()
     override val interestsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val offersChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -56,9 +54,8 @@ class ProfileViewModelImpl(
             }
         }
         handleException {
-            postsInteractor.loadAllUserPostByAccountId(accountId).consumeEach {
-                postChannel.send(it)
-            }
+            postsInteractor.loadAllUserPostByAccountIdImmediately(accountId).apply { postChannel.send(ListItemEvent.Added(this)) }
+            postsInteractor.loadAllUserPostByAccountId(accountId).map { it.toBatched() }.consumeTo(postChannel)
         }
         handleException {
             profileChannel.consumeEach { profile ->

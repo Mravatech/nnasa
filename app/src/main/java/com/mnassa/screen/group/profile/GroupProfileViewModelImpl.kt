@@ -31,8 +31,7 @@ class GroupProfileViewModelImpl(
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> = ConflatedBroadcastChannel()
-    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> = ConflatedBroadcastChannel()
+    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> = ConflatedBroadcastChannel()
     override val groupPermissionsChannel: BroadcastChannel<GroupPermissions> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +49,8 @@ class GroupProfileViewModelImpl(
         }
 
         handleException {
-            postsInteractor.loadAllByGroupId(groupId).consumeTo(newsFeedChannel)
-        }
-
-        handleException {
-            postsInteractor.loadAllInfoPosts().consumeTo(infoFeedChannel)
+            newsFeedChannel.send(ListItemEvent.Added(postsInteractor.loadAllByGroupIdImmediately(groupId)))
+            postsInteractor.loadAllByGroupId(groupId).bufferize(this).consumeTo(newsFeedChannel)
         }
 
         handleException {

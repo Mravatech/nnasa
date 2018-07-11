@@ -41,8 +41,6 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
     return result
 }
 
-var start = System.currentTimeMillis()
-
 internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: ExceptionHandler): T? {
     val result = suspendCancellableCoroutine<T?> { continuation ->
         val listener = object : ValueEventListener {

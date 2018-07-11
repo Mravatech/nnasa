@@ -29,8 +29,6 @@ class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.
     var onMyMessageLongClick = { item: ChatMessageModel -> }
     var onUserMessageLongClick = { item: ChatMessageModel -> }
     var onReplyClick = { chatModel: ChatMessageModel?, post: PostModel? -> }
-    private val localOnDataChangedListener = { onDataChangedListener() }
-    var onDataChangedListener = { }
 
     override val itemsComparator: (item1: ChatMessageModel, item2: ChatMessageModel) -> Int = { first, second ->
         val res = when {
@@ -115,7 +113,7 @@ class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.
     }
 
     class ChatDataStorage(adapter: MessagesAdapter) :
-            SortedDataStorage<ChatMessageModel>(ChatMessageModel::class.java, adapter, adapter.localOnDataChangedListener), DataStorage<ChatMessageModel> {
+            SortedDataStorage<ChatMessageModel>(ChatMessageModel::class.java, adapter), DataStorage<ChatMessageModel> {
         private val dateMessages = HashMap<Date, ChatMessageModel>()
 
         override fun addAll(elements: Collection<ChatMessageModel>): Boolean {

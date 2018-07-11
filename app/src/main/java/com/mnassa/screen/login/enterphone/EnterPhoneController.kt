@@ -25,6 +25,7 @@ import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_phone.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
@@ -86,7 +87,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             val termsAndCondSpan = Spannable.Factory.getInstance().newSpannable(termsAndCond)
             termsAndCondSpan.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    Snackbar.make(view, "Terms and conditions!", Snackbar.LENGTH_SHORT).show()
+                    open(TermsAndConditionsController.newInstance())
                 }
             }, 0, termsAndCond.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
