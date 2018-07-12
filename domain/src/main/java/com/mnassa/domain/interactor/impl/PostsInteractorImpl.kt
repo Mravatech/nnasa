@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
+import android.arch.lifecycle.LiveData
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*

@@ -1,5 +1,6 @@
 package com.mnassa.data.repository
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Room
 import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
@@ -8,6 +9,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
+import com.mnassa.data.database.entity.PostRoomEntity
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
@@ -27,12 +29,13 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by Peter on 3/15/2018.
@@ -48,8 +51,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     private val roomDb by lazy {
         Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
-            .fallbackToDestructiveMigration()
-            .build() }
+                .fallbackToDestructiveMigration()
+                .build()
+    }
 
     override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
         return db.child(TABLE_NEWS_FEED)
@@ -61,10 +65,22 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadAllImmediately(): List<PostModel> {
-        return db.child(TABLE_NEWS_FEED)
-                .child(userRepository.getAccountIdOrException())
-                .awaitList<PostDbEntity>(exceptionHandler)
-                .mapNotNull { mapPost(it) }
+        val accountId = userRepository.getAccountIdOrException()
+
+        return withContext(DefaultDispatcher) { roomDb.getPostDao().getAllByAccountId(accountId, 20, null).map {
+            async { it.toPostModel() }
+        }.map { it.await() } }
+
+
+//        return db.child(TABLE_NEWS_FEED)
+//                .child(accountId)
+//                .awaitList<PostDbEntity>(exceptionHandler)
+//                .mapNotNull { mapPost(it) }
+//                .also { allPosts ->
+//                    async {
+//                        roomDb.getPostDao().insert(allPosts.map { PostRoomEntity(it, accountId) })
+//                    }
+//                }
     }
 
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
@@ -153,7 +169,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
     override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post).run { Unit }
     override suspend fun changeStatus(id: String, status: ExpirationType) {
-        val statusString = when(status) {
+        val statusString = when (status) {
             is ExpirationType.ACTIVE -> DatabaseContract.EXPIRATION_TYPE_ACTIVE
             is ExpirationType.FULFILLED -> DatabaseContract.EXPIRATION_TYPE_FULFILLED
             is ExpirationType.CLOSED -> DatabaseContract.EXPIRATION_TYPE_CLOSED

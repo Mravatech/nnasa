@@ -1,5 +1,6 @@
 package com.mnassa.domain.repository
 
+import android.arch.lifecycle.LiveData
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel

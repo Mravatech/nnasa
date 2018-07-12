@@ -1,10 +1,12 @@
 package com.mnassa.screen.posts
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.isNewItemsNeeded
 import com.mnassa.extensions.waitForNewItems
@@ -60,6 +62,13 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
+        launchCoroutineUI {
+            adapter.set(viewModel.loadAllImmediately())
+            adapter.isLoadingEnabled = false
+        }
+
+
+
 //        controllerSubscriptionContainer.launchCoroutineUI {
 //            viewModel.newsFeedChannel.consumeEach {
 //                when (it) {
@@ -95,18 +104,18 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
 
         view.rvNewsFeed.adapter = adapter
 
-        launchCoroutineUI {
-            viewModel.loadFeedWithPagination().consumeEachIndexed {
-                adapter.dataStorage.add(it.value)
-
-                if (view.rvNewsFeed.isNewItemsNeeded(adapter.emptyItemCount)) {
-                } else {
-                    view.rvNewsFeed.waitForNewItems(adapter.emptyItemCount)
-                }
-            }
-        }.invokeOnCompletion {
-            adapter.isLoadingEnabled = false
-        }
+//        launchCoroutineUI {
+//            viewModel.loadFeedWithPagination().consumeEachIndexed {
+//                adapter.dataStorage.add(it.value)
+//
+//                if (view.rvNewsFeed.isNewItemsNeeded(adapter.emptyItemCount)) {
+//                } else {
+//                    view.rvNewsFeed.waitForNewItems(adapter.emptyItemCount)
+//                }
+//            }
+//        }.invokeOnCompletion {
+//            adapter.isLoadingEnabled = false
+//        }
     }
 
     override fun scrollToTop() {

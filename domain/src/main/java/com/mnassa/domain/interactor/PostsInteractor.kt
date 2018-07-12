@@ -10,8 +10,10 @@ import java.io.Serializable
 interface PostsInteractor {
     //
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
+
     //
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
+
     suspend fun loadAllImmediately(): List<PostModel>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?>
@@ -50,7 +52,7 @@ interface PostsInteractor {
 data class PostPrivacyOptions(
         var privacyType: PostPrivacyType,
         var privacyConnections: Set<String>
-): Serializable {
+) : Serializable {
     companion object {
         val DEFAULT = PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet())
     }

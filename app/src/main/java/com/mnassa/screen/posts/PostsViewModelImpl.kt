@@ -1,5 +1,8 @@
 package com.mnassa.screen.posts
 
+import android.arch.lifecycle.LiveData
+import android.os.Bundle
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.InfoPostModel
@@ -11,10 +14,7 @@ import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 import kotlin.system.measureTimeMillis
@@ -76,7 +76,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         }
     }
 
-    private suspend fun getNewsFeed(): List<PostModel> {
+    override suspend fun loadAllImmediately(): List<PostModel> {
         val start = System.currentTimeMillis()
         val result = handleExceptionsSuspend { postsInteractor.loadAllImmediately() } ?: emptyList()
         Timber.e("NewsFeed loading time = ${System.currentTimeMillis() - start}")
