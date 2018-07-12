@@ -98,6 +98,8 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                 tvEventName.text = item.user.formattedFromEvent
                 tvEventName.goneIfEmpty()
 
+                cbIsPresent.isChecked = item.isChecked
+
                 tvGuestsCount.text = "+${item.guestsCount}"
                 tvGuestsCount.isInvisible = item.guestsCount <= 0
             }
