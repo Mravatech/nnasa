@@ -100,9 +100,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                 adapter.dataStorage.add(it.value)
 
                 if (view.rvNewsFeed.isNewItemsNeeded(adapter.emptyItemCount)) {
-                    adapter.isLoadingEnabled = true
                 } else {
-                    adapter.isLoadingEnabled = false
                     view.rvNewsFeed.waitForNewItems(adapter.emptyItemCount)
                 }
             }

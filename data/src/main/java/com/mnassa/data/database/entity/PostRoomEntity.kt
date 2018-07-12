@@ -11,7 +11,7 @@ import android.arch.persistence.room.PrimaryKey
 class PostRoomEntity(
         @PrimaryKey
         @ColumnInfo(name = "id")
-        private val id: String
+        val id: String
 ) {
         companion object {
             const val TABLE_NAME = "POST"
