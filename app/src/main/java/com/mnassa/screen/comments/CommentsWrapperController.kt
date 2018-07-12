@@ -251,7 +251,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun openKeyboardOnComment() {
         launchCoroutineUI {
-            getCommentsContainer().etCommentText?.apply { showKeyboard(this) }
+            getCommentsContainer()?.etCommentText?.apply { showKeyboard(this) }
         }
     }
 

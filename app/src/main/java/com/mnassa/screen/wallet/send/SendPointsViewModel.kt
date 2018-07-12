@@ -11,6 +11,7 @@ interface SendPointsViewModel : MnassaViewModel {
     val resultListenerChannel: BroadcastChannel<SendPointsResult>
 
     fun sendPoints(amount: Long, sender: TransactionSideModel, recipient: TransactionSideModel, description: String?)
+    suspend fun hasAnyGroup(): Boolean
 
     data class SendPointsResult(
             val amount: Long,

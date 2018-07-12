@@ -40,6 +40,9 @@ class CommentsWrapperForPostViewModelImpl(
             postsInteractor.loadById(postId, postAuthorId).consumeEach { post ->
                 if (post != null) {
                     loadComments()
+                } else {
+                    canReadCommentsChannel.send(false)
+                    canWriteCommentsChannel.send(false)
                 }
             }
         }

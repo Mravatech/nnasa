@@ -223,7 +223,7 @@ private val viewModelsModule = Kodein.Module {
         }
         result
     }
-    bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
+    bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance(), instance()) }
     bind<SelectConnectionViewModel>() with factory { additionalData: SelectConnectionViewModel.AdditionalData -> SelectConnectionViewModelImpl(additionalData, instance(), instance()) }
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }

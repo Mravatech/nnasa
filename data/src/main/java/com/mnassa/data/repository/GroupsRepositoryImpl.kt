@@ -3,6 +3,7 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
@@ -147,5 +148,10 @@ class GroupsRepositoryImpl(
                 .map { converter.convertCollection(it, ShortAccountModel::class.java).toSet() }
     }
 
-
+    override suspend fun hasAnyGroup(): Boolean {
+        return !firestore.collection(DatabaseContract.TABLE_GROUPS)
+                .document(userRepository.getAccountIdOrException())
+                .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
+                .get().await(exceptionHandler).isEmpty
+    }
 }
