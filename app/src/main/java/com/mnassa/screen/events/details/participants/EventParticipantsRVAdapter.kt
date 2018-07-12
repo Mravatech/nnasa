@@ -127,7 +127,7 @@ class EventParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventParticipan
                 val editButtonEnabled = item is EventParticipantItem.ConnectionsHeader && item.canEdit || item is EventParticipantItem.OtherHeader && item.canEdit
                 ivCheckParticipants.isInvisible = !editButtonEnabled
                 ivCheckParticipants.isEnabled = editButtonEnabled
-                ivSearch.isInvisible = item is EventParticipantItem.OtherHeader
+                ivSearch.isGone = item is EventParticipantItem.OtherHeader
             }
         }
 
