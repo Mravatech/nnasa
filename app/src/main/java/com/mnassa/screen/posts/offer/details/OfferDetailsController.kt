@@ -23,7 +23,7 @@ import org.kodein.di.generic.instance
  */
 class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
 
-    override val viewModel: OfferDetailsViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
+    override val viewModel: OfferDetailsViewModel by instance(arg = getParams(args))
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onViewCreated(view: View) {

@@ -24,5 +24,8 @@ interface NeedDetailsViewModel : MnassaViewModel {
     fun sendComplaint(id: String, reason: String, authorText: String?)
     fun changeStatus(status: ExpirationType)
 
-    data class ViewModelParams(val postId: String, val postAuthorId: String)
+    data class ViewModelParams(
+            val postId: String,
+            val postAuthorId: String,
+            val post: PostModel?)
 }

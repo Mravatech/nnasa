@@ -156,7 +156,7 @@ class EventSelectParticipantsRVAdapter : BaseSortedPaginationRVAdapter<EventPart
                 btnSave.isInvisible = !editButtonEnabled
                 btnSave.isEnabled = editButtonEnabled
                 btnSave.text = fromDictionary(R.string.event_participant_save)
-                ivSearch.isInvisible = item is EventParticipantItem.OtherHeader
+                ivSearch.isGone = item is EventParticipantItem.OtherHeader
             }
         }
 

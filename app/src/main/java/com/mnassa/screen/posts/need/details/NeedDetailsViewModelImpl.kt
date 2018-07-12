@@ -30,7 +30,10 @@ open class NeedDetailsViewModelImpl(
     protected val postId: String = params.postId
     protected val postAuthorId: String = params.postAuthorId
 
-    override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
+    override val postChannel: ConflatedBroadcastChannel<PostModel> by lazy {
+        val postInitValue = params.post
+        postInitValue?.let { ConflatedBroadcastChannel(it) } ?: ConflatedBroadcastChannel()
+    }
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
@@ -45,7 +48,7 @@ open class NeedDetailsViewModelImpl(
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
                 } else {
-                    finishScreenChannel.send(Unit)
+//                    finishScreenChannel.send(Unit)
                 }
             }
         }
