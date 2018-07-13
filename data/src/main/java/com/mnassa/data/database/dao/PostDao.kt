@@ -29,6 +29,14 @@ interface PostDao {
     """)
     fun getIndexByAccountId(accountId: String): LiveData<List<String>>
 
+    @Query("""
+        select *
+        from POST
+        where id = :id
+        limit 1
+    """)
+    fun getById(id: String): PostRoomEntity?
+
     /*
     select *
         from POST

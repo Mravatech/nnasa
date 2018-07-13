@@ -10,6 +10,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface PostsRepository {
     //
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
+    suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>>
     //
 
 

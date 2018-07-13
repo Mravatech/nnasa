@@ -10,6 +10,7 @@ import java.io.Serializable
 interface PostsInteractor {
     //
     suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
+    suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>>
 
     //
     suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>

@@ -22,6 +22,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
     override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> = postsRepository.loadAllWithPagination()
+    override suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>> = postsRepository.loadIndex()
+
     override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadAllImmediately(): List<PostModel> = postsRepository.loadAllImmediately()
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()

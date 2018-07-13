@@ -31,10 +31,8 @@ import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
@@ -56,13 +54,35 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .build()
     }
 
+    inner class PostLazyItem(id: String) : LazyItem<PostModel>(id) {
+        override suspend fun loadItem(id: String): PostModel? {
+            val fromDb = withContext(DefaultDispatcher) {
+                roomDb.getPostDao().getById(id)?.toPostModel()
+            }
+            if (fromDb != null) return fromDb
+            return loadById(id, userRepository.getAccountIdOrException()).receive()
+        }
+    }
 
-    private fun xx(): ReceiveChannel<List<LazyItem<PostModel>>> {
+
+    override suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>> {
         val accountId = userRepository.getAccountIdOrException()
-        val channel = ArrayChannel<List<LazyItem<PostModel>>>(100)
+        val channel = RendezvousChannel<List<LazyItem<PostModel>>>()
+        val lazyItemsCache = HashMap<String, LazyItem<PostModel>>()
 
-        val observer = Observer<List<String>> {
-
+        lateinit var observer: Observer<List<String>>
+        observer = Observer {
+            val index = it ?: emptyList()
+            launch {
+                try {
+                    channel.send(index.map { lazyItemsCache.getOrPut(it) { PostLazyItem(it) }.also { it.markToReload() } })
+                } catch (e: ClosedSendChannelException) {
+                    roomDb.getPostDao().getIndexByAccountId(accountId).removeObserver(observer)
+                } catch (e: Exception) {
+                    channel.close(e)
+                    roomDb.getPostDao().getIndexByAccountId(accountId).removeObserver(observer)
+                }
+            }
         }
 
         //1. Subscribe to index table

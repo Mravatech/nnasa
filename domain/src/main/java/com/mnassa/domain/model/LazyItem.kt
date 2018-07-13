@@ -34,9 +34,14 @@ abstract class LazyItem<T>(val id: String) : Serializable where T : Serializable
         return item
     }
 
-    fun update(): Deferred<T?> {
-        isReady = false
+    fun refresh(): Deferred<T?> {
+        markToReload()
         return prepare()
+    }
+
+    fun markToReload() {
+        isReady = false
+        item = null
     }
 
     abstract suspend fun loadItem(id: String): T?

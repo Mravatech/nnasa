@@ -1,5 +1,7 @@
 package com.mnassa.screen.posts
 
+import android.os.Bundle
+import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -42,6 +44,17 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
 
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        launchCoroutineUI {
+            val start = System.currentTimeMillis()
+            postsInteractor.loadIndex().consumeEach {
+                Timber.e("INDEX_LOADED >>> ${System.currentTimeMillis() - start} ; size = ${it.size}")
+            }
+        }
     }
 
     override suspend fun loadFeedWithPagination(): ReceiveChannel<PostModel> {
