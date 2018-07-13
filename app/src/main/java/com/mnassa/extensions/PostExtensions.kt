@@ -147,7 +147,9 @@ val PostModel.canBeShared: Boolean
             this !is OfferPostModel &&
             (if (this is RecommendedProfilePostModel) this.recommendedProfile != null else true)
 
-val PostModel.canRecommend: Boolean get() = statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE
+val PostModel.canRecommend: Boolean get() =
+    statusOfExpiration == null ||
+            statusOfExpiration is ExpirationType.ACTIVE
 
 val PostModel.canBeEdited: Boolean get() = isMyPost() && (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE)
 
