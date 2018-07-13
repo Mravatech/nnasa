@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatEditText
 import android.util.AttributeSet
+import android.view.inputmethod.EditorInfo
 import com.mnassa.R
 
 class PrefixEditText : AppCompatEditText {
@@ -22,6 +23,10 @@ class PrefixEditText : AppCompatEditText {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+    init {
+        inputType = inputType or EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
+    }
 
     override fun onMeasure(
         widthMeasureSpec: Int,

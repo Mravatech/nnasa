@@ -60,8 +60,10 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
         if (post is RecommendedProfilePostModel) {
             super.bindTags(post.offers, view)
 
-
             with(view) {
+                tvExpiration.visibility = View.GONE
+                vExpirationSeparator.visibility = View.GONE
+
                 btnConnectNow.isGone = post.recommendedProfile == null
                 val profile = post.recommendedProfile ?: return
 
@@ -71,8 +73,6 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
                 tvRecommendedUserName.text = profile.formattedName
                 tvRecommendedUserPosition.text = profile.formattedPosition
                 tvRecommendedUserPosition.goneIfEmpty()
-                tvExpiration.visibility = View.GONE
-                vExpirationSeparator.visibility = View.GONE
 
                 btnConnectNow.tag = post
             }

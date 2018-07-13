@@ -9,7 +9,7 @@
         <item name="android:maxLines">1</item>
         <item name="android:imeOptions">actionNext</item>
         <item name="android:singleLine">true</item>
-        <item name="android:inputType">text</item>
+        <item name="android:inputType">text|textCapSentences</item>
     </style>
 
     <style name="Registration.TextInputLayout">

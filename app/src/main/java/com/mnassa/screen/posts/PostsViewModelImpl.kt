@@ -1,8 +1,6 @@
 package com.mnassa.screen.posts
 
-import android.arch.lifecycle.LiveData
-import android.os.Bundle
-import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.InfoPostModel
@@ -71,8 +69,12 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
 
     private fun resetCounter() {
         handleException {
-            postsInteractor.resetCounter()
-            isCounterReset = true
+            try {
+                postsInteractor.resetCounter()
+                isCounterReset = true
+            } catch (e: NetworkException) {
+                //ignore
+            }
         }
     }
 

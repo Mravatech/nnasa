@@ -27,6 +27,7 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_USERS_COL_STATE_DISABLE
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.channels.produce
@@ -83,7 +84,7 @@ class UserRepositoryImpl(
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
-            addPushToken()
+            async { addPushToken() }
         }
     }
 
