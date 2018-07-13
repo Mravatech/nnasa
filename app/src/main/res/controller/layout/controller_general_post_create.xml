@@ -45,7 +45,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
                     android:maxLength="@integer/max_general_post_length" />
             </android.support.design.widget.TextInputLayout>
 

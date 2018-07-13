@@ -55,7 +55,6 @@
                     android:layout_height="wrap_content"
                     android:maxLength="@integer/max_recommend_length"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
                     />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>

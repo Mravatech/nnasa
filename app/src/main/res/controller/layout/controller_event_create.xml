@@ -45,7 +45,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
                     android:maxLength="@integer/max_event_title_length" />
             </android.support.design.widget.TextInputLayout>
 
@@ -132,8 +131,7 @@
                     android:id="@+id/etLocationDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="text" />
+                    android:imeOptions="actionDone" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -196,7 +194,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
                     android:maxLength="@integer/max_event_description_length" />
             </android.support.design.widget.TextInputLayout>
 
