@@ -1,5 +1,6 @@
 package com.mnassa.screen.events
 
+import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
@@ -43,8 +44,12 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : Mnas
 
     private fun resetCounter() {
         handleException {
-            eventsInteractor.resetCounter()
-            isCounterReset = true
+            try {
+                eventsInteractor.resetCounter()
+                isCounterReset = true
+            } catch (e: NetworkException) {
+                //ignore
+            }
         }
     }
 
