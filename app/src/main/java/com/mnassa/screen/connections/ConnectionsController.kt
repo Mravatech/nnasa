@@ -197,44 +197,44 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
 
         loadAllConnectionsJob?.cancel()
         loadAllConnectionsJob = launchCoroutineUI {
-            viewModel.allConnectionsChannel.consumeEach {
-                allConnectionsAdapter.isLoadingEnabled = false
-                allConnectionsAdapter.set(it)
-
-                with(headerRef()) {
-                    tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, it.size)
-                    tvAllConnections.isGone = it.isEmpty()
-                    vAllConnections.isGone = it.isEmpty()
-                }
-            }
+//            viewModel.allConnectionsChannel.consumeEach {
+//                allConnectionsAdapter.isLoadingEnabled = false
+//                allConnectionsAdapter.set(it)
+//
+//                with(headerRef()) {
+//                    tvAllConnections.setHeaderWithCounter(R.string.tab_connections_all, it.size)
+//                    tvAllConnections.isGone = it.isEmpty()
+//                    vAllConnections.isGone = it.isEmpty()
+//                }
+//            }
         }
 
         loadRecommendedConnectionsJob?.cancel()
         loadRecommendedConnectionsJob = launchCoroutineUI {
-            viewModel.recommendedConnectionsChannel.consumeEach {
-                recommendedConnectionsAdapter.setWithMaxRange(it)
-
-                with(headerRef()) {
-                    tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
-                    tvRecommendedConnections.isGone = it.isEmpty()
-                    rvRecommendedConnections.isGone = it.isEmpty()
-                }
-            }
+//            viewModel.recommendedConnectionsChannel.consumeEach {
+//                recommendedConnectionsAdapter.setWithMaxRange(it)
+//
+//                with(headerRef()) {
+//                    tvRecommendedConnections.setHeaderWithCounter(R.string.tab_connections_recommended, it.size)
+//                    tvRecommendedConnections.isGone = it.isEmpty()
+//                    rvRecommendedConnections.isGone = it.isEmpty()
+//                }
+//            }
         }
 
         loadNewConnectionsJob?.cancel()
         loadNewConnectionsJob = launchCoroutineUI {
-            viewModel.newConnectionRequestsChannel.consumeEach {
-                newConnectionRequestsAdapter.setWithMaxRange(it)
-
-                with(headerRef()) {
-                    tvNewConnectionRequests.isGone = it.isEmpty()
-                    rvNewConnectionRequests.isGone = it.isEmpty()
-                    vNewConnectionRequests.isGone = it.isEmpty()
-
-                    tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
-                }
-            }
+//            viewModel.newConnectionRequestsChannel.consumeEach {
+//                newConnectionRequestsAdapter.setWithMaxRange(it)
+//
+//                with(headerRef()) {
+//                    tvNewConnectionRequests.isGone = it.isEmpty()
+//                    rvNewConnectionRequests.isGone = it.isEmpty()
+//                    vNewConnectionRequests.isGone = it.isEmpty()
+//
+//                    tvNewConnectionRequests.setHeaderWithCounter(R.string.tab_connections_new_requests, it.size)
+//                }
+//            }
         }
     }
 

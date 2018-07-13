@@ -1,5 +1,6 @@
 package com.mnassa.data.database.dao
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
@@ -19,6 +20,14 @@ interface PostDao {
         limit :limit
         """)
     fun getAllByAccountId(accountId: String, limit: Int, offset: String?): List<PostRoomEntity>
+
+    @Query("""
+        select id
+        from POST
+        where accountId = :accountId
+        order by id desc
+    """)
+    fun getIndexByAccountId(accountId: String): LiveData<List<String>>
 
     /*
     select *

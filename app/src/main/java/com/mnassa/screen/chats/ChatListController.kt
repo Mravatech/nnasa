@@ -45,23 +45,23 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
             view?.llEmptyMessages?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.listMessagesChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
-                }
-            }
-        }
+//        controllerSubscriptionContainer.launchCoroutineUI {
+//            viewModel.listMessagesChannel.consumeEach {
+//                when (it) {
+//                    is ListItemEvent.Added -> {
+//                        adapter.isLoadingEnabled = false
+//                        adapter.dataStorage.addAll(it.item)
+//                    }
+//                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+//                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+//                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+//                    is ListItemEvent.Cleared -> {
+//                        adapter.isLoadingEnabled = true
+//                        adapter.dataStorage.clear()
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onViewCreated(view: View) {

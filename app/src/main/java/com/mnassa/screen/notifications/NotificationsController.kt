@@ -41,28 +41,28 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
             adapter.restoreState(this)
         }
         adapter.isLoadingEnabled = true
-        controllerSubscriptionContainer.launchCoroutineUI {
-            val view = getViewSuspend()
-            viewModel.notificationChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        if (it.item.isNotEmpty()) {
-                            adapter.addNotifications(it.item)
-                        }
-                        view.llEmptyNotifications.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
-                    }
-                    is ListItemEvent.Changed -> adapter.addNotifications(it.item)
-                    is ListItemEvent.Moved -> adapter.addNotifications(it.item)
-                    is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
-                        view.llEmptyNotifications.isInvisible = true
-                    }
-                }
-            }
-        }
+//        controllerSubscriptionContainer.launchCoroutineUI {
+//            val view = getViewSuspend()
+//            viewModel.notificationChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
+//                when (it) {
+//                    is ListItemEvent.Added -> {
+//                        adapter.isLoadingEnabled = false
+//                        if (it.item.isNotEmpty()) {
+//                            adapter.addNotifications(it.item)
+//                        }
+//                        view.llEmptyNotifications.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
+//                    }
+//                    is ListItemEvent.Changed -> adapter.addNotifications(it.item)
+//                    is ListItemEvent.Moved -> adapter.addNotifications(it.item)
+//                    is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
+//                    is ListItemEvent.Cleared -> {
+//                        adapter.dataStorage.clear()
+//                        adapter.isLoadingEnabled = true
+//                        view.llEmptyNotifications.isInvisible = true
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onViewCreated(view: View) {

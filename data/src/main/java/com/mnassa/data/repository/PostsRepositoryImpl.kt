@@ -1,6 +1,6 @@
 package com.mnassa.data.repository
 
-import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.arch.persistence.room.Room
 import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
@@ -31,6 +31,7 @@ import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
@@ -55,6 +56,22 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .build()
     }
 
+
+    private fun xx(): ReceiveChannel<List<LazyItem<PostModel>>> {
+        val accountId = userRepository.getAccountIdOrException()
+        val channel = ArrayChannel<List<LazyItem<PostModel>>>(100)
+
+        val observer = Observer<List<String>> {
+
+        }
+
+        //1. Subscribe to index table
+        roomDb.getPostDao().getIndexByAccountId(accountId).observeForever(observer)
+
+        return channel
+    }
+
+
     override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
         return db.child(TABLE_NEWS_FEED)
                 .child(userRepository.getAccountIdOrException())
@@ -67,20 +84,23 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun loadAllImmediately(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
 
-        return withContext(DefaultDispatcher) { roomDb.getPostDao().getAllByAccountId(accountId, 20, null).map {
-            async { it.toPostModel() }
-        }.map { it.await() } }
+        val result = withContext(DefaultDispatcher) {
+            roomDb.getPostDao().getAllByAccountId(accountId, 20, null)
+                    .map { async { it.toPostModel() } }
+                    .map { it.await() }
+        }
 
+        if (result.isNotEmpty()) return result
 
-//        return db.child(TABLE_NEWS_FEED)
-//                .child(accountId)
-//                .awaitList<PostDbEntity>(exceptionHandler)
-//                .mapNotNull { mapPost(it) }
-//                .also { allPosts ->
-//                    async {
-//                        roomDb.getPostDao().insert(allPosts.map { PostRoomEntity(it, accountId) })
-//                    }
-//                }
+        return db.child(TABLE_NEWS_FEED)
+                .child(accountId)
+                .awaitList<PostDbEntity>(exceptionHandler)
+                .mapNotNull { mapPost(it) }
+                .also { allPosts ->
+                    async {
+                        roomDb.getPostDao().insert(allPosts.map { PostRoomEntity(it, accountId) })
+                    }
+                }
     }
 
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {

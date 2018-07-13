@@ -11,7 +11,7 @@ import com.mnassa.domain.model.PostModel
  * Created by Peter on 7/11/2018.
  */
 @Entity(tableName = PostRoomEntity.TABLE_NAME,
-        indices = [(Index("accountId"))])
+        indices = [(Index("accountId")), (Index("id", unique = true))])
 class PostRoomEntity(
         @PrimaryKey
         @ColumnInfo(name = "id")
