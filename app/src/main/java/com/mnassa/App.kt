@@ -10,7 +10,7 @@ import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import io.fabric.sdk.android.Fabric
@@ -19,7 +19,6 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
 import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import timber.log.Timber
 
@@ -60,12 +59,19 @@ class App : MultiDexApplication(), KodeinAware {
             getInstance<LoginInteractor>().handleAccountStatus()
         }
 
+        getInstance<NetworkInteractor>().register()
+
         Timber.e("appId: ${appInfoProvider.applicationId}")
         Timber.e("packageName: $packageName")
         Timber.e("isDebug: ${appInfoProvider.isDebug}")
         Timber.e("endpoint: ${appInfoProvider.endpoint}")
         Timber.e("versionCode: ${appInfoProvider.versionCode}")
         Timber.e("versionName: ${appInfoProvider.versionName}")
+    }
+
+    override fun onTerminate() {
+        getInstance<NetworkInteractor>().unregister()
+        super.onTerminate()
     }
 
     companion object {
