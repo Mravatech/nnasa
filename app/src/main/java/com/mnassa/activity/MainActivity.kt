@@ -42,6 +42,9 @@ import org.kodein.di.android.retainedKodein
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.kcontext
 import java.util.*
+import android.app.NotificationManager
+
+
 
 open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
 
@@ -102,6 +105,10 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
         val intentFilter = IntentFilter()
         intentFilter.addAction(MnassaFirebaseMessagingService.NOTIFICATION)
         registerReceiver(balanceChangeReceiver, intentFilter)
+
+        //close all push-notifications
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
     }
 
     override fun onPause() {
