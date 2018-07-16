@@ -29,6 +29,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             invokeReConsumeFirstly = true,
             beforeReConsume = {
                 isCounterReset = false
+                Timber.e("preloadAllPosts >>> beforeReConsume - clear!")
                 it.send(ListItemEvent.Cleared())
                 it.send(ListItemEvent.Added(postsInteractor.getAllPreloadedPosts()))
                 Timber.e("preloadAllPosts >>> beforeReConsume - sent")

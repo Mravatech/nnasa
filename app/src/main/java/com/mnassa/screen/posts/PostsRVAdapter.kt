@@ -9,6 +9,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.extensions.isRepost
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
+import timber.log.Timber
 
 /**
  * Created by Peter on 3/14/2018.
@@ -40,6 +41,11 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
         onHideInfoPostClickListener = { }
         onGroupClickListener = { }
         onMoreItemClickListener = { item: PostModel, view: View -> }
+    }
+
+    override fun onAttachedToRecyclerView(rv: RecyclerView) {
+        super.onAttachedToRecyclerView(rv)
+        Timber.e("preloadAllPosts >>> onAttachedToRecyclerView")
     }
 
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->

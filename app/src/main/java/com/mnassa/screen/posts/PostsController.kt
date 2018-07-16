@@ -19,6 +19,7 @@ import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
+import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.consumeEachIndexed
@@ -65,7 +66,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
+        Timber.e("preloadAllPosts >>> before coroutine launching")
         controllerSubscriptionContainer.launchCoroutineUI {
+            Timber.e("preloadAllPosts >>> coroutine launched!")
             viewModel.newsFeedChannel.consumeEach {
                 Timber.e("preloadAllPosts >>> consumeEach")
 

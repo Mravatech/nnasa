@@ -90,7 +90,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
 
         with(view) {
             vpMain.adapter = adapter
-            vpMain.offscreenPageLimit = adapter.count
+//            vpMain.offscreenPageLimit = adapter.count
 
             accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
