@@ -28,7 +28,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
 
     override val onLogoutListener: SimpleCompositeEventListener<LogoutReason> = SimpleCompositeEventListener()
 
-    override suspend fun isLoggedIn(): Boolean = userRepository.getAccountIdOrNull() != null
+    override fun isLoggedIn(): Boolean = userRepository.getAccountIdOrNull() != null
 
     override suspend fun requestVerificationCode(
             phoneNumber: String,

@@ -1,8 +1,8 @@
 package com.mnassa.data.database.dao
 
-import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import com.mnassa.data.database.entity.PostRoomEntity
 
@@ -22,12 +22,18 @@ interface PostDao {
     fun getAllByAccountId(accountId: String, limit: Int, offset: String?): List<PostRoomEntity>
 
     @Query("""
-        select id
-        from POST
-        where accountId = :accountId
-        order by id desc
+        DELETE
+        FROM POST
+        WHERE accountId = :accountId
     """)
-    fun getIndexByAccountId(accountId: String): LiveData<List<String>>
+    fun deleteAllWithAccountId(accountId: String)
+
+    @Query("""
+        DELETE
+        FROM POST
+        where id = :id
+    """)
+    fun deleteById(id: String)
 
     @Query("""
         select *
@@ -45,10 +51,10 @@ interface PostDao {
         limit :limit
      */
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: PostRoomEntity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entities: List<PostRoomEntity>)
 
 }

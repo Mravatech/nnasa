@@ -1,6 +1,5 @@
 package com.mnassa.domain.interactor.impl
 
-import android.arch.lifecycle.LiveData
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
@@ -21,11 +20,9 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val tagInteractor: TagInteractor,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
-    override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> = postsRepository.loadAllWithPagination()
-    override suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>> = postsRepository.loadIndex()
-
-    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
-    override suspend fun loadAllImmediately(): List<PostModel> = postsRepository.loadAllImmediately()
+    override suspend fun preloadAllPosts(): List<PostModel> = postsRepository.preloadAllPosts()
+    override suspend fun getAllPreloadedPosts(): List<PostModel> = postsRepository.getAllPreloadedPosts()
+    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id, authorId)
     override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)

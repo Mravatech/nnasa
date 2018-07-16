@@ -9,13 +9,10 @@ import java.io.Serializable
  */
 interface PostsInteractor {
     //
-    suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
-    suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>>
-
+    suspend fun preloadAllPosts(): List<PostModel>
+    suspend fun getAllPreloadedPosts(): List<PostModel>
+    suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
     //
-    suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>>
-
-    suspend fun loadAllImmediately(): List<PostModel>
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?>
     suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>

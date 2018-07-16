@@ -1,6 +1,5 @@
 package com.mnassa.data.repository
 
-import android.arch.lifecycle.Observer
 import android.arch.persistence.room.Room
 import android.content.Context
 import com.androidkotlincore.entityconverter.ConvertersContext
@@ -10,7 +9,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.database.entity.PostRoomEntity
-import com.mnassa.data.extensions.*
+import com.mnassa.data.extensions.await
+import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toValueChannel
+import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
@@ -30,11 +32,26 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.selects.select
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.emptyList
+import kotlin.collections.first
+import kotlin.collections.firstOrNull
+import kotlin.collections.getOrPut
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
+import kotlin.collections.set
+import kotlin.collections.toList
 
 /**
  * Created by Peter on 3/15/2018.
@@ -48,80 +65,91 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
+    private var preloadedPosts = HashMap<String, Deferred<List<PostModel>>>() //accountId - to posts future
     private val roomDb by lazy {
         Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
                 .fallbackToDestructiveMigration()
                 .build()
     }
 
-    inner class PostLazyItem(id: String) : LazyItem<PostModel>(id) {
-        override suspend fun loadItem(id: String): PostModel? {
-            val fromDb = withContext(DefaultDispatcher) {
-                roomDb.getPostDao().getById(id)?.toPostModel()
+    override suspend fun preloadAllPosts(): List<PostModel> {
+        Timber.e("preloadAllPosts >>> ")
+        val firebaseChannel = produce { send(loadPostsFromFirebase()) }
+
+        val future = async {
+            select<List<PostModel>> {
+                produce { send(loadPostsFromDb()) }.onReceive { posts ->
+                    Timber.e("preloadAllPosts >>> FROM DB: ${posts.size}")
+                    posts.takeIf { it.isNotEmpty() } ?: firebaseChannel.receive()
+                }
+                firebaseChannel.onReceive { posts ->
+                    Timber.e("preloadAllPosts >>> FROM FIRE_BASE ${posts.size}")
+                    posts
+                }
+
             }
-            if (fromDb != null) return fromDb
-            return loadById(id, userRepository.getAccountIdOrException()).receive()
+        }
+        preloadedPosts[userRepository.getAccountIdOrException()] = future
+        return future.await()
+    }
+
+    override suspend fun getAllPreloadedPosts(): List<PostModel> {
+        Timber.e("preloadAllPosts >>> getAllPreloadedPosts")
+        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadAllPosts() } }.await().also {
+            Timber.e("preloadAllPosts >>> getAllPreloadedPosts >> finished")
         }
     }
 
+    private suspend fun loadPostsFromDb(): List<PostModel> {
+        return withContext(DefaultDispatcher) {
+            roomDb.getPostDao().getAllByAccountId(userRepository.getAccountIdOrException(), 10, null).map { it.toPostModel() }
+        }
+    }
 
-    override suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>> {
-        val accountId = userRepository.getAccountIdOrException()
-        val channel = RendezvousChannel<List<LazyItem<PostModel>>>()
-        val lazyItemsCache = HashMap<String, LazyItem<PostModel>>()
+    private suspend fun saveAllPostsToDb(accountId: String, posts: List<PostModel>) {
+        withContext(DefaultDispatcher) {
+            roomDb.getPostDao().deleteAllWithAccountId(accountId)
+            roomDb.getPostDao().insert(posts.map { PostRoomEntity(it, accountId) })
+        }
+    }
 
-        lateinit var observer: Observer<List<String>>
-        observer = Observer {
-            val index = it ?: emptyList()
-            launch {
-                try {
-                    channel.send(index.map { lazyItemsCache.getOrPut(it) { PostLazyItem(it) }.also { it.markToReload() } })
-                } catch (e: ClosedSendChannelException) {
-                    roomDb.getPostDao().getIndexByAccountId(accountId).removeObserver(observer)
-                } catch (e: Exception) {
-                    channel.close(e)
-                    roomDb.getPostDao().getIndexByAccountId(accountId).removeObserver(observer)
+    private suspend fun updateInDb(accountId: String, postEvent: ListItemEvent<PostModel>) {
+        withContext(DefaultDispatcher) {
+            when (postEvent) {
+                is ListItemEvent.Added, is ListItemEvent.Moved, is ListItemEvent.Changed -> {
+                    roomDb.getPostDao().insert(PostRoomEntity(postEvent.item, accountId))
+                }
+                is ListItemEvent.Removed -> {
+                    roomDb.getPostDao().deleteById(postEvent.item.id)
                 }
             }
         }
-
-        //1. Subscribe to index table
-        roomDb.getPostDao().getIndexByAccountId(accountId).observeForever(observer)
-
-        return channel
     }
 
-
-    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
-        return db.child(TABLE_NEWS_FEED)
-                .child(userRepository.getAccountIdOrException())
-                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { mapPost(it) }
-                )
-    }
-
-    override suspend fun loadAllImmediately(): List<PostModel> {
+    private suspend fun loadPostsFromFirebase(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
-
-        val result = withContext(DefaultDispatcher) {
-            roomDb.getPostDao().getAllByAccountId(accountId, 20, null)
-                    .map { async { it.toPostModel() } }
-                    .map { it.await() }
-        }
-
-        if (result.isNotEmpty()) return result
-
         return db.child(TABLE_NEWS_FEED)
                 .child(accountId)
                 .awaitList<PostDbEntity>(exceptionHandler)
                 .mapNotNull { mapPost(it) }
-                .also { allPosts ->
-                    async {
-                        roomDb.getPostDao().insert(allPosts.map { PostRoomEntity(it, accountId) })
-                    }
+                .also { posts -> async { saveAllPostsToDb(accountId, posts) } }
+    }
+
+    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
+        val accountId = userRepository.getAccountIdOrException()
+        return db.child(TABLE_NEWS_FEED)
+                .child(accountId)
+                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                        exceptionHandler = exceptionHandler,
+                        mapper = { mapPost(it) }
+                ).map {
+                    preloadedPosts.remove(accountId) //invalidate cache
+                    updateInDb(accountId, it)
+                    it
                 }
     }
+
+    //==============================================================================================
 
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
         return db.child(TABLE_INFO_FEED)
@@ -172,17 +200,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
                 .awaitList<PostDbEntity>()
                 .mapNotNull { mapPost(it, groupId) }
-    }
-
-    override suspend fun loadAllWithPagination(): ReceiveChannel<PostModel> {
-        val userId = requireNotNull(userRepository.getAccountIdOrException())
-
-        return db
-                .child(TABLE_NEWS_FEED)
-                .child(userId)
-                .toValueChannelWithPagination<PostDbEntity, PostModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { mapPost(it) })
     }
 
     override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> {

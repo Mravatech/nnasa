@@ -1,23 +1,20 @@
 package com.mnassa.screen.posts
 
-import android.os.Bundle
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.InfoPostModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PermissionsModel
-import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
-import kotlin.system.measureTimeMillis
 
 /**
  * Created by Peter on 3/6/2018.
@@ -28,37 +25,23 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
-//    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
-//            invokeReConsumeFirstly = true,
-//            beforeReConsume = {
-//                isCounterReset = false
-//                it.send(ListItemEvent.Cleared())
-//                it.send(ListItemEvent.Added(getNewsFeed()))
-//            },
-//            receiveChannelProvider = {
-//                postsInteractor.loadAll().map { it.toBatched() }
-//            })
-//
-//    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
-//            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
+    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
+            invokeReConsumeFirstly = true,
+            beforeReConsume = {
+                isCounterReset = false
+                it.send(ListItemEvent.Cleared())
+                it.send(ListItemEvent.Added(postsInteractor.getAllPreloadedPosts()))
+                Timber.e("preloadAllPosts >>> beforeReConsume - sent")
+            },
+            receiveChannelProvider = {
+                postsInteractor.loadAllWithChangesHandling().bufferize(this)
+            })
+
+    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
+            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
 
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        launchCoroutineUI {
-            val start = System.currentTimeMillis()
-            postsInteractor.loadIndex().consumeEach {
-                Timber.e("INDEX_LOADED >>> ${System.currentTimeMillis() - start} ; size = ${it.size}")
-            }
-        }
-    }
-
-    override suspend fun loadFeedWithPagination(): ReceiveChannel<PostModel> {
-        return postsInteractor.loadAllWithPagination()
     }
 
     override fun onAttachedToWindow(post: PostModel) {
@@ -89,12 +72,5 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                 //ignore
             }
         }
-    }
-
-    override suspend fun loadAllImmediately(): List<PostModel> {
-        val start = System.currentTimeMillis()
-        val result = handleExceptionsSuspend { postsInteractor.loadAllImmediately() } ?: emptyList()
-        Timber.e("NewsFeed loading time = ${System.currentTimeMillis() - start}")
-        return result
     }
 }

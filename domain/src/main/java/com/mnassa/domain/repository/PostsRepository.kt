@@ -9,13 +9,11 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface PostsRepository {
     //
-    suspend fun loadAllWithPagination(): ReceiveChannel<PostModel>
-    suspend fun loadIndex(): ReceiveChannel<List<LazyItem<PostModel>>>
-    //
-
-
+    suspend fun preloadAllPosts(): List<PostModel>
+    suspend fun getAllPreloadedPosts(): List<PostModel>
     suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
-    suspend fun loadAllImmediately(): List<PostModel>
+
+    //
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadAllByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
     suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel>

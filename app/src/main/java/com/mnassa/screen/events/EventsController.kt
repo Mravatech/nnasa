@@ -50,23 +50,23 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-//        controllerSubscriptionContainer.launchCoroutineUI {
-//            viewModel.eventsFeedChannel.consumeEach {
-//                when (it) {
-//                    is ListItemEvent.Added -> {
-//                        adapter.isLoadingEnabled = false
-//                        adapter.dataStorage.addAll(it.item)
-//                    }
-//                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-//                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-//                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-//                    is ListItemEvent.Cleared -> {
-//                        adapter.isLoadingEnabled = true
-//                        adapter.dataStorage.clear()
-//                    }
-//                }
-//            }
-//        }
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.eventsFeedChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
+                    }
+                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                    is ListItemEvent.Cleared -> {
+                        adapter.isLoadingEnabled = true
+                        adapter.dataStorage.clear()
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View) {

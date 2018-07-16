@@ -13,7 +13,7 @@ interface LoginInteractor {
 
     val onLogoutListener: CompositeEventListener<LogoutReason>
 
-    suspend fun isLoggedIn(): Boolean
+    fun isLoggedIn(): Boolean
     suspend fun requestVerificationCode(
             phoneNumber: String,
             previousResponse: PhoneVerificationModel? = null,
