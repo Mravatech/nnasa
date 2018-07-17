@@ -5,7 +5,6 @@ import com.bluelinelabs.conductor.Controller
 import com.mnassa.App
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.PostType
 import com.mnassa.extensions.isMyPost
 import com.mnassa.extensions.markAsOpened
