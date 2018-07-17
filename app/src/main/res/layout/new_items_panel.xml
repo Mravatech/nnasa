@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/flNewItemsPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/new_items_panel_background"
+        android:clickable="true"
+        android:focusable="true"
+        tools:layout_marginTop="100dp">
+
+        <com.mnassa.widget.MnassaTextView
+            style="@style/MnassaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:paddingTop="8dp"
+            android:text="@string/posts_new_items_available"
+            android:textColor="@color/white"
+            tools:text="New items are available" />
+
+    </FrameLayout>
+
+</FrameLayout>

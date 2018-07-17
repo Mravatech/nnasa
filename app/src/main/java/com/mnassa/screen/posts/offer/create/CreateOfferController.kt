@@ -303,7 +303,6 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                     else -> "(${perPerson * sharingOptions.privacyConnections.size})"
                 }
             }
-
         }
     }
 

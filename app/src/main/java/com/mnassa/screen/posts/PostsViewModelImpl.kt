@@ -11,6 +11,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
@@ -44,6 +45,8 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     override fun onAttachedToWindow(post: PostModel) {
+        Timber.e("WWWWINDOW ATTACH: ${post.text}")
+
         handleException { postsInteractor.onItemViewed(post) }
 
         //reset counter with debounce
@@ -52,6 +55,10 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             delay(1_000)
             resetCounter()
         }
+    }
+
+    override fun onDetachedFromWindow(post: PostModel) {
+        Timber.e("WWWWINDOW DETACH: ${post.text}")
     }
 
     override fun hideInfoPost(post: PostModel) {
