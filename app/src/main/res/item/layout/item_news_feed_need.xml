@@ -210,6 +210,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/tvCommentsCount"
                     android:drawableEnd="@drawable/ic_post_button_arrow_blue"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:fontFamily="@font/roboto_medium"
@@ -223,11 +224,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/tvCommentsCount"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:fontFamily="@font/roboto_medium"
                     android:gravity="end"
                     android:textAllCaps="true"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"
+                    tools:text="EXPIRED"
+                    tools:visibility="visible" />
 
             </RelativeLayout>
 
