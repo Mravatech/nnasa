@@ -21,7 +21,7 @@ class MnassaFirebaseInstanceIDService : FirebaseInstanceIdService() {
     // [START refresh_token]
     override fun onTokenRefresh() {
         // Get updated InstanceID token.
-        val userProfileInteractor: UserProfileInteractor = applicationContext.getInstance<UserProfileInteractor>()
+        val userProfileInteractor: UserProfileInteractor = applicationContext.getInstance()
 
         launch {
             userProfileInteractor.addPushToken()
