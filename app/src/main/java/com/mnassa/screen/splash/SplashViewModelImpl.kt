@@ -22,7 +22,7 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
 
         launchCoroutineUI {
             if (loginInteractor.isLoggedIn()) {
-                postsRepository.preloadAllPosts()
+                postsRepository.preloadFeed()
                 delay(SHORT_DELAY)
                 //todo: await events etc
                 openNextScreenChannel.send(SplashViewModel.NextScreen.MAIN)

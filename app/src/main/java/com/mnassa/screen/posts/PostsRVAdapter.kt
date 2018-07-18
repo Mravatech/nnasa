@@ -45,7 +45,7 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
 
     override fun onAttachedToRecyclerView(rv: RecyclerView) {
         super.onAttachedToRecyclerView(rv)
-        Timber.e("preloadAllPosts >>> onAttachedToRecyclerView")
+        Timber.e("preloadFeed >>> onAttachedToRecyclerView")
     }
 
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->

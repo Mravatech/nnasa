@@ -37,7 +37,7 @@ class CommentsWrapperForPostViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            postsInteractor.loadById(postId, postAuthorId).consumeEach { post ->
+            postsInteractor.loadById(postId).consumeEach { post ->
                 if (post != null) {
                     loadComments()
                 } else {

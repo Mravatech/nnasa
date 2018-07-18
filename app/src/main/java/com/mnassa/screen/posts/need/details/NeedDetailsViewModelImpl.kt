@@ -42,7 +42,7 @@ open class NeedDetailsViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            postsInteractor.loadById(postId, postAuthorId).consumeEach {
+            postsInteractor.loadById(postId).consumeEach {
                 if (it != null) {
                     it.timeOfExpiration = getExpiration(it)
                     postChannel.send(it)

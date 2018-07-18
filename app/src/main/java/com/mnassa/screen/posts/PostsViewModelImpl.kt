@@ -9,9 +9,7 @@ import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
@@ -28,15 +26,15 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             invokeReConsumeFirstly = true,
             beforeReConsume = {
                 isCounterReset = false
-                Timber.e("preloadAllPosts >>> beforeReConsume - clear!")
+                Timber.e("preloadFeed >>> beforeReConsume - clear!")
                 it.send(ListItemEvent.Cleared())
-                it.send(ListItemEvent.Added(postsInteractor.getAllPreloadedPosts()))
-                Timber.e("preloadAllPosts >>> beforeReConsume - sent")
+                it.send(ListItemEvent.Added(postsInteractor.getPreloadedFeed()))
+                Timber.e("preloadFeed >>> beforeReConsume - sent")
             },
             receiveChannelProvider = {
-                postsInteractor.loadAllWithChangesHandling().bufferize(this)
+                postsInteractor.loadFeedWithChangesHandling().bufferize(this)
             })
-
+    override val newsFeedUpdatesChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> = ArrayBroadcastChannel(10)
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
             receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
 
@@ -45,8 +43,6 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     override fun onAttachedToWindow(post: PostModel) {
-        Timber.e("WWWWINDOW ATTACH: ${post.text}")
-
         handleException { postsInteractor.onItemViewed(post) }
 
         //reset counter with debounce
@@ -58,7 +54,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     override fun onDetachedFromWindow(post: PostModel) {
-        Timber.e("WWWWINDOW DETACH: ${post.text}")
+
     }
 
     override fun hideInfoPost(post: PostModel) {

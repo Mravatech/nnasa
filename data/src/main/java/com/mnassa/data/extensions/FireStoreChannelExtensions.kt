@@ -20,7 +20,7 @@ import timber.log.Timber
 //    class Changed<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
 //    class Removed<T: Any>(item: T) : ListItemEvent<T>(item)
 //}
-internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionReference.toValueChannelWithChangesHandling(
+internal suspend inline fun <reified DbType : HasId, reified OutType : Any> CollectionReference.toValueChannelWithChangesHandling(
         exceptionHandler: ExceptionHandler,
         noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
@@ -34,7 +34,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
     val REMOVED = 4
 
     val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
-        launch {
+        launch(FIRE_STORE_DISPATCHER) {
             try {
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
@@ -65,21 +65,23 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
         }
     }
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    withContext(FIRE_STORE_DISPATCHER) {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        if (dataSnapshot == null) return@addSnapshotListener
+            if (dataSnapshot == null) return@addSnapshotListener
 
-        dataSnapshot.documentChanges.forEach {
-            when (it.type) {
-                DocumentChange.Type.ADDED -> emitter(it.document, null, ADDED)
-                DocumentChange.Type.MODIFIED -> emitter(it.document, null, CHANGED)
-                DocumentChange.Type.REMOVED -> emitter(it.document, null, REMOVED)
-                else -> throw IllegalStateException("Illegal change type ${it.type}")
+            dataSnapshot.documentChanges.forEach {
+                when (it.type) {
+                    DocumentChange.Type.ADDED -> emitter(it.document, null, ADDED)
+                    DocumentChange.Type.MODIFIED -> emitter(it.document, null, CHANGED)
+                    DocumentChange.Type.REMOVED -> emitter(it.document, null, REMOVED)
+                    else -> throw IllegalStateException("Illegal change type ${it.type}")
+                }
             }
         }
     }
@@ -89,26 +91,28 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
 
 // Subscribe to single value changes
 
-internal inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
+internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
     val channel = RendezvousChannel<T?>()
     lateinit var listener: ListenerRegistration
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    withContext(FIRE_STORE_DISPATCHER) {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        launch {
-            try {
-                channel.send(dataSnapshot.mapSingle())
-            } catch (e: ClosedSendChannelException) {
-                listener.remove()
-            } catch (e: Exception) {
-                Timber.e(e)
-                listener.remove()
-                channel.close(exceptionHandler.handle(e))
+            launch {
+                try {
+                    channel.send(dataSnapshot.mapSingle())
+                } catch (e: ClosedSendChannelException) {
+                    listener.remove()
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    listener.remove()
+                    channel.close(exceptionHandler.handle(e))
+                }
             }
         }
     }

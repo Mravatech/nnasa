@@ -9,10 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.database.entity.PostRoomEntity
-import com.mnassa.data.extensions.await
-import com.mnassa.data.extensions.awaitList
-import com.mnassa.data.extensions.toValueChannel
-import com.mnassa.data.extensions.toValueChannelWithChangesHandling
+import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
@@ -24,9 +21,6 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.data.repository.DatabaseContract.TABLE_INFO_FEED
-import com.mnassa.data.repository.DatabaseContract.TABLE_NEWS_FEED
-import com.mnassa.data.repository.DatabaseContract.TABLE_POSTS
-import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_POSTS
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.PostsRepository
@@ -61,110 +55,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .build()
     }
 
-    private suspend fun getFromDb(postId: String): PostModel? {
-        return withContext(DefaultDispatcher) {
-            roomDb.getPostDao().getById(postId)?.toPostModel()
-        }
-    }
-
-    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null): ReceiveChannel<PostModel?> {
-        return firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
-                .document(postId)
-                .toValueChannel<PostDbEntity>(exceptionHandler)
-                .map {
-                    withContext(DefaultDispatcher) {
-                        if (it == null) {
-                            roomDb.getPostDao().deleteById(postId)
-                            null
-                        } else {
-                            mapPost(it, groupId)?.also {
-                                roomDb.getPostDao().insert(PostRoomEntity(it))
-                            }
-                        }
-                    }
-                }
-    }
-
-    private suspend fun get(postId: String, groupId: String? = null): PostModel? {
-        return getFromDb(postId) ?: getFromFirestoreChannel(postId, groupId).consume { receive() }
-    }
-
-    override suspend fun preloadAllPosts(): List<PostModel> {
-        Timber.e("preloadAllPosts >>> ")
-        val future = async {
-            val accountId = userRepository.getAccountIdOrException()
-            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(accountId)
-                    .collection(DatabaseContract.TABLE_FEED)
-                    .awaitList<PostShortDbEntity>()
-                    .map { shortPost ->
-                        async {
-                            get(shortPost.id)?.also {
-                                it.autoSuggest = shortPost.autoSuggest ?: PostAutoSuggest.EMPTY
-                            }
-                        }
-                    }
-                    .mapNotNull { it.await() }
-                    .also {
-                        Timber.e("preloadAllPosts >>> loaded all posts! ${it.size}")
-                    }
-        }
-        preloadedPosts[userRepository.getAccountIdOrException()] = future
-        return future.await()
-    }
-
-
-    override suspend fun getAllPreloadedPosts(): List<PostModel> {
-        Timber.e("preloadAllPosts >>> getAllPreloadedPosts")
-        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadAllPosts() } }.await().also {
-            Timber.e("preloadAllPosts >>> getAllPreloadedPosts >> finished")
-        }
-    }
-
-    private suspend fun saveAllPostsToDb(accountId: String, posts: List<PostModel>) {
-        withContext(DefaultDispatcher) {
-            roomDb.getPostDao().insert(posts.map { PostRoomEntity(it) })
-        }
-    }
-
-    private suspend fun updateInDb(accountId: String, postEvent: ListItemEvent<PostModel>) {
-        withContext(DefaultDispatcher) {
-            when (postEvent) {
-                is ListItemEvent.Added, is ListItemEvent.Moved, is ListItemEvent.Changed -> {
-                    roomDb.getPostDao().insert(PostRoomEntity(postEvent.item))
-                }
-                is ListItemEvent.Removed -> {
-                    roomDb.getPostDao().deleteById(postEvent.item.id)
-                }
-            }
-        }
-    }
-
-    private suspend fun loadPostsFromFirebase(): List<PostModel> {
-        val accountId = userRepository.getAccountIdOrException()
-        return db.child(TABLE_NEWS_FEED)
-                .child(accountId)
-                .awaitList<PostDbEntity>(exceptionHandler)
-                .mapNotNull { mapPost(it) }
-                .also { posts -> async { saveAllPostsToDb(accountId, posts) } }
-    }
-
-    override suspend fun loadAllWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
-        val accountId = userRepository.getAccountIdOrException()
-        return db.child(TABLE_NEWS_FEED)
-                .child(accountId)
-                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { mapPost(it) }
-                ).map {
-                    preloadedPosts.remove(accountId) //invalidate cache
-                    updateInDb(accountId, it)
-                    it
-                }
-    }
-
-    //==============================================================================================
-
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
         return db.child(TABLE_INFO_FEED)
                 .child(userRepository.getAccountIdOrException())
@@ -178,24 +68,62 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
-    override suspend fun loadAllByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
-        val userId = requireNotNull(accountId)
-        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PUBLIC_POSTS
-        return db.child(table)
-                .child(userId)
-                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { mapPost(it) }
-                )
+    override suspend fun preloadFeed(): List<PostModel> {
+        Timber.e("preloadFeed >>> ")
+        val future = async {
+            val accountId = userRepository.getAccountIdOrException()
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(DatabaseContract.TABLE_FEED)
+                    .awaitList<PostShortDbEntity>()
+                    .mapNotNull { it.toFullModel() }
+                    .also {
+                        Timber.e("preloadFeed >>> loaded all posts! ${it.size}")
+                    }
+        }
+        preloadedPosts[userRepository.getAccountIdOrException()] = future
+        return future.await()
     }
 
-    override suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel> {
-        val userId = requireNotNull(accountId)
-        val table = if (userId == userRepository.getAccountIdOrException()) TABLE_POSTS else TABLE_PUBLIC_POSTS
-        return db.child(table)
-                .child(userId)
-                .awaitList<PostDbEntity>(exceptionHandler)
-                .mapNotNull { mapPost(it) }
+
+    override suspend fun getPreloadedFeed(): List<PostModel> {
+        Timber.e("preloadFeed >>> getPreloadedFeed")
+        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await().also {
+            Timber.e("preloadFeed >>> getPreloadedFeed >> finished")
+        }
+    }
+
+    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
+        val accountId = userRepository.getAccountIdOrException()
+
+        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                .document(accountId)
+                .collection(DatabaseContract.TABLE_FEED)
+                .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
+                    it.toFullModel()
+                })
+    }
+
+    //==============================================================================================
+
+    override suspend fun loadWall(accountId: String): List<PostModel> {
+        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                .document(accountId)
+                .collection(DatabaseContract.TABLE_WALL)
+                .awaitList<PostShortDbEntity>()
+                .mapNotNull { it.toFullModel() }
+                .also {
+                    Timber.e("loadWall >>> loaded all posts! ${it.size}")
+                }
+    }
+
+    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
+        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                .document(accountId)
+                .collection(DatabaseContract.TABLE_WALL)
+                .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
+                    it.toFullModel()
+                })
     }
 
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
@@ -216,29 +144,14 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .mapNotNull { mapPost(it, groupId) }
     }
 
-    override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> {
-        //load from newsFeed -> if not found load from public posts
-        val newsFeedRef = db.child(TABLE_NEWS_FEED).child(userRepository.getAccountIdOrException()).child(id)
-        val publicPostRef = db.child(TABLE_PUBLIC_POSTS).child(authorId).child(id)
-
-        val isPublicPost = publicPostRef.await<PostDbEntity>(exceptionHandler)?.type != null
-
-        return (if (isPublicPost) publicPostRef else newsFeedRef)
-                .toValueChannel<PostDbEntity>(exceptionHandler)
-                .map { it?.run { mapPost(this) } }
-
-    }
-
-    override suspend fun loadUserPostById(id: String, accountId: String): PostModel? {
-        return loadById(id, accountId).consume { receive() }
-    }
+    override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = getFromFirestoreChannel(id)
 
     override suspend fun sendViewed(ids: List<String>) = postApi.viewItems(ViewItemsRequest(ids, NetworkContract.EntityType.POST)).handleException(exceptionHandler).run { Unit }
     override suspend fun sendOpened(ids: List<String>) = postApi.openItem(OpenItemsRequest(ids.first(), NetworkContract.EntityType.POST)).handleException(exceptionHandler).run { Unit }
     override suspend fun resetCounter() = postApi.resetCounter(ResetCounterRequest(NetworkContract.ResetCounter.POSTS)).handleException(exceptionHandler).run { Unit }
 
-    override suspend fun createNeed(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.NEED, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
-    override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post).run { Unit }
+    override suspend fun createNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post)
+    override suspend fun updateNeed(post: RawPostModel) = processPost(NetworkContract.PostType.NEED, post)
     override suspend fun changeStatus(id: String, status: ExpirationType) {
         val statusString = when (status) {
             is ExpirationType.ACTIVE -> DatabaseContract.EXPIRATION_TYPE_ACTIVE
@@ -249,10 +162,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.changePostStatus(ChangePostStatusRequest(id, statusString)).handleException(exceptionHandler)
     }
 
-    override suspend fun createGeneralPost(post: RawPostModel): PostModel = processPost(NetworkContract.PostType.GENERAL, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
-    override suspend fun updateGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post).run { Unit }
-    override suspend fun createOffer(post: RawPostModel): OfferPostModel = processPost(NetworkContract.PostType.OFFER, post).let { converter.convert(it, PostAdditionInfo.withGroup(post.groupIds)) }
-    override suspend fun updateOffer(post: RawPostModel) = processPost(NetworkContract.PostType.OFFER, post).run { Unit }
+    override suspend fun createGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post)
+    override suspend fun updateGeneralPost(post: RawPostModel) = processPost(NetworkContract.PostType.GENERAL, post)
+    override suspend fun createOffer(post: RawPostModel) = processPost(NetworkContract.PostType.OFFER, post)
+    override suspend fun updateOffer(post: RawPostModel) = processPost(NetworkContract.PostType.OFFER, post)
 
     override suspend fun createUserRecommendation(post: RawRecommendPostModel) {
         postApi.createPost(CreatePostRequest(
@@ -276,7 +189,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         )).handleException(exceptionHandler)
     }
 
-    private suspend fun processPost(postType: String, postModel: RawPostModel): Any {
+    private suspend fun processPost(postType: String, postModel: RawPostModel) {
         val request = CreatePostRequest(
                 type = postType,
                 postId = postModel.id,
@@ -296,8 +209,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 subcategory = postModel.subCategory?.name?.engTranslate
         )
 
-        return if (postModel.id == null) {
-            postApi.createPost(request).handleException(exceptionHandler).data
+        if (postModel.id == null) {
+            postApi.createPost(request).handleException(exceptionHandler)
         } else postApi.changePost(request).handleException(exceptionHandler)
 
     }
@@ -370,5 +283,39 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             Timber.e(e, "Error while mapping post ${input.id}; groupId = $groupId")
             null
         }
+    }
+
+    private suspend fun getFromDb(postId: String): PostModel? {
+        return withContext(DefaultDispatcher) {
+            roomDb.getPostDao().getById(postId)?.toPostModel()
+        }
+    }
+
+    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null): ReceiveChannel<PostModel?> {
+        return firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
+                .document(postId)
+                .toValueChannel<PostDbEntity>(exceptionHandler)
+                .map {
+                    withContext(DefaultDispatcher) {
+                        if (it == null) {
+                            roomDb.getPostDao().deleteById(postId)
+                            null
+                        } else {
+                            mapPost(it, groupId)?.also {
+                                roomDb.getPostDao().insert(PostRoomEntity(it))
+                            }
+                        }
+                    }
+                }
+    }
+
+    private suspend fun PostShortDbEntity.toFullModel(): PostModel? {
+        var result = getFromDb(id)
+        if ((result?.updatedAt?.time ?: 0) < updatedAt) {
+            result = getFromFirestoreChannel(id).consume { receive() }
+        }
+        result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
+
+        return result
     }
 }

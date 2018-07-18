@@ -11,8 +11,7 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/new_items_panel_background"
         android:clickable="true"
-        android:focusable="true"
-        tools:layout_marginTop="100dp">
+        android:focusable="true">
 
         <com.mnassa.widget.MnassaTextView
             style="@style/MnassaText"

@@ -6,6 +6,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import com.mnassa.data.database.DbConverters
 import com.mnassa.domain.model.PostModel
+import java.io.InvalidClassException
 
 /**
  * Created by Peter on 7/11/2018.
@@ -24,7 +25,7 @@ class PostRoomEntity(
 
     constructor(post: PostModel) : this(post.id, post.createdAt.time, DbConverters.toString(post))
 
-    fun toPostModel(): PostModel = DbConverters.fromString(data)
+    fun toPostModel(): PostModel? = try { DbConverters.fromString(data) } catch (e: InvalidClassException) { null }
 
     companion object {
         const val TABLE_NAME = "POST"

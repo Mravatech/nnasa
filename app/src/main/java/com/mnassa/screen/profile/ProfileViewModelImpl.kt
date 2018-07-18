@@ -54,8 +54,8 @@ class ProfileViewModelImpl(
             }
         }
         handleException {
-            postsInteractor.loadAllUserPostByAccountIdImmediately(accountId).apply { postChannel.send(ListItemEvent.Added(this)) }
-            postsInteractor.loadAllUserPostByAccountId(accountId).map { it.toBatched() }.consumeTo(postChannel)
+            postsInteractor.loadWall(accountId).apply { postChannel.send(ListItemEvent.Added(this)) }
+            postsInteractor.loadWallWithChangesHandling(accountId).map { it.toBatched() }.consumeTo(postChannel)
         }
         handleException {
             profileChannel.consumeEach { profile ->

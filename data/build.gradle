@@ -70,4 +70,5 @@ dependencies {
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.androidExtensions
     implementation deps.coroutines.core
+    implementation deps.coroutines.android
 }

@@ -26,6 +26,7 @@ import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.channels.map
 
@@ -87,7 +88,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         }
                     }
                     it.item.replyPost?.first?.takeIf { accountId != null }?.let { first ->
-                        val replyPost: PostModel? = postsRepository.loadUserPostById(first, accountId!!)
+                        val replyPost: PostModel? = postsRepository.loadById(first).consume { receive() }
                         replyPost?.let { post ->
                             it.item.replyPost = it.item.replyPost?.copy(second = post)
                         }

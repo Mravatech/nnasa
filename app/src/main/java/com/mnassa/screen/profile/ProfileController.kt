@@ -2,15 +2,17 @@ package com.mnassa.screen.profile
 
 import android.os.Bundle
 import android.support.v7.widget.PopupMenu
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.model.*
-import com.mnassa.extensions.avatarSquare
-import com.mnassa.extensions.formattedPosition
-import com.mnassa.extensions.isGone
-import com.mnassa.extensions.isMyProfile
+import com.mnassa.domain.model.impl.PostCountersImpl
+import com.mnassa.domain.model.impl.PostModelImpl
+import com.mnassa.domain.repository.UserRepository
+import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -28,9 +30,14 @@ import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
+import kotlinx.android.synthetic.main.new_items_panel.view.*
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
+import java.util.*
+import kotlin.math.abs
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,6 +56,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private var adapter = PostsRVAdapter(withHeader = false)
     private val dialog: DialogHelper by instance()
+    private var lastViewedPostDate: Long = -1
+    private var hasNewPosts: Boolean = false
+        get() {
+            return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
+        }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -59,28 +71,85 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.postChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
+            subscribeToUpdates(viewModel.postChannel)
+        }
+    }
+
+    private fun getFirstItem(): PostModel? {
+        if (adapter.dataStorage.isEmpty()) return null
+        return adapter.dataStorage[0]
+    }
+
+    private suspend fun subscribeToUpdates(channel: BroadcastChannel<ListItemEvent<List<PostModel>>>) {
+        channel.consumeEach {
+            when (it) {
+                is ListItemEvent.Added -> {
+                    adapter.isLoadingEnabled = false
+                    adapter.dataStorage.addAll(it.item)
+                    triggerScrollPanel()
+                }
+                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                is ListItemEvent.Cleared -> {
+                    adapter.isLoadingEnabled = true
+                    adapter.dataStorage.clear()
+                    lastViewedPostDate = -1
                 }
             }
         }
+    }
+
+    private fun triggerScrollPanel() {
+        view?.rvProfile?.scrollBy(0, 0)
+    }
+
+    private fun showNewItemsPanel() {
+
+        val panel = view?.flNewItemsPanel ?: return
+        panel.animate()
+                .setDuration(PANEL_ANIMATION_DURATION)
+                .translationY(PANEL_ANIMATION_START_POSITION)
+                .alpha(PANEL_ANIMATION_START_ALPHA)
+                .start()
+    }
+
+    private fun hideNewItemsPanel() {
+
+        val panel = view?.flNewItemsPanel ?: return
+        panel.animate()
+                .setDuration(PANEL_ANIMATION_DURATION)
+                .translationY(PANEL_ANIMATION_END_POSITION)
+                .alpha(PANEL_ANIMATION_END_ALPHA)
+                .start()
     }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvProfile.adapter = adapter
+        view.rvProfile.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            private var isShown = false
+            private var isHidden = false
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy != 0 && abs(dy) < 10) return
+
+                if (/*dy > 0 && */recyclerView.firstVisibleItemPosition > 1 && hasNewPosts) {
+                    if (isShown) return
+                    showNewItemsPanel()
+                    isShown = true
+                    isHidden = false
+                } else {
+                    if (isHidden) return
+                    hideNewItemsPanel()
+                    isHidden = true
+                    isShown = false
+                }
+            }
+        })
+        view.flNewItemsPanel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
+        view.flNewItemsPanel.setOnClickListener { scrollToTop() }
         view.toolbarProfile.setNavigationOnClickListener { close() }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
@@ -107,6 +176,41 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
+
+
+        launchCoroutineUI {
+            (1..1000).forEach {
+                delay(5_000)
+                val post = PostModelImpl(
+                        "aaaa$it",
+                        true,
+                        PostType.NEED(),
+                        Date(),
+                        emptyList(),
+                        null,
+                        Date(),
+                        "aaaa$it",
+                        emptySet(),
+                        PostPrivacyType.PUBLIC(),
+                        emptyList(),
+                        "Test $it",
+                        null, null, Date(), PostCountersImpl(it, it, it, it, it, it),
+                        view.context.getInstance<UserRepository>().getCurrentAccountOrException(),
+                        null,
+                        0.0,
+                        PostAutoSuggest.EMPTY,
+                        null,
+                        emptySet(),
+                        emptyList()
+                )
+                viewModel.postChannel.send(ListItemEvent.Added(listOf(post)))
+            }
+        }
+    }
+
+    fun scrollToTop() {
+        val recyclerView = view?.rvProfile ?: return
+        recyclerView.scrollToPosition(0)
     }
 
     private suspend fun bindHeader() {
@@ -303,6 +407,12 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
         private const val OTHER = "other"
+
+        private const val PANEL_ANIMATION_DURATION = 500L
+        private const val PANEL_ANIMATION_START_POSITION = 0f
+        private const val PANEL_ANIMATION_START_ALPHA = 1f
+        private const val PANEL_ANIMATION_END_POSITION = -100f
+        private const val PANEL_ANIMATION_END_ALPHA = 0f
 
         fun newInstance(account: ShortAccountModel): ProfileController {
             val params = Bundle()

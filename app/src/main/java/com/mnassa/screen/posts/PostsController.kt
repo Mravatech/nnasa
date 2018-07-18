@@ -6,7 +6,11 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.di.getInstance
+import com.mnassa.domain.model.*
+import com.mnassa.domain.model.impl.PostCountersImpl
+import com.mnassa.domain.model.impl.PostModelImpl
+import com.mnassa.domain.repository.UserRepository
 import com.mnassa.extensions.firstVisibleItemPosition
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -18,10 +22,12 @@ import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.android.synthetic.main.new_items_panel.view.*
+import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
-import timber.log.Timber
+import java.util.*
 import kotlin.math.abs
 
 /**
@@ -35,6 +41,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
     }
+    private var lastViewedPostDate: Long = -1
+    private var hasNewPosts: Boolean = false
+        get() {
+            return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
+        }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -43,8 +54,13 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             adapter.restoreState(this)
         }
 
-        adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
-        adapter.onDetachedFromWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onDetachedFromWindow(post) }}
+        adapter.onAttachedToWindow = { post ->
+            controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
+            if (post.createdAt.time > lastViewedPostDate) {
+                lastViewedPostDate = post.createdAt.time
+            }
+        }
+        adapter.onDetachedFromWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onDetachedFromWindow(post) } }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
@@ -61,30 +77,14 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onDataChangedListener = { itemsCount ->
-            Timber.e("preloadAllPosts >>> rv - changed")
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        Timber.e("preloadAllPosts >>> before coroutine launching")
         controllerSubscriptionContainer.launchCoroutineUI {
-            Timber.e("preloadAllPosts >>> coroutine launched!")
-            viewModel.newsFeedChannel.consumeEach {
-                Timber.e("preloadAllPosts >>> consumeEach")
-
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
-                }
-            }
+            subscribeToUpdates(viewModel.newsFeedChannel)
+        }
+        controllerSubscriptionContainer.launchCoroutineUI {
+            subscribeToUpdates(viewModel.newsFeedUpdatesChannel)
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -99,18 +99,43 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         }
     }
 
+    private fun getFirstItem(): PostModel? {
+        if (adapter.dataStorage.isEmpty()) return null
+        return adapter.dataStorage[0]
+    }
+
+    private suspend fun subscribeToUpdates(channel: BroadcastChannel<ListItemEvent<List<PostModel>>>) {
+        channel.consumeEach {
+            when (it) {
+                is ListItemEvent.Added -> {
+                    adapter.isLoadingEnabled = false
+                    adapter.dataStorage.addAll(it.item)
+                    triggerScrollPanel()
+                }
+                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                is ListItemEvent.Cleared -> {
+                    adapter.isLoadingEnabled = true
+                    adapter.dataStorage.clear()
+                    lastViewedPostDate = -1
+                }
+            }
+        }
+    }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvNewsFeed.adapter = adapter
-        view.rvNewsFeed.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        view.rvNewsFeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             private var isShown = false
             private var isHidden = false
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0 && abs(dy) < 10) return
 
-                if (dy > 0 && recyclerView.firstVisibleItemPosition > 1) {
+                if (/*dy > 0 && */recyclerView.firstVisibleItemPosition > 1 && hasNewPosts) {
                     if (isShown) return
                     showNewItemsPanel()
                     isShown = true
@@ -125,6 +150,39 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         })
         view.flNewItemsPanel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
         view.flNewItemsPanel.setOnClickListener { scrollToTop() }
+
+       launchCoroutineUI {
+           (1..1000).forEach {
+               delay(5_000)
+               val post = PostModelImpl(
+                       "aaaa$it",
+                       true,
+                       PostType.NEED(),
+                       Date(),
+                       emptyList(),
+                       null,
+                       Date(),
+                       "aaaa$it",
+                       emptySet(),
+                       PostPrivacyType.PUBLIC(),
+                       emptyList(),
+                       "Test $it",
+                       null, null, Date(), PostCountersImpl(it, it, it, it, it, it),
+                       view.context.getInstance<UserRepository>().getCurrentAccountOrException(),
+                       null,
+                       0.0,
+                       PostAutoSuggest.EMPTY,
+                       null,
+                       emptySet(),
+                       emptyList()
+               )
+               viewModel.newsFeedUpdatesChannel.send(ListItemEvent.Added(listOf(post)))
+           }
+       }
+    }
+
+    private fun triggerScrollPanel() {
+        view?.rvNewsFeed?.scrollBy(0, 0)
     }
 
     private fun showNewItemsPanel() {

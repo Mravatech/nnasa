@@ -302,10 +302,15 @@ private val repositoryModule = Kodein.Module {
         result
     }
     bind<FirebaseFirestore>() with singleton {
-        val db = FirebaseFirestore.getInstance()
-        val settings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
-        db.firestoreSettings = settings
-        db
+        synchronized(FirebaseFirestore::class.java) {
+            val db = FirebaseFirestore.getInstance()
+            val settings = FirebaseFirestoreSettings.Builder()
+                    .setPersistenceEnabled(true)
+                    .setTimestampsInSnapshotsEnabled(true)
+                    .build()
+            db.firestoreSettings = settings
+            db
+        }
     }
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }

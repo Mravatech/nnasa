@@ -141,6 +141,12 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <include layout="@layout/new_items_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
     <LinearLayout
         android:id="@+id/rlConnectContainer"
         android:layout_width="match_parent"
