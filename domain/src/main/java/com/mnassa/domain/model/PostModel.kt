@@ -27,7 +27,7 @@ interface PostModel : Model {
     val author: ShortAccountModel
     val copyOwnerId: String?
     val price: Double
-    val autoSuggest: PostAutoSuggest
+    var autoSuggest: PostAutoSuggest
     val repostAuthor: ShortAccountModel?
     var groupIds: Set<String>
     var groups: List<GroupModel>

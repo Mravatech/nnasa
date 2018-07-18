@@ -11,18 +11,18 @@ import com.mnassa.domain.model.PostModel
  * Created by Peter on 7/11/2018.
  */
 @Entity(tableName = PostRoomEntity.TABLE_NAME,
-        indices = [(Index("accountId")), (Index("id", unique = true))])
+        indices = [(Index("createdAt")), (Index("id", unique = true))])
 class PostRoomEntity(
         @PrimaryKey
         @ColumnInfo(name = "id")
         val id: String,
-        @ColumnInfo(name = "accountId")
-        val accountId: String,
+        @ColumnInfo(name = "createdAt")
+        val createdAt: Long,
         @ColumnInfo(name = "data")
         val data: String
 ) {
 
-    constructor(post: PostModel, accountId: String) : this(post.id, accountId, DbConverters.toString(post))
+    constructor(post: PostModel) : this(post.id, post.createdAt.time, DbConverters.toString(post))
 
     fun toPostModel(): PostModel = DbConverters.fromString(data)
 

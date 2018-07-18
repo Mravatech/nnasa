@@ -217,7 +217,6 @@
                     android:gravity="end"
                     android:textAllCaps="true"
                     android:textColor="@color/accent"
-                    android:layout_toEndOf="@id/tvCommentsCount"
                     tools:text="You can help lolong lon" />
 
                 <TextView

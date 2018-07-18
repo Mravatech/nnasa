@@ -28,12 +28,12 @@ internal data class PostDbEntity(
         @SerializedName("original") var original: String?,
         @SerializedName("statusOfExpiration") var statusOfExpiration: String,
         @SerializedName("timeOfExpiration") var timeOfExpiration: Long?,
-        @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
+        @SerializedName("author") var author: /*Map<String, */ShortAccountDbEntity/*>*/,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("repostAuthor") var repostAuthor: Map<String, ShortAccountDbEntity>?,
+        @SerializedName("repostAuthor") var repostAuthor: /*Map<String, */ShortAccountDbEntity/*>*/?,
         //posted account
-        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
+        @SerializedName("postedAccount") var postedAccount: /*Map<String, */ProfileDbEntity?/*>?*/,
         //info post
         @SerializedName("title") var title: String?, //offer post
         //offer post
@@ -64,4 +64,12 @@ internal data class PostAutoSuggest(
     override val accountIds: List<String>
         get() = aidsInternal ?: emptyList()
 }
+
+internal class PostShortDbEntity(
+        @SerializedName("id") override var id: String,
+        @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
+        @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName("isOpened") var isOpened: Boolean?,
+        @SerializedName("updatedAt") var updatedAt: Long
+): HasId
 

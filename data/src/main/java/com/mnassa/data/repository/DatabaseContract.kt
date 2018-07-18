@@ -76,6 +76,10 @@ internal object DatabaseContract {
     //
     const val ACCOUNTS_PUSH_SETTINGS = "accountsPushSettings"
     //
+    const val TABLE_ALL_POSTS = "allPosts"
+    const val TABLE_FEED = "feed"
+    const val TABLE_WALL = "wall"
+
     const val TABLE_NEWS_FEED = "newsfeed"
     const val NEWS_FEED_TYPE_NEED = "need"
     const val NEWS_FEED_TYPE_ACCOUNT = "account"

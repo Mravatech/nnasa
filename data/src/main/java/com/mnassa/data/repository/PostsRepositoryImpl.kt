@@ -17,6 +17,7 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
 import com.mnassa.data.network.bean.firebase.OfferCategoryDbModel
 import com.mnassa.data.network.bean.firebase.PostDbEntity
+import com.mnassa.data.network.bean.firebase.PostShortDbEntity
 import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
@@ -37,21 +38,9 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.selects.select
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.emptyList
-import kotlin.collections.first
-import kotlin.collections.firstOrNull
-import kotlin.collections.getOrPut
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
 import kotlin.collections.set
-import kotlin.collections.toList
 
 /**
  * Created by Peter on 3/15/2018.
@@ -72,26 +61,58 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .build()
     }
 
+    private suspend fun getFromDb(postId: String): PostModel? {
+        return withContext(DefaultDispatcher) {
+            roomDb.getPostDao().getById(postId)?.toPostModel()
+        }
+    }
+
+    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null): ReceiveChannel<PostModel?> {
+        return firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
+                .document(postId)
+                .toValueChannel<PostDbEntity>(exceptionHandler)
+                .map {
+                    withContext(DefaultDispatcher) {
+                        if (it == null) {
+                            roomDb.getPostDao().deleteById(postId)
+                            null
+                        } else {
+                            mapPost(it, groupId)?.also {
+                                roomDb.getPostDao().insert(PostRoomEntity(it))
+                            }
+                        }
+                    }
+                }
+    }
+
+    private suspend fun get(postId: String, groupId: String? = null): PostModel? {
+        return getFromDb(postId) ?: getFromFirestoreChannel(postId, groupId).consume { receive() }
+    }
+
     override suspend fun preloadAllPosts(): List<PostModel> {
         Timber.e("preloadAllPosts >>> ")
-        val firebaseChannel = produce { send(loadPostsFromFirebase()) }
-
         val future = async {
-            select<List<PostModel>> {
-                produce { send(loadPostsFromDb()) }.onReceive { posts ->
-                    Timber.e("preloadAllPosts >>> FROM DB: ${posts.size}")
-                    posts.takeIf { it.isNotEmpty() } ?: firebaseChannel.receive()
-                }
-                firebaseChannel.onReceive { posts ->
-                    Timber.e("preloadAllPosts >>> FROM FIRE_BASE ${posts.size}")
-                    posts
-                }
-
-            }
+            val accountId = userRepository.getAccountIdOrException()
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(DatabaseContract.TABLE_FEED)
+                    .awaitList<PostShortDbEntity>()
+                    .map { shortPost ->
+                        async {
+                            get(shortPost.id)?.also {
+                                it.autoSuggest = shortPost.autoSuggest ?: PostAutoSuggest.EMPTY
+                            }
+                        }
+                    }
+                    .mapNotNull { it.await() }
+                    .also {
+                        Timber.e("preloadAllPosts >>> loaded all posts! ${it.size}")
+                    }
         }
         preloadedPosts[userRepository.getAccountIdOrException()] = future
         return future.await()
     }
+
 
     override suspend fun getAllPreloadedPosts(): List<PostModel> {
         Timber.e("preloadAllPosts >>> getAllPreloadedPosts")
@@ -100,16 +121,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun loadPostsFromDb(): List<PostModel> {
-        return withContext(DefaultDispatcher) {
-            roomDb.getPostDao().getAllByAccountId(userRepository.getAccountIdOrException(), 10, null).map { it.toPostModel() }
-        }
-    }
-
     private suspend fun saveAllPostsToDb(accountId: String, posts: List<PostModel>) {
         withContext(DefaultDispatcher) {
-            roomDb.getPostDao().deleteAllWithAccountId(accountId)
-            roomDb.getPostDao().insert(posts.map { PostRoomEntity(it, accountId) })
+            roomDb.getPostDao().insert(posts.map { PostRoomEntity(it) })
         }
     }
 
@@ -117,7 +131,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         withContext(DefaultDispatcher) {
             when (postEvent) {
                 is ListItemEvent.Added, is ListItemEvent.Moved, is ListItemEvent.Changed -> {
-                    roomDb.getPostDao().insert(PostRoomEntity(postEvent.item, accountId))
+                    roomDb.getPostDao().insert(PostRoomEntity(postEvent.item))
                 }
                 is ListItemEvent.Removed -> {
                     roomDb.getPostDao().deleteById(postEvent.item.id)
@@ -348,7 +362,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         return try {
             val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
             if (out is RecommendedProfilePostModel) {
-                val offerIds = input.postedAccount?.values?.firstOrNull()?.offers ?: emptyList()
+                val offerIds = input.postedAccount?.offers ?: emptyList()
                 out.offers = offerIds.map { async { tagRepository.get(it) } }.mapNotNull { it.await() }
             }
             out
