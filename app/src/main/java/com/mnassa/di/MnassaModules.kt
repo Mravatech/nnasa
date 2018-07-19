@@ -296,22 +296,22 @@ private val convertersModule = Kodein.Module {
 }
 
 private val repositoryModule = Kodein.Module {
-    bind<FirebaseDatabase>() with singleton {
+    val firebase by lazy {
         val result = FirebaseDatabase.getInstance()
         result.setPersistenceEnabled(true)
         result
     }
-    bind<FirebaseFirestore>() with singleton {
-        synchronized(FirebaseFirestore::class.java) {
-            val db = FirebaseFirestore.getInstance()
-            val settings = FirebaseFirestoreSettings.Builder()
-                    .setPersistenceEnabled(true)
-                    .setTimestampsInSnapshotsEnabled(true)
-                    .build()
-            db.firestoreSettings = settings
-            db
-        }
+    bind<FirebaseDatabase>() with singleton { firebase }
+    val firestore by lazy {
+        val db = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        db.firestoreSettings = settings
+        db
     }
+    bind<FirebaseFirestore>() with singleton { firestore }
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }

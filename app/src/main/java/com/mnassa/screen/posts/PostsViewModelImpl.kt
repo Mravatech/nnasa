@@ -32,7 +32,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                 Timber.e("preloadFeed >>> beforeReConsume - sent")
             },
             receiveChannelProvider = {
-                postsInteractor.loadFeedWithChangesHandling().bufferize(this)
+                postsInteractor.loadFeedWithChangesHandling().map { it.toBatched() }//.bufferize(this)
             })
     override val newsFeedUpdatesChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> = ArrayBroadcastChannel(10)
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(

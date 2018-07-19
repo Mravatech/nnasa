@@ -17,7 +17,7 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?
     val jsonElement: JsonElement = dataSnapshot.value.toJson<T>()
     forDebug { Timber.i("FIREBASE DATABASE >>> ${dataSnapshot.path} >>> $jsonElement") }
 
-    return jsonElement.mapTo(dataSnapshot.key, dataSnapshot.path)
+    return jsonElement.mapTo(dataSnapshot.key ?: "", dataSnapshot.path)
 }
 
 internal inline fun <reified T : Any> DataSnapshot?.mapSingle(): T? = mapSingleValue(this)

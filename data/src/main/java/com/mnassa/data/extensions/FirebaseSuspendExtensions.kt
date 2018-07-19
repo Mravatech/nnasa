@@ -26,7 +26,7 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
             override fun onCancelled(error: DatabaseError) =
                     continuation.resumeWithException(exceptionHandler.handle(error.toException()))
 
-            override fun onDataChange(snapshot: DataSnapshot?) {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 try {
                     continuation.resume(snapshot.mapList())
                 } catch (e: Exception) {
@@ -47,7 +47,7 @@ internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: Exce
             override fun onCancelled(error: DatabaseError) =
                     continuation.resumeWithException(exceptionHandler.handle(error.toException()))
 
-            override fun onDataChange(snapshot: DataSnapshot?) {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 try {
                     continuation.resume(snapshot.mapSingle())
                 } catch (e: Exception) {

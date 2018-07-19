@@ -69,6 +69,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.onDataChangedListener = { itemsCount ->
             view?.findViewById<View>(R.id.rlEmptyView)?.isGone = !adapter.dataStorage.isEmpty()
         }
+        adapter.onAttachedToWindow = { post ->
+            if (post.createdAt.time > lastViewedPostDate) {
+                lastViewedPostDate = post.createdAt.time
+            }
+        }
 
         controllerSubscriptionContainer.launchCoroutineUI {
             subscribeToUpdates(viewModel.postChannel)

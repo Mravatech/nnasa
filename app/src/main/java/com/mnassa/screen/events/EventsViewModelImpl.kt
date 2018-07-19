@@ -4,12 +4,14 @@ import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -28,7 +30,8 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : Mnas
                 it.send(ListItemEvent.Added(getAllEvents()))
             },
             receiveChannelProvider = {
-                eventsInteractor.getEventsFeedChannel().map { it.toBatched() }
+                produce<ListItemEvent<List<EventModel>>> {  }
+                eventsInteractor.getEventsFeedChannel().bufferize(this)
             })
 
     override fun onAttachedToWindow(event: EventModel) {

@@ -34,7 +34,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     val REMOVED = 4
 
     val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
-        launch(FIRE_STORE_DISPATCHER) {
+        launch {
             try {
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
@@ -65,7 +65,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
         }
     }
 
-    withContext(FIRE_STORE_DISPATCHER) {
+    firestoreLockSuspend {
         listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
                 channel.close(exceptionHandler.handle(firebaseFirestoreException))
@@ -95,7 +95,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(e
     val channel = RendezvousChannel<T?>()
     lateinit var listener: ListenerRegistration
 
-    withContext(FIRE_STORE_DISPATCHER) {
+    firestoreLockSuspend {
         listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
                 channel.close(exceptionHandler.handle(firebaseFirestoreException))
@@ -103,7 +103,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(e
                 return@addSnapshotListener
             }
 
-            launch {
+            firestoreLock {
                 try {
                     channel.send(dataSnapshot.mapSingle())
                 } catch (e: ClosedSendChannelException) {
@@ -120,26 +120,28 @@ internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(e
     return channel
 }
 
-internal inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+internal suspend inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
     val channel = RendezvousChannel<List<T>>()
     lateinit var listener: ListenerRegistration
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    firestoreLockSuspend {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        launch {
-            try {
-                channel.send(dataSnapshot.mapList())
-            } catch (e: ClosedSendChannelException) {
-                listener.remove()
-            } catch (e: Exception) {
-                Timber.e(e)
-                listener.remove()
-                channel.close(exceptionHandler.handle(e))
+            firestoreLock {
+                try {
+                    channel.send(dataSnapshot.mapList())
+                } catch (e: ClosedSendChannelException) {
+                    listener.remove()
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    listener.remove()
+                    channel.close(exceptionHandler.handle(e))
+                }
             }
         }
     }
@@ -147,26 +149,28 @@ internal inline fun <reified T : Any> DocumentReference.toListChannel(exceptionH
     return channel
 }
 
-internal inline fun <reified T : Any> CollectionReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+internal suspend inline fun <reified T : Any> CollectionReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
     val channel = RendezvousChannel<List<T>>()
     lateinit var listener: ListenerRegistration
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    firestoreLockSuspend {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        launch {
-            try {
-                channel.send(dataSnapshot.mapList())
-            } catch (e: ClosedSendChannelException) {
-                listener.remove()
-            } catch (e: Exception) {
-                Timber.e(e)
-                listener.remove()
-                channel.close(exceptionHandler.handle(e))
+            firestoreLock {
+                try {
+                    channel.send(dataSnapshot.mapList())
+                } catch (e: ClosedSendChannelException) {
+                    listener.remove()
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    listener.remove()
+                    channel.close(exceptionHandler.handle(e))
+                }
             }
         }
     }

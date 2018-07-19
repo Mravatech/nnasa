@@ -30,7 +30,7 @@ internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: Exce
             channel.close(exceptionHandler.handle(error.toException()))
         }
 
-        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
             val listener = this
             launch {
                 try {
@@ -64,7 +64,7 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
             channel.close(exceptionHandler.handle(error.toException()))
         }
 
-        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
             val listener = this
             launch {
                 try {

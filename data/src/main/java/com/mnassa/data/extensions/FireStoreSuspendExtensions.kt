@@ -11,7 +11,7 @@ import timber.log.Timber
  * Created by Peter on 4/19/2018.
  */
 internal suspend inline fun <reified T : Any> DocumentReference.await(): T? {
-    val result = withContext(FIRE_STORE_DISPATCHER) {
+    val result = firestoreLockSuspend {
         suspendCancellableCoroutine<T?> { continuation ->
             lateinit var listener: ListenerRegistration
             listener = addSnapshotListener { snapshot, firebaseFirestoreException ->
@@ -35,7 +35,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.await(): T? {
 }
 
 internal suspend inline fun <reified T : Any> DocumentReference.awaitList(): List<T> {
-    val result = withContext(FIRE_STORE_DISPATCHER) {
+    val result = firestoreLockSuspend {
         suspendCancellableCoroutine<List<T>> { continuation ->
             lateinit var listener: ListenerRegistration
             listener = addSnapshotListener { snapshot, firebaseFirestoreException ->
@@ -59,7 +59,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.awaitList(): Lis
 }
 
 internal suspend inline fun <reified T : Any> Query.awaitList(): List<T> {
-    val result = withContext(FIRE_STORE_DISPATCHER) {
+    val result = firestoreLockSuspend {
         suspendCancellableCoroutine<List<T>> { continuation ->
             lateinit var listener: ListenerRegistration
             listener = addSnapshotListener { snapshot, firebaseFirestoreException ->

@@ -68,8 +68,6 @@ internal data class PostAutoSuggest(
 internal class PostShortDbEntity(
         @SerializedName("id") override var id: String,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("createdAt") var createdAt: Long,
-        @SerializedName("isOpened") var isOpened: Boolean?,
         @SerializedName("updatedAt") var updatedAt: Long
 ): HasId
 

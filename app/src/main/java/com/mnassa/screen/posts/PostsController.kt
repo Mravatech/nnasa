@@ -1,16 +1,17 @@
 package com.mnassa.screen.posts
 
+import android.arch.lifecycle.Lifecycle
+import android.content.Context
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.content.edit
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.di.getInstance
-import com.mnassa.domain.model.*
-import com.mnassa.domain.model.impl.PostCountersImpl
-import com.mnassa.domain.model.impl.PostModelImpl
-import com.mnassa.domain.repository.UserRepository
+import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.firstVisibleItemPosition
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -25,9 +26,7 @@ import kotlinx.android.synthetic.main.new_items_panel.view.*
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
-import java.util.*
 import kotlin.math.abs
 
 /**
@@ -46,6 +45,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         get() {
             return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
         }
+    private var postIdToScroll: String? = null
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -78,6 +78,16 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+
+            if (postIdToScroll != null) {
+                val dataIndex = adapter.dataStorage.indexOfFirst { it.id == postIdToScroll }
+                if (dataIndex >= 0) {
+                    postIdToScroll = null
+                    val layoutManager = view?.rvNewsFeed?.layoutManager
+                    layoutManager as LinearLayoutManager
+                    layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
+                }
+            }
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -96,6 +106,28 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                     is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
                 }
             }
+        }
+
+        //scroll to element logic
+
+        val sharedPrefs = requireNotNull(applicationContext).getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        lifecycle.subscribe {
+            if (it == Lifecycle.Event.ON_PAUSE) {
+                val layoutManager = view?.rvNewsFeed?.layoutManager ?: return@subscribe
+                layoutManager as LinearLayoutManager
+                val firstVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val firstVisibleDataPosition = maxOf(0, adapter.convertAdapterPositionToDataIndex(firstVisiblePosition))
+                if (adapter.dataStorage.isEmpty()) return@subscribe
+                val firstItem = adapter.dataStorage[firstVisibleDataPosition]
+
+                sharedPrefs.edit {
+                    putString(PREFS_FIRST_POST_ID, firstItem.id)
+                }
+            }
+        }
+
+        postIdToScroll = sharedPrefs.getString(PREFS_FIRST_POST_ID, null).also {
+            sharedPrefs.edit { clear() }
         }
     }
 
@@ -150,35 +182,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         })
         view.flNewItemsPanel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
         view.flNewItemsPanel.setOnClickListener { scrollToTop() }
-
-       launchCoroutineUI {
-           (1..1000).forEach {
-               delay(5_000)
-               val post = PostModelImpl(
-                       "aaaa$it",
-                       true,
-                       PostType.NEED(),
-                       Date(),
-                       emptyList(),
-                       null,
-                       Date(),
-                       "aaaa$it",
-                       emptySet(),
-                       PostPrivacyType.PUBLIC(),
-                       emptyList(),
-                       "Test $it",
-                       null, null, Date(), PostCountersImpl(it, it, it, it, it, it),
-                       view.context.getInstance<UserRepository>().getCurrentAccountOrException(),
-                       null,
-                       0.0,
-                       PostAutoSuggest.EMPTY,
-                       null,
-                       emptySet(),
-                       emptyList()
-               )
-               viewModel.newsFeedUpdatesChannel.send(ListItemEvent.Added(listOf(post)))
-           }
-       }
     }
 
     private fun triggerScrollPanel() {
@@ -231,5 +234,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         private const val PANEL_ANIMATION_START_ALPHA = 1f
         private const val PANEL_ANIMATION_END_POSITION = -100f
         private const val PANEL_ANIMATION_END_ALPHA = 0f
+
+        private const val PREFS_FIRST_POST_ID = "PREFS_FIRST_POST_ID"
+        private const val PREFS = "POST_PREFS"
     }
 }

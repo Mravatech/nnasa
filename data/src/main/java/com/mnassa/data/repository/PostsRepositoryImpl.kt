@@ -56,21 +56,24 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
-        return db.child(TABLE_INFO_FEED)
-                .child(userRepository.getAccountIdOrException())
-                .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = {
-                            val post = converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
-                            post.isPinned = true
-                            post
-                        }
-                )
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_INFO_FEED)
+                    .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
+                            exceptionHandler = exceptionHandler,
+                            mapper = {
+                                val post = converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
+                                post.isPinned = true
+                                post
+                            }
+                    )
+        }
     }
 
     override suspend fun preloadFeed(): List<PostModel> {
         Timber.e("preloadFeed >>> ")
-        val future = async {
+        val future = firestoreLock {
             val accountId = userRepository.getAccountIdOrException()
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
@@ -96,52 +99,66 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
         val accountId = userRepository.getAccountIdOrException()
 
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                .document(accountId)
-                .collection(DatabaseContract.TABLE_FEED)
-                .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
-                    it.toFullModel()
-                })
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(DatabaseContract.TABLE_FEED)
+                    .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
+                        it.toFullModel()
+                    })
+        }
     }
 
     //==============================================================================================
 
     override suspend fun loadWall(accountId: String): List<PostModel> {
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                .document(accountId)
-                .collection(DatabaseContract.TABLE_WALL)
-                .awaitList<PostShortDbEntity>()
-                .mapNotNull { it.toFullModel() }
-                .also {
-                    Timber.e("loadWall >>> loaded all posts! ${it.size}")
-                }
+        return firestoreLockSuspend {
+            val tableName = if (accountId == userRepository.getAccountIdOrException()) DatabaseContract.TABLE_PRIVATE_WALL else DatabaseContract.TABLE_PUBLIC_WALL
+
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(tableName)
+                    .awaitList<PostShortDbEntity>()
+                    .mapNotNull { it.toFullModel() }
+                    .also {
+                        Timber.e("loadWall >>> loaded all posts! ${it.size}")
+                    }
+        }
     }
 
     override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                .document(accountId)
-                .collection(DatabaseContract.TABLE_WALL)
-                .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
-                    it.toFullModel()
-                })
+        return firestoreLockSuspend {
+            val tableName = if (accountId == userRepository.getAccountIdOrException()) DatabaseContract.TABLE_PRIVATE_WALL else DatabaseContract.TABLE_PUBLIC_WALL
+
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(tableName)
+                    .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
+                        it.toFullModel()
+                    })
+        }
     }
 
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-                .document(groupId)
-                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-                .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { mapPost(it, groupId) }
-                )
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
+                    .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                            exceptionHandler = exceptionHandler,
+                            mapper = { mapPost(it, groupId) }
+                    )
+        }
     }
 
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-                .document(groupId)
-                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-                .awaitList<PostDbEntity>()
-                .mapNotNull { mapPost(it, groupId) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
+                    .awaitList<PostDbEntity>()
+                    .mapNotNull { mapPost(it, groupId) }
+        }
     }
 
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = getFromFirestoreChannel(id)
@@ -266,9 +283,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadOfferCategories(): List<OfferCategoryModel> {
-        return firestore.collection(DatabaseContract.TABLE_OFFER_CATEGORY)
-                .awaitList<OfferCategoryDbModel>()
-                .map { converter.convert(it, OfferCategoryModel::class.java) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_OFFER_CATEGORY)
+                    .awaitList<OfferCategoryDbModel>()
+                    .map { converter.convert(it, OfferCategoryModel::class.java) }
+        }
     }
 
     private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
@@ -292,21 +311,23 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null): ReceiveChannel<PostModel?> {
-        return firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
-                .document(postId)
-                .toValueChannel<PostDbEntity>(exceptionHandler)
-                .map {
-                    withContext(DefaultDispatcher) {
-                        if (it == null) {
-                            roomDb.getPostDao().deleteById(postId)
-                            null
-                        } else {
-                            mapPost(it, groupId)?.also {
-                                roomDb.getPostDao().insert(PostRoomEntity(it))
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
+                    .document(postId)
+                    .toValueChannel<PostDbEntity>(exceptionHandler)
+                    .map {
+                        withContext(DefaultDispatcher) {
+                            if (it == null) {
+                                roomDb.getPostDao().deleteById(postId)
+                                null
+                            } else {
+                                mapPost(it, groupId)?.also {
+                                    roomDb.getPostDao().insert(PostRoomEntity(it))
+                                }
                             }
                         }
                     }
-                }
+        }
     }
 
     private suspend fun PostShortDbEntity.toFullModel(): PostModel? {

@@ -36,8 +36,8 @@ class ConnectionsConverter : ConvertersContextRegistrationCallback {
 
         dataSnapshot.children.forEach {
             if (it != null) {
-                val group = result.getOrPut(it.key, { mutableListOf() })
-                it.children?.forEach {
+                val group = result.getOrPut(it.key ?: "") { mutableListOf() }
+                it.children.forEach {
                     group.addAll(it.mapList<ShortAccountDbEntity>().map { converter.convert(it, ShortAccountModel::class.java) })
                 }
             }
