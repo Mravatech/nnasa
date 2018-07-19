@@ -24,6 +24,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
         exceptionHandler: ExceptionHandler,
         noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
+    forDebug { Timber.i("#LISTEN# toValueChannelWithChangesHandling ${this.path}") }
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
     lateinit var listener: ListenerRegistration
@@ -58,7 +59,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                     else -> {
                         Timber.e(e)
                         listener.remove()
-                        channel.close(exceptionHandler.handle(e))
+                        channel.close(exceptionHandler.handle(e, path))
                     }
                 }
             }
@@ -68,7 +69,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     firestoreLockSuspend {
         listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
-                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
                 listener.remove()
                 return@addSnapshotListener
             }
@@ -92,13 +93,14 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
 // Subscribe to single value changes
 
 internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
+    forDebug { Timber.i("#LISTEN# toValueChannel ${this.path}") }
     val channel = RendezvousChannel<T?>()
     lateinit var listener: ListenerRegistration
 
     firestoreLockSuspend {
         listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
-                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
                 listener.remove()
                 return@addSnapshotListener
             }
@@ -111,7 +113,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(e
                 } catch (e: Exception) {
                     Timber.e(e)
                     listener.remove()
-                    channel.close(exceptionHandler.handle(e))
+                    channel.close(exceptionHandler.handle(e, path))
                 }
             }
         }
@@ -121,13 +123,14 @@ internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(e
 }
 
 internal suspend inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    forDebug { Timber.i("#LISTEN# toListChannel ${this.path}") }
     val channel = RendezvousChannel<List<T>>()
     lateinit var listener: ListenerRegistration
 
     firestoreLockSuspend {
         listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
-                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
                 listener.remove()
                 return@addSnapshotListener
             }
@@ -140,7 +143,7 @@ internal suspend inline fun <reified T : Any> DocumentReference.toListChannel(ex
                 } catch (e: Exception) {
                     Timber.e(e)
                     listener.remove()
-                    channel.close(exceptionHandler.handle(e))
+                    channel.close(exceptionHandler.handle(e, path))
                 }
             }
         }
@@ -150,13 +153,14 @@ internal suspend inline fun <reified T : Any> DocumentReference.toListChannel(ex
 }
 
 internal suspend inline fun <reified T : Any> CollectionReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    forDebug { Timber.i("#LISTEN# toListChannel ${this.path}") }
     val channel = RendezvousChannel<List<T>>()
     lateinit var listener: ListenerRegistration
 
     firestoreLockSuspend {
         listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
-                channel.close(exceptionHandler.handle(firebaseFirestoreException))
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
                 listener.remove()
                 return@addSnapshotListener
             }
@@ -169,7 +173,7 @@ internal suspend inline fun <reified T : Any> CollectionReference.toListChannel(
                 } catch (e: Exception) {
                     Timber.e(e)
                     listener.remove()
-                    channel.close(exceptionHandler.handle(e))
+                    channel.close(exceptionHandler.handle(e, path))
                 }
             }
         }

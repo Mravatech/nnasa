@@ -21,17 +21,18 @@ internal suspend inline fun <reified T : Any> get(databaseReference: DatabaseRef
 }
 
 internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: ExceptionHandler): List<T> {
+    forDebug { Timber.i("#LISTEN# awaitList ${this.ref}") }
     val result = suspendCancellableCoroutine<List<T>> { continuation ->
         val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
-                    continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException(), ref.path))
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 try {
                     continuation.resume(snapshot.mapList())
                 } catch (e: Exception) {
                     Timber.e(e)
-                    continuation.resumeWithException(exceptionHandler.handle(e))
+                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
                 }
             }
         }
@@ -42,17 +43,18 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
 }
 
 internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: ExceptionHandler): T? {
+    forDebug { Timber.i("#LISTEN# await ${this.ref}") }
     val result = suspendCancellableCoroutine<T?> { continuation ->
         val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
-                    continuation.resumeWithException(exceptionHandler.handle(error.toException()))
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException(), ref.path))
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 try {
                     continuation.resume(snapshot.mapSingle())
                 } catch (e: Exception) {
                     Timber.e(e)
-                    continuation.resumeWithException(exceptionHandler.handle(e))
+                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
                 }
             }
         }

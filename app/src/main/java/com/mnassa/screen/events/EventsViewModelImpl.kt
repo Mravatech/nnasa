@@ -30,7 +30,6 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor) : Mnas
                 it.send(ListItemEvent.Added(getAllEvents()))
             },
             receiveChannelProvider = {
-                produce<ListItemEvent<List<EventModel>>> {  }
                 eventsInteractor.getEventsFeedChannel().bufferize(this)
             })
 
