@@ -1,6 +1,7 @@
 package com.mnassa.data.network.bean.firebase
 
 import android.support.annotation.Nullable
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
@@ -28,12 +29,12 @@ internal data class PostDbEntity(
         @SerializedName("original") var original: String?,
         @SerializedName("statusOfExpiration") var statusOfExpiration: String,
         @SerializedName("timeOfExpiration") var timeOfExpiration: Long?,
-        @SerializedName("author") var author: /*Map<String, */ShortAccountDbEntity/*>*/,
+        @SerializedName("author") var author: JsonObject,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("repostAuthor") var repostAuthor: /*Map<String, */ShortAccountDbEntity/*>*/?,
+        @SerializedName("repostAuthor") var repostAuthor: JsonObject,
         //posted account
-        @SerializedName("postedAccount") var postedAccount: /*Map<String, */ProfileDbEntity?/*>?*/,
+        @SerializedName("postedAccount") var postedAccount: JsonObject,
         //info post
         @SerializedName("title") var title: String?, //offer post
         //offer post

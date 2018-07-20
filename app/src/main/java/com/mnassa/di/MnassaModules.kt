@@ -282,7 +282,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(LocationConverter(instance()))
         converter.registerConverter(ProfileConverter(instance()))
         converter.registerConverter(AbilityConverter())
-        converter.registerConverter(PostConverter(instance()))
+        converter.registerConverter(PostConverter(instance(), instance()))
         converter.registerConverter(CommentsConverter())
         converter.registerConverter(WalletConverter { instance() })
         converter.registerConverter(InvitationConverter())

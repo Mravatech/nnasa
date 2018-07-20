@@ -294,8 +294,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         return try {
             val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
             if (out is RecommendedProfilePostModel) {
-                val offerIds = input.postedAccount?.offers ?: emptyList()
-                out.offers = offerIds.map { async { tagRepository.get(it) } }.mapNotNull { it.await() }
+
+//                val offerIds = input.postedAccount?.offers ?: emptyList()
+//                out.offers = offerIds.map { async { tagRepository.get(it) } }.mapNotNull { it.await() }
             }
             out
         } catch (e: Exception) {
