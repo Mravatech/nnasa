@@ -181,36 +181,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
-
-
-        launchCoroutineUI {
-            (1..1000).forEach {
-                delay(5_000)
-                val post = PostModelImpl(
-                        "aaaa$it",
-                        true,
-                        PostType.NEED(),
-                        Date(),
-                        emptyList(),
-                        null,
-                        Date(),
-                        "aaaa$it",
-                        emptySet(),
-                        PostPrivacyType.PUBLIC(),
-                        emptyList(),
-                        "Test $it",
-                        null, null, Date(), PostCountersImpl(it, it, it, it, it, it),
-                        view.context.getInstance<UserRepository>().getCurrentAccountOrException(),
-                        null,
-                        0.0,
-                        PostAutoSuggest.EMPTY,
-                        null,
-                        emptySet(),
-                        emptyList()
-                )
-                viewModel.postChannel.send(ListItemEvent.Added(listOf(post)))
-            }
-        }
     }
 
     fun scrollToTop() {
