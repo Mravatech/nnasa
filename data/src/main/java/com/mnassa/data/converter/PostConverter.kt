@@ -227,20 +227,19 @@ class PostConverter(private val languageProvider: LanguageProvider,
 
     private fun convertAuthor(input: JsonObject, converter: ConvertersContext): ShortAccountModel {
         try {
-            //new posts from firestore converting logic
-            return convertAuthor(gson.fromJson(input, ShortAccountDbEntity::class.java), converter)
-        } catch (e: JsonSyntaxException) {
-            e.printStackTrace()
-            //do nothing
-        }
-        try {
             //old posts from firebase & notifications converting logic
             val type: Type = object : TypeToken<Map<String, ShortAccountDbEntity>>() {}.type
             return convertAuthor(gson.fromJson<Map<String, ShortAccountDbEntity>>(input, type), converter)
         } catch (e: JsonSyntaxException) {
-            e.printStackTrace()
             //do nothing
         }
+        try {
+            //new posts from firestore converting logic
+            return convertAuthor(gson.fromJson(input, ShortAccountDbEntity::class.java), converter)
+        } catch (e: JsonSyntaxException) {
+            //do nothing
+        }
+
         throw IllegalArgumentException("Cannot convert post author $input")
     }
 
