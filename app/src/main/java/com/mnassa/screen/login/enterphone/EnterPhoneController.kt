@@ -46,9 +46,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
         get() {
             val view = view ?: return ""
             val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
-            return countryCode.phonePrefix.code
+            return (countryCode.phonePrefix.code
                     .replace("+", "") +
-                    view.etPhoneNumberTail.text.toString()
+                    view.etPhoneNumberTail.text.toString())
+                    .replace(" ", "")
         }
 
     override fun onCreated(savedInstanceState: Bundle?) {
