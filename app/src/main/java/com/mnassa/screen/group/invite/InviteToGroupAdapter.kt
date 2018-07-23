@@ -18,17 +18,17 @@ import kotlinx.android.synthetic.main.item_group_invite.view.*
 /**
  * Created by Peter on 3/5/2018.
  */
-class InviteToGroupAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.OnClickListener {
+class InviteToGroupAdapter : BasePaginationRVAdapter<UserInvite>(), View.OnClickListener {
 
-    private val blockedSelectedUsers = HashSet<String>()
     var onSendInviteClick: (item: ShortAccountModel) -> Unit = {}
     var onRevokeInviteClick: (item: ShortAccountModel) -> Unit = {}
+    var onRemoveUserClick: (item: ShortAccountModel) -> Unit = {}
 
-    override var filterPredicate: (item: ShortAccountModel) -> Boolean = { it.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
+    override var filterPredicate: (item: UserInvite) -> Boolean = { it.user.formattedName.toLowerCase().contains(searchPhrase.toLowerCase()) }
 
     init {
         dataStorage = FilteredSortedDataStorage(filterPredicate, SimpleDataProviderImpl())
-        searchListener = dataStorage as SearchListener<ShortAccountModel>
+        searchListener = dataStorage as SearchListener<UserInvite>
     }
 
     fun searchByName(searchText: String) {
@@ -41,14 +41,8 @@ class InviteToGroupAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.
         onRevokeInviteClick = { }
     }
 
-    fun setNotUnselectableUsers(userIds: Set<String>) {
-        blockedSelectedUsers.clear()
-        blockedSelectedUsers.addAll(userIds)
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ShortAccountModel> {
-        return InviteViewHolder.newInstance(parent, this, blockedSelectedUsers)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<UserInvite> {
+        return InviteViewHolder.newInstance(parent, this)
     }
 
     override fun onClick(view: View) {
@@ -57,32 +51,38 @@ class InviteToGroupAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.
 
         if (position >= 0) {
             val item = getDataItemByAdapterPosition(position)
-            if (blockedSelectedUsers.contains(item.id)) {
-                onRevokeInviteClick(item)
-            } else onSendInviteClick(item)
+            when {
+                item.isMember -> onRemoveUserClick(item.user)
+                item.isInvited -> onRevokeInviteClick(item.user)
+                else -> onSendInviteClick(item.user)
+            }
         }
     }
 
-    private class InviteViewHolder(
-            private val blockedSelectedAccounts: Set<String>,
-            itemView: View) : BaseVH<ShortAccountModel>(itemView) {
+    private class InviteViewHolder(itemView: View) : BaseVH<UserInvite>(itemView) {
 
-        override fun bind(item: ShortAccountModel) {
+        override fun bind(item: UserInvite) {
             with(itemView) {
-                ivAvatar.avatarRound(item.avatar)
-                tvUserName.text = item.formattedName
-                tvPosition.text = item.formattedPosition
+                ivAvatar.avatarRound(item.user.avatar)
+                tvUserName.text = item.user.formattedName
+                tvPosition.text = item.user.formattedPosition
                 tvPosition.goneIfEmpty()
-                tvEventName.text = item.formattedFromEvent
+                tvEventName.text = item.user.formattedFromEvent
                 tvEventName.goneIfEmpty()
 
-                val isAlreadyInvited = blockedSelectedAccounts.contains(item.id)
-                if (isAlreadyInvited) {
-                    btnInvite.text = fromDictionary(R.string.group_member_invite_revoke)
-                    btnInvite.setTextColor(ContextCompat.getColor(context, R.color.money_spent))
-                } else {
-                    btnInvite.text = fromDictionary(R.string.group_member_invite_send)
-                    btnInvite.setTextColor(ContextCompat.getColor(context, R.color.money_gained))
+                when {
+                    item.isMember -> {
+                        btnInvite.text = fromDictionary(R.string.group_member_invite_remove)
+                        btnInvite.setTextColor(ContextCompat.getColor(context, R.color.money_spent))
+                    }
+                    item.isInvited -> {
+                        btnInvite.text = fromDictionary(R.string.group_member_invite_revoke)
+                        btnInvite.setTextColor(ContextCompat.getColor(context, R.color.money_spent))
+                    }
+                    else -> {
+                        btnInvite.text = fromDictionary(R.string.group_member_invite_send)
+                        btnInvite.setTextColor(ContextCompat.getColor(context, R.color.money_gained))
+                    }
                 }
 
                 btnInvite
@@ -90,10 +90,10 @@ class InviteToGroupAdapter : BasePaginationRVAdapter<ShortAccountModel>(), View.
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, blockedSelectedAccounts: Set<String>): InviteViewHolder {
+            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): InviteViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_group_invite, parent, false)
 
-                val viewHolder = InviteViewHolder(blockedSelectedAccounts, view)
+                val viewHolder = InviteViewHolder(view)
                 view.tag = viewHolder
                 view.btnInvite.tag = viewHolder
 

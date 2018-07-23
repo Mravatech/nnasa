@@ -17,9 +17,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/btnInvite"
         android:layout_below="@id/toolbar"
-        android:layout_marginEnd="@dimen/spacing_horizontal"
-        android:layout_marginStart="@dimen/spacing_horizontal"
-        android:layout_marginTop="@dimen/spacing_vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/item_group_invite" />
 
