@@ -54,7 +54,7 @@ class EnterPromoController(args: Bundle) : EnterPhoneController(args) {
         val promoCode = requireNotNull(view).etPromoCode.text.toString()
         val promoCodeLength = requireNotNull(resources).getInteger(R.integer.promo_code_length)
 
-        return super.validateInput() && promoCode.length == promoCodeLength
+        return super.validateInput() && promoCode.isNotBlank() && promoCode.length <= promoCodeLength
     }
 
     companion object {
