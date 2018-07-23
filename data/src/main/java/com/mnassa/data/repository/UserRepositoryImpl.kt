@@ -27,10 +27,11 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_USERS_COL_STATE_DISABLE
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -84,7 +85,9 @@ class UserRepositoryImpl(
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
-            async { addPushToken() }
+            launch {
+                addPushToken(FirebaseInstanceId.getInstance().instanceId.await(exceptionHandler).token)
+            }
         }
     }
 
@@ -290,10 +293,10 @@ class UserRepositoryImpl(
                 .map { it ?: PermissionsDbEntity.EMPTY }
     }
 
-    override suspend fun addPushToken() {
-        val token = FirebaseInstanceId.getInstance().token
+    override suspend fun addPushToken(token: String?) {
         if (getAccountIdOrNull() != null && token != null) {
             val info = "$ANDROID,${getFirebaseUserId()},${getAccountIdOrNull()}"
+            Timber.i("addPushToken >>> $token >>> $info")
             firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
         }
     }

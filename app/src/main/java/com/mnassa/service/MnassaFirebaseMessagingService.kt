@@ -3,6 +3,10 @@ package com.mnassa.service
 import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.mnassa.di.getInstance
+import com.mnassa.domain.interactor.UserProfileInteractor
+import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 
 
 /**
@@ -54,6 +58,17 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
         // message, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
+
+    override fun onNewToken(token: String?) {
+        super.onNewToken(token)
+        Timber.i("onNewToken >>> addPushToken >>> $token")
+
+        val userProfileInteractor: UserProfileInteractor = applicationContext.getInstance()
+
+        launch {
+            userProfileInteractor.addPushToken(token)
+        }
+    }
 
     companion object {
         const val NOTIFICATION = "NOTIFICATION"
