@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="validation_code_length">6</integer>
-    <integer name="promo_code_length">6</integer>
+    <integer name="promo_code_length">250</integer>
     <integer name="validation_code_resend_delay_seconds">60</integer>
 </resources>
