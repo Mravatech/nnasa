@@ -72,7 +72,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun preloadFeed(): List<PostModel> {
-        Timber.e("preloadFeed >>> ")
         val future = firestoreLock {
             val accountId = userRepository.getAccountIdOrException()
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
@@ -80,9 +79,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .collection(DatabaseContract.TABLE_FEED)
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
-                    .also {
-                        Timber.e("preloadFeed >>> loaded all posts! ${it.size}")
-                    }
         }
         preloadedPosts[userRepository.getAccountIdOrException()] = future
         return future.await()
@@ -90,10 +86,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
 
     override suspend fun getPreloadedFeed(): List<PostModel> {
-        Timber.e("preloadFeed >>> getPreloadedFeed")
-        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await().also {
-            Timber.e("preloadFeed >>> getPreloadedFeed >> finished")
-        }
+        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await()
     }
 
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
@@ -290,15 +283,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
+    private fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
         return try {
-            val out: PostModel = converter.convert(input, PostAdditionInfo.withGroup(groupId))
-            if (out is RecommendedProfilePostModel) {
-
-//                val offerIds = input.postedAccount?.offers ?: emptyList()
-//                out.offers = offerIds.map { async { tagRepository.get(it) } }.mapNotNull { it.await() }
-            }
-            out
+            return converter.convert(input, PostAdditionInfo.withGroup(groupId))
         } catch (e: Exception) {
             Timber.e(e, "Error while mapping post ${input.id}; groupId = $groupId")
             null

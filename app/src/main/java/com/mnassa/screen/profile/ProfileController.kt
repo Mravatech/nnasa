@@ -2,16 +2,11 @@ package com.mnassa.screen.profile
 
 import android.os.Bundle
 import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.di.getInstance
 import com.mnassa.domain.model.*
-import com.mnassa.domain.model.impl.PostCountersImpl
-import com.mnassa.domain.model.impl.PostModelImpl
-import com.mnassa.domain.repository.UserRepository
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -22,6 +17,7 @@ import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
+import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.common.*
@@ -30,14 +26,10 @@ import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
-import kotlinx.android.synthetic.main.new_items_panel.view.*
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
-import java.util.*
-import kotlin.math.abs
 
 /**
  * Created by IntelliJ IDEA.
@@ -109,58 +101,17 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         view?.rvProfile?.scrollBy(0, 0)
     }
 
-    private fun showNewItemsPanel() {
-
-        val panel = view?.flNewItemsPanel ?: return
-        panel.animate()
-                .setDuration(PANEL_ANIMATION_DURATION)
-                .translationY(PANEL_ANIMATION_START_POSITION)
-                .alpha(PANEL_ANIMATION_START_ALPHA)
-                .start()
-    }
-
-    private fun hideNewItemsPanel() {
-
-        val panel = view?.flNewItemsPanel ?: return
-        panel.animate()
-                .setDuration(PANEL_ANIMATION_DURATION)
-                .translationY(PANEL_ANIMATION_END_POSITION)
-                .alpha(PANEL_ANIMATION_END_ALPHA)
-                .start()
-    }
-
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvProfile.adapter = adapter
-        view.rvProfile.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            private var isShown = false
-            private var isHidden = false
+        view.rvProfile.attachPanel { hasNewPosts }
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0 && abs(dy) < 10) return
-
-                if (/*dy > 0 && */recyclerView.firstVisibleItemPosition > 1 && hasNewPosts) {
-                    if (isShown) return
-                    showNewItemsPanel()
-                    isShown = true
-                    isHidden = false
-                } else {
-                    if (isHidden) return
-                    hideNewItemsPanel()
-                    isHidden = true
-                    isShown = false
-                }
-            }
-        })
-        view.flNewItemsPanel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
-        view.flNewItemsPanel.setOnClickListener { scrollToTop() }
         view.toolbarProfile.setNavigationOnClickListener { close() }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
         }
-
 
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
@@ -183,11 +134,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
     }
 
-    fun scrollToTop() {
-        val recyclerView = view?.rvProfile ?: return
-        recyclerView.scrollToPosition(0)
-    }
-
     private suspend fun bindHeader() {
         bindHeader(
                 profile = viewModel.profileChannel.consume { receive() },
@@ -200,7 +146,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
     private fun bindHeader(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>, connectionStatus: ConnectionStatus) {
         val view = view ?: return
-        val parent = view?.flSecondHeader ?: return
+        val parent = view.flSecondHeader ?: return
 
         val viewHolder = when {
             parent.tag is BaseProfileHolder -> parent.tag as BaseProfileHolder
@@ -252,7 +198,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                             viewModel.sendConnectionStatus(connectionStatus, accountId)
                     }
                 }
-
             }
 
         }
@@ -382,12 +327,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
         private const val OTHER = "other"
-
-        private const val PANEL_ANIMATION_DURATION = 500L
-        private const val PANEL_ANIMATION_START_POSITION = 0f
-        private const val PANEL_ANIMATION_START_ALPHA = 1f
-        private const val PANEL_ANIMATION_END_POSITION = -100f
-        private const val PANEL_ANIMATION_END_ALPHA = 0f
 
         fun newInstance(account: ShortAccountModel): ProfileController {
             val params = Bundle()

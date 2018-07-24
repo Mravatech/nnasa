@@ -47,8 +47,6 @@ open class NeedDetailsViewModelImpl(
                     it.timeOfExpiration = getExpiration(it)
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
-                } else {
-//                    finishScreenChannel.send(Unit)
                 }
             }
         }
