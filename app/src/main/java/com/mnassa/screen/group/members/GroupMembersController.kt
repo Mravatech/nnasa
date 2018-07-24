@@ -5,12 +5,10 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.isInvisible
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.connections.adapters.AllConnectionsRecyclerViewAdapter
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_group_members.view.*
 import kotlinx.android.synthetic.main.search_view.view.*

@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/chip_layout_margin"
-    card_view:cardCornerRadius="@dimen/chip_layout_radius">
+    app:cardCornerRadius="@dimen/chip_layout_radius">
 
-    <TextView
-        android:id="@+id/tvChipText"
-        style="@style/ChipTextView"
-        android:layout_weight="1"
-        android:drawableEnd="@drawable/ic_delete_tag" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvChipText"
+            style="@style/ChipTextView"
+            android:layout_weight="1"
+            tools:text="Text tag" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivRemoveTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="4dp"
+            app:srcCompat="@drawable/ic_delete_tag"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </LinearLayout>
+
 
 </android.support.v7.widget.CardView>
