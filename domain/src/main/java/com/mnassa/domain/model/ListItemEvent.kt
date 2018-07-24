@@ -3,7 +3,6 @@ package com.mnassa.domain.model
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.launchCoroutineUI
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -92,6 +91,10 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
 
         try {
             consumeEach {
+                if (outputChannel.isClosedForSend) {
+                    return@consumeEach
+                }
+
                 when (it) {
                     is ListItemEvent.Added -> {
                         addItemsCache.add(it.item)
@@ -125,8 +128,6 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
                 }
                 Unit
             }
-        } catch (e: ClosedSendChannelException) {
-            //do nothing
         } catch (e: Exception) {
             outputChannel.close(e)
         }

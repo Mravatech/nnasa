@@ -37,6 +37,12 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
         launch {
             try {
+
+                if (channel.isClosedForSend) {
+                    listener.remove()
+                    return@launch
+                }
+
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
                 val result: ListItemEvent<OutType> = when (eventType) {
@@ -50,7 +56,6 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                 channel.send(result)
             } catch (e: Exception) {
                 when {
-                    e is ClosedSendChannelException -> listener.remove()
                     e.isSuppressed -> {
                         Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} id: ${input.id}")
 //                        removeEventListener(listener)
@@ -107,9 +112,12 @@ internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(e
 
             firestoreLock {
                 try {
+                    if (channel.isClosedForSend) {
+                        listener.remove()
+                        return@firestoreLock
+                    }
+
                     channel.send(dataSnapshot.mapSingle())
-                } catch (e: ClosedSendChannelException) {
-                    listener.remove()
                 } catch (e: Exception) {
                     Timber.e(e)
                     listener.remove()
@@ -137,9 +145,12 @@ internal suspend inline fun <reified T : Any> DocumentReference.toListChannel(ex
 
             firestoreLock {
                 try {
+                    if (channel.isClosedForSend) {
+                        listener.remove()
+                        return@firestoreLock
+                    }
+
                     channel.send(dataSnapshot.mapList())
-                } catch (e: ClosedSendChannelException) {
-                    listener.remove()
                 } catch (e: Exception) {
                     Timber.e(e)
                     listener.remove()
@@ -167,9 +178,12 @@ internal suspend inline fun <reified T : Any> CollectionReference.toListChannel(
 
             firestoreLock {
                 try {
+                    if (channel.isClosedForSend) {
+                        listener.remove()
+                        return@firestoreLock
+                    }
+
                     channel.send(dataSnapshot.mapList())
-                } catch (e: ClosedSendChannelException) {
-                    listener.remove()
                 } catch (e: Exception) {
                     Timber.e(e)
                     listener.remove()

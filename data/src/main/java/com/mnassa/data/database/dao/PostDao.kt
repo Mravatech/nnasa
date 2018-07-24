@@ -12,22 +12,6 @@ import com.mnassa.data.database.entity.PostRoomEntity
 @Dao
 interface PostDao {
 
-//    @Query("""
-//        select *
-//        from POST
-//        where accountId = :accountId and (case when :offset is null then 1 else  id < :offset end)
-//        order by id desc
-//        limit :limit
-//        """)
-//    fun getAllByAccountId(accountId: String, limit: Int, offset: String?): List<PostRoomEntity>
-
-//    @Query("""
-//        DELETE
-//        FROM POST
-//        WHERE accountId = :accountId
-//    """)
-//    fun deleteAllWithAccountId(accountId: String)
-
     @Query("""
         DELETE
         FROM POST

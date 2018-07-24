@@ -2,6 +2,7 @@ package com.mnassa.screen.posts
 
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.PostsInteractor
+import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
@@ -11,13 +12,13 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
-import timber.log.Timber
 
 /**
  * Created by Peter on 3/6/2018.
  */
 class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
-                         private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), PostsViewModel {
+                         private val userProfileInteractor: UserProfileInteractor,
+                         private val preferencesInteractor: PreferencesInteractor) : MnassaViewModelImpl(), PostsViewModel {
 
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
@@ -26,10 +27,8 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             invokeReConsumeFirstly = true,
             beforeReConsume = {
                 isCounterReset = false
-                Timber.e("preloadFeed >>> beforeReConsume - clear!")
                 it.send(ListItemEvent.Cleared())
                 it.send(ListItemEvent.Added(postsInteractor.getPreloadedFeed()))
-                Timber.e("preloadFeed >>> beforeReConsume - sent")
             },
             receiveChannelProvider = {
                 postsInteractor.loadFeedWithChangesHandling().map { it.toBatched() }//.bufferize(this)
@@ -53,16 +52,24 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         }
     }
 
-    override fun onDetachedFromWindow(post: PostModel) {
-
-    }
-
     override fun hideInfoPost(post: PostModel) {
         handleException {
             withProgressSuspend {
                 postsInteractor.hideInfoPost(post.id)
             }
         }
+    }
+
+    override fun saveScrollPosition(post: PostModel) {
+        preferencesInteractor.saveString(KEY_POSTS_POSITION, post.id)
+    }
+
+    override fun restoreScrollPosition(): String? {
+        return preferencesInteractor.getString(KEY_POSTS_POSITION)
+    }
+
+    override fun resetScrollPosition() {
+        preferencesInteractor.saveString(KEY_POSTS_POSITION, null)
     }
 
     private fun resetCounter() {
@@ -74,5 +81,9 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                 //ignore
             }
         }
+    }
+
+    companion object {
+        private const val KEY_POSTS_POSITION = "KEY_POSTS_POSITION"
     }
 }
