@@ -6,17 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.domain.model.TransactionModel
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.goneIfEmpty
-import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_wallet_transaction_income.view.*
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 
 /**
  * Created by Peter on 4/2/2018.
  */
-class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
+class WalletRVAdapter(languageProvider: LanguageProvider) : BaseSortedPaginationRVAdapter<TransactionModel>() {
+    private val dateFormatter = SimpleDateFormat("h:mm a d MMM yyyy", languageProvider.locale)
+
     override val itemsComparator: (item1: TransactionModel, item2: TransactionModel) -> Int = { first, second ->
         first.time.compareTo(second.time) * -1
     }
@@ -27,8 +30,8 @@ class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<TransactionModel> = when (viewType) {
-        TYPE_SPENT -> TransactionViewHolder.newInstanceSpent(parent)
-        TYPE_GAINED -> TransactionViewHolder.newInstanceGained(parent)
+        TYPE_SPENT -> TransactionViewHolder.newInstanceSpent(parent, dateFormatter)
+        TYPE_GAINED -> TransactionViewHolder.newInstanceGained(parent, dateFormatter)
         else -> throw IllegalArgumentException("Illegal view type $viewType")
     }
 
@@ -36,7 +39,7 @@ class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
         return if (dataStorage[position].amount < 0) TYPE_SPENT else TYPE_GAINED
     }
 
-    class TransactionViewHolder(itemView: View) : BaseVH<TransactionModel>(itemView) {
+    class TransactionViewHolder(itemView: View, private val formatter: SimpleDateFormat) : BaseVH<TransactionModel>(itemView) {
         private val moneyFormatter = DecimalFormat("+#,##0;-#")
 
         override fun bind(item: TransactionModel) {
@@ -50,7 +53,7 @@ class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
                 tvFrom.goneIfEmpty()
                 tvType.text = item.type
                 tvAmount.text = moneyFormatter.format(item.amount)
-                tvTime.text = item.time.toTimeAgo()
+                tvTime.text = formatter.format(item.time)
                 tvBalanceAfter.text = fromDictionary(R.string.wallet_balance_after).format(item.afterBalance)
                 tvDescription.text = item.description
                 tvDescription.goneIfEmpty()
@@ -58,22 +61,22 @@ class WalletRVAdapter : BaseSortedPaginationRVAdapter<TransactionModel>() {
         }
 
         companion object {
-            fun newInstanceSpent(parent: ViewGroup): TransactionViewHolder {
+            fun newInstanceSpent(parent: ViewGroup, formatter: SimpleDateFormat): TransactionViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_wallet_transaction_income, parent, false)
                 with(view) {
                     tvAmount.setTextColor(ContextCompat.getColor(parent.context, R.color.money_spent))
                     tvAmount.setBackgroundResource(R.drawable.transaction_corners_spent)
                 }
-                return TransactionViewHolder(view)
+                return TransactionViewHolder(view, formatter)
             }
 
-            fun newInstanceGained(parent: ViewGroup): TransactionViewHolder {
+            fun newInstanceGained(parent: ViewGroup, formatter: SimpleDateFormat): TransactionViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_wallet_transaction_income, parent, false)
                 with(view) {
                     tvAmount.setTextColor(ContextCompat.getColor(parent.context, R.color.money_gained))
                     tvAmount.setBackgroundResource(R.drawable.transaction_corners_gained)
                 }
-                return TransactionViewHolder(view)
+                return TransactionViewHolder(view, formatter)
             }
         }
     }
