@@ -192,6 +192,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
 const val PRIVATE_CHAT_MESSAGE = "privateChatMessage"
 const val RESPONSE_CHAT_MESSAGE = "responseChatMessage"
 const val POST_COMMENT = "postComment"
+const val POST_COMMENT_REPLY = "userPostCommentReply"
 const val CONNECTION_REQUEST = "connectionRequest"
 const val POST_REPOST = "postRepost"
 const val NEW_USER_JOINED = "newUserJoined"

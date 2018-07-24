@@ -27,8 +27,8 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.mapNotNull
 
 /**
  * Created by IntelliJ IDEA.
@@ -107,15 +107,12 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         exceptionHandler = exceptionHandler,
                         mapper = { converter.convert(it, ChatRoomModel::class.java) }
                 )
-                .map {
+                .mapNotNull {
                     val otherUserId = it.item.members?.firstOrNull { it != userId }
                     if (otherUserId != null) {
                         it.item.account = userRepository.getAccountById(otherUserId)
                     }
-                    it
-                }
-                .filter {
-                    it.item.account != null
+                    it.takeIf { it.item.account != null }
                 }
     }
 
@@ -126,16 +123,13 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(TABLE_CHAT_TYPE_PRIVATE)
                 .child(userId)
                 .awaitList<ChatDbModel>(exceptionHandler)
-                .map {
-                    val item =  converter.convert(it, ChatRoomModel::class.java)
+                .mapNotNull {
+                    val item = converter.convert(it, ChatRoomModel::class.java)
                     val otherUserId = item.members?.firstOrNull { it != userId }
                     if (otherUserId != null) {
                         item.account = userRepository.getAccountById(otherUserId)
                     }
-                    item
-                }
-                .filter { item ->
-                    item.account != null
+                    item.takeIf { it.account != null }
                 }
     }
 

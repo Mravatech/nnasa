@@ -2,7 +2,6 @@ package com.mnassa.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.mnassa.R
 import com.mnassa.domain.model.TagModel
@@ -38,9 +37,5 @@ class ChipView(
 
     interface OnChipListener {
         fun onViewRemoved(key: Long)
-    }
-
-    companion object {
-        const val DRAWABLE_RIGHT = 2
     }
 }

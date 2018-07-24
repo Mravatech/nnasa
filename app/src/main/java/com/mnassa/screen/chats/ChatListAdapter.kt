@@ -116,8 +116,9 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 val oldEntity = idToModel[element.id]
-                if (oldEntity != null && wrappedList.indexOf(oldEntity) != -1) {
-                    val position = wrappedList.indexOf(oldEntity)
+
+                val position = if (oldEntity != null) wrappedList.indexOf(oldEntity) else -1
+                if (position != -1) {
                     wrappedList.updateItemAt(position, element)
                 } else {
                     wrappedList.add(element)
