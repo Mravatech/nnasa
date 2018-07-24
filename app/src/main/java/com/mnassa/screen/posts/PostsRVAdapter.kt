@@ -43,11 +43,6 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
         onMoreItemClickListener = { item: PostModel, view: View -> }
     }
 
-    override fun onAttachedToRecyclerView(rv: RecyclerView) {
-        super.onAttachedToRecyclerView(rv)
-        Timber.e("preloadFeed >>> onAttachedToRecyclerView")
-    }
-
     override val itemsComparator: (item1: PostModel, item2: PostModel) -> Int = { first, second ->
         val firstPinned = (first as? InfoPostModel)?.isPinned ?: false
         val secondPinned = (second as? InfoPostModel)?.isPinned ?: false

@@ -115,7 +115,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                     it
                 }
                 .filter {
-                    it.item.account != null /*&& it.item.chatMessageModel != null*/
+                    it.item.account != null
                 }
     }
 
@@ -135,7 +135,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                     item
                 }
                 .filter { item ->
-                    item.account != null /*&& item.chatMessageModel != null*/
+                    item.account != null
                 }
     }
 

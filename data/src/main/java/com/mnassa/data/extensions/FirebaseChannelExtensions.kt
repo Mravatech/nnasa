@@ -35,9 +35,12 @@ internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: Exce
             val listener = this
             launch {
                 try {
+                    if (channel.isClosedForSend) {
+                        query.removeEventListener(listener)
+                        return@launch
+                    }
+
                     channel.send(dataSnapshot.mapList())
-                } catch (e: ClosedSendChannelException) {
-                    query.removeEventListener(listener)
                 } catch (e: Exception) {
                     Timber.e(e)
                     query.removeEventListener(listener)
@@ -70,9 +73,12 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
             val listener = this
             launch {
                 try {
+                    if (channel.isClosedForSend) {
+                        query.removeEventListener(listener)
+                        return@launch
+                    }
+
                     channel.send(dataSnapshot.mapSingle())
-                } catch (e: ClosedSendChannelException) {
-                    query.removeEventListener(listener)
                 } catch (e: Exception) {
                     Timber.e(e)
                     query.removeEventListener(listener)
@@ -98,6 +104,10 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
     val channel = ArrayChannel<OutType>(limit)
     launch {
         try {
+            if (channel.isClosedForSend) {
+                return@launch
+            }
+
             var latestId: String? = null
             while (true) {
                 val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
@@ -150,6 +160,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
     val emitter = { input: DataSnapshot, previousChildName: String?, eventType: Int ->
         launch {
             try {
+
+                if (channel.isClosedForSend) {
+                    removeEventListener(listener)
+                    return@launch
+                }
+
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
                 val result: ListItemEvent<OutType> = when (eventType) {
@@ -163,7 +179,6 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
                 channel.send(result)
             } catch (e: Exception) {
                 when {
-                    e is ClosedSendChannelException -> removeEventListener(listener)
                     e.isSuppressed -> {
                         Timber.e(e, "Suppressed exception: class: ${DbType::class.java.name} path: ${input.path}")
 //                        removeEventListener(listener)

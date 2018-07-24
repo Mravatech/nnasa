@@ -245,11 +245,6 @@ class PostConverter(private val languageProvider: LanguageProvider,
 
     private fun convertAuthor(input: ShortAccountDbEntity?, converter: ConvertersContext): ShortAccountModel {
         return converter.convert(requireNotNull(input), ShortAccountModel::class.java)
-
-//        val entity = requireNotNull(input.values.first())
-//        entity.id = input.keys.first()
-//
-//        return converter.convert(entity, ShortAccountModel::class.java)
     }
 
     private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {

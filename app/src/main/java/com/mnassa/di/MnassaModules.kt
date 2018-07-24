@@ -194,8 +194,8 @@ private val viewModelsModule = Kodein.Module {
     bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance(), instance()) }
-    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance()) }
-    bind<EventsViewModel>() with provider { EventsViewModelImpl(instance()) }
+    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance(), instance()) }
+    bind<EventsViewModel>() with provider { EventsViewModelImpl(instance(), instance()) }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
@@ -333,6 +333,7 @@ private val repositoryModule = Kodein.Module {
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), { instance() }, instance(), { instance() }, instance()) }
+    bind<PreferencesRepository>() with singleton { PreferencesRepositoryImpl(instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -359,6 +360,7 @@ private val interactorModule = Kodein.Module {
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
     bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<NetworkInteractor>() with singleton { NetworkInteractorImpl(instance()) }
+    bind<PreferencesInteractor>() with singleton { PreferencesInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"
