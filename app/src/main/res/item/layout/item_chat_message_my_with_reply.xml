@@ -9,12 +9,8 @@
 
     <TextView
         android:id="@+id/tvMyMessageWithReplySent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/chat_message_half_base_margin"
-        android:minWidth="@dimen/chat_message_time_min_width"
-        tools:text="12132131" />
+        style="@style/ChatMessage.Time"
+        tools:text="12:00 PM" />
 
     <LinearLayout
         android:id="@+id/rlMyMessageWithReplyContainer"
@@ -28,7 +24,8 @@
         <TextView
             android:id="@+id/tvMyReplyMessage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:text="Reply message gge gge gge gge gge long long long"/>
 
         <TextView
             android:id="@+id/divider"
@@ -39,6 +36,7 @@
         <TextView
             android:id="@+id/tvMyMessageWithReply"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:text="myMessage with reply long long long long long long long"/>
     </LinearLayout>
 </LinearLayout>

@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="end"
     android:layout_margin="@dimen/chat_message_half_base_margin"
-    android:orientation="horizontal"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:gravity="end"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tvMyMessageSent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/chat_message_half_base_margin"
-        android:layout_gravity="bottom"
-        android:minWidth="@dimen/chat_message_time_min_width"
-        tools:text="12132131"
-        android:gravity="end" />
+        style="@style/ChatMessage.Time"
+        tools:text="12:00 PM" />
 
     <TextView
         android:id="@+id/tvMyMessage"
@@ -23,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="@dimen/chat_message_half_base_margin"
-        tools:text="test message big message test test testtest"
         android:background="@drawable/income_chat_message_background"
-        android:padding="@dimen/chat_message_base_padding" />
+        android:padding="@dimen/chat_message_base_padding"
+        tools:text="test message big message test test testtest" />
 </LinearLayout>
