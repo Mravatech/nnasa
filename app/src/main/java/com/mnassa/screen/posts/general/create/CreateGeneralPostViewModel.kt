@@ -1,5 +1,6 @@
 package com.mnassa.screen.posts.general.create
 
+import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.RawPostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
@@ -20,4 +21,6 @@ interface CreateGeneralPostViewModel : MnassaViewModel, PlaceAutocompleteAdapter
     fun applyChanges(post: RawPostModel)
     suspend fun canPromotePost(): Boolean
     suspend fun getPromotePostPrice(): Long
+
+    suspend fun getUserLocation(): LocationPlaceModel?
 }

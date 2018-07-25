@@ -4,10 +4,7 @@ import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.GeoPlaceModel
-import com.mnassa.domain.model.RawPostModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -41,10 +38,14 @@ class CreateNeedViewModelImpl(
 
     override suspend fun getDefaultExpirationDays(): Long = postsInteractor.getDefaultExpirationDays()
 
-
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userInteractor.getAccountByIdChannel(userId).consume { receive() } }
-    override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
+    override suspend fun getTag(tagId: String): TagModel? = handleExceptionsSuspend { tagInteractor.get(tagId) }
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun canPromotePost(): Boolean = userInteractor.getPermissions().consume { receive() }.canPromoteNeedPost
-    override suspend fun getPromotePostPrice(): Long = postsInteractor.getPromotePostPrice()
+    override suspend fun canPromotePost(): Boolean = handleExceptionsSuspend { userInteractor.getPermissions().consume { receive() }.canPromoteNeedPost }
+            ?: false
+
+    override suspend fun getPromotePostPrice(): Long = handleExceptionsSuspend { postsInteractor.getPromotePostPrice() }
+            ?: 0L
+
+    override suspend fun getUserLocation(): LocationPlaceModel? = handleExceptionsSuspend { userInteractor.getProfileById(userInteractor.getAccountIdOrException())?.location }
 }

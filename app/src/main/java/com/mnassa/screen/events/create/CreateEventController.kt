@@ -236,6 +236,15 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             setData(args[EXTRA_EVENT] as EventModel)
             args.remove(EXTRA_EVENT)
         }
+
+        if (eventId == null && placeId == null) {
+            launchCoroutineUI {
+                viewModel.getUserLocation()?.let {
+                    placeId = it.placeId
+                    view.actvCity.setText(it.placeName.toString())
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

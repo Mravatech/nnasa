@@ -58,7 +58,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             actvPlace.setOnItemClickListener { _, _, i, _ ->
                 val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 placeId = item.placeId
-                val placeName = "${item.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                val placeName = "${item.primaryText} ${item.secondaryText}"
                 actvPlace.setText(placeName)
             }
 
