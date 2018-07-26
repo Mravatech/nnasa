@@ -5,9 +5,6 @@ import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallba
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.*
 import com.mnassa.data.network.bean.retrofit.response.PostData
@@ -93,12 +90,12 @@ class PostConverter(private val languageProvider: LanguageProvider,
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    recommendedProfile = try { convertAuthor(requireNotNull(input.postedAccount), converter) } catch (e: Exception) { null },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
+                    recommendedProfile = try { convertAuthor(input.postedAccount.parseObject(), converter) } catch (e: Exception) { null },
                     offers = emptyList(),
                     groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
@@ -120,11 +117,11 @@ class PostConverter(private val languageProvider: LanguageProvider,
                     text = input.text,
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
@@ -149,11 +146,11 @@ class PostConverter(private val languageProvider: LanguageProvider,
                     text = input.text,
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     //TODO: server side problem - offer without title
                     title = input.title ?: "Title is not specified".also { Timber.e(FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!"))) },
                     category = input.category,
@@ -182,11 +179,11 @@ class PostConverter(private val languageProvider: LanguageProvider,
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
@@ -225,34 +222,10 @@ class PostConverter(private val languageProvider: LanguageProvider,
         }
     }
 
-    private fun convertAuthor(input: JsonObject, converter: ConvertersContext): ShortAccountModel {
-        try {
-            //old posts from firebase & notifications converting logic
-            val type: Type = object : TypeToken<Map<String, ShortAccountDbEntity>>() {}.type
-            return convertAuthor(gson.fromJson<Map<String, ShortAccountDbEntity>>(input, type), converter)
-        } catch (e: JsonSyntaxException) {
-            //do nothing
-        }
-        try {
-            //new posts from firestore converting logic
-            return convertAuthor(gson.fromJson(input, ShortAccountDbEntity::class.java), converter)
-        } catch (e: JsonSyntaxException) {
-            //do nothing
-        }
-
-        throw IllegalArgumentException("Cannot convert post author $input")
-    }
-
     private fun convertAuthor(input: ShortAccountDbEntity?, converter: ConvertersContext): ShortAccountModel {
         return converter.convert(requireNotNull(input), ShortAccountModel::class.java)
     }
 
-    private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {
-        val entity = requireNotNull(input.values.first())
-        entity.id = input.keys.first()
-
-        return converter.convert(entity, ShortAccountModel::class.java)
-    }
 
     private fun convertPostType(input: String): PostType {
         return when (input) {

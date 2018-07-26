@@ -20,7 +20,7 @@ internal data class EventDbEntity(
         @SerializedName("locationId") val locationId: String?,
         @SerializedName("locationType") val locationType: String,
         @SerializedName("originalCreatedAt") val originalCreatedAt: Long,
-        @SerializedName("originalId", alternate = arrayOf("originalPostId")) val originalId: String,
+        @SerializedName("originalId", alternate = ["originalPostId"]) val originalId: String,
         @SerializedName("pictures") val pictures: List<String>,
         @SerializedName("price") val price: Long,
         @SerializedName("privacyType") val privacyType: String?,

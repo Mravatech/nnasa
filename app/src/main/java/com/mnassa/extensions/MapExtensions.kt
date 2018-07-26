@@ -4,9 +4,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.mnassa.domain.model.GeoPlaceModel
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 
 /**

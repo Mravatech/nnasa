@@ -104,12 +104,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
     val channel = ArrayChannel<OutType>(limit)
     launch {
         try {
-            if (channel.isClosedForSend) {
-                return@launch
-            }
-
             var latestId: String? = null
             while (true) {
+                if (channel.isClosedForSend) {
+                    return@launch
+                }
+
                 val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
                 latestId = portion.lastOrNull()?.id
                 portion.forEach { mapper(it)?.apply { channel.send(this) } }

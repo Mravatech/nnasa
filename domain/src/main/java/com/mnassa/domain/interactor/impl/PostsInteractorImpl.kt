@@ -9,6 +9,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
@@ -22,7 +23,12 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun preloadFeed(): List<PostModel> = postsRepository.preloadFeed()
     override suspend fun getPreloadedFeed(): List<PostModel> = postsRepository.getPreloadedFeed()
-    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadFeedWithChangesHandling()
+    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
+        return produce {
+            getPreloadedFeed().forEach { send(ListItemEvent.Added(it)) }
+            postsRepository.loadFeedWithChangesHandling().consumeEach { send(it) }
+        }
+    }
     override suspend fun loadWall(accountId: String): List<PostModel> = postsRepository.loadWall(accountId)
     override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadWallWithChangesHandling(accountId)
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()

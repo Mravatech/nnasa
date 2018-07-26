@@ -31,7 +31,7 @@ class NotificationAdapter : BaseSortedPaginationRVAdapter<NotificationAdapter.No
     fun addNotifications(notifications: List<NotificationModel>) {
         var hasOld = false
         var hasNew = false
-        val itemsToAdd = notifications.mapTo(ArrayList<NotificationItem>()) {
+        val itemsToAdd = notifications.mapTo(ArrayList<NotificationItem>(notifications.size + 2)) {
             hasNew = hasNew or !it.isOld
             hasOld = hasOld or it.isOld
             NotificationItem.ContentItem(it)

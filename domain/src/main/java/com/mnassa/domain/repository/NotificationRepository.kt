@@ -11,7 +11,11 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 
 interface NotificationRepository {
-    suspend fun loadNotificationsOld(): ReceiveChannel<ListItemEvent<NotificationModel>>
-    suspend fun loadNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>>
+    suspend fun loadOldNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>>
+    suspend fun preloadOldNotifications(): List<NotificationModel>
+    suspend fun getPreloadedOldNotifications(): List<NotificationModel>
+
+    suspend fun loadNewNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>>
+
     suspend fun notificationView(resetCounter: Boolean, all: Boolean, ids: List<String>)
 }

@@ -9,7 +9,6 @@ import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.model.bufferize
-import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.group.list.GroupListController
@@ -23,6 +22,7 @@ import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -40,26 +40,28 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         savedInstanceState?.apply {
             adapter.restoreState(this)
         }
-        adapter.isLoadingEnabled = true
+        adapter.isLoadingEnabled = savedInstanceState == null
         controllerSubscriptionContainer.launchCoroutineUI {
-            val view = getViewSuspend()
-            viewModel.notificationChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        if (it.item.isNotEmpty()) {
-                            adapter.addNotifications(it.item)
-                        }
-                        view.llEmptyNotifications.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
-                    }
-                    is ListItemEvent.Changed -> adapter.addNotifications(it.item)
-                    is ListItemEvent.Moved -> adapter.addNotifications(it.item)
-                    is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
-                        view.llEmptyNotifications.isInvisible = true
-                    }
+            subscribeToUpdates(viewModel.oldNotificationChannel.openSubscription().bufferize(controllerSubscriptionContainer))
+        }
+        controllerSubscriptionContainer.launchCoroutineUI {
+            subscribeToUpdates(viewModel.newNotificationChannel.openSubscription().bufferize(controllerSubscriptionContainer))
+        }
+    }
+
+    private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<List<NotificationModel>>>) {
+        channel.consumeEach {
+            when (it) {
+                is ListItemEvent.Added -> {
+                    adapter.isLoadingEnabled = false
+                    adapter.addNotifications(it.item)
+                }
+                is ListItemEvent.Changed -> adapter.addNotifications(it.item)
+                is ListItemEvent.Moved -> adapter.addNotifications(it.item)
+                is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
+                is ListItemEvent.Cleared -> {
+                    adapter.isLoadingEnabled = true
+                    adapter.dataStorage.clear()
                 }
             }
         }
@@ -97,6 +99,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         when (item.type) {
             POST_COMMENT,
             POST_COMMENT_REPLY,
+            POST_COMMENT_REPLY_2,
             POST_IS_EXPIRED,
             POST_PROMOTED,
             USER_WAS_RECOMMENDED_BY_POST,

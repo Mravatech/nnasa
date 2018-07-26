@@ -5,6 +5,8 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.repository.NotificationRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,11 +15,19 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 class NotificationInteractorImpl(private val notificationRepository: NotificationRepository) : NotificationInteractor {
 
-    override suspend fun loadNotificationsOld(): ReceiveChannel<ListItemEvent<NotificationModel>> = notificationRepository.loadNotificationsOld()
-
-    override suspend fun loadNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> = notificationRepository.loadNotifications()
-
-    override suspend fun notificationView(resetCounter: Boolean, all: Boolean, ids: List<String>) {
-        notificationRepository.notificationView(resetCounter, all, ids)
+    override suspend fun loadOldNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> {
+        return produce {
+            getPreloadedOldNotifications().forEach {
+                send(ListItemEvent.Added(it))
+            }
+            notificationRepository.loadOldNotifications().consumeEach {
+                send(it)
+            }
+        }
     }
+    override suspend fun preloadOldNotifications(): List<NotificationModel> = notificationRepository.preloadOldNotifications()
+    override suspend fun getPreloadedOldNotifications(): List<NotificationModel> = notificationRepository.getPreloadedOldNotifications()
+
+    override suspend fun loadNewNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> = notificationRepository.loadNewNotifications()
+    override suspend fun notificationView(resetCounter: Boolean, all: Boolean, ids: List<String>) = notificationRepository.notificationView(resetCounter, all, ids)
 }

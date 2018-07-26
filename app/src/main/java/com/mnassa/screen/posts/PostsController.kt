@@ -18,9 +18,10 @@ import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.map
 import org.kodein.di.generic.instance
 
 /**
@@ -84,10 +85,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.newsFeedChannel)
-        }
-        controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.newsFeedUpdatesChannel)
+            subscribeToUpdates(viewModel.newsFeedChannel.openSubscription())
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -122,17 +120,17 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         return adapter.dataStorage[0]
     }
 
-    private suspend fun subscribeToUpdates(channel: BroadcastChannel<ListItemEvent<List<PostModel>>>) {
+    private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<PostModel>>) {
         channel.consumeEach {
             when (it) {
                 is ListItemEvent.Added -> {
                     adapter.isLoadingEnabled = false
-                    adapter.dataStorage.addAll(it.item)
+                    adapter.dataStorage.add(it.item)
                     triggerScrollPanel()
                 }
-                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
+                is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
+                is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
                 is ListItemEvent.Cleared -> {
                     adapter.isLoadingEnabled = true
                     adapter.dataStorage.clear()

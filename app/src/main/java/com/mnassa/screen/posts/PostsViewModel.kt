@@ -11,8 +11,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 3/6/2018.
  */
 interface PostsViewModel : MnassaViewModel {
-    val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
-    val newsFeedUpdatesChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
+    val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>>
     val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>
 
     val permissionsChannel: BroadcastChannel<PermissionsModel>

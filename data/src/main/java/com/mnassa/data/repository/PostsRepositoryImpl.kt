@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.database.entity.PostRoomEntity
@@ -20,7 +21,6 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
-import com.mnassa.data.repository.DatabaseContract.TABLE_INFO_FEED
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.PostsRepository
@@ -72,15 +72,17 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun preloadFeed(): List<PostModel> {
+        val accountId = userRepository.getAccountIdOrException()
         val future = firestoreLock {
-            val accountId = userRepository.getAccountIdOrException()
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
         }
-        preloadedPosts[userRepository.getAccountIdOrException()] = future
+        preloadedPosts[accountId] = future
         return future.await()
     }
 

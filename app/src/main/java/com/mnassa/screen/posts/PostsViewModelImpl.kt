@@ -23,17 +23,14 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
-            invokeReConsumeFirstly = true,
+    override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> by ProcessAccountChangeArrayBroadcastChannel(
             beforeReConsume = {
                 isCounterReset = false
                 it.send(ListItemEvent.Cleared())
-                it.send(ListItemEvent.Added(postsInteractor.getPreloadedFeed()))
             },
             receiveChannelProvider = {
-                postsInteractor.loadFeedWithChangesHandling().map { it.toBatched() }//.bufferize(this)
+                postsInteractor.loadFeedWithChangesHandling()
             })
-    override val newsFeedUpdatesChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> = ArrayBroadcastChannel(10)
     override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
             receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
 
