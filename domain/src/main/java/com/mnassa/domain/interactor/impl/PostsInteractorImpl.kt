@@ -26,7 +26,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return produce {
             send(ListItemEvent.Added(getPreloadedFeed()))
-            postsRepository.loadFeedWithChangesHandling().consumeEach { send(it.toBatched()) }
+            postsRepository.loadFeedWithChangesHandling().bufferize1().consumeEach { send(it) }
         }
     }
     override suspend fun loadWall(accountId: String): List<PostModel> = postsRepository.loadWall(accountId)

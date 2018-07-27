@@ -19,6 +19,14 @@ class PreferencesRepositoryImpl(private val context: Context) : PreferencesRepos
 
     override fun getString(key: String): String? = prefs.getString(key, null)
 
+    override fun saveLong(key: String, value: Long) {
+        prefs.edit {
+            putLong(key, value)
+        }
+    }
+
+    override fun getLong(key: String, defValue: Long): Long = prefs.getLong(key, defValue)
+
     companion object {
         private const val PREFS_NAME = "MNASSA_PREFS"
     }

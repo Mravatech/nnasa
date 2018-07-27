@@ -6,6 +6,7 @@ import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
@@ -21,4 +22,8 @@ interface PostsViewModel : MnassaViewModel {
     fun saveScrollPosition(post: PostModel)
     fun restoreScrollPosition(): String?
     fun resetScrollPosition()
+
+    fun getLastViewedPostDate(): Date?
+    fun setLastViewedPostDate(date: Date?)
+
 }

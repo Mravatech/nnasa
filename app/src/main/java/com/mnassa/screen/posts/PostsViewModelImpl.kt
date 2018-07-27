@@ -12,6 +12,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
+import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
@@ -69,6 +70,14 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         preferencesInteractor.saveString(KEY_POSTS_POSITION, null)
     }
 
+    override fun getLastViewedPostDate(): Date? {
+        return preferencesInteractor.getLong(KEY_POSTS_LAST_VIEWED, -1).takeIf { it >= 0 }?.let { Date(it) }
+    }
+
+    override fun setLastViewedPostDate(date: Date?) {
+        preferencesInteractor.saveLong(KEY_POSTS_LAST_VIEWED, date?.time ?: -1)
+    }
+
     private fun resetCounter() {
         handleException {
             try {
@@ -82,5 +91,6 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
 
     companion object {
         private const val KEY_POSTS_POSITION = "KEY_POSTS_POSITION"
+        private const val KEY_POSTS_LAST_VIEWED = "KEY_POSTS_LAST_VIEWED"
     }
 }

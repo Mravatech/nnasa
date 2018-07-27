@@ -10,6 +10,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
@@ -118,7 +119,12 @@ class EventsInteractorImpl(
         return tags
     }
 
-    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> = eventsRepository.getEventsFeedChannel()
+    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
+        return produce {
+            send(ListItemEvent.Added(loadAllImmediately()))
+            eventsRepository.getEventsFeedChannel().bufferize1().consumeEach { send(it) }
+        }
+    }
 
     override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.loadAllImmediately()
 

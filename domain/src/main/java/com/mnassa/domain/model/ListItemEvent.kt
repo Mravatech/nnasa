@@ -3,10 +3,14 @@ package com.mnassa.domain.model
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.launchCoroutineUI
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T
@@ -40,6 +44,48 @@ sealed class ListItemEvent<T : Any>() {
     }
 
     abstract fun toBatched(): ListItemEvent<List<T>>
+}
+
+suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize1(): ReceiveChannel<ListItemEvent<List<E>>> {
+    val input = this
+
+    return produce(context = Unconfined) {
+        val output = this
+        val addEventBuffer = ArrayList<E>()
+        suspend fun flush() {
+            if (addEventBuffer.isNotEmpty() && output.isActive) {
+                val event: ListItemEvent<List<E>> = ListItemEvent.Added(addEventBuffer.toMutableList())
+                addEventBuffer.clear()
+                send(event)
+            }
+        }
+
+        async(kotlin.coroutines.experimental.coroutineContext) {
+            while (output.isActive) {
+                delay(2_000)
+                flush()
+            }
+        }
+
+        input.consumeEach {
+            if (!output.isActive) {
+                return@consumeEach
+            }
+            when (it) {
+                is ListItemEvent.Added -> addEventBuffer.add(it.item)
+                is ListItemEvent.Changed -> addEventBuffer.add(it.item)
+                is ListItemEvent.Moved -> addEventBuffer.add(it.item)
+                is ListItemEvent.Removed -> {
+                    flush()
+                    send(it.toBatched())
+                }
+                is ListItemEvent.Cleared -> {
+                    addEventBuffer.clear()
+                    send(it.toBatched())
+                }
+            }
+        }
+    }
 }
 
 suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(

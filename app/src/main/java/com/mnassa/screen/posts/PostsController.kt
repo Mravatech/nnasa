@@ -22,6 +22,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
+import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
@@ -34,10 +35,14 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
     }
-    private var lastViewedPostDate: Long = -1
+    private var lastViewedPostDate: Date?
+        get() = viewModel.getLastViewedPostDate()
+        set(value) = viewModel.setLastViewedPostDate(value)
     private var hasNewPosts: Boolean = false
         get() {
-            return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
+            val firstVisibleItem = getFirstItem()?.createdAt ?: return false
+            val lastViewedItem = lastViewedPostDate ?: return true
+            return firstVisibleItem > lastViewedItem
         }
     private var postIdToScroll: String? = null
 
@@ -50,8 +55,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
 
         adapter.onAttachedToWindow = { post ->
             controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
-            if (post.createdAt.time > lastViewedPostDate) {
-                lastViewedPostDate = post.createdAt.time
+            if (lastViewedPostDate == null || post.createdAt > lastViewedPostDate) {
+                lastViewedPostDate = post.createdAt
             }
         }
         adapter.onItemClickListener = {
@@ -69,6 +74,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
+        adapter.isLoadingEnabled = savedInstanceState == null
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
 
@@ -78,7 +84,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                     postIdToScroll = null
                     val layoutManager = view?.rvNewsFeed?.layoutManager
                     layoutManager as LinearLayoutManager
-                    layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
+                    val pos = adapter.convertDataIndexToAdapterPosition(dataIndex)
+                    layoutManager.scrollToPosition(pos)
                 }
             }
         }
@@ -123,9 +130,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         channel.consumeEach {
             when (it) {
                 is ListItemEvent.Added -> {
-                    adapter.isLoadingEnabled = false
-                    adapter.dataStorage.addAll(it.item)
-                    triggerScrollPanel()
+                    if (it.item.isNotEmpty()) {
+                        adapter.isLoadingEnabled = false
+                        adapter.dataStorage.addAll(it.item)
+                        triggerScrollPanel()
+                    }
                 }
                 is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
                 is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
@@ -133,7 +142,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                 is ListItemEvent.Cleared -> {
                     adapter.isLoadingEnabled = true
                     adapter.dataStorage.clear()
-                    lastViewedPostDate = -1
+                    lastViewedPostDate = null
                 }
             }
         }

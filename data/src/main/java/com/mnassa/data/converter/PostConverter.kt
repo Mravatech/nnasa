@@ -60,7 +60,16 @@ class PostConverter(private val languageProvider: LanguageProvider,
         return convertPostData(input, token, converter) as OfferPostModelImpl
     }
 
-    internal fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+        try {
+            return convertPostInternal(input, token, converter)
+        } catch (e: Exception) {
+            Timber.e(e, "WRONG POST STRUCTURE >>> ${input.id}")
+            throw e
+        }
+    }
+
+    private fun convertPostInternal(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
         val additionInfo: PostAdditionInfo? = token as? PostAdditionInfo
 
         val attachments = input.images.orEmpty().mapIndexed { index, image ->
