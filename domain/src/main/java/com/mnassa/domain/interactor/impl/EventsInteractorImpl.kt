@@ -126,7 +126,7 @@ class EventsInteractorImpl(
         }
     }
 
-    override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.loadAllImmediately()
+    override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.preloadEvents()
 
     override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> = eventsRepository.getEventsChannel(eventId)
 

@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseEventsApi
@@ -36,14 +37,16 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val eventsApi: FirebaseEventsApi,
                            private val db: DatabaseReference) : EventsRepository {
 
-    override suspend fun loadAllImmediately(): List<EventModel> {
+    override suspend fun preloadEvents(): List<EventModel> {
         return firestoreLockSuspend {
             firestore
                     .collection(DatabaseContract.TABLE_EVENTS)
                     .document(userRepository.getAccountIdOrException())
                     .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<EventDbEntity>()
-                    .map { converter.convert(it, EventModel::class.java) }
+                    .mapNotNull { try { converter.convert(it, EventModel::class.java) } catch (e: Exception) { null } }
         }
     }
 
