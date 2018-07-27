@@ -1,14 +1,13 @@
 package com.mnassa.screen.notifications
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
-import com.mnassa.domain.model.bufferize
+import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.group.list.GroupListController
@@ -41,11 +40,16 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
             adapter.restoreState(this)
         }
         adapter.isLoadingEnabled = savedInstanceState == null
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.llEmptyNotifications?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
+        adapter.onItemClickListener = { onNotificationClickHandle(it) }
+
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.oldNotificationChannel.openSubscription().bufferize(controllerSubscriptionContainer))
+            subscribeToUpdates(viewModel.oldNotificationChannel.openSubscription())
         }
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.newNotificationChannel.openSubscription().bufferize(controllerSubscriptionContainer))
+            subscribeToUpdates(viewModel.newNotificationChannel.openSubscription())
         }
     }
 
@@ -71,11 +75,13 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         super.onViewCreated(view)
         with(view) {
             tvEmptyNotifications.text = fromDictionary(R.string.notifications_no_notifications)
-            rvNotifications.layoutManager = LinearLayoutManager(view.context)
             rvNotifications.adapter = adapter
         }
-        adapter.onItemClickListener = { onNotificationClickHandle(it) }
+    }
 
+    override fun onDestroyView(view: View) {
+        view.rvNotifications.adapter = null
+        super.onDestroyView(view)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

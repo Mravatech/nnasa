@@ -23,7 +23,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<PostModel>> by ProcessAccountChangeArrayBroadcastChannel(
+    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> by ProcessAccountChangeArrayBroadcastChannel(
             beforeReConsume = {
                 isCounterReset = false
                 it.send(ListItemEvent.Cleared())

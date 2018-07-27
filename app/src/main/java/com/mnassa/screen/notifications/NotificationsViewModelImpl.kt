@@ -14,11 +14,11 @@ class NotificationsViewModelImpl(
         private val notificationInteractor: NotificationInteractor
 ) : MnassaViewModelImpl(), NotificationsViewModel {
 
-    override val newNotificationChannel: BroadcastChannel<ListItemEvent<NotificationModel>> by ProcessAccountChangeArrayBroadcastChannel(
+    override val newNotificationChannel: BroadcastChannel<ListItemEvent<List<NotificationModel>>> by ProcessAccountChangeArrayBroadcastChannel(
             beforeReConsume = { it.send(ListItemEvent.Cleared()) },
             receiveChannelProvider = { notificationInteractor.loadNewNotifications() })
 
-    override val oldNotificationChannel: BroadcastChannel<ListItemEvent<NotificationModel>> by ProcessAccountChangeArrayBroadcastChannel(
+    override val oldNotificationChannel: BroadcastChannel<ListItemEvent<List<NotificationModel>>> by ProcessAccountChangeArrayBroadcastChannel(
             receiveChannelProvider = { notificationInteractor.loadOldNotifications() })
 
     override fun notificationView(id: String) {

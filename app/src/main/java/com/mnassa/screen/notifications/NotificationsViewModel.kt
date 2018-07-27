@@ -9,8 +9,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  * Created by Peter on 3/6/2018.
  */
 interface NotificationsViewModel : MnassaViewModel {
-    val oldNotificationChannel: BroadcastChannel<ListItemEvent<NotificationModel>>
-    val newNotificationChannel: BroadcastChannel<ListItemEvent<NotificationModel>>
+    val oldNotificationChannel: BroadcastChannel<ListItemEvent<List<NotificationModel>>>
+    val newNotificationChannel: BroadcastChannel<ListItemEvent<List<NotificationModel>>>
 
     fun notificationView(id: String)
 }

@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.map
 import org.kodein.di.generic.instance
 
 /**
@@ -120,17 +119,17 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         return adapter.dataStorage[0]
     }
 
-    private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<PostModel>>) {
+    private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<List<PostModel>>>) {
         channel.consumeEach {
             when (it) {
                 is ListItemEvent.Added -> {
                     adapter.isLoadingEnabled = false
-                    adapter.dataStorage.add(it.item)
+                    adapter.dataStorage.addAll(it.item)
                     triggerScrollPanel()
                 }
-                is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
+                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
+                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
+                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
                 is ListItemEvent.Cleared -> {
                     adapter.isLoadingEnabled = true
                     adapter.dataStorage.clear()

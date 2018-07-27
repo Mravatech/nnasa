@@ -14,7 +14,7 @@ interface PostsInteractor {
     //
     suspend fun preloadFeed(): List<PostModel>
     suspend fun getPreloadedFeed(): List<PostModel>
-    suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     //account wall
     suspend fun loadWall(accountId: String): List<PostModel>
