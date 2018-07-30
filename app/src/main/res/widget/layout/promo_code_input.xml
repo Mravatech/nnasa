@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="center"
-        android:inputType="number"
+        android:inputType="textVisiblePassword"
         android:maxLength="@integer/promo_code_length"
         android:textSize="22sp"
         tools:hint="Your promo code" />
