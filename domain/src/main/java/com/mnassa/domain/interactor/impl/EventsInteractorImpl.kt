@@ -26,7 +26,7 @@ class EventsInteractorImpl(
 
     init {
         launch {
-            viewItemChannel.bufferize(SubscriptionsContainerDelegate(), SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
+            viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
                         eventsRepository.sendViewed(it.item.map { it.id })
@@ -122,7 +122,7 @@ class EventsInteractorImpl(
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
         return produce {
             send(ListItemEvent.Added(loadAllImmediately()))
-            eventsRepository.getEventsFeedChannel().bufferize1().consumeEach { send(it) }
+            eventsRepository.getEventsFeedChannel().withBuffer().consumeEach { send(it) }
         }
     }
 

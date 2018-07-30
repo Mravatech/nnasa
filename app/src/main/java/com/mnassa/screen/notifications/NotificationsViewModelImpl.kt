@@ -27,4 +27,9 @@ class NotificationsViewModelImpl(
         }
     }
 
+    override fun resetCounter() {
+        handleException {
+            notificationInteractor.notificationView(true, true, emptyList())
+        }
+    }
 }

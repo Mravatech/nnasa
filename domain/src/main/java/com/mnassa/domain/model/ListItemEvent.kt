@@ -1,16 +1,11 @@
 package com.mnassa.domain.model
 
-import com.mnassa.core.addons.SubscriptionContainer
-import com.mnassa.core.addons.launchCoroutineUI
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
-import timber.log.Timber
+import kotlinx.coroutines.experimental.launch
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T
@@ -46,25 +41,26 @@ sealed class ListItemEvent<T : Any>() {
     abstract fun toBatched(): ListItemEvent<List<T>>
 }
 
-suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize1(): ReceiveChannel<ListItemEvent<List<E>>> {
+suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(bufferWindow: Long = 2000, sendIfEmpty: Boolean = false): ReceiveChannel<ListItemEvent<List<E>>> {
     val input = this
 
     return produce(context = Unconfined) {
         val output = this
-        val addEventBuffer = ArrayList<E>()
+        val eventsBuffer = ArrayList<E>()
         suspend fun flush() {
-            if (addEventBuffer.isNotEmpty() && output.isActive) {
-                val event: ListItemEvent<List<E>> = ListItemEvent.Added(addEventBuffer.toMutableList())
-                addEventBuffer.clear()
+            if (output.isActive && (sendIfEmpty || eventsBuffer.isNotEmpty())) {
+                val event: ListItemEvent<List<E>> = ListItemEvent.Added(eventsBuffer.toMutableList())
+                eventsBuffer.clear()
                 send(event)
             }
         }
 
-        async(kotlin.coroutines.experimental.coroutineContext) {
+        launch(kotlin.coroutines.experimental.coroutineContext) {
             while (output.isActive) {
-                delay(2_000)
+                delay(bufferWindow)
                 flush()
             }
+            input.cancel()
         }
 
         input.consumeEach {
@@ -72,111 +68,18 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize1(): ReceiveChan
                 return@consumeEach
             }
             when (it) {
-                is ListItemEvent.Added -> addEventBuffer.add(it.item)
-                is ListItemEvent.Changed -> addEventBuffer.add(it.item)
-                is ListItemEvent.Moved -> addEventBuffer.add(it.item)
+                is ListItemEvent.Added -> eventsBuffer.add(it.item)
+                is ListItemEvent.Changed -> eventsBuffer.add(it.item)
+                is ListItemEvent.Moved -> eventsBuffer.add(it.item)
                 is ListItemEvent.Removed -> {
                     flush()
                     send(it.toBatched())
                 }
                 is ListItemEvent.Cleared -> {
-                    addEventBuffer.clear()
+                    eventsBuffer.clear()
                     send(it.toBatched())
                 }
             }
         }
     }
-}
-
-suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
-        subscriptionContainer: SubscriptionContainer,
-        bufferizationTimeMillis: Long = 2000L,
-        maxBufferSize: Int = 500
-): ReceiveChannel<ListItemEvent<List<E>>> {
-    val srcChannel = this
-    var sendItemsJob: Job? = null
-    lateinit var consumeJob: Job
-    var lastItemsSentAt: Long = System.currentTimeMillis()
-
-    val outputChannel = object : RendezvousChannel<ListItemEvent<List<E>>>() {
-        override fun cancel(cause: Throwable?): Boolean {
-            srcChannel.cancel(cause)
-            sendItemsJob?.cancel()
-            consumeJob.cancel()
-            return super.cancel(cause)
-        }
-    }
-
-    consumeJob = subscriptionContainer.launchCoroutineUI {
-        val addItemsCache: MutableList<E> = ArrayList()
-
-        lateinit var sendItems: suspend () -> Unit
-
-        sendItems = suspend {
-            outputChannel.send(ListItemEvent.Added(addItemsCache.toMutableList()))
-            addItemsCache.clear()
-            lastItemsSentAt = System.currentTimeMillis()
-
-            sendItemsJob?.cancel()
-            sendItemsJob = subscriptionContainer.launchCoroutineUI {
-                delay(bufferizationTimeMillis)
-                if (isActive) {
-                    sendItems()
-                }
-            }
-        }
-
-        //emit empty list when no items consumed
-        sendItemsJob = subscriptionContainer.launchCoroutineUI {
-            delay(bufferizationTimeMillis)
-            if (this.isActive) {
-                sendItems()
-            }
-        }
-
-        try {
-            consumeEach {
-                if (outputChannel.isClosedForSend) {
-                    return@consumeEach
-                }
-
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        addItemsCache.add(it.item)
-
-                        if (System.currentTimeMillis() - lastItemsSentAt < bufferizationTimeMillis && addItemsCache.size < maxBufferSize) {
-                            sendItemsJob?.cancel()
-                            sendItemsJob = subscriptionContainer.launchCoroutineUI {
-                                delay(bufferizationTimeMillis)
-                                sendItems()
-                            }
-                        } else {
-                            sendItems()
-                        }
-                    }
-                    is ListItemEvent.Changed -> {
-                        sendItems()
-                        outputChannel.send(ListItemEvent.Changed(listOf(it.item)))
-                    }
-                    is ListItemEvent.Moved -> {
-                        sendItems()
-                        outputChannel.send(ListItemEvent.Moved(listOf(it.item)))
-                    }
-                    is ListItemEvent.Removed -> {
-                        sendItems()
-                        outputChannel.send(ListItemEvent.Removed(listOf(it.item)))
-                    }
-                    is ListItemEvent.Cleared -> {
-                        addItemsCache.clear()
-                        outputChannel.send(ListItemEvent.Cleared())
-                    }
-                }
-                Unit
-            }
-        } catch (e: Exception) {
-            outputChannel.close(e)
-        }
-    }
-
-    return outputChannel
 }

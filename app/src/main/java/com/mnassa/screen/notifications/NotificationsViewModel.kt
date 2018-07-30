@@ -13,4 +13,5 @@ interface NotificationsViewModel : MnassaViewModel {
     val newNotificationChannel: BroadcastChannel<ListItemEvent<List<NotificationModel>>>
 
     fun notificationView(id: String)
+    fun resetCounter()
 }

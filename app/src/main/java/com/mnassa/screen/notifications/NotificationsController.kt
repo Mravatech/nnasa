@@ -90,7 +90,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
     }
 
     override fun onPageSelected() {
-        //do nothing here
+        viewModel.resetCounter()
     }
 
     override fun scrollToTop() {

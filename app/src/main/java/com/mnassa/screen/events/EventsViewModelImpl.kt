@@ -5,7 +5,6 @@ import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job

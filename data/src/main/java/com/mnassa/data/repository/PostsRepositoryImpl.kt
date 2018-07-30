@@ -139,9 +139,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                     .document(groupId)
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-                    .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                    .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                             exceptionHandler = exceptionHandler,
-                            mapper = { mapPost(it, groupId) }
+                            mapper = { it.toFullModel(groupId) }
                     )
         }
     }
@@ -151,8 +151,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                     .document(groupId)
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-                    .awaitList<PostDbEntity>()
-                    .mapNotNull { mapPost(it, groupId) }
+                    .awaitList<PostShortDbEntity>()
+                    .mapNotNull { it.toFullModel(groupId) }
         }
     }
 
@@ -320,10 +320,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun PostShortDbEntity.toFullModel(): PostModel? {
+    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null): PostModel? {
         var result = getFromDb(id)
         if ((result?.updatedAt?.time ?: 0) < updatedAt) {
-            result = getFromFirestoreChannel(id).consume { receive() }
+            result = getFromFirestoreChannel(id, groupId).consume { receive() }
         }
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 

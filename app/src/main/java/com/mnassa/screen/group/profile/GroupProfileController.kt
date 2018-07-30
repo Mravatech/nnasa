@@ -71,7 +71,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.newsFeedChannel.consumeEach {
+            viewModel.getNewsFeedChannel().consumeEach {
                 when (it) {
                     is ListItemEvent.Added -> {
                         adapter.isLoadingEnabled = false

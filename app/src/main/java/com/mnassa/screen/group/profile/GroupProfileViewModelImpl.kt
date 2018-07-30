@@ -2,7 +2,6 @@ package com.mnassa.screen.group.profile
 
 import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
-import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
@@ -11,10 +10,7 @@ import com.mnassa.extensions.isAdmin
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -31,7 +27,6 @@ class GroupProfileViewModelImpl(
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
-    override val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> = ConflatedBroadcastChannel()
     override val groupPermissionsChannel: BroadcastChannel<GroupPermissions> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,16 +44,18 @@ class GroupProfileViewModelImpl(
         }
 
         handleException {
-            newsFeedChannel.send(ListItemEvent.Added(postsInteractor.loadAllByGroupIdImmediately(groupId)))
-            postsInteractor.loadAllByGroupId(groupId).bufferize(this).consumeTo(newsFeedChannel)
-        }
-
-        handleException {
             groupChannel.consumeEach {
                 groupPermissionsChannel.send(if (it.isAdmin) GroupPermissions.ADMIN_PERMISSIONS else it.permissions)
             }
         }
 
+    }
+
+    override suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return produce {
+            send(ListItemEvent.Added(postsInteractor.loadAllByGroupIdImmediately(groupId)))
+            postsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
+        }
     }
 
     override fun onAttachedToWindow(post: PostModel) {

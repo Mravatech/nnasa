@@ -1,6 +1,5 @@
 package com.mnassa.domain.interactor.impl
 
-import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -26,7 +25,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return produce {
             send(ListItemEvent.Added(getPreloadedFeed()))
-            postsRepository.loadFeedWithChangesHandling().bufferize1().consumeEach { send(it) }
+            postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
         }
     }
     override suspend fun loadWall(accountId: String): List<PostModel> = postsRepository.loadWall(accountId)
@@ -40,7 +39,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     init {
         launch {
-            viewItemChannel.bufferize(SubscriptionsContainerDelegate(), SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
+            viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
                         postsRepository.sendViewed(it.item.map { it.id })

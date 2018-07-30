@@ -28,22 +28,16 @@
         <item name="android:layout_height">@dimen/chat_room_icon_size</item>
     </style>
 
-    <style name="ChatRoom.UserNameItem">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">@dimen/chat_room_user_name_size</item>
-        <item name="android:textColor">@color/black_transparent_90</item>
+    <style name="ChatRoom.UserNameItem" parent="MnassaHeader2">
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="ChatRoom.LastMessageItem">
-        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">@dimen/chat_room_message_size</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">normal</item>
         <item name="android:maxLines">2</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:lineSpacingExtra">@dimen/chat_room_message_line_space</item>
     </style>
 
     <style name="ChatRoom.TimeAgoItem">
@@ -115,7 +109,6 @@
     <dimen name="chat_room_unread_count_margin_top">4dp</dimen>
     <dimen name="chat_room_no_content_text_size">16sp</dimen>
     <dimen name="chat_room_user_name_size">16sp</dimen>
-    <dimen name="chat_room_message_line_space">6sp</dimen>
     <dimen name="chat_room_message_size">14sp</dimen>
     <dimen name="chat_room_base_margin">16dp</dimen>
     <dimen name="chat_room_margin_time_ago_start">8dp</dimen>
