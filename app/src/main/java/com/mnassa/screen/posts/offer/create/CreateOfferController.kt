@@ -172,7 +172,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     (sCategory.selectedItem as CategoryWrapper?)?.category?.let { category ->
-                        if((sSubCategory.selectedItem as CategoryWrapper?)?.category?.parentId != category.id) {
+                        if ((sSubCategory.selectedItem as CategoryWrapper?)?.category?.parentId != category.id) {
                             launchCoroutineUI { initSubCategorySpinner(category) }
                         }
                     }
@@ -235,7 +235,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             actvPlace.setText(offer.locationPlace?.placeName?.toString())
 
             etPrice.setText(if (offer.price > 0.0) offer.price.formatAsMoney().toString() else null)
-            sharingOptions.privacyConnections = offer.privacyConnections
+            sharingOptions = PostPrivacyOptions(offer.privacyType, offer.privacyConnections)
             applyShareOptionsChanges()
         }
     }
@@ -281,12 +281,28 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             val perPost = viewModel.getShareOfferPostPrice()
             val perPerson = viewModel.getShareOfferPostPerUserPrice() ?: 0L
 
+
             if (perPost != null) {
                 getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} ($perPost)"
             } else {
-                getViewSuspend().tvShareOptions?.text = "${sharingOptions.format()} (${perPerson * sharingOptions.privacyConnections.size})"
+                getViewSuspend().tvShareOptions?.text = when {
+                    sharingOptions.privacyType is PostPrivacyType.WORLD -> {
+                        val promotePrice = viewModel.getPromotePostPrice()
+                        "${sharingOptions.format()} ($promotePrice)"
+                    }
+                    sharingOptions.privacyType is PostPrivacyType.PUBLIC -> {
+                        val connectionsCount = viewModel.getConnectionsCount() - 1 //minus ValueCenter
+                        "${sharingOptions.format()} (${perPerson * connectionsCount})"
+                    }
+                    sharingOptions.privacyType is PostPrivacyType.PRIVATE -> {
+                        "${sharingOptions.format()} (${perPerson * sharingOptions.privacyConnections.size})"
+                    }
+                    sharingOptions.privacyType is PostPrivacyType.GROUP -> {
+                        sharingOptions.format()
+                    }
+                    else -> "(${perPerson * sharingOptions.privacyConnections.size})"
+                }
             }
-
         }
     }
 

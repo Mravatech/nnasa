@@ -85,7 +85,8 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                 open(postDetailsFactory.newInstance(post))
             } else {
                 val position = adapter.dataStorage.indexOf(chatMessageModel)
-                view.rvMessages.scrollToPosition(position)
+                if (position >= 0)
+                    view.rvMessages.scrollToPosition(position + 1)
             }
         }
 
@@ -135,9 +136,12 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         view.btnSend.setOnClickListener {
             val text = view.etWriteMessage.text.toString().trim()
             if (text.isNotBlank()) {
-                viewModel.sendMessage(text, MessagesAdapter.TEXT_TYPE, replyMessageModel, replyPostModel)
-                view.etWriteMessage.text = null
-                view.ivReplyClose.callOnClick()
+                launchCoroutineUI {
+                    if (viewModel.sendMessage(text, MessagesAdapter.TEXT_TYPE, replyMessageModel, replyPostModel)) {
+                        view.etWriteMessage.text = null
+                        view.ivReplyClose.callOnClick()
+                    }
+                }
             }
         }
     }

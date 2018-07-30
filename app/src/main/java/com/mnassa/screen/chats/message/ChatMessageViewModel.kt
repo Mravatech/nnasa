@@ -10,6 +10,6 @@ interface ChatMessageViewModel : MnassaViewModel {
     val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>>
     val currentUserAccountId: String
 
-    fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?)
+    suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?): Boolean
     fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean)
 }

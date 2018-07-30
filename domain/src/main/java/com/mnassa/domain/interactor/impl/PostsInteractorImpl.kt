@@ -20,12 +20,13 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val tagInteractor: TagInteractor,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
-    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
-    override suspend fun loadAllImmediately(): List<PostModel> = postsRepository.loadAllImmediately()
+    override suspend fun preloadFeed(): List<PostModel> = postsRepository.preloadFeed()
+    override suspend fun getPreloadedFeed(): List<PostModel> = postsRepository.getPreloadedFeed()
+    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadFeedWithChangesHandling()
+    override suspend fun loadWall(accountId: String): List<PostModel> = postsRepository.loadWall(accountId)
+    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadWallWithChangesHandling(accountId)
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
-    override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id, authorId)
-    override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
-    override suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel> = postsRepository.loadAllUserPostByAccountIdImmediately(accountId)
+    override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.loadAllByGroupIdImmediately(groupId)
 
@@ -56,7 +57,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun resetCounter() = postsRepository.resetCounter()
 
-    override suspend fun createNeed(post: RawPostModel): PostModel {
+    override suspend fun createNeed(post: RawPostModel) {
         return postsRepository.createNeed(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)
@@ -69,7 +70,11 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 processedTags = processTags(post)))
     }
 
-    override suspend fun createGeneralPost(post: RawPostModel): PostModel {
+    override suspend fun changeStatus(id: String, status: ExpirationType) {
+        postsRepository.changeStatus(id, status)
+    }
+
+    override suspend fun createGeneralPost(post: RawPostModel) {
         return postsRepository.createGeneralPost(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)))
@@ -82,7 +87,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 processedTags = processTags(post)))
     }
 
-    override suspend fun createOffer(post: RawPostModel): OfferPostModel {
+    override suspend fun createOffer(post: RawPostModel) {
         return postsRepository.createOffer(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)))

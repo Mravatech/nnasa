@@ -45,7 +45,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
                     android:maxLength="@integer/max_offer_title_length" />
             </android.support.design.widget.TextInputLayout>
 
@@ -64,7 +63,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
                     android:maxLength="@integer/max_offer_desc_length" />
             </android.support.design.widget.TextInputLayout>
 

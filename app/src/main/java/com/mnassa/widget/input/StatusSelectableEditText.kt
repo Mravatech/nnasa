@@ -27,7 +27,8 @@ class StatusSelectableEditText : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val statuses = listOf(fromDictionary(R.string.reg_company_status_commercial),
+    private val statuses = listOf(
+            fromDictionary(R.string.reg_company_status_commercial),
             fromDictionary(R.string.reg_company_status_governmental),
             fromDictionary(R.string.reg_company_status_non_profit)
     )
@@ -38,11 +39,11 @@ class StatusSelectableEditText : LinearLayout {
         tvCompanyStatusLabel.hint = fromDictionary(R.string.reg_company_status_label)
 
         tvCompanyStatusView.setOnClickListener {
-            dialogHelper.showChooseCompanyStatusDialog(context, statuses, occupationPositionInList, {
+            dialogHelper.showChooseCompanyStatusDialog(context, statuses, occupationPositionInList) {
                 tvCompanyStatusLabel.visibility = View.VISIBLE
                 tvCompanyStatusView.text = statuses[it]
                 occupationPositionInList = it
-            })
+            }
         }
     }
 

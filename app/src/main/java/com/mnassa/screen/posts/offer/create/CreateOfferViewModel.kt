@@ -24,4 +24,5 @@ interface CreateOfferViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
     fun applyChanges(post: RawPostModel)
     suspend fun canPromotePost(): Boolean
     suspend fun getPromotePostPrice(): Long
+    suspend fun getConnectionsCount(): Long
 }

@@ -64,7 +64,8 @@ val PostModel.formattedText: CharSequence?
                 val spannable = SpannableStringBuilder(fromDictionary(R.string.recommend_prefix))
                 spannable.append(" ")
                 val nameStart = spannable.length
-                spannable.append(this.recommendedProfile?.formattedName ?: fromDictionary(R.string.deleted_user))
+                spannable.append(this.recommendedProfile?.formattedName
+                        ?: fromDictionary(R.string.deleted_user))
                 spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(App.context, R.color.accent)), nameStart, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 if (!text.isNullOrBlank()) {
@@ -139,7 +140,20 @@ fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiratio
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
 
-val PostModel.canBeShared: Boolean get() = privacyType !is PostPrivacyType.PRIVATE && !isMyPost()
+val PostModel.canBeShared: Boolean
+    get() = privacyType !is PostPrivacyType.PRIVATE &&
+            !isMyPost() &&
+            (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE) &&
+            this !is OfferPostModel &&
+            (if (this is RecommendedProfilePostModel) this.recommendedProfile != null else true)
+
+val PostModel.canRecommend: Boolean get() =
+    statusOfExpiration == null ||
+            statusOfExpiration is ExpirationType.ACTIVE
+
+val PostModel.canBeEdited: Boolean get() = isMyPost() && (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE)
+
+val PostModel.statusCanBeChanged: Boolean get() = canBeEdited && type is PostType.NEED
 
 suspend fun PostModel?.canBePromoted(): Boolean {
     if (this?.privacyType is PostPrivacyType.WORLD) return false

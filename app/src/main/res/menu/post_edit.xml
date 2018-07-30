@@ -13,4 +13,12 @@
     <item
         android:id="@+id/action_post_promote"
         android:title="" />
+
+    <item
+        android:id="@+id/action_post_close"
+        android:title="" />
+
+    <item
+        android:id="@+id/action_post_fulfill"
+        android:title="" />
 </menu>

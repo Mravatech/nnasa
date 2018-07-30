@@ -7,10 +7,7 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -45,9 +42,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         RecommendController.OnRecommendPostResult {
     override val layoutId: Int = R.layout.controller_need_details
     protected val postId by lazy { requireNotNull(args.getString(EXTRA_POST_ID)) }
-    protected val postAuthorId by lazy { requireNotNull(args.getString(EXTRA_POST_AUTHOR_ID)) }
     protected var post: PostModel? = null
-    override val viewModel: NeedDetailsViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
+    override val viewModel: NeedDetailsViewModel by instance(arg = getParams(args))
     override var sharingOptions = PostPrivacyOptions.DEFAULT
         set(value) = viewModel.repost(value)
     private val popupMenuHelper: PopupMenuHelper by instance()
@@ -115,7 +111,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 post = post,
                 onEditPost = { open(CreateNeedController.newInstanceEditMode(post)) },
                 onDeletePost = { viewModel.delete() },
-                onPromotePost = { viewModel.promote() }
+                onPromotePost = { viewModel.promote() },
+                changeStatus = { viewModel.changeStatus(it) }
         )
     }
 
@@ -172,6 +169,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvViewsCount.text = fromDictionary(R.string.need_views_count).format(post.counters.views)
             ivRepost.setOnClickListener { openSharingOptionsScreen() }
             tvRepostsCount.text = post.counters.reposts.toString()
+            ivRepost.isInvisible = !post.canBeShared
+            tvRepostsCount.visibility = ivRepost.visibility
 
             //expiration
             tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)
@@ -190,6 +189,13 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             btnRecommend.setOnClickListener { openRecommendScreen(post, commentsWrapper.accountsToRecommend.map { it.id }) }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
+
+            val parentController = parentController
+            if (parentController is CommentsWrapperController) {
+                launchCoroutineUI {
+                    parentController.bindCanRecommend(post.canRecommend)
+                }
+            }
         }
     }
 
@@ -220,7 +226,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                                 viewModel.postChannel.consume { receive() })
                     }
                 }
-                makePostActionsVisible()
+                if (post.canRecommend) makePostActionsVisible()
+                else makePostActionsGone()
             }
         }
     }
@@ -279,5 +286,13 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         private const val OTHER = "other"
 
         //to create instance, use PostDetailsFactory
+
+        fun getParams(args: Bundle): NeedDetailsViewModel.ViewModelParams {
+            return NeedDetailsViewModel.ViewModelParams (
+                    postId = args.getString(EXTRA_POST_ID),
+                    postAuthorId = args.getString(EXTRA_POST_AUTHOR_ID),
+                    post = args.getSerializable(EXTRA_POST_MODEL) as PostModel?
+            )
+        }
     }
 }

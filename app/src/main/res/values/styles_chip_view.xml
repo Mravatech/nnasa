@@ -10,7 +10,6 @@
         <item name="android:background">@color/transparent</item>
         <item name="android:imeOptions">actionDone</item>
         <item name="android:minWidth">@dimen/et_chip_min_width</item>
-        <item name="android:inputType">text</item>
     </style>
 
     <style name="ChipTextHeader" parent="ChipCommon">

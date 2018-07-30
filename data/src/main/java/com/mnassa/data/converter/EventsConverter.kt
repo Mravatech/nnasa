@@ -166,7 +166,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 locationDescription = (locationType as? EventLocationType.Specified)?.description,
                 allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC,
                 privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() && input.privacy.privacyType is PostPrivacyType.PRIVATE }?.toList(),
-                groups = input.groupIds.toList().takeIf { it.isNotEmpty() }
+                groups = input.groupIds.toList().takeIf { it.isNotEmpty() },
+                needPush = input.needPush
         )
     }
 }

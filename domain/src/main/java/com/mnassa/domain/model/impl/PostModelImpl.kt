@@ -26,7 +26,7 @@ open class PostModelImpl(
         override val author: ShortAccountModel,
         override val copyOwnerId: String?,
         override val price: Double,
-        override val autoSuggest: PostAutoSuggest,
+        override var autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
         override var groupIds: Set<String>,
         override var groups: List<GroupModel>
@@ -88,6 +88,10 @@ open class PostModelImpl(
     override fun toString(): String {
         return "PostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, groupId=$groupIds)"
     }
+
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
 }
 
 class InfoPostImpl(
@@ -110,7 +114,7 @@ class InfoPostImpl(
         override val author: ShortAccountModel,
         override val copyOwnerId: String?,
         override val price: Double,
-        override val autoSuggest: PostAutoSuggest,
+        override var autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
         override var groupIds: Set<String>,
         override var groups: List<GroupModel>,
@@ -145,6 +149,10 @@ class InfoPostImpl(
     override fun toString(): String {
         return "InfoPostImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', groupId=$groupIds)"
     }
+
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
 }
 
 class OfferPostModelImpl(
@@ -167,7 +175,7 @@ class OfferPostModelImpl(
         override val author: ShortAccountModel,
         override val copyOwnerId: String?,
         override val price: Double,
-        override val autoSuggest: PostAutoSuggest,
+        override var autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
         override var groupIds: Set<String>,
         override var groups: List<GroupModel>,
@@ -202,6 +210,10 @@ class OfferPostModelImpl(
     override fun toString(): String {
         return "OfferPostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, title='$title', category=$category, subCategory=$subCategory, groupId=$groupIds)"
     }
+
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
 }
 
 class RecommendedProfilePostModelImpl(
@@ -224,7 +236,7 @@ class RecommendedProfilePostModelImpl(
         override val author: ShortAccountModel,
         override val copyOwnerId: String?,
         override val price: Double,
-        override val autoSuggest: PostAutoSuggest,
+        override var autoSuggest: PostAutoSuggest,
         override val repostAuthor: ShortAccountModel?,
         override var groupIds: Set<String>,
         override var groups: List<GroupModel>,
@@ -317,6 +329,10 @@ class RecommendedProfilePostModelImpl(
 
     override fun toString(): String {
         return "RecommendedProfilePostModelImpl(id='$id', allConnections=$allConnections, type=$type, createdAt=$createdAt, attachments=$attachments, locationPlace=$locationPlace, originalCreatedAt=$originalCreatedAt, originalId='$originalId', privacyConnections=$privacyConnections, privacyType=$privacyType, tags=$tags, text=$text, updatedAt=$updatedAt, counters=$counters, author=$author, copyOwnerId=$copyOwnerId, price=$price, autoSuggest=$autoSuggest, repostAuthor=$repostAuthor, recommendedProfile=$recommendedProfile, offers=$offers, groupId=$groupIds)"
+    }
+
+    companion object {
+        private const val serialVersionUID: Long = 1
     }
 
 }

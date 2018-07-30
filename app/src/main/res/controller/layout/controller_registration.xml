@@ -126,17 +126,38 @@
                 tools:text="Organization" />
         </LinearLayout>
 
-        <!--</FrameLayout>-->
 
-        <com.aurelhubert.ahbottomnavigation.AHBottomNavigationViewPager
-            android:id="@+id/vpRegistration"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_height="match_parent"
             android:layout_below="@id/llAccountTypePersonal"
-            android:layout_marginTop="@dimen/spacing_vertical"
-            tools:background="#9c9cce" />
-    </RelativeLayout>
+            android:layout_marginTop="@dimen/spacing_vertical">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/padding_horizontal"
+                android:paddingStart="@dimen/padding_horizontal">
+
+                <include
+                    android:id="@+id/llPersonal"
+                    layout="@layout/sub_reg_personal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    tools:visibility="visible"/>
+
+                <include
+                    android:id="@+id/llOrganization"
+                    layout="@layout/sub_reg_company"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
+
+
+            </FrameLayout>
+        </ScrollView>
+    </RelativeLayout>
 
 </LinearLayout>

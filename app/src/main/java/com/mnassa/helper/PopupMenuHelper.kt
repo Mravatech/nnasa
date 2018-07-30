@@ -7,13 +7,11 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.mnassa.R
+import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.extensions.canBePromoted
-import com.mnassa.extensions.canBeShared
-import com.mnassa.extensions.getPromotionPrice
-import com.mnassa.extensions.isAdmin
+import com.mnassa.extensions.*
 import com.mnassa.translation.fromDictionary
 
 /**
@@ -26,16 +24,27 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
             post: PostModel,
             onEditPost: () -> Unit,
             onDeletePost: () -> Unit,
-            onPromotePost: () -> Unit
+            onPromotePost: () -> Unit,
+            changeStatus: (ExpirationType) -> Unit = { }
     ) {
         val popup = PopupMenu(view.context, view)
         popup.menuInflater.inflate(R.menu.post_edit, popup.menu)
         popup.menu.findItem(R.id.action_post_edit).title = fromDictionary(R.string.need_action_edit)
         popup.menu.findItem(R.id.action_post_delete).title = fromDictionary(R.string.need_action_delete)
         popup.menu.findItem(R.id.action_post_promote).title = fromDictionary(R.string.post_promote_menu)
+        popup.menu.findItem(R.id.action_post_close).title = fromDictionary(R.string.post_close)
+        popup.menu.findItem(R.id.action_post_fulfill).title = fromDictionary(R.string.post_fulfill)
         if (!post.canBePromoted()) {
             popup.menu.removeItem(R.id.action_post_promote)
         }
+        if (!post.canBeEdited) {
+            popup.menu.removeItem(R.id.action_post_edit)
+        }
+        if (!post.statusCanBeChanged) {
+            popup.menu.removeItem(R.id.action_post_close)
+            popup.menu.removeItem(R.id.action_post_fulfill)
+        }
+
         val promotionPrice = post.getPromotionPrice()
 
         popup.setOnMenuItemClickListener { item ->
@@ -43,6 +52,9 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
                 R.id.action_post_edit -> onEditPost()
                 R.id.action_post_delete -> dialogHelper.showConfirmPostRemovingDialog(view.context, onDeletePost)
                 R.id.action_post_promote -> dialogHelper.showConfirmPostPromotingDialog(view.context, promotionPrice, onPromotePost)
+                R.id.action_post_close -> changeStatus(ExpirationType.CLOSED)
+                R.id.action_post_fulfill -> changeStatus(ExpirationType.FULFILLED)
+
             }
             true
         }

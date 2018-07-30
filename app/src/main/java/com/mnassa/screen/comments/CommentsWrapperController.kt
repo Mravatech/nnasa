@@ -58,6 +58,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     private val wrappedControllerParams by lazy { args.getBundle(EXTRA_CONTROLLER_ARGS) }
     private val commentsRewardModel by lazy { args.getSerializable(EXTRA_COMMENT_OWNER) as CommentsRewardModel }
     private val wrappedController = StateExecutor<Controller?, CommentsWrapperCallback>(null) { it is CommentsWrapperCallback }
+    private val initializedContainer = StateExecutor<Unit?, Unit>(null) { it != null }
     //
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
@@ -131,7 +132,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
             rvContent.adapter = commentsAdapter
             initializeContainer()
             bindToolbar(toolbar)
-
         }
 
         launchCoroutineUI {
@@ -160,6 +160,11 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                 }
             }
         }
+    }
+
+    override fun onViewDestroyed(view: View) {
+        initializedContainer.value = null
+        super.onViewDestroyed(view)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -213,8 +218,9 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
             bindEditedComment(editedComment, false)
             bindReplyTo(replyTo)
-            getCommentsContainer().recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
-            getCommentsContainer().attachmentsPanel?.isGone = attachmentsAdapter.dataStorage.isEmpty()
+            container.recommendPanel?.isGone = accountsToRecommendAdapter.dataStorage.isEmpty()
+            container.attachmentsPanel?.isGone = attachmentsAdapter.dataStorage.isEmpty()
+            initializedContainer.value = Unit
         }
     }
 
@@ -245,8 +251,14 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun openKeyboardOnComment() {
         launchCoroutineUI {
-            getCommentsContainer().etCommentText?.apply { showKeyboard(this) }
+            getCommentsContainer()?.etCommentText?.apply { showKeyboard(this) }
         }
+    }
+
+    suspend fun bindCanRecommend(canRecommend: Boolean) {
+        //
+        initializedContainer.await()
+        getCommentsContainer().ivCommentRecommend?.isGone = !canRecommend
     }
 
     private fun inflateHeader(parent: ViewGroup): View {
@@ -275,20 +287,25 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         val emptyParamConstructor = wrappedControllerClass.constructors.firstOrNull { it.parameterTypes.isEmpty() }
         val oneParamConstructor = wrappedControllerClass.constructors.firstOrNull { it.parameterTypes.size == 1 && it.parameterTypes[0] == Bundle::class.java }
 
-        return (if (emptyParamConstructor != null) emptyParamConstructor.newInstance() else requireNotNull(oneParamConstructor).newInstance(wrappedControllerParams)) as Controller
+        return (if (emptyParamConstructor != null) emptyParamConstructor.newInstance()
+        else requireNotNull(oneParamConstructor).newInstance(wrappedControllerParams)) as Controller
     }
 
     private fun onPostCommentClick() {
         with(view ?: return) {
             val editedCommentLocal = editedComment
-            if (editedCommentLocal != null) {
-                viewModel.editComment(makeCommentModel())
-            } else viewModel.createComment(makeCommentModel())
-            etCommentText.text = null
-            replyTo = null
-            editedComment = null
-            bindRecommendedAccounts(emptyList())
-            bindCommentAttachments(emptyList())
+            launchCoroutineUI {
+                val result = if (editedCommentLocal != null) {
+                    viewModel.editComment(makeCommentModel())
+                } else viewModel.createComment(makeCommentModel())
+                if (result) {
+                    etCommentText.text = null
+                    replyTo = null
+                    editedComment = null
+                    bindRecommendedAccounts(emptyList())
+                    bindCommentAttachments(emptyList())
+                }
+            }
         }
     }
 

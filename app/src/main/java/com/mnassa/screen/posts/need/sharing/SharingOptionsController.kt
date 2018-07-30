@@ -14,6 +14,7 @@ import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.formattedName
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -222,7 +223,7 @@ suspend fun PostPrivacyOptions.format(): CharSequence {
                 privacyType is PostPrivacyType.GROUP -> privacyType.group.formattedName
                 privacyConnections.isNotEmpty() -> {
                     val userInteractor: UserProfileInteractor = App.context.getInstance()
-                    val usernames = privacyConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.userName }
+                    val usernames = privacyConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.formattedName }
                     if (privacyConnections.size <= 2) {
                         usernames
                     } else {

@@ -48,11 +48,16 @@ dependencies {
     implementation deps.firebase.storage
     implementation deps.firebase.fcm
     implementation deps.firebase.firestore
+
     //network
     implementation deps.network.retrofit
     implementation deps.network.coroutineAdapter
     implementation deps.network.gsonconverter
     implementation deps.network.logging
+
+    //room
+    implementation deps.archComponents.roomRuntime
+    kapt deps.archComponents.roomProcessor
 
     //mapper
     implementation deps.mapper.core
@@ -65,4 +70,5 @@ dependencies {
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.androidExtensions
     implementation deps.coroutines.core
+    implementation deps.coroutines.android
 }

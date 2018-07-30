@@ -123,3 +123,5 @@ suspend fun EventModel?.canBePromoted(): Boolean {
 suspend fun EventModel.getPromotionPrice(): Long {
     return App.context.getInstance<EventsInteractor>().getPromotePostPrice()
 }
+
+val EventModel.canMarkParticipants: Boolean get() = isMyEvent() && !(status is EventStatus.CLOSED || status is EventStatus.ANNULED)

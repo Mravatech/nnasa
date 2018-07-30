@@ -12,8 +12,14 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface PostsViewModel : MnassaViewModel {
     val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
+    val newsFeedUpdatesChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
     val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>
+
     val permissionsChannel: BroadcastChannel<PermissionsModel>
     fun onAttachedToWindow(post: PostModel)
     fun hideInfoPost(post: PostModel)
+
+    fun saveScrollPosition(post: PostModel)
+    fun restoreScrollPosition(): String?
+    fun resetScrollPosition()
 }

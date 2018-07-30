@@ -29,4 +29,5 @@ interface GroupsInteractor {
     suspend fun updateGroup(group: RawGroupModel)
 
     suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>>
+    suspend fun hasAnyGroup(): Boolean
 }

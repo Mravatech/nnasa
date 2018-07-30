@@ -7,13 +7,14 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
-import com.mnassa.extensions.isMyEvent
+import com.mnassa.extensions.canMarkParticipants
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.withContext
 import java.util.concurrent.ConcurrentSkipListSet
 
 /**
@@ -39,8 +40,9 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                 if (it != null) {
                     eventChannel.send(it)
                 } else {
-                    //TODO
+                    //TODO - do nothing here or close screen
                 }
+                loadTickets()
             }
         }
 
@@ -73,9 +75,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
         loadTicketsJob?.cancel()
         loadTicketsJob = handleException {
             eventsInteractor.getTicketsChannel(eventId).consumeEach {
-                async {
-                    val attendedUsers = eventsInteractor.getAttendedUsers(eventId).mapNotNullTo(HashSet()) { it.takeIf { it.isPresent }?.user?.id }
-
+                withContext(DefaultDispatcher) {
                     var hasConnections = false
                     var hasOtherUsers = false
                     val participants = it.mapNotNullTo(ArrayList<EventParticipantItem>(it.size)) {
@@ -84,15 +84,15 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                             hasOtherUsers = hasOtherUsers || !it.isInConnections
                         }
                     }
-                    val event = eventChannel.openSubscription().consume { receive() }
+                    val event = eventChannel.consume { receive() }
                     if (hasConnections) {                                               //TODO: cannot load event within notifications
-                        participants += EventParticipantItem.ConnectionsHeader(event.isMyEvent())
+                        participants += EventParticipantItem.ConnectionsHeader(event.canMarkParticipants)
                     }
                     if (hasOtherUsers) {
-                        participants += EventParticipantItem.OtherHeader(!hasConnections && event.isMyEvent())
+                        participants += EventParticipantItem.OtherHeader(!hasConnections && event.canMarkParticipants)
                     }
                     participantsChannel.send(participants)
-                }.await()
+                }
             }
         }
     }

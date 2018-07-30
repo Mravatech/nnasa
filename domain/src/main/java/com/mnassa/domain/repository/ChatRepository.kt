@@ -13,6 +13,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 interface ChatRepository {
     suspend fun listOfChats(): ReceiveChannel<ListItemEvent<ChatRoomModel>>
+    suspend fun listOfChatsImmediately(): List<ChatRoomModel>
     suspend fun listOfMessages(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<ChatMessageModel>>
     suspend fun getChatIdByUserId(accountId: String): String
     suspend fun getSupportChat(): String

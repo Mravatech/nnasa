@@ -40,18 +40,13 @@ class GroupInviteConnectionsController(args: Bundle) : MnassaControllerImpl<Grou
 
         adapter.onSendInviteClick = viewModel::sendInvite
         adapter.onRevokeInviteClick = viewModel::revokeInvite
+        adapter.onRemoveUserClick = viewModel::removeUser
 
         adapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.connectionsChannel.consumeEach {
                 adapter.set(it)
                 adapter.isLoadingEnabled = false
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.alreadyInvitedUsersChannel.consumeEach {
-                adapter.setNotUnselectableUsers(it)
             }
         }
 

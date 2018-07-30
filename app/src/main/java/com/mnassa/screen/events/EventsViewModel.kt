@@ -11,4 +11,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 interface EventsViewModel : MnassaViewModel {
     val eventsFeedChannel: BroadcastChannel<ListItemEvent<List<EventModel>>>
     fun onAttachedToWindow(event: EventModel)
+
+    fun saveScrollPosition(event: EventModel)
+    fun restoreScrollPosition(): String?
+    fun resetScrollPosition()
 }

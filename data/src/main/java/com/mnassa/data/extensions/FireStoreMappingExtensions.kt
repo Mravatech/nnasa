@@ -12,7 +12,7 @@ import timber.log.Timber
 //////////////////////////////////////////// MAPPING ///////////////////////////////////////////////
 
 internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: QueryDocumentSnapshot?): T? {
-    if (dataSnapshot == null || dataSnapshot.data == null) return null
+    if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.data == null) return null
     if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
 
     val jsonElement: JsonElement = dataSnapshot.data.toJson<T>()
@@ -24,14 +24,14 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: QueryDocument
 internal inline fun <reified T : Any> QueryDocumentSnapshot?.mapSingle(): T? = mapSingleValue(this)
 
 internal inline fun <reified T : Any> mapListValue(dataSnapshot: QuerySnapshot?): List<T> {
-    if (dataSnapshot == null) return emptyList()
+    if (dataSnapshot == null || dataSnapshot.isEmpty) return emptyList()
     return dataSnapshot.documents.mapNotNull { it.mapSingle<T>() }
 }
 
 internal inline fun <reified T : Any> QuerySnapshot?.mapList(): List<T> = mapListValue(this)
 
 internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DocumentSnapshot?): T? {
-    if (dataSnapshot == null) return null
+    if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.data == null) return null
     if (dataSnapshot is T) return dataSnapshot //parse dataSnapshot manually
 
     val jsonElement: JsonElement = dataSnapshot.data.toJson<T>()
@@ -43,7 +43,7 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DocumentSnaps
 internal inline fun <reified T : Any> DocumentSnapshot?.mapSingle(): T? = mapSingleValue(this)
 
 internal inline fun <reified T : Any> mapListValues(dataSnapshot: DocumentSnapshot?): List<T> {
-    if (dataSnapshot == null) return emptyList()
+    if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.data == null) return emptyList()
     val resultList = ArrayList<T>()
 
     dataSnapshot.data?.entries?.forEachIndexed { index, entry ->

@@ -107,7 +107,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         locationType = getLocationType(),
                         tagModels = chipTags.getTags(),
                         status = eventStatus,
-                        groupIds = groupIds.toSet()
+                        groupIds = groupIds.toSet(),
+                        needPush = cbSendNotification.isChecked
                 )
                 viewModel.publish(model)
             }
@@ -219,6 +220,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             etTicketPrice.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             etTicketsQuantity.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             etTicketsPerAccountLimit.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
+            //
+            cbSendNotification.text = fromDictionary(R.string.event_need_notification)
             //
             onEventChanged()
             //
@@ -362,6 +365,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             etTicketsQuantity.setText(event.ticketsTotal.toString())
             sEventType.setSelection(event.type.position)
             onEventChanged()
+            cbSendNotification.isGone = true
         }
     }
 

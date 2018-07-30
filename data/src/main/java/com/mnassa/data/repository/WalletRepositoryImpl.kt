@@ -121,7 +121,7 @@ class WalletRepositoryImpl(
                 .map { converter.convertCollection(it, TransactionModel::class.java) }
     }
 
-    private fun getGroupChannel(groupId: String) = firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+    private suspend fun getGroupChannel(groupId: String) = firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
             .document(groupId)
             .toValueChannel<GroupDbEntity>(exceptionHandler)
 }

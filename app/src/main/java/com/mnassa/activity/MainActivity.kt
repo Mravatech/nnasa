@@ -7,12 +7,15 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import android.view.View
 import android.widget.Toast
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
+import com.mnassa.core.addons.SubscriptionContainer
+import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
@@ -26,6 +29,11 @@ import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.in_out_come_toast.view.*
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinContext
@@ -34,8 +42,11 @@ import org.kodein.di.android.retainedKodein
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.kcontext
 import java.util.*
+import android.app.NotificationManager
 
-open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate() {
+
+
+open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
 
     @Suppress("LeakingThis")
     override val kodeinContext: KodeinContext<*> = kcontext(this)
@@ -46,6 +57,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
 
     private lateinit var router: Router
     private lateinit var onLogoutListener: (LogoutReason) -> Unit
+    private val balanceChangeReceiver = BalanceChangeReceiver()
 
     private val languageProvider: LanguageProvider by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,43 +104,58 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
         super.onResume()
         val intentFilter = IntentFilter()
         intentFilter.addAction(MnassaFirebaseMessagingService.NOTIFICATION)
-        registerReceiver(broadcastReceiver, intentFilter)
+        registerReceiver(balanceChangeReceiver, intentFilter)
+
+        //close all push-notifications
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
     }
 
     override fun onPause() {
+        unregisterReceiver(balanceChangeReceiver)
         super.onPause()
-        unregisterReceiver(broadcastReceiver)
     }
 
     override fun onDestroy() {
         getInstance<LoginInteractor>().onLogoutListener.unSubscribe(onLogoutListener)
+        cancelAllSubscriptions()
         super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
 //        SavedInstanceFragment.getInstance(fragmentManager).pushData(outState.clone() as Bundle)
         // advise was taken from here = https://www.devsbedevin.com/avoiding-transactiontoolargeexception-on-android-nougat-and-up/
         outState.clear() // We don't want a TransactionTooLargeException, so we handle things via the SavedInstanceFragment
     }
 
-    private val broadcastReceiver = object : BroadcastReceiver() {
+    private class BalanceChangeReceiver : BroadcastReceiver() {
+        private var notificationsQueue: Deferred<Unit>? = null
+
         override fun onReceive(context: Context, intent: Intent) {
-            val fromName = intent.getStringExtra(MnassaFirebaseMessagingService.FROM_USER)
-            val amount = intent.getStringExtra(MnassaFirebaseMessagingService.AMOUNT).toLong()
-            val layout = layoutInflater.inflate(R.layout.in_out_come_toast, findViewById(R.id.toastRoot))
-            layout.iocView.showView(amount, fromName)
-            val toast = Toast(applicationContext)
-            toast.setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
-            toast.duration = Toast.LENGTH_LONG
-            toast.view = layout
-            toast.show()
+            launch(UI) {
+                notificationsQueue?.await()
+                notificationsQueue = async(UI) {
+                    val fromName = intent.getStringExtra(MnassaFirebaseMessagingService.FROM_USER)
+                    val amount = intent.getStringExtra(MnassaFirebaseMessagingService.AMOUNT).toLong()
+                    if (amount == 0L) return@async
+                    val layout = View.inflate(context, R.layout.in_out_come_toast, null)
+                    layout.iocView.showView(amount, fromName)
+                    val toast = Toast(context.applicationContext)
+                    toast.setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
+                    toast.duration = Toast.LENGTH_LONG
+                    toast.view = layout
+                    toast.show()
+
+                    delay(LONG_TOAST_DURATION_MILLIS)
+                }
+            }
         }
     }
 
     companion object {
         private const val START_OFFSET = 0
+        private const val LONG_TOAST_DURATION_MILLIS = 3_500
     }
 
 }

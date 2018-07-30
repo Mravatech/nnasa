@@ -3,6 +3,8 @@ package com.mnassa.data.repository
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mnassa.data.extensions.await
+import com.mnassa.data.extensions.firestoreLockSuspend
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
@@ -40,19 +42,23 @@ class GroupsRepositoryImpl(
     }
 
     override suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS)
-                .document(userRepository.getAccountIdOrException())
-                .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
-                .toListChannel<GroupDbEntity>(exceptionHandler)
-                .map { converter.convertCollection(it, GroupModel::class.java) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
+                    .toListChannel<GroupDbEntity>(exceptionHandler)
+                    .map { converter.convertCollection(it, GroupModel::class.java) }
+        }
     }
 
     override suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS)
-                .document(userRepository.getAccountIdOrException())
-                .collection(DatabaseContract.TABLE_GROUPS_COL_INVITES)
-                .toListChannel<GroupDbEntity>(exceptionHandler)
-                .map { converter.convertCollection(it, GroupModel::class.java) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_GROUPS_COL_INVITES)
+                    .toListChannel<GroupDbEntity>(exceptionHandler)
+                    .map { converter.convertCollection(it, GroupModel::class.java) }
+        }
     }
 
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) {
@@ -117,18 +123,22 @@ class GroupsRepositoryImpl(
     }
 
     override suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-                .document(groupId)
-                .toValueChannel<GroupDbEntity>(exceptionHandler)
-                .map { it?.let { converter.convert(it, GroupModel::class.java) } }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .toValueChannel<GroupDbEntity>(exceptionHandler)
+                    .map { it?.let { converter.convert(it, GroupModel::class.java) } }
+        }
     }
 
     override suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-                .document(groupId)
-                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_MEMBERS)
-                .toListChannel<ShortAccountDbEntity>(exceptionHandler)
-                .map { converter.convertCollection(it, ShortAccountModel::class.java) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_MEMBERS)
+                    .toListChannel<ShortAccountDbEntity>(exceptionHandler)
+                    .map { converter.convertCollection(it, ShortAccountModel::class.java) }
+        }
     }
 
     override suspend fun createGroup(group: RawGroupModel): GroupModel {
@@ -140,12 +150,21 @@ class GroupsRepositoryImpl(
     }
 
     override suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-                .document(groupId)
-                .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_INVITES)
-                .toListChannel<ShortAccountDbEntity>(exceptionHandler)
-                .map { converter.convertCollection(it, ShortAccountModel::class.java).toSet() }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_INVITES)
+                    .toListChannel<ShortAccountDbEntity>(exceptionHandler)
+                    .map { converter.convertCollection(it, ShortAccountModel::class.java).toSet() }
+        }
     }
 
-
+    override suspend fun hasAnyGroup(): Boolean {
+        return firestoreLockSuspend {
+            !firestore.collection(DatabaseContract.TABLE_GROUPS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_GROUPS_COL_MY)
+                    .get().await(exceptionHandler).isEmpty
+        }
+    }
 }

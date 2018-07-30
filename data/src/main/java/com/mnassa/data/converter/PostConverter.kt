@@ -4,6 +4,10 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.*
 import com.mnassa.data.network.bean.retrofit.response.PostData
@@ -25,12 +29,14 @@ import com.mnassa.domain.model.PostAutoSuggest
 import com.mnassa.domain.model.impl.*
 import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
+import java.lang.reflect.Type
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
-class PostConverter(private val languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
+class PostConverter(private val languageProvider: LanguageProvider,
+                    private val gson: Gson) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertPost)
@@ -207,16 +213,38 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
 
     private fun convertExpiration(expiration: String?): ExpirationType? {
         return when (expiration) {
-            EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE(expiration)
-            EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED(expiration)
-            EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED(expiration)
-            EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED(expiration)
+            EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE
+            EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED
+            EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED
+            EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED
             else -> {
                 Timber.d(IllegalArgumentException("Wrong expiration type $expiration"))
                 null
             }
 
         }
+    }
+
+    private fun convertAuthor(input: JsonObject, converter: ConvertersContext): ShortAccountModel {
+        try {
+            //old posts from firebase & notifications converting logic
+            val type: Type = object : TypeToken<Map<String, ShortAccountDbEntity>>() {}.type
+            return convertAuthor(gson.fromJson<Map<String, ShortAccountDbEntity>>(input, type), converter)
+        } catch (e: JsonSyntaxException) {
+            //do nothing
+        }
+        try {
+            //new posts from firestore converting logic
+            return convertAuthor(gson.fromJson(input, ShortAccountDbEntity::class.java), converter)
+        } catch (e: JsonSyntaxException) {
+            //do nothing
+        }
+
+        throw IllegalArgumentException("Cannot convert post author $input")
+    }
+
+    private fun convertAuthor(input: ShortAccountDbEntity?, converter: ConvertersContext): ShortAccountModel {
+        return converter.convert(requireNotNull(input), ShortAccountModel::class.java)
     }
 
     private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {

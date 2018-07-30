@@ -20,10 +20,11 @@ import timber.log.Timber
 //    class Changed<T: Any>(item: T, previousChildName: String?) : ListItemEvent<T>(item)
 //    class Removed<T: Any>(item: T) : ListItemEvent<T>(item)
 //}
-internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionReference.toValueChannelWithChangesHandling(
+internal suspend inline fun <reified DbType : HasId, reified OutType : Any> CollectionReference.toValueChannelWithChangesHandling(
         exceptionHandler: ExceptionHandler,
         noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
+    forDebug { Timber.i("#LISTEN# toValueChannelWithChangesHandling ${this.path}") }
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
     lateinit var listener: ListenerRegistration
@@ -36,6 +37,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
     val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
         launch {
             try {
+
+                if (channel.isClosedForSend) {
+                    listener.remove()
+                    return@launch
+                }
+
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
                 val result: ListItemEvent<OutType> = when (eventType) {
@@ -49,7 +56,6 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
                 channel.send(result)
             } catch (e: Exception) {
                 when {
-                    e is ClosedSendChannelException -> listener.remove()
                     e.isSuppressed -> {
                         Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} id: ${input.id}")
 //                        removeEventListener(listener)
@@ -58,28 +64,30 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
                     else -> {
                         Timber.e(e)
                         listener.remove()
-                        channel.close(exceptionHandler.handle(e))
+                        channel.close(exceptionHandler.handle(e, path))
                     }
                 }
             }
         }
     }
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    firestoreLockSuspend {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        if (dataSnapshot == null) return@addSnapshotListener
+            if (dataSnapshot == null) return@addSnapshotListener
 
-        dataSnapshot.documentChanges.forEach {
-            when (it.type) {
-                DocumentChange.Type.ADDED -> emitter(it.document, null, ADDED)
-                DocumentChange.Type.MODIFIED -> emitter(it.document, null, CHANGED)
-                DocumentChange.Type.REMOVED -> emitter(it.document, null, REMOVED)
-                else -> throw IllegalStateException("Illegal change type ${it.type}")
+            dataSnapshot.documentChanges.forEach {
+                when (it.type) {
+                    DocumentChange.Type.ADDED -> emitter(it.document, null, ADDED)
+                    DocumentChange.Type.MODIFIED -> emitter(it.document, null, CHANGED)
+                    DocumentChange.Type.REMOVED -> emitter(it.document, null, REMOVED)
+                    else -> throw IllegalStateException("Illegal change type ${it.type}")
+                }
             }
         }
     }
@@ -89,26 +97,32 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> CollectionRe
 
 // Subscribe to single value changes
 
-internal inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
+internal suspend inline fun <reified T : Any> DocumentReference.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
+    forDebug { Timber.i("#LISTEN# toValueChannel ${this.path}") }
     val channel = RendezvousChannel<T?>()
     lateinit var listener: ListenerRegistration
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    firestoreLockSuspend {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        launch {
-            try {
-                channel.send(dataSnapshot.mapSingle())
-            } catch (e: ClosedSendChannelException) {
-                listener.remove()
-            } catch (e: Exception) {
-                Timber.e(e)
-                listener.remove()
-                channel.close(exceptionHandler.handle(e))
+            firestoreLock {
+                try {
+                    if (channel.isClosedForSend) {
+                        listener.remove()
+                        return@firestoreLock
+                    }
+
+                    channel.send(dataSnapshot.mapSingle())
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    listener.remove()
+                    channel.close(exceptionHandler.handle(e, path))
+                }
             }
         }
     }
@@ -116,26 +130,32 @@ internal inline fun <reified T : Any> DocumentReference.toValueChannel(exception
     return channel
 }
 
-internal inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+internal suspend inline fun <reified T : Any> DocumentReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    forDebug { Timber.i("#LISTEN# toListChannel ${this.path}") }
     val channel = RendezvousChannel<List<T>>()
     lateinit var listener: ListenerRegistration
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    firestoreLockSuspend {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        launch {
-            try {
-                channel.send(dataSnapshot.mapList())
-            } catch (e: ClosedSendChannelException) {
-                listener.remove()
-            } catch (e: Exception) {
-                Timber.e(e)
-                listener.remove()
-                channel.close(exceptionHandler.handle(e))
+            firestoreLock {
+                try {
+                    if (channel.isClosedForSend) {
+                        listener.remove()
+                        return@firestoreLock
+                    }
+
+                    channel.send(dataSnapshot.mapList())
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    listener.remove()
+                    channel.close(exceptionHandler.handle(e, path))
+                }
             }
         }
     }
@@ -143,26 +163,32 @@ internal inline fun <reified T : Any> DocumentReference.toListChannel(exceptionH
     return channel
 }
 
-internal inline fun <reified T : Any> CollectionReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+internal suspend inline fun <reified T : Any> CollectionReference.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    forDebug { Timber.i("#LISTEN# toListChannel ${this.path}") }
     val channel = RendezvousChannel<List<T>>()
     lateinit var listener: ListenerRegistration
 
-    listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-        if (firebaseFirestoreException != null) {
-            channel.close(exceptionHandler.handle(firebaseFirestoreException))
-            listener.remove()
-            return@addSnapshotListener
-        }
+    firestoreLockSuspend {
+        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null) {
+                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
+                listener.remove()
+                return@addSnapshotListener
+            }
 
-        launch {
-            try {
-                channel.send(dataSnapshot.mapList())
-            } catch (e: ClosedSendChannelException) {
-                listener.remove()
-            } catch (e: Exception) {
-                Timber.e(e)
-                listener.remove()
-                channel.close(exceptionHandler.handle(e))
+            firestoreLock {
+                try {
+                    if (channel.isClosedForSend) {
+                        listener.remove()
+                        return@firestoreLock
+                    }
+
+                    channel.send(dataSnapshot.mapList())
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    listener.remove()
+                    channel.close(exceptionHandler.handle(e, path))
+                }
             }
         }
     }

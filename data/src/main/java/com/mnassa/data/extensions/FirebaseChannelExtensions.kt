@@ -22,25 +22,29 @@ internal inline fun <reified T : Any> getListChannel(
 ): ReceiveChannel<List<T>> = databaseReference.child(path).toListChannel(exceptionHandler)
 
 internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<List<T>> {
+    forDebug { Timber.i("#LISTEN# toListChannel ${this.ref}") }
     val query = this
     val channel = RendezvousChannel<List<T>>()
 
     addValueEventListener(object : ValueEventListener {
         override fun onCancelled(error: DatabaseError) {
-            channel.close(exceptionHandler.handle(error.toException()))
+            channel.close(exceptionHandler.handle(error.toException(), query.ref.path))
         }
 
-        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
             val listener = this
             launch {
                 try {
+                    if (channel.isClosedForSend) {
+                        query.removeEventListener(listener)
+                        return@launch
+                    }
+
                     channel.send(dataSnapshot.mapList())
-                } catch (e: ClosedSendChannelException) {
-                    query.removeEventListener(listener)
                 } catch (e: Exception) {
                     Timber.e(e)
                     query.removeEventListener(listener)
-                    channel.close(exceptionHandler.handle(e))
+                    channel.close(exceptionHandler.handle(e, query.ref.path))
                 }
             }
         }
@@ -56,25 +60,29 @@ internal inline fun <reified T : Any> getValueChannel(databaseReference: Databas
 }
 
 internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: ExceptionHandler): ReceiveChannel<T?> {
+    forDebug { Timber.i("#LISTEN# toValueChannel ${this.ref}") }
     val query = this
     val channel = RendezvousChannel<T?>()
 
     addValueEventListener(object : ValueEventListener {
         override fun onCancelled(error: DatabaseError) {
-            channel.close(exceptionHandler.handle(error.toException()))
+            channel.close(exceptionHandler.handle(error.toException(), query.ref.path))
         }
 
-        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
             val listener = this
             launch {
                 try {
+                    if (channel.isClosedForSend) {
+                        query.removeEventListener(listener)
+                        return@launch
+                    }
+
                     channel.send(dataSnapshot.mapSingle())
-                } catch (e: ClosedSendChannelException) {
-                    query.removeEventListener(listener)
                 } catch (e: Exception) {
                     Timber.e(e)
                     query.removeEventListener(listener)
-                    channel.close(exceptionHandler.handle(e))
+                    channel.close(exceptionHandler.handle(e, query.ref.path))
                 }
             }
         }
@@ -92,9 +100,14 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
         noinline mapper: suspend (input: DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT
 ): Channel<OutType> {
+    forDebug { Timber.i("#LISTEN# getValueChannelWithPagination ${databaseReference.ref}") }
     val channel = ArrayChannel<OutType>(limit)
     launch {
         try {
+            if (channel.isClosedForSend) {
+                return@launch
+            }
+
             var latestId: String? = null
             while (true) {
                 val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
@@ -109,7 +122,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
             //skip this exception
         } catch (e: Exception) {
             Timber.e(e)
-            channel.close(exceptionHandler.handle(e))
+            channel.close(exceptionHandler.handle(e, databaseReference.path))
         }
     }
     return channel
@@ -133,6 +146,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
         exceptionHandler: ExceptionHandler,
         noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
         limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
+    forDebug { Timber.i("#LISTEN# toValueChannelWithChangesHandling ${this.ref}") }
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
     lateinit var listener: ChildEventListener
@@ -146,6 +160,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
     val emitter = { input: DataSnapshot, previousChildName: String?, eventType: Int ->
         launch {
             try {
+
+                if (channel.isClosedForSend) {
+                    removeEventListener(listener)
+                    return@launch
+                }
+
                 val dbEntity = input.mapSingle<DbType>() ?: return@launch
                 val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
                 val result: ListItemEvent<OutType> = when (eventType) {
@@ -159,7 +179,6 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
                 channel.send(result)
             } catch (e: Exception) {
                 when {
-                    e is ClosedSendChannelException -> removeEventListener(listener)
                     e.isSuppressed -> {
                         Timber.e(e, "Suppressed exception: class: ${DbType::class.java.name} path: ${input.path}")
 //                        removeEventListener(listener)
@@ -168,7 +187,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
                     else -> {
                         Timber.e(e)
                         removeEventListener(listener)
-                        channel.close(exceptionHandler.handle(e))
+                        channel.close(exceptionHandler.handle(e, path))
                     }
                 }
             }
@@ -177,7 +196,7 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
 
     listener = object : ChildEventListener {
         override fun onCancelled(databaseError: DatabaseError) {
-            channel.close(exceptionHandler.handle(databaseError.toException()))
+            channel.close(exceptionHandler.handle(databaseError.toException(), path))
         }
 
         override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {

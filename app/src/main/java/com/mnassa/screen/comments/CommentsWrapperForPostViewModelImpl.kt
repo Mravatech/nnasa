@@ -37,9 +37,12 @@ class CommentsWrapperForPostViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            postsInteractor.loadById(postId, postAuthorId).consumeEach { post ->
+            postsInteractor.loadById(postId).consumeEach { post ->
                 if (post != null) {
                     loadComments()
+                } else {
+                    canReadCommentsChannel.send(false)
+                    canWriteCommentsChannel.send(false)
                 }
             }
         }
@@ -54,8 +57,8 @@ class CommentsWrapperForPostViewModelImpl(
         }
     }
 
-    override fun createComment(comment: RawCommentModel) {
-        handleException {
+    override suspend fun createComment(comment: RawCommentModel): Boolean {
+        return handleExceptionsSuspend {
             withProgressSuspend {
                 comment.uploadImages()
                 val createdComment: CommentModel = when (comment.parentCommentId) {
@@ -65,17 +68,19 @@ class CommentsWrapperForPostViewModelImpl(
                 commentsChannel.send((commentsChannel.valueOrNull ?: emptyList()) + createdComment)
                 scrollToChannel.send(createdComment)
             }
-        }
+            true
+        } ?: false
     }
 
-    override fun editComment(comment: RawCommentModel) {
-        handleException {
+    override suspend fun editComment(comment: RawCommentModel): Boolean {
+        return handleExceptionsSuspend {
             withProgressSuspend {
                 comment.uploadImages()
                 commentsInteractor.editPostComment(comment)
                 loadComments()
             }
-        }
+            true
+        } ?: false
     }
 
     override fun deleteComment(commentModel: CommentModel) {

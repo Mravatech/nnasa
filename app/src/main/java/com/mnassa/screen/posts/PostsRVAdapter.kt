@@ -9,6 +9,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.extensions.isRepost
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
+import timber.log.Timber
 
 /**
  * Created by Peter on 3/14/2018.

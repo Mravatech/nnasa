@@ -7,6 +7,7 @@ import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
@@ -29,7 +30,10 @@ open class NeedDetailsViewModelImpl(
     protected val postId: String = params.postId
     protected val postAuthorId: String = params.postAuthorId
 
-    override val postChannel: ConflatedBroadcastChannel<PostModel> = ConflatedBroadcastChannel()
+    override val postChannel: ConflatedBroadcastChannel<PostModel> by lazy {
+        val postInitValue = params.post
+        postInitValue?.let { ConflatedBroadcastChannel(it) } ?: ConflatedBroadcastChannel()
+    }
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
@@ -38,13 +42,11 @@ open class NeedDetailsViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            postsInteractor.loadById(postId, postAuthorId).consumeEach {
+            postsInteractor.loadById(postId).consumeEach {
                 if (it != null) {
                     it.timeOfExpiration = getExpiration(it)
                     postChannel.send(it)
                     postTagsChannel.send(loadTags(it.tags))
-                } else {
-                    finishScreenChannel.send(Unit)
                 }
             }
         }
@@ -96,6 +98,14 @@ open class NeedDetailsViewModelImpl(
                 ))
             }
             finishScreenChannel.send(Unit)
+        }
+    }
+
+    override fun changeStatus(status: ExpirationType) {
+        handleException {
+            withProgressSuspend {
+                postsInteractor.changeStatus(postId, status)
+            }
         }
     }
 

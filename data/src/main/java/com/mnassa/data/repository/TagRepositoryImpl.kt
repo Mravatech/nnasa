@@ -19,6 +19,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 class TagRepositoryImpl(
@@ -30,17 +31,25 @@ class TagRepositoryImpl(
         private val userRepository: UserRepository
 ) : TagRepository {
 
+    private val tagsCache = ConcurrentHashMap<String, TagModel>()
+    @Volatile
+    private var isTagsCacheLoaded = false
+
     override suspend fun get(id: String): TagModel? {
-        return databaseReference.child(DatabaseContract.TABLE_TAGS)
-                .child(id)
-                .await<TagDbEntity>(exceptionHandler)
-                ?.run { converter.convert(this, TagModel::class.java) }
+        @Suppress("DeferredResultUnused")
+        async { updateCacheIfNeeded() }
+
+        return tagsCache.getOrPut(id) {
+            databaseReference.child(DatabaseContract.TABLE_TAGS)
+                    .child(id)
+                    .await<TagDbEntity>(exceptionHandler)
+                    ?.run { converter.convert(this, TagModel::class.java) }
+        }
     }
 
     override suspend fun getAll(): List<TagModel> {
-        return databaseReference.child(DatabaseContract.TABLE_TAGS)
-                .awaitList<TagDbEntity>(exceptionHandler)
-                .run { converter.convertCollection(this, TagModel::class.java) }
+        return if (isTagsCacheLoaded) tagsCache.values.toList()
+        else getAllAndUpdateCache()
     }
 
     override suspend fun search(searchKeyword: String): List<TagModel> {
@@ -56,15 +65,9 @@ class TagRepositoryImpl(
     }
 
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
-        return firebaseTagsApi.createCustomTagIds(CustomTagsRequest(tags)).handleException(exceptionHandler).data.tags
-    }
-
-    override suspend fun getTagsByIds(ids: List<String>): List<TagModel> {
-        if (ids.isEmpty()) return emptyList()
-        val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
-                .apply { keepSynced(true) }
-                .awaitList<TagDbEntity>(exceptionHandler)
-        return filterById(ids, tags).await()
+        return firebaseTagsApi.createCustomTagIds(CustomTagsRequest(tags))
+                .handleException(exceptionHandler).data.tags
+                .also { updateCacheIfNeeded(forceUpdate = true) }
     }
 
     override suspend fun getAddTagsDialogInterval(): Long? {
@@ -117,14 +120,22 @@ class TagRepositoryImpl(
                 .await(exceptionHandler) ?: false
     }
 
-    private fun filterById(ids: List<String>, tags: List<TagDbEntity>) = async {
-        val result = mutableListOf<TagModel>()
-        for (tag in tags) {
-            if (ids.contains(tag.id)) {
-                result.add(converter.convert(tag, TagModel::class.java))
-            }
-        }
-        result
+    private suspend fun getAllAndUpdateCache(): List<TagModel> {
+        return databaseReference.child(DatabaseContract.TABLE_TAGS)
+                .awaitList<TagDbEntity>(exceptionHandler)
+                .run { converter.convertCollection(this, TagModel::class.java) }
+                .also {
+                    it.forEach {
+                        val id = it.id
+                        if (id != null) tagsCache[id] = it
+                    }
+                }
+    }
+
+    private suspend fun updateCacheIfNeeded(forceUpdate: Boolean = false) {
+        if (isTagsCacheLoaded || forceUpdate) return
+        getAllAndUpdateCache()
+        isTagsCacheLoaded = true
     }
 
 }

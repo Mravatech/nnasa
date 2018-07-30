@@ -1,10 +1,7 @@
 package com.mnassa.screen.posts.offer.create
 
 import android.os.Bundle
-import com.mnassa.domain.interactor.PlaceFinderInteractor
-import com.mnassa.domain.interactor.PostsInteractor
-import com.mnassa.domain.interactor.TagInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Deferred
@@ -20,7 +17,8 @@ class CreateOfferViewModelImpl(private val offerId: String?,
                                private val postsInteractor: PostsInteractor,
                                private val tagInteractor: TagInteractor,
                                private val placeFinderInteractor: PlaceFinderInteractor,
-                               private val userRepository: UserProfileInteractor) : MnassaViewModelImpl(), CreateOfferViewModel {
+                               private val userRepository: UserProfileInteractor,
+                               private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), CreateOfferViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private val categoryToSubCategory = HashMap<String, MutableList<OfferCategoryModel>>()
@@ -77,4 +75,5 @@ class CreateOfferViewModelImpl(private val offerId: String?,
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
     override suspend fun canPromotePost(): Boolean = userRepository.getPermissions().consume { receive() }.canPromoteOfferPost
     override suspend fun getPromotePostPrice(): Long = postsInteractor.getPromotePostPrice()
+    override suspend fun getConnectionsCount(): Long = handleExceptionsSuspend { connectionsInteractor.getConnectedConnections().consume { receive() }.size.toLong() } ?: 0L
 }

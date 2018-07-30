@@ -115,7 +115,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
 
         if (args.containsKey(EXTRA_POST_TO_EDIT)) {
-            setData(args.getSerializable(EXTRA_POST_TO_EDIT) as PostModel)
+            setData(args.getSerializable(EXTRA_POST_TO_EDIT) as PostModel, view)
             args.remove(EXTRA_POST_TO_EDIT)
         }
 
@@ -189,20 +189,18 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
     }
 
-    private fun setData(post: PostModel) {
+    private fun setData(post: PostModel, view: View) {
         this.post = post
-        launchCoroutineUI {
-            with(getViewSuspend()) {
-                etNeed.setText(post.text)
-                chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
-                attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
+        with(view) {
+            etNeed.setText(post.text)
+            attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
-                placeId = post.locationPlace?.placeId
-                actvPlace.setText(post.locationPlace?.placeName?.toString())
-                etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-                sharingOptions.privacyConnections = post.privacyConnections
-                tvShareOptions.text = sharingOptions.format()
-            }
+            placeId = post.locationPlace?.placeId
+            actvPlace.setText(post.locationPlace?.placeName?.toString())
+            etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
+            sharingOptions = PostPrivacyOptions(post.privacyType, post.privacyConnections)
+            launchCoroutineUI { tvShareOptions.text = sharingOptions.format() }
+            launchCoroutineUI { chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) }) }
         }
     }
 
@@ -238,9 +236,14 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
 
         private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
-            return if (args.containsKey(EXTRA_GROUP)) {
-                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
-            } else PostPrivacyOptions.DEFAULT
+            return when {
+                args.containsKey(EXTRA_GROUP) -> PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+                args.containsKey(EXTRA_POST_TO_EDIT) -> {
+                    val post = args.getSerializable(EXTRA_POST_TO_EDIT) as PostModel
+                    PostPrivacyOptions(post.privacyType, post.privacyConnections)
+                }
+                else -> PostPrivacyOptions.DEFAULT
+            }
         }
     }
 }

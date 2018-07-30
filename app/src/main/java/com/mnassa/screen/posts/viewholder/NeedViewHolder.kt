@@ -33,7 +33,7 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
 
             if (item.statusOfExpiration is ExpirationType.ACTIVE) {
                 tvAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
-                tvExpiration.visibility = View.INVISIBLE
+                tvExpiration.visibility = View.GONE
 
                 tvAction.text = when {
                     item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
@@ -43,7 +43,7 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
                     else -> null
                 }
             } else {
-                tvAction.visibility = View.INVISIBLE
+                tvAction.visibility = View.GONE
                 tvExpiration.visibility = View.VISIBLE
                 tvExpiration.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
             }

@@ -44,16 +44,18 @@ class ChatMessageViewModelImpl(
         }
     }
 
-    override fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?) {
-        handleException {
-            chatInteractor.sendMessage(
-                    chatID = chatId.await(),
-                    text = text,
-                    type = type,
-                    linkedMessageId = linkedMessage?.id,
-                    linkedPostId = linkedPost?.id)
-        }
-    }
+    override suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?) =
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    chatInteractor.sendMessage(
+                            chatID = chatId.await(),
+                            text = text,
+                            type = type,
+                            linkedMessageId = linkedMessage?.id,
+                            linkedPostId = linkedPost?.id)
+                }
+                true
+            } ?: false
 
     override fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean) {
         handleException {

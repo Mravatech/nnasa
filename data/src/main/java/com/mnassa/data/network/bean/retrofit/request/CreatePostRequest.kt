@@ -25,3 +25,8 @@ data class CreatePostRequest(
 
         @SerializedName("privacyCommunitiesIds") val groups: List<String>? = null
 )
+
+data class ChangePostStatusRequest(
+        @SerializedName("postId") val id: String,
+        @SerializedName("statusOfExpiration") val statusOfExpiration: String
+)

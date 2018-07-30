@@ -89,39 +89,47 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.bufferize(
 
         }
 
-        consumeEach {
-            when (it) {
-                is ListItemEvent.Added -> {
-                    addItemsCache.add(it.item)
+        try {
+            consumeEach {
+                if (outputChannel.isClosedForSend) {
+                    return@consumeEach
+                }
 
-                    if (System.currentTimeMillis() - lastItemsSentAt < bufferizationTimeMillis && addItemsCache.size < maxBufferSize) {
-                        sendItemsJob?.cancel()
-                        sendItemsJob = subscriptionContainer.launchCoroutineUI {
-                            delay(bufferizationTimeMillis)
+                when (it) {
+                    is ListItemEvent.Added -> {
+                        addItemsCache.add(it.item)
+
+                        if (System.currentTimeMillis() - lastItemsSentAt < bufferizationTimeMillis && addItemsCache.size < maxBufferSize) {
+                            sendItemsJob?.cancel()
+                            sendItemsJob = subscriptionContainer.launchCoroutineUI {
+                                delay(bufferizationTimeMillis)
+                                sendItems()
+                            }
+                        } else {
                             sendItems()
                         }
-                    } else {
+                    }
+                    is ListItemEvent.Changed -> {
                         sendItems()
+                        outputChannel.send(ListItemEvent.Changed(listOf(it.item)))
+                    }
+                    is ListItemEvent.Moved -> {
+                        sendItems()
+                        outputChannel.send(ListItemEvent.Moved(listOf(it.item)))
+                    }
+                    is ListItemEvent.Removed -> {
+                        sendItems()
+                        outputChannel.send(ListItemEvent.Removed(listOf(it.item)))
+                    }
+                    is ListItemEvent.Cleared -> {
+                        addItemsCache.clear()
+                        outputChannel.send(ListItemEvent.Cleared())
                     }
                 }
-                is ListItemEvent.Changed -> {
-                    sendItems()
-                    outputChannel.send(ListItemEvent.Changed(listOf(it.item)))
-                }
-                is ListItemEvent.Moved -> {
-                    sendItems()
-                    outputChannel.send(ListItemEvent.Moved(listOf(it.item)))
-                }
-                is ListItemEvent.Removed -> {
-                    sendItems()
-                    outputChannel.send(ListItemEvent.Removed(listOf(it.item)))
-                }
-                is ListItemEvent.Cleared -> {
-                    addItemsCache.clear()
-                    outputChannel.send(ListItemEvent.Cleared())
-                }
+                Unit
             }
-            Unit
+        } catch (e: Exception) {
+            outputChannel.close(e)
         }
     }
 

@@ -14,11 +14,11 @@ class ExceptionHandlerImpl(
     private val firebaseExceptionHandler by lazy(firebaseExceptionHandlerLazy)
     private val networkExceptionHandler by lazy(networkExceptionHandlerLazy)
 
-    override fun handle(throwable: Throwable): Throwable {
+    override fun handle(throwable: Throwable, tag: String): Throwable {
         return when (throwable) {
-            is FirebaseException -> firebaseExceptionHandler.handle(throwable)
-            is DatabaseException -> firebaseExceptionHandler.handle(throwable)
-            is FirebaseMappingException -> firebaseExceptionHandler.handle(throwable)
+            is FirebaseException -> firebaseExceptionHandler.handle(throwable, tag)
+            is DatabaseException -> firebaseExceptionHandler.handle(throwable, tag)
+            is FirebaseMappingException -> firebaseExceptionHandler.handle(throwable, tag)
             else -> networkExceptionHandler.handle(throwable)
         }
     }

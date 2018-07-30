@@ -15,7 +15,10 @@ import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.EventAttendee
+import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.EventTicketModel
+import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -34,41 +37,49 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val db: DatabaseReference) : EventsRepository {
 
     override suspend fun loadAllImmediately(): List<EventModel> {
-        return firestore
-                .collection(DatabaseContract.TABLE_EVENTS)
-                .document(userRepository.getAccountIdOrException())
-                .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
-                .awaitList<EventDbEntity>()
-                .map { converter.convert(it, EventModel::class.java) }
+        return firestoreLockSuspend {
+            firestore
+                    .collection(DatabaseContract.TABLE_EVENTS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .awaitList<EventDbEntity>()
+                    .map { converter.convert(it, EventModel::class.java) }
+        }
     }
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
-        return firestore
-                .collection(DatabaseContract.TABLE_EVENTS)
-                .document(userRepository.getAccountIdOrException())
-                .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
-                .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
-                        exceptionHandler = exceptionHandler,
-                        mapper = { converter.convert(it) }
-                )
+        return firestoreLockSuspend {
+            firestore
+                    .collection(DatabaseContract.TABLE_EVENTS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
+                            exceptionHandler = exceptionHandler,
+                            mapper = { converter.convert(it) }
+                    )
+        }
     }
 
     override suspend fun getEventsChannel(eventId: String): ReceiveChannel<EventModel?> {
-        return firestore
-                .collection(DatabaseContract.TABLE_EVENTS)
-                .document(userRepository.getAccountIdOrException())
-                .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
-                .document(eventId)
-                .toValueChannel<EventDbEntity>(
-                        exceptionHandler = exceptionHandler
-                ).map { it?.let { converter.convert(it, EventModel::class.java) } }
+        return firestoreLockSuspend {
+            firestore
+                    .collection(DatabaseContract.TABLE_EVENTS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .document(eventId)
+                    .toValueChannel<EventDbEntity>(
+                            exceptionHandler = exceptionHandler
+                    ).map { it?.let { converter.convert(it, EventModel::class.java) } }
+        }
     }
 
     override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> {
-        return firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
-                .document(eventId)
-                .toListChannel<EventTicketDbEntity>(exceptionHandler)
-                .map { converter.convertCollection(it, EventTicketModel::class.java) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
+                    .document(eventId)
+                    .toListChannel<EventTicketDbEntity>(exceptionHandler)
+                    .map { converter.convertCollection(it, EventTicketModel::class.java) }
+        }
     }
 
     override suspend fun sendViewed(ids: List<String>) {
@@ -84,10 +95,12 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     }
 
     override suspend fun getTickets(eventId: String): List<EventTicketModel> {
-        return firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
-                .document(eventId)
-                .awaitList<EventTicketDbEntity>()
-                .run { converter.convertCollection(this, EventTicketModel::class.java) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
+                    .document(eventId)
+                    .awaitList<EventTicketDbEntity>()
+                    .run { converter.convertCollection(this, EventTicketModel::class.java) }
+        }
     }
 
     override suspend fun buyTickets(eventId: String, ticketsCount: Long) {
@@ -95,19 +108,23 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     }
 
     override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> {
-        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
-                .document(eventId)
-                .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
-                .awaitList<EventAttendeeAccountDbEntity>()
-                .map { EventAttendee(converter.convert(it), it.presence ?: false) }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+                    .document(eventId)
+                    .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+                    .awaitList<EventAttendeeAccountDbEntity>()
+                    .map { EventAttendee(converter.convert(it), it.presence ?: false) }
+        }
     }
 
     override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
-        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
-                .document(eventId)
-                .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
-                .toListChannel<EventAttendeeAccountDbEntity>(exceptionHandler)
-                .map { it.map { EventAttendee(converter.convert(it), it.presence ?: false) } }
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+                    .document(eventId)
+                    .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+                    .toListChannel<EventAttendeeAccountDbEntity>(exceptionHandler)
+                    .map { it.map { EventAttendee(converter.convert(it), it.presence ?: false) } }
+        }
     }
 
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {
