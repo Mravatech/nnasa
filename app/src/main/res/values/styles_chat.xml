@@ -44,7 +44,6 @@
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">@dimen/chat_room_message_size</item>
         <item name="android:textColor">@color/gray_cool</item>
-        <item name="android:textStyle">normal</item>
         <item name="android:gravity">end</item>
     </style>
 

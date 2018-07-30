@@ -36,8 +36,8 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         with(itemView) {
             itemView.ivUserIcon.avatarRound(item.extra.author?.avatar)
             tvNotificationCame.text = item.createdAt.toTimeAgo()
-            llNotificationRoot.setOnClickListener(onClickListener)
-            llNotificationRoot.tag = this@NotificationHolder
+            rlNotificationRoot.setOnClickListener(onClickListener)
+            rlNotificationRoot.tag = this@NotificationHolder
         }
         setViewsByType(item)
     }
