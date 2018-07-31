@@ -40,7 +40,9 @@ class ChipsAdapter(
 
         val query = text.toLowerCase()
         val newList = resultList.filter { it.name.toString().toLowerCase().contains(query) }
-        if (newList.size != resultList.size) {
+        if (newList.isEmpty()) {
+            chipListener.onEmptySearchResult()
+        } else if (newList.size != resultList.size) {
             resultList = newList
             notifyDataSetChanged()
             if (newList.isNotEmpty()) return

@@ -287,7 +287,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
             listPopupWindow.promptPosition = ListPopupWindow.POSITION_PROMPT_BELOW
             etChipInput.addTextChangedListener(SimpleTextWatcher {
-                if (it.isNotEmpty() && it.length >= MIN_SYMBOLS_TO_START_SEARCH) {
+                if (it.isNotBlank() && it.length >= MIN_SYMBOLS_TO_START_SEARCH) {
                     if (!listPopupWindow.isShowing) {
                         listPopupWindow.show()
                     }
