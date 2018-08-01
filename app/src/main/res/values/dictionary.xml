@@ -583,6 +583,9 @@
     <string name="group_delete_menu">_groupNewsfeed_menu_delete</string>
     <string name="group_wallet_menu">_groupNewsfeed_menu_wallet</string>
     <string name="group_delete_dialog">_group_delete</string>
+    <string name="group_open_profile">_group_open_group</string>
+    <string name="group_invite_decline">_connections_groupMenu_declineInvite</string>
+    <string name="group_invite_apply">_connections_groupMenu_applyInvite</string>
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>
     <string name="group_item_header_all">_group_item_header_all</string>

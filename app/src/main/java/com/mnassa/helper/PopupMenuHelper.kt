@@ -215,4 +215,20 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
 
     }
 
+    fun showGroupInviteMenu(view: View, onAccept: () -> Unit, onDecline: () -> Unit) {
+        val popup = PopupMenu(view.context, view)
+        popup.menuInflater.inflate(R.menu.group_invite, popup.menu)
+        popup.menu.findItem(R.id.action_group_invite_accept)?.title = fromDictionary(R.string.group_invite_apply)
+        popup.menu.findItem(R.id.action_group_invite_decline)?.title = fromDictionary(R.string.group_invite_decline)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_group_invite_accept -> onAccept()
+                R.id.action_group_invite_decline -> onDecline()
+            }
+            true
+        }
+        popup.show()
+    }
+
 }
