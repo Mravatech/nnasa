@@ -139,16 +139,23 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         addChip(tagModel)
     }
 
+    override fun onSearchResult(text: String, tags: List<TagModel>) {
+        if (etChipInput.text.toString() != text) return
+
+        if (tags.isEmpty() && listPopupWindow.isShowing) {
+            listPopupWindow.dismiss()
+        }
+        if (tags.isNotEmpty()) {
+            listPopupWindow.show()
+        }
+    }
+
     override fun onViewRemoved(key: Long) {
         allVisibleTags.firstOrNull { it.localId == key }?.also { allVisibleTags.remove(it) }
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
         onChipsChangeListener()
-    }
-
-    override fun onEmptySearchResult() {
-        listPopupWindow.dismiss()
     }
 
     fun setTags(tags: List<TagModel>) {
