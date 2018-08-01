@@ -22,7 +22,7 @@ interface PostsRepository {
 
     //group wall
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>>
-    suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel>
+    suspend fun preloadGroupFeed(groupId: String): List<PostModel>
 
     suspend fun loadById(id: String): ReceiveChannel<PostModel?>
 

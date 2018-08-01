@@ -12,11 +12,15 @@ import com.mnassa.domain.model.HasId
  */
 internal data class NotificationDbEntity(
         @SerializedName("id") @Nullable override var id: String,
-        @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
         @SerializedName("text") var text: String,
         @SerializedName("type") var type: String,
         @SerializedName("extra") var extra: NotificationExtraDbEntity?
-) : HasId
+) : HasId {
+    companion object {
+        const val PROPERTY_CREATED_AT = "createdAt"
+    }
+}
 
 internal data class NotificationExtraDbEntity(
         @SerializedName("author") var author: JsonObject,

@@ -61,7 +61,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
         val future = async {
             db.child(TABLE_NOTIFICATIONS_OLD)
                     .child(accountId)
-                    .orderByChild("createdAt")
+                    .orderByChild(NotificationDbEntity.PROPERTY_CREATED_AT)
                     .limitToLast(DEFAULT_LIMIT)
                     .awaitList<NotificationDbEntity>(exceptionHandler)
                     .map { converter.convert(it, NotificationModel::class.java).also { it.isOld = true } }

@@ -77,7 +77,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
-                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                     .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
@@ -115,9 +115,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .collection(tableName)
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
-                    .also {
-                        Timber.e("loadWall >>> loaded all posts! ${it.size}")
-                    }
         }
     }
 
@@ -146,11 +143,13 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> {
+    override suspend fun preloadGroupFeed(groupId: String): List<PostModel> {
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                     .document(groupId)
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel(groupId) }
         }

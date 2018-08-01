@@ -13,7 +13,7 @@ internal data class PostDbEntity(
         @SerializedName("allConnections") var allConnections: Boolean,
         @SerializedName("copyOwner") var copyOwner: String?,
         @SerializedName("counters") var counters: PostCountersDbEntity,
-        @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
         @SerializedName("images") var images: List<String>?,
         @SerializedName("videos") var videos: List<String>?,
         @SerializedName("itemType") var itemType: String,
@@ -45,7 +45,11 @@ internal data class PostDbEntity(
         @SerializedName("privacyCommunitiesIds") val groupIds: Set<String>?,
         @SerializedName("privacyCommunitiesInfo") val groups: List<GroupDbEntity>?
 
-) : HasId
+) : HasId {
+    companion object {
+        const val PROPERTY_CREATED_AT = "createdAt"
+    }
+}
 
 internal data class PostCountersDbEntity(
         @SerializedName("comments") var comments: Int,
@@ -69,6 +73,7 @@ internal data class PostAutoSuggest(
 internal class PostShortDbEntity(
         @SerializedName("id") override var id: String,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("updatedAt") var updatedAt: Long
+        @SerializedName("updatedAt") var updatedAt: Long,
+        @SerializedName(PostDbEntity.PROPERTY_CREATED_AT) var createdAt: Long
 ): HasId
 
