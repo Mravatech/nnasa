@@ -35,7 +35,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.preloadGroupFeed(groupId)
 
-    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(10)
+    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(100)
 
     init {
         launch {
@@ -140,6 +140,6 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()
 
     private companion object {
-        private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
+        private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 2_000L
     }
 }
