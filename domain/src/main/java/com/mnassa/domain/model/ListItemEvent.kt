@@ -1,11 +1,11 @@
 package com.mnassa.domain.model
 
+import com.mnassa.core.addons.launchWorker
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T
@@ -55,7 +55,7 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(bufferWindow: 
             }
         }
 
-        launch(kotlin.coroutines.experimental.coroutineContext) {
+        launchWorker {
             while (output.isActive) {
                 delay(bufferWindow)
                 flush()
