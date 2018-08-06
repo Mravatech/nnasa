@@ -28,8 +28,12 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
         }
     }
-    override suspend fun loadWall(accountId: String): List<PostModel> = postsRepository.loadWall(accountId)
-    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadWallWithChangesHandling(accountId)
+    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return produce {
+            send(ListItemEvent.Added(postsRepository.preloadWall(accountId)))
+            postsRepository.loadWallWithChangesHandling(accountId).withBuffer().consumeEach { send(it) }
+        }
+    }
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)

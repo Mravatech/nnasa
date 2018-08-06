@@ -17,7 +17,7 @@ interface PostsRepository {
     suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
 
     //account wall
-    suspend fun loadWall(accountId: String): List<PostModel>
+    suspend fun preloadWall(accountId: String): List<PostModel>
     suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
 
     //group wall

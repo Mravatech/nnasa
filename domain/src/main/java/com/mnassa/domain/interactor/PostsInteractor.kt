@@ -17,8 +17,7 @@ interface PostsInteractor {
     suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     //account wall
-    suspend fun loadWall(accountId: String): List<PostModel>
-    suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
+    suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     //group wall
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>>

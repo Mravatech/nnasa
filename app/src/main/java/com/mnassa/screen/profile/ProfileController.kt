@@ -115,6 +115,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
+
+        if (args.containsKey(EXTRA_ACCOUNT)) {
+            (args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel?)?.apply {
+                view.ivCropImage.avatarSquare(avatar)
+                view.profileName.text = formattedName
+            }
+            args.remove(EXTRA_ACCOUNT)
+        }
     }
 
     private suspend fun bindHeader() {

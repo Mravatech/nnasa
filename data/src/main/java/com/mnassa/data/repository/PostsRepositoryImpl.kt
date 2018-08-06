@@ -106,13 +106,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     //==============================================================================================
 
-    override suspend fun loadWall(accountId: String): List<PostModel> {
+    override suspend fun preloadWall(accountId: String): List<PostModel> {
         return firestoreLockSuspend {
             val tableName = if (accountId == userRepository.getAccountIdOrException()) DatabaseContract.TABLE_PRIVATE_WALL else DatabaseContract.TABLE_PUBLIC_WALL
 
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(tableName)
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
         }
