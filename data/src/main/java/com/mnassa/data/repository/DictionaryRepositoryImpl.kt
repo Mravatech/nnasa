@@ -16,9 +16,10 @@ import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
 /**
@@ -48,15 +49,14 @@ class DictionaryRepositoryImpl(
     }
 
     override suspend fun loadDictionary(): List<TranslatedWordModel> {
-        val result = async {
+        return withContext(DefaultDispatcher) {
             val dictionary = databaseReference
                     .child(DatabaseContract.TABLE_DICTIONARY)
                     .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
                     .awaitList<TranslatedWordDbEntity>(exceptionHandler)
                     .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
             converter.convertCollection(dictionary, TranslatedWordModel::class.java)
-        }.await()
-        return result
+        }
     }
 
     override fun getLocalDictionaryVersion(): Int = dictionaryPreferences.getDictionaryVersion()

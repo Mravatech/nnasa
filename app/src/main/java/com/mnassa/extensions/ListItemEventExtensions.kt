@@ -22,7 +22,7 @@ suspend fun <T : Any> ReceiveChannel<ListItemEvent<List<T>>>.subscribeToUpdates(
             is ListItemEvent.Added -> {
                 adapter.isLoadingEnabled = false
                 adapter.dataStorage.addAll(it.item)
-                emptyView()?.isInvisible = !adapter.dataStorage.isEmpty()
+                emptyView()?.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
                 onAdded()
             }
             is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)

@@ -295,14 +295,10 @@ class UserRepositoryImpl(
 
     override suspend fun addPushToken(token: String?) {
         val accountId = getAccountIdOrNull()
-        try {
-            if (accountId != null && token != null) {
-                val info = "$ANDROID,${getFirebaseUserId()},$accountId"
-                Timber.i("addPushToken >>> $token >>> $info")
-                firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Cannot add push token for account $accountId")
+        if (accountId != null && token != null) {
+            val info = "$ANDROID,${getFirebaseUserId()},$accountId"
+            Timber.i("addPushToken >>> $token >>> $info")
+            firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
         }
     }
 
