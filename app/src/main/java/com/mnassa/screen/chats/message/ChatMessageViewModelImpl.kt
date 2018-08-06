@@ -22,7 +22,7 @@ class ChatMessageViewModelImpl(
     override val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>> = BroadcastChannel(10)
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
-    private val chatId = asyncUI { chatInteractor.getChatIdByUserId(userAccountId) }
+    private val chatId = asyncUI { handleExceptionsSuspend { chatInteractor.getChatIdByUserId(userAccountId) } ?: "UNDEFINED" }
     private var resetCounterJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

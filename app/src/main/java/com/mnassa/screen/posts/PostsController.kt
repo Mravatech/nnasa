@@ -10,6 +10,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.isInvisible
+import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.main.OnPageSelected
@@ -18,7 +19,6 @@ import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -74,7 +74,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
-        adapter.isLoadingEnabled = savedInstanceState == null
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
 
@@ -91,7 +90,11 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.newsFeedChannel.openSubscription())
+            viewModel.newsFeedChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().rlEmptyView },
+                    onAdded = { triggerScrollPanel() },
+                    onCleared = { lastViewedPostDate = null })
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -124,28 +127,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
     private fun getFirstItem(): PostModel? {
         if (adapter.dataStorage.isEmpty()) return null
         return adapter.dataStorage[0]
-    }
-
-    private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<List<PostModel>>>) {
-        channel.consumeEach {
-            when (it) {
-                is ListItemEvent.Added -> {
-                    if (it.item.isNotEmpty()) {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                        triggerScrollPanel()
-                    }
-                }
-                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                is ListItemEvent.Cleared -> {
-                    adapter.isLoadingEnabled = true
-                    adapter.dataStorage.clear()
-                    lastViewedPostDate = null
-                }
-            }
-        }
     }
 
     override fun onViewCreated(view: View) {

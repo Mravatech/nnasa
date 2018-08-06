@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import android.widget.TextView
 import com.mnassa.R
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.AutoTagModelImpl
@@ -29,9 +30,7 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -180,7 +179,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     private var scanForTagsJob: Job? = null
     private val autoDetectTextWatcher = SimpleTextWatcher { text ->
         scanForTagsJob?.cancel()
-        scanForTagsJob = launch(UI) {
+        scanForTagsJob = launchUI {
             val tags = async { scanForTags(text) }
             addDetectedTags(tags.await())
         }

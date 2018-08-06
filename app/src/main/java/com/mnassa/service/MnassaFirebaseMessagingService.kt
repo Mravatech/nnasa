@@ -3,9 +3,9 @@ package com.mnassa.service
 import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.UserProfileInteractor
-import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
 
@@ -65,7 +65,7 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
 
         val userProfileInteractor: UserProfileInteractor = applicationContext.getInstance()
 
-        launch {
+        launchWorker {
             userProfileInteractor.addPushToken(token)
         }
     }

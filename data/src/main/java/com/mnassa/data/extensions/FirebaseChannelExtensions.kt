@@ -1,12 +1,12 @@
 package com.mnassa.data.extensions
 
 import com.google.firebase.database.*
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
@@ -33,11 +33,11 @@ internal inline fun <reified T : Any> Query.toListChannel(exceptionHandler: Exce
 
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val listener = this
-            launch {
+            launchWorker {
                 try {
                     if (channel.isClosedForSend) {
                         query.removeEventListener(listener)
-                        return@launch
+                        return@launchWorker
                     }
 
                     channel.send(dataSnapshot.mapList())
@@ -71,11 +71,11 @@ internal inline fun <reified T : Any> Query.toValueChannel(exceptionHandler: Exc
 
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val listener = this
-            launch {
+            launchWorker {
                 try {
                     if (channel.isClosedForSend) {
                         query.removeEventListener(listener)
-                        return@launch
+                        return@launchWorker
                     }
 
                     channel.send(dataSnapshot.mapSingle())
@@ -102,12 +102,12 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> getValueChan
 ): Channel<OutType> {
     forDebug { Timber.i("#LISTEN# getValueChannelWithPagination ${databaseReference.ref}") }
     val channel = ArrayChannel<OutType>(limit)
-    launch {
+    launchWorker {
         try {
             var latestId: String? = null
             while (true) {
                 if (channel.isClosedForSend) {
-                    return@launch
+                    return@launchWorker
                 }
 
                 val portion = loadPortion<DbType>(databaseReference, latestId, limit, exceptionHandler)
@@ -158,16 +158,16 @@ internal inline fun <reified DbType : HasId, reified OutType : Any> DatabaseRefe
 
 
     val emitter = { input: DataSnapshot, previousChildName: String?, eventType: Int ->
-        launch {
+        launchWorker {
             try {
 
                 if (channel.isClosedForSend) {
                     removeEventListener(listener)
-                    return@launch
+                    return@launchWorker
                 }
 
-                val dbEntity = input.mapSingle<DbType>() ?: return@launch
-                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
+                val dbEntity = input.mapSingle<DbType>() ?: return@launchWorker
+                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launchWorker
                 val result: ListItemEvent<OutType> = when (eventType) {
                     MOVED -> ListItemEvent.Moved(outModel, previousChildName)
                     CHANGED -> ListItemEvent.Changed(outModel, previousChildName)

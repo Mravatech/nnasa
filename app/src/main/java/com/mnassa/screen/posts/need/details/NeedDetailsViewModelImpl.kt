@@ -118,6 +118,6 @@ open class NeedDetailsViewModelImpl(
     }
 
     private suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { tag -> asyncWorker { tagInteractor.get(tag) } }.mapNotNull { it.await() }
+        return tags.map { tag -> asyncWorker { handleExceptionsSuspend { tagInteractor.get(tag) } } }.mapNotNull { it.await() }
     }
 }

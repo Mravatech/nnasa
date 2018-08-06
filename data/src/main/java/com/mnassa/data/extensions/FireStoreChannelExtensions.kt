@@ -1,12 +1,12 @@
 package com.mnassa.data.extensions
 
 import com.google.firebase.firestore.*
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
@@ -35,16 +35,16 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     val REMOVED = 4
 
     val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
-        launch {
+        launchWorker {
             try {
 
                 if (channel.isClosedForSend) {
                     listener.remove()
-                    return@launch
+                    return@launchWorker
                 }
 
-                val dbEntity = input.mapSingle<DbType>() ?: return@launch
-                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launch
+                val dbEntity = input.mapSingle<DbType>() ?: return@launchWorker
+                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launchWorker
                 val result: ListItemEvent<OutType> = when (eventType) {
                     MOVED -> ListItemEvent.Moved(outModel, previousChildName)
                     CHANGED -> ListItemEvent.Changed(outModel, previousChildName)

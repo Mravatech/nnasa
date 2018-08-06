@@ -5,13 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.yield
 
 class ChipsAdapter(
@@ -50,7 +49,7 @@ class ChipsAdapter(
             if (newList.isNotEmpty()) return
         }
 
-        searchJob = launch(UI) {
+        searchJob = launchUI {
             delay(USER_STOP_TYPING)
             resultList = searchTags(text)
             yield()

@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -9,7 +10,6 @@ import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
 /**
@@ -38,7 +38,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(100)
 
     init {
-        launch {
+        launchWorker {
             viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {

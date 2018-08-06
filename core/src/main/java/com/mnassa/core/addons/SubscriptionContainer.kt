@@ -2,6 +2,7 @@ package com.mnassa.core.addons
 
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
+import timber.log.Timber
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
@@ -71,6 +72,12 @@ open class SubscriptionsContainerDelegate : SubscriptionContainer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 private val WORKER_POOL = CommonPool
 private val UI_POOL = UI
+private val WORKER_POOL_WITH_EXCEPTION_HANDLING = WORKER_POOL + CoroutineExceptionHandler { context, exception ->
+    Timber.e(exception, "Unhandled exception in the WORKER pool $context")
+}
+private val UI_POOL_WITH_EXCEPTION_HANDLING = UI_POOL + CoroutineExceptionHandler { context, exception ->
+    Timber.e(exception, "Unhandled exception in the UI pool $context")
+}
 
 /**
  * Extension to add job into container
@@ -91,7 +98,12 @@ fun <CancellableContext> CancellableContext.launchCoroutineWorker(
         block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Unit): Job where CancellableContext : SubscriptionContainer {
     val thisReference = this.asReference()
     val coroutineBlockWrapper: suspend CoroutineScope.() -> Unit = { block(this, thisReference) }
-    return launch(context = WORKER_POOL, start = start, block = coroutineBlockWrapper).bind(this)
+    return launch(context = WORKER_POOL_WITH_EXCEPTION_HANDLING, start = start, block = coroutineBlockWrapper).bind(this)
+}
+
+fun launchWorker(start: CoroutineStart = CoroutineStart.DEFAULT,
+                 block: suspend CoroutineScope.() -> Unit): Job {
+    return launch(context = WORKER_POOL_WITH_EXCEPTION_HANDLING, start = start, block = block)
 }
 
 /**
@@ -102,7 +114,12 @@ fun <CancellableContext> CancellableContext.launchCoroutineUI(
         block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Unit): Job where CancellableContext : SubscriptionContainer {
     val thisReference = this.asReference()
     val coroutineBlockWrapper: suspend CoroutineScope.() -> Unit = { block(this, thisReference) }
-    return launch(context = UI_POOL, start = start, block = coroutineBlockWrapper).bind(this)
+    return launch(context = UI_POOL_WITH_EXCEPTION_HANDLING, start = start, block = coroutineBlockWrapper).bind(this)
+}
+
+fun launchUI(start: CoroutineStart = CoroutineStart.DEFAULT,
+                 block: suspend CoroutineScope.() -> Unit): Job {
+    return launch(context = UI_POOL_WITH_EXCEPTION_HANDLING, start = start, block = block)
 }
 
 fun <Result, CancellableContext> CancellableContext.asyncWorker(
@@ -126,3 +143,17 @@ fun <Result, CancellableContext> CancellableContext.asyncUI(
     result.bind(this)
     return result
 }
+
+//private fun <Result, CancellableContext> CancellableContext.handleException(
+//        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Result): suspend CoroutineScope.() -> Result?
+//        where CancellableContext : SubscriptionContainer {
+//    val thisReference = this.asReference()
+//    return {
+//        try {
+//            block(this, thisReference)
+//        } catch (e: Exception) {
+//            Timber.e(e)
+//            null
+//        }
+//    }
+//}

@@ -7,12 +7,13 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
+import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.main.OnPageSelected
@@ -21,11 +22,7 @@ import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_events_list.view.*
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
 import org.kodein.di.generic.instance
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -64,7 +61,6 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
-        adapter.isLoadingEnabled = savedInstanceState == null
 
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
@@ -81,11 +77,15 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.eventsFeedChannel)
+            viewModel.eventsFeedChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().rlEmptyView },
+                    onAdded = { triggerScrollPanel() },
+                    onCleared = { lastViewedPostDate = null }
+            )
         }
 
         //scroll to element logic
-
         lifecycle.subscribe {
             if (it == Lifecycle.Event.ON_PAUSE) {
                 val layoutManager = view?.rvEvents?.layoutManager ?: return@subscribe
@@ -101,28 +101,6 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
 
         postIdToScroll = viewModel.restoreScrollPosition()
         viewModel.resetScrollPosition()
-    }
-
-    private suspend fun subscribeToUpdates(channel: BroadcastChannel<ListItemEvent<List<EventModel>>>) {
-        channel.consumeEach {
-            when (it) {
-                is ListItemEvent.Added -> {
-                    if (it.item.isNotEmpty()) {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                        triggerScrollPanel()
-                    }
-                }
-                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                is ListItemEvent.Cleared -> {
-                    adapter.isLoadingEnabled = true
-                    adapter.dataStorage.clear()
-                    lastViewedPostDate = null
-                }
-            }
-        }
     }
 
     override fun onViewCreated(view: View) {
@@ -160,12 +138,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     }
 
     private fun openEvent(event: EventModel) {
-        launch {
-            try {
-                event.markAsOpened()
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        launchWorker {
+            event.markAsOpened()
         }
 
         open(EventDetailsController.newInstance(event))

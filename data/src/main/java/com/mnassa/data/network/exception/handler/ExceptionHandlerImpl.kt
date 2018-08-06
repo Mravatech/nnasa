@@ -1,6 +1,7 @@
 package com.mnassa.data.network.exception.handler
 
 import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DatabaseException
 import com.mnassa.domain.exception.FirebaseMappingException
 
@@ -16,6 +17,7 @@ class ExceptionHandlerImpl(
 
     override fun handle(throwable: Throwable, tag: String): Throwable {
         return when (throwable) {
+            is FirebaseNetworkException -> firebaseExceptionHandler.handle(throwable, tag)
             is FirebaseException -> firebaseExceptionHandler.handle(throwable, tag)
             is DatabaseException -> firebaseExceptionHandler.handle(throwable, tag)
             is FirebaseMappingException -> firebaseExceptionHandler.handle(throwable, tag)

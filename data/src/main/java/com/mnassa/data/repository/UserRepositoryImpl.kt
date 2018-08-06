@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.iid.FirebaseInstanceId
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toListChannel
@@ -30,7 +31,6 @@ import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
 /**
@@ -85,7 +85,7 @@ class UserRepositoryImpl(
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
-            launch {
+            launchWorker {
                 addPushToken(FirebaseInstanceId.getInstance().instanceId.await(exceptionHandler).token)
             }
         }
@@ -294,10 +294,15 @@ class UserRepositoryImpl(
     }
 
     override suspend fun addPushToken(token: String?) {
-        if (getAccountIdOrNull() != null && token != null) {
-            val info = "$ANDROID,${getFirebaseUserId()},${getAccountIdOrNull()}"
-            Timber.i("addPushToken >>> $token >>> $info")
-            firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
+        val accountId = getAccountIdOrNull()
+        try {
+            if (accountId != null && token != null) {
+                val info = "$ANDROID,${getFirebaseUserId()},$accountId"
+                Timber.i("addPushToken >>> $token >>> $info")
+                firebaseAuthApi.addPushToken(PushTokenRequest(token, info)).handleException(exceptionHandler)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Cannot add push token for account $accountId")
         }
     }
 

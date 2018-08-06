@@ -13,8 +13,6 @@ import com.mnassa.domain.exception.NotAuthorizedException
  */
 class FirebaseExceptionHandlerImpl : FirebaseExceptionHandler {
     override fun handle(firebaseException: FirebaseException, tag: String): Throwable {
-        //TODO: handleException FirebaseExceptions here
-
         return when (firebaseException) {
             is FirebaseAuthInvalidCredentialsException -> firebaseException //invalid phone number or invalid code
             is FirebaseTooManyRequestsException -> firebaseException //too many requests
