@@ -1,60 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llCharRoom"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background_highlighted"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/ivChatUserIcon"
-        style="@style/ChatRoom.IconItem"
-        android:layout_margin="@dimen/chat_room_base_margin"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/empty_ava" />
-
-    <LinearLayout
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:id="@+id/rlCharRoom"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/chat_room_base_margin"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="@color/background_highlighted"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        android:paddingBottom="@dimen/spacing_vertical"
+        android:paddingEnd="@dimen/spacing_horizontal"
+        android:paddingStart="@dimen/spacing_horizontal"
+        android:paddingTop="@dimen/spacing_vertical">
+
+        <ImageView
+            android:id="@+id/ivChatUserIcon"
+            style="@style/ChatRoom.IconItem"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/chat_room_base_margin"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/empty_ava" />
 
         <TextView
             android:id="@+id/tvUserName"
             style="@style/ChatRoom.UserNameItem"
+            android:layout_toEndOf="@id/ivChatUserIcon"
+            android:layout_toStartOf="@id/tvMessageCame"
             tools:text="Gordon Baker" />
 
         <TextView
             android:id="@+id/tvLastMessage"
             style="@style/ChatRoom.LastMessageItem"
+            android:layout_below="@id/tvUserName"
+            android:layout_toEndOf="@id/ivChatUserIcon"
+            android:layout_toStartOf="@id/tvMessageUnread"
             tools:text="It’s the one week of the year in which you get the chance to take…" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/chat_room_base_margin"
-        android:layout_marginStart="@dimen/chat_room_margin_time_ago_start"
-        android:layout_marginTop="@dimen/chat_room_base_margin"
-        android:gravity="end"
-        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvMessageCame"
             style="@style/ChatRoom.TimeAgoItem"
+            android:layout_alignParentEnd="true"
             tools:text="9 min" />
 
         <TextView
             android:id="@+id/tvMessageUnread"
             style="@style/ChatRoom.UnreadCountItem"
-            android:layout_marginTop="@dimen/chat_room_unread_count_margin_top"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvMessageCame"
+            android:layout_marginStart="@dimen/chat_room_margin_time_ago_start"
+            android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
             tools:text="8"
             tools:visibility="visible" />
 
-    </LinearLayout>
-</LinearLayout>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+</FrameLayout>

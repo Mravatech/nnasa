@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.launchUI
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.LoginInteractor
@@ -16,7 +17,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
 /**
@@ -55,7 +55,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         userRepository.setCurrentAccount(null)
 
         if (wasLoggedIn) {
-            launch(UI) { onLogoutListener.emit(reason) }
+            launchUI { onLogoutListener.emit(reason) }
         }
     }
 

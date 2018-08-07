@@ -15,6 +15,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
 
+//TODO: use android.support.v7.recyclerview.extensions.ListAdapter & AsyncListDiffer
 abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = WeakStateExecutor<RecyclerView?, RecyclerView>(
             initState = null,

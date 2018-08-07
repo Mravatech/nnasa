@@ -26,7 +26,6 @@ import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -68,33 +67,18 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.postChannel)
+            viewModel.postChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().findViewById(R.id.rlEmptyView) },
+                    onAdded = { triggerScrollPanel() },
+                    onCleared = { lastViewedPostDate = -1 }
+            )
         }
     }
 
     private fun getFirstItem(): PostModel? {
         if (adapter.dataStorage.isEmpty()) return null
         return adapter.dataStorage[0]
-    }
-
-    private suspend fun subscribeToUpdates(channel: BroadcastChannel<ListItemEvent<List<PostModel>>>) {
-        channel.consumeEach {
-            when (it) {
-                is ListItemEvent.Added -> {
-                    adapter.isLoadingEnabled = false
-                    adapter.dataStorage.addAll(it.item)
-                    triggerScrollPanel()
-                }
-                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                is ListItemEvent.Cleared -> {
-                    adapter.isLoadingEnabled = true
-                    adapter.dataStorage.clear()
-                    lastViewedPostDate = -1
-                }
-            }
-        }
     }
 
     private fun triggerScrollPanel() {
@@ -127,11 +111,18 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-
         launchCoroutineUI { viewModel.profileChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
         launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
+
+        if (args.containsKey(EXTRA_ACCOUNT)) {
+            (args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel?)?.apply {
+                view.ivCropImage.avatarSquare(avatar)
+                view.profileName.text = formattedName
+            }
+            args.remove(EXTRA_ACCOUNT)
+        }
     }
 
     private suspend fun bindHeader() {

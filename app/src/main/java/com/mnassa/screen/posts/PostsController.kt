@@ -10,6 +10,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.isInvisible
+import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.main.OnPageSelected
@@ -18,10 +19,10 @@ import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
+import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
@@ -34,10 +35,14 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
     }
-    private var lastViewedPostDate: Long = -1
+    private var lastViewedPostDate: Date?
+        get() = viewModel.getLastViewedPostDate()
+        set(value) = viewModel.setLastViewedPostDate(value)
     private var hasNewPosts: Boolean = false
         get() {
-            return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
+            val firstVisibleItem = getFirstItem()?.createdAt ?: return false
+            val lastViewedItem = lastViewedPostDate ?: return true
+            return firstVisibleItem > lastViewedItem
         }
     private var postIdToScroll: String? = null
 
@@ -50,8 +55,8 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
 
         adapter.onAttachedToWindow = { post ->
             controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
-            if (post.createdAt.time > lastViewedPostDate) {
-                lastViewedPostDate = post.createdAt.time
+            if (lastViewedPostDate == null || post.createdAt > lastViewedPostDate) {
+                lastViewedPostDate = post.createdAt
             }
         }
         adapter.onItemClickListener = {
@@ -78,16 +83,18 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                     postIdToScroll = null
                     val layoutManager = view?.rvNewsFeed?.layoutManager
                     layoutManager as LinearLayoutManager
-                    layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
+                    val pos = adapter.convertDataIndexToAdapterPosition(dataIndex)
+                    layoutManager.scrollToPosition(pos)
                 }
             }
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.newsFeedChannel)
-        }
-        controllerSubscriptionContainer.launchCoroutineUI {
-            subscribeToUpdates(viewModel.newsFeedUpdatesChannel)
+            viewModel.newsFeedChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().rlEmptyView },
+                    onAdded = { triggerScrollPanel() },
+                    onCleared = { lastViewedPostDate = null })
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -120,26 +127,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
     private fun getFirstItem(): PostModel? {
         if (adapter.dataStorage.isEmpty()) return null
         return adapter.dataStorage[0]
-    }
-
-    private suspend fun subscribeToUpdates(channel: BroadcastChannel<ListItemEvent<List<PostModel>>>) {
-        channel.consumeEach {
-            when (it) {
-                is ListItemEvent.Added -> {
-                    adapter.isLoadingEnabled = false
-                    adapter.dataStorage.addAll(it.item)
-                    triggerScrollPanel()
-                }
-                is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                is ListItemEvent.Cleared -> {
-                    adapter.isLoadingEnabled = true
-                    adapter.dataStorage.clear()
-                    lastViewedPostDate = -1
-                }
-            }
-        }
     }
 
     override fun onViewCreated(view: View) {

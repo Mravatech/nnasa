@@ -101,7 +101,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             actvPlace.setOnItemClickListener { _, _, i, _ ->
                 val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
                 placeId = item.placeId
-                val placeName = "${item.primaryText} ${placeAutocompleteAdapter.getItem(i)?.secondaryText}"
+                val placeName = "${item.primaryText} ${item.secondaryText}"
                 actvPlace.setText(placeName)
             }
             tilPlace.hint = fromDictionary(R.string.need_create_city_hint)
@@ -121,6 +121,15 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         launchCoroutineUI {
             viewModel.closeScreenChannel.consumeEach { close() }
+        }
+
+        if (postId == null && placeId == null) {
+            launchCoroutineUI {
+                viewModel.getUserLocation()?.let {
+                    placeId = it.placeId
+                    view.actvPlace.setText(it.placeName.toString())
+                }
+            }
         }
     }
 

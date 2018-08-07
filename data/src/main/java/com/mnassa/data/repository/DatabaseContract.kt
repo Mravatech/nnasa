@@ -137,7 +137,7 @@ internal object DatabaseContract {
     const val TABLE_GROUPS_COL_MY = "myCommunities"
     const val TABLE_GROUPS_COL_INVITES = "invitesToCommunities"
     const val TABLE_GROUPS_ALL = "allCommunities"
-    const val TABLE_GROUPS_ALL_COL_FEED = "postFeed"
+    const val TABLE_GROUPS_ALL_COL_FEED = "postsFeed2"
     const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
     const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
     const val TABLE_GROUPS_ALL_COL_WALLET = "wallet"

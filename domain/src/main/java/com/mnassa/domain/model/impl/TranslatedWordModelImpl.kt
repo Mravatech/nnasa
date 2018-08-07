@@ -21,4 +21,6 @@ class TranslatedWordModelImpl(
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): String = toString()
 
     override fun toString(): String = languageProvider.chooseTranslate(this)
+
+    override fun equals(other: Any?): Boolean = other is TranslatedWordModel && id == other.id && info == other.info
 }

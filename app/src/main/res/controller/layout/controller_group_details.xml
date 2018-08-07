@@ -5,16 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.mnassa.widget.MnassaToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:toolbar_title="@string/group_info_header" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar">
+        android:layout_above="@id/vBtnOpenGroupShadow"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="-5dp"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -177,10 +174,44 @@
                     tools:layout_height="60dp" />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
         </LinearLayout>
 
-
     </ScrollView>
+
+    <com.mnassa.widget.MnassaToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_title="@string/group_info_header" />
+
+    <View
+        style="@style/MnassaShadow"
+        android:layout_marginTop="-5dp"
+        android:layout_below="@id/toolbar" />
+
+    <View
+        android:id="@+id/vBtnOpenGroupShadow"
+        style="@style/MnassaShadow"
+        android:layout_above="@id/btnOpenGroup"
+        android:rotation="180"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/btnOpenGroup"
+        style="@style/MnassaTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        tools:text="Open group"
+        tools:visibility="visible" />
 
 
 </RelativeLayout>

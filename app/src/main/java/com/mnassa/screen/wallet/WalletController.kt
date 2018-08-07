@@ -11,6 +11,7 @@ import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.TransactionSideModel
+import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.wallet.send.SendPointsController
@@ -25,7 +26,8 @@ import org.kodein.di.generic.instance
 class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(args), SendPointsController.OnSentPointsResultListener {
     override val layoutId: Int = R.layout.controller_wallet
     override val viewModel: WalletViewModel by instance(arg = getParams(args))
-    private val transactionsAdapter = WalletRVAdapter()
+    private val languageProvider: LanguageProvider by instance()
+    private val transactionsAdapter by lazy { WalletRVAdapter(languageProvider) }
     private val dialogHelper: DialogHelper by instance()
 
     override fun onViewCreated(view: View) {

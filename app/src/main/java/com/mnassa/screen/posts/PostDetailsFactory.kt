@@ -3,6 +3,7 @@ package com.mnassa.screen.posts
 import android.os.Bundle
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.App
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
@@ -17,8 +18,6 @@ import com.mnassa.screen.posts.info.details.InfoDetailsController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.offer.details.OfferDetailsController
 import com.mnassa.screen.posts.profile.details.RecommendedProfileController
-import kotlinx.coroutines.experimental.launch
-import timber.log.Timber
 
 /**
  * Created by Peter on 4/11/2018.
@@ -27,12 +26,8 @@ class PostDetailsFactory {
 
     fun newInstance(post: PostModel): Controller {
 
-        launch {
-            try {
-                post.markAsOpened()
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        launchWorker {
+            post.markAsOpened()
         }
 
         App.context.getInstance<InviteSourceHolder>().source = InviteSource.Post(post)

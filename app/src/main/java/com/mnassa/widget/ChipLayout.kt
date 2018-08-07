@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import android.widget.TextView
 import com.mnassa.R
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.AutoTagModelImpl
@@ -29,9 +30,7 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -139,16 +138,23 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         addChip(tagModel)
     }
 
+    override fun onSearchResult(text: String, tags: List<TagModel>) {
+        if (etChipInput.text.toString() != text) return
+
+        if (tags.isEmpty() && listPopupWindow.isShowing) {
+            listPopupWindow.dismiss()
+        }
+        if (tags.isNotEmpty()) {
+            listPopupWindow.show()
+        }
+    }
+
     override fun onViewRemoved(key: Long) {
         allVisibleTags.firstOrNull { it.localId == key }?.also { allVisibleTags.remove(it) }
         if (!etChipInput.isFocused) {
             focusLeftView()
         }
         onChipsChangeListener()
-    }
-
-    override fun onEmptySearchResult() {
-        listPopupWindow.dismiss()
     }
 
     fun setTags(tags: List<TagModel>) {
@@ -173,7 +179,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     private var scanForTagsJob: Job? = null
     private val autoDetectTextWatcher = SimpleTextWatcher { text ->
         scanForTagsJob?.cancel()
-        scanForTagsJob = launch(UI) {
+        scanForTagsJob = launchUI {
             val tags = async { scanForTags(text) }
             addDetectedTags(tags.await())
         }
@@ -287,7 +293,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
             listPopupWindow.promptPosition = ListPopupWindow.POSITION_PROMPT_BELOW
             etChipInput.addTextChangedListener(SimpleTextWatcher {
-                if (it.isNotEmpty() && it.length >= MIN_SYMBOLS_TO_START_SEARCH) {
+                if (it.isNotBlank() && it.length >= MIN_SYMBOLS_TO_START_SEARCH) {
                     if (!listPopupWindow.isShowing) {
                         listPopupWindow.show()
                     }

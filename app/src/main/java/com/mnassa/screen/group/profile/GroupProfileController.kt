@@ -47,8 +47,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
 
-        adapter.isLoadingEnabled = savedInstanceState == null
-
         adapter.onAttachedToWindow = { post -> viewModel.onAttachedToWindow(post) }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
@@ -71,21 +69,10 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.newsFeedChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
-                }
-            }
+            viewModel.getNewsFeedChannel().subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().rlEmptyView }
+            )
         }
     }
 

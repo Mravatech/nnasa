@@ -1,6 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
-import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.channels.produce
 import timber.log.Timber
 
 /**
@@ -22,19 +22,28 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun preloadFeed(): List<PostModel> = postsRepository.preloadFeed()
     override suspend fun getPreloadedFeed(): List<PostModel> = postsRepository.getPreloadedFeed()
-    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadFeedWithChangesHandling()
-    override suspend fun loadWall(accountId: String): List<PostModel> = postsRepository.loadWall(accountId)
-    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadWallWithChangesHandling(accountId)
+    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return produce {
+            send(ListItemEvent.Added(getPreloadedFeed()))
+            postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
+        }
+    }
+    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return produce {
+            send(ListItemEvent.Added(postsRepository.preloadWall(accountId)))
+            postsRepository.loadWallWithChangesHandling(accountId).withBuffer().consumeEach { send(it) }
+        }
+    }
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
-    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.loadAllByGroupIdImmediately(groupId)
+    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.preloadGroupFeed(groupId)
 
-    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(10)
+    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(100)
 
     init {
-        launch {
-            viewItemChannel.bufferize(SubscriptionsContainerDelegate(), SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
+        launchWorker {
+            viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
                         postsRepository.sendViewed(it.item.map { it.id })
@@ -135,6 +144,6 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()
 
     private companion object {
-        private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
+        private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 2_000L
     }
 }

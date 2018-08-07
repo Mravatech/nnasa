@@ -1,6 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
-import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RawEventModel
@@ -10,7 +10,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.channels.produce
 import timber.log.Timber
 
 /**
@@ -24,8 +24,8 @@ class EventsInteractorImpl(
     private val viewItemChannel = ArrayChannel<ListItemEvent<EventModel>>(10)
 
     init {
-        launch {
-            viewItemChannel.bufferize(SubscriptionsContainerDelegate(), SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
+        launchWorker {
+            viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
                         eventsRepository.sendViewed(it.item.map { it.id })
@@ -118,9 +118,14 @@ class EventsInteractorImpl(
         return tags
     }
 
-    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> = eventsRepository.getEventsFeedChannel()
+    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
+        return produce {
+            send(ListItemEvent.Added(loadAllImmediately()))
+            eventsRepository.getEventsFeedChannel().withBuffer().consumeEach { send(it) }
+        }
+    }
 
-    override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.loadAllImmediately()
+    override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.preloadEvents()
 
     override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> = eventsRepository.getEventsChannel(eventId)
 

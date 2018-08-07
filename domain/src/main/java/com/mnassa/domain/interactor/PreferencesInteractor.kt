@@ -6,5 +6,7 @@ package com.mnassa.domain.interactor
 interface PreferencesInteractor {
     fun saveString(key: String, value: String?)
     fun getString(key: String): String?
+    fun saveLong(key: String, value: Long)
+    fun getLong(key: String, defValue: Long = 0): Long
 
 }

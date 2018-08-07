@@ -17,12 +17,12 @@ interface PostsRepository {
     suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
 
     //account wall
-    suspend fun loadWall(accountId: String): List<PostModel>
+    suspend fun preloadWall(accountId: String): List<PostModel>
     suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>
 
     //group wall
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>>
-    suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel>
+    suspend fun preloadGroupFeed(groupId: String): List<PostModel>
 
     suspend fun loadById(id: String): ReceiveChannel<PostModel?>
 

@@ -41,7 +41,7 @@ interface UserRepository {
 
     suspend fun getProfileByAccountId(accountId: String): ProfileAccountModel?
     suspend fun getProfileById(accountId: String): ReceiveChannel<ProfileAccountModel?>
-    suspend fun addPushToken()
+    suspend fun addPushToken(token: String?)
     fun getAccountIdOrNull(): String?
     fun getAccountIdOrException(): String
     suspend fun getFirebaseToken(): String?

@@ -22,7 +22,10 @@ import com.mnassa.domain.model.impl.RecommendedConnectionsImpl
 import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.produce
+import java.util.*
 
 /**
  * Created by Peter on 3/5/2018.
@@ -34,6 +37,8 @@ class ConnectionsRepositoryImpl(
         private val userRepository: UserRepository,
         private val firebaseConnectionsApi: FirebaseConnectionsApi,
         private val converter: ConvertersContext) : ConnectionsRepository {
+
+    private var connectionsCache = WeakHashMap<String, List<ShortAccountModel>>()
 
     override suspend fun sendContacts(phoneNumbers: List<String>) {
         val phonesToSend = phoneNumbers.map { it.replace(" ", "") }.filter { it.isNotBlank() }
@@ -64,7 +69,15 @@ class ConnectionsRepositoryImpl(
     }
 
     override suspend fun getConnectedConnections(): ReceiveChannel<List<ShortAccountModel>> {
-        return getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_CONNECTED)
+        return produce {
+            val accountId = userRepository.getAccountIdOrException()
+            connectionsCache[accountId]?.takeIf { it.isNotEmpty() }?.let { send(it) }
+
+            getConnections(DatabaseContract.TABLE_CONNECTIONS_COL_CONNECTED).consumeEach {
+                send(it)
+                connectionsCache[accountId] = it
+            }
+        }
     }
 
     override suspend fun getSentConnections(): ReceiveChannel<List<ShortAccountModel>> {
@@ -146,7 +159,7 @@ class ConnectionsRepositoryImpl(
 
     private fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
-                .child(requireNotNull(userRepository.getAccountIdOrException()))
+                .child(userRepository.getAccountIdOrException())
                 .child(columnName)
                 .toListChannel<ShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, ShortAccountModel::class.java) }

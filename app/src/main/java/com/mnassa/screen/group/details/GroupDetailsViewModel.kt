@@ -11,7 +11,12 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface GroupDetailsViewModel : MnassaViewModel {
     val groupChannel: BroadcastChannel<GroupModel>
+    val isMemberChannel: BroadcastChannel<Boolean>
     val closeScreenChannel: BroadcastChannel<Unit>
     val tagsChannel: BroadcastChannel<List<TagModel>>
     val membersChannel: BroadcastChannel<List<ShortAccountModel>>
+    val hasInviteChannel: BroadcastChannel<Boolean>
+
+    fun acceptInvite()
+    fun declineInvite()
 }

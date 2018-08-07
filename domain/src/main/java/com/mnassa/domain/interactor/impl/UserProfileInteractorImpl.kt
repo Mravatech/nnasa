@@ -77,7 +77,7 @@ class UserProfileInteractorImpl(
         } else throw AccountDisabledException("Account ${account.formattedName} (${account.id}) is disabled!", IllegalArgumentException())
     }
 
-    override suspend fun addPushToken() = userRepository.addPushToken()
+    override suspend fun addPushToken(token: String?) = userRepository.addPushToken(token)
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
     override fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()

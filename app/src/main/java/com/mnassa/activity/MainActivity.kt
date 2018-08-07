@@ -33,7 +33,6 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinContext
@@ -43,7 +42,7 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.kcontext
 import java.util.*
 import android.app.NotificationManager
-
+import com.mnassa.core.addons.launchUI
 
 
 open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
@@ -133,7 +132,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
         private var notificationsQueue: Deferred<Unit>? = null
 
         override fun onReceive(context: Context, intent: Intent) {
-            launch(UI) {
+            launchUI {
                 notificationsQueue?.await()
                 notificationsQueue = async(UI) {
                     val fromName = intent.getStringExtra(MnassaFirebaseMessagingService.FROM_USER)

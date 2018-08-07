@@ -17,7 +17,7 @@ class CreateOfferViewModelImpl(private val offerId: String?,
                                private val postsInteractor: PostsInteractor,
                                private val tagInteractor: TagInteractor,
                                private val placeFinderInteractor: PlaceFinderInteractor,
-                               private val userRepository: UserProfileInteractor,
+                               private val userInteractor: UserProfileInteractor,
                                private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), CreateOfferViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
@@ -70,10 +70,12 @@ class CreateOfferViewModelImpl(private val offerId: String?,
         }
     }
 
-    override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userRepository.getAccountByIdChannel(userId).consume { receive() } }
-    override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
+    override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userInteractor.getAccountByIdChannel(userId).consume { receive() } }
+    override suspend fun getTag(tagId: String): TagModel? = handleExceptionsSuspend { tagInteractor.get(tagId) }
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun canPromotePost(): Boolean = userRepository.getPermissions().consume { receive() }.canPromoteOfferPost
-    override suspend fun getPromotePostPrice(): Long = postsInteractor.getPromotePostPrice()
+    override suspend fun canPromotePost(): Boolean = handleExceptionsSuspend { userInteractor.getPermissions().consume { receive() }.canPromoteOfferPost } ?: false
+    override suspend fun getPromotePostPrice(): Long = handleExceptionsSuspend { postsInteractor.getPromotePostPrice() } ?: 0L
     override suspend fun getConnectionsCount(): Long = handleExceptionsSuspend { connectionsInteractor.getConnectedConnections().consume { receive() }.size.toLong() } ?: 0L
+
+    override suspend fun getUserLocation(): LocationPlaceModel? = handleExceptionsSuspend { userInteractor.getProfileById(userInteractor.getAccountIdOrException())?.location }
 }

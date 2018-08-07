@@ -2,6 +2,8 @@ package com.mnassa.data.repository
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.data.extensions.DEFAULT_LIMIT
+import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannelWithChangesHandling
 import com.mnassa.data.network.api.FirebaseNotificationsApi
 import com.mnassa.data.network.bean.firebase.NotificationDbEntity
@@ -14,8 +16,9 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.domain.repository.NotificationRepository
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +32,9 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                                  private val exceptionHandler: ExceptionHandler,
                                  private val converter: ConvertersContext) : NotificationRepository {
 
-    override suspend fun loadNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> {
+    private val preloadedOldNotifications = HashMap<String, Deferred<List<NotificationModel>>>()
+
+    override suspend fun loadNewNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> {
         val myUserId = requireNotNull(userRepository.getAccountIdOrNull())
         return db.child(TABLE_NOTIFICATIONS)
                 .child(myUserId)
@@ -41,7 +46,7 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
-    override suspend fun loadNotificationsOld(): ReceiveChannel<ListItemEvent<NotificationModel>> {
+    override suspend fun loadOldNotifications(): ReceiveChannel<ListItemEvent<NotificationModel>> {
         val myUserId = requireNotNull(userRepository.getAccountIdOrNull())
         return db.child(TABLE_NOTIFICATIONS_OLD)
                 .child(myUserId)
@@ -49,6 +54,25 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                         exceptionHandler = exceptionHandler,
                         mapper = { converter.convert(it, NotificationModel::class.java).also { it.isOld = true } }
                 )
+    }
+
+    override suspend fun preloadOldNotifications(): List<NotificationModel> {
+        val accountId = userRepository.getAccountIdOrException()
+        val future = async {
+            db.child(TABLE_NOTIFICATIONS_OLD)
+                    .child(accountId)
+                    .orderByChild(NotificationDbEntity.PROPERTY_CREATED_AT)
+                    .limitToLast(DEFAULT_LIMIT)
+                    .awaitList<NotificationDbEntity>(exceptionHandler)
+                    .map { converter.convert(it, NotificationModel::class.java).also { it.isOld = true } }
+                    .asReversed()
+        }
+        preloadedOldNotifications[accountId] = future
+        return future.await()
+    }
+
+    override suspend fun getPreloadedOldNotifications(): List<NotificationModel> {
+        return preloadedOldNotifications.getOrPut(userRepository.getAccountIdOrException()) { async { preloadOldNotifications() } }.await()
     }
 
     override suspend fun notificationView(resetCounter: Boolean, all: Boolean, ids: List<String>) {

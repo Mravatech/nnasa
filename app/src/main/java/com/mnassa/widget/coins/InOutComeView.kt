@@ -128,10 +128,13 @@ class InOutComeView : FrameLayout {
                             val y = btnInOutCome.y
                             val width = btnInOutCome.width
                             val height = btnInOutCome.height
+
                             for (i in 1..COINS_COUNT) {
                                 val coin = Coin.generate(
                                         paint = paint,
-                                        point = PointF(x + random.nextInt(width), y + random.nextInt(height)),
+                                        point = PointF(
+                                                x + random.nextInt(maxOf(width, 1)),
+                                                y + random.nextInt(maxOf(height, 1))),
                                         direction = Coin.Direction.values()[i % DIRECTION_WAYS]
                                 )
                                 coins.add(coin)
@@ -151,7 +154,7 @@ class InOutComeView : FrameLayout {
         const val ANIMATION_SLIDE_DOWN_DURATION = 500L
         const val ANIMATION_SLIDE_UP_DELAY = 3000L
         const val ANIMATION_BTN_DELAY = 100L
-        const val ANIMATION_TEXT_DELAY = 0L
+        const val ANIMATION_TEXT_DELAY = 10L
         const val START_PLACE = 0f
         const val GRAVITY_BEGIN = -10f
         const val MAX = 1.2f

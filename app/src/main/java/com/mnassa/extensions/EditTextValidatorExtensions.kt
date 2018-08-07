@@ -14,7 +14,7 @@ import java.util.regex.Pattern
 
 //TODO: pass error text as function parameter (?)
 
-val PATTERN_PHONE_TAIL = Pattern.compile("\\d{12,13}")!!
+val PATTERN_PHONE_TAIL = Pattern.compile("\\d{11,13}")!!
 val PATTERN_PHONE = Patterns.PHONE
 
 fun TextInputLayout.validateAsFirstName(): Boolean {

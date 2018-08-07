@@ -61,6 +61,17 @@ class GroupsRepositoryImpl(
         }
     }
 
+    override suspend fun getHasInviteToGroupChannel(groupId: String): ReceiveChannel<Boolean> {
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_GROUPS_COL_INVITES)
+                    .document(groupId)
+                    .toValueChannel<GroupDbEntity>(exceptionHandler)
+                    .map { it != null }
+        }
+    }
+
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) {
         api.inviteAction(GroupConnectionRequest(
                 action = NetworkContract.GroupInviteAction.INVITE,

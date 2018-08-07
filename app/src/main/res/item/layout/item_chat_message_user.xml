@@ -18,14 +18,10 @@
         android:padding="@dimen/chat_message_base_padding"
         tools:text="Message with long long long long long long long text" />
 
+
     <TextView
         android:id="@+id/tvMyMessageSent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ChatMessage.Time"
         android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@id/tvUserMessage"
-        android:layout_marginBottom="@dimen/chat_message_half_base_margin"
-        android:maxLines="1"
-        android:minWidth="@dimen/chat_message_time_min_width"
-        tools:text="text" />
+        tools:text="12:00 PM" />
 </RelativeLayout>

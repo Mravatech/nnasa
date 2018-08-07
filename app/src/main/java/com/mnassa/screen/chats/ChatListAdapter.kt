@@ -55,7 +55,7 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
         val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
         when (view.id) {
-            R.id.llCharRoom -> {
+            R.id.rlCharRoom -> {
                 onItemClickListener(getDataItemByAdapterPosition(position))
             }
         }
@@ -71,8 +71,8 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
 
     private class ChatRoomViewHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<ChatRoomModel>(itemView) {
         override fun bind(item: ChatRoomModel) {
-            itemView.llCharRoom.tag = this@ChatRoomViewHolder
-            itemView.llCharRoom.setOnClickListener(onClickListener)
+            itemView.rlCharRoom.tag = this@ChatRoomViewHolder
+            itemView.rlCharRoom.setOnClickListener(onClickListener)
             itemView.tvLastMessage.text = item.chatMessageModel?.text
             item.account?.let {
                 itemView.ivChatUserIcon.avatarRound(it.avatar)
@@ -116,8 +116,9 @@ class ChatListAdapter : BaseSortedPaginationRVAdapter<ChatRoomModel>(), View.OnC
             adapter.postDataUpdate {
                 wrappedList.beginBatchedUpdates()
                 val oldEntity = idToModel[element.id]
-                if (oldEntity != null && wrappedList.indexOf(oldEntity) != -1) {
-                    val position = wrappedList.indexOf(oldEntity)
+
+                val position = if (oldEntity != null) wrappedList.indexOf(oldEntity) else -1
+                if (position != -1) {
                     wrappedList.updateItemAt(position, element)
                 } else {
                     wrappedList.add(element)

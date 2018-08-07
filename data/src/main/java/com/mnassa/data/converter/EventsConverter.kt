@@ -13,6 +13,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.EventModelImpl
 import com.mnassa.domain.model.impl.EventTicketModelImpl
 import com.mnassa.domain.model.impl.RawEventModel
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -32,35 +33,40 @@ class EventsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertEvent(input: EventDbEntity, tag: Any?, converter: ConvertersContext): EventModelImpl {
-        return EventModelImpl(
-                id = input.id,
-                author = converter.convert(input.author),
-                commentsCount = input.counters.comments ?: 0,
-                viewsCount = input.counters.views ?: 0,
-                createdAt = Date(input.createdAt),
-                duration = convertDuration(input),
-                startAt = Date(input.eventStartAt),
-                locationType = convertLocation(input, converter),
-                allConnections = input.allConnections,
-                privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
-                itemType = converter.convert(input.itemType),
-                originalId = input.originalId,
-                originalCreatedAt = Date(input.originalCreatedAt),
-                pictures = input.pictures,
-                price = input.price,
-                privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) }
-                        ?: PostPrivacyType.PUBLIC(),
-                status = converter.convert(input.status),
-                tags = input.tags ?: emptyList(),
-                title = input.title,
-                text = input.text,
-                ticketsPerAccount = input.ticketsPerAccount,
-                ticketsSold = input.ticketsSold,
-                ticketsTotal = input.ticketsTotal,
-                type = converter.convert(input.type),
-                updatedAt = Date(input.updatedAt),
-                participants = input.participants ?: emptyList(),
-                groupIds = input.privacyCommunitiesIds ?: emptySet())
+        try {
+            return EventModelImpl(
+                    id = input.id,
+                    author = converter.convert(input.author),
+                    commentsCount = input.counters.comments ?: 0,
+                    viewsCount = input.counters.views ?: 0,
+                    createdAt = Date(input.createdAt),
+                    duration = convertDuration(input),
+                    startAt = Date(input.eventStartAt),
+                    locationType = convertLocation(input, converter),
+                    allConnections = input.allConnections,
+                    privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
+                    itemType = input.itemType?.let { converter.convert(it, ItemType::class.java) } ?: ItemType.ORIGINAL,
+                    originalId = input.originalId ?: input.id,
+                    originalCreatedAt = Date(input.originalCreatedAt),
+                    pictures = input.pictures,
+                    price = input.price,
+                    privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) }
+                            ?: PostPrivacyType.PUBLIC(),
+                    status = converter.convert(input.status),
+                    tags = input.tags ?: emptyList(),
+                    title = input.title,
+                    text = input.text,
+                    ticketsPerAccount = input.ticketsPerAccount,
+                    ticketsSold = input.ticketsSold,
+                    ticketsTotal = input.ticketsTotal,
+                    type = converter.convert(input.type),
+                    updatedAt = Date(input.updatedAt),
+                    participants = input.participants ?: emptyList(),
+                    groupIds = input.privacyCommunitiesIds ?: emptySet())
+        } catch (e: Exception) {
+            Timber.e(e, "WRONG EVENT STRUCTURE >>> ${input.id}")
+            throw e
+        }
     }
 
     private fun convertDuration(input: EventDbEntity?): EventDuration? {

@@ -6,6 +6,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.database.entity.PostRoomEntity
@@ -20,7 +21,6 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
-import com.mnassa.data.repository.DatabaseContract.TABLE_INFO_FEED
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.PostsRepository
@@ -72,15 +72,17 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun preloadFeed(): List<PostModel> {
+        val accountId = userRepository.getAccountIdOrException()
         val future = firestoreLock {
-            val accountId = userRepository.getAccountIdOrException()
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
         }
-        preloadedPosts[userRepository.getAccountIdOrException()] = future
+        preloadedPosts[accountId] = future
         return future.await()
     }
 
@@ -104,18 +106,17 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     //==============================================================================================
 
-    override suspend fun loadWall(accountId: String): List<PostModel> {
+    override suspend fun preloadWall(accountId: String): List<PostModel> {
         return firestoreLockSuspend {
             val tableName = if (accountId == userRepository.getAccountIdOrException()) DatabaseContract.TABLE_PRIVATE_WALL else DatabaseContract.TABLE_PUBLIC_WALL
 
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(tableName)
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
                     .mapNotNull { it.toFullModel() }
-                    .also {
-                        Timber.e("loadWall >>> loaded all posts! ${it.size}")
-                    }
         }
     }
 
@@ -137,20 +138,22 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                     .document(groupId)
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-                    .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
+                    .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                             exceptionHandler = exceptionHandler,
-                            mapper = { mapPost(it, groupId) }
+                            mapper = { it.toFullModel(groupId) }
                     )
         }
     }
 
-    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> {
+    override suspend fun preloadGroupFeed(groupId: String): List<PostModel> {
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
                     .document(groupId)
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-                    .awaitList<PostDbEntity>()
-                    .mapNotNull { mapPost(it, groupId) }
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    .limit(DEFAULT_LIMIT.toLong())
+                    .awaitList<PostShortDbEntity>()
+                    .mapNotNull { it.toFullModel(groupId) }
         }
     }
 
@@ -318,10 +321,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun PostShortDbEntity.toFullModel(): PostModel? {
+    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null): PostModel? {
         var result = getFromDb(id)
         if ((result?.updatedAt?.time ?: 0) < updatedAt) {
-            result = getFromFirestoreChannel(id).consume { receive() }
+            result = getFromFirestoreChannel(id, groupId).consume { receive() }
         }
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 

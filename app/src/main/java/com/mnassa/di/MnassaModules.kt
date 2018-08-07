@@ -182,7 +182,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 }
 
 private val viewModelsModule = Kodein.Module {
-    bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance()) }
+    bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance(), instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
@@ -264,7 +264,7 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
-    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance()) }
+    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }

@@ -86,7 +86,7 @@ firebase.fcm =             "com.google.firebase:firebase-messaging:17.1.0"
 deps.firebase = firebase
 
 //============================================== KOTLIN ============================================
-versions.kotlin = '1.2.50'
+versions.kotlin = '1.2.51'
 def kotlin = [:]
 kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
