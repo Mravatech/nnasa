@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.yield
 
 class ChipsAdapter(
         context: Context,
@@ -40,19 +40,21 @@ class ChipsAdapter(
 
         val query = text.toLowerCase()
         val newList = resultList.filter { it.name.toString().toLowerCase().contains(query) }
-        if (newList.size != resultList.size) {
+        chipListener.onSearchResult(text, newList)
+        if (newList.isEmpty()) {
+            //hide view
+        } else if (newList.size != resultList.size) {
             resultList = newList
             notifyDataSetChanged()
             if (newList.isNotEmpty()) return
         }
 
-        searchJob = launch(UI) {
+        searchJob = launchUI {
             delay(USER_STOP_TYPING)
             resultList = searchTags(text)
-            if (resultList.isEmpty()) {
-                chipListener.onEmptySearchResult()
-            }
+            yield()
             notifyDataSetChanged()
+            chipListener.onSearchResult(text, resultList)
         }
     }
 
@@ -60,7 +62,7 @@ class ChipsAdapter(
 
     interface ChipListener {
         fun onChipClick(tagModel: TagModel)
-        fun onEmptySearchResult()
+        fun onSearchResult(text: String, tags: List<TagModel>)
     }
 
     companion object {

@@ -239,7 +239,9 @@
     <string name="_group_permission_need_INFO">I Need posts</string>
     <string name="_group_permission_offer_INFO">I Offer posts</string>
     <string name="_group_permission_general_INFO">General posts</string>
+    <string name="_group_open_group_INFO">Open community</string>
     <string name="_community_header_invites_INFO">Invites</string>
+    <string name="_connections_groupMenu_applyInvite_INFO">Apply invite</string>
     <string name="_inviteSharing_fromGroupMask_INFO">I think this community can be useful for you.
 %@
 
@@ -264,5 +266,9 @@ Check it in http://MNASSA.com</string>
     <string name="_profile_delete_tag_penalty_description_prefix_INFO">Are you sure you want to delete this tag?</string>
     <string name="_profile_delete_tag_penalty_description_suffix_INFO">The system takes away -%d points</string>
     <string name="_profile_connect_button_INFO">Connect</string>
+
+    <string name="_newsfeed_new_posts_available_INFO">New posts are available</string>
+    <string name="_newsfeed_new_events_available_INFO">New events are available</string>
+
 
 </resources>

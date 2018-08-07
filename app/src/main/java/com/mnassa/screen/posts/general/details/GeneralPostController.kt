@@ -20,7 +20,7 @@ import org.kodein.di.generic.instance
  */
 class GeneralPostController(args: Bundle) : NeedDetailsController(args) {
 
-    override val viewModel: GeneralPostViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
+    override val viewModel: GeneralPostViewModel by instance(arg = getParams(args))
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun bindToolbar(toolbar: MnassaToolbar) {

@@ -36,8 +36,16 @@ deps.support = support
 //============================================= ARCH COMPONENTS ====================================
 
 def archComponents = [:]
-archComponents.viewModel = "android.arch.lifecycle:viewmodel:1.1.0"
-archComponents.paging = "android.arch.paging:runtime:1.0.0-alpha5"
+
+versions.archComponents = '1.1.1'
+versions.room_version = "1.0.0"
+
+archComponents.viewModel = "android.arch.lifecycle:viewmodel:$versions.archComponents"
+archComponents.roomRuntime = "android.arch.persistence.room:runtime:$versions.archComponents"
+archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions.archComponents"
+archComponents.roomRuntime = "android.arch.persistence.room:runtime:$versions.room_version"
+archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions.room_version"
+
 deps.archComponents = archComponents
 
 //============================================= PLAY SERVICES ======================================
@@ -66,19 +74,19 @@ deps.fabric = fabric
 //========================================== FIREBASE ==============================================
 versions.firebase = versions.playServices
 def firebase = [:]
-firebase.core =            "com.google.firebase:firebase-core:15.0.2"
-firebase.auth =            "com.google.firebase:firebase-auth:15.1.0"
+firebase.core =            "com.google.firebase:firebase-core:16.0.1"
+firebase.auth =            "com.google.firebase:firebase-auth:16.0.2"
 firebase.auth_service =    "com.google.android.gms:play-services-auth:15.0.0"
-firebase.database =        "com.google.firebase:firebase-database:15.0.0"
-firebase.storage =         "com.google.firebase:firebase-storage:15.0.2"
+firebase.database =        "com.google.firebase:firebase-database:16.0.1"
+firebase.storage =         "com.google.firebase:firebase-storage:16.0.1"
 firebase.ui  =             "com.firebaseui:firebase-ui-storage:3.3.1"
-firebase.firestore =       "com.google.firebase:firebase-firestore:16.0.0"
-firebase.fcm =             "com.google.firebase:firebase-messaging:15.0.2"
+firebase.firestore =       "com.google.firebase:firebase-firestore:17.0.3"
+firebase.fcm =             "com.google.firebase:firebase-messaging:17.1.0"
 
 deps.firebase = firebase
 
 //============================================== KOTLIN ============================================
-versions.kotlin = '1.2.50'
+versions.kotlin = '1.2.51'
 def kotlin = [:]
 kotlin.stdlib =         "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 kotlin.test =           "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"

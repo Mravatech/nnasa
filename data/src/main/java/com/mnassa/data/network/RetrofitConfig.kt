@@ -12,6 +12,7 @@ import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Peter on 2/26/2018.
@@ -31,6 +32,9 @@ class RetrofitConfig(
         val baseUrl = appInfoProvider.endpoint
 
         val okHttpBuilder = OkHttpClient.Builder()
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .connectTimeout(1, TimeUnit.MINUTES)
 
         if (appInfoProvider.isDebug) {
             okHttpBuilder.addNetworkInterceptor(StethoInterceptor())

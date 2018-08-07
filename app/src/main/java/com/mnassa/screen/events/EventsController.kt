@@ -1,27 +1,29 @@
 package com.mnassa.screen.events
 
+import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
+import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
+import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_events_list.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
 import org.kodein.di.generic.instance
-import timber.log.Timber
+import java.util.*
 
 /**
  * Created by Peter on 3/6/2018.
@@ -36,42 +38,84 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@EventsController)
     }
+    private var lastViewedPostDate: Date?
+        get() = viewModel.getLastViewedEventDate()
+        set(value) = viewModel.setLastViewedEventDate(value)
+    private var hasNewPosts: Boolean = false
+        get() {
+            val firstVisibleItem = getFirstItem()?.createdAt ?: return false
+            val lastViewedItem = lastViewedPostDate ?: return true
+            return firstVisibleItem > lastViewedItem
+        }
+    private var postIdToScroll: String? = null
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         savedInstanceState?.apply { adapter.restoreState(this) }
 
-        adapter.onAttachedToWindow = { post -> controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) } }
+        adapter.onAttachedToWindow = { post ->
+            controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
+            if (lastViewedPostDate == null || post.createdAt > lastViewedPostDate) {
+                lastViewedPostDate = post.createdAt
+            }
+        }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
-        adapter.isLoadingEnabled = savedInstanceState == null
 
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
-        }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.eventsFeedChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
+            if (postIdToScroll != null) {
+                val dataIndex = adapter.dataStorage.indexOfFirst { it.id == postIdToScroll }
+                if (dataIndex >= 0) {
+                    postIdToScroll = null
+                    val layoutManager = view?.rvEvents?.layoutManager
+                    layoutManager as LinearLayoutManager
+                    layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
                 }
             }
         }
+
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.eventsFeedChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().rlEmptyView },
+                    onAdded = { triggerScrollPanel() },
+                    onCleared = { lastViewedPostDate = null }
+            )
+        }
+
+        //scroll to element logic
+        lifecycle.subscribe {
+            if (it == Lifecycle.Event.ON_PAUSE) {
+                val layoutManager = view?.rvEvents?.layoutManager ?: return@subscribe
+                layoutManager as LinearLayoutManager
+                val firstVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val firstVisibleDataPosition = maxOf(0, adapter.convertAdapterPositionToDataIndex(firstVisiblePosition))
+                if (adapter.dataStorage.isEmpty()) return@subscribe
+                val firstItem = adapter.dataStorage[firstVisibleDataPosition]
+
+                viewModel.saveScrollPosition(firstItem)
+            }
+        }
+
+        postIdToScroll = viewModel.restoreScrollPosition()
+        viewModel.resetScrollPosition()
     }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.rvEvents.adapter = adapter
+        view.rvEvents.attachPanel { hasNewPosts }
+    }
+
+    private fun triggerScrollPanel() {
+        view?.rvEvents?.scrollBy(0, 0)
+    }
+
+    private fun getFirstItem(): EventModel? {
+        if (adapter.dataStorage.isEmpty()) return null
+        return adapter.dataStorage[0]
     }
 
     override fun scrollToTop() {
@@ -94,12 +138,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     }
 
     private fun openEvent(event: EventModel) {
-        launch {
-            try {
-                event.markAsOpened()
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        launchWorker {
+            event.markAsOpened()
         }
 
         open(EventDetailsController.newInstance(event))

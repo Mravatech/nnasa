@@ -176,20 +176,20 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 tools:background="#0ac" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tvViewsCount"
                     style="@style/MnassaTextTiny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:drawableStart="@drawable/ic_eye_18dp"
                     tools:text="12" />
@@ -200,36 +200,41 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_horizontal"
-                    android:layout_toEndOf="@id/tvViewsCount"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:drawableStart="@drawable/ic_comment"
                     tools:text="12" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
 
                 <TextView
                     android:id="@+id/tvAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:drawableEnd="@drawable/ic_post_button_arrow_blue"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:fontFamily="@font/roboto_medium"
                     android:gravity="end"
                     android:textAllCaps="true"
                     android:textColor="@color/accent"
-                    tools:text="You can help" />
+                    tools:visibility="visible"
+                    tools:text="You can help lolong lon" />
 
                 <TextView
                     android:id="@+id/tvExpiration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:fontFamily="@font/roboto_medium"
                     android:gravity="end"
                     android:textAllCaps="true"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"
+                    tools:text="EXPIRED"
+                    tools:visibility="gone" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

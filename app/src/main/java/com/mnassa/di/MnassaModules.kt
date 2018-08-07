@@ -182,9 +182,9 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 }
 
 private val viewModelsModule = Kodein.Module {
-    bind<SplashViewModel>() with provider { SplashViewModelImpl(instance()) }
+    bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance(), instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
@@ -194,8 +194,8 @@ private val viewModelsModule = Kodein.Module {
     bind<ProfileViewModel>() with factory { accountId: String -> ProfileViewModelImpl(accountId, instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<BuildNetworkViewModel>() with provider { BuildNetworkViewModelImpl(instance()) }
     bind<HomeViewModel>() with provider { HomeViewModelImpl(instance(), instance(), instance()) }
-    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance()) }
-    bind<EventsViewModel>() with provider { EventsViewModelImpl(instance()) }
+    bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance(), instance()) }
+    bind<EventsViewModel>() with provider { EventsViewModelImpl(instance(), instance()) }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
@@ -223,7 +223,7 @@ private val viewModelsModule = Kodein.Module {
         }
         result
     }
-    bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance()) }
+    bind<SendPointsViewModel>() with provider { SendPointsViewModelImpl(instance(), instance()) }
     bind<SelectConnectionViewModel>() with factory { additionalData: SelectConnectionViewModel.AdditionalData -> SelectConnectionViewModelImpl(additionalData, instance(), instance()) }
     bind<RecommendUserViewModel>() with factory { postId: String? -> RecommendUserViewModelImpl(postId, instance(), instance()) }
     bind<ComplaintOtherViewModel>() with provider { ComplaintOtherViewModelImpl() }
@@ -260,11 +260,11 @@ private val viewModelsModule = Kodein.Module {
     bind<InfoDetailsViewModel>() with provider { InfoDetailsViewModelImpl(instance()) }
     bind<RewardingViewModel>() with provider { RewardingViewModelImpl(instance()) }
     bind<BuyOfferViewModel>() with provider { BuyOfferViewModelImpl(instance(), instance()) }
-    bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance()) }
+    bind<CreateOfferViewModel>() with factory { offerId: String? -> CreateOfferViewModelImpl(offerId, instance(), instance(), instance(), instance(), instance()) }
     bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
-    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance()) }
+    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
@@ -282,7 +282,7 @@ private val convertersModule = Kodein.Module {
         converter.registerConverter(LocationConverter(instance()))
         converter.registerConverter(ProfileConverter(instance()))
         converter.registerConverter(AbilityConverter())
-        converter.registerConverter(PostConverter(instance()))
+        converter.registerConverter(PostConverter(instance(), instance()))
         converter.registerConverter(CommentsConverter())
         converter.registerConverter(WalletConverter { instance() })
         converter.registerConverter(InvitationConverter())
@@ -296,17 +296,22 @@ private val convertersModule = Kodein.Module {
 }
 
 private val repositoryModule = Kodein.Module {
-    bind<FirebaseDatabase>() with singleton {
+    val firebase by lazy {
         val result = FirebaseDatabase.getInstance()
         result.setPersistenceEnabled(true)
         result
     }
-    bind<FirebaseFirestore>() with singleton {
+    bind<FirebaseDatabase>() with singleton { firebase }
+    val firestore by lazy {
         val db = FirebaseFirestore.getInstance()
-        val settings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
         db.firestoreSettings = settings
         db
     }
+    bind<FirebaseFirestore>() with singleton { firestore }
     bind<FirebaseStorage>() with singleton { FirebaseStorage.getInstance() }
     bind<DatabaseReference>() with provider { instance<FirebaseDatabase>().reference }
     bind<StorageReference>() with provider { instance<FirebaseStorage>().reference }
@@ -319,7 +324,7 @@ private val repositoryModule = Kodein.Module {
     bind<CountersRepository>() with singleton { CountersRepositoryImpl(instance(), instance(), instance()) }
     bind<PlaceFinderRepository>() with singleton { PlaceFinderRepositoryImpl(instance<PlayServiceHelper>().googleApiClient, instance()) }
     bind<InviteRepository>() with singleton { InviteRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<PostsRepository>() with singleton { PostsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsRepository>() with singleton { CommentsRepositoryImpl(instance(), instance(), exceptionHandler = instance(COMMENTS_EXCEPTION_HANDLER)) }
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
@@ -328,6 +333,7 @@ private val repositoryModule = Kodein.Module {
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), { instance() }, instance(), { instance() }, instance()) }
+    bind<PreferencesRepository>() with singleton { PreferencesRepositoryImpl(instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -353,6 +359,8 @@ private val interactorModule = Kodein.Module {
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
     bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance(), instance()) }
+    bind<NetworkInteractor>() with singleton { NetworkInteractorImpl(instance()) }
+    bind<PreferencesInteractor>() with singleton { PreferencesInteractorImpl(instance()) }
 }
 
 private const val COMMENTS_EXCEPTION_HANDLER = "COMMENTS_EXCEPTION_HANDLER"

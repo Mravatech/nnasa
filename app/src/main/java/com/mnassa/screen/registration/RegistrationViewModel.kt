@@ -1,7 +1,6 @@
 package com.mnassa.screen.registration
 
 import com.mnassa.domain.model.ProfileAccountModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -11,7 +10,7 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
  */
 interface RegistrationViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
     val openScreenChannel: BroadcastChannel<RegistrationViewModel.OpenScreenCommand>
-    val hasPersonalAccountChannel: BroadcastChannel<Boolean>
+    suspend fun hasPersonalAccountChannel(): Boolean
     val addTagRewardChannel: BroadcastChannel<Long?>
 
 

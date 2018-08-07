@@ -27,18 +27,18 @@ interface PostModel : Model {
     val author: ShortAccountModel
     val copyOwnerId: String?
     val price: Double
-    val autoSuggest: PostAutoSuggest
+    var autoSuggest: PostAutoSuggest
     val repostAuthor: ShortAccountModel?
     var groupIds: Set<String>
     var groups: List<GroupModel>
 }
 
-interface InfoPostModel: PostModel {
+interface InfoPostModel : PostModel {
     val title: String
     var isPinned: Boolean
 }
 
-interface OfferPostModel: PostModel {
+interface OfferPostModel : PostModel {
     val title: String
     val category: String?
     val subCategory: String?
@@ -91,6 +91,10 @@ sealed class PostPrivacyType : Serializable {
     class PRIVATE : PostPrivacyType()
     class WORLD : PostPrivacyType()
     class GROUP(val group: GroupModel) : PostPrivacyType()
+
+    override fun equals(other: Any?): Boolean {
+        return other?.javaClass == this.javaClass
+    }
 }
 
 sealed class EntityType : Serializable {
@@ -99,10 +103,10 @@ sealed class EntityType : Serializable {
 }
 
 sealed class ExpirationType(val text: String) : Serializable {
-    class ACTIVE(text: String) : ExpirationType(text)
-    class EXPIRED(text: String) : ExpirationType(text)
-    class CLOSED(text: String) : ExpirationType(text)
-    class FULFILLED(text: String) : ExpirationType(text)
+    object ACTIVE : ExpirationType("active")
+    object EXPIRED : ExpirationType("expired")
+    object CLOSED : ExpirationType("closed")
+    object FULFILLED : ExpirationType("fulfilled")
 }
 
 data class RawPostModel(                            //REQUIRED:
@@ -122,7 +126,7 @@ data class RawPostModel(                            //REQUIRED:
 
         val processedImages: List<String> = emptyList(),
         val processedTags: List<String> = emptyList()
-): Serializable
+) : Serializable
 
 data class RawRecommendPostModel(
         val postId: String?,
@@ -130,4 +134,4 @@ data class RawRecommendPostModel(
         val accountId: String,
         val text: String,
         val privacy: PostPrivacyOptions
-): Serializable
+) : Serializable

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
     android:layout_margin="@dimen/chat_message_half_base_margin"
-    android:orientation="horizontal">
+    android:gravity="left">
 
     <LinearLayout
         android:id="@+id/rlUserMessagesReplyContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/chat_message_half_base_margin"
+        android:layout_toStartOf="@+id/tvUserMessageWithReplySent"
         android:background="@drawable/outcome_chat_message_background"
         android:orientation="vertical"
         android:padding="@dimen/chat_message_base_padding">
@@ -18,7 +20,8 @@
         <TextView
             android:id="@+id/tvUserReplyMessage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:text="Reply message" />
 
         <TextView
             android:id="@+id/vDivider"
@@ -29,16 +32,13 @@
         <TextView
             android:id="@+id/tvUserMessageWithReply"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:text="Message with long long long long long long long long text" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvUserMessageWithReplySent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:minWidth="@dimen/chat_message_time_min_width"
-        android:layout_marginBottom="@dimen/chat_message_half_base_margin"
-        android:gravity="center_vertical"
-        tools:text="12132131" />
-</LinearLayout>
+        style="@style/ChatMessage.Time"
+        android:layout_alignParentEnd="true"
+        tools:text="12:00 PM" />
+</RelativeLayout>

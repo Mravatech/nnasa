@@ -23,6 +23,8 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
 
     override suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>> = groupsRepository.getInvitesToGroups()
 
+    override suspend fun getHasInviteToGroupChannel(groupId: String): ReceiveChannel<Boolean> = groupsRepository.getHasInviteToGroupChannel(groupId)
+
     override suspend fun sendInvite(groupId: String, accountIds: List<String>) = groupsRepository.sendInvite(groupId, accountIds)
 
     override suspend fun revokeInvite(groupId: String, accountIds: List<String>) = groupsRepository.revokeInvite(groupId, accountIds)
@@ -52,6 +54,7 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
             processedTags = processTags(group)))
 
     override suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>> = groupsRepository.getInvitedUsers(groupId)
+    override suspend fun hasAnyGroup(): Boolean = groupsRepository.hasAnyGroup()
 
     private suspend fun uploadAvatar(group: RawGroupModel): String? {
         if (group.avatarToUpload == null) {

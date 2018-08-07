@@ -1,6 +1,7 @@
 package com.mnassa.data.network.bean.firebase
 
 import android.support.annotation.Nullable
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
@@ -11,22 +12,26 @@ import com.mnassa.domain.model.HasId
  */
 internal data class NotificationDbEntity(
         @SerializedName("id") @Nullable override var id: String,
-        @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
         @SerializedName("text") var text: String,
         @SerializedName("type") var type: String,
-        @SerializedName("extra") var extra: NotificationAuthorDbEntity?
-) : HasId
+        @SerializedName("extra") var extra: NotificationExtraDbEntity?
+) : HasId {
+    companion object {
+        const val PROPERTY_CREATED_AT = "createdAt"
+    }
+}
 
-internal data class NotificationAuthorDbEntity(
-        @SerializedName("author") var author: HashMap<String, ShortAccountDbEntity>,
-        @SerializedName("post") var post: HashMap<String, PostDbEntity>,
-        @SerializedName("reffered") var reffered: HashMap<String, ShortAccountDbEntity>?,
-        @SerializedName("recommended") var recommended: HashMap<String, ShortAccountDbEntity>?,
-        @SerializedName("community") val group: HashMap<String, GroupDbEntity>?,
+internal data class NotificationExtraDbEntity(
+        @SerializedName("author") var author: JsonObject,
+        @SerializedName("post") var post: JsonObject,
+        @SerializedName("reffered") var reffered: JsonObject?,
+        @SerializedName("recommended") var recommended: JsonObject?,
+        @SerializedName("community") val group: JsonObject?,
         @SerializedName("eventName") val eventName: String?,
         @SerializedName("ticketsPrice") val ticketsPrice: String?,
         @SerializedName("totalPrice") val totalPrice: String?,
         @SerializedName("attendee") val attendee: String?,
-        @SerializedName("event") val event: HashMap<String, EventDbEntity>?,
+        @SerializedName("event") val event: JsonObject?,
         @SerializedName("newInviteNumber") val newInviteNumber: Int?
 )

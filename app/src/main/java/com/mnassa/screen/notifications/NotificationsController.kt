@@ -1,14 +1,12 @@
 package com.mnassa.screen.notifications
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
-import com.mnassa.domain.model.bufferize
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
@@ -23,6 +21,7 @@ import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -40,26 +39,33 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         savedInstanceState?.apply {
             adapter.restoreState(this)
         }
-        adapter.isLoadingEnabled = true
+        adapter.isLoadingEnabled = savedInstanceState == null
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.llEmptyNotifications?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
+        adapter.onItemClickListener = { onNotificationClickHandle(it) }
+
         controllerSubscriptionContainer.launchCoroutineUI {
-            val view = getViewSuspend()
-            viewModel.notificationChannel.openSubscription().bufferize(controllerSubscriptionContainer).consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        if (it.item.isNotEmpty()) {
-                            adapter.addNotifications(it.item)
-                        }
-                        view.llEmptyNotifications.isInvisible = it.item.isNotEmpty() || !adapter.dataStorage.isEmpty()
-                    }
-                    is ListItemEvent.Changed -> adapter.addNotifications(it.item)
-                    is ListItemEvent.Moved -> adapter.addNotifications(it.item)
-                    is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.dataStorage.clear()
-                        adapter.isLoadingEnabled = true
-                        view.llEmptyNotifications.isInvisible = true
-                    }
+            subscribeToUpdates(viewModel.oldNotificationChannel.openSubscription())
+        }
+        controllerSubscriptionContainer.launchCoroutineUI {
+            subscribeToUpdates(viewModel.newNotificationChannel.openSubscription())
+        }
+    }
+
+    private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<List<NotificationModel>>>) {
+        channel.consumeEach {
+            when (it) {
+                is ListItemEvent.Added -> {
+                    adapter.isLoadingEnabled = false
+                    adapter.addNotifications(it.item)
+                }
+                is ListItemEvent.Changed -> adapter.addNotifications(it.item)
+                is ListItemEvent.Moved -> adapter.addNotifications(it.item)
+                is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
+                is ListItemEvent.Cleared -> {
+                    adapter.isLoadingEnabled = true
+                    adapter.dataStorage.clear()
                 }
             }
         }
@@ -69,11 +75,13 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         super.onViewCreated(view)
         with(view) {
             tvEmptyNotifications.text = fromDictionary(R.string.notifications_no_notifications)
-            rvNotifications.layoutManager = LinearLayoutManager(view.context)
             rvNotifications.adapter = adapter
         }
-        adapter.onItemClickListener = { onNotificationClickHandle(it) }
+    }
 
+    override fun onDestroyView(view: View) {
+        view.rvNotifications.adapter = null
+        super.onDestroyView(view)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -82,7 +90,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
     }
 
     override fun onPageSelected() {
-        //do nothing here
+        viewModel.resetCounter()
     }
 
     override fun scrollToTop() {
@@ -96,6 +104,8 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
 
         when (item.type) {
             POST_COMMENT,
+            POST_COMMENT_REPLY,
+            POST_COMMENT_REPLY_2,
             POST_IS_EXPIRED,
             POST_PROMOTED,
             USER_WAS_RECOMMENDED_BY_POST,
@@ -133,15 +143,23 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
             }
             else -> {
                 when {
-                    item.type.contains(POST) -> {
-                        val postDetailsFactory: PostDetailsFactory by instance()
-                        open(postDetailsFactory.newInstance(requireNotNull(item.extra.post)))
+                    item.type.toLowerCase().contains(POST) -> {
+                        item.extra.post?.let { post ->
+                            val postDetailsFactory: PostDetailsFactory by instance()
+                            open(postDetailsFactory.newInstance(post))
+                        }
                     }
-                    item.type.contains(EVENT) -> open(EventDetailsController.newInstance(requireNotNull(item.extra.event)))
+                    item.type.toLowerCase().contains(EVENT) -> {
+                        item.extra.event?.let { event ->
+                            open(EventDetailsController.newInstance(event))
+                        }
+                    }
                     else -> {
                         val account = item.extra.recommended ?: item.extra.reffered
                         ?: item.extra.author
-                        open(ProfileController.newInstance(requireNotNull(account)))
+                        account?.let {
+                            open(ProfileController.newInstance(it))
+                        }
                     }
                 }
 

@@ -3,6 +3,7 @@ package com.mnassa.data.service
 import android.content.Context
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
@@ -14,7 +15,6 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -39,7 +39,7 @@ class FirebaseLoginServiceImpl(
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 Timber.d("MNSA_LOGIN requestVerificationCode -> onVerificationCompleted -> ${credential.smsCode}")
-                launch {
+                launchWorker {
                     try {
                         signIn(credential)
                         sendChannel.send(OnVerificationCompleted(phoneNumber))
@@ -56,7 +56,7 @@ class FirebaseLoginServiceImpl(
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
                 Timber.d("MNSA_LOGIN requestVerificationCode -> onCodeSent")
-                launch {
+                launchWorker {
                     sendChannel.send(OnCodeSent(
                             phoneNumber = phoneNumber,
                             verificationId = verificationId,

@@ -7,10 +7,7 @@ import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
-import com.mnassa.extensions.avatarSquare
-import com.mnassa.extensions.formattedPosition
-import com.mnassa.extensions.isInvisible
-import com.mnassa.extensions.isMyProfile
+import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
@@ -19,8 +16,11 @@ import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.posts.PostDetailsFactory
+import com.mnassa.screen.posts.PostsRVAdapter
+import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
+import com.mnassa.screen.profile.common.*
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
@@ -38,95 +38,68 @@ import org.kodein.di.generic.instance
 
 class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data),
         ComplaintOtherController.OnComplaintResult,
-        SelectGroupController.OnGroupSelectedListener {
+        SelectGroupController.OnGroupSelectedListener,
+        View.OnClickListener {
 
     override val layoutId: Int = R.layout.controller_profile
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     override val viewModel: ProfileViewModel by instance(arg = accountId)
 
-    private var adapter = ProfileAdapter()
+    private var adapter = PostsRVAdapter(withHeader = false)
     private val dialog: DialogHelper by instance()
+    private var lastViewedPostDate: Long = -1
+    private var hasNewPosts: Boolean = false
+        get() {
+            return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
+        }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         adapter.isLoadingEnabled = savedInstanceState == null
 
-//        adapter.onDataChangedListener = { itemsCount ->
-////            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
-//        }
-
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.postChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
-                }
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.findViewById<View>(R.id.rlEmptyView)?.isGone = !adapter.dataStorage.isEmpty()
+        }
+        adapter.onAttachedToWindow = { post ->
+            if (post.createdAt.time > lastViewedPostDate) {
+                lastViewedPostDate = post.createdAt.time
             }
         }
+
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.postChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().findViewById(R.id.rlEmptyView) },
+                    onAdded = { triggerScrollPanel() },
+                    onCleared = { lastViewedPostDate = -1 }
+            )
+        }
+    }
+
+    private fun getFirstItem(): PostModel? {
+        if (adapter.dataStorage.isEmpty()) return null
+        return adapter.dataStorage[0]
+    }
+
+    private fun triggerScrollPanel() {
+        view?.rvProfile?.scrollBy(0, 0)
     }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvProfile.adapter = adapter
-        view.ivProfileBack.setOnClickListener { close() }
+        view.rvProfile.attachPanel { hasNewPosts }
 
-        adapter.onConnectionStatusClickListener = {
-            when (it) {
-                ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
-                    viewModel.sendConnectionStatus(it, accountId)
-                }
-                ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
-                    viewModel.sendConnectionStatus(it, accountId)
-            }
-        }
-        adapter.onWalletClickListener = { open(WalletController.newInstance()) }
-        adapter.onConnectionsClickListener = { open(AllConnectionsController.newInstance()) }
+        view.toolbarProfile.setNavigationOnClickListener { close() }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
         }
+
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
-
-        launchCoroutineUI {
-            viewModel.profileChannel.consumeEach { profileModel ->
-                adapter.profileModel = profileModel
-
-                profileModel.avatar?.let { avatar ->
-                    view.ivCropImage.avatarSquare(avatar)
-                    view.ivCropImage.setOnClickListener {
-                        PhotoPagerActivity.start(it.context, listOf(avatar), 0)
-                    }
-                }
-
-                val connectionStatus = viewModel.statusesConnectionsChannel.consume { receive() }
-                handleCollapsingToolbar(view, connectionStatus, profileModel)
-                setTitle(profileModel, view)
-                onEditProfile(profileModel, view)
-                if (!profileModel.isMyProfile) {
-                    handleConnectionStatus(connectionStatus, view)
-                }
-            }
-        }
-
-        launchCoroutineUI {
-            viewModel.offersChannel.consumeEach { adapter.offers = it }
-        }
-
-        launchCoroutineUI {
-            viewModel.interestsChannel.consumeEach { adapter.interests = it }
-        }
 
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
@@ -137,24 +110,102 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
 
-        launchCoroutineUI {
-            viewModel.closeScreenChannel.consumeEach { close() }
+        launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
+        launchCoroutineUI { viewModel.profileChannel.consumeEach { bindHeader() } }
+        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
+        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
+        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
+
+        if (args.containsKey(EXTRA_ACCOUNT)) {
+            (args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel?)?.apply {
+                view.ivCropImage.avatarSquare(avatar)
+                view.profileName.text = formattedName
+            }
+            args.remove(EXTRA_ACCOUNT)
+        }
+    }
+
+    private suspend fun bindHeader() {
+        bindHeader(
+                profile = viewModel.profileChannel.consume { receive() },
+                offers = viewModel.offersChannel.consume { receive() },
+                interests = viewModel.interestsChannel.consume { receive() },
+                connectionStatus = viewModel.statusesConnectionsChannel.consume { receive() }
+        )
+    }
+
+
+    private fun bindHeader(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>, connectionStatus: ConnectionStatus) {
+        val view = view ?: return
+        val parent = view.flSecondHeader ?: return
+
+        val viewHolder = when {
+            parent.tag is BaseProfileHolder -> parent.tag as BaseProfileHolder
+            profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
+            profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
+            !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
+            !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
+            else -> throw IllegalArgumentException("Wrong account type!")
+        }
+        if (parent.tag !is BaseProfileHolder) {
+            parent.addView(viewHolder.itemView)
+        }
+        parent.tag = viewHolder
+
+        viewHolder.bindProfile(profile)
+        viewHolder.bindOffers(offers)
+        viewHolder.bindInterests(interests)
+        viewHolder.bindConnectionStatus(connectionStatus)
+
+        //
+
+        profile.avatar?.let { avatar ->
+            view.ivCropImage.avatarSquare(avatar)
+            view.ivCropImage.setOnClickListener {
+                PhotoPagerActivity.start(it.context, listOf(avatar), 0)
+            }
+        }
+
+        handleCollapsingToolbar(view, connectionStatus, profile)
+        setTitle(profile, view)
+        onEditProfile(profile, view)
+        if (!profile.isMyProfile) {
+            handleConnectionStatus(connectionStatus, view)
+        }
+    }
+
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.tvPointsGiven -> open(WalletController.newInstance())
+            R.id.tvProfileConnections -> open(AllConnectionsController.newInstance())
+            R.id.tvConnectionStatus -> {
+                launchCoroutineUI {
+                    val connectionStatus = viewModel.statusesConnectionsChannel.consume { receive() }
+                    when (connectionStatus) {
+                        ConnectionStatus.CONNECTED -> dialog.yesNoDialog(view.context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                            viewModel.sendConnectionStatus(connectionStatus, accountId)
+                        }
+                        ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
+                            viewModel.sendConnectionStatus(connectionStatus, accountId)
+                    }
+                }
+            }
+
         }
     }
 
     private fun handleCollapsingToolbar(view: View, connectionStatus: ConnectionStatus, profileModel: ProfileAccountModel) {
 
         view.appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val shouldShowFab = (connectionStatus == ConnectionStatus.CONNECTED ||
-                    connectionStatus == ConnectionStatus.RECOMMENDED ||
-                    connectionStatus == ConnectionStatus.SENT)
-            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                view.tvTitleCollapsed.visibility = View.VISIBLE
+            val shouldShowFab = true
+
+            val offset = view.resources.getDimensionPixelSize(R.dimen.profile_main_image_height)
+
+            if (appBarLayout.totalScrollRange - Math.abs(verticalOffset) < offset) {
                 if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.hide()
                 }
             } else {
-                view.tvTitleCollapsed.visibility = View.GONE
                 if (!profileModel.isMyProfile && shouldShowFab) {
                     view.fabProfile.show()
                 }
@@ -173,13 +224,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleConnectionStatus(connectionStatus: ConnectionStatus, view: View) {
-        adapter.connectionStatus = connectionStatus
-
         val fab = view.fabProfile
         fab.visibility = View.VISIBLE
         fab.setOnClickListener {
-            adapter.profileModel?.let {
-                open(ChatMessageController.newInstance(it))
+            launchCoroutineUI {
+                viewModel.profileChannel.consume { receive() }.apply { open(ChatMessageController.newInstance(this)) }
             }
         }
         fab.setImageResource(R.drawable.ic_chat)
@@ -259,11 +308,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         if (profileModel.accountType == AccountType.PERSONAL) {
             view.profileName.text = profileModel.formattedName
             view.profileSubName.text = profileModel.formattedPosition
-            view.tvTitleCollapsed.text = profileModel.formattedName
         } else {
             view.profileName.text = profileModel.organizationInfo?.organizationName
             view.profileSubName.text = profileModel.organizationType
-            view.tvTitleCollapsed.text = profileModel.organizationInfo?.organizationName
         }
     }
 

@@ -16,8 +16,8 @@ interface CommentsWrapperViewModel : MnassaViewModel {
     val canReadCommentsChannel: BroadcastChannel<Boolean>
     val canWriteCommentsChannel: BroadcastChannel<Boolean>
 
-    fun createComment(comment: RawCommentModel)
-    fun editComment(comment: RawCommentModel)
+    suspend fun createComment(comment: RawCommentModel): Boolean
+    suspend fun editComment(comment: RawCommentModel): Boolean
     fun deleteComment(commentModel: CommentModel)
     fun sendPointsForComment(rewardModel: RewardModel) {}
     fun preloadImage(imageFile: Uri)

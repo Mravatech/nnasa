@@ -107,7 +107,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         locationType = getLocationType(),
                         tagModels = chipTags.getTags(),
                         status = eventStatus,
-                        groupIds = groupIds.toSet()
+                        groupIds = groupIds.toSet(),
+                        needPush = cbSendNotification.isChecked
                 )
                 viewModel.publish(model)
             }
@@ -220,6 +221,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             etTicketsQuantity.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             etTicketsPerAccountLimit.addTextChangedListener(SimpleTextWatcher { onEventChanged() })
             //
+            cbSendNotification.text = fromDictionary(R.string.event_need_notification)
+            //
             onEventChanged()
             //
             if (eventId != null) {
@@ -232,6 +235,15 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         if (args.containsKey(EXTRA_EVENT)) {
             setData(args[EXTRA_EVENT] as EventModel)
             args.remove(EXTRA_EVENT)
+        }
+
+        if (eventId == null && placeId == null) {
+            launchCoroutineUI {
+                viewModel.getUserLocation()?.let {
+                    placeId = it.placeId
+                    view.actvCity.setText(it.placeName.toString())
+                }
+            }
         }
     }
 
@@ -362,6 +374,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             etTicketsQuantity.setText(event.ticketsTotal.toString())
             sEventType.setSelection(event.type.position)
             onEventChanged()
+            cbSendNotification.isGone = true
         }
     }
 

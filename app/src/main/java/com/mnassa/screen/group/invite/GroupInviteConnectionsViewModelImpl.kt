@@ -19,32 +19,49 @@ class GroupInviteConnectionsViewModelImpl(
         val connectionsInteractor: ConnectionsInteractor
 ) : MnassaViewModelImpl(), GroupInviteConnectionsViewModel {
 
-    override val connectionsChannel: BroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
+    override val connectionsChannel: BroadcastChannel<List<UserInvite>> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ConflatedBroadcastChannel()
-    override val alreadyInvitedUsersChannel: BroadcastChannel<Set<String>> = ConflatedBroadcastChannel()
-    private val groupMembers = ConflatedBroadcastChannel<Set<String>>()
+
+    private val userConnections = ConflatedBroadcastChannel<List<ShortAccountModel>>()
+    private val groupMembers = ConflatedBroadcastChannel<List<ShortAccountModel>>()
+    private val invitedUsers = ConflatedBroadcastChannel<Set<ShortAccountModel>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         handleException {
-            connectionsInteractor.getConnectedConnections().consumeEach { connections ->
-                val members = groupMembers.consume { receive() }
-                connectionsChannel.send(connections.filter { !members.contains(it.id) })
+            connectionsInteractor.getConnectedConnections().consumeEach {
+                userConnections.send(it)
+                refreshData()
             }
         }
 
         handleException {
-            groupsInteractor.getGroupMembers(groupId).consumeEach { members ->
-                groupMembers.send(members.map { it.id }.toSet())
+            groupsInteractor.getGroupMembers(groupId).consumeEach {
+                groupMembers.send(it)
+                refreshData()
             }
         }
 
         handleException {
             groupsInteractor.getInvitedUsers(groupId).consumeEach {
-                alreadyInvitedUsersChannel.send(it.map { it.id }.toSet())
+                invitedUsers.send(it)
+                refreshData()
             }
         }
+    }
+
+    private suspend fun refreshData() {
+        val allUserConnections = userConnections.consume{ receive() }
+        val groupMembers = groupMembers.consume { receive() }
+        val invitedUsers = invitedUsers.consume { receive() }
+        allUserConnections.map { user ->
+            UserInvite(
+                    user = user,
+                    isInvited = invitedUsers.any { it.id == user.id },
+                    isMember = groupMembers.any { it.id == user.id }
+            )
+        }.let { connectionsChannel.send(it) }
     }
 
     override fun sendInvite(user: ShortAccountModel) {
@@ -59,6 +76,14 @@ class GroupInviteConnectionsViewModelImpl(
         handleException {
             withProgressSuspend {
                 groupsInteractor.revokeInvite(groupId, listOf(user.id))
+            }
+        }
+    }
+
+    override fun removeUser(user: ShortAccountModel) {
+        handleException {
+            withProgressSuspend {
+                groupsInteractor.removeMember(groupId, user.id)
             }
         }
     }

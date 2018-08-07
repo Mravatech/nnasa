@@ -1,9 +1,6 @@
 package com.mnassa.screen.posts.offer.create
 
-import com.mnassa.domain.model.OfferCategoryModel
-import com.mnassa.domain.model.RawPostModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -24,4 +21,7 @@ interface CreateOfferViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
     fun applyChanges(post: RawPostModel)
     suspend fun canPromotePost(): Boolean
     suspend fun getPromotePostPrice(): Long
+    suspend fun getConnectionsCount(): Long
+
+    suspend fun getUserLocation(): LocationPlaceModel?
 }

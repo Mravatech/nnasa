@@ -3,6 +3,7 @@ package com.mnassa.screen.group.profile
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
  * Created by Peter on 5/14/2018.
@@ -13,7 +14,8 @@ interface GroupProfileViewModel : MnassaViewModel {
     val closeScreenChannel: BroadcastChannel<Unit>
     val groupPermissionsChannel: BroadcastChannel<GroupPermissions>
 
-    val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
+    suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<List<PostModel>>>
+
     fun onAttachedToWindow(post: PostModel)
     fun hideInfoPost(post: PostModel)
     fun leave()

@@ -20,14 +20,14 @@ internal suspend fun <T> Deferred<T>.handleException(handler: ExceptionHandler):
         val result = await()
         return result
     } catch (e: Throwable) {
-        throw handler.handle(e)
+        throw handler.handle(e, this.onJoin.toString())
     }
 }
 
 internal fun FirebaseException.handleException(handler: FirebaseExceptionHandler): Throwable {
-    return handler.handle(this)
+    return handler.handle(this, this.toString())
 }
 
 internal fun FirebaseException.handleException(handler: ExceptionHandler): Throwable {
-    return handler.handle(this)
+    return handler.handle(this, this.toString())
 }

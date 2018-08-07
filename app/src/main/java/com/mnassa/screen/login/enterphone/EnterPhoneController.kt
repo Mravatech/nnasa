@@ -1,23 +1,21 @@
 package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.AdapterView
-import org.kodein.di.generic.instance
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.helper.CountryHelper
-import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.onImeActionDone
 import com.mnassa.extensions.showKeyboard
+import com.mnassa.helper.CountryHelper
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.entercode.EnterCodeController
@@ -32,6 +30,7 @@ import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 2/21/2018.

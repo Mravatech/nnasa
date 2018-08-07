@@ -2,7 +2,6 @@ package com.mnassa.data.converter
 
 import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
 import com.mnassa.data.network.bean.firebase.*
 import com.mnassa.domain.model.EventModel
@@ -11,7 +10,6 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.NotificationExtraImpl
 import com.mnassa.domain.model.impl.NotificationModelImpl
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -26,18 +24,17 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertPostData(input: NotificationDbEntity, token: Any?, converter: ConvertersContext): NotificationModelImpl {
-        Timber.i(input.toString())
         val extra = NotificationExtraImpl(
-                author = convertAuthor(input.extra?.author, converter),
-                post = convertPost(input.extra?.post, converter),
-                reffered = convertAuthor(input.extra?.reffered, converter),
-                recommended = convertAuthor(input.extra?.recommended, converter),
-                group = convertGroup(input.extra?.group, converter),
+                author = input.extra?.author?.parseObject<ShortAccountDbEntity>()?.let { converter.convert(it, ShortAccountModel::class.java) },
+                post = input.extra?.post?.parseObject<PostDbEntity>()?.let { converter.convert(it, PostModel::class.java) },
+                reffered = input.extra?.reffered?.parseObject<ShortAccountDbEntity>()?.let { converter.convert(it, ShortAccountModel::class.java) },
+                recommended = input.extra?.recommended?.parseObject<ShortAccountDbEntity>()?.let { converter.convert(it, ShortAccountModel::class.java) },
+                group = input.extra?.group?.parseObject<GroupDbEntity>()?.let { converter.convert(it, GroupModel::class.java) },
                 eventName = input.extra?.eventName,
                 ticketsPrice = input.extra?.ticketsPrice,
                 totalPrice = input.extra?.totalPrice,
                 attendee = input.extra?.attendee,
-                event = convertEvent(input.extra?.event, converter),
+                event = input.extra?.event?.parseObject<EventDbEntity>()?.let { converter.convert(it, EventModel::class.java) },
                 newInviteNumber = input.extra?.newInviteNumber
         )
         if (extra.author == null) {
@@ -52,33 +49,4 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
                 isOld = true
         )
     }
-
-    private fun convertEvent(input: Map<String, EventDbEntity>?, converter: ConvertersContext): EventModel? {
-        if (input == null) return null
-        val entity = input.values.first()
-        entity.id = input.keys.first()
-        return converter.convert(entity)
-    }
-
-    private fun convertAuthor(input: Map<String, ShortAccountDbEntity>?, converter: ConvertersContext): ShortAccountModel? {
-        if (input == null) return null
-        val entity = input.values.first()
-        entity.id = input.keys.first()
-        return converter.convert(entity)
-    }
-
-    private fun convertPost(input: Map<String, PostDbEntity>?, converter: ConvertersContext): PostModel? {
-        if (input == null) return null
-        val entity = input.values.first()
-        entity.id = input.keys.first()
-        return converter.convert(entity, PostAdditionInfo(emptySet()), PostModel::class.java)
-    }
-
-    private fun convertGroup(input: Map<String, GroupDbEntity>?, converter: ConvertersContext): GroupModel? {
-        if (input == null) return null
-        val entity = input.values.first()
-        entity.id = input.keys.first()
-        return converter.convert(entity)
-    }
-
 }

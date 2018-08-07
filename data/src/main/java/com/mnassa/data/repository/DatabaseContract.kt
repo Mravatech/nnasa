@@ -76,6 +76,12 @@ internal object DatabaseContract {
     //
     const val ACCOUNTS_PUSH_SETTINGS = "accountsPushSettings"
     //
+    const val TABLE_ALL_POSTS = "allPosts"
+    const val TABLE_FEED = "postsFeed"
+    const val TABLE_PUBLIC_WALL = "postsPublicWall"
+    const val TABLE_PRIVATE_WALL = "postsPrivateWall"
+    const val TABLE_INFO_FEED = "postsInfoFeed"
+
     const val TABLE_NEWS_FEED = "newsfeed"
     const val NEWS_FEED_TYPE_NEED = "need"
     const val NEWS_FEED_TYPE_ACCOUNT = "account"
@@ -109,8 +115,6 @@ internal object DatabaseContract {
     const val TABLE_EVENT_ATTENDIES = "attendedUsers"
     const val TABLE_EVENT_ATTENDIES_COLLECTION = "attendanceList"
     //
-    const val TABLE_INFO_FEED = "infofeed"
-    //
     const val TABLE_OFFER_CATEGORY = "categories"
     //offer
     const val SHARE_OFFER_POST = "dictionary/paymentTypes/shareOfferPost"
@@ -133,7 +137,7 @@ internal object DatabaseContract {
     const val TABLE_GROUPS_COL_MY = "myCommunities"
     const val TABLE_GROUPS_COL_INVITES = "invitesToCommunities"
     const val TABLE_GROUPS_ALL = "allCommunities"
-    const val TABLE_GROUPS_ALL_COL_FEED = "postFeed"
+    const val TABLE_GROUPS_ALL_COL_FEED = "postsFeed2"
     const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
     const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
     const val TABLE_GROUPS_ALL_COL_WALLET = "wallet"

@@ -1,6 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
-import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.channels.produce
 import timber.log.Timber
 
 /**
@@ -20,20 +20,30 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val tagInteractor: TagInteractor,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
-    override suspend fun loadAll(): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllWithChangesHandling()
-    override suspend fun loadAllImmediately(): List<PostModel> = postsRepository.loadAllImmediately()
+    override suspend fun preloadFeed(): List<PostModel> = postsRepository.preloadFeed()
+    override suspend fun getPreloadedFeed(): List<PostModel> = postsRepository.getPreloadedFeed()
+    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return produce {
+            send(ListItemEvent.Added(getPreloadedFeed()))
+            postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
+        }
+    }
+    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return produce {
+            send(ListItemEvent.Added(postsRepository.preloadWall(accountId)))
+            postsRepository.loadWallWithChangesHandling(accountId).withBuffer().consumeEach { send(it) }
+        }
+    }
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
-    override suspend fun loadById(id: String, authorId: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id, authorId)
-    override suspend fun loadAllUserPostByAccountId(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByAccountId(accountId)
-    override suspend fun loadAllUserPostByAccountIdImmediately(accountId: String): List<PostModel> = postsRepository.loadAllUserPostByAccountIdImmediately(accountId)
+    override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
-    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.loadAllByGroupIdImmediately(groupId)
+    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.preloadGroupFeed(groupId)
 
-    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(10)
+    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(100)
 
     init {
-        launch {
-            viewItemChannel.bufferize(SubscriptionsContainerDelegate(), SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
+        launchWorker {
+            viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
                         postsRepository.sendViewed(it.item.map { it.id })
@@ -56,7 +66,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     override suspend fun resetCounter() = postsRepository.resetCounter()
 
-    override suspend fun createNeed(post: RawPostModel): PostModel {
+    override suspend fun createNeed(post: RawPostModel) {
         return postsRepository.createNeed(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)
@@ -69,7 +79,11 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 processedTags = processTags(post)))
     }
 
-    override suspend fun createGeneralPost(post: RawPostModel): PostModel {
+    override suspend fun changeStatus(id: String, status: ExpirationType) {
+        postsRepository.changeStatus(id, status)
+    }
+
+    override suspend fun createGeneralPost(post: RawPostModel) {
         return postsRepository.createGeneralPost(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)))
@@ -82,7 +96,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 processedTags = processTags(post)))
     }
 
-    override suspend fun createOffer(post: RawPostModel): OfferPostModel {
+    override suspend fun createOffer(post: RawPostModel) {
         return postsRepository.createOffer(post.copy(
                 processedImages = processImages(post),
                 processedTags = processTags(post)))
@@ -130,6 +144,6 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()
 
     private companion object {
-        private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
+        private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 2_000L
     }
 }

@@ -30,14 +30,14 @@ class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewMo
     override var selectedAccount: ShortAccountModel? = null
         set(value) {
             if (field != value) {
-                bindRecipient(value, selectedGroup)
+                bindRecipient(value, null)
                 field = value
             }
         }
     private var selectedGroup: GroupModel? = null
         set(value) {
             if (field != value) {
-                bindRecipient(selectedAccount, value)
+                bindRecipient(null, value)
                 field = value
             }
         }
@@ -91,11 +91,17 @@ class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewMo
                 tlRecipientType.addTab(it)
                 if (selectedAccount != null) it.select()
             }
-            tlRecipientType.newTab().let {
-                it.text = fromDictionary(R.string.transaction_recipient_group)
-                tlRecipientType.addTab(it)
-                if (selectedGroup != null) it.select()
+            launchCoroutineUI {
+                if (viewModel.hasAnyGroup()) {
+                    tlRecipientType.newTab().let {
+                        it.text = fromDictionary(R.string.transaction_recipient_group)
+                        tlRecipientType.addTab(it)
+                        if (selectedGroup != null) it.select()
+                    }
+                }
+                bindRecipient(selectedAccount, selectedGroup)
             }
+
             tlRecipientType.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 

@@ -2,11 +2,9 @@ package com.mnassa.screen.main
 
 import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NotAuthorizedException
-import com.mnassa.domain.interactor.CountersInteractor
-import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.NotificationInteractor
-import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
@@ -24,7 +22,8 @@ class MainViewModelImpl(
         private val loginInteractor: LoginInteractor,
         private val userProfileInteractor: UserProfileInteractor,
         private val notificationInteractor: NotificationInteractor,
-        private val countersInteractor: CountersInteractor
+        private val countersInteractor: CountersInteractor,
+        private val networkInteractor: NetworkInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
@@ -83,6 +82,8 @@ class MainViewModelImpl(
     override fun selectAccount(account: ShortAccountModel) {
         handleException {
             try {
+                if (!networkInteractor.isConnected) throw NetworkDisableException("Network is required to change account!", IllegalStateException())
+
                 withProgressSuspend {
                     userProfileInteractor.setCurrentUserAccount(account)
                     delay(1_000) //for animation purpose. Also this time is needed to update all counters

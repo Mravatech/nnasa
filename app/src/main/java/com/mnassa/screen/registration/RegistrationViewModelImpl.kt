@@ -13,7 +13,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.consume
 
 /**
  * Created by Peter on 2/26/2018.
@@ -25,7 +25,6 @@ class RegistrationViewModelImpl(
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
-    override val hasPersonalAccountChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
     override val addTagRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
 
     private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
@@ -35,14 +34,13 @@ class RegistrationViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            userProfileInteractor.getAllAccounts().consumeEach {
-                hasPersonalAccountChannel.send(it.any { it.accountType == AccountType.PERSONAL })
-            }
-        }
-
-        handleException {
             tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
         }
+    }
+
+    override suspend fun hasPersonalAccountChannel(): Boolean {
+        return handleExceptionsSuspend { userProfileInteractor.getAllAccounts().consume { receive() }.any { it.accountType == AccountType.PERSONAL } }
+                ?: true
     }
 
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
@@ -58,7 +56,8 @@ class RegistrationViewModelImpl(
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
-                val profile = userProfileInteractor.getProfileById(shortAccountModel.id) ?: return@withProgressSuspend
+                val profile = userProfileInteractor.getProfileById(shortAccountModel.id)
+                        ?: return@withProgressSuspend
                 openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(profile))
             }
         }
@@ -76,7 +75,8 @@ class RegistrationViewModelImpl(
                         offers = offersWithIds,
                         interests = interestsWithIds
                 )
-                val profile = userProfileInteractor.getProfileById(shortAccountModel.id) ?: return@withProgressSuspend
+                val profile = userProfileInteractor.getProfileById(shortAccountModel.id)
+                        ?: return@withProgressSuspend
                 openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(profile))
             }
         }

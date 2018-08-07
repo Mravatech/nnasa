@@ -13,15 +13,16 @@ import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.*
+import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.members.GroupMembersController
+import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_details.view.*
 import kotlinx.android.synthetic.main.item_group_member_round.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.delay
 import org.kodein.di.generic.instance
 
 /**
@@ -33,6 +34,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
     private var group = args.getSerializable(EXTRA_GROUP) as GroupModel
     override val viewModel: GroupDetailsViewModel by instance(arg = groupId)
     private val tagsAdapter = PostTagRVAdapter()
+    private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -41,6 +43,24 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
         launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.membersChannel.consumeEach { bindMembers(it, view) } }
+        launchCoroutineUI {
+            viewModel.isMemberChannel.consumeEach { isMember ->
+                view.btnOpenGroup.isGone = !isMember
+                view.vBtnOpenGroupShadow.visibility = view.btnOpenGroup.visibility
+            }
+        }
+        launchCoroutineUI {
+            viewModel.hasInviteChannel.consumeEach { hasInvite ->
+                if (hasInvite) {
+                    view.toolbar.onMoreClickListener = { view ->
+                        popupMenuHelper.showGroupInviteMenu(view, { viewModel.acceptInvite() }, { viewModel.declineInvite() })
+                    }
+                } else {
+                    view.toolbar.onMoreClickListener = null
+                }
+
+            }
+        }
 
         with(view) {
             rvGroupTags.layoutManager = ChipsLayoutManager.newBuilder(context)
@@ -49,6 +69,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                     .setOrientation(ChipsLayoutManager.HORIZONTAL)
                     .build()
             rvGroupTags.adapter = tagsAdapter
+            btnOpenGroup.text = fromDictionary(R.string.group_open_profile)
         }
 
         bindGroup(group, view)
@@ -90,6 +111,11 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
             tvGroupLocation.goneIfEmpty()
             tvGroupLocationHeader.visibility = tvGroupLocation.visibility
             vGroupLocationDivider.visibility = tvGroupLocation.visibility
+
+            //open group button
+            btnOpenGroup.setOnClickListener {
+                open(GroupProfileController.newInstance(group))
+            }
         }
     }
 
@@ -109,7 +135,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                 val itemView = inflater.inflate(R.layout.item_group_member_round, llGroupMembersContainer, false)
                 llGroupMembersContainer.addView(itemView)
 
-                val offset = i.toDouble() * (itemSize.toDouble()* GROUP_MEMBERS_ITEMS_DISTANCE)
+                val offset = i.toDouble() * (itemSize.toDouble() * GROUP_MEMBERS_ITEMS_DISTANCE)
                 val layoutParams = itemView.layoutParams as ViewGroup.MarginLayoutParams
                 layoutParams.marginStart = offset.toInt()
                 itemView.layoutParams = layoutParams

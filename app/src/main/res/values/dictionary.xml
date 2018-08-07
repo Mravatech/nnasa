@@ -63,6 +63,8 @@
     <string name="tab_home_button_create_general_post">_android_home_button_create_general</string>
 
     <!-- ========================================= POSTS ======================================== -->
+    <string name="posts_new_items_available">_newsfeed_new_posts_available</string>
+    <string name="events_new_items_available">_newsfeed_new_events_available</string>
     <string name="need_prefix">_post_type_need_Info</string>
     <string name="recommend_prefix">_android_post_recommends_prefix</string>
     <string name="recommend_title">_profile_menu_recommendUser</string>
@@ -164,6 +166,8 @@
     <string name="post_promote_dialog_title">_promotion_willCostMaskpromotePost</string>
     <string name="post_promote_dialog_no">_post_details_alert_cancel</string>
     <string name="post_promote_dialog_yes">_android_ok</string>
+    <string name="post_close">_post_details_alert_expirationStatusTo_closed</string>
+    <string name="post_fulfill">_post_details_alert_expirationStatusTo_fulfilled</string>
 
     <!-- ========================================== OFFER ======================================= -->
     <string name="offer_prefix">_post_type_offer_Info</string>
@@ -491,6 +495,7 @@
     <string name="event_status_closed">closed</string>
     <string name="event_status_suspended">suspended</string>
     <string name="event_promote_menu">_post_details_alert_promote</string>
+    <string name="event_need_notification">_new_event_is_need_push</string>
 
     <!-- ========================================== CREATE GENERAL ============================= -->
     <string name="general_text_placeholder">_android_general_text_placeholder</string>
@@ -578,6 +583,9 @@
     <string name="group_delete_menu">_groupNewsfeed_menu_delete</string>
     <string name="group_wallet_menu">_groupNewsfeed_menu_wallet</string>
     <string name="group_delete_dialog">_group_delete</string>
+    <string name="group_open_profile">_group_open_group</string>
+    <string name="group_invite_decline">_connections_groupMenu_declineInvite</string>
+    <string name="group_invite_apply">_connections_groupMenu_applyInvite</string>
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>
     <string name="group_item_header_all">_group_item_header_all</string>
@@ -591,6 +599,7 @@
 
     <string name="group_member_invite_send">_group_member_invite_send</string>
     <string name="group_member_invite_revoke">_group_member_invite_revoke</string>
+    <string name="group_member_invite_remove">_group_member_remove</string>
 
     <string name="add_tags_dialog_title">_add_tags_dialog_title</string>
     <string name="add_tags_dialog_description">_add_tags_dialog_description</string>

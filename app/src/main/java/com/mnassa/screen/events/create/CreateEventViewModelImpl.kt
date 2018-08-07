@@ -5,6 +5,7 @@ import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.GeoPlaceModel
+import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.screen.base.MnassaViewModelImpl
@@ -36,8 +37,13 @@ class CreateEventViewModelImpl(private val eventId: String?,
         }
     }
 
-    override suspend fun getTag(tagId: String): TagModel? = tagInteractor.get(tagId)
+    override suspend fun getTag(tagId: String): TagModel? = handleExceptionsSuspend { tagInteractor.get(tagId) }
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun canPromoteEvents(): Boolean = userProfileInteractor.getPermissions().consume { receive() }.canPromoteEvent
-    override suspend fun getPromoteEventPrice(): Long = eventsInteractor.getPromotePostPrice()
+    override suspend fun canPromoteEvents(): Boolean = handleExceptionsSuspend { userProfileInteractor.getPermissions().consume { receive() }.canPromoteEvent }
+            ?: false
+
+    override suspend fun getPromoteEventPrice(): Long = handleExceptionsSuspend { eventsInteractor.getPromotePostPrice() }
+            ?: 0L
+
+    override suspend fun getUserLocation(): LocationPlaceModel? = handleExceptionsSuspend { userProfileInteractor.getProfileById(userProfileInteractor.getAccountIdOrException())?.location }
 }

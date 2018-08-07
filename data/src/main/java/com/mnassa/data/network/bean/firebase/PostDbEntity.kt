@@ -1,6 +1,7 @@
 package com.mnassa.data.network.bean.firebase
 
 import android.support.annotation.Nullable
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 
@@ -12,13 +13,13 @@ internal data class PostDbEntity(
         @SerializedName("allConnections") var allConnections: Boolean,
         @SerializedName("copyOwner") var copyOwner: String?,
         @SerializedName("counters") var counters: PostCountersDbEntity,
-        @SerializedName("createdAt") var createdAt: Long,
+        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
         @SerializedName("images") var images: List<String>?,
         @SerializedName("videos") var videos: List<String>?,
         @SerializedName("itemType") var itemType: String,
         @SerializedName("type") var type: String,
         @SerializedName("originalCreatedAt") var originalCreatedAt: Long?,
-        @SerializedName("originalId", alternate = arrayOf("originalPostId")) var originalId: String,
+        @SerializedName("originalId", alternate = ["originalPostId"]) var originalId: String,
         @SerializedName("privacyConnections") var privacyConnections: List<String>?,
         @SerializedName("privacyType") var privacyType: String,
         @SerializedName("text") var text: String?,
@@ -28,12 +29,12 @@ internal data class PostDbEntity(
         @SerializedName("original") var original: String?,
         @SerializedName("statusOfExpiration") var statusOfExpiration: String,
         @SerializedName("timeOfExpiration") var timeOfExpiration: Long?,
-        @SerializedName("author") var author: Map<String, ShortAccountDbEntity>,
+        @SerializedName("author") var author: JsonObject,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("repostAuthor") var repostAuthor: Map<String, ShortAccountDbEntity>?,
+        @SerializedName("repostAuthor") var repostAuthor: JsonObject,
         //posted account
-        @SerializedName("postedAccount") var postedAccount: Map<String, ProfileDbEntity?>?,
+        @SerializedName("postedAccount") var postedAccount: JsonObject,
         //info post
         @SerializedName("title") var title: String?, //offer post
         //offer post
@@ -44,7 +45,11 @@ internal data class PostDbEntity(
         @SerializedName("privacyCommunitiesIds") val groupIds: Set<String>?,
         @SerializedName("privacyCommunitiesInfo") val groups: List<GroupDbEntity>?
 
-) : HasId
+) : HasId {
+    companion object {
+        const val PROPERTY_CREATED_AT = "createdAt"
+    }
+}
 
 internal data class PostCountersDbEntity(
         @SerializedName("comments") var comments: Int,
@@ -64,4 +69,11 @@ internal data class PostAutoSuggest(
     override val accountIds: List<String>
         get() = aidsInternal ?: emptyList()
 }
+
+internal class PostShortDbEntity(
+        @SerializedName("id") override var id: String,
+        @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
+        @SerializedName("updatedAt") var updatedAt: Long,
+        @SerializedName(PostDbEntity.PROPERTY_CREATED_AT) var createdAt: Long
+): HasId
 

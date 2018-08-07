@@ -46,7 +46,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@id/cbIsPresent"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
@@ -69,6 +69,17 @@
                 style="@style/Connections.UserPosition"
                 tools:text="at some company" />
         </LinearLayout>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cbIsPresent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:enabled="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:text=""/>
 
     </RelativeLayout>
 </FrameLayout>

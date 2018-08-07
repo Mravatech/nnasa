@@ -7,6 +7,8 @@ import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.splash.SplashViewModel.NextScreen.LOGIN
+import com.mnassa.screen.splash.SplashViewModel.NextScreen.MAIN
 import kotlinx.android.synthetic.main.controller_splash.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -25,23 +27,17 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
         view.tvApplicationName.text = String.format("%s %s", appInfoProvider.appName, appInfoProvider.versionName)
 
         launchCoroutineUI {
-            viewModel.progressChannel.consumeEach {
-                if (it == 0) {
-                    openNextScreen()
+            viewModel.openNextScreenChannel.consumeEach {
+                val controller = when (it) {
+                    LOGIN -> EnterPhoneController.newInstance()
+                    MAIN -> MainController.newInstance()
                 }
+                open(controller)
             }
         }
     }
 
     override fun subscribeToServerMaintenanceStatus() = closeServerMaintenanceDialog()
-
-    private suspend fun openNextScreen() {
-        val nextScreen = when {
-            viewModel.isLoggedIn() -> MainController.newInstance()
-            else -> EnterPhoneController.newInstance()
-        }
-        open(nextScreen)
-    }
 
     companion object {
         fun newInstance() = SplashController()

@@ -12,7 +12,6 @@ import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.extensions.isGone
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
@@ -27,7 +26,7 @@ import org.kodein.di.generic.instance
  */
 class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
 
-    override val viewModel: RecommendedProfileViewModel by instance(arg = NeedDetailsViewModel.ViewModelParams(postId, postAuthorId))
+    override val viewModel: RecommendedProfileViewModel by instance(arg = getParams(args))
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onViewCreated(view: View) {
@@ -61,8 +60,10 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
         if (post is RecommendedProfilePostModel) {
             super.bindTags(post.offers, view)
 
-
             with(view) {
+                tvExpiration.visibility = View.GONE
+                vExpirationSeparator.visibility = View.GONE
+
                 btnConnectNow.isGone = post.recommendedProfile == null
                 val profile = post.recommendedProfile ?: return
 
@@ -72,8 +73,6 @@ class RecommendedProfileController(args: Bundle) : NeedDetailsController(args) {
                 tvRecommendedUserName.text = profile.formattedName
                 tvRecommendedUserPosition.text = profile.formattedPosition
                 tvRecommendedUserPosition.goneIfEmpty()
-                tvExpiration.visibility = View.GONE
-                vExpirationSeparator.visibility = View.GONE
 
                 btnConnectNow.tag = post
             }

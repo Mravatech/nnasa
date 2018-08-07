@@ -55,7 +55,17 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
 
     init {
         itemsTheSameComparator = { first, second -> first.id == second.id }
-        contentTheSameComparator = { first, second -> first == second }
+        contentTheSameComparator = { first, second ->
+                    first.counters == second.counters &&
+                    first.attachments == second.attachments &&
+                    first.locationPlace == second.locationPlace &&
+                    first.privacyType == second.privacyType &&
+                    first.tags == second.tags &&
+                    first.text == second.text &&
+                    first.statusOfExpiration == second.statusOfExpiration &&
+                    first.price == second.price &&
+                    first.autoSuggest == second.autoSuggest
+        }
         dataStorage = SortedDataStorage(itemClass, this)
     }
 

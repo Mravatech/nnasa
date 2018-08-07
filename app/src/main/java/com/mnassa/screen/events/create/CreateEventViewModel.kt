@@ -1,5 +1,6 @@
 package com.mnassa.screen.events.create
 
+import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.screen.base.MnassaViewModel
@@ -16,4 +17,5 @@ interface CreateEventViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
     fun publish(model: RawEventModel)
     suspend fun canPromoteEvents(): Boolean
     suspend fun getPromoteEventPrice(): Long
+    suspend fun getUserLocation(): LocationPlaceModel?
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Titles sets programmatically -->
+    <item
+        android:id="@+id/action_group_invite_accept"
+        android:title="" />
+    <item
+        android:id="@+id/action_group_invite_decline"
+        android:title="" />
+</menu>

@@ -12,6 +12,7 @@ interface GroupsInteractor {
     suspend fun deleteGroup(groupId: String)
     suspend fun getMyGroups(): ReceiveChannel<List<GroupModel>>
     suspend fun getInvitesToGroups(): ReceiveChannel<List<GroupModel>>
+    suspend fun getHasInviteToGroupChannel(groupId: String): ReceiveChannel<Boolean>
 
     suspend fun sendInvite(groupId: String, accountIds: List<String>)
     suspend fun revokeInvite(groupId: String, accountIds: List<String>)
@@ -29,4 +30,5 @@ interface GroupsInteractor {
     suspend fun updateGroup(group: RawGroupModel)
 
     suspend fun getInvitedUsers(groupId: String): ReceiveChannel<Set<ShortAccountModel>>
+    suspend fun hasAnyGroup(): Boolean
 }

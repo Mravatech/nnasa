@@ -22,7 +22,7 @@ class ChatMessageViewModelImpl(
     override val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>> = BroadcastChannel(10)
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
-    private val chatId = asyncUI { chatInteractor.getChatIdByUserId(userAccountId) }
+    private val chatId = asyncUI { handleExceptionsSuspend { chatInteractor.getChatIdByUserId(userAccountId) } ?: "UNDEFINED" }
     private var resetCounterJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,16 +44,18 @@ class ChatMessageViewModelImpl(
         }
     }
 
-    override fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?) {
-        handleException {
-            chatInteractor.sendMessage(
-                    chatID = chatId.await(),
-                    text = text,
-                    type = type,
-                    linkedMessageId = linkedMessage?.id,
-                    linkedPostId = linkedPost?.id)
-        }
-    }
+    override suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?) =
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    chatInteractor.sendMessage(
+                            chatID = chatId.await(),
+                            text = text,
+                            type = type,
+                            linkedMessageId = linkedMessage?.id,
+                            linkedPostId = linkedPost?.id)
+                }
+                true
+            } ?: false
 
     override fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean) {
         handleException {

@@ -4,6 +4,7 @@ import com.androidkotlincore.entityconverter.ConvertersContext
 import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
 import com.androidkotlincore.entityconverter.convert
 import com.androidkotlincore.entityconverter.registerConverter
+import com.google.gson.Gson
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.*
 import com.mnassa.data.network.bean.retrofit.response.PostData
@@ -25,12 +26,14 @@ import com.mnassa.domain.model.PostAutoSuggest
 import com.mnassa.domain.model.impl.*
 import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
+import java.lang.reflect.Type
 import java.util.*
 
 /**
  * Created by Peter on 3/15/2018.
  */
-class PostConverter(private val languageProvider: LanguageProvider) : ConvertersContextRegistrationCallback {
+class PostConverter(private val languageProvider: LanguageProvider,
+                    private val gson: Gson) : ConvertersContextRegistrationCallback {
 
     override fun register(convertersContext: ConvertersContext) {
         convertersContext.registerConverter(this::convertPost)
@@ -57,7 +60,16 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         return convertPostData(input, token, converter) as OfferPostModelImpl
     }
 
-    internal fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+    private fun convertPost(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
+        try {
+            return convertPostInternal(input, token, converter)
+        } catch (e: Exception) {
+            Timber.e(e, "WRONG POST STRUCTURE >>> ${input.id}")
+            throw e
+        }
+    }
+
+    private fun convertPostInternal(input: PostDbEntity, token: Any?, converter: ConvertersContext): PostModelImpl {
         val additionInfo: PostAdditionInfo? = token as? PostAdditionInfo
 
         val attachments = input.images.orEmpty().mapIndexed { index, image ->
@@ -87,12 +99,12 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
-                    recommendedProfile = try { convertAuthor(requireNotNull(input.postedAccount), converter) } catch (e: Exception) { null },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
+                    recommendedProfile = try { convertAuthor(input.postedAccount.parseObject(), converter) } catch (e: Exception) { null },
                     offers = emptyList(),
                     groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
@@ -114,11 +126,11 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     text = input.text,
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     title = input.title
@@ -143,11 +155,11 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     text = input.text,
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     //TODO: server side problem - offer without title
                     title = input.title ?: "Title is not specified".also { Timber.e(FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!"))) },
                     category = input.category,
@@ -176,11 +188,11 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
                     updatedAt = Date(input.updatedAt),
                     counters = converter.convert(input.counters),
-                    author = convertAuthor(input.author, converter),
+                    author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
-                    repostAuthor = input.repostAuthor?.run { convertAuthor(this, converter) },
+                    repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     groupIds = input.groupIds ?: additionInfo?.groupIds ?: emptySet(),
                     groups = input.groups?.let { it.map { convertShortGroup(it) } } ?: emptyList()
             )
@@ -207,10 +219,10 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
 
     private fun convertExpiration(expiration: String?): ExpirationType? {
         return when (expiration) {
-            EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE(expiration)
-            EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED(expiration)
-            EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED(expiration)
-            EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED(expiration)
+            EXPIRATION_TYPE_ACTIVE -> ExpirationType.ACTIVE
+            EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED
+            EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED
+            EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED
             else -> {
                 Timber.d(IllegalArgumentException("Wrong expiration type $expiration"))
                 null
@@ -219,12 +231,10 @@ class PostConverter(private val languageProvider: LanguageProvider) : Converters
         }
     }
 
-    private fun convertAuthor(input: Map<String, ShortAccountDbEntity?>, converter: ConvertersContext): ShortAccountModel {
-        val entity = requireNotNull(input.values.first())
-        entity.id = input.keys.first()
-
-        return converter.convert(entity, ShortAccountModel::class.java)
+    private fun convertAuthor(input: ShortAccountDbEntity?, converter: ConvertersContext): ShortAccountModel {
+        return converter.convert(requireNotNull(input), ShortAccountModel::class.java)
     }
+
 
     private fun convertPostType(input: String): PostType {
         return when (input) {

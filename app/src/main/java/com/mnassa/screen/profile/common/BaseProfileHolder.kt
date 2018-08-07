@@ -1,5 +1,6 @@
 package com.mnassa.screen.profile.common
 
+import android.support.annotation.CallSuper
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.text.Spannable
@@ -32,7 +33,10 @@ abstract class BaseProfileHolder(itemView: View) : BasePaginationRVAdapter.BaseV
     protected var bottomTagsAdapter = PostTagRVAdapter()
 
     abstract fun bindProfile(profile: ProfileAccountModel)
-    abstract fun bindOffers(offers: List<TagModel>)
+    @CallSuper
+    open fun bindOffers(offers: List<TagModel>) {
+        bottomTagsAdapter.set(offers)
+    }
     abstract fun bindInterests(interests: List<TagModel>)
     abstract fun bindConnectionStatus(connectionStatus: ConnectionStatus)
 
