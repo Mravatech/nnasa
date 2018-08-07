@@ -37,18 +37,20 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
         launchWorker {
             try {
-
                 if (channel.isClosedForSend) {
                     listener.remove()
                     return@launchWorker
                 }
 
                 val dbEntity = input.mapSingle<DbType>() ?: return@launchWorker
-                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) } ?: return@launchWorker
+                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) }
+                if (outModel == null && eventType == REMOVED) channel.send(ListItemEvent.Removed(dbEntity.id))
+                if (outModel == null) return@launchWorker
+
                 val result: ListItemEvent<OutType> = when (eventType) {
-                    MOVED -> ListItemEvent.Moved(outModel, previousChildName)
-                    CHANGED -> ListItemEvent.Changed(outModel, previousChildName)
-                    ADDED -> ListItemEvent.Added(outModel, previousChildName)
+                    MOVED -> ListItemEvent.Moved(outModel)
+                    CHANGED -> ListItemEvent.Changed(outModel)
+                    ADDED -> ListItemEvent.Added(outModel)
                     REMOVED -> ListItemEvent.Removed(outModel)
                     else -> throw IllegalArgumentException("Illegal event type $eventType")
                 }
