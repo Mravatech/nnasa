@@ -1,6 +1,7 @@
 package com.mnassa.extensions
 
 import android.view.View
+import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
@@ -27,7 +28,16 @@ suspend fun <T : Any> ReceiveChannel<ListItemEvent<List<T>>>.subscribeToUpdates(
             }
             is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
             is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-            is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+            is ListItemEvent.Removed -> {
+                if (it.previousChildName != null) {
+                    adapter.dataStorage.find { model -> model is HasId && model.id == it.previousChildName }?.let { model ->
+                        adapter.dataStorage.remove(model)
+                    }
+
+                } else {
+                    adapter.dataStorage.removeAll(it.item)
+                }
+            }
             is ListItemEvent.Cleared -> {
                 adapter.isLoadingEnabled = true
                 adapter.dataStorage.clear()

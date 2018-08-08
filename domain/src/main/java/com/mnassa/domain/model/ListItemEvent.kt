@@ -9,25 +9,34 @@ import kotlinx.coroutines.experimental.delay
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T
+    var previousChildName: String? = null
 
     constructor(item: T) : this() {
         this.item = item
+        this.previousChildName = null
     }
 
-    class Added<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item) {
+    constructor(previousChildName: String): this() {
+        this.previousChildName = previousChildName
+    }
+
+    class Added<T : Any>(item: T) : ListItemEvent<T>(item) {
         override fun toBatched(): ListItemEvent<List<T>> = Added(listOf(item))
     }
 
-    class Moved<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item) {
+    class Moved<T : Any>(item: T) : ListItemEvent<T>(item) {
         override fun toBatched(): ListItemEvent<List<T>> = Moved(listOf(item))
     }
 
-    class Changed<T : Any>(item: T, previousChildName: String? = null) : ListItemEvent<T>(item) {
+    class Changed<T : Any>(item: T) : ListItemEvent<T>(item) {
         override fun toBatched(): ListItemEvent<List<T>> = Changed(listOf(item))
     }
 
-    class Removed<T : Any>(item: T) : ListItemEvent<T>(item) {
-        override fun toBatched(): ListItemEvent<List<T>> = Removed(listOf(item))
+    class Removed<T : Any> : ListItemEvent<T> {
+        constructor(item: T): super(item)
+        constructor(previousChildName: String): super(previousChildName = previousChildName)
+
+        override fun toBatched(): ListItemEvent<List<T>> = if (previousChildName != null) Removed(previousChildName!!) else Removed(listOf(item))
     }
 
     class Cleared<T : Any> : ListItemEvent<T>() {
@@ -51,7 +60,7 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(bufferWindow: 
             if (output.isActive && (sendIfEmpty || eventsBuffer.isNotEmpty())) {
                 val event: ListItemEvent<List<E>> = ListItemEvent.Added(eventsBuffer.toMutableList())
                 eventsBuffer.clear()
-                send(event)
+                output.send(event)
             }
         }
 
@@ -73,11 +82,11 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(bufferWindow: 
                 is ListItemEvent.Moved -> eventsBuffer.add(it.item)
                 is ListItemEvent.Removed -> {
                     flush()
-                    send(it.toBatched())
+                    output.send(it.toBatched())
                 }
                 is ListItemEvent.Cleared -> {
                     eventsBuffer.clear()
-                    send(it.toBatched())
+                    output.send(it.toBatched())
                 }
             }
         }
