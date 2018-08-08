@@ -286,9 +286,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
+    private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
         return try {
-            return converter.convert(input, PostAdditionInfo.withGroup(groupId))
+            return converter.convert(input.withAutoSuggest(), PostAdditionInfo.withGroup(groupId))
         } catch (e: Exception) {
             Timber.e(e, "Error while mapping post ${input.id}; groupId = $groupId")
             null
@@ -329,5 +329,32 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 
         return result
+    }
+
+    private suspend fun PostDbEntity.withAutoSuggest(): PostDbEntity {
+        if (autoSuggest != null) return this
+        autoSuggest = loadShortModel(id)?.autoSuggest
+        return this
+    }
+
+    private suspend fun loadShortModel(id: String): PostShortDbEntity? {
+        val accountId = userRepository.getAccountIdOrException()
+        val fromNewsFeed = firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(DatabaseContract.TABLE_FEED)
+                    .document(id)
+                    .await<PostShortDbEntity>()
+        }
+        if (fromNewsFeed != null) return fromNewsFeed
+
+        val fromPrivateWall = firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(DatabaseContract.TABLE_PRIVATE_WALL)
+                    .document(id)
+                    .await<PostShortDbEntity>()
+        }
+        return fromPrivateWall
     }
 }
