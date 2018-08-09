@@ -14,11 +14,6 @@ interface GroupProfileViewModel : MnassaViewModel {
     val closeScreenChannel: BroadcastChannel<Unit>
     val groupPermissionsChannel: BroadcastChannel<GroupPermissions>
 
-    suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<List<PostModel>>>
-
-    fun onAttachedToWindow(post: PostModel)
-    fun hideInfoPost(post: PostModel)
     fun leave()
-    fun removePost(post: PostModel)
     fun delete()
 }

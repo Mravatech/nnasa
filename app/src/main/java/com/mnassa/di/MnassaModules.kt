@@ -86,6 +86,10 @@ import com.mnassa.screen.group.members.GroupMembersViewModel
 import com.mnassa.screen.group.members.GroupMembersViewModelImpl
 import com.mnassa.screen.group.profile.GroupProfileViewModel
 import com.mnassa.screen.group.profile.GroupProfileViewModelImpl
+import com.mnassa.screen.group.profile.events.GroupEventsViewModel
+import com.mnassa.screen.group.profile.events.GroupEventsViewModelImpl
+import com.mnassa.screen.group.profile.posts.GroupPostsViewModel
+import com.mnassa.screen.group.profile.posts.GroupPostsViewModelImpl
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModel
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModelImpl
 import com.mnassa.screen.group.select.SelectGroupViewModel
@@ -269,6 +273,8 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
     bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
+    bind<GroupEventsViewModel>() with factory { groupId: String -> GroupEventsViewModelImpl(groupId) }
+    bind<GroupPostsViewModel>() with factory { groupId: String -> GroupPostsViewModelImpl(groupId, instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {

@@ -22,8 +22,6 @@ class GroupProfileViewModelImpl(
         private val postsInteractor: PostsInteractor,
         private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), GroupProfileViewModel {
 
-    private var resetCounterJob: Job? = null
-
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
@@ -51,46 +49,12 @@ class GroupProfileViewModelImpl(
 
     }
 
-    override suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        return produce {
-            send(ListItemEvent.Added(postsInteractor.loadAllByGroupIdImmediately(groupId)))
-            postsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
-        }
-    }
-
-    override fun onAttachedToWindow(post: PostModel) {
-        handleException { postsInteractor.onItemViewed(post) }
-
-        //reset counter with debounce
-        resetCounterJob?.cancel()
-        resetCounterJob = async {
-            delay(1_000)
-            resetCounter()
-        }
-    }
-
-    override fun hideInfoPost(post: PostModel) {
-        handleException {
-            withProgressSuspend {
-                postsInteractor.hideInfoPost(post.id)
-            }
-        }
-    }
-
     override fun leave() {
         handleException {
             withProgressSuspend {
                 groupsInteractor.leaveGroup(groupId)
             }
             closeScreenChannel.send(Unit)
-        }
-    }
-
-    override fun removePost(post: PostModel) {
-        handleException {
-            withProgressSuspend {
-                postsInteractor.removePost(postId = post.id)
-            }
         }
     }
 
@@ -103,11 +67,7 @@ class GroupProfileViewModelImpl(
         }
     }
 
-    private fun resetCounter() {
-        handleException {
-            postsInteractor.resetCounter()
-        }
-    }
+
 
     private suspend fun loadTags(tags: List<String>): List<TagModel> {
         return tags.map { tag -> asyncWorker { handleExceptionsSuspend { tagInteractor.get(tag) } } }.mapNotNull { it.await() }

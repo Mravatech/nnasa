@@ -4,7 +4,6 @@
     android:id="@+id/llGroupsHeader"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.mnassa.widget.MnassaTextView
@@ -15,18 +14,24 @@
         android:layout_marginEnd="@dimen/spacing_horizontal"
         android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginTop="@dimen/spacing_vertical"
-        android:text="@string/groups_requests" />
+        android:text="@string/groups_requests"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvNewConnectionRequests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_vertical"
+        android:visibility="gone"
         tools:layout_height="150dp"
-        tools:listitem="@layout/item_connection_request" />
+        tools:listitem="@layout/item_connection_request"
+        tools:visibility="visible" />
 
     <View
         android:id="@+id/vGroupInvites"
-        style="@style/MnassaShadow" />
+        style="@style/MnassaShadow"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </LinearLayout>

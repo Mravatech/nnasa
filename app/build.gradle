@@ -145,6 +145,7 @@ dependencies {
     implementation deps.support.cardview
     implementation deps.support.annotations
     implementation deps.support.recyclerview
+    implementation deps.support.constraint
 
     //firebase
     implementation deps.firebase.core

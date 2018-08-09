@@ -3,32 +3,34 @@ package com.mnassa.screen.group.profile
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
+import androidx.view.doOnLayout
+import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.Router
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.clans.fab.FloatingActionButton
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.GroupModel
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
-import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.group.create.CreateGroupController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
-import com.mnassa.screen.group.members.GroupMembersController
-import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.PostsRVAdapter
+import com.mnassa.screen.group.profile.events.GroupEventsController
+import com.mnassa.screen.group.profile.posts.GroupPostsController
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
-import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.posts.offer.create.CreateOfferController
-import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_profile.view.*
-import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
+import kotlin.math.roundToInt
 
 /**
  * Created by Peter on 5/14/2018.
@@ -39,67 +41,115 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
     private var groupModel: GroupModel = args.getSerializable(EXTRA_GROUP) as GroupModel
 
     override val viewModel: GroupProfileViewModel by instance(arg = groupId)
-    private val adapter = PostsRVAdapter(withHeader = false)
-    private val tagsAdapter = PostTagRVAdapter()
-    private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
 
-    override fun onCreated(savedInstanceState: Bundle?) {
-        super.onCreated(savedInstanceState)
-
-        adapter.onAttachedToWindow = { post -> viewModel.onAttachedToWindow(post) }
-        adapter.onItemClickListener = {
-            val postDetailsFactory: PostDetailsFactory by instance()
-            open(postDetailsFactory.newInstance(it))
-        }
-        adapter.onCreateNeedClickListener = {
-            controllerSubscriptionContainer.launchCoroutineUI {
-                if (viewModel.groupPermissionsChannel.consume { receive() }.canCreateNeedPost) {
-                    open(CreateNeedController.newInstance(group = groupModel))
+    private val viewPagerAdapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
+        override fun configureRouter(router: Router, position: Int) {
+            if (!router.hasRootController()) {
+                val page: Controller = when (position) {
+                    HomePage.NEEDS.ordinal -> GroupPostsController.newInstance(groupId)
+                    HomePage.EVENTS.ordinal -> GroupEventsController.newInstance(groupId)
+                    else -> throw IllegalArgumentException("Invalid page position $position")
                 }
+                router.setRoot(RouterTransaction.with(page).tag(formatTabControllerTag(position)))
             }
         }
-        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
-        adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
-        adapter.onMoreItemClickListener = this::showPostMenu
-        adapter.onDataChangedListener = { itemsCount ->
-            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
-        }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.getNewsFeedChannel().subscribeToUpdates(
-                    adapter = adapter,
-                    emptyView = { getViewSuspend().rlEmptyView }
-            )
+        override fun getCount(): Int = HomePage.values().size
+
+        override fun getPageTitle(position: Int): CharSequence = when (position) {
+            HomePage.NEEDS.ordinal -> fromDictionary(R.string.tab_home_posts_title)
+            HomePage.EVENTS.ordinal -> fromDictionary(R.string.tab_home_events_title)
+            else -> throw IllegalArgumentException("Invalid page position $position")
         }
     }
+
+    // Collapsing avatar logic
+    private val appBarStateChangeListener: AppBarStateChangeListener = object : AppBarStateChangeListener() {
+        override fun onOffsetChanged(state: AppBarStateChangeListener.State, offset: Float) {
+            translationView(offset)
+        }
+    }
+    private val avatarSrcPoint = IntArray(2)
+    private val avatarDestPoint = IntArray(2)
+    private val expandedAvatarSizePx: Int
+        get() = applicationContext!!.resources.getDimensionPixelSize(R.dimen.group_profile_avatar_expanded)
+    private val collapsedAvatarSizePx: Int
+        get() = applicationContext!!.resources.getDimensionPixelSize(R.dimen.group_profile_avatar_collapsed)
+    private val avatarSizeDiff: Float
+        get() = (expandedAvatarSizePx - collapsedAvatarSizePx).toFloat()
+
+    private fun setupCollapsingToolbar(view: View) {
+        view.app_bar.addOnOffsetChangedListener(appBarStateChangeListener)
+        view.ivGroupAvatar.doOnLayout {
+            resetPoints()
+        }
+    }
+
+    private fun translationView(offset: Float) {
+        val view = view ?: return
+        val newAvatarSize = expandedAvatarSizePx - (avatarSizeDiff) * offset
+
+        val expandAvatarSize = expandedAvatarSizePx.toFloat()
+        val xAvatarOffset = (avatarDestPoint[0] - avatarSrcPoint[0] - (expandAvatarSize - newAvatarSize) / 2f) * offset
+        // If avatar center in vertical, just half `(expandAvatarSize - newAvatarSize)`
+        val yAvatarOffset = (avatarDestPoint[1] - avatarSrcPoint[1] - (expandAvatarSize - newAvatarSize)) * offset
+        with(view) {
+            val lp = ivGroupAvatar.layoutParams
+            lp.width = newAvatarSize.roundToInt()
+            lp.height = newAvatarSize.roundToInt()
+            ivGroupAvatar.layoutParams = lp
+            ivGroupAvatar.translationX = xAvatarOffset
+            ivGroupAvatar.translationY = yAvatarOffset
+
+            tvGroupDescription.alpha = (1 - offset) * 0.4f
+            ivGroupInfo.alpha = 1 - offset
+        }
+    }
+
+    private fun resetPoints() {
+        val view = view ?: return
+        val offset = appBarStateChangeListener.currentOffset
+
+        val newAvatarSize = expandedAvatarSizePx - (avatarSizeDiff) * offset
+        val expandAvatarSize = expandedAvatarSizePx.toFloat()
+
+        with(view) {
+            val tmpAvatarPoint = IntArray(2)
+            ivGroupAvatar.getLocationOnScreen(tmpAvatarPoint)
+            avatarSrcPoint[0] = (tmpAvatarPoint[0] - ivGroupAvatar.translationX -
+                    (expandAvatarSize - newAvatarSize) / 2f).roundToInt()
+            // If avatar center in vertical, just half `(expandAvatarSize - newAvatarSize)`
+            avatarSrcPoint[1] = (tmpAvatarPoint[1] - ivGroupAvatar.translationY -
+                    (expandAvatarSize - newAvatarSize)).roundToInt()
+
+            space.getLocationOnScreen(avatarDestPoint)
+        }
+
+        view.post { translationView(offset) }
+    }
+    ///
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+        appBarStateChangeListener.reset()
 
         with(view) {
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-            llGroupMembers.setOnClickListener { open(GroupMembersController.newInstance(groupModel)) }
-            flInfoSection.setOnClickListener { open(GroupDetailsController.newInstance(groupModel)) }
-            llGroupInvites.setOnClickListener { if (groupModel.isAdmin) open(GroupInviteConnectionsController.newInstance(groupModel)) }
-            rvGroupTags.adapter = tagsAdapter
-            rvGroupPosts.adapter = adapter
+            val titleColor = ContextCompat.getColor(context, R.color.white)
+            collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
+            collapsingToolbarLayout.setExpandedTitleColor(titleColor)
+
+            vpGroupProfile.adapter = viewPagerAdapter
+            tabLayout.setupWithViewPager(vpGroupProfile)
         }
+        setupCollapsingToolbar(view)
 
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
-        launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-        
+
         initFab(view)
         bindGroup(groupModel, view)
-    }
-
-    override fun onDestroyView(view: View) {
-        view.rvGroupTags.adapter = null
-        view.rvGroupPosts.adapter = null
-        super.onDestroyView(view)
     }
 
     private fun initFab(view: View) {
@@ -108,7 +158,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         }
 
         launchCoroutineUI {
-            viewModel.groupPermissionsChannel.consumeEach { (_, _, canCreateGeneralPost, canCreateNeedPost, canCreateOfferPost) ->
+            viewModel.groupPermissionsChannel.consumeEach { (_, canCreateEvent, canCreateGeneralPost, canCreateNeedPost, canCreateOfferPost) ->
                 with(getViewSuspend()) {
                     fabGroup.removeAllMenuButtons()
 
@@ -121,15 +171,14 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                         fabGroup.addMenuButton(button)
                     }
 
-                    //TODO: uncomment for events in groups
-//                    if (permission.canCreateEvent) {
-//                        button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
-//                        button.setOnClickListener {
-//                            fabGroup.close(false)
-//                            open(CreateEventController.newInstance(group = groupModel))
-//                        }
-//                        fabGroup.addMenuButton(button)
-//                    }
+                    if (canCreateEvent) {
+                        val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
+                        button.setOnClickListener {
+                            fabGroup.close(false)
+                            open(CreateEventController.newInstance(group = groupModel))
+                        }
+                        fabGroup.addMenuButton(button)
+                    }
 
                     if (canCreateOfferPost) {
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_offer))
@@ -152,7 +201,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                     fabGroup.isGone = !(
                             canCreateNeedPost ||
                                     canCreateOfferPost ||
-//                                    permission.canCreateEvent || //TODO: uncomment for events in groups
+                                    canCreateEvent ||
                                     canCreateGeneralPost)
                 }
             }
@@ -210,7 +259,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 
     private fun bindGroup(group: GroupModel, view: View) {
         this.groupModel = group
-        adapter.showMoreOptions = group.isAdmin
 
         with(view) {
             val avatar = group.avatar
@@ -221,26 +269,20 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                 }
             }
 
-            tvGroupTitle.text = group.formattedName
-            tvGroupSubTitle.text = group.formattedRole
-            toolbar.title = tvGroupTitle.text
+            collapsingToolbarLayout.title = "  " + group.formattedName
+            tvGroupDescription.text = group.formattedRole
+            ivGroupInfo.setOnClickListener { open(GroupDetailsController.newInstance(group)) }
+            tvGroupDescription.setOnClickListener { open(GroupDetailsController.newInstance(group)) }
 
-            tvMembersCount.text = group.numberOfParticipants.toString()
-            tvInvitesCount.text = group.numberOfInvites.toString()
             initToolbar(view)
         }
     }
 
-    private fun bindTags(tags: List<TagModel>, view: View) {
-        tagsAdapter.set(tags)
-        view.rvGroupTags.isGone = tags.isEmpty()
+    private enum class HomePage {
+        NEEDS, EVENTS
     }
 
-    private fun showPostMenu(post: PostModel, view: View) {
-        popupMenuHelper.showGroupPostItemMenu(view,
-                onRemove = { viewModel.removePost(post) }
-        )
-    }
+    private fun formatTabControllerTag(position: Int): String = "home_tab_controller_$position"
 
     companion object {
         private const val EXTRA_GROUP = "EXTRA_GROUP"
