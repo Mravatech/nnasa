@@ -10,7 +10,10 @@ import com.mnassa.domain.model.withBuffer
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -22,20 +25,17 @@ class GroupPostsViewModelImpl(private val groupId: String,
 
     private var resetCounterJob: Job? = null
     override val groupChannel: ConflatedBroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
-
+    override val newsFeedChannel: ReceiveChannel<ListItemEvent<List<PostModel>>>
+        get() = produce {
+            send(ListItemEvent.Added(postsInteractor.loadAllByGroupIdImmediately(groupId)))
+            postsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
+        }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleException {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) groupChannel.send(it)
             }
-        }
-    }
-
-    override suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        return produce {
-            send(ListItemEvent.Added(postsInteractor.loadAllByGroupIdImmediately(groupId)))
-            postsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
         }
     }
 

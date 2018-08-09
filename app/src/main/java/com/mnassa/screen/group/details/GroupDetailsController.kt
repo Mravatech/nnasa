@@ -15,6 +15,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.*
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
@@ -83,6 +84,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
     private fun bindGroup(group: GroupModel, view: View) {
         this.group = group
         with(view) {
+            //avatar
             val avatar = group.avatar
             ivGroupAvatar.avatarSquare(avatar)
             if (avatar != null && !avatar.isBlank()) {
@@ -91,6 +93,15 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                 }
             }
 
+            //counters
+            tvMembersCount.text = group.numberOfParticipants.toString()
+            tvInvitesCount.text = group.numberOfInvites.toString()
+            tvMembersCount.setOnClickListener { open(GroupMembersController.newInstance(group)) }
+            tvMembersCountLabel.setOnClickListener { open(GroupMembersController.newInstance(group)) }
+            tvInvitesCount.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
+            tvInvitesCountLabel.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
+
+            //titles
             tvGroupTitle.text = group.name
             tvGroupSubTitle.text = group.formattedRole
 

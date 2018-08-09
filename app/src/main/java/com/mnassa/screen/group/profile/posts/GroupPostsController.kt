@@ -7,6 +7,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.isAdmin
+import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -37,26 +38,19 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
         }
-//        adapter.onCreateNeedClickListener = {
-//            controllerSubscriptionContainer.launchCoroutineUI {
-//                if (viewModel.groupPermissionsChannel.consume { receive() }.canCreateNeedPost) {
-//                    open(CreateNeedController.newInstance(group = groupModel))
-//                }
-//            }
-//        }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onMoreItemClickListener = this::showPostMenu
-//        adapter.onDataChangedListener = { itemsCount ->
-//            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
-//        }
+        adapter.onDataChangedListener = { itemsCount ->
+            view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
+        }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.getNewsFeedChannel().subscribeToUpdates(
+            viewModel.newsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
-                    emptyView = { /*getViewSuspend().rlEmptyView*/ null }
+                    emptyView = { getViewSuspend().rlEmptyView }
             )
         }
     }

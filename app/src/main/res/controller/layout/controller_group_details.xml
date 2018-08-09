@@ -13,7 +13,7 @@
         android:layout_marginTop="-5dp"
         android:fillViewport="true">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -25,9 +25,67 @@
                 android:layout_height="200dp"
                 tools:src="@drawable/ic_empty_ava" />
 
+            <View
+                android:id="@+id/vCenterView"
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ivGroupAvatar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <TextView
+                android:id="@+id/tvMembersCount"
+                style="@style/Group.Profile.Counter"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@id/vCenterView"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_toStartOf="@id/vCenterView"
+                tools:text="777" />
+
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvMembersCountLabel"
+                style="@style/Group.Profile.CounterLabel"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/tvMembersCount"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_toStartOf="@id/vCenterView"
+                android:text="@string/groups_members_count" />
+
+            <TextView
+                android:id="@+id/tvInvitesCount"
+                style="@style/Group.Profile.Counter"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/vCenterView"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_toEndOf="@id/vCenterView"
+                tools:text="777" />
+
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvInvitesCountLabel"
+                style="@style/Group.Profile.CounterLabel"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/tvInvitesCount"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_toEndOf="@id/vCenterView"
+                android:text="@string/groups_invites_count" />
+
+            <View
+                android:id="@+id/vGroupCountersDivider"
+                style="@style/MnassaDivider"
+                android:layout_below="@id/tvMembersCountLabel"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal" />
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/vGroupCountersDivider"
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:orientation="vertical"
                 android:paddingEnd="@dimen/spacing_horizontal"
@@ -175,12 +233,7 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 
@@ -192,8 +245,8 @@
 
     <View
         style="@style/MnassaShadow"
-        android:layout_marginTop="-5dp"
-        android:layout_below="@id/toolbar" />
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="-5dp" />
 
     <View
         android:id="@+id/vBtnOpenGroupShadow"

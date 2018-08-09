@@ -12,10 +12,11 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface GroupPostsViewModel : MnassaViewModel {
     val groupChannel: BroadcastChannel<GroupModel>
+    val newsFeedChannel: ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     fun onAttachedToWindow(post: PostModel)
     fun hideInfoPost(post: PostModel)
     fun removePost(post: PostModel)
 
-    suspend fun getNewsFeedChannel(): ReceiveChannel<ListItemEvent<List<PostModel>>>
+
 }

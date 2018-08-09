@@ -15,6 +15,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
+import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.group.create.CreateGroupController
@@ -35,7 +36,7 @@ import kotlin.math.roundToInt
 /**
  * Created by Peter on 5/14/2018.
  */
-class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileViewModel>(args) {
+class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileViewModel>(args), MnassaRouter {
     override val layoutId: Int = R.layout.controller_group_profile
     private val groupId: String by lazy { args.getString(EXTRA_GROUP_ID) }
     private var groupModel: GroupModel = args.getSerializable(EXTRA_GROUP) as GroupModel
@@ -92,7 +93,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 
         val expandAvatarSize = expandedAvatarSizePx.toFloat()
         val xAvatarOffset = (avatarDestPoint[0] - avatarSrcPoint[0] - (expandAvatarSize - newAvatarSize) / 2f) * offset
-        // If avatar center in vertical, just half `(expandAvatarSize - newAvatarSize)`
         val yAvatarOffset = (avatarDestPoint[1] - avatarSrcPoint[1] - (expandAvatarSize - newAvatarSize)) * offset
         with(view) {
             val lp = ivGroupAvatar.layoutParams
@@ -243,6 +243,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                 }
                 true
             }
+            toolbar.setOnClickListener { open(GroupDetailsController.newInstance(groupModel)) }
         }
     }
 
@@ -269,7 +270,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
                 }
             }
 
-            collapsingToolbarLayout.title = "  " + group.formattedName
+            collapsingToolbarLayout.title = GROUP_NAME_PREFIX + group.formattedName
             tvGroupDescription.text = group.formattedRole
             ivGroupInfo.setOnClickListener { open(GroupDetailsController.newInstance(group)) }
             tvGroupDescription.setOnClickListener { open(GroupDetailsController.newInstance(group)) }
@@ -282,11 +283,15 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
         NEEDS, EVENTS
     }
 
+    override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)
+    override fun close(self: Controller) = mnassaRouter.close(self)
+
     private fun formatTabControllerTag(position: Int): String = "home_tab_controller_$position"
 
     companion object {
         private const val EXTRA_GROUP = "EXTRA_GROUP"
         private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val GROUP_NAME_PREFIX = "  "
 
         fun newInstance(group: GroupModel): GroupProfileController {
             val args = Bundle()

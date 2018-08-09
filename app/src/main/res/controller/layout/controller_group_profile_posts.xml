@@ -5,6 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/rlEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivEmpty"
+            style="@style/EmptyList.Icon"
+            app:srcCompat="@drawable/ic_mnassa_empty" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvEmptyTitle"
+            style="@style/EmptyList.Title"
+            android:layout_below="@id/ivEmpty"
+            android:text="@string/posts_empty_list_title" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvEmptyDescription"
+            style="@style/EmptyList.Description"
+            android:layout_below="@id/tvEmptyTitle"
+            android:text="@string/posts_empty_list_description" />
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvGroupPosts"
         android:layout_width="match_parent"
