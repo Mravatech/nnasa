@@ -225,6 +225,16 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 tools:text="General" />
 
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switchEvent"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="Event" />
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

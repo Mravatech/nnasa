@@ -550,6 +550,7 @@
     <string name="group_leave">_group_menu_leave</string>
     <string name="groups_members_count">_community_header_members</string>
     <string name="groups_invites_count">_community_header_invites</string>
+    <string name="groups_points_count">_community_header_points</string>
     <string name="group_title_placeholder">_groupEdit_cellTitle_placeholder</string>
     <string name="group_description_placeholder">_groupEdit_cellInfo_placeholder</string>
     <string name="group_website_placeholder">_groupEdit_cellWebsite_placeholder</string>
@@ -580,12 +581,17 @@
     <string name="group_permissions_need">_group_permission_need</string>
     <string name="group_permissions_offer">_group_permission_offer</string>
     <string name="group_permissions_general">_group_permission_general</string>
+    <string name="group_permissions_event">_group_permission_event</string>
     <string name="group_delete_menu">_groupNewsfeed_menu_delete</string>
     <string name="group_wallet_menu">_groupNewsfeed_menu_wallet</string>
     <string name="group_delete_dialog">_group_delete</string>
     <string name="group_open_profile">_group_open_group</string>
     <string name="group_invite_decline">_connections_groupMenu_declineInvite</string>
     <string name="group_invite_apply">_connections_groupMenu_applyInvite</string>
+    
+    <string name="group_details_manage_members">_groupNewsfeed_menu_manageMembers</string>
+    <string name="group_details_invite_members">_groupNewsfeed_menu_invite</string>
+    <string name="group_details_invites">_groupNewsfeed_menu_invites</string>
 
     <string name="group_item_header_my">_group_item_header_created_by_me</string>
     <string name="group_item_header_all">_group_item_header_all</string>

@@ -239,6 +239,7 @@
     <string name="_group_permission_need_INFO">I Need posts</string>
     <string name="_group_permission_offer_INFO">I Offer posts</string>
     <string name="_group_permission_general_INFO">General posts</string>
+    <string name="_group_permission_event_INFO">Events</string>
     <string name="_group_open_group_INFO">Open community</string>
     <string name="_community_header_invites_INFO">Invites</string>
     <string name="_connections_groupMenu_applyInvite_INFO">Apply invite</string>

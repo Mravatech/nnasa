@@ -6,6 +6,7 @@ import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
@@ -21,9 +22,11 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class GroupDetailsViewModelImpl(private val groupId: String,
                                 private val groupsInteractor: GroupsInteractor,
                                 private val tagInteractor: TagInteractor,
-                                private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), GroupDetailsViewModel {
+                                private val userProfileInteractor: UserProfileInteractor,
+                                private val walletInteractor: WalletInteractor) : MnassaViewModelImpl(), GroupDetailsViewModel {
 
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
+    override val pointsChannel: BroadcastChannel<Long> = ConflatedBroadcastChannel()
     override val isMemberChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val membersChannel: BroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
@@ -53,6 +56,9 @@ class GroupDetailsViewModelImpl(private val groupId: String,
         }
         handleException {
             groupsInteractor.getHasInviteToGroupChannel(groupId).consumeTo(hasInviteChannel)
+        }
+        handleException {
+            walletInteractor.getGroupBalance(groupId).consumeTo(pointsChannel)
         }
     }
 

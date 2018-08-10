@@ -268,7 +268,7 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
-    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance(), instance()) }
+    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance(), instance(), instance()) }
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }

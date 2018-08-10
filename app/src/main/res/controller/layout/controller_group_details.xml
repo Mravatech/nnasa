@@ -13,7 +13,7 @@
         android:layout_marginTop="-5dp"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -25,215 +25,265 @@
                 android:layout_height="200dp"
                 tools:src="@drawable/ic_empty_ava" />
 
-            <View
-                android:id="@+id/vCenterView"
-                android:layout_width="1dp"
+            <TextView
+                android:id="@+id/tvGroupTitle"
+                style="@style/MnassaHeader1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ivGroupAvatar"
-                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="Group title" />
+
+            <TextView
+                android:id="@+id/tvGroupSubTitle"
+                style="@style/MnassaHeader3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text='You are a member' />
+
+            <View
+                android:id="@+id/vGroupDescriptionDivider"
+                style="@style/MnassaDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical" />
 
-            <TextView
-                android:id="@+id/tvMembersCount"
-                style="@style/Group.Profile.Counter"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@id/vCenterView"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_toStartOf="@id/vCenterView"
-                tools:text="777" />
-
             <com.mnassa.widget.MnassaTextView
-                android:id="@+id/tvMembersCountLabel"
-                style="@style/Group.Profile.CounterLabel"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/tvMembersCount"
+                android:id="@+id/tvGroupDescriptionHeader"
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_toStartOf="@id/vCenterView"
-                android:text="@string/groups_members_count" />
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:text="@string/group_description_placeholder" />
 
             <TextView
-                android:id="@+id/tvInvitesCount"
-                style="@style/Group.Profile.Counter"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@id/vCenterView"
+                android:id="@+id/tvGroupDescription"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_toEndOf="@id/vCenterView"
-                tools:text="777" />
+                android:layout_marginTop="@dimen/spacing_vertical"
+                tools:text="Group description" />
 
-            <com.mnassa.widget.MnassaTextView
-                android:id="@+id/tvInvitesCountLabel"
-                style="@style/Group.Profile.CounterLabel"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/tvInvitesCount"
+            <View
+                android:id="@+id/vGroupMembersDivider"
+                style="@style/MnassaDivider"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_toEndOf="@id/vCenterView"
-                android:text="@string/groups_invites_count" />
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <LinearLayout
+                android:id="@+id/llCounters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal">
+
+                <LinearLayout
+                    android:id="@+id/llGroupMembersCounter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/spacing_vertical"
+                    android:paddingTop="@dimen/spacing_vertical">
+
+                    <TextView
+                        android:id="@+id/tvMembersCount"
+                        style="@style/Group.Profile.Counter"
+                        tools:text="777" />
+
+                    <com.mnassa.widget.MnassaTextView
+                        style="@style/Group.Profile.CounterLabel"
+                        android:text="@string/groups_members_count" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llGroupInvitesCounter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/spacing_vertical"
+                    android:paddingTop="@dimen/spacing_vertical">
+
+                    <TextView
+                        android:id="@+id/tvInvitesCount"
+                        style="@style/Group.Profile.Counter"
+                        tools:text="777" />
+
+                    <com.mnassa.widget.MnassaTextView
+                        style="@style/Group.Profile.CounterLabel"
+                        android:text="@string/groups_invites_count" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/llGroupPointsCounter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/spacing_vertical"
+                    android:paddingTop="@dimen/spacing_vertical">
+
+                    <TextView
+                        android:id="@+id/tvPointsCount"
+                        style="@style/Group.Profile.Counter"
+                        tools:text="777" />
+
+                    <com.mnassa.widget.MnassaTextView
+                        style="@style/Group.Profile.CounterLabel"
+                        android:text="@string/groups_points_count" />
+                </LinearLayout>
+            </LinearLayout>
 
             <View
                 android:id="@+id/vGroupCountersDivider"
                 style="@style/MnassaDivider"
-                android:layout_below="@id/tvMembersCountLabel"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                android:paddingEnd="@dimen/spacing_horizontal"
-                android:paddingStart="@dimen/spacing_horizontal" />
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal" />
 
-
-            <LinearLayout
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvGroupMembersHeader"
+                style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/vGroupCountersDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:orientation="vertical"
-                android:paddingEnd="@dimen/spacing_horizontal"
-                android:paddingStart="@dimen/spacing_horizontal">
+                android:text="@string/groups_members_count" />
+
+            <LinearLayout
+                android:id="@+id/llGroupMembers"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/group_details_member_avatar_size"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:orientation="horizontal"
+                tools:background="#0f0">
+
+                <FrameLayout
+                    android:id="@+id/llGroupMembersContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    tools:background="#00f"
+                    tools:layout_width="200dp" />
 
                 <TextView
-                    android:id="@+id/tvGroupTitle"
-                    style="@style/MnassaHeader1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="Group title" />
-
-                <TextView
-                    android:id="@+id/tvGroupSubTitle"
-                    style="@style/MnassaHeader3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    tools:text='You are a member' />
-
-                <View
-                    android:id="@+id/vGroupDescriptionDivider"
-                    style="@style/MnassaDivider"
-                    android:layout_marginTop="@dimen/spacing_vertical" />
-
-                <com.mnassa.widget.MnassaTextView
-                    android:id="@+id/tvGroupDescriptionHeader"
-                    style="@style/MnassaTextTiny"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:text="@string/group_description_placeholder" />
-
-                <TextView
-                    android:id="@+id/tvGroupDescription"
+                    android:id="@+id/tvGroupMembersCounter"
                     style="@style/MnassaText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    tools:text="Group description" />
-
-                <View
-                    android:id="@+id/vGroupMembersDivider"
-                    style="@style/MnassaDivider"
-                    android:layout_marginTop="@dimen/spacing_vertical" />
-
-                <com.mnassa.widget.MnassaTextView
-                    android:id="@+id/tvGroupMembersHeader"
-                    style="@style/MnassaTextTiny"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:text="@string/groups_members_count" />
-
-                <LinearLayout
-                    android:id="@+id/llGroupMembers"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/group_details_member_avatar_size"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:orientation="horizontal"
-                    tools:background="#0f0">
-
-                    <FrameLayout
-                        android:id="@+id/llGroupMembersContainer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        tools:background="#00f"
-                        tools:layout_width="200dp" />
-
-                    <TextView
-                        android:id="@+id/tvGroupMembersCounter"
-                        style="@style/MnassaText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/spacing_horizontal"
-                        android:gravity="center_vertical"
-                        tools:text="+666" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/vGroupWebsiteDivider"
-                    style="@style/MnassaDivider"
-                    android:layout_marginTop="@dimen/spacing_vertical" />
-
-                <com.mnassa.widget.MnassaTextView
-                    android:id="@+id/tvGroupWebsiteHeader"
-                    style="@style/MnassaTextTiny"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:text="@string/group_website_header" />
-
-                <TextView
-                    android:id="@+id/tvGroupWebsite"
-                    style="@style/MnassaText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:autoLink="web"
-                    tools:text="http://web.com" />
-
-                <View
-                    android:id="@+id/vGroupLocationDivider"
-                    style="@style/MnassaDivider"
-                    android:layout_marginTop="@dimen/spacing_vertical" />
-
-                <com.mnassa.widget.MnassaTextView
-                    android:id="@+id/tvGroupLocationHeader"
-                    style="@style/MnassaTextTiny"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:text="@string/group_location_header" />
-
-                <TextView
-                    android:id="@+id/tvGroupLocation"
-                    style="@style/MnassaText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:autoLink="all"
-                    tools:text="Ukraine" />
-
-                <View
-                    android:id="@+id/vGroupTagsDivider"
-                    style="@style/MnassaDivider"
-                    android:layout_marginTop="@dimen/spacing_vertical" />
-
-                <com.mnassa.widget.MnassaTextView
-                    android:id="@+id/tvGroupTagsHeader"
-                    style="@style/MnassaTextTiny"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_vertical"
-                    android:text="@string/group_tags_header" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rvGroupTags"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/spacing_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/spacing_horizontal"
-                    tools:background="#00a"
-                    tools:layout_height="60dp" />
-
+                    android:gravity="center_vertical"
+                    tools:text="+666" />
             </LinearLayout>
 
-        </RelativeLayout>
+            <View
+                android:id="@+id/vGroupWebsiteDivider"
+                style="@style/MnassaDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvGroupWebsiteHeader"
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:text="@string/group_website_header" />
+
+            <TextView
+                android:id="@+id/tvGroupWebsite"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:autoLink="web"
+                tools:text="http://web.com" />
+
+            <View
+                android:id="@+id/vGroupLocationDivider"
+                style="@style/MnassaDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvGroupLocationHeader"
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:text="@string/group_location_header" />
+
+            <TextView
+                android:id="@+id/tvGroupLocation"
+                style="@style/MnassaText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:autoLink="all"
+                tools:text="Ukraine" />
+
+            <View
+                android:id="@+id/vGroupTagsDivider"
+                style="@style/MnassaDivider"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical" />
+
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/tvGroupTagsHeader"
+                style="@style/MnassaTextTiny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:text="@string/group_tags_header" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvGroupTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                tools:background="#00a"
+                tools:layout_height="60dp" />
+
+
+        </LinearLayout>
 
     </ScrollView>
 

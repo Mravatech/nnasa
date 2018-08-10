@@ -64,6 +64,16 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
     }
 
+    override fun onSaveViewState(view: View, outState: Bundle) {
+        super.onSaveViewState(view, outState)
+        outState.putInt(EMPTY_STATE_VISIBILITY, view.rlEmptyView.visibility)
+    }
+
+    override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+        super.onRestoreViewState(view, savedViewState)
+        view.rlEmptyView.visibility = savedViewState.getInt(EMPTY_STATE_VISIBILITY, view.rlEmptyView.visibility)
+    }
+
     override fun onDestroyView(view: View) {
 //        view.rvGroupTags.adapter = null
         view.rvGroupPosts.adapter = null
@@ -82,6 +92,7 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
 
     companion object {
         private const val EXTRA_GROUP_ID = "EXTRA_GROUP_ID"
+        private const val EMPTY_STATE_VISIBILITY = "EMPTY_STATE_VISIBILITY"
 
         fun newInstance(groupId: String): GroupPostsController {
             val args = Bundle()

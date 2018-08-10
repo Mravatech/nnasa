@@ -81,6 +81,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             switchNeed.text = fromDictionary(R.string.group_permissions_need)
             switchOffer.text = fromDictionary(R.string.group_permissions_offer)
             switchGeneral.text = fromDictionary(R.string.group_permissions_general)
+            switchEvent.text = fromDictionary(R.string.group_permissions_event)
         }
 
         launchCoroutineUI { viewModel.closeScreenChanel.consumeEach { close() } }
@@ -127,7 +128,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             switchGeneral.isChecked = group.permissions.canCreateGeneralPost
             switchOffer.isChecked = group.permissions.canCreateOfferPost
             switchNeed.isChecked = group.permissions.canCreateNeedPost
-            //todo: group events
+            switchEvent.isChecked = group.permissions.canCreateEvent
         }
     }
 
@@ -181,7 +182,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
                             canCreateNeedPost = switchNeed.isChecked,
                             canCreateOfferPost = switchOffer.isChecked,
                             canCreateAccountPost = false,
-                            canCreateEvent = false //TODO: group events
+                            canCreateEvent = switchEvent.isChecked
                     )
             )
         }

@@ -9,17 +9,21 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.*
+import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.group.profile.GroupProfileController
+import com.mnassa.screen.group.requests.GroupConnectionRequestsController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_details.view.*
 import kotlinx.android.synthetic.main.item_group_member_round.view.*
@@ -36,6 +40,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
     override val viewModel: GroupDetailsViewModel by instance(arg = groupId)
     private val tagsAdapter = PostTagRVAdapter()
     private val popupMenuHelper: PopupMenuHelper by instance()
+    private val dialogHelper: DialogHelper by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -44,6 +49,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
         launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.membersChannel.consumeEach { bindMembers(it, view) } }
+        launchCoroutineUI { viewModel.pointsChannel.consumeEach { view.tvPointsCount.text = it.toString() } }
         launchCoroutineUI {
             viewModel.isMemberChannel.consumeEach { isMember ->
                 view.btnOpenGroup.isGone = !isMember
@@ -71,6 +77,10 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                     .build()
             rvGroupTags.adapter = tagsAdapter
             btnOpenGroup.text = fromDictionary(R.string.group_open_profile)
+
+            llGroupMembersCounter.setOnClickListener { open(GroupMembersController.newInstance(group)) }
+            llGroupInvitesCounter.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
+            llGroupPointsCounter.setOnClickListener { if (group.isAdmin) open(WalletController.newInstanceGroup(group)) }
         }
 
         bindGroup(group, view)
@@ -96,10 +106,6 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
             //counters
             tvMembersCount.text = group.numberOfParticipants.toString()
             tvInvitesCount.text = group.numberOfInvites.toString()
-            tvMembersCount.setOnClickListener { open(GroupMembersController.newInstance(group)) }
-            tvMembersCountLabel.setOnClickListener { open(GroupMembersController.newInstance(group)) }
-            tvInvitesCount.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
-            tvInvitesCountLabel.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
 
             //titles
             tvGroupTitle.text = group.name
