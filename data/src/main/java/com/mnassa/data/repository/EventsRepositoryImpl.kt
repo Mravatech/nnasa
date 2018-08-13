@@ -5,6 +5,7 @@ import com.androidkotlincore.entityconverter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.mnassa.data.converter.EventAdditionInfo
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseEventsApi
@@ -22,9 +23,12 @@ import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.repository.EventsRepository
+import com.mnassa.domain.repository.GroupsRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
+import timber.log.Timber
 
 /**
  * Created by Peter on 4/13/2018.
@@ -35,7 +39,8 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val converter: ConvertersContext,
                            private val postApi: FirebasePostApi,
                            private val eventsApi: FirebaseEventsApi,
-                           private val db: DatabaseReference) : EventsRepository {
+                           private val db: DatabaseReference,
+                           private val groupsRepository: GroupsRepository) : EventsRepository {
 
     override suspend fun preloadEvents(): List<EventModel> {
         return firestoreLockSuspend {
@@ -43,10 +48,10 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                     .collection(DatabaseContract.TABLE_EVENTS)
                     .document(userRepository.getAccountIdOrException())
                     .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
-                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
                     .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<EventDbEntity>()
-                    .mapNotNull { try { converter.convert(it, EventModel::class.java) } catch (e: Exception) { null } }
+                    .mapNotNull { mapEvent(it) }
         }
     }
 
@@ -58,8 +63,32 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                     .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
                     .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
                             exceptionHandler = exceptionHandler,
-                            mapper = { converter.convert(it) }
+                            mapper = { mapEvent(it) }
                     )
+        }
+    }
+
+    override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>> {
+        return firestoreLockSuspend {
+            firestore
+                    .collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .collection(DatabaseContract.TABLE_GROUPS_EVENTS_FEED)
+                    .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
+                            exceptionHandler = exceptionHandler,
+                            mapper = { mapEvent(it, groupId) }
+                    )
+        }
+    }
+
+    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel> {
+        return firestoreLockSuspend {
+            firestore
+                    .collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .collection(DatabaseContract.TABLE_GROUPS_EVENTS_FEED)
+                    .awaitList<EventDbEntity>()
+                    .let { it.mapNotNull { mapEvent(it, groupId) } }
         }
     }
 
@@ -70,9 +99,8 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                     .document(userRepository.getAccountIdOrException())
                     .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
                     .document(eventId)
-                    .toValueChannel<EventDbEntity>(
-                            exceptionHandler = exceptionHandler
-                    ).map { it?.let { converter.convert(it, EventModel::class.java) } }
+                    .toValueChannel<EventDbEntity>(exceptionHandler = exceptionHandler)
+                    .map { it?.let { mapEvent(it) } }
         }
     }
 
@@ -156,5 +184,17 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
 
     override suspend fun promote(id: String) {
         postApi.promote(PromotePostRequest(id, NetworkContract.EntityType.EVENT)).handleException(exceptionHandler)
+    }
+
+    private suspend fun mapEvent(input: EventDbEntity, groupId: String? = null): EventModel? {
+        val groupIds = input.groups ?: groupId?.let { setOf(it) } ?: emptySet()
+        val groups = groupIds.mapNotNull { id -> groupsRepository.getGroup(id).consume { receive() } }
+        val additionalInfo = EventAdditionInfo(groups)
+        return try {
+            converter.convert(input, additionalInfo)
+        } catch (e: Exception) {
+            Timber.e(e, "Invalid event structure: ${input.id}")
+            null
+        }
     }
 }

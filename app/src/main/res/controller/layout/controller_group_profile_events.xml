@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/rlEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_vertical"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivEmpty"
+            style="@style/EmptyList.Icon"
+            app:srcCompat="@drawable/ic_mnassa_empty" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvEmptyTitle"
+            style="@style/EmptyList.Title"
+            android:layout_below="@id/ivEmpty"
+            android:text="@string/posts_empty_list_title" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvEmptyDescription"
+            style="@style/EmptyList.Description"
+            android:layout_below="@id/tvEmptyTitle"
+            android:text="@string/posts_empty_list_description" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvGroupEvents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_event" />
+
+</RelativeLayout>

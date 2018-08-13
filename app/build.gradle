@@ -204,6 +204,7 @@ dependencies {
     implementation deps.network.logging
 
     //ui
+    implementation deps.ui.photoView
     implementation deps.ui.bottomnavigation
     implementation deps.ui.tablayout
     implementation deps.ui.dialogs

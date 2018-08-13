@@ -7,11 +7,12 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.*
+import android.widget.ImageView
 import com.mnassa.R
 import com.mnassa.extensions.image
 import com.rd.PageIndicatorView
 import kotlinx.android.synthetic.main.activity_photo_pager.*
-import kotlinx.android.synthetic.main.item_image.view.*
+import kotlinx.android.synthetic.main.item_photo_pager.view.*
 
 /**
  * Created by Peter on 20.03.2018.
@@ -108,8 +109,9 @@ class PhotoPagerActivity : AppCompatActivity(), View.OnClickListener {
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val imageUrl = images[position]
             val view = LayoutInflater.from(container.context).inflate(R.layout.item_photo_pager, container, false)
-            view.ivImage.image(imageUrl, crop = false)
-            view.ivImage.setOnClickListener(onClickListener)
+            val iv = (view.photoView) as ImageView
+            iv.image(imageUrl, crop = false)
+            iv.setOnClickListener(onClickListener)
             container.addView(view)
             return view
         }

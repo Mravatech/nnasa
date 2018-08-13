@@ -16,6 +16,7 @@ import com.mnassa.extensions.markAsOpened
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
@@ -32,9 +33,8 @@ import java.util.*
 class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_events_list
     override val viewModel: EventsViewModel by instance()
-    private val languageProvider: LanguageProvider by instance()
     private val userInteractor: UserProfileInteractor by instance()
-    private val adapter by lazy { EventsRVAdapter(languageProvider, userInteractor) }
+    private val adapter by lazy { EventsRVAdapter(userInteractor) }
     private val controllerSelectedExecutor = StateExecutor<Unit, Unit>(initState = Unit) {
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@EventsController)
@@ -62,6 +62,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
+        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
 
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled

@@ -472,7 +472,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, event.id)
             args.putSerializable(EXTRA_EVENT, event)
-            args.putStringArrayList(EXTRA_GROUP_ID, event.groupIds.toCollection(ArrayList()))
+            args.putStringArrayList(EXTRA_GROUP_ID, event.groups.map { it.id }.toCollection(ArrayList()))
             return CreateEventController(args)
         }
 

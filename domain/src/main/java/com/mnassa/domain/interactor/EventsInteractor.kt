@@ -11,6 +11,10 @@ interface EventsInteractor {
     suspend fun loadAllImmediately(): List<EventModel>
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>>
 
+    //group wall
+    suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>>
+    suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel>
+
     suspend fun createEvent(model: RawEventModel)
     suspend fun editEvent(model: RawEventModel)
     suspend fun changeStatus(event: EventModel, status: EventStatus)

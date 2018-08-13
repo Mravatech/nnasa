@@ -34,6 +34,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertEvent(input: EventDbEntity, tag: Any?, converter: ConvertersContext): EventModelImpl {
         try {
+            val tag = (tag as? EventAdditionInfo) ?: EventAdditionInfo(emptyList())
+
             return EventModelImpl(
                     id = input.id,
                     author = converter.convert(input.author),
@@ -62,7 +64,7 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                     type = converter.convert(input.type),
                     updatedAt = Date(input.updatedAt),
                     participants = input.participants ?: emptyList(),
-                    groupIds = input.privacyCommunitiesIds ?: emptySet())
+                    groups = tag.groupIds)
         } catch (e: Exception) {
             Timber.e(e, "WRONG EVENT STRUCTURE >>> ${input.id}")
             throw e

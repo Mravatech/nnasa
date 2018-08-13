@@ -194,6 +194,7 @@ ui.chipsLayoutManager = 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
 ui.timeAgo = 'com.github.marlonlom:timeago:3.0.2'
 ui.navigationDrawer = 'com.mikepenz:materialdrawer:6.0.7@aar'
 ui.durationPicker = 'mobi.upod:time-duration-picker:1.1.3'
+ui.photoView = 'com.github.chrisbanes:PhotoView:2.1.4'
 
 deps.ui = ui
 //============================================== OTHER ============================================

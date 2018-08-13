@@ -32,6 +32,7 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
+        savedInstanceState?.apply { adapter.restoreState(this) }
 
         adapter.onAttachedToWindow = { post -> viewModel.onAttachedToWindow(post) }
         adapter.onItemClickListener = {
@@ -69,13 +70,17 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
         outState.putInt(EMPTY_STATE_VISIBILITY, view.rlEmptyView.visibility)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        adapter.saveState(outState)
+    }
+
     override fun onRestoreViewState(view: View, savedViewState: Bundle) {
         super.onRestoreViewState(view, savedViewState)
         view.rlEmptyView.visibility = savedViewState.getInt(EMPTY_STATE_VISIBILITY, view.rlEmptyView.visibility)
     }
 
     override fun onDestroyView(view: View) {
-//        view.rvGroupTags.adapter = null
         view.rvGroupPosts.adapter = null
         super.onDestroyView(view)
     }

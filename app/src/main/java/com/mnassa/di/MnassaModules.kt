@@ -273,7 +273,7 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
     bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
-    bind<GroupEventsViewModel>() with factory { groupId: String -> GroupEventsViewModelImpl(groupId) }
+    bind<GroupEventsViewModel>() with factory { groupId: String -> GroupEventsViewModelImpl(groupId, instance(), instance()) }
     bind<GroupPostsViewModel>() with factory { groupId: String -> GroupPostsViewModelImpl(groupId, instance(), instance()) }
 }
 
@@ -335,7 +335,7 @@ private val repositoryModule = Kodein.Module {
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), { instance() }, instance(), { instance() }, instance()) }

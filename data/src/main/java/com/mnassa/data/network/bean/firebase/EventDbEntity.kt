@@ -36,8 +36,12 @@ internal data class EventDbEntity(
         @SerializedName("participants") val participants: List<String>?,
         @SerializedName("privacyConnections") val privacyConnections: List<String>?,
         @SerializedName("locationDescription") val locationDescription: String?,
-        @SerializedName("privacyCommunitiesIds") val privacyCommunitiesIds: Set<String>?
+        @SerializedName("privacyCommunitiesIds") val groups: Set<String>?
 ) : HasId {
+
+    companion object {
+        const val CREATED_AT = "createdAt"
+    }
 }
 
 internal data class EventTicketDbEntity(

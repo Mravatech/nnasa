@@ -1,31 +1,34 @@
 package com.mnassa.screen.events
 
 import android.support.v7.widget.RecyclerView
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.mnassa.R
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.EventStatus
-import com.mnassa.domain.model.formattedName
-import com.mnassa.domain.model.isActive
-import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.event_date.view.*
 import kotlinx.android.synthetic.main.item_event.view.*
 
 /**
  * Created by Peter on 4/16/2018.
  */
-class EventsRVAdapter(private val languageProvider: LanguageProvider, private val userProfileInteractor: UserProfileInteractor) : BaseSortedPaginationRVAdapter<EventModel>(), View.OnClickListener {
+class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) : BaseSortedPaginationRVAdapter<EventModel>(), View.OnClickListener {
     override val itemsComparator: (item1: EventModel, item2: EventModel) -> Int = { item1, item2 ->
         item1.createdAt.compareTo(item2.createdAt) * -1
     }
     override val itemClass: Class<EventModel> = EventModel::class.java
     var onItemClickListener = { item: EventModel -> }
     var onAuthorClickListener = { item: EventModel -> }
+    var onGroupClickListener = { group: GroupModel -> }
     var onAttachedToWindow: (item: EventModel) -> Unit = { }
     var onDetachedFromWindow: (item: EventModel) -> Unit = { }
 
@@ -38,12 +41,13 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
     fun destroyCallbacks() {
         onItemClickListener = { item: EventModel -> }
         onAuthorClickListener = { item: EventModel -> }
+        onGroupClickListener = { }
         onAttachedToWindow = { }
         onDetachedFromWindow = { }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<EventModel> {
-        return EventViewHolder.newInstance(parent, this, languageProvider)
+        return EventViewHolder.newInstance(parent, this, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseVH<EventModel>, position: Int) {
@@ -51,6 +55,11 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
             holder.currentAccountId = userProfileInteractor.getAccountIdOrNull()
         }
         super.onBindViewHolder(holder, position)
+    }
+
+    override fun getViewType(position: Int): Int {
+        val item = dataStorage[position]
+        return if (item.groups.isEmpty()) TYPE_EVENT_SIMPLE else TYPE_EVENT_COMMUNITY
     }
 
     override fun onViewAttachedToWindow(holder: BaseVH<EventModel>) {
@@ -72,6 +81,12 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
     }
 
     override fun onClick(view: View) {
+        val tag = view.tag
+        if (tag is GroupModel) {
+            onGroupClickListener(tag)
+            return
+        }
+
         val position = (view.tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
 
@@ -81,7 +96,8 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
         }
     }
 
-    class EventViewHolder(itemView: View, languageProvider: LanguageProvider) : BaseVH<EventModel>(itemView) {
+    class EventViewHolder(itemView: View,
+                          private val onClickListener: View.OnClickListener) : BaseVH<EventModel>(itemView) {
 
         var currentAccountId: String? = null
 
@@ -110,13 +126,46 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
                 tvEventType.text = item.formattedType
                 ivIsTicketsBought.isInvisible = !item.participants.contains(currentAccountId)
             }
+            bindGroup(item)
+        }
 
+        private fun bindGroup(item: EventModel) {
+            if (item.groups.isEmpty()) return
+
+            with(itemView) {
+                val tvGroupText: TextView = findViewById(R.id.tvGroupText)
+
+                val groupSpan = SpannableStringBuilder(fromDictionary(R.string.need_item_from_group))
+                groupSpan.append(" ")
+                var startSpan = groupSpan.length
+
+                item.groups.forEachIndexed { index, group ->
+                    groupSpan.append(group.formattedName)
+                    groupSpan.setSpan(object : ClickableSpan() {
+                        override fun onClick(widget: View?) {
+                            tvGroupText.tag = group
+                            onClickListener.onClick(tvGroupText)
+                        }
+                    }, startSpan, groupSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                    if (index != (item.groups.size - 1)) {
+                        groupSpan.append(", ")
+                    }
+
+                    startSpan = groupSpan.length
+                }
+
+                tvGroupText.text = groupSpan
+                tvGroupText.movementMethod = LinkMovementMethod.getInstance()
+            }
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, languageProvider: LanguageProvider): EventViewHolder {
+            fun newInstance(parent: ViewGroup,
+                            onClickListener: View.OnClickListener,
+                            type: Int): EventViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
-                val viewHolder = EventViewHolder(view, languageProvider)
+                val viewHolder = EventViewHolder(view, onClickListener)
 
                 with(view) {
                     rlAuthorRoot.setOnClickListener(onClickListener)
@@ -124,6 +173,8 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
 
                     rlClickableRoot.setOnClickListener(onClickListener)
                     rlClickableRoot.tag = viewHolder
+
+                    rlGroupRoot.isGone = type == TYPE_EVENT_SIMPLE
                 }
 
                 return viewHolder
@@ -132,6 +183,8 @@ class EventsRVAdapter(private val languageProvider: LanguageProvider, private va
     }
 
     companion object {
-        private const val EXTRA_STATE_EVENTS = "EXTRA_STATE_EVENTS"
+        private const val TYPE_EVENT_SIMPLE = 1
+        private const val TYPE_EVENT_COMMUNITY = 2
+
     }
 }
