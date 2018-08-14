@@ -1,9 +1,9 @@
 package com.mnassa.data.converter
 
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.convert
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextRegistrationCallback
+import com.mnassa.core.converter.convert
+import com.mnassa.core.converter.registerConverter
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.EventDbEntity
 import com.mnassa.data.network.bean.firebase.EventTicketDbEntity
@@ -89,7 +89,10 @@ class EventsConverter : ConvertersContextRegistrationCallback {
             ) else EventLocationType.Later() //server side error
             NetworkContract.EventLocationType.LATER -> EventLocationType.Later()
             NetworkContract.EventLocationType.NOT_DEFINED -> EventLocationType.NotDefined()
-            else -> throw IllegalArgumentException("Invalid location type ${input.locationType}. Event: $input")
+            else -> {
+                Timber.e(IllegalArgumentException("Invalid location type ${input.locationType}. Event: $input"))
+                EventLocationType.NotDefined()
+            }
         }
     }
 

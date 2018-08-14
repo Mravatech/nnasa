@@ -19,7 +19,7 @@ class GroupEventsViewModelImpl(private val groupId: String,
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
     override val newsFeedChannel: ReceiveChannel<ListItemEvent<List<EventModel>>>
         get() = produce {
-            send(ListItemEvent.Added(eventsInteractor.loadAllByGroupIdImmediately(groupId)))
+            handleExceptionsSuspend { send(ListItemEvent.Added(eventsInteractor.loadAllByGroupIdImmediately(groupId))) }
             eventsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
         }
 

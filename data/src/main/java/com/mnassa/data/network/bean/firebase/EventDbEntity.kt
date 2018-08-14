@@ -18,7 +18,7 @@ internal data class EventDbEntity(
         @SerializedName("itemType") val itemType: String?,
         @SerializedName("location") val locationDbEntity: LocationDbEntity?,
         @SerializedName("locationId") val locationId: String?,
-        @SerializedName("locationType") val locationType: String,
+        @SerializedName("locationType") val locationType: String?,
         @SerializedName("originalCreatedAt") val originalCreatedAt: Long,
         @SerializedName("originalId", alternate = ["originalPostId"]) val originalId: String?,
         @SerializedName("pictures") val pictures: List<String>,

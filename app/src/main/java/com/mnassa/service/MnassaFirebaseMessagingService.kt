@@ -1,6 +1,7 @@
 package com.mnassa.service
 
 import android.content.Intent
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mnassa.core.addons.launchWorker

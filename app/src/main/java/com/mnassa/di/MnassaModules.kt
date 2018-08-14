@@ -1,9 +1,9 @@
 package com.mnassa.di
 
 import android.os.Bundle
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextImpl
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextImpl
+import com.mnassa.core.converter.registerConverter
 import com.bluelinelabs.conductor.Controller
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase

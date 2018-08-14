@@ -30,7 +30,7 @@ class EventsInteractorImpl(
                     try {
                         eventsRepository.sendViewed(it.item.map { it.id })
                     } catch (e: Exception) {
-                        Timber.d(e)
+                        Timber.d(e) //ignore exception here
                     }
                 }
             }
@@ -120,7 +120,11 @@ class EventsInteractorImpl(
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
         return produce {
-            send(ListItemEvent.Added(loadAllImmediately()))
+            try {
+                send(ListItemEvent.Added(loadAllImmediately()))
+            } catch (e: Exception) {
+                Timber.e(e) //ignore exception here
+            }
             eventsRepository.getEventsFeedChannel().withBuffer().consumeEach { send(it) }
         }
     }

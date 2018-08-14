@@ -2,7 +2,6 @@ package com.mnassa.screen.chats.message
 
 import android.os.Bundle
 import com.mnassa.core.addons.asyncUI
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ChatInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ChatMessageModel
@@ -38,7 +37,7 @@ class ChatMessageViewModelImpl(
 
     private fun resetChatUnreadCount() {
         resetCounterJob?.cancel()
-        resetCounterJob = launchCoroutineUI {
+        resetCounterJob = handleException {
             delay(1_000)
             chatInteractor.resetChatUnreadCount(chatId.await())
         }

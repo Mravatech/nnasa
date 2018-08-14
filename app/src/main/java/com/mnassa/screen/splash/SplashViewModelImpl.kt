@@ -1,12 +1,11 @@
 package com.mnassa.screen.splash
 
 import android.os.Bundle
-import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.delay
@@ -23,14 +22,16 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        launchCoroutineUI {
+        handleException {
             if (loginInteractor.isLoggedIn()) {
-                val feed = async { postsRepository.preloadFeed() }
-                val notifications = async { notificatonsRepository.preloadOldNotifications() }
-                feed.await()
-                notifications.await()
-
-                openNextScreenChannel.send(SplashViewModel.NextScreen.MAIN)
+                try {
+                    val feed = asyncWorker { postsRepository.preloadFeed() }
+                    val notifications = asyncWorker { notificatonsRepository.preloadOldNotifications() }
+                    feed.await()
+                    notifications.await()
+                } finally {
+                    openNextScreenChannel.send(SplashViewModel.NextScreen.MAIN)
+                }
             } else {
                 delay(SHORT_DELAY)
                 openNextScreenChannel.send(SplashViewModel.NextScreen.LOGIN)

@@ -1,8 +1,8 @@
 package com.mnassa.data.converter
 
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextRegistrationCallback
+import com.mnassa.core.converter.registerConverter
 import com.mnassa.data.network.bean.firebase.GroupDbEntity
 import com.mnassa.data.network.bean.firebase.GroupPermissionsEntity
 import com.mnassa.data.network.bean.retrofit.request.CreateGroupRequest

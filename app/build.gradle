@@ -174,9 +174,6 @@ dependencies {
     //ucrop
     implementation deps.ucrop.general
 
-    //mapper
-    implementation deps.mapper.core
-
     //arch
     implementation deps.archComponents.viewModel
 
