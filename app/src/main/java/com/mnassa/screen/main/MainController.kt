@@ -14,6 +14,9 @@ import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
+import com.mikepenz.materialdrawer.holder.BadgeStyle
+import com.mikepenz.materialdrawer.holder.DimenHolder
+import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
@@ -42,6 +45,7 @@ import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -118,7 +122,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                     .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_profile).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_group).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_group).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false)
+                                    .withBadge("")
+                                    .withBadgeStyle(BadgeStyle().withTextColorRes(R.color.white).withColorRes(R.color.accent).withCornersDp(12).withPadding(DimenHolder.fromDp(2))),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_wallet).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_invite).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_settings).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
@@ -146,7 +152,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                         true
                     }
                     .buildForFragment()
-
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
             bnMain.accentColor = ContextCompat.getColor(view.context, R.color.accent)
             bnMain.addItems(
@@ -217,6 +222,20 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
             viewModel.currentAccountChannel.consumeEach {
                 activeAccountId = it.id
                 accountHeader?.setActiveProfile(activeAccountId.hashCode().toLong())
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.groupsCountChannel.consumeEach { groupsCount ->
+                drawer?.let {
+                    val text = when (groupsCount){
+                        0 -> null
+                        in 1..9 -> "  $groupsCount  "
+                        in 10..99 -> " $groupsCount "
+                        else -> groupsCount.toString()
+                    }
+                    it.updateBadge(GROUPS.ordinal.toLong(), StringHolder(text))
+                }
             }
         }
     }

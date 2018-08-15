@@ -188,7 +188,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 private val viewModelsModule = Kodein.Module {
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance(), instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
