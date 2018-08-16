@@ -547,6 +547,7 @@
     <string name="groups_empty_description">_android_groups_empty_description</string>
     <string name="group_is_admin">_myGroups_groupCell_isAdmin</string>
     <string name="group_is_member">_myGroups_groupCell_isMember</string>
+    <string name="group_not_member">_myGroups_groupCell_notMember</string>
     <string name="group_leave">_group_menu_leave</string>
     <string name="groups_members_count">_community_header_members</string>
     <string name="groups_invites_count">_community_header_invites</string>

@@ -223,6 +223,7 @@
     <string name="_android_groups_empty_title_INFO">No groups</string>
     <string name="_android_groups_empty_description_INFO">You have no groups yet. Just ask sb for invite or create own group</string>
     <string name="_myGroups_groupCell_isMember_INFO">You are a member</string>
+    <string name="_myGroups_groupCell_notMember_INFO">You are not a member</string>
     <string name="_group_member_remove_INFO">Remove</string>
     <string name="_group_member_invite_remove_INFO">Remove</string>
     <string name="_group_member_admin_INFO">Make admin</string>

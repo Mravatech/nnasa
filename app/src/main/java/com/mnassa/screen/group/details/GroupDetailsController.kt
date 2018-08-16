@@ -27,6 +27,7 @@ import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_details.view.*
 import kotlinx.android.synthetic.main.item_group_member_round.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -109,7 +110,9 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
 
             //titles
             tvGroupTitle.text = group.name
-            tvGroupSubTitle.text = group.formattedRole
+            launchCoroutineUI {
+                tvGroupSubTitle.text = group.formattedRole(viewModel.isMemberChannel.consume { receive() })
+            }
 
             //description
             tvGroupDescription.text = group.description

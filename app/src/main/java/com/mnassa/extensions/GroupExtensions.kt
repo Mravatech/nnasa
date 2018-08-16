@@ -10,10 +10,13 @@ import com.mnassa.translation.fromDictionary
 /**
  * Created by Peter on 5/14/2018.
  */
-val GroupModel.formattedRole: String
-    get() =
-        if (isAdmin) fromDictionary(R.string.group_is_admin)
-        else fromDictionary(R.string.group_is_member)
+fun GroupModel.formattedRole(isMember: Boolean? = null): String {
+    return when {
+        isAdmin -> fromDictionary(R.string.group_is_admin)
+        (isMember ?: true) -> fromDictionary(R.string.group_is_member)
+        else -> fromDictionary(R.string.group_not_member)
+    }
+}
 
 val GroupModel.formattedType: String get() = ""
 val GroupModel.formattedName: String get() = name.replace("\n", "").replace("\r", "")

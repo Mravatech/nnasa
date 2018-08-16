@@ -13,6 +13,7 @@ interface GroupProfileViewModel : MnassaViewModel {
     val tagsChannel: BroadcastChannel<List<TagModel>>
     val closeScreenChannel: BroadcastChannel<Unit>
     val groupPermissionsChannel: BroadcastChannel<GroupPermissions>
+    val isMemberChannel: BroadcastChannel<Boolean>
 
     fun leave()
     fun delete()

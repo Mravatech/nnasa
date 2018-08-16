@@ -29,6 +29,7 @@ import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_profile.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import kotlin.math.roundToInt
@@ -271,7 +272,9 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             }
 
             collapsingToolbarLayout.title = GROUP_NAME_PREFIX + group.formattedName
-            tvGroupDescription.text = group.formattedRole
+            launchCoroutineUI {
+                tvGroupDescription.text = group.formattedRole(viewModel.isMemberChannel.consume { receive() })
+            }
             ivGroupInfo.setOnClickListener { open(GroupDetailsController.newInstance(group)) }
             tvGroupDescription.setOnClickListener { open(GroupDetailsController.newInstance(group)) }
 
