@@ -9,18 +9,15 @@ import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.*
-import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.group.profile.GroupProfileController
-import com.mnassa.screen.group.requests.GroupConnectionRequestsController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.wallet.WalletController
@@ -41,7 +38,6 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
     override val viewModel: GroupDetailsViewModel by instance(arg = groupId)
     private val tagsAdapter = PostTagRVAdapter()
     private val popupMenuHelper: PopupMenuHelper by instance()
-    private val dialogHelper: DialogHelper by instance()
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)

@@ -13,7 +13,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
-import com.mnassa.screen.group.profile.GroupProfileController
+import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
@@ -99,7 +99,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
+        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
 
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->

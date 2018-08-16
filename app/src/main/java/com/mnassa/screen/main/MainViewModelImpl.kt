@@ -52,8 +52,8 @@ class MainViewModelImpl(
         }
     }
     override val availableAccountsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val groupsCountChannel: BroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
-        groupsInteractor.getMyGroups().map { it.size }
+    override val groupInvitesCountChannel: BroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
+        groupsInteractor.getInvitesToGroups().map { it.size }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

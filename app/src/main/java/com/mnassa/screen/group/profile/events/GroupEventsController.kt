@@ -7,13 +7,13 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.EventsRVAdapter
 import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_group_profile_events.view.*
 import org.kodein.di.generic.instance
@@ -34,6 +34,7 @@ class GroupEventsController(args: Bundle) : MnassaControllerImpl<GroupEventsView
         savedInstanceState?.apply { adapter.restoreState(this) }
 
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
+        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onItemClickListener = { openEvent(it) }
 
         adapter.onDataChangedListener = { itemsCount ->

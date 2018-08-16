@@ -45,7 +45,6 @@ import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -226,7 +225,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         }
 
         launchCoroutineUI {
-            viewModel.groupsCountChannel.consumeEach { groupsCount ->
+            viewModel.groupInvitesCountChannel.consumeEach { groupsCount ->
                 drawer?.let {
                     val text = when (groupsCount){
                         0 -> null
