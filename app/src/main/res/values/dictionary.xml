@@ -618,4 +618,6 @@
     <string name="invite_reward">_invites_rewardInfoMask</string>
     <string name="profile_connect_button">_profile_connect_button</string>
 
+    <string name="_seconds_ago">_seconds_ago</string>
+
 </resources>

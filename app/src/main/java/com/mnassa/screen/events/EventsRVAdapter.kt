@@ -65,18 +65,21 @@ class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) 
     override fun onViewAttachedToWindow(holder: BaseVH<EventModel>) {
         super.onViewAttachedToWindow(holder)
 
-        val position = convertAdapterPositionToDataIndex(holder.adapterPosition)
-        if (position >= 0) {
-            onAttachedToWindow(dataStorage[position])
+        val position = convertAdapterPositionToDataIndex(holder.adapterPosition).takeIf { it >= 0 } ?: return
+        val dataItem = dataStorage[position]
+        onAttachedToWindow(dataItem)
+        holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
+            it.startUpdateTimeJob(dataItem.originalCreatedAt)
         }
     }
 
     override fun onViewDetachedFromWindow(holder: BaseVH<EventModel>) {
         super.onViewDetachedFromWindow(holder)
 
-        val position = convertAdapterPositionToDataIndex(holder.adapterPosition)
-        if (position >= 0) {
-            onDetachedFromWindow(dataStorage[position])
+        val position = convertAdapterPositionToDataIndex(holder.adapterPosition).takeIf { it >= 0 } ?: return
+        onDetachedFromWindow(dataStorage[position])
+        holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
+            it.stopUpdateTimeJob()
         }
     }
 
