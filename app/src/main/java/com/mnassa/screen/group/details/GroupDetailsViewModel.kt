@@ -13,11 +13,17 @@ interface GroupDetailsViewModel : MnassaViewModel {
     val groupChannel: BroadcastChannel<GroupModel>
     val pointsChannel: BroadcastChannel<Long>
     val isMemberChannel: BroadcastChannel<Boolean>
-    val closeScreenChannel: BroadcastChannel<Unit>
     val tagsChannel: BroadcastChannel<List<TagModel>>
     val membersChannel: BroadcastChannel<List<ShortAccountModel>>
     val hasInviteChannel: BroadcastChannel<Boolean>
+    //
+    val closeScreenChannel: BroadcastChannel<Unit>
+    val openScreenChannel: BroadcastChannel<ScreenToOpen>
 
     fun acceptInvite()
     fun declineInvite()
+
+    enum class ScreenToOpen {
+        GROUP_PROFILE
+    }
 }

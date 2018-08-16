@@ -30,8 +30,9 @@ class GroupDetailsViewModelImpl(private val groupId: String,
     override val isMemberChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val membersChannel: BroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val hasInviteChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
+    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val openScreenChannel: BroadcastChannel<GroupDetailsViewModel.ScreenToOpen> = ArrayBroadcastChannel(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,7 @@ class GroupDetailsViewModelImpl(private val groupId: String,
         handleException {
             withProgressSuspend {
                 groupsInteractor.acceptInvite(groupId)
+                openScreenChannel.send(GroupDetailsViewModel.ScreenToOpen.GROUP_PROFILE)
             }
         }
     }
@@ -74,6 +76,7 @@ class GroupDetailsViewModelImpl(private val groupId: String,
         handleException {
             withProgressSuspend {
                 groupsInteractor.declineInvite(groupId)
+                closeScreenChannel.send(Unit)
             }
         }
     }

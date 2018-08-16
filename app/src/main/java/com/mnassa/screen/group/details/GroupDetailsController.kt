@@ -47,6 +47,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         super.onViewCreated(view)
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
+        launchCoroutineUI { viewModel.openScreenChannel.consumeEach { open(GroupProfileController.newInstance(group)) } }
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
         launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.membersChannel.consumeEach { bindMembers(it, view) } }
@@ -59,6 +60,8 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         }
         launchCoroutineUI {
             viewModel.hasInviteChannel.consumeEach { hasInvite ->
+                view.llGroupInvite.isGone = !hasInvite
+                view.vBtnInviteShadow.isGone = !hasInvite
                 if (hasInvite) {
                     view.toolbar.onMoreClickListener = { view ->
                         popupMenuHelper.showGroupInviteMenu(view, { viewModel.acceptInvite() }, { viewModel.declineInvite() })
@@ -66,7 +69,6 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                 } else {
                     view.toolbar.onMoreClickListener = null
                 }
-
             }
         }
 
@@ -82,6 +84,12 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
             llGroupMembersCounter.setOnClickListener { open(GroupMembersController.newInstance(group)) }
             llGroupInvitesCounter.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
             llGroupPointsCounter.setOnClickListener { if (group.isAdmin) open(WalletController.newInstanceGroup(group)) }
+
+            btnDecline.text = fromDictionary(R.string.group_invite_decline)
+            btnAccept.text = fromDictionary(R.string.group_invite_apply)
+
+            btnDecline.setOnClickListener { viewModel.declineInvite() }
+            btnAccept.setOnClickListener { viewModel.acceptInvite() }
         }
 
         bindGroup(group, view)
