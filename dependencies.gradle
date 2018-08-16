@@ -232,7 +232,8 @@ ext.deps = deps
 
 ext {
     endpointProd = 'https://us-central1-mnassa4prod.cloudfunctions.net'
-    endpointPreProd = 'https://us-central1-mnassa4dev.cloudfunctions.net/'
+//    endpointPreProd = 'https://us-central1-mnassa4dev.cloudfunctions.net/'
+    endpointPreProd = 'https://europe-west1-mnassa4dev.cloudfunctions.net/'
     endpointDev = 'https://us-central1-fir-test-b7667.cloudfunctions.net/'
     termsAndConditionsProd = 'https://mnassa.com/'
     termsAndConditionsPreProd = 'https://mnassa4dev.firebaseapp.com/'
