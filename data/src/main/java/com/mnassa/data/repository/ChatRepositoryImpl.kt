@@ -88,7 +88,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         }
                     }
                     it.item.replyPost?.first?.takeIf { accountId != null }?.let { first ->
-                        val replyPost: PostModel? = postsRepository.loadById(first).consume { receive() }
+                        val replyPost: PostModel? = postsRepository.loadById(first).receiveOrNull()
                         replyPost?.let { post ->
                             it.item.replyPost = it.item.replyPost?.copy(second = post)
                         }
