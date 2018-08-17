@@ -22,6 +22,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -54,7 +55,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     override val viewModel: MainViewModel by instance()
     private var drawer: Drawer? = null
     private var accountHeader: AccountHeader? = null
-    private var activeAccountId: String = ""
+    private var activeAccount: ShortAccountModel? = null
     private var previousSelectedPage = 0
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
@@ -77,7 +78,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     private fun updateActiveProfile(fireOnProfileChanged: Boolean = false) {
         accountHeader?.apply {
             profiles.forEach {
-                if ((it as? MnassaProfileDrawerItem)?.account?.id == activeAccountId) {
+                if ((it as? MnassaProfileDrawerItem)?.account?.id == activeAccount?.id) {
                     setActiveProfile(it, fireOnProfileChanged)
                 }
             }
@@ -101,7 +102,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                             innerProfile is MnassaProfileDrawerItem -> {
                                 val account = innerProfile.account
                                 drawer?.closeDrawer()
-                                activeAccountId = account.id
+                                activeAccount = account
                                 viewModel.selectAccount(account)
                                 true
                             }
@@ -136,7 +137,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                     .withSelectedItem(-1)
                     .withOnDrawerItemClickListener { _, _, item ->
                         when (values()[item.identifier.toInt()]) {
-                            PROFILE -> open(ProfileController.newInstance(activeAccountId))
+                            PROFILE -> activeAccount?.let { open(ProfileController.newInstance(it)) }
                             GROUPS -> open(GroupListController.newInstance())
                             WALLET -> open(WalletController.newInstance())
                             INVITE -> {
@@ -219,8 +220,8 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
 
         launchCoroutineUI {
             viewModel.currentAccountChannel.consumeEach {
-                activeAccountId = it.id
-                accountHeader?.setActiveProfile(activeAccountId.hashCode().toLong())
+                activeAccount = it
+                accountHeader?.setActiveProfile(it.id.hashCode().toLong())
             }
         }
 

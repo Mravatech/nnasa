@@ -5,7 +5,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
@@ -17,13 +16,9 @@ import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
-import com.mnassa.screen.profile.common.*
-import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
-import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
@@ -46,13 +41,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     override val viewModel: ProfileViewModel by instance(arg = accountId)
 
-    private var adapter = PostsRVAdapter(withHeader = false)
     private val dialog: DialogHelper by instance()
     private var lastViewedPostDate: Long = -1
     private var hasNewPosts: Boolean = false
         get() {
             return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
         }
+    private var profile: ShortAccountModel = args[EXTRA_ACCOUNT] as ShortAccountModel
+    private var adapter = ProfilePostsRVAdapter(profile)
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -95,7 +91,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        with (view) {
+        with(view) {
             rvProfile.adapter = adapter
             rvProfile.attachPanel { hasNewPosts }
 
@@ -103,63 +99,43 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             val titleColor = ContextCompat.getColor(context, R.color.white)
             collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
             collapsingToolbarLayout.setExpandedTitleColor(titleColor)
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        launchCoroutineUI {
-            viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
-                val profile = viewModel.profileChannel.consume { receive() }
-                if (!profile.isMyProfile) {
-                    handleConnectionStatus(connectionStatus, view)
-                }
-            }
+            bindProfile(this, profile)
         }
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-        launchCoroutineUI { viewModel.profileChannel.consumeEach { bindHeader() } }
-        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
-        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
-        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
+        launchCoroutineUI { viewModel.profileChannel.consumeEach { bindProfile(view, it) } }
+        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindOffers(view, it) } }
+        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindInterests(view, it) } }
+        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindConnectionStatus(view, it) } }
+    }
 
-        if (args.containsKey(EXTRA_ACCOUNT)) {
-            (args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel?)?.apply {
-                view.ivAvatar.avatarSquare(avatar)
-                view.collapsingToolbarLayout.title = formattedName
+    private fun bindProfile(view: View, profile: ShortAccountModel) {
+        this.profile = profile
+        adapter.profile = profile
+        with(view) {
+            ivAvatar.avatarSquare(profile.avatar)
+            collapsingToolbarLayout.title = profile.formattedName
+            if (profile.accountType == AccountType.PERSONAL) {
+                tvPosition.text = profile.formattedPosition
+            } else {
+                tvPosition.text = (profile as? ProfileAccountModel)?.organizationType
             }
-            args.remove(EXTRA_ACCOUNT)
         }
     }
 
-    private suspend fun bindHeader() {
-        bindHeader(
-                profile = viewModel.profileChannel.consume { receive() },
-                offers = viewModel.offersChannel.consume { receive() },
-                interests = viewModel.interestsChannel.consume { receive() },
-                connectionStatus = viewModel.statusesConnectionsChannel.consume { receive() }
-        )
+    private fun bindConnectionStatus(view: View, status: ConnectionStatus) {
+        adapter.connectionStatus = status
+        if (!profile.isMyProfile) {
+            handleConnectionStatus(status, view)
+        }
+    }
+
+    private fun bindOffers(view: View, offers: List<TagModel>) {
+        adapter.offers = offers
+    }
+
+    private fun bindInterests(view: View, interests: List<TagModel>) {
+        adapter.interests = interests
     }
 
 
@@ -332,16 +308,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 //        }
     }
 
-    private fun setTitle(profileModel: ProfileAccountModel, view: View) {
-//        if (profileModel.accountType == AccountType.PERSONAL) {
-//            view.profileName.text = profileModel.formattedName
-//            view.profileSubName.text = profileModel.formattedPosition
-//        } else {
-//            view.profileName.text = profileModel.organizationInfo?.organizationName
-//            view.profileSubName.text = profileModel.organizationType
-//        }
-    }
-
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
@@ -351,12 +317,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, account)
             params.putSerializable(EXTRA_ACCOUNT_ID, account.id)
-            return ProfileController(params)
-        }
-
-        fun newInstance(accountId: String): ProfileController {
-            val params = Bundle()
-            params.putString(EXTRA_ACCOUNT_ID, accountId)
             return ProfileController(params)
         }
     }
