@@ -1,6 +1,7 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
 import android.view.View
 import com.mnassa.R
@@ -56,7 +57,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         adapter.isLoadingEnabled = savedInstanceState == null
-
         adapter.onDataChangedListener = { itemsCount ->
             view?.findViewById<View>(R.id.rlEmptyView)?.isGone = !adapter.dataStorage.isEmpty()
         }
@@ -64,6 +64,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             if (post.createdAt.time > lastViewedPostDate) {
                 lastViewedPostDate = post.createdAt.time
             }
+        }
+        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
@@ -88,18 +95,39 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        view.rvProfile.adapter = adapter
-        view.rvProfile.attachPanel { hasNewPosts }
+        with (view) {
+            rvProfile.adapter = adapter
+            rvProfile.attachPanel { hasNewPosts }
 
-        view.toolbarProfile.setNavigationOnClickListener { close() }
-        adapter.onItemClickListener = {
-            val postDetailsFactory: PostDetailsFactory by instance()
-            open(postDetailsFactory.newInstance(it))
+            toolbar.setNavigationOnClickListener { close() }
+            val titleColor = ContextCompat.getColor(context, R.color.white)
+            collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
+            collapsingToolbarLayout.setExpandedTitleColor(titleColor)
         }
 
-        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
-        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         launchCoroutineUI {
             viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
@@ -118,8 +146,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
         if (args.containsKey(EXTRA_ACCOUNT)) {
             (args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel?)?.apply {
-                view.ivCropImage.avatarSquare(avatar)
-                view.profileName.text = formattedName
+                view.ivAvatar.avatarSquare(avatar)
+                view.collapsingToolbarLayout.title = formattedName
             }
             args.remove(EXTRA_ACCOUNT)
         }
@@ -136,42 +164,42 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
 
     private fun bindHeader(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>, connectionStatus: ConnectionStatus) {
-        val view = view ?: return
-        val parent = view.flSecondHeader ?: return
-
-        val viewHolder = when {
-            parent.tag is BaseProfileHolder -> parent.tag as BaseProfileHolder
-            profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
-            profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
-            !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
-            !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
-            else -> throw IllegalArgumentException("Wrong account type!")
-        }
-        if (parent.tag !is BaseProfileHolder) {
-            parent.addView(viewHolder.itemView)
-        }
-        parent.tag = viewHolder
-
-        viewHolder.bindProfile(profile)
-        viewHolder.bindOffers(offers)
-        viewHolder.bindInterests(interests)
-        viewHolder.bindConnectionStatus(connectionStatus)
-
-        //
-
-        profile.avatar?.let { avatar ->
-            view.ivCropImage.avatarSquare(avatar)
-            view.ivCropImage.setOnClickListener {
-                PhotoPagerActivity.start(it.context, listOf(avatar), 0)
-            }
-        }
-
-        handleCollapsingToolbar(view, connectionStatus, profile)
-        setTitle(profile, view)
-        onEditProfile(profile, view)
-        if (!profile.isMyProfile) {
-            handleConnectionStatus(connectionStatus, view)
-        }
+//        val view = view ?: return
+//        val parent = view.flSecondHeader ?: return
+//
+//        val viewHolder = when {
+//            parent.tag is BaseProfileHolder -> parent.tag as BaseProfileHolder
+//            profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
+//            profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
+//            !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
+//            !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
+//            else -> throw IllegalArgumentException("Wrong account type!")
+//        }
+//        if (parent.tag !is BaseProfileHolder) {
+//            parent.addView(viewHolder.itemView)
+//        }
+//        parent.tag = viewHolder
+//
+//        viewHolder.bindProfile(profile)
+//        viewHolder.bindOffers(offers)
+//        viewHolder.bindInterests(interests)
+//        viewHolder.bindConnectionStatus(connectionStatus)
+//
+//        //
+//
+//        profile.avatar?.let { avatar ->
+//            view.ivAvatar.avatarSquare(avatar)
+//            view.ivAvatar.setOnClickListener {
+//                PhotoPagerActivity.start(it.context, listOf(avatar), 0)
+//            }
+//        }
+//
+//        handleCollapsingToolbar(view, connectionStatus, profile)
+//        setTitle(profile, view)
+//        onEditProfile(profile, view)
+//        if (!profile.isMyProfile) {
+//            handleConnectionStatus(connectionStatus, view)
+//        }
     }
 
     override fun onClick(view: View) {
@@ -284,34 +312,34 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun onEditProfile(profileModel: ProfileAccountModel, view: View) {
-        if (profileModel.isMyProfile) {
-            view.ivProfileEdit.visibility = View.VISIBLE
-            view.ivProfileEdit.setOnClickListener {
-                launchCoroutineUI {
-                    val offers = viewModel.offersChannel.consume { receive() }
-                    val interests = viewModel.interestsChannel.consume { receive() }
-                    open(when (profileModel.accountType) {
-                        AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)
-                        AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
-                    })
-                }
-            }
-        } else {
-            view.ivProfileMenu.visibility = View.VISIBLE
-            view.ivProfileMenu.setOnClickListener {
-                onSettingsClick(profileModel, it)
-            }
-        }
+//        if (profileModel.isMyProfile) {
+//            view.ivProfileEdit.visibility = View.VISIBLE
+//            view.ivProfileEdit.setOnClickListener {
+//                launchCoroutineUI {
+//                    val offers = viewModel.offersChannel.consume { receive() }
+//                    val interests = viewModel.interestsChannel.consume { receive() }
+//                    open(when (profileModel.accountType) {
+//                        AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)
+//                        AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
+//                    })
+//                }
+//            }
+//        } else {
+//            view.ivProfileMenu.visibility = View.VISIBLE
+//            view.ivProfileMenu.setOnClickListener {
+//                onSettingsClick(profileModel, it)
+//            }
+//        }
     }
 
     private fun setTitle(profileModel: ProfileAccountModel, view: View) {
-        if (profileModel.accountType == AccountType.PERSONAL) {
-            view.profileName.text = profileModel.formattedName
-            view.profileSubName.text = profileModel.formattedPosition
-        } else {
-            view.profileName.text = profileModel.organizationInfo?.organizationName
-            view.profileSubName.text = profileModel.organizationType
-        }
+//        if (profileModel.accountType == AccountType.PERSONAL) {
+//            view.profileName.text = profileModel.formattedName
+//            view.profileSubName.text = profileModel.formattedPosition
+//        } else {
+//            view.profileName.text = profileModel.organizationInfo?.organizationName
+//            view.profileSubName.text = profileModel.organizationType
+//        }
     }
 
     companion object {

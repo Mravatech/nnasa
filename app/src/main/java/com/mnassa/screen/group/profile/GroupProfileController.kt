@@ -129,7 +129,6 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
 
         view.post { translationView(offset) }
     }
-    ///
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
