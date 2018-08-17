@@ -486,22 +486,4 @@ class DialogHelper {
                 .cancelListener { onCancel() }
                 .show()
     }
-
-    fun showGroupDetailsMembersDialog(context: Context,
-                                      onManageMembersClick : () -> Unit,
-                                      onInviteMembersClick: () -> Unit,
-                                      onManageInvitesClick: () -> Unit) {
-        MaterialDialog.Builder(context)
-                .items(fromDictionary(R.string.group_details_manage_members),
-                        fromDictionary(R.string.group_details_invite_members),
-                        fromDictionary(R.string.group_details_invites))
-                .itemsLongCallback { _, _, position, _ ->
-                    when (position) {
-                        0 -> onManageMembersClick()
-                        1 -> onInviteMembersClick()
-                        2 -> onManageInvitesClick()
-                    }
-                    true
-                }.show()
-    }
 }
