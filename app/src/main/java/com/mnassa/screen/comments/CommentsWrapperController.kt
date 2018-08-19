@@ -227,6 +227,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     override fun onSaveViewState(view: View, outState: Bundle) {
         super.onSaveViewState(view, outState)
         runBlocking {
+            //TODO: make nullable getCommentsContainer()
             outState.putString(EXTRA_COMMENT_TEXT, getCommentsContainer().etCommentText.text.toString())
         }
     }
@@ -245,6 +246,10 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         wrappedController.clear()
         view.rvContent.adapter = null
         view.rvAccountsToRecommend.adapter = null
+
+        //TODO: make nullable getCommentsContainer()
+        view.rvAccountsToRecommend?.adapter = null
+        view.rvCommentAttachments?.adapter = null
 
         super.onDestroyView(view)
     }

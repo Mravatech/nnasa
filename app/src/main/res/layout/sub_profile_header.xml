@@ -29,8 +29,10 @@
         <TextView
             android:id="@+id/tvConnectionStatus"
             style="@style/ProfileHeaderItem.TextView"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:text="999" />
+            android:gravity="bottom"
+            tools:text="connection status" />
 
     </LinearLayout>
 

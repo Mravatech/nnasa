@@ -102,10 +102,12 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
 
                 tvConnectionStatus.text = formatConnectionStatus(adapter.connectionStatus)
 
+                //offers
                 tvCanHelpWith.isGone = !adapter.hasOffers
                 rvCanHelpWith.isGone = !adapter.hasOffers
                 vCanHelpWithDivider.isGone = !adapter.hasOffers
 
+                //interests
                 tvInterestsIn.isGone = !adapter.hasInterests
                 rvInterestsIn.isGone = !adapter.hasInterests
                 vInterestsInDivider.isGone = !adapter.hasInterests
@@ -116,12 +118,17 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
                 tvMobilePhoneLabel.isGone = tvMobilePhone.text.isBlank()
                 vMobilePhoneDivider.isGone = tvMobilePhone.text.isBlank()
 
-                if (profile.accountType == AccountType.PERSONAL) {
-                    tvDateOfBirthLabel.text = fromDictionary(R.string.profile_date_of_birth)
-                } else {
-                    tvDateOfBirthLabel.text = fromDictionary(R.string.profile_date_of_foundation)
-                }
+                //date of birth
+                tvDateOfBirthLabel.text =
+                        if (profile.accountType == AccountType.PERSONAL) fromDictionary(R.string.profile_date_of_birth)
+                        else fromDictionary(R.string.profile_date_of_foundation)
 
+                val counters = profile as? ProfileAccountModel
+                //counters
+                tvProfileConnections.text = getSpannableText(counters?.numberOfConnections?.toString(), fromDictionary(R.string.profile_connections))
+                tvPointsGiven.text = getSpannableText(counters?.visiblePoints?.toString(), fromDictionary(R.string.profile_points_given))
+
+                //full profile section
                 if (profile !is ProfileAccountModel) return
 
                 //date of birth
@@ -129,41 +136,42 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
                 tvDateOfBirth.isGone = tvDateOfBirth.text.isBlank()
                 tvDateOfBirthLabel.isGone = tvDateOfBirth.text.isBlank()
                 vDateOfBirthDivider.isGone = tvDateOfBirth.text.isBlank()
+
                 //email
                 tvEmail.text = profile.contactEmail
                 tvEmail.isGone = tvEmail.text.isBlank()
                 tvEmailLabel.isGone = tvEmail.text.isBlank()
                 vEmailDivider.isGone = tvEmail.text.isBlank()
+
                 //web site
                 tvWebSite.text = profile.website
                 tvWebSite.isGone = tvWebSite.text.isBlank()
                 tvWebSiteLabel.isGone = tvWebSite.text.isBlank()
+
                 //location
                 tvLocation.text = profile.location?.formatted()
                 tvLocation.isGone = profile.location == null
-                //counters
-                tvProfileConnections.text = getSpannableText(profile.numberOfConnections.toString(), fromDictionary(R.string.profile_connections), Color.BLACK)
-                tvPointsGiven.text = getSpannableText(profile.visiblePoints.toString(), fromDictionary(R.string.profile_points_given), Color.BLACK)
-
             }
         }
 
-        private fun getSpannableText(head: String, tail: String, color: Int): SpannableString {
+        private fun getSpannableText(head: String?, tail: String): SpannableString {
+            val head = head ?: ""
             val value = "$head\n$tail"
             val span = SpannableString(value)
-            span.setSpan(ForegroundColorSpan(color), 0, head.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            span.setSpan(ForegroundColorSpan(Color.BLACK), 0, head.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             span.setSpan(RelativeSizeSpan(HeaderViewHolder.PROPORTION_TEXT_SIZE), 0, head.length, 0)
             return span
         }
 
         private fun formatConnectionStatus(connectionStatus: ConnectionStatus): CharSequence? {
-            return when (connectionStatus) {
+            val text = when (connectionStatus) {
                 ConnectionStatus.CONNECTED -> fromDictionary(R.string.user_profile_connection_connected)
                 ConnectionStatus.REQUESTED -> fromDictionary(R.string.user_profile_connection_connect)
                 ConnectionStatus.RECOMMENDED -> fromDictionary(R.string.user_profile_connection_connect)
                 ConnectionStatus.SENT -> fromDictionary(R.string.profile_request_was_sent)
                 else -> null
             }
+            return getSpannableText("", text ?: "")
         }
 
         companion object {

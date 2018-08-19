@@ -2,7 +2,7 @@ package com.mnassa.screen.profile
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.PopupMenu
+import android.support.v7.widget.Toolbar
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -19,6 +19,8 @@ import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
+import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
+import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
@@ -26,11 +28,6 @@ import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 2/26/2018
- */
 
 class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data),
         ComplaintOtherController.OnComplaintResult,
@@ -95,10 +92,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             rvProfile.adapter = adapter
             rvProfile.attachPanel { hasNewPosts }
 
-            toolbar.setNavigationOnClickListener { close() }
+            initToolbar(toolbar, profile)
+
             val titleColor = ContextCompat.getColor(context, R.color.white)
             collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
             collapsingToolbarLayout.setExpandedTitleColor(titleColor)
+
+
             bindProfile(this, profile)
         }
 
@@ -107,6 +107,30 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         launchCoroutineUI { viewModel.offersChannel.consumeEach { bindOffers(view, it) } }
         launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindInterests(view, it) } }
         launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindConnectionStatus(view, it) } }
+    }
+
+    private fun initToolbar(toolbar: Toolbar, profile: ShortAccountModel) {
+        toolbar.setNavigationOnClickListener { close() }
+        if (profile.isMyProfile) {
+            toolbar.inflateMenu(R.menu.user_profile_my)
+        } else {
+            toolbar.inflateMenu(R.menu.user_profile_other)
+        }
+        toolbar.menu.findItem(R.id.action_edit_profile)?.title = "Edit Profile" //todo set from dict
+        toolbar.menu.findItem(R.id.action_share_profile)?.title = "Share Profile" //todo set from dict
+        toolbar.menu.findItem(R.id.action_complain_about_profile)?.title = "Complain about Profile" //todo set from dict
+        toolbar.menu.findItem(R.id.action_invite_to_group_profile)?.title = fromDictionary(R.string.group_invite_profile_menu)
+
+
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_edit_profile -> onEditProfileClick(profile)
+                R.id.action_share_profile -> open(RecommendUserController.newInstance(profile))
+                R.id.action_complain_about_profile -> complainAboutProfile(profile)
+                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
+            }
+            true
+        }
     }
 
     private fun bindProfile(view: View, profile: ShortAccountModel) {
@@ -138,46 +162,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.interests = interests
     }
 
-
-    private fun bindHeader(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>, connectionStatus: ConnectionStatus) {
-//        val view = view ?: return
-//        val parent = view.flSecondHeader ?: return
-//
-//        val viewHolder = when {
-//            parent.tag is BaseProfileHolder -> parent.tag as BaseProfileHolder
-//            profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
-//            profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
-//            !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
-//            !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
-//            else -> throw IllegalArgumentException("Wrong account type!")
-//        }
-//        if (parent.tag !is BaseProfileHolder) {
-//            parent.addView(viewHolder.itemView)
-//        }
-//        parent.tag = viewHolder
-//
-//        viewHolder.bindProfile(profile)
-//        viewHolder.bindOffers(offers)
-//        viewHolder.bindInterests(interests)
-//        viewHolder.bindConnectionStatus(connectionStatus)
-//
-//        //
-//
-//        profile.avatar?.let { avatar ->
-//            view.ivAvatar.avatarSquare(avatar)
-//            view.ivAvatar.setOnClickListener {
-//                PhotoPagerActivity.start(it.context, listOf(avatar), 0)
-//            }
-//        }
-//
-//        handleCollapsingToolbar(view, connectionStatus, profile)
-//        setTitle(profile, view)
-//        onEditProfile(profile, view)
-//        if (!profile.isMyProfile) {
-//            handleConnectionStatus(connectionStatus, view)
-//        }
-    }
-
     override fun onClick(view: View) {
         when (view.id) {
             R.id.tvPointsGiven -> open(WalletController.newInstance())
@@ -195,25 +179,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
 
-        }
-    }
-
-    private fun handleCollapsingToolbar(view: View, connectionStatus: ConnectionStatus, profileModel: ProfileAccountModel) {
-
-        view.appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val shouldShowFab = true
-
-            val offset = view.resources.getDimensionPixelSize(R.dimen.profile_main_image_height)
-
-            if (appBarLayout.totalScrollRange - Math.abs(verticalOffset) < offset) {
-                if (!profileModel.isMyProfile && shouldShowFab) {
-                    view.fabProfile.hide()
-                }
-            } else {
-                if (!profileModel.isMyProfile && shouldShowFab) {
-                    view.fabProfile.show()
-                }
-            }
         }
     }
 
@@ -251,31 +216,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    private fun onSettingsClick(profileModel: ProfileAccountModel, view: View) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.user_profile_item, popup.menu)
-        popup.menu.findItem(R.id.action_share_profile).title = "Share Profile" //todo set from dict
-        popup.menu.findItem(R.id.action_complain_about_profile).title = "Complain about Profile" //todo set from dict
-        popup.menu.findItem(R.id.action_invite_to_group_profile).title = fromDictionary(R.string.group_invite_profile_menu)
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
-                R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
-                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
-            }
-            true
-        }
-        popup.show()
-    }
-
     override fun onGroupSelected(group: GroupModel) {
         viewModel.inviteToGroup(group)
     }
 
-    private fun complainAboutProfile(profileModel: ProfileAccountModel, view: View) {
+    private fun complainAboutProfile(profileModel: ShortAccountModel) {
         launchCoroutineUI {
             val reportsList = viewModel.retrieveComplaints()
-            dialog.showComplaintDialog(view.context, reportsList) {
+            dialog.showComplaintDialog(getViewSuspend().context, reportsList) {
                 if (it.id == OTHER) {
                     val controller = ComplaintOtherController.newInstance()
                     controller.targetController = this@ProfileController
@@ -287,26 +235,24 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    private fun onEditProfile(profileModel: ProfileAccountModel, view: View) {
-//        if (profileModel.isMyProfile) {
-//            view.ivProfileEdit.visibility = View.VISIBLE
-//            view.ivProfileEdit.setOnClickListener {
-//                launchCoroutineUI {
-//                    val offers = viewModel.offersChannel.consume { receive() }
-//                    val interests = viewModel.interestsChannel.consume { receive() }
-//                    open(when (profileModel.accountType) {
-//                        AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)
-//                        AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
-//                    })
-//                }
-//            }
-//        } else {
-//            view.ivProfileMenu.visibility = View.VISIBLE
-//            view.ivProfileMenu.setOnClickListener {
-//                onSettingsClick(profileModel, it)
-//            }
-//        }
+    @Suppress("NAME_SHADOWING")
+    private fun onEditProfileClick(profile: ShortAccountModel) {
+        var profile = profile as? ProfileAccountModel
+        launchCoroutineUI {
+            if (profile == null) {
+                profile = viewModel.profileChannel.consume { receiveOrNull() }
+            }
+            val profile = profile ?: return@launchCoroutineUI
+            val offers = viewModel.offersChannel.consume { receive() }
+            val interests = viewModel.interestsChannel.consume { receive() }
+
+            open(when (profile.accountType) {
+                AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profile, offers, interests)
+                AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profile, offers, interests)
+            })
+        }
     }
+
 
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
