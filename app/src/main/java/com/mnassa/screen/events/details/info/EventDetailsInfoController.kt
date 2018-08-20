@@ -208,6 +208,13 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         else super.getCommentInputContainer(self)
     }
 
+    override fun getCommentInputContainerNullable(self: CommentsWrapperController): ViewGroup? {
+        val parent = parentController
+        return if (parent is CommentsWrapperController.CommentInputContainer)
+            parent.getCommentInputContainerNullable(self)
+        else super.getCommentInputContainerNullable(self)
+    }
+
     companion object {
         const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         const val EXTRA_EVENT = "EXTRA_EVENT"

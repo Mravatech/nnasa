@@ -100,9 +100,8 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         launchCoroutineUI { eventModel.apply { bindEvent(this) } }
     }
 
-    override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {
-        return getViewSuspend().commentInputContainer
-    }
+    override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup = getViewSuspend().commentInputContainer
+    override fun getCommentInputContainerNullable(self: CommentsWrapperController): ViewGroup? = view?.commentInputContainer
 
     private suspend fun bindEvent(event: EventModel) {
         eventModel = event
