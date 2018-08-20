@@ -94,6 +94,7 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
 
             with(itemView) {
                 llAdditionalInformation.isGone = !adapter.isAdditionalInfoExpanded
+                rvICanHelpHorizontalTags.isGone = adapter.isAdditionalInfoExpanded
                 tvMoreInformation.text = if (adapter.isAdditionalInfoExpanded)
                     fromDictionary(R.string.profile_less_information)
                 else fromDictionary(R.string.profile_more_information)
@@ -184,6 +185,7 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
                 val viewHolder = HeaderViewHolder(view, adapter)
 
                 with(view) {
+                    rvICanHelpHorizontalTags.adapter = adapter.offersAdapter
                     rvCanHelpWith.adapter = adapter.offersAdapter
                     rvCanHelpWith.layoutManager = ChipsLayoutManager.newBuilder(context)
                             .setScrollingEnabled(false)

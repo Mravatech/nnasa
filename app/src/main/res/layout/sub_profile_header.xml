@@ -277,4 +277,13 @@
         <View style="@style/MnassaShadow" />
     </FrameLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvICanHelpHorizontalTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        android:background="@color/background_main"
+        tools:listitem="@layout/item_post_tag"/>
+
 </LinearLayout>
