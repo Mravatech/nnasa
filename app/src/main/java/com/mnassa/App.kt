@@ -14,7 +14,6 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -37,8 +36,6 @@ class App : MultiDexApplication(), KodeinAware {
     override fun onCreate() {
         APP_CONTEXT = this
         super.onCreate()
-        if (LeakCanary.isInAnalyzerProcess(this)) return
-        LeakCanary.install(this)
 
         FirebaseApp.initializeApp(this)
 
