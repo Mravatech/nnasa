@@ -152,6 +152,7 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
                 //location
                 tvLocation.text = profile.location?.formatted()
                 tvLocation.isGone = profile.location == null
+                vLocationDivider.isGone = profile.location == null
             }
         }
 

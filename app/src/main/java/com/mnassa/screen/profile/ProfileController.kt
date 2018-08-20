@@ -5,6 +5,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
 import com.mnassa.R
+import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
@@ -59,7 +60,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
-        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onPostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
+        adapter.onRepostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
@@ -138,6 +140,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.profile = profile
         with(view) {
             ivAvatar.avatarSquare(profile.avatar)
+            ivAvatar.setOnClickListener {
+                profile.avatar?.let { avatar ->
+                    PhotoPagerActivity.start(it.context, listOf(avatar))
+                }
+            }
             collapsingToolbarLayout.title = profile.formattedName
             if (profile.accountType == AccountType.PERSONAL) {
                 tvPosition.text = profile.formattedPosition

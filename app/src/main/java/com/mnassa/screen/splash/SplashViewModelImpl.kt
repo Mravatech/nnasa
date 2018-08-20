@@ -1,6 +1,7 @@
 package com.mnassa.screen.splash
 
 import android.os.Bundle
+import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NotificationInteractor
@@ -27,6 +28,10 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
                 try {
                     val feed = asyncWorker { postsRepository.preloadFeed() }
                     val notifications = asyncWorker { notificatonsRepository.preloadOldNotifications() }
+                    asyncUI {
+                        delay(MAX_DELAY)
+                        openNextScreenChannel.send(SplashViewModel.NextScreen.MAIN)
+                    }
                     feed.await()
                     notifications.await()
                 } finally {
@@ -40,7 +45,7 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
     }
 
     companion object {
-        private const val LONG_DELAY = 2_000
+        private const val MAX_DELAY = 6_000
         private const val SHORT_DELAY = 200
     }
 }

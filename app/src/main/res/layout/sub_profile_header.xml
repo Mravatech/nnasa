@@ -95,6 +95,7 @@
             android:drawableStart="@drawable/ic_location"
             android:textColor="@color/black"
             tools:text="New York Location"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <View
@@ -102,6 +103,7 @@
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <com.mnassa.widget.MnassaTextView
@@ -113,6 +115,7 @@
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
             android:text="@string/reg_account_can_help_with"
             tools:text="I Can help with"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
@@ -123,6 +126,7 @@
             android:orientation="horizontal"
             tools:layout_height="50dp"
             tools:listitem="@layout/item_post_tag"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <View
@@ -130,6 +134,7 @@
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <com.mnassa.widget.MnassaTextView
@@ -141,6 +146,7 @@
             android:layout_marginTop="@dimen/profile_header_item_interests_margin_top"
             android:text="@string/reg_account_interested_in"
             tools:text="My Interests"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
@@ -151,6 +157,7 @@
             android:orientation="horizontal"
             tools:layout_height="50dp"
             tools:listitem="@layout/item_post_tag"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <View
@@ -158,6 +165,7 @@
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <com.mnassa.widget.MnassaTextView
@@ -169,6 +177,7 @@
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
             android:text="@string/profile_mobile_phone"
             tools:text="Mobile Phone"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <TextView
@@ -180,6 +189,7 @@
             android:autoLink="all"
             android:textColor="@color/blue_turquoise"
             tools:text="+38 (066) 752 02 65"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <View
@@ -187,6 +197,7 @@
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <com.mnassa.widget.MnassaTextView
@@ -198,6 +209,7 @@
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
             android:text="@string/profile_email"
             tools:text="Email"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <TextView
@@ -209,6 +221,7 @@
             android:autoLink="all"
             android:textColor="@color/blue_turquoise"
             tools:text="calvin@gmail.com"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <View
@@ -227,6 +240,7 @@
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
             tools:text="Date of Birth"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <TextView
@@ -237,6 +251,7 @@
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:textColor="@color/black"
             tools:text="01 Februrary 1991 (26 years)"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <View
@@ -244,6 +259,7 @@
             style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <com.mnassa.widget.MnassaTextView
@@ -255,6 +271,7 @@
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
             android:text="@string/profile_website"
             tools:text="Email"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <TextView
@@ -266,6 +283,7 @@
             android:autoLink="all"
             android:textColor="@color/blue_turquoise"
             tools:text="www.com.com"
+            android:visibility="gone"
             tools:visibility="visible" />
     </LinearLayout>
 

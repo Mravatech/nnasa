@@ -79,14 +79,14 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     private fun resetCounter() {
-        handleException {
-            try {
-                postsInteractor.resetCounter()
-                isCounterReset = true
-            } catch (e: NetworkException) {
-                //ignore
-            }
-        }
+//        handleException {
+//            try {
+//                postsInteractor.resetCounter()
+//                isCounterReset = true
+//            } catch (e: NetworkException) {
+//                //ignore
+//            }
+//        }
     }
 
     companion object {
