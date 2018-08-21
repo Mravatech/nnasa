@@ -252,6 +252,9 @@
     <string name="reg_company_status_non_profit">_android_registration_company_status_non_profit</string>
 
     <!-- ========================================= PROFILE ====================================== -->
+    <string name="profile_edit">_profile_cellHeader_button_edit</string>
+    <string name="profile_share">_profile_menu_recommendUser</string>
+    <string name="profile_report">_profile_menu_complaint</string>
     <string name="profile_connections">_connectionsList_navTitle_connections</string>
     <string name="profile_points_given">_profile_cellHeader_labelPoints	</string>
     <string name="profile_date_of_birth">_profileDetails_birthdayPersonal</string>

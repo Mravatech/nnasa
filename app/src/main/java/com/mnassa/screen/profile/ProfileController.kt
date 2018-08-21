@@ -63,6 +63,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.onPostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
         adapter.onRepostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
+        adapter.onConnectionsCountClick = { if (profile.isMyProfile) open(AllConnectionsController.newInstance()) }
+        adapter.onPointsCountClick = { if (profile.isMyProfile) open(WalletController.newInstance()) }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
@@ -118,9 +120,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         } else {
             toolbar.inflateMenu(R.menu.user_profile_other)
         }
-        toolbar.menu.findItem(R.id.action_edit_profile)?.title = "Edit Profile" //todo set from dict
-        toolbar.menu.findItem(R.id.action_share_profile)?.title = "Share Profile" //todo set from dict
-        toolbar.menu.findItem(R.id.action_complain_about_profile)?.title = "Complain about Profile" //todo set from dict
+        toolbar.menu.findItem(R.id.action_edit_profile)?.title = fromDictionary(R.string.profile_edit)
+        toolbar.menu.findItem(R.id.action_share_profile)?.title = fromDictionary(R.string.profile_share)
+        toolbar.menu.findItem(R.id.action_complain_about_profile)?.title = fromDictionary(R.string.profile_report)
         toolbar.menu.findItem(R.id.action_invite_to_group_profile)?.title = fromDictionary(R.string.group_invite_profile_menu)
 
 

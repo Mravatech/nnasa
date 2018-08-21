@@ -49,6 +49,8 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
             recyclerView.invoke { notifyItemChanged(0) }
         }
     var onConnectionStatusClick: (ConnectionStatus) -> Unit = { }
+    var onConnectionsCountClick: () -> Unit = { }
+    var onPointsCountClick: () -> Unit = { }
 
 
     private var offersAdapter = PostTagRVAdapter()
@@ -203,10 +205,13 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
                     flMoreInformation.setOnClickListener {
                         adapter.isAdditionalInfoExpanded = !adapter.isAdditionalInfoExpanded
                     }
+                    tvProfileConnections.setOnClickListener { adapter.onConnectionsCountClick() }
+                    tvPointsGiven.setOnClickListener { adapter.onPointsCountClick() }
                     tvConnectionStatus.tag = viewHolder
                     tvConnectionStatus.setOnClickListener {
                         adapter.onConnectionStatusClick(adapter.connectionStatus)
                     }
+
                 }
 
                 return viewHolder

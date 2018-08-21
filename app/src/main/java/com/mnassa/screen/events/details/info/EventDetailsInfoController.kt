@@ -130,11 +130,11 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
     }
 
     private suspend fun bindTags(tags: List<TagModel>) {
+        tagsAdapter.set(tags)
         getViewSuspend().let {
             with(it) {
                 vTagsSeparator.isGone = tags.isEmpty()
                 rvTags.isGone = tags.isEmpty()
-                tagsAdapter.set(tags)
             }
         }
     }
