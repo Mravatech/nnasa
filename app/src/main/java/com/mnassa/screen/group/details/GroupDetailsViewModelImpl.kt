@@ -1,7 +1,6 @@
 package com.mnassa.screen.group.details
 
 import android.os.Bundle
-import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.TagInteractor
@@ -81,7 +80,5 @@ class GroupDetailsViewModelImpl(private val groupId: String,
         }
     }
 
-    private suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { tag -> asyncWorker { handleExceptionsSuspend { tagInteractor.get(tag) } } }.mapNotNull { it.await() }
-    }
+    private suspend fun loadTags(tags: List<String>): List<TagModel> = handleExceptionsSuspend { tagInteractor.get(tags) } ?: emptyList()
 }

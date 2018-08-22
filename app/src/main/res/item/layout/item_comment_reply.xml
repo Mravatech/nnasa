@@ -35,6 +35,8 @@
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_toEndOf="@id/ivAvatar"
             android:gravity="center_vertical"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="User name" />
 
         <TextView

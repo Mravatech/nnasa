@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.mnassa.R
+import com.mnassa.core.addons.asReference
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
@@ -142,12 +143,15 @@ class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) 
                 groupSpan.append(" ")
                 var startSpan = groupSpan.length
 
+                val tvGroupTextReference = tvGroupText.asReference()
                 item.groups.forEachIndexed { index, group ->
                     groupSpan.append(group.formattedName)
                     groupSpan.setSpan(object : ClickableSpan() {
                         override fun onClick(widget: View?) {
-                            tvGroupText.tag = group
-                            onClickListener.onClick(tvGroupText)
+                            tvGroupTextReference.invoke {
+                                this.tag = group
+                                onClickListener.onClick(this)
+                            }
                         }
                     }, startSpan, groupSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 

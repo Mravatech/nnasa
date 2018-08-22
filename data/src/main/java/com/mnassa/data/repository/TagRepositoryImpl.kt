@@ -133,7 +133,7 @@ class TagRepositoryImpl(
     }
 
     private suspend fun updateCacheIfNeeded(forceUpdate: Boolean = false) {
-        if (isTagsCacheLoaded || forceUpdate) return
+        if (isTagsCacheLoaded && !forceUpdate) return
         getAllAndUpdateCache()
         isTagsCacheLoaded = true
     }

@@ -58,10 +58,10 @@ class ProfileViewModelImpl(
         }
         handleException {
             profileChannel.consumeEach { profile ->
-                val interests = profile.interests.map { async { tagInteractor.get(it) } }.mapNotNull { it.await() }
+                val interests = handleExceptionsSuspend { tagInteractor.get(profile.interests) } ?: emptyList()
                 interestsChannel.send(interests)
 
-                val offers = profile.offers.map { async { tagInteractor.get(it) } }.mapNotNull { it.await() }
+                val offers = handleExceptionsSuspend { tagInteractor.get(profile.offers) } ?: emptyList()
                 offersChannel.send(offers)
             }
 

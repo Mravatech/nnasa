@@ -7,14 +7,15 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
-class Ref<out T : Any?> internal constructor(obj: T) {
-    private val weakRef = WeakReference(obj)
+class Ref<T : Any?> internal constructor(obj: T) : WeakReference<T>(obj) {
 
     suspend operator fun invoke(): T {
         return suspendCoroutineOrReturn {
-            weakRef.get() ?: throw CancellationException()
+            get() ?: throw CancellationException()
         }
     }
+
+    operator fun invoke(body: T.() -> Unit) = get()?.apply(body)
 }
 
 fun <T : Any?> T.asReference() = Ref(this)

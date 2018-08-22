@@ -225,11 +225,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:drawablePadding="@dimen/drawable_padding"
-            android:drawableStart="@drawable/ic_eye_18dp"
-            android:focusable="true"
+            android:drawableStart="@drawable/ic_expiration_active"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
             tools:text="Expiration" />

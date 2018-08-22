@@ -6,6 +6,7 @@ import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import com.mnassa.App
 import com.mnassa.R
+import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.other.LanguageProvider
@@ -107,22 +108,26 @@ fun Date.formatAsDateTime(): CharSequence {
     return localDateFormat.format(this)
 }
 
-fun TextView.startUpdateTimeJob(time: Date) {
-    stopUpdateTimeJob()
-    this.tag = launchUI {
+fun TextView.startUpdateTimeJob(time: Date) = startUpdateTimeJob(time, this)
+
+private fun startUpdateTimeJob(time: Date, textView: TextView) {
+    textView.stopUpdateTimeJob()
+    val textViewRef = textView.asReference()
+
+    textView.tag = launchUI {
         while (TimeUnit.MILLISECONDS.toMinutes(abs(System.currentTimeMillis() - time.time)) < 1) {
-            text = time.toTimeAgo()
+            textViewRef().text = time.toTimeAgo()
             delay(1, TimeUnit.SECONDS)
         }
         while (TimeUnit.MILLISECONDS.toHours(abs(System.currentTimeMillis() - time.time)) < 1) {
-            text = time.toTimeAgo()
+            textViewRef().text = time.toTimeAgo()
             delay(1, TimeUnit.MINUTES)
         }
         while (TimeUnit.MILLISECONDS.toDays(abs(System.currentTimeMillis() - time.time)) < 1) {
-            text = time.toTimeAgo()
+            textViewRef().text = time.toTimeAgo()
             delay(1, TimeUnit.HOURS)
         }
-        text = time.toTimeAgo()
+        textViewRef().text = time.toTimeAgo()
     }
 }
 

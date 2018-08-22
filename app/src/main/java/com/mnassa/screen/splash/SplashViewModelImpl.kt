@@ -8,7 +8,7 @@ import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.delay
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.coroutines.experimental.delay
 class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
                           private val postsRepository: PostsInteractor,
                           private val notificatonsRepository: NotificationInteractor) : MnassaViewModelImpl(), SplashViewModel {
-    override val openNextScreenChannel: BroadcastChannel<SplashViewModel.NextScreen> = ArrayBroadcastChannel(1)
+    override val openNextScreenChannel: ConflatedBroadcastChannel<SplashViewModel.NextScreen> = ConflatedBroadcastChannel()
     override val showMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
