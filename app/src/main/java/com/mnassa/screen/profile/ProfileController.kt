@@ -206,7 +206,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         fab.visibility = View.VISIBLE
         fab.setOnClickListener {
             launchCoroutineUI {
-                viewModel.profileChannel.consume { receive() }.apply { open(ChatMessageController.newInstance(this)) }
+                viewModel.profileChannel.consume { receiveOrNull() }?.apply { open(ChatMessageController.newInstance(this)) }
             }
         }
         fab.setImageResource(R.drawable.ic_chat)

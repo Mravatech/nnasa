@@ -123,12 +123,12 @@ mapper.core =            'com.androidkotlincore:entityconverter:0.0.5'
 deps.mapper = mapper
 
 //=============================================== DI ===============================================
-versions.kodein = '5.0.0'
+versions.kodein = '5.2.0'
 
 def di = [:]
 
 di.core = "org.kodein.di:kodein-di-generic-jvm:${versions.kodein}"
-di.android = "org.kodein.di:kodein-di-framework-android:${versions.kodein}"
+di.android = "org.kodein.di:kodein-di-framework-android-core:${versions.kodein}"
 
 deps.di = di
 

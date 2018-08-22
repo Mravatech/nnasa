@@ -10,9 +10,9 @@ import com.mnassa.R
 import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ChatRoomModel
-import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.isInvisible
+import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.chats.startchat.ChatConnectionsController
@@ -21,7 +21,6 @@ import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_list.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -31,8 +30,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
 
     override val layoutId: Int = R.layout.controller_chat_list
     override val viewModel: ChatListViewModel by instance()
-
-    val adapter = ChatListAdapter()
+    private val adapter = ChatListAdapter()
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -46,21 +44,10 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.listMessagesChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> {
-                        adapter.isLoadingEnabled = false
-                        adapter.dataStorage.addAll(it.item)
-                    }
-                    is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                    is ListItemEvent.Cleared -> {
-                        adapter.isLoadingEnabled = true
-                        adapter.dataStorage.clear()
-                    }
-                }
-            }
+            viewModel.listMessagesChannel.subscribeToUpdates(
+                    adapter = adapter,
+                    emptyView = { getViewSuspend().llEmptyMessages }
+            )
         }
     }
 

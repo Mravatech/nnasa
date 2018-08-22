@@ -18,7 +18,7 @@ class ChatMessageViewModelImpl(
         private val chatInteractor: ChatInteractor,
         private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), ChatMessageViewModel {
 
-    override val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>> = BroadcastChannel(10)
+    override val messageChannel: BroadcastChannel<ListItemEvent<List<ChatMessageModel>>> = BroadcastChannel(10)
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
     private val chatId = asyncUI { handleExceptionsSuspend { chatInteractor.getChatIdByUserId(userAccountId) } ?: "UNDEFINED" }
@@ -28,7 +28,7 @@ class ChatMessageViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            chatInteractor.listOfMessages(chatId.await(), userAccountId).consumeEach {
+            chatInteractor.loadMessagesWithChangesHandling(chatId.await(), userAccountId).consumeEach {
                 messageChannel.send(it)
                 resetChatUnreadCount()
             }
