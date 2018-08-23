@@ -95,6 +95,7 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
             val profile = adapter.profile
 
             with(itemView) {
+                flMoreInformation.isGone = profile !is ProfileAccountModel
                 llAdditionalInformation.isGone = !adapter.isAdditionalInfoExpanded
                 rvICanHelpHorizontalTags.isGone = adapter.isAdditionalInfoExpanded
                 tvMoreInformation.text = if (adapter.isAdditionalInfoExpanded)
