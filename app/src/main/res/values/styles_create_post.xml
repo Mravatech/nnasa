@@ -4,7 +4,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/btn_share_to</item>
-        <item name="android:drawableEnd">@drawable/ic_post_share_to_arrow_white</item>
+        <item name="drawableEndCompat">@drawable/ic_post_share_to_arrow_white</item>
         <item name="android:drawablePadding">@dimen/drawable_padding</item>
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:padding">@dimen/drawable_padding</item>

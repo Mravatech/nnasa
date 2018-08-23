@@ -60,7 +60,7 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:text="@string/group_description_placeholder" />
+                app:textDictionary="@string/group_description_placeholder" />
 
             <TextView
                 android:id="@+id/tvGroupDescription"
@@ -105,7 +105,7 @@
 
                     <com.mnassa.widget.MnassaTextView
                         style="@style/Group.Profile.CounterLabel"
-                        android:text="@string/groups_members_count" />
+                        app:textDictionary="@string/groups_members_count" />
 
                 </LinearLayout>
 
@@ -129,7 +129,7 @@
 
                     <com.mnassa.widget.MnassaTextView
                         style="@style/Group.Profile.CounterLabel"
-                        android:text="@string/groups_invites_count" />
+                        app:textDictionary="@string/groups_invites_count" />
                 </LinearLayout>
 
 
@@ -153,7 +153,7 @@
 
                     <com.mnassa.widget.MnassaTextView
                         style="@style/Group.Profile.CounterLabel"
-                        android:text="@string/groups_points_count" />
+                        app:textDictionary="@string/groups_points_count" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -171,7 +171,7 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:text="@string/groups_members_count" />
+                app:textDictionary="@string/groups_members_count" />
 
             <LinearLayout
                 android:id="@+id/llGroupMembers"
@@ -215,7 +215,7 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:text="@string/group_website_header" />
+                app:textDictionary="@string/group_website_header" />
 
             <TextView
                 android:id="@+id/tvGroupWebsite"
@@ -243,7 +243,7 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:text="@string/group_location_header" />
+                app:textDictionary="@string/group_location_header" />
 
             <TextView
                 android:id="@+id/tvGroupLocation"
@@ -271,7 +271,7 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:text="@string/group_tags_header" />
+                app:textDictionary="@string/group_tags_header" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvGroupTags"
@@ -336,28 +336,28 @@
             android:visibility="gone"
             tools:visibility="visible">
 
-            <Button
+            <com.mnassa.widget.MnassaButton
                 android:id="@+id/btnDecline"
                 style="@style/MnassaTransparentButton"
                 android:layout_gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableStart="@drawable/ic_close_red_24dp"
+                app:drawableStartCompat="@drawable/ic_close_red_24dp"
                 tools:text="Decline" />
 
             <Space
                 android:layout_width="@dimen/spacing_horizontal"
                 android:layout_height="wrap_content" />
 
-            <Button
+            <com.mnassa.widget.MnassaButton
                 android:id="@+id/btnAccept"
                 style="@style/MnassaTransparentButton"
                 android:layout_gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableStart="@drawable/ic_done_accent_24dp"
+                app:drawableStartCompat="@drawable/ic_done_accent_24dp"
                 tools:text="Accept" />
         </LinearLayout>
     </LinearLayout>

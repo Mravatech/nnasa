@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
         android:id="@+id/flNewItemsPanel"
@@ -23,7 +24,7 @@
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
             android:paddingTop="8dp"
-            android:text="@string/posts_new_items_available"
+            app:textDictionary="@string/posts_new_items_available"
             android:textColor="@color/white"
             tools:text="New items are available" />
 

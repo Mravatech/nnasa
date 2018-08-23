@@ -42,6 +42,7 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.kcontext
 import java.util.*
 import android.app.NotificationManager
+import android.support.v7.app.AppCompatDelegate
 import com.mnassa.core.addons.launchUI
 
 
@@ -155,6 +156,10 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
     companion object {
         private const val START_OFFSET = 0
         private const val LONG_TOAST_DURATION_MILLIS = 3_500
+
+        init {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        }
     }
 
 }

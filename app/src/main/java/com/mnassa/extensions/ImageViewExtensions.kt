@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
+import android.support.v4.content.ContextCompat
 import android.widget.ImageView
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.FirebaseApp
@@ -34,8 +35,8 @@ fun ImageView.enable() {
 }
 
 fun ImageView.avatarRound(avatarUrl: String?) {
-
-    val requestOptions = RequestOptions().placeholder(R.drawable.empty_ava).error(R.drawable.empty_ava).apply(RequestOptions.circleCropTransform())
+    val placeholder = ContextCompat.getDrawable(context, R.drawable.empty_ava)
+    val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder).apply(RequestOptions.circleCropTransform())
 
     GlideApp.with(this)
             .load(context.processFirebaseUrl(avatarUrl))
@@ -45,8 +46,8 @@ fun ImageView.avatarRound(avatarUrl: String?) {
 }
 
 fun ImageView.avatarSquare(avatarUrl: String?) {
-
-    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_ava).error(R.drawable.ic_empty_ava)
+    val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_ava)
+    val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
     GlideApp.with(this)
             .load(context.processFirebaseUrl(avatarUrl))
@@ -56,7 +57,8 @@ fun ImageView.avatarSquare(avatarUrl: String?) {
 }
 
 fun ImageView.avatarSquare(avatarUrl: Uri?) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_ava).error(R.drawable.ic_empty_ava)
+    val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_ava)
+    val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
     GlideApp.with(this)
             .load(avatarUrl ?: "")
@@ -80,7 +82,8 @@ fun ImageView.image(url: String?, crop: Boolean = true) {
 }
 
 fun ImageView.image(uri: Uri) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.ic_empty_avatar_placeholder).error(R.drawable.ic_empty_avatar_placeholder)
+    val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_avatar_placeholder)
+    val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
     GlideApp.with(this)
             .load(uri)

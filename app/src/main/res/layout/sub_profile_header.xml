@@ -53,7 +53,7 @@
             android:id="@+id/tvMoreInformation"
             style="@style/ProfileHeaderItem.TextViewMore"
             android:layout_centerInParent="true"
-            android:text="@string/profile_more_information"
+            app:textDictionary="@string/profile_more_information"
             tools:text="MORE INFORMATION" />
 
         <android.support.v7.widget.AppCompatImageView
@@ -83,7 +83,7 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <TextView
+        <com.mnassa.widget.MnassaTextView
             android:id="@+id/tvLocation"
             style="@style/ProfileHeaderItem.TextViewLabel"
             android:layout_marginBottom="24dp"
@@ -92,7 +92,7 @@
             android:layout_marginTop="24dp"
             android:autoLink="all"
             android:drawablePadding="8dp"
-            android:drawableStart="@drawable/ic_location"
+            app:drawableStartCompat="@drawable/ic_location"
             android:textColor="@color/black"
             tools:text="New York Location"
             android:visibility="gone"
@@ -113,7 +113,7 @@
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
-            android:text="@string/reg_account_can_help_with"
+            app:textDictionary="@string/reg_account_can_help_with"
             tools:text="I Can help with"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -144,7 +144,7 @@
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginTop="@dimen/profile_header_item_interests_margin_top"
-            android:text="@string/reg_account_interested_in"
+            app:textDictionary="@string/reg_account_interested_in"
             tools:text="My Interests"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -175,7 +175,7 @@
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
-            android:text="@string/profile_mobile_phone"
+            app:textDictionary="@string/profile_mobile_phone"
             tools:text="Mobile Phone"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -207,7 +207,7 @@
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
-            android:text="@string/profile_email"
+            app:textDictionary="@string/profile_email"
             tools:text="Email"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -269,7 +269,7 @@
             android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
             android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
-            android:text="@string/profile_website"
+            app:textDictionary="@string/profile_website"
             tools:text="Email"
             android:visibility="gone"
             tools:visibility="visible" />
