@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.mnassa.R
 import com.mnassa.core.addons.WeakStateExecutor
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
 
@@ -149,8 +150,9 @@ abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) 
 
     /////////////////////////////////// ABSTRACT VIEW HOLDERS //////////////////////////////////////
 
-    abstract class BaseVH<in ITEM>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    abstract class BaseVH<in ITEM>(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
         abstract fun bind(item: ITEM)
+        override val containerView: View? get() = itemView
     }
 
     private class LoadingViewHolder<in ITEM>(itemView: View) : BaseVH<ITEM>(itemView) {

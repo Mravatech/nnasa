@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="@dimen/chat_message_half_base_margin"
+        android:autoLink="all"
         android:background="@drawable/income_chat_message_background"
         android:padding="@dimen/chat_message_base_padding"
         tools:text="test message big message test test testtest" />
