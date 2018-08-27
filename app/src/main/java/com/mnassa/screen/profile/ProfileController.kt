@@ -69,6 +69,17 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
         }
+        adapter.onConnectionStatusClick = {
+            view?.context?.let { context ->
+                when (it) {
+                    ConnectionStatus.CONNECTED -> dialog.yesNoDialog(context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                        viewModel.sendConnectionStatus(it, accountId)
+                    }
+                    ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
+                        viewModel.sendConnectionStatus(it, accountId)
+                }
+            }
+        }
 
         controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.postChannel.subscribeToUpdates(
@@ -102,6 +113,11 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
             collapsingToolbarLayout.setExpandedTitleColor(titleColor)
 
+            fabProfile.setOnClickListener {
+                launchCoroutineUI {
+                    viewModel.profileChannel.consume { receiveOrNull() }?.apply { open(ChatMessageController.newInstance(this)) }
+                }
+            }
 
             bindProfile(this, profile)
         }
@@ -202,15 +218,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleConnectionStatus(connectionStatus: ConnectionStatus, view: View) {
-        val fab = view.fabProfile
-        fab.visibility = View.VISIBLE
-        fab.setOnClickListener {
-            launchCoroutineUI {
-                viewModel.profileChannel.consume { receiveOrNull() }?.apply { open(ChatMessageController.newInstance(this)) }
-            }
-        }
-        fab.setImageResource(R.drawable.ic_chat)
-
         when (connectionStatus) {
             ConnectionStatus.REQUESTED, ConnectionStatus.RECOMMENDED -> {
                 view.rlConnectContainer.visibility = View.VISIBLE

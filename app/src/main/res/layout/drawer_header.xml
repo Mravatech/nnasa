@@ -11,13 +11,17 @@
         android:layout_height="@dimen/material_drawer_account_header_height"
         android:scaleType="centerCrop" />
 
-    <ImageView
-        android:id="@+id/material_drawer_account_header_current"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:foreground="@drawable/avatar_shadow"
-        tools:src="@mipmap/ic_launcher" />
+        android:foreground="@drawable/avatar_shadow">
+        <ImageView
+            android:id="@+id/material_drawer_account_header_current"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_launcher" />
+    </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/material_drawer_account_header"
