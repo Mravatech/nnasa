@@ -45,6 +45,7 @@ import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import mobi.upod.timedurationpicker.TimeDurationPicker
 import mobi.upod.timedurationpicker.TimeDurationPickerDialog
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DialogHelper {
 
@@ -160,7 +161,7 @@ class DialogHelper {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         )
-        dialog.datePicker.maxDate = System.currentTimeMillis()
+        dialog.datePicker.maxDate = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(1)
         dialog.show()
     }
 
@@ -172,7 +173,7 @@ class DialogHelper {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         )
-        dialog.datePicker.minDate = System.currentTimeMillis()
+        dialog.datePicker.minDate = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(1)
         dialog.show()
     }
 

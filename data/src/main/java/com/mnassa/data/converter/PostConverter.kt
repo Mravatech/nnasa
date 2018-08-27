@@ -223,11 +223,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
             EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED
             EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED
             EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED
-            else -> {
-                Timber.d(IllegalArgumentException("Wrong expiration type $expiration"))
-                null
-            }
-
+            else -> null
         }
     }
 
@@ -267,8 +263,10 @@ class PostConverter(private val languageProvider: LanguageProvider,
             NEWS_FEED_PRIVACY_TYPE_PUBLIC -> PostPrivacyType.PUBLIC()
             NEWS_FEED_PRIVACY_TYPE_PRIVATE -> PostPrivacyType.PRIVATE()
             NEWS_FEED_PRIVACY_TYPE_WORLD -> PostPrivacyType.WORLD()
-
-            else -> throw IllegalArgumentException("Wrong post privacy type $input")
+            else -> {
+                Timber.e(IllegalArgumentException("Wrong post privacy type $input"))
+                PostPrivacyType.PUBLIC()
+            }
         }
     }
 
