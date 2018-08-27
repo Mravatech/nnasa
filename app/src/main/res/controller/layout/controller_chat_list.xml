@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/chat_room_base_margin"
+        android:layout_margin="@dimen/spacing_horizontal"
         app:fab_size="normal"
         app:srcCompat="@drawable/ic_add_white_24dp" />
 

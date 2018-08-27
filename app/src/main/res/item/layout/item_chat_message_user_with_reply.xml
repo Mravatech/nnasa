@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="all"
+            android:textColorLink="@color/black"
             tools:text="Reply message" />
 
         <View
@@ -35,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="all"
+            android:textColorLink="@color/black"
             tools:text="Message with long long long long long long long long text" />
     </LinearLayout>
 

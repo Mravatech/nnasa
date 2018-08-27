@@ -26,7 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="all"
-            tools:text="Reply message gge gge gge gge gge long long long"/>
+            android:textColorLink="@color/black"
+            tools:text="Reply message gge gge gge gge gge long long long" />
 
         <View
             android:id="@+id/divider"
@@ -39,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="all"
-            tools:text="myMessage with reply long long long long long long long"/>
+            android:textColorLink="@color/black"
+            tools:text="myMessage with reply long long long long long long long" />
     </LinearLayout>
 </LinearLayout>

@@ -21,5 +21,6 @@
         android:autoLink="all"
         android:background="@drawable/income_chat_message_background"
         android:padding="@dimen/chat_message_base_padding"
+        android:textColorLink="@color/black"
         tools:text="test message big message test test testtest" />
 </LinearLayout>
