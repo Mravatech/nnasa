@@ -63,7 +63,6 @@ class DictionaryRepositoryImpl(
 
     override fun saveLocalDictionary(version: Int, dictionary: List<TranslatedWordModel>) {
         dictionaryPreferences.saveDictionary(version, dictionary)
-//        dictionaryResources.print(dictionary)
     }
 
     override fun getLocalWord(id: String): TranslatedWordModel {

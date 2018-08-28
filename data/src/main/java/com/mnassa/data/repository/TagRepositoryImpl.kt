@@ -1,7 +1,7 @@
 package com.mnassa.data.repository
 
-import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
@@ -15,9 +15,11 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.withContext
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -121,15 +123,17 @@ class TagRepositoryImpl(
     }
 
     private suspend fun getAllAndUpdateCache(): List<TagModel> {
-        return databaseReference.child(DatabaseContract.TABLE_TAGS)
-                .awaitList<TagDbEntity>(exceptionHandler)
-                .run { converter.convertCollection(this, TagModel::class.java) }
-                .also {
-                    it.forEach {
-                        val id = it.id
-                        if (id != null) tagsCache[id] = it
+        return withContext(DefaultDispatcher) {
+            databaseReference.child(DatabaseContract.TABLE_TAGS)
+                    .awaitList<TagDbEntity>(exceptionHandler)
+                    .run { converter.convertCollection(this, TagModel::class.java) }
+                    .also {
+                        it.forEach {
+                            val id = it.id
+                            if (id != null) tagsCache[id] = it
+                        }
                     }
-                }
+        }
     }
 
     private suspend fun updateCacheIfNeeded(forceUpdate: Boolean = false) {
