@@ -118,15 +118,19 @@ class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) 
 
                 item.bindDate(llEventDateRoot)
 
-                flEventDisabled.isInvisible = item.isActive
-                if (item.isActive) ivEvent.enable() else ivEvent.disable()
-                val imgSrc = when (item.status) {
+                var imgSrc = when (item.status) {
                     is EventStatus.ANNULED -> R.drawable.cancelled
                     is EventStatus.CLOSED -> R.drawable.finished
                     is EventStatus.SUSPENDED -> R.drawable.sold_out
                     else -> 0
                 }
+                if (item.ticketsSold >= item.ticketsTotal) {
+                    imgSrc = R.drawable.sold_out
+                }
                 ivEventStatus.setImageResource(imgSrc)
+                flEventDisabled.isInvisible = imgSrc == 0
+                if (imgSrc == 0) ivEvent.enable() else ivEvent.disable()
+
                 tvEventType.text = item.formattedType
                 ivIsTicketsBought.isInvisible = !item.participants.contains(currentAccountId)
             }
