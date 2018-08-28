@@ -14,7 +14,7 @@ import com.mnassa.translation.fromDictionary
  */
 class MnassaButton : AppCompatButton {
     constructor(context: Context) : this(context, null)
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, android.R.attr.textViewStyle)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, android.R.attr.buttonStyle)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         attrs ?: return
         val attributeArray = context.obtainStyledAttributes(attrs, R.styleable.MnassaTextView, defStyleAttr, 0)
