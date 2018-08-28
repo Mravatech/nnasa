@@ -1,6 +1,7 @@
 package com.mnassa.data.repository
 
 import android.content.Context
+import com.google.firebase.FirebaseNetworkException
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.convert
 import com.google.firebase.auth.FirebaseAuth
@@ -261,9 +262,13 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getFirebaseToken(): String? {
-        val user = FirebaseAuth.getInstance().currentUser ?: return null
-        val forceRefresh = accountIdInternal == null
-        return user.getIdToken(forceRefresh).await(exceptionHandler).token
+        try {
+            val user = FirebaseAuth.getInstance().currentUser ?: return null
+            val forceRefresh = accountIdInternal == null
+            return user.getIdToken(forceRefresh).await(exceptionHandler).token
+        } catch (e: FirebaseNetworkException) {
+            return null
+        }
     }
 
     override suspend fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
