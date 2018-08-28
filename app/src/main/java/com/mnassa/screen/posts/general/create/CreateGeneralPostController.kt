@@ -63,19 +63,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
             toolbar.withActionButton(fromDictionary(R.string.general_publish)) {
                 viewModel.applyChanges(makePostModel())
             }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val post = post
-                launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateGeneralPostController,
-                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
-                            restrictShareReduction = postId != null,
-                            canBePromoted = viewModel.canPromotePost(),
-                            promotePrice = viewModel.getPromotePostPrice()))
-                }
-            }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
             applyShareOptionsChanges()
             etGeneralPost.hint = fromDictionary(R.string.general_text_placeholder)
@@ -110,6 +98,23 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
                     view.actvPlace.setText(it.placeName.toString())
                 }
             }
+        }
+    }
+
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val post = post
+            val canBePromoted = viewModel.canPromotePost()
+            val promotePrice = viewModel.getPromotePostPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateGeneralPostController,
+                    accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                    restrictShareReduction = postId != null,
+                    canBePromoted = canBePromoted,
+                    promotePrice = promotePrice))
         }
     }
 
