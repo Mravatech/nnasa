@@ -113,6 +113,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
             collapsingToolbarLayout.setExpandedTitleColor(titleColor)
 
+            fabProfile.isGone = profile.isMyProfile
             fabProfile.setOnClickListener {
                 launchCoroutineUI {
                     viewModel.profileChannel.consume { receiveOrNull() }?.apply { open(ChatMessageController.newInstance(this)) }
