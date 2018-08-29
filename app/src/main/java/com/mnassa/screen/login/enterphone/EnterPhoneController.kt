@@ -1,6 +1,7 @@
 package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
+import android.text.InputType
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -94,7 +95,10 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+                override fun onItemSelected(a: AdapterView<*>?, v: View?, i: Int, l: Long) {
+                    onInputChanged()
+                    updateKeyboardType(view)
+                }
             }
 
             btnVerifyMe.setOnClickListener {
@@ -110,10 +114,12 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
             etPhoneNumberTail.onImeActionDone { btnVerifyMe.performClick() }
+            etPhoneNumberTail.filters = arrayOf(PHONE_INPUT_FILTER)
             btnVerifyMe.isEnabled = validateInput()
 
             showKeyboard(etPhoneNumberTail)
         }
+        updateKeyboardType(view)
 
         addSignInViaEmailAbility()
     }
@@ -141,6 +147,15 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
     protected open fun validateInput(): Boolean {
         return PhoneNumber.isValid(phoneNumber)
+    }
+
+    private fun updateKeyboardType(view: View) {
+        val countryCode = (view.spinnerPhoneCode.selectedItem as? CountryCode)?.phonePrefix ?: return
+        view.etPhoneNumberTail.inputType = if (countryCode is PhonePrefix.SaudiArabia) {
+             InputType.TYPE_CLASS_TEXT
+        } else {
+            InputType.TYPE_CLASS_PHONE
+        }
     }
 
     companion object {

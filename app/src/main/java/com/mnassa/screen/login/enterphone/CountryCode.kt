@@ -1,19 +1,21 @@
 package com.mnassa.screen.login.enterphone
 
+import android.text.InputFilter
 import com.mnassa.R
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.translation.fromDictionary
+import java.io.Serializable
 
 /**
  * Created by Peter on 3/1/2018.
  */
-data class CountryCode(val flagRes: Int, val name: TranslatedWordModel, val phonePrefix: PhonePrefix)
+data class CountryCode(val flagRes: Int, val name: TranslatedWordModel, val phonePrefix: PhonePrefix) : Serializable
 
 fun CountryCode.withTail(tail: String): PhoneNumber = PhoneNumber(this, tail)
 private val arabicDigits = arrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
 private val europDigits = arrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 
-sealed class PhonePrefix {
+sealed class PhonePrefix : Serializable {
     abstract val normalizedCode: String
     abstract val visibleCode: String
 
@@ -83,5 +85,13 @@ class PhoneNumber(
             return false
         }
     }
+}
+
+val PHONE_INPUT_FILTER = InputFilter { source, start, end, dest, dstart, dend ->
+    val result = StringBuilder(source.length)
+    for (i in start until end) {
+        if (Character.isDigit(source[i])) result.append(source[i])
+    }
+    result
 }
 

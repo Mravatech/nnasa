@@ -3,6 +3,7 @@ package com.mnassa.screen.invite
 import android.Manifest
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
+import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
 import com.mnassa.R
@@ -16,10 +17,7 @@ import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.history.HistoryController
-import com.mnassa.screen.login.enterphone.CountryCode
-import com.mnassa.screen.login.enterphone.CountryCodeAdapter
-import com.mnassa.screen.login.enterphone.PhoneNumber
-import com.mnassa.screen.login.enterphone.withTail
+import com.mnassa.screen.login.enterphone.*
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
@@ -121,7 +119,6 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 else fromDictionary(R.string.invite_reward).format(reward)
             }
 
-
             toolbar.title = fromDictionary(R.string.invite_invite_header)
             etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
             etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
@@ -129,12 +126,17 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+                override fun onItemSelected(parent: AdapterView<*>?, v: View?, position: Int, id: Long) {
+                    onInputChanged()
+                    updateKeyboardType(view)
+                }
             }
+            updateKeyboardType(view)
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
                 view.btnInvite.isEnabled = validateInput()
                 adapter.searchByNameOrNumber(it)
             })
+            etPhoneNumberTail.filters = arrayOf(PHONE_INPUT_FILTER)
             btnInvite.setOnClickListener {
                 viewModel.checkPhoneContact(PhoneContactImpl(
                         phoneNumber ?: return@setOnClickListener,
@@ -195,6 +197,15 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     private fun shareInvite(message: String) {
         val intent = intentHelper.getShareIntent(message)
         startActivity(intent)
+    }
+
+    private fun updateKeyboardType(view: View) {
+        val countryCode = (view.spinnerPhoneCode.selectedItem as? CountryCode)?.phonePrefix ?: return
+        view.etPhoneNumberTail.inputType = if (countryCode is PhonePrefix.SaudiArabia) {
+            InputType.TYPE_CLASS_TEXT
+        } else {
+            InputType.TYPE_CLASS_PHONE
+        }
     }
 
     companion object {
