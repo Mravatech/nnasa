@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import android.util.Patterns
 import android.view.ViewGroup
 import android.widget.EditText
-import java.util.regex.Pattern
 
 /**
  * Created by Peter on 2/28/2018.
@@ -14,7 +13,6 @@ import java.util.regex.Pattern
 
 //TODO: pass error text as function parameter (?)
 
-val PATTERN_PHONE_TAIL = Pattern.compile("\\d{11,13}")!!
 val PATTERN_PHONE = Patterns.PHONE
 
 fun TextInputLayout.validateAsFirstName(): Boolean {

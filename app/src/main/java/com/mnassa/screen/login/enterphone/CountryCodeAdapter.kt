@@ -19,7 +19,7 @@ class CountryCodeAdapter(context: Context, data: MutableList<CountryCode>) : Arr
         val item = getItem(position)
         with(view) {
             ivCountryFlagSelected.setImageResource(item.flagRes)
-            tvCountryPhoneCodeSelected.text = item.phonePrefix.code
+            tvCountryPhoneCodeSelected.text = item.phonePrefix.visibleCode
         }
         return view
     }
@@ -32,7 +32,7 @@ class CountryCodeAdapter(context: Context, data: MutableList<CountryCode>) : Arr
             ivCountryFlagDropDown.setImageResource(item.flagRes)
             val countryName by item.name
             tvCountryNameDropDown.text = countryName
-            tvCountryCodeDropDown.text = "(${item.phonePrefix.code})"
+            tvCountryCodeDropDown.text = "(${item.phonePrefix.visibleCode})"
         }
         return view
     }

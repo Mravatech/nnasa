@@ -10,8 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <View style="@style/MnassaShadow" />
-
     <TextView
         android:id="@+id/tvEnterTextSuggest"
         style="@style/Invite.TextSuggest"

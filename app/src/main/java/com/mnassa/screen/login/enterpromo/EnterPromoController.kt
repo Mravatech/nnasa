@@ -34,7 +34,7 @@ class EnterPromoController(args: Bundle) : EnterPhoneController(args) {
             etPromoCode.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
 
             btnVerifyMe.setOnClickListener {
-                viewModel.requestVerificationCode(phoneNumber, etPromoCode.text.toString())
+                viewModel.requestVerificationCode(phoneNumber ?: return@setOnClickListener, etPromoCode.text.toString())
             }
 
             if (args.containsKey(EXTRA_COUNTRY_INDEX)) {

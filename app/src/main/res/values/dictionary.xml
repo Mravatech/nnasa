@@ -624,4 +624,9 @@
 
     <string name="_seconds_ago">_seconds_ago</string>
 
+    <string name="country_code_arabia">_country_code_arabia</string>
+    <string name="country_code_ukraine">_country_code_ukraine</string>
+    <string name="country_code_usa">_country_code_usa</string>
+    <string name="country_code_canada">_country_code_usa</string>
+
 </resources>
