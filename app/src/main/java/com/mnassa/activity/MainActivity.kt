@@ -155,7 +155,7 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
 
     companion object {
         private const val START_OFFSET = 0
-        private const val LONG_TOAST_DURATION_MILLIS = 3_500
+        private const val LONG_TOAST_DURATION_MILLIS = 4_500
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

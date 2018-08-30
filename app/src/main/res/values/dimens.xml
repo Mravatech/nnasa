@@ -62,4 +62,14 @@
 
     <dimen name="group_profile_avatar_expanded">70dp</dimen>
     <dimen name="group_profile_avatar_collapsed">32dp</dimen>
+
+    <dimen name="points_animation_top_offset">80dp</dimen>
+    <dimen name="points_animation_coin_size">8dp</dimen>
+
+    <dimen name="points_animation_gravity_horizontal_x">2.5dp</dimen>
+    <dimen name="points_animation_gravity_up_x">1dp</dimen>
+    <dimen name="points_animation_gravity_up_y">5dp</dimen>
+    <dimen name="points_animation_gravity_down_x">5dp</dimen>
+    <dimen name="points_animation_gravity">0.45dp</dimen>
+    <dimen name="points_animation_gravity_begin">-7dp</dimen>
 </resources>
