@@ -86,4 +86,7 @@ class UserProfileInteractorImpl(
             userRepository.getAccountByIdChannel(accountId)
 
     override suspend fun getPermissions(): ReceiveChannel<PermissionsModel> = userRepository.getPermissions()
+
+    override suspend fun getValueCenterId(): String? = userRepository.getValueCenterId()
+    override suspend fun getAdminId(): String? = userRepository.getAdminId()
 }

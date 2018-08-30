@@ -24,6 +24,8 @@ class RecommendViewModelImpl(
         handleException {
             val excludedAccounts = HashSet(params.excludedAccounts)
             excludedAccounts.add(userInteractor.getAccountIdOrException())
+            excludedAccounts.add(userInteractor.getValueCenterId())
+            excludedAccounts.add(userInteractor.getAdminId())
 
             connectionsInteractor.getConnectedConnections().consumeEach {
                 val result = it.filterNot { excludedAccounts.contains(it.id) }
