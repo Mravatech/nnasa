@@ -44,8 +44,8 @@
                     android:id="@+id/etNeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="@integer/max_need_length"
-                    android:imeOptions="actionDone" />
+                    android:inputType="textMultiLine"
+                    android:maxLength="@integer/max_need_length" />
             </android.support.design.widget.TextInputLayout>
 
 

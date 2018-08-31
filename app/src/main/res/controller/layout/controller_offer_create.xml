@@ -44,7 +44,6 @@
                     android:id="@+id/etTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
                     android:maxLength="@integer/max_offer_title_length" />
             </android.support.design.widget.TextInputLayout>
 
@@ -62,7 +61,7 @@
                     android:id="@+id/etOffer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
                     android:maxLength="@integer/max_offer_desc_length" />
             </android.support.design.widget.TextInputLayout>
 
@@ -102,7 +101,6 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:spinnerMode="dialog"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
             <View
@@ -117,7 +115,6 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:spinnerMode="dialog"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
             <View

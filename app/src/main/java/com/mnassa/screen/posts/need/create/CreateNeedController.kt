@@ -69,7 +69,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.applyChanges(makePostModel())
+                viewModel.applyChanges(makePostModel(view))
             }
             tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
@@ -171,8 +171,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         super.onDestroyView(view)
     }
 
-    private fun makePostModel(): RawPostModel {
-        with(requireNotNull(view)) {
+    private fun makePostModel(view: View): RawPostModel {
+        with(view) {
             val images = attachedImagesAdapter.dataStorage.toList()
             return RawPostModel(
                     id = postId,
