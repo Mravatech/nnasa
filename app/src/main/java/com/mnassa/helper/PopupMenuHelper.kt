@@ -104,7 +104,11 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
         popup.show()
     }
 
-    fun showConnectedAccountMenu(view: View, onChat: () -> Unit, onProfile: () -> Unit, onDisconnect: () -> Unit) {
+    suspend fun showConnectedAccountMenu(view: View,
+                                 account: ShortAccountModel,
+                                 onChat: () -> Unit,
+                                 onProfile: () -> Unit,
+                                 onDisconnect: () -> Unit) {
         val popup = PopupMenu(view.context, view)
         popup.menuInflater.inflate(R.menu.connections_item, popup.menu)
         popup.menu.findItem(R.id.action_connections_send_message).title = fromDictionary(R.string.tab_connections_all_item_send_message)
@@ -114,6 +118,10 @@ class PopupMenuHelper(private val dialogHelper: DialogHelper) {
         val disconnectTextColor = ContextCompat.getColor(view.context, R.color.red)
         disconnectSpan.setSpan(ForegroundColorSpan(disconnectTextColor), 0, disconnectSpan.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         popup.menu.findItem(R.id.action_connections_disconnect).title = disconnectSpan
+
+        if (!account.canDisconnect()) {
+            popup.menu.removeItem(R.id.action_connections_disconnect)
+        }
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {

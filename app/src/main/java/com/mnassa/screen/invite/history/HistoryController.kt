@@ -1,6 +1,5 @@
 package com.mnassa.screen.invite.history
 
-//import kotlinx.android.synthetic.main.toolbar_invite.view.*
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R

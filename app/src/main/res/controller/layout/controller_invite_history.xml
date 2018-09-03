@@ -26,8 +26,6 @@
 
     </RelativeLayout>
 
-    <View style="@style/MnassaShadow" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvInviteHistory"
         android:layout_width="match_parent"
