@@ -28,7 +28,6 @@ import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details_info.view.*
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.text.SimpleDateFormat
@@ -39,7 +38,7 @@ import java.text.SimpleDateFormat
  */
 class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetailsInfoViewModel>(args), CommentsWrapperController.CommentsWrapperCallback {
     private val eventId by lazy { args.getString(EXTRA_EVENT_ID) }
-    private val eventParam by lazy { args[EXTRA_EVENT] as EventModel? }
+    private var event =  args[EXTRA_EVENT] as EventModel
     override val layoutId: Int = R.layout.controller_event_details_info
     override val viewModel: EventDetailsInfoViewModel by instance(arg = eventId)
     private val languageProvider: LanguageProvider by instance()
@@ -48,9 +47,6 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
-
-        showProgress()
-        eventParam?.apply { bindEvent(this, view) }
 
         launchCoroutineUI {
             viewModel.eventChannel.consumeEach { bindEvent(it, getViewSuspend()) }
@@ -63,7 +59,11 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
                     .setOrientation(ChipsLayoutManager.HORIZONTAL)
                     .build()
             rvTags.adapter = tagsAdapter
+
+            btnBuyTickets.text = formatBuyButtonText(event, true, 0)
         }
+
+        bindEvent(event, view)
     }
 
     override fun onDestroyView(view: View) {
@@ -73,8 +73,6 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
 
     private fun bindEvent(event: EventModel, view: View) {
         with(view) {
-            hideProgress()
-
             tvSchedule.text = formatTime(event)
             //
             tvLocation.text = event.locationType.formatted
@@ -219,7 +217,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         const val EXTRA_EVENT = "EXTRA_EVENT"
 
-        fun newInstance(eventId: String, event: EventModel? = null): EventDetailsInfoController {
+        fun newInstance(eventId: String, event: EventModel): EventDetailsInfoController {
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, eventId)
             args.putSerializable(EXTRA_EVENT, event)
