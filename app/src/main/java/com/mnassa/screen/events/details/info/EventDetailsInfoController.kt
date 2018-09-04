@@ -48,10 +48,6 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        launchCoroutineUI {
-            viewModel.eventChannel.consumeEach { bindEvent(it, getViewSuspend()) }
-        }
-
         with(view) {
             rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
                     .setScrollingEnabled(false)
@@ -61,9 +57,13 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             rvTags.adapter = tagsAdapter
 
             btnBuyTickets.text = formatBuyButtonText(event, true, 0)
+            btnBuyTickets.isEnabled = false
         }
 
         bindEvent(event, view)
+        launchCoroutineUI {
+            viewModel.eventChannel.consumeEach { bindEvent(it, getViewSuspend()) }
+        }
     }
 
     override fun onDestroyView(view: View) {
