@@ -9,6 +9,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
 /**

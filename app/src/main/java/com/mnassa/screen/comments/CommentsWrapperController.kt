@@ -109,7 +109,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
         accountsToRecommendAdapter.onDataChangedListener = { itemsCount ->
             launchCoroutineUI {
-
                 getCommentsContainer().recommendPanel?.isGone = itemsCount == 0
                 updatePostCommentButtonState()
             }
@@ -127,7 +126,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         super.onViewCreated(view)
 
         with(view) {
-            rvContent.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             rvContent.adapter = commentsAdapter
             initializeContainer()
             bindToolbar(toolbar)

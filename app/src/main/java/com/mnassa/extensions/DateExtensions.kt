@@ -76,7 +76,7 @@ fun Date.toTimeAgo(): CharSequence {
     return when {
         TimeUnit.MILLISECONDS.toMinutes(abs(System.currentTimeMillis() - time)) < 1 -> {
             val secondsDiff = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - this.time)
-            fromDictionary(R.string._seconds_ago).format(secondsDiff)
+            fromDictionary(R.string._seconds_ago).format(maxOf(secondsDiff, 1))
         }
         isTheSameDay(System.currentTimeMillis()) -> {
             val messages = TimeAgoMessages.Builder().withLocale(locale).build()

@@ -84,7 +84,6 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             tvDescription.text = event.text
             //
             val pictures = if (event.pictures.size > 1) event.pictures.takeLast(event.pictures.size - 1) else emptyList()
-            flImages.isGone = pictures.isEmpty()
             if (pictures.isNotEmpty()) {
                 pivImages.count = pictures.size
                 pivImages.selection = 0
@@ -98,6 +97,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
                     }
                 })
             }
+            flImages.isGone = pictures.isEmpty()
             //
             tvViewsCount.text = fromDictionary(R.string.need_views_count).format(event.viewsCount)
             //
@@ -106,26 +106,26 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             llEventLocation.setOnClickListener { openGoogleMaps(event, it.context) }
 
             launchCoroutineUI { bindBuyTicketButton(event) }
+            launchCoroutineUI { bindTags(viewModel.loadTags(event.tags)) }
         }
     }
 
     private suspend fun bindBuyTicketButton(event: EventModel) {
         with(getViewSuspend()) {
-            val boughtTicketsCount = async { event.getBoughtTicketsCount() }
-            val canBuyTickets = async { event.canBuyTickets() }
+            val boughtTicketsCount = event.getBoughtTicketsCount()
+            val canBuyTickets = event.canBuyTickets(boughtTicketsCount)
             //
-            tvTickets.text = formatTicketsText(event, getViewSuspend().context, boughtTicketsCount.await())
+            tvTickets.text = formatTicketsText(event, context, boughtTicketsCount)
 
             // buy button logic
-            btnBuyTickets.isEnabled = canBuyTickets.await()
-            btnBuyTickets.text = formatBuyButtonText(event, canBuyTickets.await(), boughtTicketsCount.await())
-            btnBuyTickets.setBackgroundResource(if (boughtTicketsCount.await() == 0L) R.drawable.btn_main else R.drawable.btn_green)
+            btnBuyTickets.isEnabled = canBuyTickets
+            btnBuyTickets.text = formatBuyButtonText(event, canBuyTickets, boughtTicketsCount)
+            btnBuyTickets.setBackgroundResource(if (boughtTicketsCount == 0L) R.drawable.btn_main else R.drawable.btn_green)
             btnBuyTickets.setOnClickListener { view ->
                 launchCoroutineUI {
                     viewModel.buyTickets(dialogHelper.showBuyTicketDialog(view.context, event))
                 }
             }
-            bindTags(viewModel.loadTags(event.tags))
         }
     }
 
