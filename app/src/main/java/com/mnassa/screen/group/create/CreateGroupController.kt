@@ -73,7 +73,10 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             btnDelete.text = fromDictionary(R.string.need_create_delete_photo)
 
             toolbar.withActionButton(fromDictionary(R.string.group_save_changes)) {
-                viewModel.applyChanges(makeGroupModel())
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    viewModel.applyChanges(makeGroupModel())
+                }.invokeOnCompletion { onInputChanged() }
             }
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
@@ -189,8 +192,12 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
     }
 
     private fun onInputChanged() {
-        with(view ?: return) {
-            toolbar.actionButtonClickable = !etGroupTitle.text.isNullOrBlank()
+        view?.toolbar?.actionButtonClickable = canCreateGroup()
+    }
+
+    private fun canCreateGroup(): Boolean {
+        return with(view ?: return false) {
+            !etGroupTitle.text.isNullOrBlank()
                     && avatar != null
                     && !etGroupDescription.text.isNullOrBlank()
         }

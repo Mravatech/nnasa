@@ -70,7 +70,10 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.applyChanges(makePostModel())
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    viewModel.applyChanges(makePostModel())
+                }.invokeOnCompletion { onOfferChanged() }
             }
             tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
@@ -280,12 +283,14 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
     }
 
     private fun onOfferChanged() {
-        with(view ?: return) {
-            toolbar.actionButtonClickable =
-                    etOffer.text.length >= MIN_OFFER_DESCRIPTION_LENGTH &&
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        return with(view ?: return false) {
+            etOffer.text.length >= MIN_OFFER_DESCRIPTION_LENGTH &&
                     etTitle.text.length >= MIN_OFFER_TITLE_LENGTH
         }
-
     }
 
     @SuppressLint("SetTextI18n")

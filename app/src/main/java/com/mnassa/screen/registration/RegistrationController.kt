@@ -173,23 +173,32 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     private fun processRegisterClick() {
-        with(requireNotNull(view)) {
+        view?.btnScreenHeaderAction?.isEnabled = false
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                when {
+                    llPersonal.visibility == View.VISIBLE -> viewModel.registerPerson(
+                            firstName = etPersonFirstName.text.toString(),
+                            secondName = etPersonSecondName.text.toString(),
+                            userName = etPersonUserName.text.toString(),
+                            city = personSelectedPlaceId ?: "",
+                            offers = chipPersonOffers.getTags(),
+                            interests = chipPersonInterests.getTags())
+                    llOrganization.visibility == View.VISIBLE -> viewModel.registerOrganization(
+                            companyName = etCompanyName.text.toString(),
+                            userName = etCompanyUserName.text.toString(),
+                            city = companySelectedPlaceId ?: "",
+                            offers = chipCompanyOffers.getTags(),
+                            interests = chipCompanyInterests.getTags()
+                    )
+                    else -> throw IllegalArgumentException("Invalid page position!")
+                }
+            }
+        }.invokeOnCompletion {
+            val view = view ?: return@invokeOnCompletion
             when {
-                llPersonal.visibility == View.VISIBLE -> viewModel.registerPerson(
-                        firstName = etPersonFirstName.text.toString(),
-                        secondName = etPersonSecondName.text.toString(),
-                        userName = etPersonUserName.text.toString(),
-                        city = personSelectedPlaceId ?: "",
-                        offers = chipPersonOffers.getTags(),
-                        interests = chipPersonInterests.getTags())
-                llOrganization.visibility == View.VISIBLE -> viewModel.registerOrganization(
-                        companyName = etCompanyName.text.toString(),
-                        userName = etCompanyUserName.text.toString(),
-                        city = companySelectedPlaceId ?: "",
-                        offers = chipCompanyOffers.getTags(),
-                        interests = chipCompanyInterests.getTags()
-                )
-                else -> throw IllegalArgumentException("Invalid page position!")
+                view.llPersonal.visibility == View.VISIBLE -> onPersonChanged()
+                view.llOrganization.visibility == View.VISIBLE -> onOrganizationChanged()
             }
         }
     }

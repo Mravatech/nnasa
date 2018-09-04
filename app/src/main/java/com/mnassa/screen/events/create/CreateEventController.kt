@@ -88,29 +88,34 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
-                val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
-                val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
+                    val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
 
-                val model = RawEventModel(
-                        id = eventId,
-                        title = etEventTitle.text.toString(),
-                        description = etEventDescription.text.toString(),
-                        type = (sEventType.selectedItem as FormattedEventType).eventType,
-                        startDateTime = requireNotNull(dateTime).startDateTime,
-                        durationMillis = requireNotNull(dateTime).durationMillis,
-                        imagesToUpload = imagesToUpload,
-                        uploadedImages = uploadedImages.toMutableSet(),
-                        privacy = sharingOptions,
-                        ticketsTotal = etTicketsQuantity.text.toString().toInt(),
-                        ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
-                        price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
-                        locationType = getLocationType(),
-                        tagModels = chipTags.getTags(),
-                        status = eventStatus,
-                        groupIds = groupIds.toSet(),
-                        needPush = cbSendNotification.isChecked
-                )
-                viewModel.publish(model)
+                    val model = RawEventModel(
+                            id = eventId,
+                            title = etEventTitle.text.toString(),
+                            description = etEventDescription.text.toString(),
+                            type = (sEventType.selectedItem as FormattedEventType).eventType,
+                            startDateTime = requireNotNull(dateTime).startDateTime,
+                            durationMillis = requireNotNull(dateTime).durationMillis,
+                            imagesToUpload = imagesToUpload,
+                            uploadedImages = uploadedImages.toMutableSet(),
+                            privacy = sharingOptions,
+                            ticketsTotal = etTicketsQuantity.text.toString().toInt(),
+                            ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
+                            price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
+                            locationType = getLocationType(),
+                            tagModels = chipTags.getTags(),
+                            status = eventStatus,
+                            groupIds = groupIds.toSet(),
+                            needPush = cbSendNotification.isChecked
+                    )
+                    viewModel.publish(model)
+                }.invokeOnCompletion {
+                    onEventChanged()
+                }
             }
             tvShareOptions.setOnClickListener(::openShareOptionsScreen)
             launchCoroutineUI {

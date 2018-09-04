@@ -9,6 +9,8 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 /**
  * Created by Peter on 4/30/2018.
@@ -20,17 +22,20 @@ class CreateGeneralPostViewModelImpl(private val postId: String?,
                                      private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), CreateGeneralPostViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    private val applyChangesMutex = Mutex()
 
-    override fun applyChanges(post: RawPostModel) {
-        handleException {
-            withProgressSuspend {
-                if (postId == null) {
-                    postsInteractor.createGeneralPost(post)
-                } else {
-                    postsInteractor.updateGeneralPost(post)
+    override suspend fun applyChanges(post: RawPostModel) {
+        applyChangesMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    if (postId == null) {
+                        postsInteractor.createGeneralPost(post)
+                    } else {
+                        postsInteractor.updateGeneralPost(post)
+                    }
                 }
+                closeScreenChannel.send(Unit)
             }
-            closeScreenChannel.send(Unit)
         }
     }
 

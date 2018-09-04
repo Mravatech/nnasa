@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
+import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.await
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
@@ -198,7 +198,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                 rvAccountsToRecommend.adapter = accountsToRecommendAdapter
                 rvCommentAttachments.adapter = attachmentsAdapter
 
-                btnCommentPost.setOnClickListener { onPostCommentClick() }
+                btnCommentPost.setOnClickListener(::onPostCommentClick)
                 ivCommentRecommend.setOnClickListener { openRecommendScreen() }
                 ivCommentAttach.setOnClickListener {
                     dialogHelper.showSelectImageSourceDialog(it.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
@@ -292,21 +292,24 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         else requireNotNull(oneParamConstructor).newInstance(wrappedControllerParams)) as Controller
     }
 
-    private fun onPostCommentClick() {
-        with(view ?: return) {
-            val editedCommentLocal = editedComment
-            launchCoroutineUI {
-                val result = if (editedCommentLocal != null) {
-                    viewModel.editComment(makeCommentModel())
-                } else viewModel.createComment(makeCommentModel())
-                if (result) {
-                    etCommentText.text = null
-                    replyTo = null
-                    editedComment = null
-                    bindRecommendedAccounts(emptyList())
-                    bindCommentAttachments(emptyList())
-                }
+    private fun onPostCommentClick(view: View) {
+        view.isEnabled = false
+        val view = view.asReference()
+
+        val editedCommentLocal = editedComment
+        launchCoroutineUI {
+            val result = if (editedCommentLocal != null) {
+                viewModel.editComment(makeCommentModel())
+            } else viewModel.createComment(makeCommentModel())
+            if (result) {
+                getViewSuspend().etCommentText.text = null
+                replyTo = null
+                editedComment = null
+                bindRecommendedAccounts(emptyList())
+                bindCommentAttachments(emptyList())
             }
+        }.invokeOnCompletion {
+            view.invoke { isEnabled = canPostComment }
         }
     }
 

@@ -12,7 +12,7 @@ interface RecommendUserViewModel : MnassaViewModel {
     val closeScreenChannel: BroadcastChannel<Unit>
     suspend fun getUser(userId: String): ShortAccountModel?
 
-    fun applyChanges(post: RawRecommendPostModel)
+    suspend fun applyChanges(post: RawRecommendPostModel)
 
     suspend fun canPromotePost(): Boolean
 

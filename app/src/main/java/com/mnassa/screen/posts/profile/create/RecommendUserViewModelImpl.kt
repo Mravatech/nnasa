@@ -7,6 +7,8 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 /**
  * Created by Peter on 4/12/2018.
@@ -16,19 +18,23 @@ class RecommendUserViewModelImpl(
         private val postsInteractor: PostsInteractor,
         private val userInteractor: UserProfileInteractor
 ) : MnassaViewModelImpl(), RecommendUserViewModel {
+
     override val closeScreenChannel: ArrayBroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    private val applyChangesMutex = Mutex()
 
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userInteractor.getAccountByIdChannel(userId).consume { receive() } }
 
-    override fun applyChanges(post: RawRecommendPostModel) {
-        handleException {
-            withProgressSuspend {
-                if (postId == null) {
-                    postsInteractor.createUserRecommendation(post)
-                } else {
-                    postsInteractor.updateUserRecommendation(post)
+    override suspend fun applyChanges(post: RawRecommendPostModel) {
+        applyChangesMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    if (postId == null) {
+                        postsInteractor.createUserRecommendation(post)
+                    } else {
+                        postsInteractor.updateUserRecommendation(post)
+                    }
+                    closeScreenChannel.send(Unit)
                 }
-                closeScreenChannel.send(Unit)
             }
         }
     }
