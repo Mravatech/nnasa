@@ -67,8 +67,7 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
     }
 
     override suspend fun handle(intent: Intent?): Controller? {
-        if (intent == null) return null
-        val extras = intent.extras ?: return null
+        val extras = intent?.extras ?: return null
 
         return try {
             when {
@@ -79,27 +78,34 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                 }
                 extras.containsKey("postId") -> {
                     val postId = extras.getAndRemove("postId")?.takeIf { it.isNotBlank() }
-                            ?: return null
-                    val post = postsInteractor.loadById(postId).receiveOrNull() ?: return null
+                            ?: error("postId is empty")
+                    val post = postsInteractor.loadById(postId).receiveOrNull() ?: error("Post not found $postId")
                     postDetailsFactory.newInstance(post)
                 }
                 extras.containsKey("eventId") -> {
                     val eventId = extras.getAndRemove("eventId")?.takeIf { it.isNotBlank() }
-                            ?: return null
+                            ?: error("eventId is empty")
                     val event = eventsInteractor.loadByIdChannel(eventId).receiveOrNull()
-                            ?: return null
+                            ?: error("Event not found $eventId")
                     EventDetailsController.newInstance(event)
-                }
-                extras.containsKey("accountId") -> {
-                    val accountId = extras.getAndRemove("accountId")?.takeIf { it.isNotBlank() }
-                            ?: return null
-                    val account = profileInteractor.getAccountByIdChannel(accountId).receiveOrNull()
-                            ?: return null
-                    ProfileController.newInstance(account)
                 }
                 extras.containsKey("amount") -> {
                     extras.getAndRemove("amount")
                     WalletController.newInstance()
+                }
+                extras.containsKey("accountId") -> {
+                    val accountId = extras.getAndRemove("accountId")?.takeIf { it.isNotBlank() }
+                            ?: error("accountId is empty")
+                    val account = profileInteractor.getProfileByIdChannel(accountId).receiveOrNull()
+                            ?: error("Account with accountId not found $accountId")
+                    ProfileController.newInstance(account)
+                }
+                extras.containsKey("id") -> {
+                    val accountId = extras.getAndRemove("id")?.takeIf { it.isNotBlank() }
+                            ?: error("id is empty")
+                    val account = profileInteractor.getProfileByIdChannel(accountId).receiveOrNull()
+                            ?: error("Account with id not found $accountId")
+                    ProfileController.newInstance(account)
                 }
                 else -> null
             }
@@ -110,6 +116,10 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
     }
 
     private fun Bundle.getAndRemove(key: String): String? = getString(key).also { remove(key) }
+
+    private fun error(message: String): Nothing {
+        throw IllegalArgumentException(message)
+    }
 
     override suspend fun handle(notificationModel: NotificationModel): Controller? {
         return when (notificationModel.type) {
