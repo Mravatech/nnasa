@@ -60,6 +60,8 @@ import com.mnassa.screen.connections.select.SelectConnectionViewModel
 import com.mnassa.screen.connections.select.SelectConnectionViewModelImpl
 import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
+import com.mnassa.screen.deeplink.DeeplinkHandler
+import com.mnassa.screen.deeplink.DeeplinkHandlerImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.events.create.CreateEventViewModel
@@ -203,7 +205,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
-    bind<ChatMessageViewModel>() with factory { accountId: String? -> ChatMessageViewModelImpl(userAccountId = accountId, chatInteractor = instance(), userProfileInteractor = instance()) }
+    bind<ChatMessageViewModel>() with factory { params: ChatMessageViewModel.Params -> ChatMessageViewModelImpl(params = params, chatInteractor = instance(), userProfileInteractor = instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
@@ -417,4 +419,5 @@ private val otherModule = Kodein.Module {
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
     bind<PostDetailsFactory>() with singleton { PostDetailsFactory() }
     bind<InviteSourceHolder>() with singleton { InviteSourceHolder() }
+    bind<DeeplinkHandler>() with singleton { DeeplinkHandlerImpl(instance(), instance(), instance(), instance(), instance()) }
 }

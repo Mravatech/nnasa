@@ -27,7 +27,10 @@ import org.kodein.di.generic.instance
 class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageViewModel>(data) {
     override val layoutId: Int = R.layout.controller_chat_message
     private val accountModel by lazy { args.getSerializable(CHAT_ACCOUNT) as ShortAccountModel? }
-    override val viewModel: ChatMessageViewModel by instance(arg = accountModel?.id)
+    override val viewModel: ChatMessageViewModel by instance(arg = ChatMessageViewModel.Params(
+            accountId = data.getString(EXTRA_ACCOUNT_ID),
+            chatId = data.getString(EXTRA_CHAT_ID)
+    ))
     private val postModel: PostModel? by lazy { args.getSerializable(CHAT_POST) as PostModel? }
     private val dialog: DialogHelper by instance()
 
@@ -143,6 +146,8 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     companion object {
         private const val CHAT_ACCOUNT = "CHAT_ACCOUNT"
         private const val CHAT_POST = "CHAT_POST"
+        private const val EXTRA_CHAT_ID = "EXTRA_CHAT_ID"
+        private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
 
         fun newInstance(): ChatMessageController {
             val params = Bundle()
@@ -152,6 +157,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         fun newInstance(account: ShortAccountModel): ChatMessageController {
             val params = Bundle()
             params.putSerializable(CHAT_ACCOUNT, account)
+            params.putString(EXTRA_ACCOUNT_ID, account.id)
             return ChatMessageController(params)
         }
 
@@ -159,6 +165,13 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             val params = Bundle()
             params.putSerializable(CHAT_POST, post)
             params.putSerializable(CHAT_ACCOUNT, account)
+            params.putString(EXTRA_ACCOUNT_ID, account.id)
+            return ChatMessageController(params)
+        }
+
+        fun newInstance(chatId: String): ChatMessageController {
+            val params = Bundle()
+            params.putString(EXTRA_CHAT_ID, chatId)
             return ChatMessageController(params)
         }
     }

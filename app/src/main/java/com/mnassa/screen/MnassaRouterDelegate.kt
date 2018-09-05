@@ -66,7 +66,7 @@ class MnassaRouterDelegate : MnassaRouter {
 
     private fun openInNewActivityWithoutStack(self: Controller, controller: Controller): Boolean {
         return when (controller) {
-            is MainController -> true
+            is MainController -> self !is SplashController
             else -> false
         }
     }

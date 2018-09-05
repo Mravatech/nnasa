@@ -62,7 +62,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         chatApi.deleteMessage(MessageFromChatRequest(messageId, chatID, isDeleteForBoth)).handleException(exceptionHandler)
     }
 
-    override suspend fun loadMessagesWithChangesHandling(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
+    override suspend fun loadMessagesWithChangesHandling(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>> {
         val myUserId = userRepository.getAccountIdOrException()
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
@@ -71,11 +71,11 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(chatId)
                 .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
                         exceptionHandler = exceptionHandler,
-                        mapper = { mapChatMessage(converter.convert(it, ChatMessageModel::class.java), chatId, accountId) }
+                        mapper = { mapChatMessage(converter.convert(it, ChatMessageModel::class.java), chatId) }
                 )
     }
 
-    override suspend fun preloadMessages(chatId: String, accountId: String?): List<ChatMessageModel> {
+    override suspend fun preloadMessages(chatId: String): List<ChatMessageModel> {
         val myUserId = userRepository.getAccountIdOrException()
         return db.child(TABLE_CHAT)
                 .child(TABLE_CHAT_MESSAGES)
@@ -85,7 +85,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .limitToLast(DEFAULT_LIMIT)
                 .awaitList<ChatMessageDbModel>(exceptionHandler)
                 .let { converter.convertCollection(it, ChatMessageModel::class.java) }
-                .map { mapChatMessage(it, chatId, accountId) }
+                .map { mapChatMessage(it, chatId) }
     }
 
 
@@ -120,7 +120,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
         return chat.takeIf { it.account != null }
     }
 
-    private suspend fun mapChatMessage(post: ChatMessageModel, chatId: String, accountId: String?): ChatMessageModel {
+    private suspend fun mapChatMessage(post: ChatMessageModel, chatId: String): ChatMessageModel {
         val myUserId = userRepository.getAccountIdOrException()
         post.replyMessage?.first?.let { first ->
             val replyMessage: ChatMessageDbModel? = getReplyMessage(myUserId, chatId, first)
@@ -128,7 +128,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 post.replyMessage = post.replyMessage?.copy(second = converter.convert(replyMessage, ChatMessageModel::class.java))
             }
         }
-        post.replyPost?.first?.takeIf { accountId != null }?.let { first ->
+        post.replyPost?.first?.let { first ->
             val replyPost: PostModel? = postsRepository.loadById(first).receiveOrNull()
             replyPost?.let { post1 ->
                 post.replyPost = post.replyPost?.copy(second = post1)

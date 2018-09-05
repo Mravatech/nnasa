@@ -230,7 +230,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     override fun onSaveViewState(view: View, outState: Bundle) {
         super.onSaveViewState(view, outState)
         getCommentsContainerNullable()?.let { container ->
-            outState.putString(EXTRA_COMMENT_TEXT, container.etCommentText.text.toString())
+            outState.putString(EXTRA_COMMENT_TEXT, container.etCommentText?.text?.toString())
         }
     }
 

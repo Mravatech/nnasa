@@ -12,4 +12,9 @@ interface ChatMessageViewModel : MnassaViewModel {
 
     suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?): Boolean
     fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean)
+
+    data class Params(
+            val accountId: String?,
+            val chatId: String?
+    )
 }

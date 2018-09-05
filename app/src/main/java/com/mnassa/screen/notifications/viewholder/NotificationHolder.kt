@@ -16,6 +16,29 @@ import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.avatarRound
 import com.mnassa.extensions.toTimeAgo
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
+import com.mnassa.screen.deeplink.NotificationType.AUTO_SUGGEST_YOU_CAN_HELP
+import com.mnassa.screen.deeplink.NotificationType.CONNECTIONS_REQUEST_ACCEPTED
+import com.mnassa.screen.deeplink.NotificationType.CONNECTION_REQUEST
+import com.mnassa.screen.deeplink.NotificationType.EVENT_CANCELLING
+import com.mnassa.screen.deeplink.NotificationType.GENERAL_POST_BY_ADMIN
+import com.mnassa.screen.deeplink.NotificationType.INVITED_TO_GROUP
+import com.mnassa.screen.deeplink.NotificationType.INVITES_NUMBER_CHANGED
+import com.mnassa.screen.deeplink.NotificationType.I_WAS_RECOMMENDED
+import com.mnassa.screen.deeplink.NotificationType.I_WAS_RECOMMENDED_IN_EVENT
+import com.mnassa.screen.deeplink.NotificationType.NEW_EVENT_ATTENDEE
+import com.mnassa.screen.deeplink.NotificationType.NEW_EVENT_BY_ADMIN
+import com.mnassa.screen.deeplink.NotificationType.NEW_USER_JOINED
+import com.mnassa.screen.deeplink.NotificationType.ONE_DAY_TO_EXPIRATION_OF_POST
+import com.mnassa.screen.deeplink.NotificationType.POST_COMMENT
+import com.mnassa.screen.deeplink.NotificationType.POST_IS_EXPIRED
+import com.mnassa.screen.deeplink.NotificationType.POST_PROMOTED
+import com.mnassa.screen.deeplink.NotificationType.POST_REPOST
+import com.mnassa.screen.deeplink.NotificationType.PRIVATE_CHAT_MESSAGE
+import com.mnassa.screen.deeplink.NotificationType.RESPONSE_CHAT_MESSAGE
+import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED
+import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED_BY_POST
+import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED_IN_EVENT
+import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED_TO_YOU
 import com.mnassa.screen.notifications.NotificationAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_notifications.view.*
@@ -188,29 +211,3 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
         }
     }
 }
-//TODO: remove this
-const val PRIVATE_CHAT_MESSAGE = "privateChatMessage"
-const val RESPONSE_CHAT_MESSAGE = "responseChatMessage"
-const val POST_COMMENT = "postComment"
-const val POST_COMMENT_REPLY = "userPostCommentReply"
-const val POST_COMMENT_REPLY_2 = "userCommentReply"
-const val CONNECTION_REQUEST = "connectionRequest"
-const val POST_REPOST = "postRepost"
-const val NEW_USER_JOINED = "newUserJoined"
-const val I_WAS_RECOMMENDED = "iWasRecommended"
-const val I_WAS_RECOMMENDED_IN_EVENT = "iWasRecommendedInEvent"
-const val USER_WAS_RECOMMENDED = "userWasRecommended"
-const val USER_WAS_RECOMMENDED_BY_POST = "userWasRecommendedByPost"
-const val GENERAL_POST_BY_ADMIN = "generalPostByAdmin"
-const val NEW_EVENT_ATTENDEE = "newEventAttendee"
-const val EVENT_CANCELLING = "eventCancelling"
-const val AUTO_SUGGEST_YOU_CAN_HELP = "autoSuggestYouCanHelp"
-const val NEW_EVENT_BY_ADMIN = "newEventByAdmin"
-const val INVITES_NUMBER_CHANGED = "invitesNumberChanged"
-const val CONNECTIONS_REQUEST_ACCEPTED = "connectionsRequestAccepted"
-const val USER_WAS_RECOMMENDED_TO_YOU = "userWasRecommendedToYou"
-const val USER_WAS_RECOMMENDED_IN_EVENT = "userWasRecommendedInEvent"
-const val POST_PROMOTED = "promotePost"
-const val ONE_DAY_TO_EXPIRATION_OF_POST = "oneDayToExpirationOfPost"
-const val POST_IS_EXPIRED = "postIsExpired"
-const val INVITED_TO_GROUP = "youWasInvitedToCommunity"

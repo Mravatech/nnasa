@@ -14,8 +14,6 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
-import com.mnassa.core.addons.SubscriptionContainer
-import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
@@ -43,7 +41,7 @@ import org.kodein.di.generic.kcontext
 import java.util.*
 import android.app.NotificationManager
 import android.support.v7.app.AppCompatDelegate
-import com.mnassa.core.addons.launchUI
+import com.mnassa.core.addons.*
 
 
 open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {

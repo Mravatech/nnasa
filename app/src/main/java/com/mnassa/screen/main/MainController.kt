@@ -1,5 +1,6 @@
 package com.mnassa.screen.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
@@ -20,6 +21,8 @@ import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
+import com.mnassa.activity.SecondActivity
+import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ShortAccountModel
@@ -29,6 +32,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.ConnectionsController
+import com.mnassa.screen.deeplink.DeeplinkHandler
 import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
@@ -44,6 +48,7 @@ import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
+import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -57,6 +62,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     private var accountHeader: AccountHeader? = null
     private var activeAccount: ShortAccountModel? = null
     private var previousSelectedPage = 0
+    private val deeplinkHandler: DeeplinkHandler by instance()
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -237,6 +243,19 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                 }
             }
         }
+
+        activity?.intent?.let { handleDeepLink(it) }
+    }
+
+    private fun handleDeepLink(intent: Intent) {
+        if (deeplinkHandler.hasDeeplink(intent)) showProgress()
+        else return
+        launchCoroutineUI(CoroutineStart.UNDISPATCHED) {
+            deeplinkHandler.handle(intent)?.let { controller ->
+                open(controller)
+                getViewSuspend().bnMain.currentItem = Pages.NOTIFICATIONS.ordinal
+            }
+        }.invokeOnCompletion { hideProgress() }
     }
 
     override fun isPageSelected(page: Controller): Boolean {
