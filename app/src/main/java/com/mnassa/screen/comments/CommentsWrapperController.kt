@@ -95,8 +95,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onCommentUsefulClick = {
             open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it.id))
         }
-        commentsAdapter.onRecommendedAccountClick = { _, profile -> open(ProfileController.newInstance(profile)) }
-        commentsAdapter.onCommentAuthorClick = { open(ProfileController.newInstance(it)) }
+        commentsAdapter.onRecommendedAccountClick = { _, profile -> openAccount(profile) }
+        commentsAdapter.onCommentAuthorClick = ::openAccount
         commentsAdapter.onImageClickListener = { comment, position ->
             view?.context?.let { context ->
                 PhotoPagerActivity.start(
@@ -183,6 +183,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun onApplyReward(rewardModel: RewardModel) {
         viewModel.sendPointsForComment(rewardModel)
+    }
+
+    private fun openAccount(account: ShortAccountModel) {
+        if (ShortAccountModel.EMPTY != account) {
+            open(ProfileController.newInstance(account))
+        }
     }
 
     private fun initializeContainer() {

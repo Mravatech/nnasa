@@ -28,7 +28,7 @@ class GroupConverter(userInteractorLazy: () -> UserProfileInteractor) : Converte
 
         val creator = when {
             input.author != null -> converter.convert(input.author, ShortAccountModel::class.java)
-            else -> ShortAccountModelImpl.EMPTY
+            else -> ShortAccountModel.EMPTY
         }
 
         val permissions = input.permissions?.let {

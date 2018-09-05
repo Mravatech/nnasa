@@ -70,7 +70,7 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
             parentItemId != null -> CommentReplyModelImpl(
                     id = input.id,
                     createdAt = Date(input.createdAt),
-                    creator = convertUser(input.creator, converter).first(),
+                    creator = convertUser(input.creator, converter).firstOrNull() ?: ShortAccountModel.EMPTY,
                     text = input.text,
                     recommends = convertUser(input.recommendedAccounts
                             ?: emptyMap(), converter),
@@ -81,7 +81,7 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
             else -> CommentModelImpl(
                     id = input.id,
                     createdAt = Date(input.createdAt),
-                    creator = convertUser(input.creator, converter).first(),
+                    creator = convertUser(input.creator, converter).firstOrNull() ?: ShortAccountModel.EMPTY,
                     text = input.text,
                     recommends = convertUser(input.recommendedAccounts ?: emptyMap(), converter),
                     isRewarded = input.isRewarded,
@@ -94,7 +94,7 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
                 CommentReplyModelImpl(
                         id = replyId,
                         createdAt = Date(commentBody.createdAt),
-                        creator = convertUser(commentBody.creator, converter).first(),
+                        creator = convertUser(commentBody.creator, converter).firstOrNull() ?: ShortAccountModel.EMPTY,
                         text = commentBody.text,
                         recommends = convertUser(commentBody.recommendedAccounts
                                 ?: emptyMap(), converter),
@@ -115,10 +115,14 @@ class CommentsConverter : ConvertersContextRegistrationCallback {
         return result
     }
 
-    private fun convertUser(input: Map<String, ShortAccountDbEntity>, converter: ConvertersContext): List<ShortAccountModel> {
+    private fun convertUser(input: Map<String, ShortAccountDbEntity?>?, converter: ConvertersContext): List<ShortAccountModel> {
+        if (input == null) return emptyList()
         return input.entries.map { (userId, userBody) ->
-            userBody.id = userId
-            converter.convert<ShortAccountModel>(userBody)
+            if (userBody == null) ShortAccountModel.EMPTY
+            else {
+                userBody.id = userId
+                converter.convert(userBody)
+            }
         }
     }
 }
