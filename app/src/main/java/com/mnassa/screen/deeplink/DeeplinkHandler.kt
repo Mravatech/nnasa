@@ -40,10 +40,10 @@ import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
-import com.mnassa.screen.notifications.NotificationsController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.wallet.WalletController
+import timber.log.Timber
 
 /**
  * Created by Peter on 9/5/2018.
@@ -63,40 +63,49 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
     override fun hasDeeplink(intent: Intent?): Boolean {
         if (intent == null) return false
         val extras = intent.extras ?: return false
-        val type = extras.getString("type") ?: return false
-        return true
+        return !extras.getString("type", null).isNullOrBlank()
     }
 
     override suspend fun handle(intent: Intent?): Controller? {
         if (intent == null) return null
         val extras = intent.extras ?: return null
-        val type = extras.getString("type") ?: return null
 
-        return when {
-            extras.containsKey("chatId") -> {
-                val chatId = extras.getAndRemove("chatId")?.takeIf { it.isNotBlank() } ?: return ChatListController.newInstance()
-                ChatMessageController.newInstance(chatId)
+        return try {
+            when {
+                extras.containsKey("chatId") -> {
+                    val chatId = extras.getAndRemove("chatId")?.takeIf { it.isNotBlank() }
+                            ?: return ChatListController.newInstance()
+                    ChatMessageController.newInstance(chatId)
+                }
+                extras.containsKey("postId") -> {
+                    val postId = extras.getAndRemove("postId")?.takeIf { it.isNotBlank() }
+                            ?: return null
+                    val post = postsInteractor.loadById(postId).receiveOrNull() ?: return null
+                    postDetailsFactory.newInstance(post)
+                }
+                extras.containsKey("eventId") -> {
+                    val eventId = extras.getAndRemove("eventId")?.takeIf { it.isNotBlank() }
+                            ?: return null
+                    val event = eventsInteractor.loadByIdChannel(eventId).receiveOrNull()
+                            ?: return null
+                    EventDetailsController.newInstance(event)
+                }
+                extras.containsKey("accountId") -> {
+                    val accountId = extras.getAndRemove("accountId")?.takeIf { it.isNotBlank() }
+                            ?: return null
+                    val account = profileInteractor.getAccountByIdChannel(accountId).receiveOrNull()
+                            ?: return null
+                    ProfileController.newInstance(account)
+                }
+                extras.containsKey("amount") -> {
+                    extras.getAndRemove("amount")
+                    WalletController.newInstance()
+                }
+                else -> null
             }
-            extras.containsKey("postId") -> {
-                val postId = extras.getAndRemove("postId")?.takeIf { it.isNotBlank() } ?: return null
-                val post = postsInteractor.loadById(postId).receiveOrNull() ?: return null
-                postDetailsFactory.newInstance(post)
-            }
-            extras.containsKey("eventId") -> {
-                val eventId = extras.getAndRemove("eventId")?.takeIf { it.isNotBlank() } ?: return null
-                val event = eventsInteractor.loadByIdChannel(eventId).receiveOrNull() ?: return null
-                EventDetailsController.newInstance(event)
-            }
-            extras.containsKey("accountId") -> {
-                val accountId = extras.getAndRemove("accountId")?.takeIf { it.isNotBlank() } ?: return null
-                val account = profileInteractor.getAccountByIdChannel(accountId).receiveOrNull() ?: return null
-                ProfileController.newInstance(account)
-            }
-            extras.containsKey("amount") -> {
-                extras.getAndRemove("amount")
-                WalletController.newInstance()
-            }
-            else -> NotificationsController.newInstance()
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
         }
     }
 

@@ -250,7 +250,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     private fun handleDeepLink(intent: Intent) {
         if (deeplinkHandler.hasDeeplink(intent)) showProgress()
         else return
-        launchCoroutineUI(CoroutineStart.UNDISPATCHED) {
+        launchCoroutineUI {
             deeplinkHandler.handle(intent)?.let { controller ->
                 open(controller)
                 getViewSuspend().bnMain.currentItem = Pages.NOTIFICATIONS.ordinal
