@@ -21,8 +21,6 @@ import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
-import com.mnassa.activity.SecondActivity
-import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ShortAccountModel
@@ -48,7 +46,6 @@ import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
-import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -233,7 +230,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         launchCoroutineUI {
             viewModel.groupInvitesCountChannel.consumeEach { groupsCount ->
                 drawer?.let {
-                    val text = when (groupsCount){
+                    val text = when (groupsCount) {
                         0 -> null
                         in 1..9 -> "  $groupsCount  "
                         in 10..99 -> " $groupsCount "
@@ -251,10 +248,20 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         if (deeplinkHandler.hasDeeplink(intent)) showProgress()
         else return
         launchCoroutineUI {
-            deeplinkHandler.handle(intent)?.let { controller ->
-                open(controller)
-                getViewSuspend().bnMain.currentItem = Pages.NOTIFICATIONS.ordinal
+            val controller = deeplinkHandler.handle(intent) ?: return@launchCoroutineUI
+            open(controller)
+            when (controller) {
+                is ChatMessageController -> {
+                    getViewSuspend().bnMain.currentItem = Pages.CHAT.ordinal
+                }
+                is WalletController -> {
+                    //do nothing
+                }
+                else -> {
+                    getViewSuspend().bnMain.currentItem = Pages.NOTIFICATIONS.ordinal
+                }
             }
+
         }.invokeOnCompletion { hideProgress() }
     }
 

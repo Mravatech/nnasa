@@ -63,7 +63,7 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
     override fun hasDeeplink(intent: Intent?): Boolean {
         if (intent == null) return false
         val extras = intent.extras ?: return false
-        return !extras.getString("type", null).isNullOrBlank()
+        return !extras.getString(NOTIFICATION_TYPE, null).isNullOrBlank()
     }
 
     override suspend fun handle(intent: Intent?): Controller? {
@@ -71,38 +71,38 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
 
         return try {
             when {
-                extras.containsKey("chatId") -> {
-                    val chatId = extras.getAndRemove("chatId")?.takeIf { it.isNotBlank() }
+                extras.containsKey(CHAT_ID) -> {
+                    val chatId = extras.getAndRemove(CHAT_ID)?.takeIf { it.isNotBlank() }
                             ?: return ChatListController.newInstance()
                     ChatMessageController.newInstance(chatId)
                 }
-                extras.containsKey("postId") -> {
-                    val postId = extras.getAndRemove("postId")?.takeIf { it.isNotBlank() }
-                            ?: error("postId is empty")
+                extras.containsKey(POST_ID) -> {
+                    val postId = extras.getAndRemove(POST_ID)?.takeIf { it.isNotBlank() }
+                            ?: error("$POST_ID is empty")
                     val post = postsInteractor.loadById(postId).receiveOrNull() ?: error("Post not found $postId")
                     postDetailsFactory.newInstance(post)
                 }
-                extras.containsKey("eventId") -> {
-                    val eventId = extras.getAndRemove("eventId")?.takeIf { it.isNotBlank() }
-                            ?: error("eventId is empty")
+                extras.containsKey(EVENT_ID) -> {
+                    val eventId = extras.getAndRemove(EVENT_ID)?.takeIf { it.isNotBlank() }
+                            ?: error("$EVENT_ID is empty")
                     val event = eventsInteractor.loadByIdChannel(eventId).receiveOrNull()
                             ?: error("Event not found $eventId")
                     EventDetailsController.newInstance(event)
                 }
-                extras.containsKey("amount") -> {
-                    extras.getAndRemove("amount")
+                extras.containsKey(WALLET_AMOUNT) -> {
+                    extras.getAndRemove(WALLET_AMOUNT)
                     WalletController.newInstance()
                 }
-                extras.containsKey("accountId") -> {
-                    val accountId = extras.getAndRemove("accountId")?.takeIf { it.isNotBlank() }
-                            ?: error("accountId is empty")
+                extras.containsKey(ACCOUNT_ID_1) -> {
+                    val accountId = extras.getAndRemove(ACCOUNT_ID_1)?.takeIf { it.isNotBlank() }
+                            ?: error("$ACCOUNT_ID_1 is empty")
                     val account = profileInteractor.getProfileByIdChannel(accountId).receiveOrNull()
                             ?: error("Account with accountId not found $accountId")
                     ProfileController.newInstance(account)
                 }
-                extras.containsKey("id") -> {
-                    val accountId = extras.getAndRemove("id")?.takeIf { it.isNotBlank() }
-                            ?: error("id is empty")
+                extras.containsKey(ACCOUNT_ID_2) -> {
+                    val accountId = extras.getAndRemove(ACCOUNT_ID_2)?.takeIf { it.isNotBlank() }
+                            ?: error("$ACCOUNT_ID_2 is empty")
                     val account = profileInteractor.getProfileByIdChannel(accountId).receiveOrNull()
                             ?: error("Account with id not found $accountId")
                     ProfileController.newInstance(account)
@@ -165,10 +165,10 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
             }
             else -> {
                 when {
-                    notificationModel.type.toLowerCase().contains(POST) -> {
+                    notificationModel.type.toLowerCase().contains(POST_KEYWORD) -> {
                         notificationModel.extra.post?.let { post -> postDetailsFactory.newInstance(post) }
                     }
-                    notificationModel.type.toLowerCase().contains(EVENT) -> {
+                    notificationModel.type.toLowerCase().contains(EVENT_KEYWORD) -> {
                         notificationModel.extra.event?.let { event -> EventDetailsController.newInstance(event) }
                     }
                     else -> {
@@ -183,8 +183,16 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
     }
 
     private companion object {
-        const val POST = "post"
-        const val EVENT = "event"
+        const val POST_KEYWORD = "post"
+        const val EVENT_KEYWORD = "event"
+
+        const val NOTIFICATION_TYPE = "type"
+        const val CHAT_ID = "chatId"
+        const val POST_ID = "postId"
+        const val EVENT_ID = "eventId"
+        const val WALLET_AMOUNT = "amount"
+        const val ACCOUNT_ID_1 = "accountId"
+        const val ACCOUNT_ID_2 = "id"
     }
 }
 
