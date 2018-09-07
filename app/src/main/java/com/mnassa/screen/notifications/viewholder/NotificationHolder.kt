@@ -53,11 +53,9 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
     override fun bind(item: NotificationAdapter.NotificationItem) {
         val item = (item as NotificationAdapter.NotificationItem.ContentItem).content
 
-        if (item.extra.author != null) {
-            itemView.tvUserName.text = item.extra.author?.formattedName
-        }
         with(itemView) {
-            itemView.ivUserIcon.avatarRound(item.extra.author?.avatar)
+            tvUserName.text = item.extra.author?.formattedName
+            ivUserIcon.avatarRound(item.extra.author?.avatar)
             tvNotificationCame.text = item.createdAt.toTimeAgo()
             rlNotificationRoot.setOnClickListener(onClickListener)
             rlNotificationRoot.tag = this@NotificationHolder
