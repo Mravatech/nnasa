@@ -248,8 +248,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         if (deeplinkHandler.hasDeeplink(intent)) showProgress()
         else return
         launchCoroutineUI {
-            val controller = deeplinkHandler.handle(intent) ?: return@launchCoroutineUI
-            open(controller)
+            val controller = deeplinkHandler.handle(intent)?.also { open(it) }
             when (controller) {
                 is ChatMessageController -> {
                     getViewSuspend().bnMain.currentItem = Pages.CHAT.ordinal
@@ -261,7 +260,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                     getViewSuspend().bnMain.currentItem = Pages.NOTIFICATIONS.ordinal
                 }
             }
-
         }.invokeOnCompletion { hideProgress() }
     }
 

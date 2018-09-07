@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -11,7 +13,8 @@
         <com.mnassa.widget.MnassaToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:toolbar_title="@string/invite_invite_header"/>
 
         <com.mnassa.widget.search.MnassaSearchView
             android:id="@+id/searchView"
@@ -29,6 +32,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvInviteHistory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_invite_history"/>
 
 </LinearLayout>

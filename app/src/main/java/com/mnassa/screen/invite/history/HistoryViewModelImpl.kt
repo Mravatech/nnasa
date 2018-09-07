@@ -1,32 +1,26 @@
 package com.mnassa.screen.invite.history
 
+import android.os.Bundle
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import timber.log.Timber
-
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 3/21/2018
- */
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 
 class HistoryViewModelImpl(
-    private val inviteInteractor: InviteInteractor
+        private val inviteInteractor: InviteInteractor
 ) : MnassaViewModelImpl(), HistoryViewModel {
 
-    override val phoneContactChannel: BroadcastChannel<List<PhoneContactInvited>> = BroadcastChannel(10)
+    override val phoneContactChannel: BroadcastChannel<List<PhoneContactInvited>> = ConflatedBroadcastChannel()
 
-    private var retrievePhoneJob: Job? = null
-    override fun retrievePhoneContacts() {
-        retrievePhoneJob?.cancel()
-        retrievePhoneJob = handleException {
-            withProgressSuspend {
-                val contacts = inviteInteractor.getInvitedContacts()
-                Timber.i(contacts.toString())
-                phoneContactChannel.send(contacts)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showProgress()
+        handleException {
+            inviteInteractor.getInvitedContacts().consumeEach {
+                phoneContactChannel.send(it)
+                hideProgress()
             }
         }
     }

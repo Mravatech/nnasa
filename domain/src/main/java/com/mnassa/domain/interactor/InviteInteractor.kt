@@ -16,7 +16,7 @@ interface InviteInteractor {
     suspend fun inviteContactToPost(phoneContact: PhoneContact, postId: String)
     suspend fun inviteContactToEvent(phoneContact: PhoneContact, eventId: String)
 
-    suspend fun getInvitedContacts(): List<PhoneContactInvited>
+    suspend fun getInvitedContacts(): ReceiveChannel<List<PhoneContactInvited>>
     suspend fun getInvitesCountChannel(): ReceiveChannel<Int>
     suspend fun getRewardPerInvite(): Long?
 }
