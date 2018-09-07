@@ -51,16 +51,16 @@ import kotlinx.android.synthetic.main.item_notifications.view.*
 class NotificationHolder(itemView: View, private val onClickListener: View.OnClickListener) : BasePaginationRVAdapter.BaseVH<NotificationAdapter.NotificationItem>(itemView) {
 
     override fun bind(item: NotificationAdapter.NotificationItem) {
-        val item = (item as NotificationAdapter.NotificationItem.ContentItem).content
+        val notificationModel = (item as NotificationAdapter.NotificationItem.ContentItem).content
 
         with(itemView) {
-            tvUserName.text = item.extra.author?.formattedName
-            ivUserIcon.avatarRound(item.extra.author?.avatar)
-            tvNotificationCame.text = item.createdAt.toTimeAgo()
+            tvUserName.text = notificationModel.extra.author?.formattedName
+            ivUserIcon.avatarRound(notificationModel.extra.author?.avatar)
+            tvNotificationCame.text = notificationModel.createdAt.toTimeAgo()
             rlNotificationRoot.setOnClickListener(onClickListener)
             rlNotificationRoot.tag = this@NotificationHolder
         }
-        setViewsByType(item)
+        setViewsByType(notificationModel)
     }
 
     private fun setViewsByType(item: NotificationModel) {
@@ -83,9 +83,9 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             USER_WAS_RECOMMENDED -> {
                 val name = getRecommendedName(item)
                 val recommend = fromDictionary(fromDictionary(R.string.notification_recommend_you), fromDictionary(R.string.notification_recommended_you))
-                val _for = fromDictionary(fromDictionary(R.string.notification_for_), fromDictionary(R.string.notification_for))
+                val `for` = fromDictionary(fromDictionary(R.string.notification_for_), fromDictionary(R.string.notification_for))
                 val eventName = item.extra.post?.text ?: ""
-                val text = "$recommend $name $_for $eventName"
+                val text = "$recommend $name $`for` $eventName"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, name, eventName, Color.BLACK)
             }
             CONNECTION_REQUEST -> {
