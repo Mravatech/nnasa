@@ -19,6 +19,7 @@ import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import timber.log.Timber
 
 /**
  * Created by IntelliJ IDEA.
@@ -64,7 +65,13 @@ class NotificationRepositoryImpl(private val db: DatabaseReference,
                     .orderByChild(NotificationDbEntity.PROPERTY_CREATED_AT)
                     .limitToLast(DEFAULT_LIMIT)
                     .awaitList<NotificationDbEntity>(exceptionHandler)
-                    .map { converter.convert(it, NotificationModel::class.java).also { it.isOld = true } }
+                    .mapNotNull {
+                        try {
+                            converter.convert(it, NotificationModel::class.java).also { it.isOld = true }
+                        } catch (e: Exception) {
+                            Timber.e(e, "Invalid notification model ${it.id}; (accountId: $accountId)")
+                            null
+                        }}
                     .asReversed()
         }
         preloadedOldNotifications[accountId] = future

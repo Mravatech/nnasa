@@ -1,5 +1,6 @@
 package com.mikepenz.materialdrawer;
 
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.TextUtils;
@@ -191,7 +192,10 @@ public class MnassaAccountHeaderBuilder extends AccountHeaderBuilder {
 
         if (mCurrentProfile != null) {
             if ((mProfileImagesVisible || mOnlyMainProfileImageVisible) && !mOnlySmallProfileImagesVisible) {
-                ImageViewExtensionsKt.avatarSquare(mCurrentProfileView, mCurrentProfile.getIcon().getUri().toString());
+                ImageHolder imageHolder = mCurrentProfile.getIcon();
+                Uri imageUri = imageHolder != null ? imageHolder.getUri() : null;
+
+                ImageViewExtensionsKt.avatarSquare(mCurrentProfileView, imageUri != null ? imageUri.toString() : null);
 //                setImageOrPlaceholder(mCurrentProfileView, mCurrentProfile.getIcon());
 //                if (mProfileImagesClickable) {
 //                    mCurrentProfileView.setOnClickListener(onCurrentProfileClickListener);
