@@ -18,7 +18,7 @@ internal data class EventDbEntity(
         @SerializedName("itemType") val itemType: String?,
         @SerializedName("location") val locationDbEntity: LocationDbEntity?,
         @SerializedName("locationId") val locationId: String?,
-        @SerializedName("locationType") val locationType: String,
+        @SerializedName("locationType") val locationType: String?,
         @SerializedName("originalCreatedAt") val originalCreatedAt: Long,
         @SerializedName("originalId", alternate = ["originalPostId"]) val originalId: String?,
         @SerializedName("pictures") val pictures: List<String>,
@@ -36,8 +36,12 @@ internal data class EventDbEntity(
         @SerializedName("participants") val participants: List<String>?,
         @SerializedName("privacyConnections") val privacyConnections: List<String>?,
         @SerializedName("locationDescription") val locationDescription: String?,
-        @SerializedName("privacyCommunitiesIds") val privacyCommunitiesIds: Set<String>?
+        @SerializedName("privacyCommunitiesIds") val groups: Set<String>?
 ) : HasId {
+
+    companion object {
+        const val CREATED_AT = "createdAt"
+    }
 }
 
 internal data class EventTicketDbEntity(

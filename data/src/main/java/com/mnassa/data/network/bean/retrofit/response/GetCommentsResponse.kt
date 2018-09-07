@@ -19,12 +19,12 @@ internal data class GetCommentsResponseData(
 
 internal data class CommentResponseEntity(
         @SerializedName("createdAt") val createdAt: Long,
-        @SerializedName("creator") val creator: Map<String, ShortAccountDbEntity>,
+        @SerializedName("creator") val creator: Map<String, ShortAccountDbEntity?>?,
         @SerializedName("isPrivate") var isPrivate: Boolean = false,
         @SerializedName("isRewarded") var isRewarded: Boolean = false,
         @SerializedName("replies") var replies: Map<String, CommentResponseEntity>?,
         @SerializedName("text") var text: String?,
-        @SerializedName("accounts") var recommendedAccounts: Map<String, ShortAccountDbEntity>?,
+        @SerializedName("accounts") var recommendedAccounts: Map<String, ShortAccountDbEntity?>?,
         @SerializedName("images") var images: List<String>?
 ) {
     lateinit var id: String

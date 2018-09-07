@@ -45,7 +45,11 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                         val phone = regex.replace(cursor.getString(numberColumnIndex), "")
                         if (phone.length > NUMBER_LENGTH) {
                             result += PhoneContactImpl(
-                                    phoneNumber = phone,
+                                    phoneNumber = phone
+                                            .replace(" ", "")
+                                            .replace("-", "")
+                                            .replace("(", "")
+                                            .replace(")", ""),
                                     fullName = cursor.getString(nameColumnIndex),
                                     avatar = cursor.getString(avatarColumnIndex))
                         }

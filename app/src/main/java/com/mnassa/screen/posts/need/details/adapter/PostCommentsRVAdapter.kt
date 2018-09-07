@@ -228,6 +228,10 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
 
         private fun handleUseful(item: CommentModel, usefulButton: Button, isMyPost: Boolean) {
             when {
+                item.creator == ShortAccountModel.EMPTY -> {
+                    usefulButton.visibility = View.INVISIBLE
+                    usefulButton.isEnabled = false
+                }
                 (isMyPost && item.isMyComment()) || (!isMyPost && !item.isRewarded) -> {
                     usefulButton.visibility = View.INVISIBLE
                     usefulButton.isEnabled = false
@@ -263,7 +267,7 @@ class PostCommentsRVAdapter(private val commentsRewardModel: CommentsRewardModel
             adapter.onItemClickListener = onClickListener
         }
 
-        protected fun bindImages(item: CommentModel) {
+        private fun bindImages(item: CommentModel) {
             val attachments = item.images
 
             with(itemView) {

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileInfo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_vertical"
+    android:background="@color/background_highlighted"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+
+        <TextView
+            android:id="@+id/tvProfileConnections"
+            style="@style/ProfileHeaderItem.TextView"
+            android:layout_weight="1"
+            tools:text="999" />
+
+        <TextView
+            android:id="@+id/tvPointsGiven"
+            style="@style/ProfileHeaderItem.TextView"
+            android:layout_weight="1"
+            tools:text="999" />
+
+        <TextView
+            android:id="@+id/tvConnectionStatus"
+            style="@style/ProfileHeaderItem.TextView"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            tools:text="connection status" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:id="@+id/flMoreInformation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvMoreInformation"
+            style="@style/ProfileHeaderItem.TextViewMore"
+            android:layout_centerInParent="true"
+            app:textDictionary="@string/profile_more_information"
+            tools:text="MORE INFORMATION" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivMoreInformationIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/tvMoreInformation"
+            app:srcCompat="@drawable/ic_keyboard_arrow_down_accent_24dp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:id="@+id/llAdditionalInformation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvLocation"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginTop="24dp"
+            android:autoLink="all"
+            android:drawablePadding="8dp"
+            app:drawableStartCompat="@drawable/ic_location"
+            android:textColor="@color/black"
+            tools:text="New York Location"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vLocationDivider"
+            style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvCanHelpWith"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+            app:textDictionary="@string/reg_account_can_help_with"
+            tools:text="I Can help with"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvCanHelpWith"
+            style="@style/ProfileHeaderItem.FlowLayout"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:orientation="horizontal"
+            tools:layout_height="50dp"
+            tools:listitem="@layout/item_post_tag"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vCanHelpWithDivider"
+            style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvInterestsIn"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginTop="@dimen/profile_header_item_interests_margin_top"
+            app:textDictionary="@string/reg_account_interested_in"
+            tools:text="My Interests"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvInterestsIn"
+            style="@style/ProfileHeaderItem.FlowLayout"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:orientation="horizontal"
+            tools:layout_height="50dp"
+            tools:listitem="@layout/item_post_tag"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vInterestsInDivider"
+            style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvMobilePhoneLabel"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+            app:textDictionary="@string/profile_mobile_phone"
+            tools:text="Mobile Phone"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvMobilePhone"
+            style="@style/ProfileHeaderItem.TextViewMoreInfo"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:autoLink="all"
+            android:textColor="@color/blue_turquoise"
+            tools:text="+38 (066) 752 02 65"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vMobilePhoneDivider"
+            style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvEmailLabel"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+            app:textDictionary="@string/profile_email"
+            tools:text="Email"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            style="@style/ProfileHeaderItem.TextViewMoreInfo"
+            android:layout_marginBottom="@dimen/profile_header_item_offers_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:autoLink="all"
+            android:textColor="@color/blue_turquoise"
+            tools:text="calvin@gmail.com"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vEmailDivider"
+            style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvDateOfBirthLabel"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+            tools:text="Date of Birth"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvDateOfBirth"
+            style="@style/ProfileHeaderItem.TextViewMoreInfo"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:textColor="@color/black"
+            tools:text="01 Februrary 1991 (26 years)"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vDateOfBirthDivider"
+            style="@style/ProfileHeaderItem.ViewFaceEditTextBottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.mnassa.widget.MnassaTextView
+            android:id="@+id/tvWebSiteLabel"
+            style="@style/ProfileHeaderItem.TextViewLabel"
+            android:layout_marginBottom="@dimen/profile_header_item_tags_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginTop="@dimen/profile_header_item_offers_margin_bottom"
+            app:textDictionary="@string/profile_website"
+            tools:text="Email"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvWebSite"
+            style="@style/ProfileHeaderItem.TextViewMoreInfo"
+            android:layout_marginBottom="@dimen/profile_header_item_offers_margin_bottom"
+            android:layout_marginEnd="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:layout_marginStart="@dimen/profile_header_item_margin_fake_til_horizontal"
+            android:autoLink="all"
+            android:textColor="@color/blue_turquoise"
+            tools:text="www.com.com"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_main">
+
+        <View style="@style/MnassaShadow" />
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvICanHelpHorizontalTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        android:background="@color/background_main"
+        tools:listitem="@layout/item_post_tag"/>
+
+</LinearLayout>

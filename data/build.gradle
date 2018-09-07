@@ -60,9 +60,6 @@ dependencies {
     implementation deps.archComponents.roomRuntime
     kapt deps.archComponents.roomProcessor
 
-    //mapper
-    implementation deps.mapper.core
-
     //other
     implementation deps.other.logger
     implementation deps.stetho.http

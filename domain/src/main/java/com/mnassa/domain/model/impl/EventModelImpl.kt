@@ -35,7 +35,7 @@ data class EventModelImpl(
         override val type: EventType,
         override val updatedAt: Date,
         override val participants: List<String>,
-        override val groupIds: Set<String>
+        override val groups: List<GroupModel>
 
 ) : EventModel
 

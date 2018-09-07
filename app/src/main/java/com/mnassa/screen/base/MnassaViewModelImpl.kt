@@ -87,20 +87,20 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         return launchCoroutineWorker { handleExceptionsSuspend(function) }
     }
 
-    protected open fun showProgress() = launchCoroutineUI { isProgressEnabledChannel.send(true) }
-    protected open fun hideProgress() = launchCoroutineUI { isProgressEnabledChannel.send(false) }
-    protected open suspend fun <T> withProgressSuspend(function: suspend () -> T) {
+    protected open fun showProgress() = handleException { isProgressEnabledChannel.send(true) }
+    protected open fun hideProgress() = handleException { isProgressEnabledChannel.send(false) }
+    protected open suspend fun <T> withProgressSuspend(function: suspend () -> T): T {
         showProgress()
-        try {
+        return try {
             function()
         } finally {
             hideProgress()
         }
     }
 
-    protected open fun <T> withProgress(function: () -> T) {
+    protected open fun <T> withProgress(function: () -> T): T {
         showProgress()
-        try {
+        return try {
             function()
         } finally {
             hideProgress()

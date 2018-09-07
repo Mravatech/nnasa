@@ -1,7 +1,6 @@
 package com.mnassa.screen.events.details.info
 
 import android.os.Bundle
-import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.EventModel
@@ -10,6 +9,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
 /**
@@ -39,9 +39,7 @@ class EventDetailsInfoViewModelImpl(
         }
     }
 
-    override suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { tag -> asyncWorker { handleExceptionsSuspend { tagInteractor.get(tag) } } }.mapNotNull { it.await() }
-    }
+    override suspend fun loadTags(tags: List<String>): List<TagModel> = handleExceptionsSuspend { tagInteractor.get(tags) } ?: emptyList()
 
     override fun buyTickets(count: Long) {
         Timber.e("Buy tickets: $count")

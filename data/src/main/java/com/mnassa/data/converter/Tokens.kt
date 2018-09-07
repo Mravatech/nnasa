@@ -1,5 +1,7 @@
 package com.mnassa.data.converter
 
+import com.mnassa.domain.model.GroupModel
+
 /**
  * Created by Peter on 5/22/2018.
  */
@@ -16,3 +18,7 @@ data class PostAdditionInfo(
         }
     }
 }
+
+data class EventAdditionInfo(
+        val groupIds: List<GroupModel>
+)

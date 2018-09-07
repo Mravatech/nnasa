@@ -69,21 +69,12 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.applyChanges(makePostModel())
-            }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val post = post
+                view.toolbar.actionButtonClickable = false
                 launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateNeedController,
-                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
-                            restrictShareReduction = postId != null,
-                            canBePromoted = viewModel.canPromotePost(),
-                            promotePrice = viewModel.getPromotePostPrice()))
-                }
+                    viewModel.applyChanges(makePostModel(view))
+                }.invokeOnCompletion { onNeedTextUpdated() }
             }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
@@ -133,6 +124,23 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
     }
 
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val post = post
+            val canPromote = viewModel.canPromotePost()
+            val promotePrice = viewModel.getPromotePostPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateNeedController,
+                    accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                    restrictShareReduction = postId != null,
+                    canBePromoted = canPromote,
+                    promotePrice = promotePrice))
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != REQUEST_CODE_CROP) return
@@ -166,8 +174,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         super.onDestroyView(view)
     }
 
-    private fun makePostModel(): RawPostModel {
-        with(requireNotNull(view)) {
+    private fun makePostModel(view: View): RawPostModel {
+        with(view) {
             val images = attachedImagesAdapter.dataStorage.toList()
             return RawPostModel(
                     id = postId,
@@ -214,8 +222,12 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     }
 
     private fun onNeedTextUpdated() {
-        val view = view ?: return
-        view.toolbar.actionButtonClickable = view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        val view = view ?: return false
+        return view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
     }
 
     companion object {

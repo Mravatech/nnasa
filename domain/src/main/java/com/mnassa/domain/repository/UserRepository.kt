@@ -51,4 +51,7 @@ interface UserRepository {
 
     suspend fun getUserStatusChannel(firebaseUserId: String): ReceiveChannel<UserStatusModel>
     suspend fun getAccountStatusChannel(accountId: String): ReceiveChannel<UserStatusModel>
+
+    suspend fun getValueCenterId(): String?
+    suspend fun getAdminId(): String?
 }

@@ -3,9 +3,10 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.repository.DictionaryRepository
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
 /**
@@ -18,12 +19,12 @@ class DictionaryInteractorImpl(repositoryLazy: () -> DictionaryRepository) : Dic
     override suspend fun handleDictionaryUpdates() {
         try {
             repository.getMobileUiVersion().consumeEach { serverVersion ->
-                async {
+                withContext(DefaultDispatcher) {
                     val mobileVersion = repository.getLocalDictionaryVersion()
                     if (serverVersion != mobileVersion) {
                         repository.saveLocalDictionary(serverVersion, repository.loadDictionary())
                     }
-                }.await()
+                }
             }
         } catch (e: Exception) {
             //must never happen

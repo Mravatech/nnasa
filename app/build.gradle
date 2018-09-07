@@ -20,7 +20,7 @@ android {
 
         def versionMajor = 4
         def versionMinor = 0
-        def versionPatch = 5
+        def versionPatch = 8
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         versionCode (versionMajor * 100 + versionMinor * 10 + versionPatch)
 
@@ -145,6 +145,7 @@ dependencies {
     implementation deps.support.cardview
     implementation deps.support.annotations
     implementation deps.support.recyclerview
+    implementation deps.support.constraint
 
     //firebase
     implementation deps.firebase.core
@@ -173,9 +174,6 @@ dependencies {
     //ucrop
     implementation deps.ucrop.general
 
-    //mapper
-    implementation deps.mapper.core
-
     //arch
     implementation deps.archComponents.viewModel
 
@@ -203,6 +201,7 @@ dependencies {
     implementation deps.network.logging
 
     //ui
+    implementation deps.ui.photoView
     implementation deps.ui.bottomnavigation
     implementation deps.ui.tablayout
     implementation deps.ui.dialogs

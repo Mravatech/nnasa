@@ -1,12 +1,13 @@
 package com.mnassa.data.repository
 
 import android.content.Context
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.convert
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.iid.FirebaseInstanceId
 import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.convert
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toListChannel
@@ -21,6 +22,9 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.repository.DatabaseContract.TABLE_ACCOUNTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_ACCOUNTS_COL_PERMISSIONS
+import com.mnassa.data.repository.DatabaseContract.TABLE_CLIENT_DATA
+import com.mnassa.data.repository.DatabaseContract.TABLE_CLIENT_DATA_ADMIN
+import com.mnassa.data.repository.DatabaseContract.TABLE_CLIENT_DATA_VALUE_CENTER
 import com.mnassa.data.repository.DatabaseContract.TABLE_PUBLIC_ACCOUNTS
 import com.mnassa.data.repository.DatabaseContract.TABLE_USERS
 import com.mnassa.data.repository.DatabaseContract.TABLE_USERS_COL_STATE
@@ -261,9 +265,13 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getFirebaseToken(): String? {
-        val user = FirebaseAuth.getInstance().currentUser ?: return null
-        val forceRefresh = accountIdInternal == null
-        return user.getIdToken(forceRefresh).await(exceptionHandler).token
+        try {
+            val user = FirebaseAuth.getInstance().currentUser ?: return null
+            val forceRefresh = accountIdInternal == null
+            return user.getIdToken(forceRefresh).await(exceptionHandler).token
+        } catch (e: FirebaseNetworkException) {
+            return null
+        }
     }
 
     override suspend fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
@@ -312,6 +320,18 @@ class UserRepositoryImpl(
                         UserStatusModel.Disabled()
                     } else UserStatusModel.Enabled()
                 }
+    }
+
+    override suspend fun getValueCenterId(): String? {
+        return db.child(TABLE_CLIENT_DATA)
+                .child(TABLE_CLIENT_DATA_VALUE_CENTER)
+                .await(exceptionHandler)
+    }
+
+    override suspend fun getAdminId(): String? {
+        return db.child(TABLE_CLIENT_DATA)
+                .child(TABLE_CLIENT_DATA_ADMIN)
+                .await(exceptionHandler)
     }
 
     private fun getAccountType(type: AccountType) = when (type) {

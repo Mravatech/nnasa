@@ -1,6 +1,6 @@
 package com.mnassa.data.repository
 
-import com.androidkotlincore.entityconverter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContext
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.data.DataBufferUtils
 import com.google.android.gms.location.places.Places

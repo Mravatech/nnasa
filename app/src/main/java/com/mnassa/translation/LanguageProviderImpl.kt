@@ -12,9 +12,9 @@ class LanguageProviderImpl : LanguageProvider {
     private val arabian = Locale("ar")
     private val english = Locale.ENGLISH
     override var locale: Locale
-        get() = Locale.getDefault()
+        get() = Locale.getDefault().arabianOrEnglish()
         set(value) {
-            Locale.setDefault(value)
+            Locale.setDefault(value.arabianOrEnglish())
         }
     override val language: String
         get() = locale.language
@@ -35,6 +35,11 @@ class LanguageProviderImpl : LanguageProvider {
                 else -> info
             }
         }
+    }
+
+    private fun Locale.arabianOrEnglish(): Locale {
+        return if (language == english.language || language == arabian.language) this
+        else english
     }
 
     companion object {

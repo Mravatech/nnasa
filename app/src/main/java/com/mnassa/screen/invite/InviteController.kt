@@ -3,12 +3,12 @@ package com.mnassa.screen.invite
 import android.Manifest
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
+import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.PhoneContactImpl
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formattedText
 import com.mnassa.extensions.openApplicationSettings
@@ -17,8 +17,7 @@ import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.IntentHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.history.HistoryController
-import com.mnassa.screen.login.enterphone.CountryCode
-import com.mnassa.screen.login.enterphone.CountryCodeAdapter
+import com.mnassa.screen.login.enterphone.*
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
@@ -26,11 +25,6 @@ import kotlinx.android.synthetic.main.phone_input.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 3/19/2018
- */
 
 class InviteController : MnassaControllerImpl<InviteViewModel>() {
     override val layoutId = R.layout.controller_invite_to_mnassa
@@ -40,14 +34,11 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     private val countryHelper: CountryHelper by instance()
     private val intentHelper: IntentHelper by instance()
 
-    private var countryCodePhrase = ""
-    private val phoneNumber: String
+    private val phoneNumber: String?
         get() {
-            val view = view ?: return EMPTY_STRING
-            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode
-                    ?: return EMPTY_STRING
-            countryCodePhrase = countryCode.phonePrefix.code.replace("+", EMPTY_STRING)
-            return countryCodePhrase + view.etPhoneNumberTail.text.toString().replace(" ", "")
+            val view = view ?: return null
+            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode ?: return null
+            return countryCode.withTail(view.etPhoneNumberTail.text.toString()).normalize()
         }
 
     override fun onViewCreated(view: View) {
@@ -64,7 +55,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                             context = view.context,
                             name = name,
                             isWhatsAppInstalled = intent.resolveActivity(packageManager) != null,
-                            onInviteWithClick = { inviteWith -> handleInviteWith(inviteWith, phoneNumber) }
+                            onInviteWithClick = { inviteWith -> handleInviteWith(inviteWith, phoneNumber ?: return@chooseSendInviteWith) }
                     )
                 }
             }
@@ -79,10 +70,11 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             //set country code
             var suggestedCountyCode: String? = null
             for (countryIndex in 0 until countryHelper.countries.size) {
-                val countryCode = countryHelper.countries[countryIndex].phonePrefix.code.replace("+", "")
-                if (numberWithoutPlus.startsWith(countryCode)) {
+                val visibleCode = countryHelper.countries[countryIndex].phonePrefix.visibleCode.replace("+", "")
+                val normalizedCode = countryHelper.countries[countryIndex].phonePrefix.normalizedCode.replace("+", "")
+                if (numberWithoutPlus.startsWith(visibleCode) || numberWithoutPlus.startsWith(normalizedCode) ) {
                     view.spinnerPhoneCode.setSelection(countryIndex)
-                    suggestedCountyCode = countryCode
+                    suggestedCountyCode = normalizedCode
                     break
                 }
             }
@@ -127,7 +119,6 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 else fromDictionary(R.string.invite_reward).format(reward)
             }
 
-
             toolbar.title = fromDictionary(R.string.invite_invite_header)
             etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
             etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)
@@ -135,15 +126,20 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+                override fun onItemSelected(parent: AdapterView<*>?, v: View?, position: Int, id: Long) {
+                    onInputChanged()
+                    updateKeyboardType(view)
+                }
             }
+            updateKeyboardType(view)
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher {
                 view.btnInvite.isEnabled = validateInput()
                 adapter.searchByNameOrNumber(it)
             })
+            etPhoneNumberTail.filters = arrayOf(PHONE_INPUT_FILTER)
             btnInvite.setOnClickListener {
                 viewModel.checkPhoneContact(PhoneContactImpl(
-                        phoneNumber,
+                        phoneNumber ?: return@setOnClickListener,
                         adapter.getNameByNumber(etPhoneNumberTail.text.toString())
                                 ?: EMPTY_STRING, null))
             }
@@ -156,7 +152,7 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     }
 
     private fun validateInput(): Boolean {
-        return PATTERN_PHONE_TAIL.matcher(phoneNumber).matches()
+        return PhoneNumber.isValid(phoneNumber)
     }
 
     private fun onInputChanged() {
@@ -201,6 +197,15 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
     private fun shareInvite(message: String) {
         val intent = intentHelper.getShareIntent(message)
         startActivity(intent)
+    }
+
+    private fun updateKeyboardType(view: View) {
+        val countryCode = (view.spinnerPhoneCode.selectedItem as? CountryCode)?.phonePrefix ?: return
+        view.etPhoneNumberTail.inputType = if (countryCode is PhonePrefix.SaudiArabia) {
+            InputType.TYPE_CLASS_TEXT
+        } else {
+            InputType.TYPE_CLASS_PHONE
+        }
     }
 
     companion object {

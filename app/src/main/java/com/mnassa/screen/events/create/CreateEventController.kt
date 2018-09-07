@@ -88,43 +88,36 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
-                val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
-                val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
-
-                val model = RawEventModel(
-                        id = eventId,
-                        title = etEventTitle.text.toString(),
-                        description = etEventDescription.text.toString(),
-                        type = (sEventType.selectedItem as FormattedEventType).eventType,
-                        startDateTime = requireNotNull(dateTime).startDateTime,
-                        durationMillis = requireNotNull(dateTime).durationMillis,
-                        imagesToUpload = imagesToUpload,
-                        uploadedImages = uploadedImages.toMutableSet(),
-                        privacy = sharingOptions,
-                        ticketsTotal = etTicketsQuantity.text.toString().toInt(),
-                        ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
-                        price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
-                        locationType = getLocationType(),
-                        tagModels = chipTags.getTags(),
-                        status = eventStatus,
-                        groupIds = groupIds.toSet(),
-                        needPush = cbSendNotification.isChecked
-                )
-                viewModel.publish(model)
-            }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val event = event
+                view.toolbar.actionButtonClickable = false
                 launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateEventController,
-                            accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
-                            restrictShareReduction = eventId != null,
-                            canBePromoted = viewModel.canPromoteEvents(),
-                            promotePrice = viewModel.getPromoteEventPrice()))
+                    val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
+                    val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
+
+                    val model = RawEventModel(
+                            id = eventId,
+                            title = etEventTitle.text.toString(),
+                            description = etEventDescription.text.toString(),
+                            type = (sEventType.selectedItem as FormattedEventType).eventType,
+                            startDateTime = requireNotNull(dateTime).startDateTime,
+                            durationMillis = requireNotNull(dateTime).durationMillis,
+                            imagesToUpload = imagesToUpload,
+                            uploadedImages = uploadedImages.toMutableSet(),
+                            privacy = sharingOptions,
+                            ticketsTotal = etTicketsQuantity.text.toString().toInt(),
+                            ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
+                            price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
+                            locationType = getLocationType(),
+                            tagModels = chipTags.getTags(),
+                            status = eventStatus,
+                            groupIds = groupIds.toSet(),
+                            needPush = cbSendNotification.isChecked
+                    )
+                    viewModel.publish(model)
+                }.invokeOnCompletion {
+                    onEventChanged()
                 }
             }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -244,6 +237,23 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                     view.actvCity.setText(it.placeName.toString())
                 }
             }
+        }
+    }
+
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val event = event
+            val canBePromoted = viewModel.canPromoteEvents()
+            val promotePrice = viewModel.getPromoteEventPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateEventController,
+                    accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
+                    restrictShareReduction = eventId != null,
+                    canBePromoted = canBePromoted,
+                    promotePrice = promotePrice))
         }
     }
 
@@ -472,7 +482,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, event.id)
             args.putSerializable(EXTRA_EVENT, event)
-            args.putStringArrayList(EXTRA_GROUP_ID, event.groupIds.toCollection(ArrayList()))
+            args.putStringArrayList(EXTRA_GROUP_ID, event.groups.map { it.id }.toCollection(ArrayList()))
             return CreateEventController(args)
         }
 

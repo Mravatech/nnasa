@@ -1,6 +1,7 @@
 package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
+import android.text.InputType
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -10,7 +11,6 @@ import android.widget.AdapterView
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.extensions.PATTERN_PHONE_TAIL
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.onImeActionDone
 import com.mnassa.extensions.showKeyboard
@@ -41,14 +41,11 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
     private val dialogHelper: DialogHelper by instance()
     private val countryHelper: CountryHelper by instance()
 
-    protected val phoneNumber: String
+    protected val phoneNumber: String?
         get() {
-            val view = view ?: return ""
-            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode ?: return ""
-            return (countryCode.phonePrefix.code
-                    .replace("+", "") +
-                    view.etPhoneNumberTail.text.toString())
-                    .replace(" ", "")
+            val view = view ?: return null
+            val countryCode = view.spinnerPhoneCode.selectedItem as? CountryCode ?: return null
+            return countryCode.withTail(view.etPhoneNumberTail.text.toString()).normalize()
         }
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -98,11 +95,14 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
             spinnerPhoneCode.adapter = CountryCodeAdapter(spinnerPhoneCode.context, countryHelper.countries)
             spinnerPhoneCode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = onInputChanged()
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) = onInputChanged()
+                override fun onItemSelected(a: AdapterView<*>?, v: View?, i: Int, l: Long) {
+                    onInputChanged()
+                    updateKeyboardType(view)
+                }
             }
 
             btnVerifyMe.setOnClickListener {
-                viewModel.requestVerificationCode(phoneNumber)
+                viewModel.requestVerificationCode(phoneNumber ?: return@setOnClickListener)
             }
 
             btnEnterPromo.setOnClickListener {
@@ -114,10 +114,12 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
 
             etPhoneNumberTail.addTextChangedListener(SimpleTextWatcher { onInputChanged() })
             etPhoneNumberTail.onImeActionDone { btnVerifyMe.performClick() }
+            etPhoneNumberTail.filters = arrayOf(PHONE_INPUT_FILTER)
             btnVerifyMe.isEnabled = validateInput()
 
             showKeyboard(etPhoneNumberTail)
         }
+        updateKeyboardType(view)
 
         addSignInViaEmailAbility()
     }
@@ -144,7 +146,16 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
     }
 
     protected open fun validateInput(): Boolean {
-        return PATTERN_PHONE_TAIL.matcher(phoneNumber).matches()
+        return PhoneNumber.isValid(phoneNumber)
+    }
+
+    private fun updateKeyboardType(view: View) {
+        val countryCode = (view.spinnerPhoneCode.selectedItem as? CountryCode)?.phonePrefix ?: return
+        view.etPhoneNumberTail.inputType = if (countryCode is PhonePrefix.SaudiArabia) {
+             InputType.TYPE_CLASS_TEXT
+        } else {
+            InputType.TYPE_CLASS_PHONE
+        }
     }
 
     companion object {

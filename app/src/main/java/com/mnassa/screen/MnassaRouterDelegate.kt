@@ -5,6 +5,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.activity.SecondActivity
 import com.mnassa.screen.group.details.GroupDetailsController
+import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.login.entercode.EnterCodeController
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.login.enterpromo.EnterPromoController
@@ -57,7 +58,7 @@ class MnassaRouterDelegate : MnassaRouter {
             self is EnterCodeController -> false
             self is RegistrationController -> false
             self is SelectAccountController -> false
-            self is GroupDetailsController -> false
+            self is GroupDetailsController && controller is GroupProfileController -> false
 
             else -> true
         }
@@ -65,7 +66,7 @@ class MnassaRouterDelegate : MnassaRouter {
 
     private fun openInNewActivityWithoutStack(self: Controller, controller: Controller): Boolean {
         return when (controller) {
-            is MainController -> true
+            is MainController -> self !is SplashController
             else -> false
         }
     }

@@ -14,8 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/chat_message_half_base_margin"
         android:layout_toStartOf="@+id/tvMyMessageSent"
+        android:autoLink="all"
         android:background="@drawable/outcome_chat_message_background"
         android:padding="@dimen/chat_message_base_padding"
+        android:textColorLink="@color/black"
         tools:text="Message with long long long long long long long text" />
 
 

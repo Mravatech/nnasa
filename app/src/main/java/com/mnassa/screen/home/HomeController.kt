@@ -205,7 +205,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
 
     private fun formatTabControllerTag(position: Int): String = "home_tab_controller_$position"
 
-    enum class HomePage {
+    private enum class HomePage {
         NEEDS, EVENTS
     }
 

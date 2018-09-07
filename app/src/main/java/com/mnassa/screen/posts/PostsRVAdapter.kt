@@ -4,9 +4,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.mnassa.R
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.isRepost
+import com.mnassa.extensions.startUpdateTimeJob
+import com.mnassa.extensions.stopUpdateTimeJob
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
 
@@ -14,8 +17,8 @@ import com.mnassa.screen.posts.viewholder.*
  * Created by Peter on 3/14/2018.
  */
 open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
-    var onAttachedToWindow: (item: PostModel) -> Unit = { }
-    var onDetachedFromWindow: (item: PostModel) -> Unit = { }
+    var onAttachedToWindow: (item: PostModel) -> Unit = {}
+    var onDetachedFromWindow: (item: PostModel) -> Unit = {}
     var onItemClickListener = { item: PostModel -> }
     var onCreateNeedClickListener = {}
     var onRepostedByClickListener = { account: ShortAccountModel -> }
@@ -56,7 +59,7 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
     init {
         itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second ->
-                    first.counters == second.counters &&
+            first.counters == second.counters &&
                     first.attachments == second.attachments &&
                     first.locationPlace == second.locationPlace &&
                     first.privacyType == second.privacyType &&
@@ -117,18 +120,33 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
     override fun onViewAttachedToWindow(holder: BaseVH<PostModel>) {
         super.onViewAttachedToWindow(holder)
 
-        val position = convertAdapterPositionToDataIndex(holder.adapterPosition)
-        if (position >= 0) {
-            onAttachedToWindow(dataStorage[position])
+        val position = convertAdapterPositionToDataIndex(holder.adapterPosition).takeIf { it >= 0 }
+                ?: return
+        val dataItem = dataStorage[position]
+        onAttachedToWindow(dataItem)
+
+        holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
+            it.startUpdateTimeJob(dataItem.originalCreatedAt)
+        }
+
+        holder.itemView.findViewById<TextView?>(R.id.tvReplyTime)?.let {
+            it.startUpdateTimeJob(dataItem.createdAt)
         }
     }
 
     override fun onViewDetachedFromWindow(holder: BaseVH<PostModel>) {
         super.onViewDetachedFromWindow(holder)
 
-        val position = convertAdapterPositionToDataIndex(holder.adapterPosition)
-        if (position >= 0) {
-            onDetachedFromWindow(dataStorage[position])
+        val position = convertAdapterPositionToDataIndex(holder.adapterPosition).takeIf { it >= 0 }
+                ?: return
+        val dataItem = dataStorage[position]
+        onDetachedFromWindow(dataItem)
+
+        holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
+            it.stopUpdateTimeJob()
+        }
+        holder.itemView.findViewById<TextView?>(R.id.tvReplyTime)?.let {
+            it.stopUpdateTimeJob()
         }
     }
 

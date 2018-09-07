@@ -33,6 +33,7 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
                     MAIN -> MainController.newInstance()
                 }
                 open(controller)
+                return@launchCoroutineUI
             }
         }
     }

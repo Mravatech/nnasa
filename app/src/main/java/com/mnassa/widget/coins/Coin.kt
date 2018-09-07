@@ -4,13 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
 
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 4/17/2018
- */
-
-class Coin(startPoint: PointF, private val paint: Paint, val direction: Direction) {
+class Coin(startPoint: PointF, private val paint: Paint, private val radius: Float, val direction: Direction) {
 
 
     var drawPoint = PointF(startPoint.x, startPoint.y)
@@ -20,17 +14,21 @@ class Coin(startPoint: PointF, private val paint: Paint, val direction: Directio
     }
 
     private fun draw(canvas: Canvas, drawPoint: PointF) {
-        canvas.drawCircle(drawPoint.x, drawPoint.y, SIZE, paint)
+        canvas.drawCircle(drawPoint.x, drawPoint.y, radius, paint)
     }
 
     companion object {
-        private var SIZE = 20f
-        fun generate(point: PointF, paint: Paint, direction: Direction): Coin {
-            return Coin(point, paint, direction)
+        fun generate(point: PointF, paint: Paint, radius: Float, direction: Direction): Coin {
+            return Coin(point, paint, radius, direction)
         }
     }
 
     enum class Direction {
-        LEFT_TO_RIGHT, LEFT_TO_RIGHT_DOWN, LEFT_TO_RIGHT_UP, RIGHT_TO_LEFT, RIGHT_TO_LEFT_DOWN, RIGHT_TO_LEFT_UP,
+        LEFT_TO_RIGHT,
+        LEFT_TO_RIGHT_DOWN,
+        LEFT_TO_RIGHT_UP,
+        RIGHT_TO_LEFT,
+        RIGHT_TO_LEFT_DOWN,
+        RIGHT_TO_LEFT_UP,
     }
 }

@@ -34,6 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/ivAvatar"
             android:layout_toStartOf="@id/ivArrow"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="Lou Rodriguez" />
 
         <TextView

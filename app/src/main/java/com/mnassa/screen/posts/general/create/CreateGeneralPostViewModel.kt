@@ -18,7 +18,7 @@ interface CreateGeneralPostViewModel : MnassaViewModel, PlaceAutocompleteAdapter
     suspend fun getTag(tagId: String): TagModel?
     suspend fun getUser(userId: String): ShortAccountModel?
 
-    fun applyChanges(post: RawPostModel)
+    suspend fun applyChanges(post: RawPostModel)
     suspend fun canPromotePost(): Boolean
     suspend fun getPromotePostPrice(): Long
 

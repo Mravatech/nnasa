@@ -30,7 +30,7 @@ class EventsInteractorImpl(
                     try {
                         eventsRepository.sendViewed(it.item.map { it.id })
                     } catch (e: Exception) {
-                        Timber.d(e)
+                        Timber.d(e) //ignore exception here
                     }
                 }
             }
@@ -91,7 +91,7 @@ class EventsInteractorImpl(
                 durationMillis = event.duration?.toMillis() ?: 0L,
                 startDateTime = event.startAt,
                 description = event.text,
-                groupIds = event.groupIds,
+                groupIds = event.groups.map { it.id }.toSet(),
                 needPush = null
         )
 
@@ -120,17 +120,20 @@ class EventsInteractorImpl(
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
         return produce {
-            send(ListItemEvent.Added(loadAllImmediately()))
+            try {
+                send(ListItemEvent.Added(loadAllImmediately()))
+            } catch (e: Exception) {
+                Timber.e(e) //ignore exception here
+            }
             eventsRepository.getEventsFeedChannel().withBuffer().consumeEach { send(it) }
         }
     }
 
     override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.preloadEvents()
-
+    override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>> = eventsRepository.loadAllByGroupId(groupId)
+    override suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel> = eventsRepository.loadAllByGroupIdImmediately(groupId)
     override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> = eventsRepository.getEventsChannel(eventId)
-
     override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> = eventsRepository.getTicketsChannel(eventId)
-
     override suspend fun getTickets(eventId: String): List<EventTicketModel> = eventsRepository.getTickets(eventId)
 
     override suspend fun getBoughtTicketsCount(eventId: String): Long {
@@ -145,11 +148,8 @@ class EventsInteractorImpl(
     }
 
     override suspend fun buyTickets(eventId: String, ticketsCount: Long) = eventsRepository.buyTickets(eventId, ticketsCount)
-
     override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> = eventsRepository.getAttendedUsers(eventId)
-
     override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> = eventsRepository.getAttendedUsersChannel(eventId)
-
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) = eventsRepository.saveAttendedUsers(eventId, presentUsers, notPresentUsers)
 
     private companion object {

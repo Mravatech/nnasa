@@ -61,21 +61,12 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.general_publish)) {
-                viewModel.applyChanges(makePostModel())
-            }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val post = post
+                view.toolbar.actionButtonClickable = false
                 launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateGeneralPostController,
-                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
-                            restrictShareReduction = postId != null,
-                            canBePromoted = viewModel.canPromotePost(),
-                            promotePrice = viewModel.getPromotePostPrice()))
-                }
+                    viewModel.applyChanges(makePostModel())
+                }.invokeOnCompletion { onGeneralTextUpdated() }
             }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
             applyShareOptionsChanges()
             etGeneralPost.hint = fromDictionary(R.string.general_text_placeholder)
@@ -110,6 +101,23 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
                     view.actvPlace.setText(it.placeName.toString())
                 }
             }
+        }
+    }
+
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val post = post
+            val canBePromoted = viewModel.canPromotePost()
+            val promotePrice = viewModel.getPromotePostPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateGeneralPostController,
+                    accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                    restrictShareReduction = postId != null,
+                    canBePromoted = canBePromoted,
+                    promotePrice = promotePrice))
         }
     }
 
@@ -204,8 +212,12 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
     }
 
     private fun onGeneralTextUpdated() {
-        val view = view ?: return
-        view.toolbar.actionButtonClickable = view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        val view = view ?: return false
+        return view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
     }
 
     @SuppressLint("SetTextI18n")

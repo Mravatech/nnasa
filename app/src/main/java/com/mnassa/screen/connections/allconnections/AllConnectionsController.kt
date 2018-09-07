@@ -39,6 +39,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
         }
 
         allConnectionsAdapter.onItemOptionsClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+        allConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         allConnectionsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
@@ -67,11 +68,14 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
     }
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {
-        popupMenuHelper.showConnectedAccountMenu(
-                view = sender,
-                onChat = { openChat(accountModel) },
-                onProfile = { openProfile(accountModel) },
-                onDisconnect = { viewModel.disconnect(accountModel) })
+        launchCoroutineUI {
+            popupMenuHelper.showConnectedAccountMenu(
+                    view = sender,
+                    account = accountModel,
+                    onChat = { openChat(accountModel) },
+                    onProfile = { openProfile(accountModel) },
+                    onDisconnect = { viewModel.disconnect(accountModel) })
+        }
     }
 
     companion object {

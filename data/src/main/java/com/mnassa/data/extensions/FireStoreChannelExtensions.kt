@@ -55,6 +55,10 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                     else -> throw IllegalArgumentException("Illegal event type $eventType")
                 }
 
+                if (channel.isClosedForSend) {
+                    listener.remove()
+                    return@launchWorker
+                }
                 channel.send(result)
             } catch (e: Exception) {
                 when {

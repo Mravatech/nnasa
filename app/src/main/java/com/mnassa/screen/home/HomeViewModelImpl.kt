@@ -9,7 +9,6 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
@@ -43,12 +42,12 @@ class HomeViewModelImpl(private val countersInteractor: CountersInteractor,
     )
 
     override suspend fun getInterests(): List<TagModel> {
-        return handleExceptionsSuspend { getProfile()?.interests?.map { async { tagInteractor.get(it) } }?.mapNotNull { it.await() } }
+        return handleExceptionsSuspend { tagInteractor.get(getProfile()?.interests ?: emptyList()) }
                 ?: emptyList()
     }
 
     override suspend fun getOffers(): List<TagModel> {
-        return handleExceptionsSuspend { getProfile()?.offers?.map { async { tagInteractor.get(it) } }?.mapNotNull { it.await() } }
+        return handleExceptionsSuspend { tagInteractor.get(getProfile()?.offers ?: emptyList()) }
                 ?: emptyList()
     }
 

@@ -1,9 +1,9 @@
 package com.mnassa.di
 
 import android.os.Bundle
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextImpl
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextImpl
+import com.mnassa.core.converter.registerConverter
 import com.bluelinelabs.conductor.Controller
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -60,6 +60,8 @@ import com.mnassa.screen.connections.select.SelectConnectionViewModel
 import com.mnassa.screen.connections.select.SelectConnectionViewModelImpl
 import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
+import com.mnassa.screen.deeplink.DeeplinkHandler
+import com.mnassa.screen.deeplink.DeeplinkHandlerImpl
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.events.create.CreateEventViewModel
@@ -86,6 +88,10 @@ import com.mnassa.screen.group.members.GroupMembersViewModel
 import com.mnassa.screen.group.members.GroupMembersViewModelImpl
 import com.mnassa.screen.group.profile.GroupProfileViewModel
 import com.mnassa.screen.group.profile.GroupProfileViewModelImpl
+import com.mnassa.screen.group.profile.events.GroupEventsViewModel
+import com.mnassa.screen.group.profile.events.GroupEventsViewModelImpl
+import com.mnassa.screen.group.profile.posts.GroupPostsViewModel
+import com.mnassa.screen.group.profile.posts.GroupPostsViewModelImpl
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModel
 import com.mnassa.screen.group.requests.GroupConnectionRequestsViewModelImpl
 import com.mnassa.screen.group.select.SelectGroupViewModel
@@ -182,9 +188,9 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 }
 
 private val viewModelsModule = Kodein.Module {
-    bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance(), instance()) }
+    bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
-    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<EnterCodeViewModel>() with provider { EnterCodeViewModelImpl(instance(), instance()) }
     bind<RegistrationViewModel>() with provider { RegistrationViewModelImpl(instance(), instance(), instance()) }
     bind<SelectAccountViewModel>() with provider { SelectAccountViewModelIImpl(instance()) }
@@ -199,7 +205,7 @@ private val viewModelsModule = Kodein.Module {
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
     bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
-    bind<ChatMessageViewModel>() with factory { accountId: String? -> ChatMessageViewModelImpl(userAccountId = accountId, chatInteractor = instance(), userProfileInteractor = instance()) }
+    bind<ChatMessageViewModel>() with factory { params: ChatMessageViewModel.Params -> ChatMessageViewModelImpl(params = params, chatInteractor = instance(), userProfileInteractor = instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }
     bind<NewRequestsViewModel>() with provider { NewRequestsViewModelImpl(instance()) }
     bind<SentConnectionsViewModel>() with provider { SentConnectionsViewModelImpl(instance()) }
@@ -264,11 +270,13 @@ private val viewModelsModule = Kodein.Module {
     bind<GroupProfileViewModel>() with factory { groupId: String -> GroupProfileViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupMembersViewModel>() with factory { groupId: String -> GroupMembersViewModelImpl(groupId, instance()) }
     bind<GroupListViewModel>() with provider { GroupListViewModelImpl(instance(), instance()) }
-    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance(), instance()) }
+    bind<GroupDetailsViewModel>() with factory { groupId: String -> GroupDetailsViewModelImpl(groupId, instance(), instance(), instance(), instance()) }
     bind<CreateGroupViewModel>() with factory { groupId: String? -> CreateGroupViewModelImpl(groupId, instance(), instance(), instance()) }
     bind<GroupConnectionRequestsViewModel>() with provider { GroupConnectionRequestsViewModelImpl(instance()) }
     bind<GroupInviteConnectionsViewModel>() with factory { groupId: String -> GroupInviteConnectionsViewModelImpl(groupId, instance(), instance()) }
     bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
+    bind<GroupEventsViewModel>() with factory { groupId: String -> GroupEventsViewModelImpl(groupId, instance(), instance()) }
+    bind<GroupPostsViewModel>() with factory { groupId: String -> GroupPostsViewModelImpl(groupId, instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -329,7 +337,7 @@ private val repositoryModule = Kodein.Module {
     bind<WalletRepository>() with singleton { WalletRepositoryImpl(instance(), { instance() }, instance(), instance(), instance(), instance()) }
     bind<ChatRepository>() with singleton { ChatRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<ComplaintRepository>() with singleton { ComplaintRepositoryImpl(instance(), instance(), instance(), instance()) }
-    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<EventsRepository>() with singleton { EventsRepositoryImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<NotificationRepository>() with singleton { NotificationRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), { instance() }, instance(), { instance() }, instance()) }
@@ -411,4 +419,5 @@ private val otherModule = Kodein.Module {
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
     bind<PostDetailsFactory>() with singleton { PostDetailsFactory() }
     bind<InviteSourceHolder>() with singleton { InviteSourceHolder() }
+    bind<DeeplinkHandler>() with singleton { DeeplinkHandlerImpl(instance(), instance(), instance(), instance(), instance()) }
 }

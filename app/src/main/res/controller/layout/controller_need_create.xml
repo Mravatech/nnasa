@@ -23,7 +23,7 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/spacing_vertical">
 
-            <TextView
+            <com.mnassa.widget.MnassaTextView
                 android:id="@+id/tvShareOptions"
                 style="@style/ShareToButton"
                 android:layout_marginTop="@dimen/spacing_vertical"
@@ -44,8 +44,8 @@
                     android:id="@+id/etNeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="@integer/max_need_length"
-                    android:imeOptions="actionDone" />
+                    android:inputType="textMultiLine"
+                    android:maxLength="@integer/max_need_length" />
             </android.support.design.widget.TextInputLayout>
 
 

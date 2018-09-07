@@ -24,16 +24,26 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun getPreloadedFeed(): List<PostModel> = postsRepository.getPreloadedFeed()
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return produce {
-            send(ListItemEvent.Added(getPreloadedFeed()))
+            try {
+                send(ListItemEvent.Added(getPreloadedFeed()))
+            } catch (e: Exception) {
+                Timber.e(e) //ignore exception here
+            }
             postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
         }
     }
+
     override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return produce {
-            send(ListItemEvent.Added(postsRepository.preloadWall(accountId)))
+            try {
+                send(ListItemEvent.Added(postsRepository.preloadWall(accountId)))
+            } catch (e: Exception) {
+                Timber.e(e) //ignore exception here
+            }
             postsRepository.loadWallWithChangesHandling(accountId).withBuffer().consumeEach { send(it) }
         }
     }
+
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> = postsRepository.loadAllInfoPosts()
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = postsRepository.loadById(id)
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
@@ -48,7 +58,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                     try {
                         postsRepository.sendViewed(it.item.map { it.id })
                     } catch (e: Exception) {
-                        Timber.d(e)
+                        Timber.d(e) //ignore exception here
                     }
                 }
             }

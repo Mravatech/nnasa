@@ -70,22 +70,12 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.applyChanges(makePostModel())
-            }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val post = post
+                view.toolbar.actionButtonClickable = false
                 launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateOfferController,
-                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
-                            restrictShareReduction = offerId != null,
-                            canBePromoted = viewModel.canPromotePost(),
-                            promotePrice = viewModel.getPromotePostPrice()))
-                }
-
+                    viewModel.applyChanges(makePostModel())
+                }.invokeOnCompletion { onOfferChanged() }
             }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
             applyShareOptionsChanges()
             etOffer.prefix = fromDictionary(R.string.offer_prefix) + " "
@@ -138,6 +128,23 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                     view.actvPlace.setText(it.placeName.toString())
                 }
             }
+        }
+    }
+
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val post = post
+            val canBePromoted = viewModel.canPromotePost()
+            val promotePrice = viewModel.getPromotePostPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateOfferController,
+                    accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                    restrictShareReduction = offerId != null,
+                    canBePromoted = canBePromoted,
+                    promotePrice = promotePrice))
         }
     }
 
@@ -276,12 +283,14 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
     }
 
     private fun onOfferChanged() {
-        with(view ?: return) {
-            toolbar.actionButtonClickable =
-                    etOffer.text.length >= MIN_OFFER_DESCRIPTION_LENGTH &&
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        return with(view ?: return false) {
+            etOffer.text.length >= MIN_OFFER_DESCRIPTION_LENGTH &&
                     etTitle.text.length >= MIN_OFFER_TITLE_LENGTH
         }
-
     }
 
     @SuppressLint("SetTextI18n")

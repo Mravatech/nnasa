@@ -1,7 +1,6 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
-import com.mnassa.core.addons.asyncWorker
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.PostPrivacyOptions
@@ -28,7 +27,6 @@ open class NeedDetailsViewModelImpl(
 ) : MnassaViewModelImpl(), NeedDetailsViewModel {
 
     protected val postId: String = params.postId
-    protected val postAuthorId: String = params.postAuthorId
 
     override val postChannel: ConflatedBroadcastChannel<PostModel> by lazy {
         val postInitValue = params.post
@@ -117,7 +115,5 @@ open class NeedDetailsViewModelImpl(
         }
     }
 
-    private suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { tag -> asyncWorker { handleExceptionsSuspend { tagInteractor.get(tag) } } }.mapNotNull { it.await() }
-    }
+    private suspend fun loadTags(tags: List<String>): List<TagModel> = handleExceptionsSuspend { tagInteractor.get(tags) } ?: emptyList()
 }

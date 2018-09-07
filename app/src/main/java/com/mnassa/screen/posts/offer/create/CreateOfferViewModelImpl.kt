@@ -9,6 +9,8 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 /**
  * Created by Peter on 5/3/2018.
@@ -23,6 +25,7 @@ class CreateOfferViewModelImpl(private val offerId: String?,
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     private val categoryToSubCategory = HashMap<String, MutableList<OfferCategoryModel>>()
     private lateinit var offerCategoriesPromise: Deferred<List<OfferCategoryModel>>
+    private val applyChangesMutex = Mutex()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +44,7 @@ class CreateOfferViewModelImpl(private val offerId: String?,
                         }
                     }
                 }
-
                 categories
-
             } ?: emptyList()
         }
     }
@@ -59,14 +60,16 @@ class CreateOfferViewModelImpl(private val offerId: String?,
 
     override suspend fun getShareOfferPostPerUserPrice(): Long? = postsInteractor.getShareOfferPostPerUserPrice()
 
-    override fun applyChanges(post: RawPostModel) {
-        handleException {
-            withProgressSuspend {
-                if (offerId == null) {
-                    postsInteractor.createOffer(post)
-                } else postsInteractor.updateOffer(post)
+    override suspend fun applyChanges(post: RawPostModel) {
+        applyChangesMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    if (offerId == null) {
+                        postsInteractor.createOffer(post)
+                    } else postsInteractor.updateOffer(post)
+                }
+                closeScreenChannel.send(Unit)
             }
-            closeScreenChannel.send(Unit)
         }
     }
 

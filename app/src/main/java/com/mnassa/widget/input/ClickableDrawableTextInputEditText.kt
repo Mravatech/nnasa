@@ -1,11 +1,13 @@
 package com.mnassa.widget.input
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.design.widget.TextInputEditText
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
 import android.view.MotionEvent
 import com.mnassa.R
@@ -19,9 +21,43 @@ import com.mnassa.R
 
 class ClickableDrawableTextInputEditText : TextInputEditText {
 
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        attrs ?: return
+        val attributeArray = context.obtainStyledAttributes(attrs, R.styleable.MnassaTextView, defStyleAttr, 0)
+        try {
+            var drawableStart: Drawable? = null
+            var drawableEnd: Drawable? = null
+            var drawableBottom: Drawable? = null
+            var drawableTop: Drawable? = null
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                drawableStart = attributeArray.getDrawable(R.styleable.MnassaTextView_drawableStartCompat)
+                drawableEnd = attributeArray.getDrawable(R.styleable.MnassaTextView_drawableEndCompat)
+                drawableBottom = attributeArray.getDrawable(R.styleable.MnassaTextView_drawableBottomCompat)
+                drawableTop = attributeArray.getDrawable(R.styleable.MnassaTextView_drawableTopCompat)
+            } else {
+                val drawableStartId = attributeArray.getResourceId(R.styleable.MnassaTextView_drawableStartCompat, -1)
+                val drawableEndId = attributeArray.getResourceId(R.styleable.MnassaTextView_drawableEndCompat, -1)
+                val drawableBottomId = attributeArray.getResourceId(R.styleable.MnassaTextView_drawableBottomCompat, -1)
+                val drawableTopId = attributeArray.getResourceId(R.styleable.MnassaTextView_drawableTopCompat, -1)
+
+                if (drawableStartId != -1)
+                    drawableStart = AppCompatResources.getDrawable(context, drawableStartId)
+                if (drawableEndId != -1)
+                    drawableEnd = AppCompatResources.getDrawable(context, drawableEndId)
+                if (drawableBottomId != -1)
+                    drawableBottom = AppCompatResources.getDrawable(context, drawableBottomId)
+                if (drawableTopId != -1)
+                    drawableTop = AppCompatResources.getDrawable(context, drawableTopId)
+            }
+
+            // to support rtl
+            setCompoundDrawablesRelativeWithIntrinsicBounds(drawableStart, drawableTop, drawableEnd, drawableBottom)
+        } finally {
+            attributeArray.recycle()
+        }
+    }
 
     var isChosen = false
 

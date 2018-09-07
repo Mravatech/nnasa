@@ -36,6 +36,8 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_COL_TAGS_UPDATE_PERIOD = "$TABLE_CLIENT_DATA/parameters/tagsReminder"
     const val TABLE_CLIENT_DATA_COL_INTERESTS_MANDATORY = "parameters/interestsMandatory"
     const val TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY = "parameters/offersMandatory"
+    const val TABLE_CLIENT_DATA_VALUE_CENTER = "valueCenter"
+    const val TABLE_CLIENT_DATA_ADMIN = "parameters/adminForChatId"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"
@@ -141,4 +143,5 @@ internal object DatabaseContract {
     const val TABLE_GROUPS_ALL_COL_MEMBERS = "members"
     const val TABLE_GROUPS_ALL_COL_INVITES = "invites"
     const val TABLE_GROUPS_ALL_COL_WALLET = "wallet"
+    const val TABLE_GROUPS_EVENTS_FEED = "eventFeed"
 }

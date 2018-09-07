@@ -1,7 +1,7 @@
 package com.mnassa.data.repository
 
 import android.content.Context
-import com.androidkotlincore.entityconverter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
@@ -63,7 +63,6 @@ class DictionaryRepositoryImpl(
 
     override fun saveLocalDictionary(version: Int, dictionary: List<TranslatedWordModel>) {
         dictionaryPreferences.saveDictionary(version, dictionary)
-//        dictionaryResources.print(dictionary)
     }
 
     override fun getLocalWord(id: String): TranslatedWordModel {

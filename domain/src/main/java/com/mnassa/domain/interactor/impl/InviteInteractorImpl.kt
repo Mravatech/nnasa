@@ -29,7 +29,7 @@ class InviteInteractorImpl(
     override suspend fun inviteContactToEvent(phoneContact: PhoneContact, eventId: String) =
             inviteRepository.inviteContactToEvent(phoneContact, eventId)
 
-    override suspend fun getInvitedContacts(): List<PhoneContactInvited> =
+    override suspend fun getInvitedContacts(): ReceiveChannel<List<PhoneContactInvited>> =
             inviteRepository.getInvitedContacts(userRepository.getAccountIdOrException())
 
     override suspend fun getInvitesCountChannel(): ReceiveChannel<Int> =

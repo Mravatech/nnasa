@@ -58,9 +58,12 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
                 val page: Controller = when (position) {
-                    EventPages.INFORMATION.ordinal -> CommentsWrapperController.newInstance(
-                            EventDetailsInfoController.newInstance(eventId, eventModel),
-                            CommentsRewardModel(false, false))
+                    EventPages.INFORMATION.ordinal -> {
+                        val eventInfo = EventDetailsInfoController.newInstance(eventId, eventModel)
+                        CommentsWrapperController.newInstance(
+                                eventInfo,
+                                CommentsRewardModel(canReward = false, isOwner = false))
+                    }
                     EventPages.PARTICIPANTS.ordinal -> EventDetailsParticipantsController.newInstance(eventId, eventModel)
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
@@ -100,9 +103,8 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         launchCoroutineUI { eventModel.apply { bindEvent(this) } }
     }
 
-    override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup {
-        return getViewSuspend().commentInputContainer
-    }
+    override suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup = getViewSuspend().commentInputContainer
+    override fun getCommentInputContainerNullable(self: CommentsWrapperController): ViewGroup? = view?.commentInputContainer
 
     private suspend fun bindEvent(event: EventModel) {
         eventModel = event

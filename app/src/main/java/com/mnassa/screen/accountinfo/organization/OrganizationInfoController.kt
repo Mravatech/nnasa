@@ -7,7 +7,6 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController

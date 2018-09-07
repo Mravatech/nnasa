@@ -115,7 +115,6 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         if (playServiceHelper.googleApiClient.isConnected) {
             playServiceHelper.googleApiClient.disconnect()
         }
-        super.onDestroy()
     }
 
     override fun photoResult(uri: Uri, view: View) {

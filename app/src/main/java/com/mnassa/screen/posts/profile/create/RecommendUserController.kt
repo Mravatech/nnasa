@@ -45,13 +45,16 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.recommend_publish_button)) {
-                viewModel.applyChanges(RawRecommendPostModel(
-                        postId = postId,
-                        groupIds = groupIds.toSet(),
-                        privacy = sharingOptions,
-                        text = etRecommend.text.toString(),
-                        accountId = recommendedUser.id
-                ))
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    viewModel.applyChanges(RawRecommendPostModel(
+                            postId = postId,
+                            groupIds = groupIds.toSet(),
+                            privacy = sharingOptions,
+                            text = etRecommend.text.toString(),
+                            accountId = recommendedUser.id
+                    ))
+                }.invokeOnCompletion { onNeedTextUpdated() }
             }
             tvShareOptions.setOnClickListener {
                 if (groupIds.isNotEmpty()) return@setOnClickListener
@@ -88,8 +91,13 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
     }
 
     private fun onNeedTextUpdated() {
-        val view = view ?: return
-        view.toolbar.actionButtonClickable = view.etRecommend.text.length >= MIN_TEXT_LENGTH
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        return with(view ?: return false) {
+            etRecommend.text.length >= MIN_TEXT_LENGTH
+        }
     }
 
     companion object {

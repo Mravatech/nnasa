@@ -36,6 +36,7 @@ class App : MultiDexApplication(), KodeinAware {
     override fun onCreate() {
         APP_CONTEXT = this
         super.onCreate()
+
         FirebaseApp.initializeApp(this)
 
         val appInfoProvider = getInstance<AppInfoProvider>()

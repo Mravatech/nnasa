@@ -32,4 +32,7 @@ interface UserProfileInteractor {
     suspend fun addPushToken(token: String?)
 
     suspend fun getPermissions(): ReceiveChannel<PermissionsModel>
+
+    suspend fun getValueCenterId(): String?
+    suspend fun getAdminId(): String?
 }

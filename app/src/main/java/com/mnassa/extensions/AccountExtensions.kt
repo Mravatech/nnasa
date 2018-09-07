@@ -41,3 +41,13 @@ val ShortAccountModel.formattedPosition: CharSequence
     }
 
 val ShortAccountModel.isMyProfile: Boolean get() = id == App.context.getInstance<UserProfileInteractor>().getAccountIdOrNull()
+
+suspend fun ShortAccountModel.canRecommend(): Boolean {
+    val interactor = App.context.getInstance<UserProfileInteractor>()
+    return id != interactor.getValueCenterId() && id != interactor.getAdminId()
+}
+
+suspend fun ShortAccountModel.canDisconnect(): Boolean {
+    val interactor = App.context.getInstance<UserProfileInteractor>()
+    return id != interactor.getValueCenterId()
+}

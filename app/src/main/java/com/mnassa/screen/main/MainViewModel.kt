@@ -15,6 +15,8 @@ interface MainViewModel : MnassaViewModel {
     val unreadConnectionsCountChannel: BroadcastChannel<Int>
     val unreadEventsAndNeedsCountChannel: BroadcastChannel<Int>
 
+    val groupInvitesCountChannel: BroadcastChannel<Int>
+
     val currentAccountChannel: BroadcastChannel<ShortAccountModel>
     val availableAccountsChannel: BroadcastChannel<List<ShortAccountModel>>
 

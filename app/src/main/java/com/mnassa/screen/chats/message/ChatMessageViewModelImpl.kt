@@ -2,7 +2,6 @@ package com.mnassa.screen.chats.message
 
 import android.os.Bundle
 import com.mnassa.core.addons.asyncUI
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ChatInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ChatMessageModel
@@ -15,21 +14,21 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 
 class ChatMessageViewModelImpl(
-        private val userAccountId: String?, //if null - this is chat with admin
+        private val params: ChatMessageViewModel.Params, //if null - this is chat with admin
         private val chatInteractor: ChatInteractor,
         private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), ChatMessageViewModel {
 
-    override val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>> = BroadcastChannel(10)
+    override val messageChannel: BroadcastChannel<ListItemEvent<List<ChatMessageModel>>> = BroadcastChannel(10)
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
-    private val chatId = asyncUI { handleExceptionsSuspend { chatInteractor.getChatIdByUserId(userAccountId) } ?: "UNDEFINED" }
+    private val chatId = asyncUI { params.chatId ?: handleExceptionsSuspend { chatInteractor.getChatIdByUserId(params.accountId) } ?: "UNDEFINED" }
     private var resetCounterJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         handleException {
-            chatInteractor.listOfMessages(chatId.await(), userAccountId).consumeEach {
+            chatInteractor.loadMessagesWithChangesHandling(chatId.await()).consumeEach {
                 messageChannel.send(it)
                 resetChatUnreadCount()
             }
@@ -38,7 +37,7 @@ class ChatMessageViewModelImpl(
 
     private fun resetChatUnreadCount() {
         resetCounterJob?.cancel()
-        resetCounterJob = launchCoroutineUI {
+        resetCounterJob = handleException {
             delay(1_000)
             chatInteractor.resetChatUnreadCount(chatId.await())
         }

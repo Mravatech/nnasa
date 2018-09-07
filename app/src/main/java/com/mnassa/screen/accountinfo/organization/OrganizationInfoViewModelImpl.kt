@@ -1,7 +1,6 @@
 package com.mnassa.screen.accountinfo.organization
 
 import android.net.Uri
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -31,7 +30,7 @@ class OrganizationInfoViewModelImpl(
     }
 
     override fun skipThisStep() {
-        launchCoroutineUI {
+        handleException {
             openScreenChannel.send(OrganizationInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }

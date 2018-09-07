@@ -23,7 +23,7 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/spacing_vertical">
 
-            <TextView
+            <com.mnassa.widget.MnassaTextView
                 android:id="@+id/tvShareOptions"
                 style="@style/ShareToButton"
                 android:layout_gravity="center_horizontal"
@@ -90,7 +90,7 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:paddingEnd="4dp"
                 android:paddingStart="4dp"
-                android:text="@string/event_create_location_placeholder" />
+                app:textDictionary="@string/event_create_location_placeholder" />
 
             <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/sLocation"
@@ -156,7 +156,7 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:paddingEnd="4dp"
                 android:paddingStart="4dp"
-                android:text="@string/event_create_type" />
+                app:textDictionary="@string/event_create_type" />
 
             <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/sEventType"
@@ -193,7 +193,7 @@
                     android:id="@+id/etEventDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
                     android:maxLength="@integer/max_event_description_length" />
             </android.support.design.widget.TextInputLayout>
 
@@ -226,7 +226,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/event_paid_text" />
+                    app:textDictionary="@string/event_paid_text" />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switchPaidEvent"
@@ -265,7 +265,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="@dimen/spacing_horizontal"
                     android:layout_marginStart="@dimen/spacing_horizontal"
-                    android:text="@string/event_points_placeholder" />
+                    app:textDictionary="@string/event_points_placeholder" />
             </FrameLayout>
 
             <android.support.design.widget.TextInputLayout

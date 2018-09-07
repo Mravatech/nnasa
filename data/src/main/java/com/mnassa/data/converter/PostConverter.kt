@@ -1,9 +1,9 @@
 package com.mnassa.data.converter
 
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.convert
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextRegistrationCallback
+import com.mnassa.core.converter.convert
+import com.mnassa.core.converter.registerConverter
 import com.google.gson.Gson
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.*
@@ -26,7 +26,6 @@ import com.mnassa.domain.model.PostAutoSuggest
 import com.mnassa.domain.model.impl.*
 import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
-import java.lang.reflect.Type
 import java.util.*
 
 /**
@@ -90,7 +89,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
                         converter.convert<LocationPlaceModel>(it)
                     },
                     originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
-                    originalId = input.originalId,
+                    originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
@@ -119,7 +118,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
                         converter.convert<LocationPlaceModel>(it)
                     },
                     originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
-                    originalId = input.originalId,
+                    originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
@@ -148,7 +147,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
                         converter.convert<LocationPlaceModel>(it)
                     },
                     originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
-                    originalId = input.originalId,
+                    originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
@@ -179,7 +178,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
                         converter.convert<LocationPlaceModel>(it)
                     },
                     originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
-                    originalId = input.originalId,
+                    originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     privacyType = converter.convert(input.privacyType),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
@@ -223,11 +222,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
             EXPIRATION_TYPE_EXPIRED -> ExpirationType.EXPIRED
             EXPIRATION_TYPE_CLOSED -> ExpirationType.CLOSED
             EXPIRATION_TYPE_FULFILLED -> ExpirationType.FULFILLED
-            else -> {
-                Timber.d(IllegalArgumentException("Wrong expiration type $expiration"))
-                null
-            }
-
+            else -> null
         }
     }
 
@@ -267,8 +262,10 @@ class PostConverter(private val languageProvider: LanguageProvider,
             NEWS_FEED_PRIVACY_TYPE_PUBLIC -> PostPrivacyType.PUBLIC()
             NEWS_FEED_PRIVACY_TYPE_PRIVATE -> PostPrivacyType.PRIVATE()
             NEWS_FEED_PRIVACY_TYPE_WORLD -> PostPrivacyType.WORLD()
-
-            else -> throw IllegalArgumentException("Wrong post privacy type $input")
+            else -> {
+                Timber.e(IllegalArgumentException("Wrong post privacy type $input"))
+                PostPrivacyType.PUBLIC()
+            }
         }
     }
 

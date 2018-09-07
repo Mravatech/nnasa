@@ -38,7 +38,15 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     override val viewModel: RegistrationViewModel by instance()
     private val playServiceHelper: PlayServiceHelper by instance()
     private var personSelectedPlaceId: String? = null
+        set(value) {
+            field = value
+            onPersonChanged()
+        }
     private var companySelectedPlaceId: String? = null
+        set(value) {
+            field = value
+            onOrganizationChanged()
+        }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -165,23 +173,32 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     private fun processRegisterClick() {
-        with(requireNotNull(view)) {
+        view?.btnScreenHeaderAction?.isEnabled = false
+        launchCoroutineUI {
+            with(getViewSuspend()) {
+                when {
+                    llPersonal.visibility == View.VISIBLE -> viewModel.registerPerson(
+                            firstName = etPersonFirstName.text.toString(),
+                            secondName = etPersonSecondName.text.toString(),
+                            userName = etPersonUserName.text.toString(),
+                            city = personSelectedPlaceId ?: "",
+                            offers = chipPersonOffers.getTags(),
+                            interests = chipPersonInterests.getTags())
+                    llOrganization.visibility == View.VISIBLE -> viewModel.registerOrganization(
+                            companyName = etCompanyName.text.toString(),
+                            userName = etCompanyUserName.text.toString(),
+                            city = companySelectedPlaceId ?: "",
+                            offers = chipCompanyOffers.getTags(),
+                            interests = chipCompanyInterests.getTags()
+                    )
+                    else -> throw IllegalArgumentException("Invalid page position!")
+                }
+            }
+        }.invokeOnCompletion {
+            val view = view ?: return@invokeOnCompletion
             when {
-                llPersonal.visibility == View.VISIBLE -> viewModel.registerPerson(
-                        firstName = etPersonFirstName.text.toString(),
-                        secondName = etPersonSecondName.text.toString(),
-                        userName = etPersonUserName.text.toString(),
-                        city = personSelectedPlaceId ?: "",
-                        offers = chipPersonOffers.getTags(),
-                        interests = chipPersonInterests.getTags())
-                llOrganization.visibility == View.VISIBLE -> viewModel.registerOrganization(
-                        companyName = etCompanyName.text.toString(),
-                        userName = etCompanyUserName.text.toString(),
-                        city = companySelectedPlaceId ?: "",
-                        offers = chipCompanyOffers.getTags(),
-                        interests = chipCompanyInterests.getTags()
-                )
-                else -> throw IllegalArgumentException("Invalid page position!")
+                view.llPersonal.visibility == View.VISIBLE -> onPersonChanged()
+                view.llOrganization.visibility == View.VISIBLE -> onOrganizationChanged()
             }
         }
     }
@@ -236,15 +253,19 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         city.setOnItemClickListener { _, _, i, _ ->
             val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
             if (isPerson) {
-                personSelectedPlaceId = item.placeId
                 val personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                 city.setText(personSelectedPlaceName)
+                personSelectedPlaceId = item.placeId
             } else {
-                companySelectedPlaceId = item.placeId
                 val companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
                 city.setText(companySelectedPlaceName)
+                companySelectedPlaceId = item.placeId
             }
         }
+        city.addTextChangedListener(SimpleTextWatcher {
+            personSelectedPlaceId = null
+            companySelectedPlaceId = null
+        })
     }
 
     companion object {
@@ -254,7 +275,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     private suspend fun formatTagLabel(prefix: String): CharSequence {
         val reward = viewModel.addTagRewardChannel.consume { receive() } ?: return prefix
         val result = SpannableString(fromDictionary(R.string.add_tags_reward_suffix).format(prefix, reward))
-        result.setSpan(ForegroundColorSpan(ContextCompat.getColor(getViewSuspend().context, R.color.accent)), prefix.length, result.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val accentColor = ContextCompat.getColor(getViewSuspend().context, R.color.accent)
+        result.setSpan(ForegroundColorSpan(accentColor), prefix.length, result.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return result
     }
 }

@@ -1,9 +1,9 @@
 package com.mnassa.data.repository
 
-import com.androidkotlincore.entityconverter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.mnassa.data.extensions.await
-import com.mnassa.data.extensions.awaitList
+import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseInviteApi
@@ -17,7 +17,6 @@ import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.domain.repository.InviteRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 
@@ -64,15 +63,15 @@ class InviteRepositoryImpl(
         inviteApi.inviteContact(ContactsRequest(request)).handleException(exceptionHandler)
     }
 
-    override suspend fun getInvitedContacts(userId: String): List<PhoneContactInvited> {
-        val data = async {
-            val invited = databaseReference
+    override suspend fun getInvitedContacts(userId: String): ReceiveChannel<List<PhoneContactInvited>> {
+        return databaseReference
                     .child(DatabaseContract.TABLE_INVITETION)
                     .child(userId)
-                    .awaitList<InvitationDbEntity>(exceptionHandler)
-            converter.convertCollection(invited, PhoneContactInvited::class.java)
-        }.await().toMutableList()
-        return data.sortedWith(compareBy(PhoneContactInvited::createdAt))
+                    .toListChannel<InvitationDbEntity>(exceptionHandler)
+                    .map {
+                        converter.convertCollection(it, PhoneContactInvited::class.java)
+                                .sortedWith(compareBy(PhoneContactInvited::createdAt))
+                    }
     }
 
     override suspend fun getInvitesCountChannel(): ReceiveChannel<Int> {

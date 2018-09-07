@@ -7,11 +7,6 @@ import com.mnassa.screen.login.enterphone.CountryCode
 import com.mnassa.screen.login.enterphone.PhonePrefix
 import com.mnassa.translation.fromDictionary
 
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 4/2/2018
- */
 
 class CountryHelper(languageProvider: LanguageProvider) {
         val countries = mutableListOf(

@@ -9,7 +9,6 @@ import android.graphics.PointF
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.AnticipateOvershootInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import com.mnassa.R
@@ -17,57 +16,58 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.in_out_come_view.view.*
 import java.util.*
 
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 4/17/2018
- */
-
 class InOutComeView : FrameLayout {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val viewRefreshAnimator = ValueAnimator.ofInt(0, 1)
+    private val viewRefreshAnimator = ValueAnimator.ofFloat(0f, 1f)
     private val random = Random()
     private var coins = mutableListOf<Coin>()
     private val paint = Paint()
     private var gravity = 0f
 
     init {
+        val gravityHorizontalX = resources.getDimensionPixelSize(R.dimen.points_animation_gravity_horizontal_x)
+        val gravityVerticalUpX = resources.getDimensionPixelSize(R.dimen.points_animation_gravity_up_x)
+        val gravityVerticalUpY = resources.getDimensionPixelSize(R.dimen.points_animation_gravity_up_y)
+        val gravityVerticalDownX = resources.getDimensionPixelSize(R.dimen.points_animation_gravity_down_x)
+        val gravityCoefficient = resources.getDimensionPixelSize(R.dimen.points_animation_gravity)
+
         View.inflate(context, R.layout.in_out_come_view, this)
         setWillNotDraw(false)
         viewRefreshAnimator.duration = ANIMATION_SLIDE_UP_DELAY
         viewRefreshAnimator.addUpdateListener {
-            gravity += random.nextFloat() * (MAX - MIN)
+            gravity += random.nextFloat() * gravityCoefficient
             coins.forEach {
                 val x = it.drawPoint.x
                 val y = it.drawPoint.y
+
                 when (it.direction) {
                     Coin.Direction.LEFT_TO_RIGHT -> {
                         it.drawPoint.y = y + gravity
-                        it.drawPoint.x = x - HORIZONTAL_ADD_GRAVITY_X
+                        it.drawPoint.x = x - gravityHorizontalX
                     }
                     Coin.Direction.LEFT_TO_RIGHT_DOWN -> {
                         it.drawPoint.y = y + gravity
-                        it.drawPoint.x = x + DOWN_ADD_GRAVITY_X
+                        it.drawPoint.x = x + gravityVerticalDownX
                     }
                     Coin.Direction.LEFT_TO_RIGHT_UP -> {
-                        it.drawPoint.y = y - UP_ADD_GRAVITY_Y
-                        it.drawPoint.x = x - UP_ADD_GRAVITY_X
+                        it.drawPoint.y = y - gravityVerticalUpY
+                        it.drawPoint.x = x - gravityVerticalUpX
                     }
                     Coin.Direction.RIGHT_TO_LEFT -> {
                         it.drawPoint.y = y + gravity
-                        it.drawPoint.x = x + HORIZONTAL_ADD_GRAVITY_X
+                        it.drawPoint.x = x + gravityHorizontalX
                     }
                     Coin.Direction.RIGHT_TO_LEFT_DOWN -> {
                         it.drawPoint.y = y + gravity
-                        it.drawPoint.x = x - DOWN_ADD_GRAVITY_X
+                        it.drawPoint.x = x - gravityVerticalDownX
                     }
                     Coin.Direction.RIGHT_TO_LEFT_UP -> {
-                        it.drawPoint.y = y - UP_ADD_GRAVITY_Y
-                        it.drawPoint.x = x + UP_ADD_GRAVITY_X
+                        it.drawPoint.y = y - gravityVerticalUpY
+                        it.drawPoint.x = x + gravityVerticalUpX
                     }
                 }
             }
@@ -94,7 +94,7 @@ class InOutComeView : FrameLayout {
                 from.append(it)
             }
         }
-        gravity = GRAVITY_BEGIN
+        gravity = resources.getDimensionPixelSize(R.dimen.points_animation_gravity_begin).toFloat()
         tvInOutCome.text = from.toString()
         showWithAnimation(tvInOutCome, ANIMATION_TEXT_DELAY, false)
         showWithAnimation(btnInOutCome, ANIMATION_BTN_DELAY, true)
@@ -109,19 +109,13 @@ class InOutComeView : FrameLayout {
 
     private fun showWithAnimation(view: View, startDelay: Long, isButton: Boolean) {
         view.animate()
-                .translationY(150f)
+                .translationY(resources.getDimensionPixelOffset(R.dimen.points_animation_top_offset).toFloat())
                 .setInterpolator(OvershootInterpolator())
                 .setDuration(ANIMATION_SLIDE_DOWN_DURATION)
                 .setStartDelay(startDelay)
                 .setListener(object : Animator.AnimatorListener {
                     override fun onAnimationRepeat(animation: Animator?) {}
                     override fun onAnimationEnd(animation: Animator?) {
-                        view.animate()
-                                .translationY(START_PLACE)
-                                .setInterpolator(AnticipateOvershootInterpolator())
-                                .setStartDelay(ANIMATION_SLIDE_UP_DELAY)
-                                .setDuration(ANIMATION_SLIDE_DOWN_DURATION)
-                                .setListener(null)
                         if (isButton) {
                             coins.clear()
                             val x = btnInOutCome.x
@@ -135,6 +129,7 @@ class InOutComeView : FrameLayout {
                                         point = PointF(
                                                 x + random.nextInt(maxOf(width, 1)),
                                                 y + random.nextInt(maxOf(height, 1))),
+                                        radius = resources.getDimensionPixelSize(R.dimen.points_animation_coin_size).toFloat(),
                                         direction = Coin.Direction.values()[i % DIRECTION_WAYS]
                                 )
                                 coins.add(coin)
@@ -155,14 +150,6 @@ class InOutComeView : FrameLayout {
         const val ANIMATION_SLIDE_UP_DELAY = 3000L
         const val ANIMATION_BTN_DELAY = 100L
         const val ANIMATION_TEXT_DELAY = 10L
-        const val START_PLACE = 0f
-        const val GRAVITY_BEGIN = -10f
-        const val MAX = 1.2f
-        const val MIN = .3f
-        const val HORIZONTAL_ADD_GRAVITY_X = 5
-        const val UP_ADD_GRAVITY_X = 2
-        const val UP_ADD_GRAVITY_Y = 10
-        const val DOWN_ADD_GRAVITY_X = 10
     }
 
 }

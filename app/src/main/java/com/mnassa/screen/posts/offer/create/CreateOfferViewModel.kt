@@ -18,7 +18,7 @@ interface CreateOfferViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
     suspend fun getShareOfferPostPrice(): Long?
     suspend fun getShareOfferPostPerUserPrice(): Long?
 
-    fun applyChanges(post: RawPostModel)
+    suspend fun applyChanges(post: RawPostModel)
     suspend fun canPromotePost(): Boolean
     suspend fun getPromotePostPrice(): Long
     suspend fun getConnectionsCount(): Long

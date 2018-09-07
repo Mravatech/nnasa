@@ -73,7 +73,10 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             btnDelete.text = fromDictionary(R.string.need_create_delete_photo)
 
             toolbar.withActionButton(fromDictionary(R.string.group_save_changes)) {
-                viewModel.applyChanges(makeGroupModel())
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    viewModel.applyChanges(makeGroupModel())
+                }.invokeOnCompletion { onInputChanged() }
             }
 
             chipTags.tvChipHeader.text = fromDictionary(R.string.need_create_tags_hint)
@@ -81,6 +84,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             switchNeed.text = fromDictionary(R.string.group_permissions_need)
             switchOffer.text = fromDictionary(R.string.group_permissions_offer)
             switchGeneral.text = fromDictionary(R.string.group_permissions_general)
+            switchEvent.text = fromDictionary(R.string.group_permissions_event)
         }
 
         launchCoroutineUI { viewModel.closeScreenChanel.consumeEach { close() } }
@@ -127,7 +131,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
             switchGeneral.isChecked = group.permissions.canCreateGeneralPost
             switchOffer.isChecked = group.permissions.canCreateOfferPost
             switchNeed.isChecked = group.permissions.canCreateNeedPost
-            //todo: group events
+            switchEvent.isChecked = group.permissions.canCreateEvent
         }
     }
 
@@ -181,15 +185,19 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
                             canCreateNeedPost = switchNeed.isChecked,
                             canCreateOfferPost = switchOffer.isChecked,
                             canCreateAccountPost = false,
-                            canCreateEvent = false //TODO: group events
+                            canCreateEvent = switchEvent.isChecked
                     )
             )
         }
     }
 
     private fun onInputChanged() {
-        with(view ?: return) {
-            toolbar.actionButtonClickable = !etGroupTitle.text.isNullOrBlank()
+        view?.toolbar?.actionButtonClickable = canCreateGroup()
+    }
+
+    private fun canCreateGroup(): Boolean {
+        return with(view ?: return false) {
+            !etGroupTitle.text.isNullOrBlank()
                     && avatar != null
                     && !etGroupDescription.text.isNullOrBlank()
         }

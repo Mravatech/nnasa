@@ -14,7 +14,7 @@ interface CreateEventViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Place
     val closeScreenChannel: BroadcastChannel<Unit>
 
     suspend fun getTag(tagId: String): TagModel?
-    fun publish(model: RawEventModel)
+    suspend fun publish(model: RawEventModel)
     suspend fun canPromoteEvents(): Boolean
     suspend fun getPromoteEventPrice(): Long
     suspend fun getUserLocation(): LocationPlaceModel?

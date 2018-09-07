@@ -9,11 +9,9 @@ import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/21/2018.
@@ -23,7 +21,8 @@ class MainViewModelImpl(
         private val userProfileInteractor: UserProfileInteractor,
         private val notificationInteractor: NotificationInteractor,
         private val countersInteractor: CountersInteractor,
-        private val networkInteractor: NetworkInteractor
+        private val networkInteractor: NetworkInteractor,
+        private val groupsInteractor: GroupsInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
 
     override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
@@ -53,6 +52,9 @@ class MainViewModelImpl(
         }
     }
     override val availableAccountsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
+    override val groupInvitesCountChannel: BroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
+        groupsInteractor.getInvitesToGroups().map { it.size }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
