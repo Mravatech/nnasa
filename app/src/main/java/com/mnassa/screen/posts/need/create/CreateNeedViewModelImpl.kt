@@ -9,6 +9,8 @@ import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 /**
  * Created by Peter on 3/19/2018.
@@ -22,16 +24,19 @@ class CreateNeedViewModelImpl(
 ) : MnassaViewModelImpl(), CreateNeedViewModel {
 
     override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    private val applyChangesMutex = Mutex()
 
-    override fun applyChanges(post: RawPostModel) {
-        handleException {
-            withProgressSuspend {
-                if (postId == null) {
-                    postsInteractor.createNeed(post)
-                } else {
-                    postsInteractor.updateNeed(post)
+    override suspend fun applyChanges(post: RawPostModel) {
+        applyChangesMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    if (postId == null) {
+                        postsInteractor.createNeed(post)
+                    } else {
+                        postsInteractor.updateNeed(post)
+                    }
+                    closeScreenChannel.send(Unit)
                 }
-                closeScreenChannel.send(Unit)
             }
         }
     }
@@ -41,11 +46,7 @@ class CreateNeedViewModelImpl(
     override suspend fun getUser(userId: String): ShortAccountModel? = handleExceptionsSuspend { userInteractor.getAccountByIdChannel(userId).consume { receive() } }
     override suspend fun getTag(tagId: String): TagModel? = handleExceptionsSuspend { tagInteractor.get(tagId) }
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
-    override suspend fun canPromotePost(): Boolean = handleExceptionsSuspend { userInteractor.getPermissions().consume { receive() }.canPromoteNeedPost }
-            ?: false
-
-    override suspend fun getPromotePostPrice(): Long = handleExceptionsSuspend { postsInteractor.getPromotePostPrice() }
-            ?: 0L
-
+    override suspend fun canPromotePost(): Boolean = handleExceptionsSuspend { userInteractor.getPermissions().consume { receive() }.canPromoteNeedPost } ?: false
+    override suspend fun getPromotePostPrice(): Long = handleExceptionsSuspend { postsInteractor.getPromotePostPrice() } ?: 0L
     override suspend fun getUserLocation(): LocationPlaceModel? = handleExceptionsSuspend { userInteractor.getProfileById(userInteractor.getAccountIdOrException())?.location }
 }

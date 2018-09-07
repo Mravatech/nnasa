@@ -1,5 +1,6 @@
 package com.mnassa.domain.model
 
+import com.mnassa.domain.model.impl.PersonalAccountDiffModelImpl
 import java.io.Serializable
 import java.util.*
 
@@ -21,6 +22,21 @@ interface ShortAccountModel : Model {
     var abilities: List<AccountAbility>
     //
     var connectedBy: ConnectedByModel?
+
+    companion object {
+        val EMPTY = object : ShortAccountModel {
+            override var id: String = "DELETED_USER"
+            override var userName: String = "Deleted user"
+            override var accountType: AccountType = AccountType.PERSONAL
+            override var avatar: String? = null
+            override var contactPhone: String? = null
+            override var language: String? = null
+            override var personalInfo: PersonalAccountDiffModel? = PersonalAccountDiffModelImpl("Deleted", "user")
+            override var organizationInfo: OrganizationAccountDiffModel? = null
+            override var abilities: List<AccountAbility> = emptyList()
+            override var connectedBy: ConnectedByModel? = null
+        }
+    }
 }
 
 interface DeclinedShortAccountModel : ShortAccountModel {

@@ -188,7 +188,7 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
 
     private suspend fun mapEvent(input: EventDbEntity, groupId: String? = null): EventModel? {
         val groupIds = input.groups ?: groupId?.let { setOf(it) } ?: emptySet()
-        val groups = groupIds.mapNotNull { id -> groupsRepository.getGroup(id).consume { receive() } }
+        val groups = groupIds.mapNotNull { id -> groupsRepository.getGroup(id).consume { receiveOrNull() } }
         val additionalInfo = EventAdditionInfo(groups)
         return try {
             converter.convert(input, additionalInfo)

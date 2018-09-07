@@ -10,7 +10,6 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
 import com.mnassa.extensions.subscribeToUpdates
@@ -72,8 +71,9 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
                 if (dataIndex >= 0) {
                     postIdToScroll = null
                     val layoutManager = view?.rvEvents?.layoutManager
-                    layoutManager as LinearLayoutManager
-                    layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
+                    if (layoutManager is LinearLayoutManager) {
+                        layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
+                    }
                 }
             }
         }

@@ -23,5 +23,5 @@ interface CreateNeedViewModel : MnassaViewModel, PlaceAutocompleteAdapter.PlaceA
 
     suspend fun getUserLocation(): LocationPlaceModel?
 
-    fun applyChanges(post: RawPostModel)
+    suspend fun applyChanges(post: RawPostModel)
 }

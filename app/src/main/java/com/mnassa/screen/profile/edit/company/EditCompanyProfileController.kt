@@ -114,11 +114,10 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     }
 
     override fun onViewDestroyed(view: View) {
-        super.onViewDestroyed(view)
         if (playServiceHelper.googleApiClient.isConnected) {
             playServiceHelper.googleApiClient.disconnect()
         }
-        super.onDestroy()
+        super.onViewDestroyed(view)
     }
 
     override fun photoResult(uri: Uri, view: View) {

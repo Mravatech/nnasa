@@ -142,7 +142,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         toolbar.menu.findItem(R.id.action_complain_about_profile)?.title = fromDictionary(R.string.profile_report)
         toolbar.menu.findItem(R.id.action_invite_to_group_profile)?.title = fromDictionary(R.string.group_invite_profile_menu)
 
-
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_edit_profile -> onEditProfileClick(profile)
@@ -151,6 +150,13 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
             }
             true
+        }
+
+        launchCoroutineUI {
+            if (!profile.canRecommend()) {
+                toolbar.menu.removeItem(R.id.action_share_profile)
+                toolbar.menu.removeItem(R.id.action_complain_about_profile)
+            }
         }
     }
 

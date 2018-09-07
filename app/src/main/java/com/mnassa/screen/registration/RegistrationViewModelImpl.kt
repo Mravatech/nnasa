@@ -14,6 +14,8 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 /**
  * Created by Peter on 2/26/2018.
@@ -29,6 +31,7 @@ class RegistrationViewModelImpl(
 
     private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
     private val isOffersMandatory = async { tagInteractor.isOffersMandatory() }
+    private val createAccountMutex = Mutex()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,41 +48,45 @@ class RegistrationViewModelImpl(
         }
     }
 
-    override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
-        handleException {
-            withProgressSuspend {
-                val offersWithIds = getFilteredTags(offers)
-                val interestsWithIds = getFilteredTags(interests)
-                val shortAccountModel = userProfileInteractor.createPersonalAccount(
-                        firstName = firstName,
-                        secondName = secondName,
-                        userName = userName,
-                        city = city,
-                        offers = offersWithIds,
-                        interests = interestsWithIds
-                )
-                val profile = userProfileInteractor.getProfileById(shortAccountModel.id)
-                        ?: return@withProgressSuspend
-                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(profile))
+    override suspend fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {
+        createAccountMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    val offersWithIds = getFilteredTags(offers)
+                    val interestsWithIds = getFilteredTags(interests)
+                    val shortAccountModel = userProfileInteractor.createPersonalAccount(
+                            firstName = firstName,
+                            secondName = secondName,
+                            userName = userName,
+                            city = city,
+                            offers = offersWithIds,
+                            interests = interestsWithIds
+                    )
+                    val profile = userProfileInteractor.getProfileById(shortAccountModel.id)
+                            ?: return@withProgressSuspend
+                    openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.PersonalInfoScreen(profile))
+                }
             }
         }
     }
 
-    override fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModel>, interests: List<TagModel>) {
-        handleException {
-            withProgressSuspend {
-                val offersWithIds = getFilteredTags(offers)
-                val interestsWithIds = getFilteredTags(interests)
-                val shortAccountModel = userProfileInteractor.createOrganizationAccount(
-                        companyName = companyName,
-                        userName = userName,
-                        city = city,
-                        offers = offersWithIds,
-                        interests = interestsWithIds
-                )
-                val profile = userProfileInteractor.getProfileById(shortAccountModel.id)
-                        ?: return@withProgressSuspend
-                openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(profile))
+    override suspend fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModel>, interests: List<TagModel>) {
+        createAccountMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    val offersWithIds = getFilteredTags(offers)
+                    val interestsWithIds = getFilteredTags(interests)
+                    val shortAccountModel = userProfileInteractor.createOrganizationAccount(
+                            companyName = companyName,
+                            userName = userName,
+                            city = city,
+                            offers = offersWithIds,
+                            interests = interestsWithIds
+                    )
+                    val profile = userProfileInteractor.getProfileById(shortAccountModel.id)
+                            ?: return@withProgressSuspend
+                    openScreenChannel.send(RegistrationViewModel.OpenScreenCommand.OrganizationInfoScreen(profile))
+                }
             }
         }
     }

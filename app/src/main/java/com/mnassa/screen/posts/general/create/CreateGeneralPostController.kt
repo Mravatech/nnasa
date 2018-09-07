@@ -61,7 +61,10 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.general_publish)) {
-                viewModel.applyChanges(makePostModel())
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    viewModel.applyChanges(makePostModel())
+                }.invokeOnCompletion { onGeneralTextUpdated() }
             }
             tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
@@ -209,8 +212,12 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
     }
 
     private fun onGeneralTextUpdated() {
-        val view = view ?: return
-        view.toolbar.actionButtonClickable = view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        val view = view ?: return false
+        return view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
     }
 
     @SuppressLint("SetTextI18n")

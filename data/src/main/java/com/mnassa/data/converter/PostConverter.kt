@@ -26,7 +26,6 @@ import com.mnassa.domain.model.PostAutoSuggest
 import com.mnassa.domain.model.impl.*
 import com.mnassa.domain.other.LanguageProvider
 import timber.log.Timber
-import java.lang.reflect.Type
 import java.util.*
 
 /**

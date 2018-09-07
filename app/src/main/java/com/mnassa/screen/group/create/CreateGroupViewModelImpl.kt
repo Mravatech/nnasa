@@ -9,6 +9,8 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 /**
  * Created by Peter on 5/22/2018.
@@ -19,17 +21,20 @@ class CreateGroupViewModelImpl(private val groupId: String?,
                                private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), CreateGroupViewModel {
 
     override val closeScreenChanel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    private val applyChangesMutex = Mutex()
 
     override fun getAutocomplete(constraint: CharSequence): List<GeoPlaceModel> = placeFinderInteractor.getReqieredPlaces(constraint)
 
-    override fun applyChanges(group: RawGroupModel) {
-        handleException {
-            withProgressSuspend {
-                if (groupId == null) {
-                    groupsInteractor.createGroup(group)
-                } else groupsInteractor.updateGroup(group)
+    override suspend fun applyChanges(group: RawGroupModel) {
+        applyChangesMutex.withLock {
+            handleExceptionsSuspend {
+                withProgressSuspend {
+                    if (groupId == null) {
+                        groupsInteractor.createGroup(group)
+                    } else groupsInteractor.updateGroup(group)
+                }
+                closeScreenChanel.send(Unit)
             }
-            closeScreenChanel.send(Unit)
         }
     }
 

@@ -28,10 +28,7 @@ class PrefixEditText : AppCompatEditText {
         inputType = inputType or EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
     }
 
-    override fun onMeasure(
-        widthMeasureSpec: Int,
-        heightMeasureSpec: Int
-    ) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         calculatePrefix()
     }

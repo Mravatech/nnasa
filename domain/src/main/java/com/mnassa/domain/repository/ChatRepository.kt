@@ -9,8 +9,8 @@ interface ChatRepository {
     suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<ChatRoomModel>>
     suspend fun preloadChatList(): List<ChatRoomModel>
 
-    suspend fun loadMessagesWithChangesHandling(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<ChatMessageModel>>
-    suspend fun preloadMessages(chatId: String, accountId: String?): List<ChatMessageModel>
+    suspend fun loadMessagesWithChangesHandling(chatId: String): ReceiveChannel<ListItemEvent<ChatMessageModel>>
+    suspend fun preloadMessages(chatId: String): List<ChatMessageModel>
 
     suspend fun getChatIdByUserId(accountId: String): String
     suspend fun getSupportChat(): String

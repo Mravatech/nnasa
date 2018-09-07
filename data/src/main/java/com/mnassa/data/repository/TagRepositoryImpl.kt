@@ -16,13 +16,12 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.withContext
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
 class TagRepositoryImpl(
         private val db: DatabaseReference,
@@ -33,14 +32,11 @@ class TagRepositoryImpl(
         private val userRepository: UserRepository
 ) : TagRepository {
 
-    private val tagsCache = ConcurrentHashMap<String, TagModel>()
+    private val tagsCache = HashMap<String, TagModel?>()
     @Volatile
     private var isTagsCacheLoaded = false
 
     override suspend fun get(id: String): TagModel? {
-        @Suppress("DeferredResultUnused")
-        async { updateCacheIfNeeded() }
-
         return tagsCache.getOrPut(id) {
             databaseReference.child(DatabaseContract.TABLE_TAGS)
                     .child(id)
@@ -50,18 +46,20 @@ class TagRepositoryImpl(
     }
 
     override suspend fun getAll(): List<TagModel> {
-        return if (isTagsCacheLoaded) tagsCache.values.toList()
+        return if (isTagsCacheLoaded) withContext(DefaultDispatcher) { tagsCache.values.filterNotNull() }
         else getAllAndUpdateCache()
     }
 
     override suspend fun search(searchKeyword: String): List<TagModel> {
-        val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
-                .apply { keepSynced(true) }
-                .awaitList<TagDbEntity>(exceptionHandler)
-        return filter(searchKeyword, converter.convertCollection(tags, TagModel::class.java)).await()
+        return withContext(DefaultDispatcher) {
+            val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
+                    .apply { keepSynced(true) }
+                    .awaitList<TagDbEntity>(exceptionHandler)
+            filter(searchKeyword, converter.convertCollection(tags, TagModel::class.java))
+        }
     }
 
-    private fun filter(search: String, list: List<TagModel>) = async {
+    private suspend fun filter(search: String, list: List<TagModel>) = withContext(DefaultDispatcher) {
         val search = search.toLowerCase()
         list.filter { it.name.toString().toLowerCase().contains(search) }
     }

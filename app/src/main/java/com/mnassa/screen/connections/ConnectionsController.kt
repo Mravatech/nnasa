@@ -248,11 +248,14 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     private fun openProfile(accountModel: ShortAccountModel) = open(ProfileController.newInstance(accountModel))
 
     private fun onMoreConnectedAccountFunctions(accountModel: ShortAccountModel, sender: View) {
-        popupMenuHelper.showConnectedAccountMenu(
-                view = sender,
-                onChat = { openChat(accountModel) },
-                onProfile = { openProfile(accountModel) },
-                onDisconnect = { viewModel.disconnect(accountModel) })
+        launchCoroutineUI {
+            popupMenuHelper.showConnectedAccountMenu(
+                    view = sender,
+                    account = accountModel,
+                    onChat = { openChat(accountModel) },
+                    onProfile = { openProfile(accountModel) },
+                    onDisconnect = { viewModel.disconnect(accountModel) })
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -53,9 +53,8 @@
                     android:id="@+id/etRecommend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="@integer/max_recommend_length"
-                    android:imeOptions="actionDone"
-                    />
+                    android:inputType="textMultiLine"
+                    android:maxLength="@integer/max_recommend_length" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

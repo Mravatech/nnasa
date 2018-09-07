@@ -32,14 +32,14 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
         }
     }
 
-    override suspend fun loadMessagesWithChangesHandling(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<List<ChatMessageModel>>> {
+    override suspend fun loadMessagesWithChangesHandling(chatId: String): ReceiveChannel<ListItemEvent<List<ChatMessageModel>>> {
         return produce {
             try {
-                send(ListItemEvent.Added(chatRepository.preloadMessages(chatId, accountId)))
+                send(ListItemEvent.Added(chatRepository.preloadMessages(chatId)))
             } catch (e: Exception) {
                 Timber.e(e) //ignore exceptions here
             }
-            chatRepository.loadMessagesWithChangesHandling(chatId, accountId).withBuffer().consumeEach { send(it) }
+            chatRepository.loadMessagesWithChangesHandling(chatId).withBuffer().consumeEach { send(it) }
         }
     }
 

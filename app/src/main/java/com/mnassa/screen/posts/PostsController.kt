@@ -82,9 +82,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                 if (dataIndex >= 0) {
                     postIdToScroll = null
                     val layoutManager = view?.rvNewsFeed?.layoutManager
-                    layoutManager as LinearLayoutManager
-                    val pos = adapter.convertDataIndexToAdapterPosition(dataIndex)
-                    layoutManager.scrollToPosition(pos)
+                    if (layoutManager is LinearLayoutManager) {
+                        layoutManager.scrollToPosition(adapter.convertDataIndexToAdapterPosition(dataIndex))
+                    }
                 }
             }
         }

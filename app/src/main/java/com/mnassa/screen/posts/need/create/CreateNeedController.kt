@@ -69,7 +69,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
-                viewModel.applyChanges(makePostModel())
+                view.toolbar.actionButtonClickable = false
+                launchCoroutineUI {
+                    viewModel.applyChanges(makePostModel(view))
+                }.invokeOnCompletion { onNeedTextUpdated() }
             }
             tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
@@ -171,8 +174,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         super.onDestroyView(view)
     }
 
-    private fun makePostModel(): RawPostModel {
-        with(requireNotNull(view)) {
+    private fun makePostModel(view: View): RawPostModel {
+        with(view) {
             val images = attachedImagesAdapter.dataStorage.toList()
             return RawPostModel(
                     id = postId,
@@ -219,8 +222,12 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     }
 
     private fun onNeedTextUpdated() {
-        val view = view ?: return
-        view.toolbar.actionButtonClickable = view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
+        view?.toolbar?.actionButtonClickable = canCreatePost()
+    }
+
+    private fun canCreatePost(): Boolean {
+        val view = view ?: return false
+        return view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
     }
 
     companion object {

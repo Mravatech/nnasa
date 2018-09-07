@@ -1,5 +1,6 @@
 package com.mnassa.screen.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
@@ -29,6 +30,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.connections.ConnectionsController
+import com.mnassa.screen.deeplink.DeeplinkHandler
 import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.home.HomeController
 import com.mnassa.screen.invite.InviteController
@@ -57,6 +59,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     private var accountHeader: AccountHeader? = null
     private var activeAccount: ShortAccountModel? = null
     private var previousSelectedPage = 0
+    private val deeplinkHandler: DeeplinkHandler by instance()
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -227,7 +230,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         launchCoroutineUI {
             viewModel.groupInvitesCountChannel.consumeEach { groupsCount ->
                 drawer?.let {
-                    val text = when (groupsCount){
+                    val text = when (groupsCount) {
                         0 -> null
                         in 1..9 -> "  $groupsCount  "
                         in 10..99 -> " $groupsCount "
@@ -237,6 +240,27 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                 }
             }
         }
+
+        activity?.intent?.let { handleDeepLink(it) }
+    }
+
+    private fun handleDeepLink(intent: Intent) {
+        if (deeplinkHandler.hasDeeplink(intent)) showProgress()
+        else return
+        launchCoroutineUI {
+            val controller = deeplinkHandler.handle(intent)?.also { open(it) }
+            when (controller) {
+                is ChatMessageController -> {
+                    getViewSuspend().bnMain.currentItem = Pages.CHAT.ordinal
+                }
+                is WalletController -> {
+                    //do nothing
+                }
+                else -> {
+                    getViewSuspend().bnMain.currentItem = Pages.NOTIFICATIONS.ordinal
+                }
+            }
+        }.invokeOnCompletion { hideProgress() }
     }
 
     override fun isPageSelected(page: Controller): Boolean {

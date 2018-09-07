@@ -7,7 +7,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 interface ChatInteractor {
 
-    suspend fun loadMessagesWithChangesHandling(chatId: String, accountId: String?): ReceiveChannel<ListItemEvent<List<ChatMessageModel>>>
+    suspend fun loadMessagesWithChangesHandling(chatId: String): ReceiveChannel<ListItemEvent<List<ChatMessageModel>>>
     suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<List<ChatRoomModel>>>
     suspend fun getChatIdByUserId(accountId: String?): String
     suspend fun sendMessage(chatID: String, text: String, type: String, linkedMessageId: String?, linkedPostId: String?)
