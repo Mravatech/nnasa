@@ -67,6 +67,7 @@ class CropActivity : AppCompatActivity() {
             options.setStatusBarColor(ContextCompat.getColor(this, R.color.accent))
             options.setLogoColor(ContextCompat.getColor(this, R.color.white))
             options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.white))
+            options.setCompressionQuality(COMPRESSION_QUALITY)
             if (intent.getBooleanExtra(EXTRA_CROP_SQUARE, false)) {
                 options.withAspectRatio(1.0f, 1.0f)
             }
@@ -115,6 +116,7 @@ class CropActivity : AppCompatActivity() {
         private const val EXTRA_CROP_SQUARE = "EXTRA_CROP_SQUARE"
         private const val PHOTO_INTENT_FLAG = "PHOTO_INTENT_FLAG"
         private const val DEFAULT_VALUE = 0
+        private const val COMPRESSION_QUALITY = 40 //Default = 90
 
         fun start(source: ImageSource, context: Context, cropSquare: Boolean = false): Intent {
             val intent = Intent(context, CropActivity::class.java)

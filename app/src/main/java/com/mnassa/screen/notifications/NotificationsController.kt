@@ -10,6 +10,7 @@ import com.mnassa.domain.model.NotificationModel
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.list.GroupListController
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.invite.InviteSource
@@ -139,7 +140,9 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                 open(InviteController.newInstance())
             }
             INVITED_TO_GROUP -> {
-                open(GroupListController.newInstance())
+                val group = item.extra.group
+                if (group != null) open(GroupDetailsController.newInstance(group))
+                else open(GroupListController.newInstance())
             }
             else -> {
                 when {

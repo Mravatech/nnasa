@@ -215,17 +215,17 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.mnassa.widget.MnassaTextView
                     android:id="@+id/tvViewsCount"
                     style="@style/MnassaTextTiny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:drawablePadding="@dimen/drawable_padding"
-                    android:drawableStart="@drawable/ic_eye_18dp"
+                    app:drawableStartCompat="@drawable/ic_eye_18dp"
                     tools:text="12" />
 
-                <TextView
+                <com.mnassa.widget.MnassaTextView
                     android:id="@+id/tvCommentsCount"
                     style="@style/MnassaTextTiny"
                     android:layout_width="wrap_content"
@@ -233,7 +233,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/spacing_horizontal"
                     android:drawablePadding="@dimen/drawable_padding"
-                    android:drawableStart="@drawable/ic_comment"
+                    app:drawableStartCompat="@drawable/ic_comment"
                     tools:text="12" />
 
                 <Space
@@ -241,11 +241,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <TextView
+                <com.mnassa.widget.MnassaTextView
                     android:id="@+id/btnAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_post_button_arrow_blue"
+                    app:drawableEndCompat="@drawable/ic_post_button_arrow_blue"
                     android:drawablePadding="@dimen/drawable_padding"
                     android:fontFamily="@font/roboto_medium"
                     android:textAllCaps="true"

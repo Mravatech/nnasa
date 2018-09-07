@@ -130,11 +130,11 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
     }
 
     private suspend fun bindTags(tags: List<TagModel>) {
+        tagsAdapter.set(tags)
         getViewSuspend().let {
             with(it) {
                 vTagsSeparator.isGone = tags.isEmpty()
                 rvTags.isGone = tags.isEmpty()
-                tagsAdapter.set(tags)
             }
         }
     }
@@ -206,6 +206,13 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         return if (parent is CommentsWrapperController.CommentInputContainer)
             parent.getCommentInputContainer(self)
         else super.getCommentInputContainer(self)
+    }
+
+    override fun getCommentInputContainerNullable(self: CommentsWrapperController): ViewGroup? {
+        val parent = parentController
+        return if (parent is CommentsWrapperController.CommentInputContainer)
+            parent.getCommentInputContainerNullable(self)
+        else super.getCommentInputContainerNullable(self)
     }
 
     companion object {

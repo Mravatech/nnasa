@@ -21,9 +21,11 @@
             android:id="@+id/tvUserReplyMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:textColorLink="@color/black"
             tools:text="Reply message" />
 
-        <TextView
+        <View
             android:id="@+id/vDivider"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_width"
@@ -33,6 +35,8 @@
             android:id="@+id/tvUserMessageWithReply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:textColorLink="@color/black"
             tools:text="Message with long long long long long long long long text" />
     </LinearLayout>
 

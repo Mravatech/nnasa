@@ -2,7 +2,11 @@ package com.mnassa.data.service
 
 import android.content.Context
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.*
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.iid.FirebaseInstanceId
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.api.FirebaseAuthApi
@@ -12,9 +16,11 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -102,6 +108,7 @@ class FirebaseLoginServiceImpl(
 
     override suspend fun signOut() {
         FirebaseAuth.getInstance().signOut()
+        withContext(DefaultDispatcher) { FirebaseInstanceId.getInstance().deleteInstanceId() }
     }
 
     @Parcelize

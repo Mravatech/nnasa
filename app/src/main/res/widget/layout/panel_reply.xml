@@ -40,6 +40,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="Replying to " />
     </LinearLayout>
 

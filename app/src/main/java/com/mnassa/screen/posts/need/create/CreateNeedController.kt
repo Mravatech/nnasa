@@ -71,19 +71,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
                 viewModel.applyChanges(makePostModel())
             }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val post = post
-                launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateNeedController,
-                            accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
-                            restrictShareReduction = postId != null,
-                            canBePromoted = viewModel.canPromotePost(),
-                            promotePrice = viewModel.getPromotePostPrice()))
-                }
-            }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
 
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
@@ -130,6 +118,23 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                     view.actvPlace.setText(it.placeName.toString())
                 }
             }
+        }
+    }
+
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val post = post
+            val canPromote = viewModel.canPromotePost()
+            val promotePrice = viewModel.getPromotePostPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateNeedController,
+                    accountsToExclude = if (post != null) listOf(post.author.id) else emptyList(),
+                    restrictShareReduction = postId != null,
+                    canBePromoted = canPromote,
+                    promotePrice = promotePrice))
         }
     }
 

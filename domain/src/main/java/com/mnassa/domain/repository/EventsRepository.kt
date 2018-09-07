@@ -10,6 +10,9 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 interface EventsRepository {
     suspend fun preloadEvents(): List<EventModel>
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>>
+    suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>>
+    suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel>
+
     suspend fun getEventsChannel(eventId: String): ReceiveChannel<EventModel?>
     suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>
     suspend fun sendViewed(ids: List<String>)

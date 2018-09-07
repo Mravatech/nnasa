@@ -15,13 +15,16 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.*
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_details.view.*
 import kotlinx.android.synthetic.main.item_group_member_round.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -40,9 +43,11 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         super.onViewCreated(view)
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
+        launchCoroutineUI { viewModel.openScreenChannel.consumeEach { open(GroupProfileController.newInstance(group)) } }
         launchCoroutineUI { viewModel.groupChannel.consumeEach { bindGroup(it, view) } }
         launchCoroutineUI { viewModel.tagsChannel.consumeEach { bindTags(it, view) } }
         launchCoroutineUI { viewModel.membersChannel.consumeEach { bindMembers(it, view) } }
+        launchCoroutineUI { viewModel.pointsChannel.consumeEach { view.tvPointsCount.text = it.toString() } }
         launchCoroutineUI {
             viewModel.isMemberChannel.consumeEach { isMember ->
                 view.btnOpenGroup.isGone = !isMember
@@ -51,6 +56,8 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
         }
         launchCoroutineUI {
             viewModel.hasInviteChannel.consumeEach { hasInvite ->
+                view.llGroupInvite.isGone = !hasInvite
+                view.vBtnInviteShadow.isGone = !hasInvite
                 if (hasInvite) {
                     view.toolbar.onMoreClickListener = { view ->
                         popupMenuHelper.showGroupInviteMenu(view, { viewModel.acceptInvite() }, { viewModel.declineInvite() })
@@ -58,7 +65,6 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                 } else {
                     view.toolbar.onMoreClickListener = null
                 }
-
             }
         }
 
@@ -70,6 +76,16 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                     .build()
             rvGroupTags.adapter = tagsAdapter
             btnOpenGroup.text = fromDictionary(R.string.group_open_profile)
+
+            llGroupMembersCounter.setOnClickListener { open(GroupMembersController.newInstance(group)) }
+            llGroupInvitesCounter.setOnClickListener { if (group.isAdmin) open(GroupInviteConnectionsController.newInstance(group)) }
+            llGroupPointsCounter.setOnClickListener { if (group.isAdmin) open(WalletController.newInstanceGroup(group)) }
+
+            btnDecline.text = fromDictionary(R.string.group_invite_decline)
+            btnAccept.text = fromDictionary(R.string.group_invite_apply)
+
+            btnDecline.setOnClickListener { viewModel.declineInvite() }
+            btnAccept.setOnClickListener { viewModel.acceptInvite() }
         }
 
         bindGroup(group, view)
@@ -83,6 +99,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
     private fun bindGroup(group: GroupModel, view: View) {
         this.group = group
         with(view) {
+            //avatar
             val avatar = group.avatar
             ivGroupAvatar.avatarSquare(avatar)
             if (avatar != null && !avatar.isBlank()) {
@@ -91,8 +108,15 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
                 }
             }
 
+            //counters
+            tvMembersCount.text = group.numberOfParticipants.toString()
+            tvInvitesCount.text = group.numberOfInvites.toString()
+
+            //titles
             tvGroupTitle.text = group.name
-            tvGroupSubTitle.text = group.formattedRole
+            launchCoroutineUI {
+                tvGroupSubTitle.text = group.formattedRole(viewModel.isMemberChannel.consume { receive() })
+            }
 
             //description
             tvGroupDescription.text = group.description

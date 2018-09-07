@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/llContainer"
     style="@style/PersonalInfo.InputContainer"
     android:layout_marginTop="@dimen/personal_info_inputs_linear_layout_margin_top"
@@ -42,7 +43,7 @@
         <com.mnassa.widget.input.ClickableDrawableTextInputEditText
             android:id="@+id/etCompanyPhone"
             style="@style/PersonalInfo.EditText"
-            android:drawableEnd="@drawable/ic_eye_off"
+            app:drawableEndCompat="@drawable/ic_eye_off"
             android:drawablePadding="@dimen/personal_info_drawable_padding"
             android:inputType="phone" />
     </android.support.design.widget.TextInputLayout>
@@ -54,7 +55,7 @@
         <com.mnassa.widget.input.ClickableDrawableTextInputEditText
             android:id="@+id/etCompanyEmail"
             style="@style/PersonalInfo.EditText"
-            android:drawableEnd="@drawable/ic_eye_off"
+            app:drawableEndCompat="@drawable/ic_eye_off"
             android:drawablePadding="@dimen/personal_info_drawable_padding"
             android:inputType="textEmailAddress" />
     </android.support.design.widget.TextInputLayout>

@@ -14,11 +14,15 @@ import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
+import com.mikepenz.materialdrawer.holder.BadgeStyle
+import com.mikepenz.materialdrawer.holder.DimenHolder
+import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -51,7 +55,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     override val viewModel: MainViewModel by instance()
     private var drawer: Drawer? = null
     private var accountHeader: AccountHeader? = null
-    private var activeAccountId: String = ""
+    private var activeAccount: ShortAccountModel? = null
     private var previousSelectedPage = 0
 
     private val adapter: RouterPagerAdapter = object : RouterPagerAdapter(this) {
@@ -74,7 +78,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     private fun updateActiveProfile(fireOnProfileChanged: Boolean = false) {
         accountHeader?.apply {
             profiles.forEach {
-                if ((it as? MnassaProfileDrawerItem)?.account?.id == activeAccountId) {
+                if ((it as? MnassaProfileDrawerItem)?.account?.id == activeAccount?.id) {
                     setActiveProfile(it, fireOnProfileChanged)
                 }
             }
@@ -86,7 +90,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
 
         with(view) {
             vpMain.adapter = adapter
-            vpMain.offscreenPageLimit = adapter.count
 
             accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
@@ -98,7 +101,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                             innerProfile is MnassaProfileDrawerItem -> {
                                 val account = innerProfile.account
                                 drawer?.closeDrawer()
-                                activeAccountId = account.id
+                                activeAccount = account
                                 viewModel.selectAccount(account)
                                 true
                             }
@@ -118,7 +121,9 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                     .withAccountHeader(requireNotNull(accountHeader))
                     .addDrawerItems(
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_profile)).withIcon(R.drawable.ic_profile).withIdentifier(PROFILE.ordinal.toLong()).withSelectable(false),
-                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_group).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false),
+                            PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_groups)).withIcon(R.drawable.ic_group).withIdentifier(GROUPS.ordinal.toLong()).withSelectable(false)
+                                    .withBadge(null as String?)
+                                    .withBadgeStyle(BadgeStyle().withTextColorRes(R.color.white).withColorRes(R.color.accent).withCornersDp(12).withPadding(DimenHolder.fromDp(2))),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_wallet)).withIcon(R.drawable.ic_wallet).withIdentifier(WALLET.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_invite)).withIcon(R.drawable.ic_invite).withIdentifier(INVITE.ordinal.toLong()).withSelectable(false),
                             PrimaryDrawerItem().withName(fromDictionary(R.string.side_menu_settings)).withIcon(R.drawable.ic_settings).withIdentifier(SETTINGS.ordinal.toLong()).withSelectable(false),
@@ -131,7 +136,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                     .withSelectedItem(-1)
                     .withOnDrawerItemClickListener { _, _, item ->
                         when (values()[item.identifier.toInt()]) {
-                            PROFILE -> open(ProfileController.newInstance(activeAccountId))
+                            PROFILE -> activeAccount?.let { open(ProfileController.newInstance(it)) }
                             GROUPS -> open(GroupListController.newInstance())
                             WALLET -> open(WalletController.newInstance())
                             INVITE -> {
@@ -146,7 +151,6 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
                         true
                     }
                     .buildForFragment()
-
             bnMain.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
             bnMain.accentColor = ContextCompat.getColor(view.context, R.color.accent)
             bnMain.addItems(
@@ -215,8 +219,22 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
 
         launchCoroutineUI {
             viewModel.currentAccountChannel.consumeEach {
-                activeAccountId = it.id
-                accountHeader?.setActiveProfile(activeAccountId.hashCode().toLong())
+                activeAccount = it
+                accountHeader?.setActiveProfile(it.id.hashCode().toLong())
+            }
+        }
+
+        launchCoroutineUI {
+            viewModel.groupInvitesCountChannel.consumeEach { groupsCount ->
+                drawer?.let {
+                    val text = when (groupsCount){
+                        0 -> null
+                        in 1..9 -> "  $groupsCount  "
+                        in 10..99 -> " $groupsCount "
+                        else -> groupsCount.toString()
+                    }
+                    it.updateBadge(GROUPS.ordinal.toLong(), StringHolder(text))
+                }
             }
         }
     }

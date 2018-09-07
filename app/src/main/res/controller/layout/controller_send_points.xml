@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/send_points_description" />
+                app:textDictionary="@string/send_points_description" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tlRecipientType"
@@ -72,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:text="@string/send_points_amount_hint"
+                    app:textDictionary="@string/send_points_amount_hint"
                     android:textSize="16sp"
                     tools:text="points" />
             </FrameLayout>

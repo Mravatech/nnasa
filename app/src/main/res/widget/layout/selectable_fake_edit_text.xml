@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginEnd="@dimen/personal_info_abilities_inner_margin"
     android:layout_marginStart="@dimen/personal_info_abilities_inner_margin"
     android:orientation="vertical">
@@ -44,12 +45,12 @@
 
     </RelativeLayout>
 
-    <TextView
+    <com.mnassa.widget.MnassaTextView
         android:id="@+id/tvSelectView"
         style="@style/PersonalInfo.SelectableTextView"
         android:layout_marginStart="@dimen/personal_info_inner_margin_start"
         android:layout_marginTop="@dimen/personal_info_inner_margin_start"
-        android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"
+        app:drawableEndCompat="@drawable/ic_arrow_drop_down_black_24dp"
         tools:text="Select your occupation" />
 
     <View

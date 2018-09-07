@@ -13,7 +13,6 @@ interface RegistrationViewModel : MnassaViewModel, PlaceAutocompleteAdapter.Plac
     suspend fun hasPersonalAccountChannel(): Boolean
     val addTagRewardChannel: BroadcastChannel<Long?>
 
-
     fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>)
     fun registerOrganization(userName: String, city: String, companyName: String, offers: List<TagModel>, interests: List<TagModel>)
 

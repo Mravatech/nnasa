@@ -42,7 +42,6 @@ import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.runBlocking
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -226,8 +225,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     override fun onSaveViewState(view: View, outState: Bundle) {
         super.onSaveViewState(view, outState)
-        runBlocking {
-            outState.putString(EXTRA_COMMENT_TEXT, getCommentsContainer().etCommentText.text.toString())
+        getCommentsContainerNullable()?.let { container ->
+            outState.putString(EXTRA_COMMENT_TEXT, container.etCommentText.text.toString())
         }
     }
 
@@ -244,15 +243,19 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     override fun onDestroyView(view: View) {
         wrappedController.clear()
         view.rvContent.adapter = null
-        view.rvAccountsToRecommend.adapter = null
+
+        getCommentsContainerNullable()?.let { container ->
+            with(container) {
+                rvAccountsToRecommend?.adapter = null
+                rvCommentAttachments?.adapter = null
+            }
+        }
 
         super.onDestroyView(view)
     }
 
     override fun openKeyboardOnComment() {
-        launchCoroutineUI {
-            getCommentsContainer()?.etCommentText?.apply { showKeyboard(this) }
-        }
+        getCommentsContainerNullable()?.etCommentText?.apply { showKeyboard(this) }
     }
 
     suspend fun bindCanRecommend(canRecommend: Boolean) {
@@ -432,6 +435,11 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         return wrappedController.getCommentInputContainer(this@CommentsWrapperController)
     }
 
+    private fun getCommentsContainerNullable(): ViewGroup? {
+        val wrappedController = wrappedController.value as? CommentsWrapperCallback?
+        return wrappedController?.getCommentInputContainerNullable(this@CommentsWrapperController)
+    }
+
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
         val permissionsList = when (imageSource) {
             CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -489,5 +497,6 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
 
     interface CommentInputContainer {
         suspend fun getCommentInputContainer(self: CommentsWrapperController): ViewGroup = self.getViewSuspend().commentPanel
+        fun getCommentInputContainerNullable(self: CommentsWrapperController): ViewGroup? = self.view?.commentPanel
     }
 }

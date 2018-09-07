@@ -1,9 +1,9 @@
 package com.mnassa.data.converter
 
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.convert
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextRegistrationCallback
+import com.mnassa.core.converter.convert
+import com.mnassa.core.converter.registerConverter
 import com.mnassa.data.extensions.isSuppressed
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity

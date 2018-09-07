@@ -73,10 +73,14 @@ open class SubscriptionsContainerDelegate : SubscriptionContainer {
 private val WORKER_POOL = CommonPool
 private val UI_POOL = UI
 private val WORKER_POOL_WITH_EXCEPTION_HANDLING = WORKER_POOL + CoroutineExceptionHandler { context, exception ->
-    Timber.e(exception, "Unhandled exception in the WORKER pool $context")
+    if (exception !is JobCancellationException) {
+        Timber.e(exception, "Unhandled exception in the WORKER pool $context")
+    }
 }
 private val UI_POOL_WITH_EXCEPTION_HANDLING = UI_POOL + CoroutineExceptionHandler { context, exception ->
-    Timber.e(exception, "Unhandled exception in the UI pool $context")
+    if (exception !is JobCancellationException) {
+        Timber.e(exception, "Unhandled exception in the UI pool $context")
+    }
 }
 
 /**

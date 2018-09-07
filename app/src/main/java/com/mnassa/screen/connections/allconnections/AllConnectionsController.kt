@@ -39,6 +39,7 @@ class AllConnectionsController : MnassaControllerImpl<AllConnectionsViewModel>()
         }
 
         allConnectionsAdapter.onItemOptionsClickListener = { item, view -> onMoreConnectedAccountFunctions(item, view) }
+        allConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         allConnectionsAdapter.isLoadingEnabled = true
         launchCoroutineUI {

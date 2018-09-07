@@ -39,8 +39,10 @@ class RegistrationViewModelImpl(
     }
 
     override suspend fun hasPersonalAccountChannel(): Boolean {
-        return handleExceptionsSuspend { userProfileInteractor.getAllAccounts().consume { receive() }.any { it.accountType == AccountType.PERSONAL } }
-                ?: true
+        return withProgressSuspend {
+            handleExceptionsSuspend { userProfileInteractor.getAllAccounts().consume { receive() }.any { it.accountType == AccountType.PERSONAL } }
+                    ?: true
+        }
     }
 
     override fun registerPerson(userName: String, city: String, firstName: String, secondName: String, offers: List<TagModel>, interests: List<TagModel>) {

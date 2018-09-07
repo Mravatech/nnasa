@@ -50,7 +50,7 @@ class MnassaGlideModule : AppGlideModule() {
 //====================================== STRING URL LOADER =========================================
 
     internal class OkHttpStringUrlLoader private constructor(private val client: Call.Factory) : ModelLoader<String, InputStream> {
-        private val wrongUrl = ""
+        private val wrongUrl = " "
 
         override fun handles(url: String): Boolean = true
 

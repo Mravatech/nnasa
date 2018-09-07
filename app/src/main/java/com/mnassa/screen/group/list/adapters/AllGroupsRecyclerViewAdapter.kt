@@ -153,7 +153,7 @@ class AllGroupsRecyclerViewAdapter(
                 ivAvatar.avatarRound(groupItem.avatar)
                 tvUserName.text = groupItem.formattedName
 
-                tvPosition.text = groupItem.formattedRole
+                tvPosition.text = groupItem.formattedRole()
                 tvPosition.goneIfEmpty()
 
                 tvEventName.text = ""

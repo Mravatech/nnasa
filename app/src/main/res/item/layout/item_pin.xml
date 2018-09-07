@@ -4,7 +4,7 @@
     style="@style/PinItemContainer"
     tools:layout_width="wrap_content">
 
-    <View
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/vPinBackground"
         style="@style/PinItemBackground" />
 

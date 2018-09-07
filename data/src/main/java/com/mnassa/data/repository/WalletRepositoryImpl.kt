@@ -1,6 +1,6 @@
 package com.mnassa.data.repository
 
-import com.androidkotlincore.entityconverter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnassa.data.extensions.await

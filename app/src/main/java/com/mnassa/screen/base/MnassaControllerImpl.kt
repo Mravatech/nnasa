@@ -17,6 +17,8 @@ import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -28,7 +30,7 @@ import java.lang.ref.WeakReference
 /**
  * Created by Peter on 2/20/2018.
  */
-abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, KodeinAware {
+abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<VM>, MnassaController<VM>, KodeinAware, LayoutContainer {
     override val kodeinTrigger = KodeinTrigger()
     override val kodein: Kodein = Kodein.lazy {
         val parentKodein by closestKodein(requireNotNull(applicationContext))
@@ -38,6 +40,8 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     private val loginInteractor: LoginInteractor by instance()
     private val dialogHelper: DialogHelper by instance()
     private var serverMaintenanceDialog = WeakReference<Dialog>(null)
+
+    override val containerView: View? get() = view
 
     constructor(params: Bundle) : super(params)
     constructor() : super()
@@ -58,6 +62,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     override fun onDestroyView(view: View) {
         hideProgress() //prevent showing progress after screen change
         hideKeyboard()
+        clearFindViewByIdCache()
         super.onDestroyView(view)
     }
 
@@ -68,7 +73,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
                 AlertDialog.Builder(context)
                         .setTitle(fromDictionary(R.string.error_dialog_title))
                         .setMessage(it)
-                        .setPositiveButton(context.getString(android.R.string.ok), { _, _ -> })
+                        .setPositiveButton(context.getString(android.R.string.ok)) { _, _ -> }
                         .show()
             }
         }

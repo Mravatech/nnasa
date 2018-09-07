@@ -1,7 +1,7 @@
 package com.mnassa.data.repository
 
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.convert
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.convert
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebaseCommentsApi
 import com.mnassa.data.network.bean.retrofit.request.CreateCommentRequest

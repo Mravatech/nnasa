@@ -1,8 +1,8 @@
 package com.mnassa.data.converter
 
-import com.androidkotlincore.entityconverter.ConvertersContext
-import com.androidkotlincore.entityconverter.ConvertersContextRegistrationCallback
-import com.androidkotlincore.entityconverter.registerConverter
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.ConvertersContextRegistrationCallback
+import com.mnassa.core.converter.registerConverter
 import com.google.firebase.database.DataSnapshot
 import com.mnassa.data.extensions.mapList
 import com.mnassa.data.network.NetworkContract

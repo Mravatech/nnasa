@@ -3,6 +3,7 @@ package com.mnassa.widget
 import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -28,8 +29,12 @@ class GoBackArrow : AppCompatImageView {
         isClickable = true
 
         setOnClickListener {
-            val activity = it.context as? Activity
-            activity?.onBackPressed()
+            val context = it.context
+            if (context is Activity) {
+                context.onBackPressed()
+            } else if (context is AppCompatActivity) {
+                context.onBackPressed()
+            }
         }
     }
 }

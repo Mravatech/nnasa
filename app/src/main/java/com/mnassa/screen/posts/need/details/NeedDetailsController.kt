@@ -163,7 +163,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvLocation.text = post.locationPlace.formatted()
             tvLocation.invisibleIfEmpty()
             //time
-            tvCreationTime.text = post.createdAt.toTimeAgo()
+            tvCreationTime.text = post.createdAt.formatAsDateTime()
 
             //views count
             tvViewsCount.text = fromDictionary(R.string.need_views_count).format(post.counters.views)

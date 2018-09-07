@@ -31,13 +31,13 @@
                 android:id="@+id/tvEmptyTitle"
                 style="@style/EmptyList.Title"
                 android:layout_below="@id/ivEmpty"
-                android:text="@string/connections_sent_requests_empty_title" />
+                app:textDictionary="@string/connections_sent_requests_empty_title" />
 
             <com.mnassa.widget.MnassaTextView
                 android:id="@+id/tvEmptyDescription"
                 style="@style/EmptyList.Description"
                 android:layout_below="@id/tvEmptyTitle"
-                android:text="@string/connections_sent_requests_empty_description" />
+                app:textDictionary="@string/connections_sent_requests_empty_description" />
 
         </RelativeLayout>
 

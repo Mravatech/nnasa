@@ -2,7 +2,6 @@ package com.mnassa.screen.chats.message
 
 import android.os.Bundle
 import com.mnassa.core.addons.asyncUI
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.ChatInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ChatMessageModel
@@ -19,7 +18,7 @@ class ChatMessageViewModelImpl(
         private val chatInteractor: ChatInteractor,
         private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), ChatMessageViewModel {
 
-    override val messageChannel: BroadcastChannel<ListItemEvent<ChatMessageModel>> = BroadcastChannel(10)
+    override val messageChannel: BroadcastChannel<ListItemEvent<List<ChatMessageModel>>> = BroadcastChannel(10)
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
     private val chatId = asyncUI { handleExceptionsSuspend { chatInteractor.getChatIdByUserId(userAccountId) } ?: "UNDEFINED" }
@@ -29,7 +28,7 @@ class ChatMessageViewModelImpl(
         super.onCreate(savedInstanceState)
 
         handleException {
-            chatInteractor.listOfMessages(chatId.await(), userAccountId).consumeEach {
+            chatInteractor.loadMessagesWithChangesHandling(chatId.await(), userAccountId).consumeEach {
                 messageChannel.send(it)
                 resetChatUnreadCount()
             }
@@ -38,7 +37,7 @@ class ChatMessageViewModelImpl(
 
     private fun resetChatUnreadCount() {
         resetCounterJob?.cancel()
-        resetCounterJob = launchCoroutineUI {
+        resetCounterJob = handleException {
             delay(1_000)
             chatInteractor.resetChatUnreadCount(chatId.await())
         }

@@ -1,7 +1,6 @@
 package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -28,7 +27,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     }
 
     override fun skipThisStep() {
-        launchCoroutineUI {
+        handleException {
             openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }

@@ -1,7 +1,8 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
-import android.support.v7.widget.PopupMenu
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.Toolbar
 import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.PhotoPagerActivity
@@ -13,14 +14,12 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
-import com.mnassa.screen.group.profile.GroupProfileController
+import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
-import com.mnassa.screen.profile.common.*
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
@@ -30,11 +29,6 @@ import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
-/**
- * Created by IntelliJ IDEA.
- * User: okli
- * Date: 2/26/2018
- */
 
 class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(data),
         ComplaintOtherController.OnComplaintResult,
@@ -45,24 +39,45 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     private val accountId: String by lazy { args.getString(EXTRA_ACCOUNT_ID) }
     override val viewModel: ProfileViewModel by instance(arg = accountId)
 
-    private var adapter = PostsRVAdapter(withHeader = false)
     private val dialog: DialogHelper by instance()
     private var lastViewedPostDate: Long = -1
     private var hasNewPosts: Boolean = false
         get() {
             return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
         }
+    private var profile: ShortAccountModel = args[EXTRA_ACCOUNT] as ShortAccountModel
+    private var adapter = ProfilePostsRVAdapter(profile)
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
         adapter.isLoadingEnabled = savedInstanceState == null
-
         adapter.onDataChangedListener = { itemsCount ->
             view?.findViewById<View>(R.id.rlEmptyView)?.isGone = !adapter.dataStorage.isEmpty()
         }
         adapter.onAttachedToWindow = { post ->
             if (post.createdAt.time > lastViewedPostDate) {
                 lastViewedPostDate = post.createdAt.time
+            }
+        }
+        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
+        adapter.onPostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
+        adapter.onRepostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
+        adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
+        adapter.onConnectionsCountClick = { if (profile.isMyProfile) open(AllConnectionsController.newInstance()) }
+        adapter.onPointsCountClick = { if (profile.isMyProfile) open(WalletController.newInstance()) }
+        adapter.onItemClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
+        }
+        adapter.onConnectionStatusClick = {
+            view?.context?.let { context ->
+                when (it) {
+                    ConnectionStatus.CONNECTED -> dialog.yesNoDialog(context, fromDictionary(R.string.user_profile_you_want_to_disconnect)) {
+                        viewModel.sendConnectionStatus(it, accountId)
+                    }
+                    ConnectionStatus.SENT, ConnectionStatus.RECOMMENDED, ConnectionStatus.REQUESTED ->
+                        viewModel.sendConnectionStatus(it, accountId)
+                }
             }
         }
 
@@ -88,90 +103,89 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        view.rvProfile.adapter = adapter
-        view.rvProfile.attachPanel { hasNewPosts }
+        with(view) {
+            rvProfile.adapter = adapter
+            rvProfile.attachPanel { hasNewPosts }
 
-        view.toolbarProfile.setNavigationOnClickListener { close() }
-        adapter.onItemClickListener = {
-            val postDetailsFactory: PostDetailsFactory by instance()
-            open(postDetailsFactory.newInstance(it))
-        }
+            initToolbar(toolbar, profile)
 
-        adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
-        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
-        adapter.onGroupClickListener = { open(GroupProfileController.newInstance(it)) }
+            val titleColor = ContextCompat.getColor(context, R.color.white)
+            collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
+            collapsingToolbarLayout.setExpandedTitleColor(titleColor)
 
-        launchCoroutineUI {
-            viewModel.statusesConnectionsChannel.consumeEach { connectionStatus ->
-                val profile = viewModel.profileChannel.consume { receive() }
-                if (!profile.isMyProfile) {
-                    handleConnectionStatus(connectionStatus, view)
+            fabProfile.isGone = profile.isMyProfile
+            fabProfile.setOnClickListener {
+                launchCoroutineUI {
+                    viewModel.profileChannel.consume { receiveOrNull() }?.apply { open(ChatMessageController.newInstance(this)) }
                 }
             }
+
+            bindProfile(this, profile)
         }
 
         launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-        launchCoroutineUI { viewModel.profileChannel.consumeEach { bindHeader() } }
-        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindHeader() } }
-        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindHeader() } }
-        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindHeader() } }
+        launchCoroutineUI { viewModel.profileChannel.consumeEach { bindProfile(view, it) } }
+        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindOffers(view, it) } }
+        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindInterests(view, it) } }
+        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindConnectionStatus(view, it) } }
+    }
 
-        if (args.containsKey(EXTRA_ACCOUNT)) {
-            (args.getSerializable(EXTRA_ACCOUNT) as ShortAccountModel?)?.apply {
-                view.ivCropImage.avatarSquare(avatar)
-                view.profileName.text = formattedName
+    private fun initToolbar(toolbar: Toolbar, profile: ShortAccountModel) {
+        toolbar.setNavigationOnClickListener { close() }
+        if (profile.isMyProfile) {
+            toolbar.inflateMenu(R.menu.user_profile_my)
+        } else {
+            toolbar.inflateMenu(R.menu.user_profile_other)
+        }
+        toolbar.menu.findItem(R.id.action_edit_profile)?.title = fromDictionary(R.string.profile_edit)
+        toolbar.menu.findItem(R.id.action_share_profile)?.title = fromDictionary(R.string.profile_share)
+        toolbar.menu.findItem(R.id.action_complain_about_profile)?.title = fromDictionary(R.string.profile_report)
+        toolbar.menu.findItem(R.id.action_invite_to_group_profile)?.title = fromDictionary(R.string.group_invite_profile_menu)
+
+
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_edit_profile -> onEditProfileClick(profile)
+                R.id.action_share_profile -> open(RecommendUserController.newInstance(profile))
+                R.id.action_complain_about_profile -> complainAboutProfile(profile)
+                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
             }
-            args.remove(EXTRA_ACCOUNT)
+            true
         }
     }
 
-    private suspend fun bindHeader() {
-        bindHeader(
-                profile = viewModel.profileChannel.consume { receive() },
-                offers = viewModel.offersChannel.consume { receive() },
-                interests = viewModel.interestsChannel.consume { receive() },
-                connectionStatus = viewModel.statusesConnectionsChannel.consume { receive() }
-        )
-    }
-
-
-    private fun bindHeader(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>, connectionStatus: ConnectionStatus) {
-        val view = view ?: return
-        val parent = view.flSecondHeader ?: return
-
-        val viewHolder = when {
-            parent.tag is BaseProfileHolder -> parent.tag as BaseProfileHolder
-            profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> CompanyProfileViewHolder.newInstance(parent, this, profile)
-            profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> PersonalProfileViewHolder.newInstance(parent, this, profile)
-            !profile.isMyProfile && profile.accountType == AccountType.ORGANIZATION -> AnotherCompanyProfileHolder.newInstance(parent, this, profile)
-            !profile.isMyProfile && profile.accountType == AccountType.PERSONAL -> AnotherPersonalProfileHolder.newInstance(parent, this, profile)
-            else -> throw IllegalArgumentException("Wrong account type!")
-        }
-        if (parent.tag !is BaseProfileHolder) {
-            parent.addView(viewHolder.itemView)
-        }
-        parent.tag = viewHolder
-
-        viewHolder.bindProfile(profile)
-        viewHolder.bindOffers(offers)
-        viewHolder.bindInterests(interests)
-        viewHolder.bindConnectionStatus(connectionStatus)
-
-        //
-
-        profile.avatar?.let { avatar ->
-            view.ivCropImage.avatarSquare(avatar)
-            view.ivCropImage.setOnClickListener {
-                PhotoPagerActivity.start(it.context, listOf(avatar), 0)
+    private fun bindProfile(view: View, profile: ShortAccountModel) {
+        this.profile = profile
+        adapter.profile = profile
+        with(view) {
+            ivAvatar.avatarSquare(profile.avatar)
+            ivAvatar.setOnClickListener {
+                profile.avatar?.let { avatar ->
+                    PhotoPagerActivity.start(it.context, listOf(avatar))
+                }
+            }
+            collapsingToolbarLayout.title = profile.formattedName
+            if (profile.accountType == AccountType.PERSONAL) {
+                tvPosition.text = profile.formattedPosition
+            } else {
+                tvPosition.text = (profile as? ProfileAccountModel)?.organizationType
             }
         }
+    }
 
-        handleCollapsingToolbar(view, connectionStatus, profile)
-        setTitle(profile, view)
-        onEditProfile(profile, view)
+    private fun bindConnectionStatus(view: View, status: ConnectionStatus) {
+        adapter.connectionStatus = status
         if (!profile.isMyProfile) {
-            handleConnectionStatus(connectionStatus, view)
+            handleConnectionStatus(status, view)
         }
+    }
+
+    private fun bindOffers(view: View, offers: List<TagModel>) {
+        adapter.offers = offers
+    }
+
+    private fun bindInterests(view: View, interests: List<TagModel>) {
+        adapter.interests = interests
     }
 
     override fun onClick(view: View) {
@@ -194,25 +208,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    private fun handleCollapsingToolbar(view: View, connectionStatus: ConnectionStatus, profileModel: ProfileAccountModel) {
-
-        view.appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val shouldShowFab = true
-
-            val offset = view.resources.getDimensionPixelSize(R.dimen.profile_main_image_height)
-
-            if (appBarLayout.totalScrollRange - Math.abs(verticalOffset) < offset) {
-                if (!profileModel.isMyProfile && shouldShowFab) {
-                    view.fabProfile.hide()
-                }
-            } else {
-                if (!profileModel.isMyProfile && shouldShowFab) {
-                    view.fabProfile.show()
-                }
-            }
-        }
-    }
-
     override var onComplaint: String = ""
         set(value) {
             viewModel.sendComplaint(accountId, OTHER, value)
@@ -224,15 +219,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     }
 
     private fun handleConnectionStatus(connectionStatus: ConnectionStatus, view: View) {
-        val fab = view.fabProfile
-        fab.visibility = View.VISIBLE
-        fab.setOnClickListener {
-            launchCoroutineUI {
-                viewModel.profileChannel.consume { receive() }.apply { open(ChatMessageController.newInstance(this)) }
-            }
-        }
-        fab.setImageResource(R.drawable.ic_chat)
-
         when (connectionStatus) {
             ConnectionStatus.REQUESTED, ConnectionStatus.RECOMMENDED -> {
                 view.rlConnectContainer.visibility = View.VISIBLE
@@ -247,31 +233,14 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    private fun onSettingsClick(profileModel: ProfileAccountModel, view: View) {
-        val popup = PopupMenu(view.context, view)
-        popup.menuInflater.inflate(R.menu.user_profile_item, popup.menu)
-        popup.menu.findItem(R.id.action_share_profile).title = "Share Profile" //todo set from dict
-        popup.menu.findItem(R.id.action_complain_about_profile).title = "Complain about Profile" //todo set from dict
-        popup.menu.findItem(R.id.action_invite_to_group_profile).title = fromDictionary(R.string.group_invite_profile_menu)
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_share_profile -> open(RecommendUserController.newInstance(profileModel))
-                R.id.action_complain_about_profile -> complainAboutProfile(profileModel, view)
-                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
-            }
-            true
-        }
-        popup.show()
-    }
-
     override fun onGroupSelected(group: GroupModel) {
         viewModel.inviteToGroup(group)
     }
 
-    private fun complainAboutProfile(profileModel: ProfileAccountModel, view: View) {
+    private fun complainAboutProfile(profileModel: ShortAccountModel) {
         launchCoroutineUI {
             val reportsList = viewModel.retrieveComplaints()
-            dialog.showComplaintDialog(view.context, reportsList) {
+            dialog.showComplaintDialog(getViewSuspend().context, reportsList) {
                 if (it.id == OTHER) {
                     val controller = ComplaintOtherController.newInstance()
                     controller.targetController = this@ProfileController
@@ -283,36 +252,24 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    private fun onEditProfile(profileModel: ProfileAccountModel, view: View) {
-        if (profileModel.isMyProfile) {
-            view.ivProfileEdit.visibility = View.VISIBLE
-            view.ivProfileEdit.setOnClickListener {
-                launchCoroutineUI {
-                    val offers = viewModel.offersChannel.consume { receive() }
-                    val interests = viewModel.interestsChannel.consume { receive() }
-                    open(when (profileModel.accountType) {
-                        AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)
-                        AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profileModel, offers, interests)
-                    })
-                }
+    @Suppress("NAME_SHADOWING")
+    private fun onEditProfileClick(profile: ShortAccountModel) {
+        var profile = profile as? ProfileAccountModel
+        launchCoroutineUI {
+            if (profile == null) {
+                profile = viewModel.profileChannel.consume { receiveOrNull() }
             }
-        } else {
-            view.ivProfileMenu.visibility = View.VISIBLE
-            view.ivProfileMenu.setOnClickListener {
-                onSettingsClick(profileModel, it)
-            }
+            val profile = profile ?: return@launchCoroutineUI
+            val offers = viewModel.offersChannel.consume { receive() }
+            val interests = viewModel.interestsChannel.consume { receive() }
+
+            open(when (profile.accountType) {
+                AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profile, offers, interests)
+                AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profile, offers, interests)
+            })
         }
     }
 
-    private fun setTitle(profileModel: ProfileAccountModel, view: View) {
-        if (profileModel.accountType == AccountType.PERSONAL) {
-            view.profileName.text = profileModel.formattedName
-            view.profileSubName.text = profileModel.formattedPosition
-        } else {
-            view.profileName.text = profileModel.organizationInfo?.organizationName
-            view.profileSubName.text = profileModel.organizationType
-        }
-    }
 
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -323,12 +280,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             val params = Bundle()
             params.putSerializable(EXTRA_ACCOUNT, account)
             params.putSerializable(EXTRA_ACCOUNT_ID, account.id)
-            return ProfileController(params)
-        }
-
-        fun newInstance(accountId: String): ProfileController {
-            val params = Bundle()
-            params.putString(EXTRA_ACCOUNT_ID, accountId)
             return ProfileController(params)
         }
     }

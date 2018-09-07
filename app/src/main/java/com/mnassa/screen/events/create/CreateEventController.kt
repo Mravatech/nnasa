@@ -112,19 +112,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 )
                 viewModel.publish(model)
             }
-            tvShareOptions.setOnClickListener {
-                if (groupIds.isNotEmpty()) return@setOnClickListener
-                val event = event
-                launchCoroutineUI {
-                    open(SharingOptionsController.newInstance(
-                            options = sharingOptions,
-                            listener = this@CreateEventController,
-                            accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
-                            restrictShareReduction = eventId != null,
-                            canBePromoted = viewModel.canPromoteEvents(),
-                            promotePrice = viewModel.getPromoteEventPrice()))
-                }
-            }
+            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -244,6 +232,23 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                     view.actvCity.setText(it.placeName.toString())
                 }
             }
+        }
+    }
+
+    private fun openShareOptionsScreen(view: View) {
+        if (groupIds.isNotEmpty()) return
+
+        launchCoroutineUI {
+            val event = event
+            val canBePromoted = viewModel.canPromoteEvents()
+            val promotePrice = viewModel.getPromoteEventPrice()
+            open(SharingOptionsController.newInstance(
+                    options = sharingOptions,
+                    listener = this@CreateEventController,
+                    accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
+                    restrictShareReduction = eventId != null,
+                    canBePromoted = canBePromoted,
+                    promotePrice = promotePrice))
         }
     }
 
@@ -472,7 +477,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             val args = Bundle()
             args.putString(EXTRA_EVENT_ID, event.id)
             args.putSerializable(EXTRA_EVENT, event)
-            args.putStringArrayList(EXTRA_GROUP_ID, event.groupIds.toCollection(ArrayList()))
+            args.putStringArrayList(EXTRA_GROUP_ID, event.groups.map { it.id }.toCollection(ArrayList()))
             return CreateEventController(args)
         }
 

@@ -1,11 +1,11 @@
 package com.mnassa.screen.group.details
 
 import android.os.Bundle
-import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
@@ -21,14 +21,17 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 class GroupDetailsViewModelImpl(private val groupId: String,
                                 private val groupsInteractor: GroupsInteractor,
                                 private val tagInteractor: TagInteractor,
-                                private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), GroupDetailsViewModel {
+                                private val userProfileInteractor: UserProfileInteractor,
+                                private val walletInteractor: WalletInteractor) : MnassaViewModelImpl(), GroupDetailsViewModel {
 
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
+    override val pointsChannel: BroadcastChannel<Long> = ConflatedBroadcastChannel()
     override val isMemberChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val membersChannel: BroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
     override val hasInviteChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
+    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val openScreenChannel: BroadcastChannel<GroupDetailsViewModel.ScreenToOpen> = ArrayBroadcastChannel(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,12 +57,16 @@ class GroupDetailsViewModelImpl(private val groupId: String,
         handleException {
             groupsInteractor.getHasInviteToGroupChannel(groupId).consumeTo(hasInviteChannel)
         }
+        handleException {
+            walletInteractor.getGroupBalance(groupId).consumeTo(pointsChannel)
+        }
     }
 
     override fun acceptInvite() {
         handleException {
             withProgressSuspend {
                 groupsInteractor.acceptInvite(groupId)
+                openScreenChannel.send(GroupDetailsViewModel.ScreenToOpen.GROUP_PROFILE)
             }
         }
     }
@@ -68,11 +75,10 @@ class GroupDetailsViewModelImpl(private val groupId: String,
         handleException {
             withProgressSuspend {
                 groupsInteractor.declineInvite(groupId)
+                closeScreenChannel.send(Unit)
             }
         }
     }
 
-    private suspend fun loadTags(tags: List<String>): List<TagModel> {
-        return tags.map { tag -> asyncWorker { handleExceptionsSuspend { tagInteractor.get(tag) } } }.mapNotNull { it.await() }
-    }
+    private suspend fun loadTags(tags: List<String>): List<TagModel> = handleExceptionsSuspend { tagInteractor.get(tags) } ?: emptyList()
 }

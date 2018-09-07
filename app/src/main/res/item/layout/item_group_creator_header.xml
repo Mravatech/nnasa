@@ -14,7 +14,7 @@
         android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginTop="@dimen/spacing_vertical"
         android:layout_toStartOf="@id/ivSearch"
-        android:text="@string/groups_all_my" />
+        app:textDictionary="@string/groups_all_my" />
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/ivSearch"
