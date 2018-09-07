@@ -107,6 +107,9 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                             ?: error("Account with id not found $accountId")
                     ProfileController.newInstance(account)
                 }
+                extras.getAndRemove(NOTIFICATION_TYPE) == INVITES_NUMBER_CHANGED -> {
+                    InviteController.newInstance()
+                }
                 else -> null
             }
         } catch (e: Exception) {
