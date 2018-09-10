@@ -51,7 +51,7 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
     override suspend fun getAddTagPrice(): ReceiveChannel<Long?> = tagRepository.getAddTagPrice()
 
     override suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long? {
-        return tagRepository.getRemoveTagPrice().consume { receive() }?.let { removedTagsCount * it }
+        return tagRepository.getRemoveTagPrice().receiveOrNull()?.let { removedTagsCount * it }
     }
 
     override suspend fun isInterestsMandatory(): Boolean = tagRepository.isInterestsMandatory()

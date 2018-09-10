@@ -161,7 +161,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
         while (allVisibleTags.isNotEmpty()) {
             removeLastChip()
         }
-        addTags(tags.distinctBy { it.name.toString() + it.id })
+        addTags(tags)
     }
 
     fun addTags(tags: List<TagModel>) {

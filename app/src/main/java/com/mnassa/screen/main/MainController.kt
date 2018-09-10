@@ -192,7 +192,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         }
 
         launchCoroutineUI {
-            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS, it) }
+            viewModel.unreadNotificationsCountChannel.consumeEach {
+                var counter = it
+                if (getViewSuspend().vpMain.currentItem == Pages.NOTIFICATIONS.ordinal) {
+                    counter = 0
+                }
+                setCounter(Pages.NOTIFICATIONS, counter)
+            }
         }
 
         launchCoroutineUI {
