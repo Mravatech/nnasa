@@ -37,18 +37,6 @@ import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import java.util.LinkedHashSet
 import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.distinct
-import kotlin.collections.distinctBy
-import kotlin.collections.filter
-import kotlin.collections.filterNot
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.collections.plus
-import kotlin.collections.plusAssign
-import kotlin.collections.toList
 
 /**
  * Created by IntelliJ IDEA.
@@ -148,6 +136,9 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
             listPopupWindow.show()
         }
     }
+
+    override fun getAlreadyAddedTags(): Set<TagModel> = allVisibleTags
+    override suspend fun getAllTags(): List<TagModel> = allAvailableTags.await()
 
     override fun onViewRemoved(key: Long) {
         allVisibleTags.firstOrNull { it.localId == key }?.also { allVisibleTags.remove(it) }
@@ -306,7 +297,7 @@ class ChipLayout : LinearLayout, ChipView.OnChipListener, ChipsAdapter.ChipListe
     }
 
     @Parcelize
-    private class ChipLayoutState(val tags: List<TagModel>, val allVisibleTags: List<TagModel>, val superState: Parcelable?): Parcelable
+    private class ChipLayoutState(val tags: List<TagModel>, val allVisibleTags: List<TagModel>, val superState: Parcelable?) : Parcelable
 
     companion object {
         private const val EDIT_TEXT_RESERVE = 1

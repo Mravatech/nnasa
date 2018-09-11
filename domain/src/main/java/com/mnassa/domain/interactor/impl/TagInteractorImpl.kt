@@ -30,10 +30,6 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
         return tagRepository.createCustomTagIds(tags)
     }
 
-    override suspend fun search(searchKeyword: String): List<TagModel> {
-        return tagRepository.search(searchKeyword)
-    }
-
     override suspend fun shouldShowAddTagsDialog(): Boolean {
         val intervalMillis = tagRepository.getAddTagsDialogInterval() ?: return false
         val lastShowingTime = tagRepository.getAddTagsDialogLastShowingTime()
