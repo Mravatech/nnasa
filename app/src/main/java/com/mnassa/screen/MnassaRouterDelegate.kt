@@ -11,6 +11,7 @@ import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.screen.splash.SplashController
 import com.mnassa.screen.termsandconditions.TermsAndConditionsController
@@ -72,7 +73,7 @@ class MnassaRouterDelegate : MnassaRouter {
     }
 
     private fun openInNewActivity(self: Controller, controller: Controller): Boolean {
-        return isInMainController(self)
+        return isInMainController(self) || controller is PhotoPagerController
     }
 
     private fun isInMainController(controller: Controller): Boolean {

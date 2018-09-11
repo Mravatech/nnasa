@@ -10,7 +10,6 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.clans.fab.FloatingActionButton
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.extensions.*
@@ -23,6 +22,7 @@ import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.profile.events.GroupEventsController
 import com.mnassa.screen.group.profile.posts.GroupPostsController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.offer.create.CreateOfferController
@@ -266,7 +266,7 @@ class GroupProfileController(args: Bundle) : MnassaControllerImpl<GroupProfileVi
             ivGroupAvatar.avatarRound(avatar)
             if (avatar != null && !avatar.isBlank()) {
                 ivGroupAvatar.setOnClickListener {
-                    PhotoPagerActivity.start(view.context, listOf(avatar), 0)
+                    open(PhotoPagerController.newInstance(listOf(avatar)))
                 }
             }
 

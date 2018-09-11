@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleRegistryOwner
+import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleOwner
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.core.events.CompositeEventListener
@@ -44,10 +44,10 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
 
 
     //Lifecycle
-    private val lifecycleRegistryOwner = ControllerLifecycleRegistryOwner(this)
+    private val lifecycleRegistryOwner = ControllerLifecycleOwner(this)
     private val lifecycleEmitter: EmitableCompositeEventListener<Lifecycle.Event> = SimpleCompositeEventListener()
     override val lifecycle: CompositeEventListener<Lifecycle.Event> = lifecycleEmitter
-    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistryOwner.lifecycle
+    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistryOwner.lifecycle as LifecycleRegistry
 
     //OnActivityResult
     private val onActivityResultEmitter: EmitableCompositeEventListener<OnActivityResultEvent> = SimpleCompositeEventListener()

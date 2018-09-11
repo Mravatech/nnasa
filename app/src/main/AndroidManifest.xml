@@ -49,9 +49,6 @@
             android:name=".activity.CropActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.PhotoPagerActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
         <!-- ==================================== SERVICE ==================================== -->
 
         <service

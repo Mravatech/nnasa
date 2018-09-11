@@ -115,6 +115,8 @@ import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
+import com.mnassa.screen.photopager.PhotoPagerViewModel
+import com.mnassa.screen.photopager.PhotoPagerViewModelImpl
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
@@ -277,6 +279,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
     bind<GroupEventsViewModel>() with factory { groupId: String -> GroupEventsViewModelImpl(groupId, instance(), instance()) }
     bind<GroupPostsViewModel>() with factory { groupId: String -> GroupPostsViewModelImpl(groupId, instance(), instance()) }
+    bind<PhotoPagerViewModel>() with provider { PhotoPagerViewModelImpl(instance(), instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {

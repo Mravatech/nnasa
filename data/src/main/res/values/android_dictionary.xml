@@ -274,7 +274,10 @@ Check it in http://MNASSA.com</string>
 
     <string name="_seconds_ago_INFO">%d seconds ago</string>
 
-
+    <string name="_save_to_gallery_INFO">Save to gallery</string>
+    <string name="_save_to_gallery_downloading_INFO">Downloading image</string>
+    <string name="_gallery_image_num_INFO">Image %d of %d</string>
+    <string name="_gallery_image_saved_INFO">Image will be saved in %s</string>
 
     <string name="_country_code_arabia_INFO">+966</string>
     <string name="_country_code_arabia_ENG">+966</string>

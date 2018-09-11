@@ -10,6 +10,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.extensions.goneIfEmpty
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.need.details.adapter.PostAttachmentsAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_info_post_details.view.*
@@ -53,7 +54,9 @@ class InfoDetailsController(args: Bundle) : MnassaControllerImpl<InfoDetailsView
                 pivImages.count = post.attachments.size
                 pivImages.selection = 0
 
-                vpImages.adapter = PostAttachmentsAdapter(post.attachments)
+                vpImages.adapter = PostAttachmentsAdapter(post.attachments) { images, index ->
+                    open(PhotoPagerController.newInstance(images, index))
+                }
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
                         pivImages.selection = position

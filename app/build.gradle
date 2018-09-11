@@ -186,6 +186,9 @@ dependencies {
     implementation deps.di.core
     implementation deps.di.android
 
+    implementation deps.archComponents.runtime
+    implementation deps.archComponents.common
+
     //other
     implementation deps.other.logger
 //    debugImplementation deps.other.leakDebug

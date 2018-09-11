@@ -13,7 +13,6 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.EventModel
@@ -30,6 +29,7 @@ import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsController
 import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details.view.*
 import kotlinx.android.synthetic.main.event_date.view.*
@@ -113,7 +113,7 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             val mainImage = event.pictures.firstOrNull()
             ivEventImage.image(mainImage)
             ivEventImage.setOnClickListener {
-                if (mainImage != null) PhotoPagerActivity.start(it.context, listOf(mainImage))
+                if (mainImage != null) open(PhotoPagerController.newInstance(listOf(mainImage)))
             }
 
             event.bindDate(llEventDateRoot)
