@@ -309,7 +309,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                         "${sharingOptions.format()} ($promotePrice)"
                     }
                     sharingOptions.privacyType is PostPrivacyType.PUBLIC -> {
-                        val connectionsCount = viewModel.getConnectionsCount() - 1 //minus ValueCenter
+                        val connectionsCount = viewModel.getConnectionsCount()
                         "${sharingOptions.format()} (${perPerson * connectionsCount})"
                     }
                     sharingOptions.privacyType is PostPrivacyType.PRIVATE -> {
