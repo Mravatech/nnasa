@@ -2,11 +2,11 @@ package com.mnassa.data.repository
 
 import android.arch.persistence.room.Room
 import android.content.Context
-import com.mnassa.core.converter.ConvertersContext
-import com.mnassa.core.converter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.convert
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.database.entity.PostRoomEntity
@@ -60,12 +60,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(userRepository.getAccountIdOrException())
                     .collection(DatabaseContract.TABLE_INFO_FEED)
-                    .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
+                    .toValueChannelWithChangesHandling<PostShortDbEntity, InfoPostModel>(
                             exceptionHandler = exceptionHandler,
                             mapper = {
-                                val post = converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
-                                post.isPinned = true
-                                post
+                                it.toFullModel()?.let {
+                                    converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
+                                }?.also { it.isPinned = true }
                             }
                     )
         }

@@ -160,7 +160,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
                     autoSuggest = input.autoSuggest ?: PostAutoSuggest.EMPTY,
                     repostAuthor = input.repostAuthor.parseObject<ShortAccountDbEntity>()?.let { convertAuthor(it, converter) },
                     //TODO: server side problem - offer without title
-                    title = input.title ?: "Title is not specified".also { Timber.e(FirebaseMappingException("offer post ${input.id}", RuntimeException("Title is NULL!"))) },
+                    title = input.title ?: "Title is not specified",
                     category = input.category,
                     subCategory = input.subcategory,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),

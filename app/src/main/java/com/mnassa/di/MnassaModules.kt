@@ -18,6 +18,7 @@ import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
+import com.mnassa.data.service.CustomLoginServiceImpl
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
@@ -25,6 +26,7 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
+import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.helper.*
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
@@ -349,11 +351,12 @@ private val repositoryModule = Kodein.Module {
 
 private val serviceModule = Kodein.Module {
     bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance(), instance()) }
+    bind<CustomLoginService>() with singleton { CustomLoginServiceImpl(instance(), instance(), instance()) }
 }
 
 private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl({ instance() }) }
-    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance()) }
+    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
@@ -396,6 +399,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseNotificationsApi>()
     bindRetrofitApi<FirebaseSettingsApi>()
     bindRetrofitApi<FirebaseGroupsApi>()
+    bindRetrofitApi<CustomAuthApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }
