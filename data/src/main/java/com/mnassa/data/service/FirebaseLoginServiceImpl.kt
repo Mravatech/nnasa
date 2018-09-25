@@ -36,7 +36,7 @@ class FirebaseLoginServiceImpl(
 
     override suspend fun checkPhone(phoneNumber: String, promoCode: String?): PhoneValidationResult {
         Timber.d("MNSA_LOGIN checkPhone $phoneNumber with promo $promoCode")
-        val useCustomAuth = authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleException(exceptionHandler).customAuth
+        val useCustomAuth = authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleException(exceptionHandler).data.customAuth
         return PhoneValidationResult(useCustomAuth = useCustomAuth)
     }
 
