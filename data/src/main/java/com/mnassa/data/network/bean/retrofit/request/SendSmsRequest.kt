@@ -6,7 +6,8 @@ import com.google.gson.annotations.SerializedName
  * Created by Peter on 9/25/2018.
  */
 data class SendSmsRequest(
-        @SerializedName("phone") val phone: String
+        @SerializedName("phone") val phone: String,
+        @SerializedName("test") val isTest: Boolean = false
 )
 
 data class CheckSmsRequest(

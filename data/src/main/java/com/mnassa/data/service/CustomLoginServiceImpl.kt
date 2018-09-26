@@ -8,6 +8,7 @@ import com.mnassa.data.network.bean.retrofit.request.SendSmsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.PhoneVerificationModel
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -19,12 +20,13 @@ import kotlinx.coroutines.experimental.channels.produce
 class CustomLoginServiceImpl(
         private val authApi: CustomAuthApi,
         private val exceptionHandler: ExceptionHandler,
-        private val firebaseLoginService: FirebaseLoginService
+        private val firebaseLoginService: FirebaseLoginService,
+        private val appInfoProvider: AppInfoProvider
 ) : CustomLoginService {
 
     override fun requestVerificationCode(phoneNumber: String): ReceiveChannel<PhoneVerificationModel> {
         return produce {
-            val authId = authApi.sendSms(SendSmsRequest(phone = phoneNumber)).handleException(exceptionHandler).data.id
+            val authId = authApi.sendSms(SendSmsRequest(phone = phoneNumber, isTest = appInfoProvider.isDebug)).handleException(exceptionHandler).data.id
             send(OnCodeSent(phoneNumber = phoneNumber, verificationId = authId, token = null))
         }
     }

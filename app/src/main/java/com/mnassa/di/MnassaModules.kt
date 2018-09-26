@@ -351,7 +351,7 @@ private val repositoryModule = Kodein.Module {
 
 private val serviceModule = Kodein.Module {
     bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance(), instance()) }
-    bind<CustomLoginService>() with singleton { CustomLoginServiceImpl(instance(), instance(), instance()) }
+    bind<CustomLoginService>() with singleton { CustomLoginServiceImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val interactorModule = Kodein.Module {
