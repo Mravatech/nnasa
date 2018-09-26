@@ -4,6 +4,7 @@ import android.content.Intent
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.activity.SecondActivity
+import com.mnassa.screen.chats.startchat.ChatConnectionsController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.login.entercode.EnterCodeController
@@ -60,6 +61,7 @@ class MnassaRouterDelegate : MnassaRouter {
             self is RegistrationController -> false
             self is SelectAccountController -> false
             self is GroupDetailsController && controller is GroupProfileController -> false
+            self is ChatConnectionsController -> false
 
             else -> true
         }
