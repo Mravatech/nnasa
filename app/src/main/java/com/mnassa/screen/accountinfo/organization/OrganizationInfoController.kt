@@ -33,7 +33,9 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
             etCompanyPhone.setHideMode(false)
             etCompanyPhone.setText(accountModel.contactPhone)
             etCompanyNameNotEditable.setText(accountModel.organizationInfo?.organizationName)
-            btnHeaderNext.setOnClickListener { launchCoroutineUI { processProfile(getViewSuspend()) } }
+            toolbar.withActionButton(fromDictionary(R.string.reg_info_next)) {
+                launchCoroutineUI { processProfile(getViewSuspend()) }
+            }
             tvSkipThisStep.setOnClickListener {
                 viewModel.skipThisStep()
             }
@@ -82,8 +84,6 @@ class OrganizationInfoController(data: Bundle) : BaseEditableProfileController<O
         with(view){
             tilCompanyPhone.hint = fromDictionary(R.string.reg_info_phone_number)
             tilCompanyNameNotEditable.hint = fromDictionary(R.string.reg_company_name)
-            tvHeader.text = fromDictionary(R.string.reg_company_title)
-            btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
             tilWebSite.hint = fromDictionary(R.string.reg_company_website)
             tilCompanyEmail.hint = fromDictionary(R.string.reg_info_email)
             tilFoundation.hint = fromDictionary(R.string.reg_company_founded)

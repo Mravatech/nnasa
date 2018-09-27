@@ -31,9 +31,7 @@ class PhotoPagerController(args: Bundle) : MnassaControllerImpl<PhotoPagerViewMo
         }
 
         pager.adapter = PhotoPagerAdapter(images, this)
-        pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) = Unit
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
+        pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) = onPageChanged()
         })
 

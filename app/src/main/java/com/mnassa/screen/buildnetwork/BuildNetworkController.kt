@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import org.kodein.di.generic.instance
 import com.mnassa.R
@@ -12,11 +11,9 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.openApplicationSettings
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.main.MainController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_build_network.view.*
-import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 
@@ -33,12 +30,11 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
         super.onViewCreated(view)
 
         with(view) {
-            pbRegistration.progress = RegistrationFlowProgress.BUILD_NETWORK
 
-            tvScreenHeader.text = fromDictionary(R.string.invite_title)
-            btnScreenHeaderAction.text = fromDictionary(R.string.invite_title_action)
-            btnScreenHeaderAction.visibility = View.VISIBLE
-            btnScreenHeaderAction.isEnabled = adapter.selectedAccounts.isNotEmpty()
+            toolbar.withActionButton(fromDictionary(R.string.invite_title_action)) {
+                viewModel.inviteUsers(adapter.selectedAccounts.toList())
+            }
+            toolbar.actionButtonClickable = adapter.selectedAccounts.isNotEmpty()
 
             tvInviteUsersToBuildNetwork.text = formatSubTitle()
 
@@ -46,7 +42,7 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
 
             adapter.onSelectedAccountsChangedListener = { selectedAccounts ->
                 tvInviteUsersToBuildNetwork.text = formatSubTitle()
-                btnScreenHeaderAction.isEnabled = selectedAccounts.isNotEmpty()
+                toolbar.actionButtonClickable = selectedAccounts.isNotEmpty()
             }
 
             btnSkipStep.text = fromDictionary(R.string.invite_skip_step)
@@ -54,10 +50,6 @@ class BuildNetworkController(args: Bundle) : MnassaControllerImpl<BuildNetworkVi
                 dialogHelper.showWelcomeDialog(it.context) {
                     open(MainController.newInstance())
                 }
-            }
-
-            btnScreenHeaderAction.setOnClickListener {
-                viewModel.inviteUsers(adapter.selectedAccounts.toList())
             }
         }
 

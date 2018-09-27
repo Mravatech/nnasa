@@ -3,6 +3,7 @@ package com.mnassa.screen.events.details
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
+import android.support.v4.view.ViewPager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
@@ -88,6 +89,9 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         with(view) {
             tlEventTabs.setupWithViewPager(vpEvents)
             vpEvents.adapter = adapter
+            vpEvents.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+                override fun onPageSelected(position: Int) { hideKeyboard() }
+            })
             toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
             appBarLayout.addOnOffsetChangedListener(offsetChangedListener)
         }
