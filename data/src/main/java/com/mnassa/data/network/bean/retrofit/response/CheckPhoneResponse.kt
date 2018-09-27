@@ -10,5 +10,5 @@ data class CheckPhoneResponse(
 ) : MnassaResponse()
 
 data class CheckPhoneResponseData(
-        @SerializedName("customAuth") val customAuth: Boolean = false
+        @SerializedName("customAuth") val customAuth: Boolean? = false
 )
