@@ -19,12 +19,12 @@ sealed class PhonePrefix : Serializable {
     abstract val normalizedCode: String
     abstract val visibleCode: String
 
-    object SaudiArabia : PhonePrefix() { //+966  +٦٦٩
+    object SaudiArabia : PhonePrefix() { //+966  +٩٦٦
         override val normalizedCode: String = "966"
         override val visibleCode: String get() = fromDictionary(R.string.country_code_arabia)
     }
 
-    object Ukraine : PhonePrefix() { //+380   +٠٨٣
+    object Ukraine : PhonePrefix() { //+380   +٣٨٠
         override val normalizedCode: String = "380"
         override val visibleCode: String get() = fromDictionary(R.string.country_code_ukraine)
     }

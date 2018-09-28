@@ -10,18 +10,20 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/spacing_vertical">
 
-        <include
-            android:id="@+id/header"
-            layout="@layout/header_login"
+        <com.mnassa.widget.MnassaToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:back_button_enabled="false"
+            app:toolbar_title="@string/invite_title"/>
 
         <TextView
             android:id="@+id/tvInviteUsersToBuildNetwork"
             style="@style/MnassaText"
-            android:layout_below="@id/header"
+            android:layout_below="@id/toolbar"
             android:layout_marginEnd="@dimen/padding_horizontal"
             android:layout_marginStart="@dimen/padding_horizontal"
+            android:layout_marginTop="@dimen/padding_horizontal"
             tools:text="Invite users to build your Network (0)" />
 
         <android.support.v7.widget.RecyclerView

@@ -50,20 +50,6 @@ class TagRepositoryImpl(
         else getAllAndUpdateCache()
     }
 
-    override suspend fun search(searchKeyword: String): List<TagModel> {
-        return withContext(DefaultDispatcher) {
-            val tags = databaseReference.child(DatabaseContract.TABLE_TAGS)
-                    .apply { keepSynced(true) }
-                    .awaitList<TagDbEntity>(exceptionHandler)
-            filter(searchKeyword, converter.convertCollection(tags, TagModel::class.java))
-        }
-    }
-
-    private suspend fun filter(search: String, list: List<TagModel>) = withContext(DefaultDispatcher) {
-        val search = search.toLowerCase()
-        list.filter { it.name.toString().toLowerCase().contains(search) }
-    }
-
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
         return firebaseTagsApi.createCustomTagIds(CustomTagsRequest(tags))
                 .handleException(exceptionHandler).data.tags

@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.EventLocationType
 import com.mnassa.domain.model.EventModel
@@ -24,6 +23,7 @@ import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.CommentsWrapperController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
@@ -87,7 +87,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
                 pivImages.selection = 0
 
                 vpImages.adapter = PhotoPagerAdapter(pictures) {
-                    PhotoPagerActivity.start(context, pictures, pictures.indexOf(it))
+                    open(PhotoPagerController.newInstance(pictures, pictures.indexOf(it)))
                 }
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {

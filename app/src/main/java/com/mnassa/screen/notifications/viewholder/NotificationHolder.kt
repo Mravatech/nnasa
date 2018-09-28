@@ -76,7 +76,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             }
             I_WAS_RECOMMENDED_IN_EVENT -> {
                 val recommended = fromDictionary(fromDictionary(R.string.notification_recommend_you_in_event), fromDictionary(R.string.notification_recommended_you_in_event))
-                val eventText = item.extra.event?.text ?: ""
+                val eventText = item.extra.event?.title ?: ""
                 val text = "$recommended $eventText"
                 itemView.tvNotificationInfo.text = getOneSpanText(text, eventText, Color.BLACK)
             }
@@ -99,7 +99,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             }
             NEW_EVENT_BY_ADMIN -> {
                 val invited = fromDictionary(fromDictionary(R.string.notification_invite_to_event), fromDictionary(R.string.notification_invited_you_to))
-                val eventText = item.extra.event?.text ?: ""
+                val eventText = item.extra.event?.title ?: ""
                 val text = "$invited $eventText"
                 itemView.tvNotificationInfo.text = getOneSpanText(text, eventText, Color.BLACK)
             }
@@ -139,7 +139,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
                 val thinks = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you_in_event), fromDictionary(R.string.notification_thinks))
                 val canHelpYouWith = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you_in_event2), fromDictionary(R.string.notification_can_help_you_with))
                 val name = item.extra.event?.author?.formattedName ?: ""
-                val event = item.extra.event?.text ?: ""
+                val event = item.extra.event?.title ?: ""
                 val text = "$thinks $name $canHelpYouWith $event"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, name, event, Color.BLACK)
             }

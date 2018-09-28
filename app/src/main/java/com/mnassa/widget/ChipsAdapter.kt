@@ -1,17 +1,20 @@
 package com.mnassa.widget
 
 import android.content.Context
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import com.mnassa.core.addons.launchUI
-import com.mnassa.di.getInstance
-import com.mnassa.domain.interactor.TagInteractor
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.model.TagModel
+import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.yield
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 class ChipsAdapter(
         context: Context,
@@ -21,51 +24,73 @@ class ChipsAdapter(
         android.R.id.text1) {
 
     private var resultList: List<TagModel> = mutableListOf()
+    private var lastSearchText = ""
 
     override fun getCount() = resultList.size
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val row = super.getView(position, convertView, parent)
         val item = getItem(position)
-        row.findViewById<TextView>(android.R.id.text1).text = item.name.toString()
+        row.findViewById<TextView>(android.R.id.text1).text = formatText(item, lastSearchText)
         row.setOnClickListener { chipListener.onChipClick(item) }
         return row
     }
 
     override fun getItem(position: Int) = resultList[position]
 
-    private var searchJob: Job? = null
-    fun search(text: String) {
-        searchJob?.cancel()
+    private fun formatText(tagModel: TagModel, textToUnderline: String): CharSequence {
+        val span = SpannableString(tagModel.name.toString())
 
-        val query = text.toLowerCase()
-        val newList = resultList.filter { it.name.toString().toLowerCase().contains(query) }
-        chipListener.onSearchResult(text, newList)
-        if (newList.isEmpty()) {
-            //hide view
-        } else if (newList.size != resultList.size) {
-            resultList = newList
-            notifyDataSetChanged()
-            if (newList.isNotEmpty()) return
+        var startIndex = 0
+        while (true) {
+            startIndex = span.indexOf(textToUnderline, startIndex, true).takeIf { it >= 0 } ?: break
+            span.setSpan(StyleSpan(Typeface.BOLD), startIndex, startIndex + textToUnderline.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            startIndex += textToUnderline.length
         }
 
-        searchJob = launchUI {
-            delay(USER_STOP_TYPING)
-            resultList = searchTags(text)
-            yield()
-            notifyDataSetChanged()
-            chipListener.onSearchResult(text, resultList)
+        return span
+    }
+
+    private var searchJob: Job? = null
+    private val searchMutex = Mutex()
+    fun search(text: String) {
+        lastSearchText = text
+        searchJob?.cancel()
+
+        searchJob = launchWorker(CoroutineStart.UNDISPATCHED) {
+            searchMutex.withLock {
+                setResult(text, chipListener.getAllTags().filterLowercase(text))
+            }
         }
     }
 
-    private suspend fun searchTags(text: String): List<TagModel> = context.getInstance<TagInteractor>().search(text)
+    private fun List<TagModel>.filterLowercase(text: String): List<TagModel> {
+        if (text.isNullOrBlank()) return emptyList()
+        val text = text.toLowerCase()
+        return filter { it.name.toString().toLowerCase().contains(text) }
+    }
+
+    private fun setResult(text: String, result: List<TagModel>) {
+        //exclude already added tags
+        val alreadyAddedTags = chipListener.getAlreadyAddedTags()
+        val result = result.filterNot { tagToAdd ->
+            val tagToAddText = tagToAdd.name.toString().toLowerCase()
+            alreadyAddedTags.any { addedTag ->
+                (tagToAdd.id == addedTag.id && tagToAdd.id != null) ||
+                        (tagToAddText == addedTag.name.toString().toLowerCase())
+            }
+        }
+
+        resultList = result
+        notifyDataSetChanged()
+        chipListener.onSearchResult(text, result)
+    }
 
     interface ChipListener {
         fun onChipClick(tagModel: TagModel)
         fun onSearchResult(text: String, tags: List<TagModel>)
+        fun getAlreadyAddedTags(): Set<TagModel>
+        suspend fun getAllTags(): List<TagModel>
     }
 
-    companion object {
-        private const val USER_STOP_TYPING = 400
-    }
 }

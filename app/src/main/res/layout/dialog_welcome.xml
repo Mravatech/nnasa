@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@color/background_highlighted"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_vertical"
     android:paddingTop="@dimen/padding_vertical">
 
     <android.support.v7.widget.AppCompatImageView

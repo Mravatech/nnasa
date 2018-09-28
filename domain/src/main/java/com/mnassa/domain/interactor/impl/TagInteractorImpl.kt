@@ -30,10 +30,6 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
         return tagRepository.createCustomTagIds(tags)
     }
 
-    override suspend fun search(searchKeyword: String): List<TagModel> {
-        return tagRepository.search(searchKeyword)
-    }
-
     override suspend fun shouldShowAddTagsDialog(): Boolean {
         val intervalMillis = tagRepository.getAddTagsDialogInterval() ?: return false
         val lastShowingTime = tagRepository.getAddTagsDialogLastShowingTime()
@@ -51,7 +47,7 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
     override suspend fun getAddTagPrice(): ReceiveChannel<Long?> = tagRepository.getAddTagPrice()
 
     override suspend fun calculateRemoveTagPrice(removedTagsCount: Int): Long? {
-        return tagRepository.getRemoveTagPrice().consume { receive() }?.let { removedTagsCount * it }
+        return tagRepository.getRemoveTagPrice().receiveOrNull()?.let { removedTagsCount * it }
     }
 
     override suspend fun isInterestsMandatory(): Boolean = tagRepository.isInterestsMandatory()

@@ -13,7 +13,6 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.needAttach
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.await
@@ -26,6 +25,7 @@ import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.rewarding.RewardingController
 import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.need.create.AttachedImage
 import com.mnassa.screen.posts.need.details.adapter.PostCommentsRVAdapter
@@ -98,13 +98,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onRecommendedAccountClick = { _, profile -> openAccount(profile) }
         commentsAdapter.onCommentAuthorClick = ::openAccount
         commentsAdapter.onImageClickListener = { comment, position ->
-            view?.context?.let { context ->
-                PhotoPagerActivity.start(
-                        context = context,
-                        images = comment.images,
-                        selectedItem = position
-                )
-            }
+            open(PhotoPagerController.newInstance(comment.images, position))
         }
 
         accountsToRecommendAdapter.onDataChangedListener = { itemsCount ->

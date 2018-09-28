@@ -30,7 +30,7 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         with(view) {
-            toolbar.withActionButton(fromDictionary(R.string.rewarding_send), {
+            toolbar.withActionButton(fromDictionary(R.string.rewarding_send)) {
                 val points = etAmount.text.toString()
                 resultListener.onApplyReward(RewardModelImpl(
                         recipientId = accountModel.id,
@@ -39,7 +39,7 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
                         userDescription = etComment.text.toString().takeIf { it.isNotBlank() }
                 ))
                 close()
-            })
+            }
             toolbar.title = fromDictionary(R.string.rewarding_title)
             etRecipient.setText(accountModel.formattedName)
             etComment.hint = fromDictionary(R.string.rewarding_you_can_add_comment)

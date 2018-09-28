@@ -25,6 +25,7 @@ import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.other.AppInfoProvider
+import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.chats.ChatListController
@@ -166,6 +167,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
             )
 
             bnMain.setOnTabSelectedListener { position, _ ->
+                hideKeyboard()
                 vpMain.setCurrentItem(position, false)
                 Pages.values().forEach { page ->
                     val index = page.ordinal
@@ -192,7 +194,13 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
         }
 
         launchCoroutineUI {
-            viewModel.unreadNotificationsCountChannel.consumeEach { setCounter(Pages.NOTIFICATIONS, it) }
+            viewModel.unreadNotificationsCountChannel.consumeEach {
+                var counter = it
+                if (getViewSuspend().vpMain.currentItem == Pages.NOTIFICATIONS.ordinal) {
+                    counter = 0
+                }
+                setCounter(Pages.NOTIFICATIONS, counter)
+            }
         }
 
         launchCoroutineUI {

@@ -20,7 +20,7 @@ android {
 
         def versionMajor = 4
         def versionMinor = 0
-        def versionPatch = 8
+        def versionPatch = 9
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         versionCode (versionMajor * 100 + versionMinor * 10 + versionPatch)
 
@@ -185,6 +185,9 @@ dependencies {
     //dependency injection
     implementation deps.di.core
     implementation deps.di.android
+
+    implementation deps.archComponents.runtime
+    implementation deps.archComponents.common
 
     //other
     implementation deps.other.logger

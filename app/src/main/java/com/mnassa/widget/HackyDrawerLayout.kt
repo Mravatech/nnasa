@@ -28,9 +28,7 @@ class HackyDrawerLayout : FrameLayout {
         return try {
             super.onInterceptTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
             false
         }
-
     }
 }

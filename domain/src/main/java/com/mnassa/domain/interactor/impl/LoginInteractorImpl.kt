@@ -10,6 +10,7 @@ import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.UserStatusModel
 import com.mnassa.domain.repository.UserRepository
+import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
@@ -24,7 +25,10 @@ import timber.log.Timber
  */
 class LoginInteractorImpl(private val userRepository: UserRepository,
                           private val userProfileInteractor: UserProfileInteractor,
-                          private val loginService: FirebaseLoginService) : LoginInteractor {
+                          private val loginService: FirebaseLoginService,
+                          private val customLoginService: CustomLoginService) : LoginInteractor {
+
+    private var useCustomAuth = false
 
     override val onLogoutListener: SimpleCompositeEventListener<LogoutReason> = SimpleCompositeEventListener()
 
@@ -36,8 +40,10 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
             promoCode: String?
     ): ReceiveChannel<PhoneVerificationModel> {
 
-        loginService.checkPhone(phoneNumber, promoCode)
-        return loginService.requestVerificationCode("+$phoneNumber", previousResponse)
+        useCustomAuth = loginService.checkPhone(phoneNumber, promoCode).useCustomAuth
+        return if (useCustomAuth) {
+            customLoginService.requestVerificationCode(phoneNumber)
+        } else loginService.requestVerificationCode("+$phoneNumber", previousResponse)
     }
 
     override suspend fun processLoginByEmail(email: String, password: String): PhoneVerificationModel {
@@ -45,13 +51,21 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
     }
 
     override suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String?): List<ShortAccountModel> {
-        loginService.signIn(verificationSMSCode, response)
+        if (useCustomAuth) {
+            customLoginService.signIn(verificationSMSCode ?: "invalid code", response)
+        } else {
+            loginService.signIn(verificationSMSCode, response)
+        }
         return userRepository.getAccounts()
     }
 
     override suspend fun signOut(reason: LogoutReason) {
         val wasLoggedIn = isLoggedIn()
-        loginService.signOut()
+        if (useCustomAuth) {
+            customLoginService.signOut()
+        } else {
+            loginService.signOut()
+        }
         userRepository.setCurrentAccount(null)
 
         if (wasLoggedIn) {

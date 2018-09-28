@@ -5,7 +5,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
@@ -16,6 +15,7 @@ import com.mnassa.screen.complaintother.ComplaintOtherController
 import com.mnassa.screen.connections.allconnections.AllConnectionsController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.select.SelectGroupController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
@@ -167,7 +167,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             ivAvatar.avatarSquare(profile.avatar)
             ivAvatar.setOnClickListener {
                 profile.avatar?.let { avatar ->
-                    PhotoPagerActivity.start(it.context, listOf(avatar))
+                    open(PhotoPagerController.newInstance(listOf(avatar)))
                 }
             }
             collapsingToolbarLayout.title = profile.formattedName

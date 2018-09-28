@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
 import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ChatRoomModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -26,7 +24,7 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnectionsController.ChatConnectionsResult, OnPageSelected, OnScrollToTop {
+class ChatListController : MnassaControllerImpl<ChatListViewModel>(), OnPageSelected, OnScrollToTop {
 
     override val layoutId: Int = R.layout.controller_chat_list
     override val viewModel: ChatListViewModel by instance()
@@ -55,7 +53,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
         super.onViewCreated(view)
         with(view) {
             fabAddChat.setOnClickListener {
-                router.pushController(RouterTransaction.with(ChatConnectionsController.newInstance(this@ChatListController)))
+                open(ChatConnectionsController.newInstance())
             }
             rvMessages.layoutManager = LinearLayoutManager(view.context)
             rvMessages.addItemDecoration(ChatRoomItemDecoration(ContextCompat.getDrawable(view.context, R.drawable.chat_decorator)!!))
@@ -94,10 +92,6 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), ChatConnec
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         adapter.saveState(outState)
-    }
-
-    override fun onChatChosen(accountModel: ShortAccountModel) {
-        open(ChatMessageController.newInstance(accountModel))
     }
 
     companion object {
