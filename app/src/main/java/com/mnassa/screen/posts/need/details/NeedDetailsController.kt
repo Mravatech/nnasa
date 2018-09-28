@@ -16,6 +16,7 @@ import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.comments.CommentsWrapperListener
 import com.mnassa.screen.complaintother.ComplaintOtherController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_AUTHOR_ID
 import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_ID
 import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_MODEL
@@ -148,7 +149,9 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 pivImages.count = post.attachments.size
                 pivImages.selection = 0
 
-                vpImages.adapter = PostAttachmentsAdapter(post.attachments)
+                vpImages.adapter = PostAttachmentsAdapter(post.attachments) { images, index ->
+                    open(PhotoPagerController.newInstance(images, index))
+                }
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
                         pivImages.selection = position

@@ -13,9 +13,9 @@ import com.mnassa.data.network.api.FirebaseAuthApi
 import com.mnassa.data.network.bean.retrofit.request.CheckPhoneRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
+import com.mnassa.domain.model.PhoneValidationResult
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -32,11 +32,12 @@ class FirebaseLoginServiceImpl(
         private val exceptionHandler: ExceptionHandler,
         private val context: Context) : FirebaseLoginService {
 
-    private val VERIFY_PHONE_NUMBER_TIMEOUT_SEC by lazy { context.resources.getInteger(com.mnassa.data.R.integer.validation_code_resend_delay_seconds).toLong() }
+    private val verifyPhoneNumberTimeoutSec by lazy { context.resources.getInteger(com.mnassa.data.R.integer.validation_code_resend_delay_seconds).toLong() }
 
-    override suspend fun checkPhone(phoneNumber: String, promoCode: String?) {
+    override suspend fun checkPhone(phoneNumber: String, promoCode: String?): PhoneValidationResult {
         Timber.d("MNSA_LOGIN checkPhone $phoneNumber with promo $promoCode")
-        authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleException(exceptionHandler)
+        val useCustomAuth = authApi.checkPhone(CheckPhoneRequest(phoneNumber, promoCode)).handleException(exceptionHandler).data?.customAuth ?: false
+        return PhoneValidationResult(useCustomAuth = useCustomAuth)
     }
 
     override fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
@@ -75,7 +76,7 @@ class FirebaseLoginServiceImpl(
         Timber.d("MNSA_LOGIN requestVerificationCode -> opening channel for $phoneNumber")
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,
-                VERIFY_PHONE_NUMBER_TIMEOUT_SEC,
+                verifyPhoneNumberTimeoutSec,
                 TimeUnit.SECONDS,
                 { it.run() },
                 callback,
@@ -110,22 +111,4 @@ class FirebaseLoginServiceImpl(
         FirebaseAuth.getInstance().signOut()
         withContext(DefaultDispatcher) { FirebaseInstanceId.getInstance().deleteInstanceId() }
     }
-
-    @Parcelize
-    private class OnVerificationCompleted(
-            override val phoneNumber: String,
-            override val isVerified: Boolean = true) : PhoneVerificationModel
-
-    @Parcelize
-    private class OnCodeSent(
-            override val phoneNumber: String,
-            val verificationId: String,
-            val token: PhoneAuthProvider.ForceResendingToken?,
-            override val isVerified: Boolean = false) : PhoneVerificationModel
-
-    @Parcelize
-    private class EmailAuth(
-            override val phoneNumber: String = "",
-            override val isVerified: Boolean = true
-    ) : PhoneVerificationModel
 }

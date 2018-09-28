@@ -8,7 +8,6 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ProfileAccountModel
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.PATTERN_PHONE
 import com.mnassa.extensions.avatarSquare
 import com.mnassa.screen.buildnetwork.BuildNetworkController
@@ -36,7 +35,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             tvSkipThisStep.setOnClickListener { viewModel.skipThisStep() }
             setCalendarEditText(etDateOfBirthday)
             addPhoto(fabInfoAddPhoto)
-            btnHeaderNext.setOnClickListener { launchCoroutineUI { processProfile(getViewSuspend())  }}
+            toolbar.withActionButton(fromDictionary(R.string.reg_info_next)) { launchCoroutineUI { processProfile(getViewSuspend()) } }
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -87,8 +86,6 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             rInfoBtnFemale.text = fromDictionary(R.string.reg_person_info_female_gender)
             tilYourEmail.hint = fromDictionary(R.string.reg_info_email)
             tvSkipThisStep.text = fromDictionary(R.string.reg_info_skip)
-            tvHeader.text = fromDictionary(R.string.reg_personal_info_title)
-            btnHeaderNext.text = fromDictionary(R.string.reg_info_next)
         }
     }
 

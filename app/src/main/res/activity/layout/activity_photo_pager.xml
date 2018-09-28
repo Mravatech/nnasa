@@ -10,26 +10,15 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:background="#fff"/>
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        style="@style/MnassaShadow"
-        android:rotation="180"
-        android:layout_alignParentBottom="true"/>
+        tools:background="#fff" />
 
-    <com.rd.PageIndicatorView
-        android:id="@+id/pivImages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="@dimen/spacing_vertical"
-        app:piv_animationType="worm"
-        app:piv_dynamicCount="true"
-        app:piv_interactiveAnimation="true"
-        app:piv_radius="4dp" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#22000000"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ToolbarColoredBackArrow"
+        app:titleTextColor="@color/white" />
 
 </RelativeLayout>

@@ -10,14 +10,14 @@ deps.data = project(':data')
 deps.domain = project(':domain')
 
 //============================================== BUILD =============================================
-versions.androidGradlePluginVersion = '3.1.4'
+versions.androidGradlePluginVersion = '3.2.0'
 deps.androidGradlePlugin = "com.android.tools.build:gradle:$versions.androidGradlePluginVersion"
 
 def build_versions = [:]
 build_versions.min_sdk = 19
 build_versions.target_sdk = 27
 build_versions.compile_sdk = 27
-build_versions.build_tools = "27.0.3"
+build_versions.build_tools = "28.0.2"
 ext.build_versions = build_versions
 
 //=============================================== SUPPORT ==========================================
@@ -47,6 +47,9 @@ archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions
 archComponents.roomRuntime = "android.arch.persistence.room:runtime:$versions.room_version"
 archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions.room_version"
 
+archComponents.runtime = "android.arch.core:runtime:$versions.archComponents"
+archComponents.common = "android.arch.core:common:$versions.archComponents"
+
 deps.archComponents = archComponents
 
 //============================================= PLAY SERVICES ======================================
@@ -66,7 +69,7 @@ playServices.playServicesGradlePlugin = "com.google.gms:google-services:$version
 deps.playServices = playServices
 
 //========================================== Crashlytics ===========================================
-versions.fabricVersion = "1.+"
+versions.fabricVersion = "1.25.4"
 
 def fabric = [:]
 fabric.fabricPlugin = "io.fabric.tools:gradle:${versions.fabricVersion}"
@@ -104,11 +107,11 @@ deps.coroutines = coroutines
 
 //============================================= CONDUCTOR ==========================================
 
-versions.conductor = '2.1.4'
+versions.conductor = '2.1.5'
 def conductor = [:]
 
 conductor.core =        "com.bluelinelabs:conductor:$versions.conductor"
-conductor.lifecycle =   'com.bluelinelabs:conductor-archlifecycle:0.1.1'
+conductor.lifecycle =   "com.bluelinelabs:conductor-archlifecycle:$versions.conductor"
 conductor.support =     "com.bluelinelabs:conductor-support:$versions.conductor"
 
 deps.conductor = conductor
@@ -223,6 +226,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.maven { url "https://maven.fabric.io/public" }
     handler.maven { url "https://plugins.gradle.org/m2/" }
     handler.maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI/' }
+    handler.maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 ext.addRepos = this.&addRepos
 

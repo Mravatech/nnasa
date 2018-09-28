@@ -9,6 +9,7 @@
         android:layout_height="68dp"
         android:background="@color/background_highlighted"
         android:gravity="center_vertical"
+        android:layoutDirection="ltr"
         android:orientation="horizontal"
         android:paddingBottom="4dp"
         android:paddingEnd="@dimen/padding_horizontal"
@@ -21,8 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="?selectableItemBackground"
-            tools:listitem="@layout/item_country_code_drop_down"
-            android:spinnerMode="dialog" />
+            android:spinnerMode="dialog"
+            tools:listitem="@layout/item_country_code_drop_down" />
 
         <View
             android:layout_width="@dimen/divider_width"

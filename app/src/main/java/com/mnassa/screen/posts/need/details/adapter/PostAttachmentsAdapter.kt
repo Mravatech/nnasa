@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.activity.VideoViewActivity
 import com.mnassa.core.addons.launchUI
 import com.mnassa.data.extensions.await
@@ -20,7 +19,7 @@ import timber.log.Timber
 /**
  * Created by Peter on 4/30/2018.
  */
-class PostAttachmentsAdapter(private val attachments: List<PostAttachment>) : PagerAdapter() {
+class PostAttachmentsAdapter(private val attachments: List<PostAttachment>, private val onImageClick: (images: List<String>, index: Int) -> Unit) : PagerAdapter() {
     override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -43,7 +42,7 @@ class PostAttachmentsAdapter(private val attachments: List<PostAttachment>) : Pa
             val allImages = attachments.filterIsInstance<PostAttachment.PostPhotoAttachment>()
             val imageIndex = allImages.indexOf(image)
             if (imageIndex >= 0) {
-                PhotoPagerActivity.start(container.context, allImages.map { it.photoUrl }, imageIndex)
+                onImageClick(allImages.map { it.photoUrl }, imageIndex)
             }
         }
         return view

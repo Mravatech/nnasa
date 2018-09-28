@@ -18,6 +18,7 @@ import com.mnassa.data.network.RetrofitConfig
 import com.mnassa.data.network.api.*
 import com.mnassa.data.network.exception.handler.*
 import com.mnassa.data.repository.*
+import com.mnassa.data.service.CustomLoginServiceImpl
 import com.mnassa.data.service.FirebaseLoginServiceImpl
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.interactor.impl.*
@@ -25,6 +26,7 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.*
+import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
 import com.mnassa.helper.*
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoViewModel
@@ -115,6 +117,8 @@ import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
+import com.mnassa.screen.photopager.PhotoPagerViewModel
+import com.mnassa.screen.photopager.PhotoPagerViewModelImpl
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsViewModel
 import com.mnassa.screen.posts.PostsViewModelImpl
@@ -277,6 +281,7 @@ private val viewModelsModule = Kodein.Module {
     bind<SelectGroupViewModel>() with factory { args: SelectGroupViewModel.Params -> SelectGroupViewModelImpl(args, instance()) }
     bind<GroupEventsViewModel>() with factory { groupId: String -> GroupEventsViewModelImpl(groupId, instance(), instance()) }
     bind<GroupPostsViewModel>() with factory { groupId: String -> GroupPostsViewModelImpl(groupId, instance(), instance()) }
+    bind<PhotoPagerViewModel>() with provider { PhotoPagerViewModelImpl(instance(), instance(), instance()) }
 }
 
 private val convertersModule = Kodein.Module {
@@ -346,11 +351,12 @@ private val repositoryModule = Kodein.Module {
 
 private val serviceModule = Kodein.Module {
     bind<FirebaseLoginService>() with singleton { FirebaseLoginServiceImpl(instance(), instance(), instance()) }
+    bind<CustomLoginService>() with singleton { CustomLoginServiceImpl(instance(), instance(), instance(), instance()) }
 }
 
 private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl({ instance() }) }
-    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance()) }
+    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
@@ -393,6 +399,7 @@ private val networkModule = Kodein.Module {
     bindRetrofitApi<FirebaseNotificationsApi>()
     bindRetrofitApi<FirebaseSettingsApi>()
     bindRetrofitApi<FirebaseGroupsApi>()
+    bindRetrofitApi<CustomAuthApi>()
 
     //exception handlers
     bind<NetworkExceptionHandler>() with singleton { NetworkExceptionHandlerImpl(instance(), instance()) }

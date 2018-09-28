@@ -12,6 +12,7 @@ import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.formattedText
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.helper.DialogHelper
@@ -69,7 +70,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         }
         postModel?.let {
             view.rlReplyMessageContainer.visibility = View.VISIBLE
-            view.tvReplyMessageText.text = it.text
+            view.tvReplyMessageText.text = it.formattedText
             replyPostModel = postModel
         }
         adapter.accountId = viewModel.currentUserAccountId
@@ -81,8 +82,9 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                 open(postDetailsFactory.newInstance(post))
             } else {
                 val position = adapter.dataStorage.indexOf(chatMessageModel)
-                if (position >= 0)
+                if (position >= 0) {
                     view.rvMessages.scrollToPosition(position + 1)
+                }
             }
         }
     }

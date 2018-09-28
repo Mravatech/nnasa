@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
-import com.mnassa.activity.PhotoPagerActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -18,6 +17,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.invite.GroupInviteConnectionsController
 import com.mnassa.screen.group.members.GroupMembersController
 import com.mnassa.screen.group.profile.GroupProfileController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.screen.wallet.WalletController
@@ -104,7 +104,7 @@ class GroupDetailsController(args: Bundle) : MnassaControllerImpl<GroupDetailsVi
             ivGroupAvatar.avatarSquare(avatar)
             if (avatar != null && !avatar.isBlank()) {
                 ivGroupAvatar.setOnClickListener {
-                    PhotoPagerActivity.start(view.context, listOf(avatar), 0)
+                    open(PhotoPagerController.newInstance(listOf(avatar)))
                 }
             }
 

@@ -31,6 +31,7 @@ class PinView : LinearLayout {
 
     init {
         orientation = HORIZONTAL
+        layoutDirection = LinearLayout.LAYOUT_DIRECTION_LTR
         digitsCount = resources.getInteger(R.integer.validation_code_length)
 
         val inflater = LayoutInflater.from(context)

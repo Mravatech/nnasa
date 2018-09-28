@@ -4,6 +4,7 @@ import android.content.Intent
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.activity.SecondActivity
+import com.mnassa.screen.chats.startchat.ChatConnectionsController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.login.entercode.EnterCodeController
@@ -11,6 +12,7 @@ import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.screen.login.enterpromo.EnterPromoController
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
+import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.registration.RegistrationController
 import com.mnassa.screen.splash.SplashController
 import com.mnassa.screen.termsandconditions.TermsAndConditionsController
@@ -59,6 +61,7 @@ class MnassaRouterDelegate : MnassaRouter {
             self is RegistrationController -> false
             self is SelectAccountController -> false
             self is GroupDetailsController && controller is GroupProfileController -> false
+            self is ChatConnectionsController -> false
 
             else -> true
         }
@@ -72,7 +75,7 @@ class MnassaRouterDelegate : MnassaRouter {
     }
 
     private fun openInNewActivity(self: Controller, controller: Controller): Boolean {
-        return isInMainController(self)
+        return isInMainController(self) || controller is PhotoPagerController
     }
 
     private fun isInMainController(controller: Controller): Boolean {
