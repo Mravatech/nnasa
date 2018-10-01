@@ -35,7 +35,7 @@ class UserProfileInteractorImpl(
                 city = city,
                 offers = offers,
                 interests = interests)
-        userRepository.setCurrentAccount(account)
+        setCurrentUserAccount(account)
         return account
     }
 
@@ -47,7 +47,7 @@ class UserProfileInteractorImpl(
                 offers = offers,
                 interests = interests
         )
-        userRepository.setCurrentAccount(account)
+        setCurrentUserAccount(account)
         return account
     }
 
