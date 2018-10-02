@@ -10,7 +10,7 @@ import java.io.Serializable
 interface PostsInteractor {
     //personal feed
     suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
-
+    suspend fun loadInfoPost(postId: String): PostModel?
     //
     suspend fun preloadFeed(): List<PostModel>
     suspend fun getPreloadedFeed(): List<PostModel>
