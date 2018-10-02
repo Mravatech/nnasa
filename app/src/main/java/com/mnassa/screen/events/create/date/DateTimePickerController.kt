@@ -48,7 +48,7 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
             tilDuration.hint = fromDictionary(R.string.event_duration_placeholder)
 
             etDate.setOnClickListener {
-                dialogHelper.calendarDialogFuture(it.context, this@DateTimePickerController, startDateTime)
+                dialogHelper.calendarDialogFuture(it.context, startDateTime.time, this@DateTimePickerController)
             }
             etTime.setOnClickListener {
                 dialogHelper.timeDialog(it.context, this@DateTimePickerController, startDateTime)

@@ -19,7 +19,6 @@ import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.sub_profile_header.view.*
-import java.util.*
 
 /**
  * Created by Peter on 8/17/2018.
@@ -136,7 +135,7 @@ class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHea
                 if (profile !is ProfileAccountModel) return
 
                 //date of birth
-                tvDateOfBirth.text = profile.createdAt?.let { Date(it).formatAsDate() }
+                tvDateOfBirth.text = profile.birthday?.formatAsDate()
                 tvDateOfBirth.isGone = tvDateOfBirth.text.isBlank()
                 tvDateOfBirthLabel.isGone = tvDateOfBirth.text.isBlank()
                 vDateOfBirthDivider.isGone = tvDateOfBirth.text.isBlank()

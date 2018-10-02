@@ -153,7 +153,9 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialogPast(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+    fun calendarDialogPast(context: Context, init: Date? = null, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        init?.let { calendar.time = it }
         val dialog = DatePickerDialog(
                 context,
                 listener,
@@ -165,7 +167,9 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialogFuture(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+    fun calendarDialogFuture(context: Context, init: Date? = null, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        init?.let { calendar.time = it }
         val dialog = DatePickerDialog(
                 context,
                 listener,

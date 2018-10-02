@@ -54,8 +54,8 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         with(view) {
             etFoundation.isLongClickable = false
             etFoundation.isFocusableInTouchMode = false
-            etFoundation.setText(getDateByTimeMillis(accountModel.createdAt))
-            birthday = accountModel.createdAt
+            etFoundation.setText(getDateByTimeMillis(accountModel.birthday?.time ?: 0L))
+            birthday = accountModel.birthday?.time
             setCalendarEditText(etFoundation)
             etCompanyEmail.setHideMode(accountModel.showContactEmail)
             etCompanyEmail.setText(accountModel.contactEmail)
