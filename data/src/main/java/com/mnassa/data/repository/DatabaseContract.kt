@@ -38,6 +38,7 @@ internal object DatabaseContract {
     const val TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY = "parameters/offersMandatory"
     const val TABLE_CLIENT_DATA_VALUE_CENTER = "valueCenter"
     const val TABLE_CLIENT_DATA_ADMIN = "parameters/adminForChatId"
+    const val MINIMUM_SUPPORTED_API_VERSION = "clientData/minSupportedAPIVersionAndroid"
     //
     const val TABLE_DICTIONARY = "dictionary"
     const val TABLE_DICTIONARY_COL_MOBILE_UI = "mobileUi"

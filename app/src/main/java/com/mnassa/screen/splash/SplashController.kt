@@ -40,6 +40,8 @@ class SplashController : MnassaControllerImpl<SplashViewModel>() {
 
     override fun subscribeToServerMaintenanceStatus() = closeServerMaintenanceDialog()
 
+    override fun subscribeToSupportedApiStatus() = closeApiNotSupportedDialog()
+
     companion object {
         fun newInstance() = SplashController()
     }

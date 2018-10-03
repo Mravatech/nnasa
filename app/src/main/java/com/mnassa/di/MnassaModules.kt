@@ -347,6 +347,7 @@ private val repositoryModule = Kodein.Module {
     bind<SettingsRepository>() with singleton { SettingsRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<GroupsRepository>() with singleton { GroupsRepositoryImpl(instance(), { instance() }, instance(), { instance() }, instance()) }
     bind<PreferencesRepository>() with singleton { PreferencesRepositoryImpl(instance()) }
+    bind<ClientDataRepository>() with singleton { ClientDataRepositoryImpl(instance(), instance()) }
 }
 
 private val serviceModule = Kodein.Module {
@@ -373,7 +374,7 @@ private val interactorModule = Kodein.Module {
     bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
     bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance(), instance()) }
-    bind<NetworkInteractor>() with singleton { NetworkInteractorImpl(instance()) }
+    bind<NetworkInteractor>() with singleton { NetworkInteractorImpl(instance(), instance(), instance()) }
     bind<PreferencesInteractor>() with singleton { PreferencesInteractorImpl(instance()) }
 }
 

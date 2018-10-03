@@ -634,4 +634,7 @@
     <string name="country_code_usa">_country_code_usa</string>
     <string name="country_code_canada">_country_code_usa</string>
 
+    <string name="update_app">_maintenance_updateMessage</string>
+    <string name="open_google_play">_android_open_google_play</string>
+
 </resources>
