@@ -98,7 +98,7 @@ abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(
         editText.isLongClickable = false
         editText.isFocusableInTouchMode = false
         editText.setOnClickListener {
-            dialog.calendarDialogPast(editText.context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            dialog.calendarDialogPast(editText.context, birthday?.let { Date(it) }, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 editText.setText("${DateFormatSymbols().months[month]} $dayOfMonth, $year")
                 val cal = Calendar.getInstance()
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)

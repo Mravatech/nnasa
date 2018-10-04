@@ -71,14 +71,14 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             etYourEmail.setText(accountModel.contactEmail)
             etYourEmail.setHideMode(accountModel.showContactEmail)
             addPhoto(fabInfoAddPhoto)
-            etDateOfBirthday.setText(getDateByTimeMillis(accountModel.createdAt))
+            etDateOfBirthday.setText(getDateByTimeMillis(accountModel.birthday?.time ?: 0L))
             chipPersonInterests.setTags(interests)
             chipPersonOffers.setTags(offers)
             etPersonFirstName.setText(accountModel.personalInfo?.firstName)
             etPersonSecondName.setText(accountModel.personalInfo?.lastName)
             etPersonUserName.setText(accountModel.userName)
             setToolbar(toolbarEditProfile, this)
-            birthday = accountModel.createdAt
+            birthday = accountModel.birthday?.time ?: 0L
             setCalendarEditText(etDateOfBirthday)
             ivUserAvatar.avatarSquare(accountModel.avatar)
             chipPersonOffers.onChipsChangeListener = { onPersonChanged() }

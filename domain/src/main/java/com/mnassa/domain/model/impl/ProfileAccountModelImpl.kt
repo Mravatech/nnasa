@@ -2,6 +2,7 @@ package com.mnassa.domain.model.impl
 
 import com.mnassa.domain.model.*
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,5 +46,6 @@ data class ProfileAccountModelImpl(
         override val gender: Gender,
         override val website: String?,
         override val organizationType: String?,
-        override var connectedBy: ConnectedByModel?
+        override var connectedBy: ConnectedByModel?,
+        override val birthday: Date?
 ) : ProfileAccountModel

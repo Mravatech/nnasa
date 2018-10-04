@@ -71,6 +71,18 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
+    override suspend fun loadInfoPost(postId: String): PostModel? {
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(userRepository.getAccountIdOrException())
+                    .collection(DatabaseContract.TABLE_INFO_FEED)
+                    .document(postId)
+                    .await<PostShortDbEntity>()
+                    .let { it?.toFullModel() }
+                    ?: loadById(postId).receiveOrNull()
+        }
+    }
+
     override suspend fun preloadFeed(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
         val future = firestoreLock {

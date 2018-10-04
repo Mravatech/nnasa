@@ -1,6 +1,7 @@
 package com.mnassa.domain.model
 
 import android.os.Parcelable
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,4 +36,5 @@ interface ProfileAccountModel : ShortAccountModel, Parcelable {
     val gender: Gender
     val website: String?
     val organizationType: String?
+    val birthday: Date?
 }

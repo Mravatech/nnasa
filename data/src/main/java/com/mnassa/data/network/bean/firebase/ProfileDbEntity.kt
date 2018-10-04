@@ -43,7 +43,8 @@ internal class ProfileDbEntity(
         location: LocationDbEntity?,
         gender: String?,
         @SerializedName("website") val website: String?,
-        @SerializedName("organizationType") val organizationType: String?
+        @SerializedName("organizationType") val organizationType: String?,
+        @SerializedName("birthday") val birthday: Long?
 ) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
 
     @SerializedName("createdAt") var createdAt: Long? = createdAt

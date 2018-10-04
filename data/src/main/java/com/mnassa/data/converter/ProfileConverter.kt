@@ -10,6 +10,7 @@ import com.mnassa.data.network.bean.firebase.ProfileDbEntity
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.*
 import com.mnassa.domain.other.LanguageProvider
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -98,7 +99,8 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 gender = gender,
                 website = input.website,
                 organizationType = input.organizationType,
-                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) }
+                connectedBy = input.connectedBy?.run { convertersContext.convert(this, ConnectedByModel::class.java) },
+                birthday = input.birthday?.let { Date(it) }
         )
     }
 
