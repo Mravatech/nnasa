@@ -17,7 +17,7 @@ data class RegisterSendingCompanyAccountInfoRequest(
         @SerializedName("userName") val userName: String,
         @SerializedName("language") val language: String? = null,
         @SerializedName("type") val type: String,
-        @SerializedName("founded") val founded: Long? = 0,
+        @SerializedName("birthday") val founded: Long? = 0,
         @SerializedName("id") val id: String,
         @SerializedName("website") val website: String?,
         @SerializedName("organizationType") val organizationType: String?
@@ -33,7 +33,7 @@ data class ProfileCompanyAccountInfoRequest(
         @SerializedName("userName") val userName: String,
         @SerializedName("language") val language: String? = null,
         @SerializedName("type") val type: String,
-        @SerializedName("founded") val founded: Long? = 0,
+        @SerializedName("birthday") val founded: Long? = 0,
         @SerializedName("id") val id: String,
         @SerializedName("website") val website: String?,
         @SerializedName("organizationType") val organizationType: String?,

@@ -76,6 +76,12 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                             ?: return ChatListController.newInstance()
                     ChatMessageController.newInstance(chatId)
                 }
+                extras.containsKey(POST_ID) && (extras.getString(NOTIFICATION_TYPE)?.contains(AWARENESS_KEYWORD) ?: false) -> {
+                    val postId = extras.getAndRemove(POST_ID)?.takeIf { it.isNotBlank() }
+                            ?: error("$POST_ID is empty (awareness)")
+                    val post = postsInteractor.loadInfoPost(postId) ?: error("Post not found $postId")
+                    postDetailsFactory.newInstance(post)
+                }
                 extras.containsKey(POST_ID) -> {
                     val postId = extras.getAndRemove(POST_ID)?.takeIf { it.isNotBlank() }
                             ?: error("$POST_ID is empty")
@@ -193,6 +199,7 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
     private companion object {
         const val POST_KEYWORD = "post"
         const val EVENT_KEYWORD = "event"
+        const val AWARENESS_KEYWORD = "awareness"
 
         const val NOTIFICATION_TYPE = "type"
         const val CHAT_ID = "chatId"

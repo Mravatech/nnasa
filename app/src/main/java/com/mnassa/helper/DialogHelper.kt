@@ -6,6 +6,8 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -153,7 +155,9 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialogPast(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+    fun calendarDialogPast(context: Context, init: Date? = null, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        init?.let { calendar.time = it }
         val dialog = DatePickerDialog(
                 context,
                 listener,
@@ -165,7 +169,9 @@ class DialogHelper {
         dialog.show()
     }
 
-    fun calendarDialogFuture(context: Context, listener: DatePickerDialog.OnDateSetListener, calendar: Calendar = Calendar.getInstance()) {
+    fun calendarDialogFuture(context: Context, init: Date? = null, listener: DatePickerDialog.OnDateSetListener) {
+        val calendar = Calendar.getInstance()
+        init?.let { calendar.time = it }
         val dialog = DatePickerDialog(
                 context,
                 listener,
@@ -486,5 +492,36 @@ class DialogHelper {
                 .onNegative { dialog, which -> dialog.cancel() }
                 .cancelListener { onCancel() }
                 .show()
+    }
+
+    fun showUpdateAppDialog(context: Context): Dialog {
+        return MaterialDialog.Builder(context)
+                .content(fromDictionary(R.string.update_app))
+                .cancelable(false)
+                .canceledOnTouchOutside(false)
+                .autoDismiss(false)
+                .positiveText(fromDictionary(R.string.open_google_play))
+                .onPositive { dialog, which ->
+                    val packageName = context.packageName.replace(".stage", "")
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+                    if (!startActivitySafe(intent, context)) {
+                        startActivitySafe(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")), context)
+                    }
+                }
+                .show()
+                .also {
+                    it.contentView?.let {
+                        Linkify.addLinks(it, Linkify.ALL)
+                        it.linksClickable = true
+                    }
+                }
+
+    }
+
+    private fun startActivitySafe(intent: Intent, context: Context): Boolean {
+        return if (intent.resolveActivityInfo(context.packageManager, 0)?.exported == true) {
+            context.startActivity(intent)
+            true
+        } else false
     }
 }

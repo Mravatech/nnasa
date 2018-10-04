@@ -27,7 +27,7 @@ class HackyDrawerLayout : FrameLayout {
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return try {
             super.onInterceptTouchEvent(ev)
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Throwable) {
             false
         }
     }

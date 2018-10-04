@@ -65,7 +65,7 @@ class EditCompanyProfileViewModelImpl(
                         showContactEmail = showContactEmail,
                         showContactPhone = showContactPhone,
                         contactEmail = contactEmail,
-                        founded = founded ?: profileAccountModel.createdAt,
+                        founded = founded ?: profileAccountModel.birthday?.time,
                         organizationType = organizationType,
                         website = website,
                         foundedDate = foundedDate,

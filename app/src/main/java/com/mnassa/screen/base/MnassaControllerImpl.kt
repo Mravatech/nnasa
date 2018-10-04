@@ -11,6 +11,7 @@ import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.interactor.SettingsInteractor
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.extensions.hideKeyboard
@@ -38,8 +39,10 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     }
     private val settingsInteractor: SettingsInteractor by instance()
     private val loginInteractor: LoginInteractor by instance()
+    private val networkInteractor: NetworkInteractor by instance()
     private val dialogHelper: DialogHelper by instance()
     private var serverMaintenanceDialog = WeakReference<Dialog>(null)
+    private var apiNotSupportedDialog = WeakReference<Dialog>(null)
 
     override val containerView: View? get() = view
 
@@ -57,6 +60,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         subscribeToProgressEvents()
         subscribeToErrorEvents()
         subscribeToServerMaintenanceStatus()
+        subscribeToSupportedApiStatus()
     }
 
     override fun onDestroyView(view: View) {
@@ -110,9 +114,31 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         }
     }
 
+    protected open fun subscribeToSupportedApiStatus() {
+        val isMostParentController = parentController == null
+        if (!isMostParentController) return
+
+        launchCoroutineUI {
+            networkInteractor.isApiSupported().consumeEach { isSupported ->
+                closeApiNotSupportedDialog()
+                if (!isSupported) {
+                    val dialog = dialogHelper.showUpdateAppDialog(getViewSuspend().context)
+                    apiNotSupportedDialog = WeakReference(dialog)
+                }
+            }
+        }.invokeOnCompletion {
+            closeApiNotSupportedDialog()
+        }
+    }
+
     protected fun closeServerMaintenanceDialog() {
         serverMaintenanceDialog.get()?.dismiss()
         serverMaintenanceDialog.clear()
+    }
+
+    protected fun closeApiNotSupportedDialog() {
+        apiNotSupportedDialog.get()?.dismiss()
+        apiNotSupportedDialog.clear()
     }
 
     private var progressDialog: Dialog? = null

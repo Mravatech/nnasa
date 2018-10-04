@@ -88,10 +88,6 @@ class PhoneNumber(
 }
 
 val PHONE_INPUT_FILTER = InputFilter { source, start, end, dest, dstart, dend ->
-    val result = StringBuilder(source.length)
-    for (i in start until end) {
-        if (Character.isDigit(source[i])) result.append(source[i])
-    }
-    result
+    if (source.isNotEmpty() && Character.isDigit(source[0])) null else ""
 }
 
