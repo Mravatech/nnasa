@@ -143,7 +143,7 @@ class UserRepositoryImpl(
                 location = Location(city),
                 locationId = city
         )).handleException(exceptionHandler)
-        return converter.convert(result.account)
+        return converter.convert(result.data.account)
     }
 
     override suspend fun createOrganizationAccount(
@@ -162,7 +162,7 @@ class UserRepositoryImpl(
                 location = Location(city),
                 locationId = city
         )).handleException(exceptionHandler)
-        return converter.convert(result.account)
+        return converter.convert(result.data.account)
     }
 
     override suspend fun processAccount(account: PersonalInfoModel) {
