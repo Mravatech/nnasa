@@ -16,7 +16,8 @@ interface PostsRepository {
     suspend fun preloadFeed(): List<PostModel>
     suspend fun getPreloadedFeed(): List<PostModel>
     suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>>
-
+    suspend fun recheckSavedPosts(): ListItemEvent<List<PostModel>>
+    suspend fun clearSavedPosts()
     //account wall
     suspend fun preloadWall(accountId: String): List<PostModel>
     suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>>

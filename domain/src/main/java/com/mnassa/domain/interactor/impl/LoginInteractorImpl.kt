@@ -9,6 +9,7 @@ import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.UserStatusModel
+import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
@@ -25,6 +26,7 @@ import timber.log.Timber
  */
 class LoginInteractorImpl(private val userRepository: UserRepository,
                           private val userProfileInteractor: UserProfileInteractor,
+                          private val postsRepository: PostsRepository,
                           private val loginService: FirebaseLoginService,
                           private val customLoginService: CustomLoginService) : LoginInteractor {
 
@@ -67,7 +69,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
             loginService.signOut()
         }
         userRepository.setCurrentAccount(null)
-
+        postsRepository.clearSavedPosts()
         if (wasLoggedIn) {
             launchUI { onLogoutListener.emit(reason) }
         }

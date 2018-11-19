@@ -357,7 +357,7 @@ private val serviceModule = Kodein.Module {
 
 private val interactorModule = Kodein.Module {
     bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl({ instance() }) }
-    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance(), instance()) }
+    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }

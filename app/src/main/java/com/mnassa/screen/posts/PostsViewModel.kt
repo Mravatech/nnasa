@@ -14,6 +14,7 @@ import java.util.*
 interface PostsViewModel : MnassaViewModel {
     val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
     val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>
+    val recheckFeedsChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
 
     val permissionsChannel: BroadcastChannel<PermissionsModel>
     fun onAttachedToWindow(post: PostModel)
@@ -26,4 +27,5 @@ interface PostsViewModel : MnassaViewModel {
     fun getLastViewedPostDate(): Date?
     fun setLastViewedPostDate(date: Date?)
 
+    fun recheckFeeds()
 }

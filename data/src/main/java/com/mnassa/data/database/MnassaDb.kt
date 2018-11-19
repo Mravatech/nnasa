@@ -11,7 +11,7 @@ import com.mnassa.data.database.entity.PostRoomEntity
  */
 @Database(
         entities = [(PostRoomEntity::class)],
-        version = 3
+        version = 4
 )
 @TypeConverters(DbConverters::class)
 abstract class MnassaDb : RoomDatabase() {

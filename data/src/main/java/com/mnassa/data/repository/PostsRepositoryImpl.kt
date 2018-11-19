@@ -34,6 +34,7 @@ import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
+import java.util.*
 import kotlin.collections.set
 
 /**
@@ -56,14 +57,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+        val accountId = userRepository.getAccountIdOrException()
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(userRepository.getAccountIdOrException())
+                    .document(accountId)
                     .collection(DatabaseContract.TABLE_INFO_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, InfoPostModel>(
                             exceptionHandler = exceptionHandler,
                             mapper = {
-                                it.toFullModel()?.let {
+                                it.toFullModel(currentUserId = accountId)?.let {
                                     converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
                                 }?.also { it.isPinned = true }
                             }
@@ -72,27 +74,34 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadInfoPost(postId: String): PostModel? {
+        val accountId = userRepository.getAccountIdOrException()
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(userRepository.getAccountIdOrException())
+                    .document(accountId)
                     .collection(DatabaseContract.TABLE_INFO_FEED)
                     .document(postId)
                     .await<PostShortDbEntity>()
-                    .let { it?.toFullModel() }
+                    .let { it?.toFullModel(currentUserId = accountId) }
                     ?: loadById(postId).receiveOrNull()
         }
     }
 
     override suspend fun preloadFeed(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
-        val future = firestoreLock {
+       firestoreLock {
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
                     .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
-                    .limit(DEFAULT_LIMIT.toLong())
+                    .limit(50)
                     .awaitList<PostShortDbEntity>()
-                    .mapNotNull { it.toFullModel() }
+                    .mapNotNull { it.toFullModel(currentUserId = accountId) }
+
+        }.await()
+        val future = async {
+           roomDb.getPostDao().getAllPosts(accountId).mapNotNull {
+                it.toPostModel()
+            }
         }
         preloadedPosts[accountId] = future
         return future.await()
@@ -111,9 +120,39 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
-                        it.toFullModel()
+                        it.toFullModel(currentUserId = accountId)
                     })
         }
+    }
+
+    override suspend fun recheckSavedPosts(): ListItemEvent<List<PostModel>> {
+        val accountId = userRepository.getAccountIdOrException()
+        val itemsFromFirestore = firestoreLock {
+            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                    .document(accountId)
+                    .collection(DatabaseContract.TABLE_FEED)
+                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    .awaitList<PostShortDbEntity>()
+                    .mapNotNull { it.toFullModel(currentUserId = accountId) }
+
+        }.await()//.mapNotNull { it.id }.toMutableList()
+        val idsFromFirestore = itemsFromFirestore.mapNotNull { it.id }.toMutableList()
+        val idsFromPreload = preloadedPosts[accountId]?.await()?.mapNotNull { it.id }?.toMutableList()
+        idsFromFirestore.retainAll(idsFromPreload as Collection<String>)
+        idsFromPreload.removeAll(idsFromFirestore)
+        val removePosts = idsFromPreload.mapNotNull {
+            val onePost = roomDb.getPostDao().getById(it)
+            roomDb.getPostDao().deleteById(it)
+            onePost?.toPostModel()
+        }
+
+//        val updatedItems = roomDb.getPostDao().getAllPosts(accountId).map {  }
+
+        return ListItemEvent.Removed(removePosts)
+    }
+
+    override suspend fun clearSavedPosts() {
+        roomDb.getPostDao().clearAll()
     }
 
     //==============================================================================================
@@ -152,7 +191,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                             exceptionHandler = exceptionHandler,
-                            mapper = { it.toFullModel(groupId) }
+                            mapper = { it.toFullModel(groupId = groupId) }
                     )
         }
     }
@@ -165,7 +204,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                     .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
-                    .mapNotNull { it.toFullModel(groupId) }
+                    .mapNotNull { it.toFullModel(groupId = groupId) }
         }
     }
 
@@ -313,7 +352,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null): ReceiveChannel<PostModel?> {
+    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null, currentUserId: String? = null): ReceiveChannel<PostModel?> {
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
                     .document(postId)
@@ -325,7 +364,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                                 null
                             } else {
                                 mapPost(it, groupId)?.also {
-                                    roomDb.getPostDao().insert(PostRoomEntity(it))
+                                    roomDb.getPostDao().insert(PostRoomEntity(currentUserId, it))
                                 }
                             }
                         }
@@ -333,10 +372,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null): PostModel? {
+    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null, currentUserId: String? = null): PostModel? {
         var result = getFromDb(id)
         if ((result?.updatedAt?.time ?: 0) < updatedAt) {
-            result = getFromFirestoreChannel(id, groupId).consume { receive() }
+            result = getFromFirestoreChannel(id, groupId, currentUserId).consume { receive() }
         }
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 

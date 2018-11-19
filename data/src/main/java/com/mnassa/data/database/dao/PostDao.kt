@@ -27,10 +27,23 @@ interface PostDao {
     """)
     fun getById(id: String): PostRoomEntity?
 
+    @Query("""
+       select *
+       from POST
+       where userId = :currentUserId
+       ORDER BY createdAt
+       DESC
+    """
+    )
+    fun getAllPosts(currentUserId: String): List<PostRoomEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(entity: PostRoomEntity)
+    fun insert(entity: PostRoomEntity) : Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entities: List<PostRoomEntity>)
+
+    @Query("""DELETE FROM POST""")
+    fun clearAll()
 
 }
