@@ -138,6 +138,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        view.rvNewsFeed.itemAnimator = null
         view.rvNewsFeed.adapter = adapter
         view.rvNewsFeed.attachPanel { hasNewPosts }
         viewModel.recheckFeeds()
