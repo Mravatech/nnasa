@@ -60,6 +60,7 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
         itemsTheSameComparator = { first, second -> first.id == second.id }
         contentTheSameComparator = { first, second ->
             first.counters == second.counters &&
+                    first.updatedAt == second.updatedAt &&
                     first.attachments == second.attachments &&
                     first.locationPlace == second.locationPlace &&
                     first.privacyType == second.privacyType &&

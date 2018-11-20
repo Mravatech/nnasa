@@ -99,9 +99,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
         }.await()
         val future = async {
-           roomDb.getPostDao().getAllPosts(accountId).mapNotNull {
+           val posts = roomDb.getPostDao().getAllPosts(accountId).mapNotNull {
                 it.toPostModel()
             }
+            Timber.i(posts.toString())
+            posts
         }
         preloadedPosts[accountId] = future
         return future.await()
@@ -109,7 +111,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
 
     override suspend fun getPreloadedFeed(): List<PostModel> {
-        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await()
+        val accountId = userRepository.getAccountIdOrException()
+        val posts = roomDb.getPostDao().getAllPosts(accountId).mapNotNull {
+            it.toPostModel()
+        }
+        Timber.i(posts.toString())
+        return posts//preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await()
     }
 
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
@@ -133,9 +140,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .collection(DatabaseContract.TABLE_FEED)
                     .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                     .awaitList<PostShortDbEntity>()
-                    .mapNotNull { it.toFullModel(currentUserId = accountId) }
 
-        }.await()//.mapNotNull { it.id }.toMutableList()
+        }.await()
         val idsFromFirestore = itemsFromFirestore.mapNotNull { it.id }.toMutableList()
         val idsFromPreload = preloadedPosts[accountId]?.await()?.mapNotNull { it.id }?.toMutableList()
         idsFromFirestore.retainAll(idsFromPreload as Collection<String>)
@@ -145,8 +151,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             roomDb.getPostDao().deleteById(it)
             onePost?.toPostModel()
         }
-
-//        val updatedItems = roomDb.getPostDao().getAllPosts(accountId).map {  }
 
         return ListItemEvent.Removed(removePosts)
     }
