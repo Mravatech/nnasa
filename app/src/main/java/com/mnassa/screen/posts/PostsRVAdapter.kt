@@ -68,7 +68,8 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
                     first.text == second.text &&
                     first.statusOfExpiration == second.statusOfExpiration &&
                     first.price == second.price &&
-                    first.autoSuggest == second.autoSuggest
+                    first.autoSuggest == second.autoSuggest &&
+                    (first as? InfoPostModel)?.isPinned ?: false == (second as? InfoPostModel)?.isPinned ?: false
         }
         dataStorage = SortedDataStorage(itemClass, this)
     }

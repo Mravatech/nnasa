@@ -65,7 +65,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .toValueChannelWithChangesHandling<PostShortDbEntity, InfoPostModel>(
                             exceptionHandler = exceptionHandler,
                             mapper = {
-                                it.toFullModel(currentUserId = accountId)?.let {
+                                it.toFullModel(currentUserId = accountId, savePinned = true)?.let {
                                     converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
                                 }?.also { it.isPinned = true }
                             }
@@ -356,7 +356,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null, currentUserId: String? = null): ReceiveChannel<PostModel?> {
+    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null, currentUserId: String? = null, savePinned :Boolean = false): ReceiveChannel<PostModel?> {
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
                     .document(postId)
@@ -368,6 +368,9 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                                 null
                             } else {
                                 mapPost(it, groupId)?.also {
+                                    if (savePinned){
+                                        (it as InfoPostModel).isPinned = true
+                                    }
                                     roomDb.getPostDao().insert(PostRoomEntity(currentUserId, it))
                                 }
                             }
@@ -376,10 +379,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null, currentUserId: String? = null): PostModel? {
+    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null, currentUserId: String? = null, savePinned :Boolean = false): PostModel? {
         var result = getFromDb(id)
         if ((result?.updatedAt?.time ?: 0) < updatedAt) {
-            result = getFromFirestoreChannel(id, groupId, currentUserId).consume { receive() }
+            result = getFromFirestoreChannel(id, groupId, currentUserId, savePinned).consume { receive() }
         }
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 
