@@ -91,16 +91,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun preloadFeed(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
-//        firestoreLock {
-//            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-//                    .document(accountId)
-//                    .collection(DatabaseContract.TABLE_FEED)
-//                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
-//                    .limit(DEFAULT_LIMIT.toLong())
-//                    .awaitList<PostShortDbEntity>()
-//                    .mapNotNull { it.toFullModel(currentUserId = accountId) }
-//
-//        }.await()
         val future = async {
             val posts = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull {postModel ->
                 postModel.toPostModel()
@@ -130,26 +120,28 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun recheckSavedPosts(): ListItemEvent<List<PostModel>> {
-        val accountId = userRepository.getAccountIdOrException()
-        val itemsFromFirestore = firestoreLock {
-            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(accountId)
-                    .collection(DatabaseContract.TABLE_FEED)
-                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
-                    .awaitList<PostShortDbEntity>()
+        return withContext(DefaultDispatcher) {
+            val accountId = userRepository.getAccountIdOrException()
+            val itemsFromFirestore = firestoreLock {
+                firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                        .document(accountId)
+                        .collection(DatabaseContract.TABLE_FEED)
+                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                        .awaitList<PostShortDbEntity>()
 
-        }.await()
-        val idsFromFirestore = itemsFromFirestore.mapNotNull { it.id }
-        val idsFromDb = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull {
-            it.toPostModel()
-        }.mapNotNull { it.id }.toMutableList()
-        idsFromDb.removeAll(idsFromFirestore)
-        val removePosts = idsFromDb.mapNotNull {
-            val onePost = roomDb.getUserPostJoinDao().getPostAndRemove(it, accountId)
-            onePost?.toPostModel()
+            }.await()
+            val idsFromFirestore = itemsFromFirestore.mapNotNull { it.id }
+            val idsFromDb = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull {
+                it.toPostModel()
+            }.mapNotNull { it.id }.toMutableList()
+            idsFromDb.removeAll(idsFromFirestore)
+            val removePosts = idsFromDb.mapNotNull {
+                val onePost = roomDb.getUserPostJoinDao().getPostAndRemove(it, accountId)
+                onePost?.toPostModel()
+            }
+
+            ListItemEvent.Removed(removePosts)
         }
-
-        return ListItemEvent.Removed(removePosts)
     }
 
     override suspend fun clearSavedPosts() {
