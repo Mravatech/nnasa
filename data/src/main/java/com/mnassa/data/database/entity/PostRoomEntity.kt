@@ -17,15 +17,13 @@ class PostRoomEntity(
         @PrimaryKey
         @ColumnInfo(name = "id")
         val id: String,
-        @ColumnInfo(name = "userId")
-        val userId: String?,
         @ColumnInfo(name = "createdAt")
         val createdAt: Long,
         @ColumnInfo(name = "data")
         val data: String
 ) {
 
-    constructor(userId: String?, post: PostModel) : this(post.id, userId, post.createdAt.time, DbConverters.toString(post))
+    constructor(post: PostModel) : this(post.id, post.createdAt.time, DbConverters.toString(post))
 
     fun toPostModel(): PostModel? = try { DbConverters.fromString(data) } catch (e: InvalidClassException) { null }
 
