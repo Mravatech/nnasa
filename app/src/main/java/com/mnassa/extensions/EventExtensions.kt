@@ -46,7 +46,7 @@ val EventLocationType.formatted: CharSequence
         is EventLocationType.Specified -> {
             val result = StringBuilder()
             val description = this.description
-            val placeName = location.placeName?.toString()
+            val placeName = location?.placeName?.toString()
             if (description != null) {
                 result.append(description)
             }

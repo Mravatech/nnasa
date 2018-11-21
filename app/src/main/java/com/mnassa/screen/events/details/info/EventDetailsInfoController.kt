@@ -190,11 +190,13 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
     private fun openGoogleMaps(event: EventModel, context: Context) {
         val location = event.locationType
         if (location is EventLocationType.Specified) {
-            val gmmIntentUri = Uri.parse("geo:${location.location.lat},${location.location.lng}")
-            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-            mapIntent.`package` = "com.google.android.apps.maps"
-            if (mapIntent.resolveActivity(context.packageManager) != null) {
-                startActivity(mapIntent)
+            location.location?.let {
+                val gmmIntentUri = Uri.parse("geo:${it.lat},${it.lng}")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.`package` = "com.google.android.apps.maps"
+                if (mapIntent.resolveActivity(context.packageManager) != null) {
+                    startActivity(mapIntent)
+                }
             }
         }
     }
