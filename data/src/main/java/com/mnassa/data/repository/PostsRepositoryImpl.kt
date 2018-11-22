@@ -52,7 +52,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
-    private var preloadedPosts = HashMap<String, Deferred<List<PostModel>>>() //accountId - to posts future
+    private var preloadedPosts = HashMap<String, List<PostModel>>() //accountId - to posts future
     private val roomDb by lazy {
         Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
                 .fallbackToDestructiveMigration()
@@ -91,19 +91,16 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     override suspend fun preloadFeed(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
-        val future = async {
-            val posts = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull {postModel ->
-                postModel.toPostModel()
-            }
-            posts
+        val posts = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull { postModel ->
+            postModel.toPostModel()
         }
-        preloadedPosts[accountId] = future
-        return future.await()
+        preloadedPosts[accountId] = posts
+        return posts
     }
 
 
     override suspend fun getPreloadedFeed(): List<PostModel> {
-        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await()
+        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) {  preloadFeed()  }.toList()
     }
 
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
@@ -122,14 +119,21 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun recheckSavedPosts(): ListItemEvent<List<PostModel>> {
         return withContext(DefaultDispatcher) {
             val accountId = userRepository.getAccountIdOrException()
-            val itemsFromFirestore = firestoreLock {
+            val newsFeedFuture = firestoreLock {
                 firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                         .document(accountId)
                         .collection(DatabaseContract.TABLE_FEED)
-                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                         .awaitList<PostShortDbEntity>()
 
-            }.await()
+            }
+            val infoFuture = firestoreLock {
+                firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                        .document(accountId)
+                        .collection(DatabaseContract.TABLE_INFO_FEED)
+                        .awaitList<PostShortDbEntity>()
+            }
+            val itemsFromFirestore = newsFeedFuture.await().toMutableList()
+            itemsFromFirestore.addAll(infoFuture.await())
             val idsFromFirestore = itemsFromFirestore.mapNotNull { it.id }
             val idsFromDb = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull {
                 it.toPostModel()
@@ -145,6 +149,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun clearSavedPosts() {
+        preloadedPosts.clear()
         withContext(DefaultDispatcher){
             roomDb.getUserPostJoinDao().clearAll()
             roomDb
