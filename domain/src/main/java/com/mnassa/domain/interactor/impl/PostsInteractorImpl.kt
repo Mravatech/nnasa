@@ -32,6 +32,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
         }
     }
+    override suspend fun recheckAndReloadFeeds(): ListItemEvent<List<PostModel>> = postsRepository.recheckSavedPosts()
 
     override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return produce {

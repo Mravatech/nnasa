@@ -37,9 +37,8 @@ class App : MultiDexApplication(), KodeinAware {
         APP_CONTEXT = this
         super.onCreate()
 
-        FirebaseApp.initializeApp(this)
-
         val appInfoProvider = getInstance<AppInfoProvider>()
+        if (!appInfoProvider.isDebug) FirebaseApp.initializeApp(this)
         if (appInfoProvider.isDebug) {
             Timber.plant(Timber.DebugTree())
             Stetho.initializeWithDefaults(this)

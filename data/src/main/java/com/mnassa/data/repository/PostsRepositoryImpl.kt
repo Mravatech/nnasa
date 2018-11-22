@@ -9,7 +9,10 @@ import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.convert
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
+import com.mnassa.data.database.entity.PostForUser
 import com.mnassa.data.database.entity.PostRoomEntity
+import com.mnassa.data.database.entity.PostUserJoin
+import com.mnassa.data.database.entity.UserRoomEntity
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
@@ -34,6 +37,7 @@ import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.map
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
+import java.util.*
 import kotlin.collections.set
 
 /**
@@ -48,7 +52,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
-    private var preloadedPosts = HashMap<String, Deferred<List<PostModel>>>() //accountId - to posts future
+    private var preloadedPosts = HashMap<String, List<PostModel>>() //accountId - to posts future
     private val roomDb by lazy {
         Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
                 .fallbackToDestructiveMigration()
@@ -56,14 +60,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+        val accountId = userRepository.getAccountIdOrException()
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(userRepository.getAccountIdOrException())
+                    .document(accountId)
                     .collection(DatabaseContract.TABLE_INFO_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, InfoPostModel>(
                             exceptionHandler = exceptionHandler,
                             mapper = {
-                                it.toFullModel()?.let {
+                                it.toFullModel(currentUserId = accountId, savePinned = true)?.let {
                                     converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
                                 }?.also { it.isPinned = true }
                             }
@@ -72,35 +77,30 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadInfoPost(postId: String): PostModel? {
+        val accountId = userRepository.getAccountIdOrException()
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(userRepository.getAccountIdOrException())
+                    .document(accountId)
                     .collection(DatabaseContract.TABLE_INFO_FEED)
                     .document(postId)
                     .await<PostShortDbEntity>()
-                    .let { it?.toFullModel() }
+                    .let { it?.toFullModel(currentUserId = accountId) }
                     ?: loadById(postId).receiveOrNull()
         }
     }
 
     override suspend fun preloadFeed(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
-        val future = firestoreLock {
-            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(accountId)
-                    .collection(DatabaseContract.TABLE_FEED)
-                    .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
-                    .limit(DEFAULT_LIMIT.toLong())
-                    .awaitList<PostShortDbEntity>()
-                    .mapNotNull { it.toFullModel() }
+        val posts = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull { postModel ->
+            postModel.toPostModel()
         }
-        preloadedPosts[accountId] = future
-        return future.await()
+        preloadedPosts[accountId] = posts
+        return posts
     }
 
 
     override suspend fun getPreloadedFeed(): List<PostModel> {
-        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) { async { preloadFeed() } }.await()
+        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) {  preloadFeed()  }.toList()
     }
 
     override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
@@ -111,8 +111,48 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
-                        it.toFullModel()
+                        it.toFullModel(currentUserId = accountId)
                     })
+        }
+    }
+
+    override suspend fun recheckSavedPosts(): ListItemEvent<List<PostModel>> {
+        return withContext(DefaultDispatcher) {
+            val accountId = userRepository.getAccountIdOrException()
+            val newsFeedFuture = firestoreLock {
+                firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                        .document(accountId)
+                        .collection(DatabaseContract.TABLE_FEED)
+                        .awaitList<PostShortDbEntity>()
+
+            }
+            val infoFuture = firestoreLock {
+                firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
+                        .document(accountId)
+                        .collection(DatabaseContract.TABLE_INFO_FEED)
+                        .awaitList<PostShortDbEntity>()
+            }
+            val itemsFromFirestore = newsFeedFuture.await().toMutableList()
+            itemsFromFirestore.addAll(infoFuture.await())
+            val idsFromFirestore = itemsFromFirestore.mapNotNull { it.id }
+            val idsFromDb = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull {
+                it.toPostModel()
+            }.mapNotNull { it.id }.toMutableList()
+            idsFromDb.removeAll(idsFromFirestore)
+            val removePosts = idsFromDb.mapNotNull {
+                val onePost = roomDb.getUserPostJoinDao().getPostAndRemove(it, accountId)
+                onePost?.toPostModel()
+            }
+
+            ListItemEvent.Removed(removePosts)
+        }
+    }
+
+    override suspend fun clearSavedPosts() {
+        preloadedPosts.clear()
+        withContext(DefaultDispatcher){
+            roomDb.getUserPostJoinDao().clearAll()
+            roomDb
         }
     }
 
@@ -152,7 +192,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                             exceptionHandler = exceptionHandler,
-                            mapper = { it.toFullModel(groupId) }
+                            mapper = { it.toFullModel(groupId = groupId) }
                     )
         }
     }
@@ -165,7 +205,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                     .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<PostShortDbEntity>()
-                    .mapNotNull { it.toFullModel(groupId) }
+                    .mapNotNull { it.toFullModel(groupId = groupId) }
         }
     }
 
@@ -309,11 +349,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
 
     private suspend fun getFromDb(postId: String): PostModel? {
         return withContext(DefaultDispatcher) {
-            roomDb.getPostDao().getById(postId)?.toPostModel()
+            roomDb.getUserPostJoinDao().getPostById(postId)?.toPostModel()
         }
     }
 
-    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null): ReceiveChannel<PostModel?> {
+    private suspend fun getFromFirestoreChannel(postId: String, groupId: String? = null, currentUserId: String? = null, savePinned: Boolean = false): ReceiveChannel<PostModel?> {
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_ALL_POSTS)
                     .document(postId)
@@ -321,11 +361,18 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .map {
                         withContext(DefaultDispatcher) {
                             if (it == null) {
-                                roomDb.getPostDao().deleteById(postId)
+                                currentUserId?.let { userId ->
+                                    roomDb.getUserPostJoinDao().deleteJoin(userId, postId)
+                                }
                                 null
                             } else {
                                 mapPost(it, groupId)?.also {
-                                    roomDb.getPostDao().insert(PostRoomEntity(it))
+                                    if (savePinned) {
+                                        (it as InfoPostModel).isPinned = true
+                                    }
+                                    currentUserId?.let { userId ->
+                                        roomDb.getUserPostJoinDao().insert(PostForUser(UserRoomEntity(userId), PostRoomEntity(it)))
+                                    }
                                 }
                             }
                         }
@@ -333,10 +380,10 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         }
     }
 
-    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null): PostModel? {
+    private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null, currentUserId: String? = null, savePinned: Boolean = false): PostModel? {
         var result = getFromDb(id)
         if ((result?.updatedAt?.time ?: 0) < updatedAt) {
-            result = getFromFirestoreChannel(id, groupId).consume { receive() }
+            result = getFromFirestoreChannel(id, groupId, currentUserId, savePinned).consume { receive() }
         }
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 

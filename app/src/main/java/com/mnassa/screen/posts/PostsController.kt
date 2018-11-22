@@ -107,7 +107,13 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                 }
             }
         }
-
+        controllerSubscriptionContainer.launchCoroutineUI {
+            viewModel.recheckFeedsChannel.consumeEach {
+                when (it) {
+                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
+                }
+            }
+        }
         //scroll to element logic
         lifecycle.subscribe {
             if (it == Lifecycle.Event.ON_PAUSE) {
@@ -132,8 +138,10 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+        view.rvNewsFeed.itemAnimator = null
         view.rvNewsFeed.adapter = adapter
         view.rvNewsFeed.attachPanel { hasNewPosts }
+        viewModel.recheckFeeds()
     }
 
     private fun triggerScrollPanel() {
