@@ -351,14 +351,16 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             when (locationType) {
                 is EventLocationType.Specified -> {
                     sLocation.setSelection(EVENT_LOCATION_SPECIFY)
-                    placeId = locationType.location.placeId
-                    val lat = locationType.location.lat
-                    val lng = locationType.location.lng
-                    if (lat != null && lng != null) {
-                        placeLatLng = LatLng(lat, lng)
+                    locationType.location?.let {
+                        placeId = it.placeId
+                        val lat = it.lat
+                        val lng = it.lng
+                        if (lat != null && lng != null) {
+                            placeLatLng = LatLng(lat, lng)
+                        }
+                        actvCity.setText(it.placeName?.toString())
                     }
                     etLocationDescription.setText(locationType.description)
-                    actvCity.setText(locationType.location.placeName?.toString())
                 }
                 is EventLocationType.NotDefined -> {
                     sLocation.setSelection(EVENT_LOCATION_NOT_DEFINED)

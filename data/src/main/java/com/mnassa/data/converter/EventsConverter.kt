@@ -82,11 +82,14 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertLocation(input: EventDbEntity, converter: ConvertersContext): EventLocationType {
         return when (input.locationType) {
-            NetworkContract.EventLocationType.SPECIFY -> if (input.locationDbEntity != null) EventLocationType.Specified(
-                    location = converter.convert(input.locationDbEntity),
-                    id = requireNotNull(input.locationId) { "LocationId not specified, but type: ${input.locationType}. Event: $input" },
-                    description = input.locationDescription
-            ) else EventLocationType.Later() //server side error
+            NetworkContract.EventLocationType.SPECIFY -> {
+                val location: LocationPlaceModel? = if (input.locationDbEntity != null) converter.convert(input.locationDbEntity, LocationPlaceModel::class) else null
+                EventLocationType.Specified(
+                        location = location,
+                        id = input.locationId,// { "LocationId not specified, but type: ${input.locationType}. Event: $input" },
+                        description = input.locationDescription
+                )
+            } //else EventLocationType.Later() //server side error
             NetworkContract.EventLocationType.LATER -> EventLocationType.Later()
             NetworkContract.EventLocationType.NOT_DEFINED -> EventLocationType.NotDefined()
             else -> {
