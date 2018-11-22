@@ -9,6 +9,10 @@ import java.io.Serializable
  */
 data class RegisterAccountResponse(
         @SerializedName("state") val state: String,
+        @SerializedName("data") val data: AccountData
+)
+
+data class AccountData(
         @SerializedName("account") val account: AccountResponseBean
 )
 
