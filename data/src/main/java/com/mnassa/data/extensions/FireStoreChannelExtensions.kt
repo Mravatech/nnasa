@@ -5,9 +5,12 @@ import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.channels.ArrayChannel
+import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import kotlinx.coroutines.experimental.sync.Mutex
 import timber.log.Timber
 
 /**
@@ -21,81 +24,103 @@ import timber.log.Timber
 //    class Removed<T: Any>(item: T) : ListItemEvent<T>(item)
 //}
 internal suspend inline fun <reified DbType : HasId, reified OutType : Any> CollectionReference.toValueChannelWithChangesHandling(
-        exceptionHandler: ExceptionHandler,
-        noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
-        limit: Int = DEFAULT_LIMIT): Channel<ListItemEvent<OutType>> {
+    exceptionHandler: ExceptionHandler,
+    noinline queryBuilder: (CollectionReference) -> Query = { it },
+    noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
+    limit: Int = DEFAULT_LIMIT
+): Channel<ListItemEvent<OutType>> {
     forDebug { Timber.i("#LISTEN# toValueChannelWithChangesHandling ${this.path}") }
+    val mutex = Mutex()
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
     lateinit var listener: ListenerRegistration
 
-    val MOVED = 1
-    val CHANGED = 2
-    val ADDED = 3
-    val REMOVED = 4
+    // Removes the FireStore
+    // listener.
+    val dispose = {
+        listener.remove()
+    }
 
-    val emitter = { input: QueryDocumentSnapshot, previousChildName: String?, eventType: Int ->
+    val processor = processor@{ changes: MutableList<DocumentChange> ->
+        if (channel.isClosedForSend) {
+            dispose.invoke()
+            return@processor
+        }
+
         launchWorker {
-            try {
-                if (channel.isClosedForSend) {
-                    listener.remove()
-                    return@launchWorker
-                }
+            // Synchronize the processing, so there's almost no chance that the change events
+            // will be sent in a wrong order.
+            mutex.lock()
 
-                val dbEntity = input.mapSingle<DbType>() ?: return@launchWorker
-                val outModel = withContext(DefaultDispatcher) { mapper(dbEntity) }
-                if (outModel == null && eventType == REMOVED) channel.send(ListItemEvent.Removed(dbEntity.id))
-                if (outModel == null) return@launchWorker
+            val changesDeferred = changes
+                .map { documentChange ->
+                    documentChange to async {
+                        // Map to network database model
+                        val dbEntity = try {
+                            documentChange.document.mapSingle<DbType>()
+                        } catch (e: Exception) {
+                            Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} id: ${documentChange.document.id}")
+                            null
+                        }
+                            ?: return@async null // we can't do anything, we don't even know its id
 
-                val result: ListItemEvent<OutType> = when (eventType) {
-                    MOVED -> ListItemEvent.Moved(outModel)
-                    CHANGED -> ListItemEvent.Changed(outModel)
-                    ADDED -> ListItemEvent.Added(outModel)
-                    REMOVED -> ListItemEvent.Removed(outModel)
-                    else -> throw IllegalArgumentException("Illegal event type $eventType")
-                }
+                        if (documentChange.type == DocumentChange.Type.REMOVED) {
+                            // Remove the model by it, instead of creating an
+                            // entity and then passing it to remove.
+                            return@async ListItemEvent.Removed<OutType>(dbEntity.id)
+                        } else {
+                            // Map to out model
+                            val outEntity = try {
+                                mapper(dbEntity)
+                            } catch (e: Exception) {
+                                null
+                            }
 
-                if (channel.isClosedForSend) {
-                    listener.remove()
-                    return@launchWorker
-                }
-                channel.send(result)
-            } catch (e: Exception) {
-                when {
-                    e.isSuppressed -> {
-                        Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} id: ${input.id}")
-//                        removeEventListener(listener)
-//                        channel.close(exceptionHandler.handle(FirebaseMappingException(input.path, e)))
+                            return@async if (outEntity == null) {
+                                ListItemEvent.Removed(dbEntity.id)
+                            } else when (documentChange.type) {
+                                DocumentChange.Type.ADDED -> ListItemEvent.Added(outEntity)
+                                DocumentChange.Type.MODIFIED -> ListItemEvent.Changed(outEntity)
+                                else -> error("Unknown FireStore change type!")
+                            }
+                        }
                     }
-                    else -> {
-                        Timber.e(e)
-                        listener.remove()
-                        channel.close(exceptionHandler.handle(e, path))
+                }
+
+            changesDeferred.forEach {
+                if (channel.isClosedForSend) {
+                    dispose.invoke()
+                    return@forEach
+                }
+
+                try {
+                    val event = it.second.await()
+                    if (event != null) {
+                        channel.send(event)
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Mapping exception: class: ${OutType::class.java.name} id: ${it.first.document.id}")
+
+                    dispose.invoke()
+                    channel.close(exceptionHandler.handle(e, path))
                 }
             }
+
+            mutex.unlock()
         }
     }
 
     firestoreLockSuspend {
-        listener = addSnapshotListener { dataSnapshot, firebaseFirestoreException ->
-            if (firebaseFirestoreException != null) {
-                channel.close(exceptionHandler.handle(firebaseFirestoreException, path))
-                listener.remove()
-                return@addSnapshotListener
-            }
-
-            if (dataSnapshot == null) return@addSnapshotListener
-
-            dataSnapshot.documentChanges.forEach {
-                when (it.type) {
-                    DocumentChange.Type.ADDED -> emitter(it.document, null, ADDED)
-                    DocumentChange.Type.MODIFIED -> emitter(it.document, null, CHANGED)
-                    DocumentChange.Type.REMOVED -> emitter(it.document, null, REMOVED)
-                    else -> throw IllegalStateException("Illegal change type ${it.type}")
+        listener = queryBuilder(this)
+            .addSnapshotListener { dataSnapshot, e ->
+                if (e != null) {
+                    channel.close(exceptionHandler.handle(e, path))
+                    listener.remove()
+                    return@addSnapshotListener
                 }
+
+                dataSnapshot?.documentChanges?.let(processor)
             }
-        }
     }
 
     return channel

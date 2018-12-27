@@ -1,6 +1,5 @@
 package com.mnassa.screen.posts
 
-import com.mnassa.domain.model.InfoPostModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
@@ -13,7 +12,6 @@ import java.util.*
  */
 interface PostsViewModel : MnassaViewModel {
     val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
-    val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>>
     val recheckFeedsChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
 
     val permissionsChannel: BroadcastChannel<PermissionsModel>
