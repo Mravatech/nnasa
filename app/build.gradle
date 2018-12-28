@@ -191,6 +191,7 @@ dependencies {
 
     //other
     implementation deps.other.logger
+    implementation deps.other.plurals
 //    debugImplementation deps.other.leakDebug
 //    stageImplementation deps.other.leakDebug
 //    releaseImplementation deps.other.leakRelease

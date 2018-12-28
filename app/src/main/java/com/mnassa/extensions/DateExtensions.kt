@@ -11,6 +11,7 @@ import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.fromDictionary
+import com.mnassa.translation.fromDictionaryPlural
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.delay
 import java.text.SimpleDateFormat
@@ -149,9 +150,9 @@ fun Long.formatAsDuration(): CharSequence {
     value -= TimeUnit.SECONDS.toMillis(seconds)
 
     val result = StringBuilder()
-    if (days > 0) result.append("${fromDictionary(R.string.days_count).format(days)} ")
-    if (hours > 0 || result.isNotEmpty()) result.append("${fromDictionary(R.string.hours_count).format(hours)} ")
-    if (minutes > 0 || result.isNotEmpty()) result.append("${fromDictionary(R.string.minutes_count).format(minutes)} ")
-    if (seconds > 0 || result.isEmpty()) result.append("${fromDictionary(R.string.seconds_count).format(seconds)} ")
+    if (days > 0) result.append("${fromDictionaryPlural(R.string.days_count, days.toInt()).format(days)} ")
+    if (hours > 0 || result.isNotEmpty()) result.append("${fromDictionaryPlural(R.string.hours_count, hours.toInt()).format(hours)} ")
+    if (minutes > 0 || result.isNotEmpty()) result.append("${fromDictionaryPlural(R.string.minutes_count, minutes.toInt()).format(minutes)} ")
+    if (seconds > 0 || result.isEmpty()) result.append("${fromDictionaryPlural(R.string.seconds_count, seconds.toInt()).format(seconds)} ")
     return result.trim().toString()
 }
