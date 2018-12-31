@@ -59,6 +59,12 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
 
     private val languageProvider: LanguageProvider by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
+        val prefs = getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
+        val lang = prefs.getString(LanguageProviderImpl.LANGUAGE_SETTINGS, null)
+        lang?.let {
+            languageProvider.locale = Locale(it)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -81,11 +87,6 @@ open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by Mnas
                     Intent(this@MainActivity, MainActivity::class.java)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
-        }
-        val prefs = getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
-        val lang = prefs.getString(LanguageProviderImpl.LANGUAGE_SETTINGS, null)
-        lang?.let {
-            languageProvider.locale = Locale(it)
         }
     }
 
