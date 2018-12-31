@@ -1,10 +1,9 @@
 package com.mnassa.translation
 
-import com.mnassa.domain.extensions.pluralRulesOf
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
-import com.seppius.i18n.plurals.PluralRules
-import timber.log.Timber
+import com.mnassa.domain.plurals.PluralQuantityRules
+import com.mnassa.domain.plurals.createPluralRules
 import java.util.*
 
 /**
@@ -45,7 +44,7 @@ class LanguageProviderImpl : LanguageProvider {
         else english
     }
 
-    override fun getPluralRules(): PluralRules? = pluralRulesOf(locale)
+    override fun getPluralRules(): PluralQuantityRules? = createPluralRules(locale)
 
     companion object {
         const val LANGUAGE_PREFERENCE = "LANGUAGE_PREFERENCE"

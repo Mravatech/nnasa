@@ -1,6 +1,5 @@
 package com.mnassa.domain.interactor.impl
 
-import com.mnassa.domain.extensions.pluralOf
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.model.Plural
 import com.mnassa.domain.model.TranslatedWordModel
@@ -45,8 +44,8 @@ class DictionaryInteractorImpl(
     override fun getWord(key: String): TranslatedWordModel = repository.getLocalWord(key)
 
     override fun getPlural(key: String, quantity: Int): TranslatedWordModel {
-        val suffix = languageProvider.getPluralRules().pluralOf(quantity).suffix
-        return getWord(key + suffix).takeUnless { it.toString().isBlank() }
+        val plural = languageProvider.getPluralRules()?.pluralOf(quantity) ?: Plural.OTHER
+        return getWord(key + plural.suffix).takeUnless { it.toString().isBlank() }
             ?: getWord(key + Plural.OTHER.suffix)
     }
 

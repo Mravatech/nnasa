@@ -1,7 +1,7 @@
 package com.mnassa.domain.other
 
 import com.mnassa.domain.model.TranslatedWordModel
-import com.seppius.i18n.plurals.PluralRules
+import com.mnassa.domain.plurals.PluralQuantityRules
 import java.io.Serializable
 import java.util.*
 
@@ -19,6 +19,6 @@ interface LanguageProvider : Serializable {
 
     fun chooseTranslate(word: TranslatedWordModel): String
 
-    fun getPluralRules(): PluralRules?
+    fun getPluralRules(): PluralQuantityRules?
 
 }
