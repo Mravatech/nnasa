@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -70,6 +71,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
             applyShareOptionsChanges()
             etGeneralPost.hint = fromDictionary(R.string.general_text_placeholder)
+            etGeneralPost.inputType = etGeneralPost.inputType or EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
             etGeneralPost.addTextChangedListener(SimpleTextWatcher { onGeneralTextUpdated() })
             onGeneralTextUpdated()
 

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.AppCompatSpinner
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.mnassa.R
@@ -80,6 +81,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             applyShareOptionsChanges()
             etOffer.prefix = fromDictionary(R.string.offer_prefix) + " "
             etOffer.hint = fromDictionary(R.string.offer_description_placeholder)
+            etOffer.inputType = etOffer.inputType and EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES.inv()
             etOffer.addTextChangedListener(SimpleTextWatcher { onOfferChanged() })
             etTitle.hint = fromDictionary(R.string.offer_title_placeholder)
             etTitle.addTextChangedListener(SimpleTextWatcher { onOfferChanged() })
