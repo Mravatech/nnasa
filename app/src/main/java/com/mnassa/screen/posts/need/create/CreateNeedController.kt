@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -81,6 +82,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             }
             etNeed.prefix = fromDictionary(R.string.need_create_prefix) + " "
             etNeed.hint = fromDictionary(R.string.need_create_need_placeholder)
+            etNeed.inputType = etNeed.inputType and EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES.inv()
             etNeed.addTextChangedListener(SimpleTextWatcher { onNeedTextUpdated() })
             onNeedTextUpdated()
 
