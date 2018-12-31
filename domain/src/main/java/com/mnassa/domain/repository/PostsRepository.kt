@@ -9,7 +9,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface PostsRepository {
     //personal feed
-    suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
+    suspend fun loadInfoPosts(): List<InfoPostModel>
+    suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadInfoPost(postId: String): PostModel?
 
     //

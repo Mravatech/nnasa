@@ -13,10 +13,8 @@ import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 import java.util.*
 
@@ -36,10 +34,8 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                 it.send(ListItemEvent.Cleared())
             },
             receiveChannelProvider = {
-                postsInteractor.loadFeedWithChangesHandling()
+                postsInteractor.loadMergedInfoPostsAndFeed()
             })
-    override val infoFeedChannel: BroadcastChannel<ListItemEvent<InfoPostModel>> by ProcessAccountChangeArrayBroadcastChannel(
-            receiveChannelProvider = { postsInteractor.loadAllInfoPosts() })
 
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()

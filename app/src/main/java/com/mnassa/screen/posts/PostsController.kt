@@ -98,16 +98,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         }
 
         controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.infoFeedChannel.openSubscription().consumeEach {
-                when (it) {
-                    is ListItemEvent.Added -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Changed -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Moved -> adapter.dataStorage.add(it.item)
-                    is ListItemEvent.Removed -> adapter.dataStorage.remove(it.item)
-                }
-            }
-        }
-        controllerSubscriptionContainer.launchCoroutineUI {
             viewModel.recheckFeedsChannel.consumeEach {
                 when (it) {
                     is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)

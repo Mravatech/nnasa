@@ -30,11 +30,8 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 import java.util.*
@@ -59,14 +56,46 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .build()
     }
 
-    override suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+    override suspend fun loadInfoPosts(): List<InfoPostModel> {
         val accountId = userRepository.getAccountIdOrException()
         return firestoreLockSuspend {
-            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(accountId)
-                    .collection(DatabaseContract.TABLE_INFO_FEED)
+            getAccountsInfoCollectionRef(accountId)
+                .awaitList<PostShortDbEntity>()
+                .map {
+                    async {
+                        it.toFullModel(currentUserId = accountId, savePinned = true)
+                            ?.let {
+                                val additionalInfo = PostAdditionInfo()
+                                return@let converter.convert(
+                                    it,
+                                    additionalInfo,
+                                    InfoPostModel::class.java
+                                ).apply {
+                                    isPinned = true
+                                }
+                            }
+                    }
+                }
+                .mapNotNull { it.await() }
+                .toList()
+        }
+    }
+
+    override suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+        val accountId = userRepository.getAccountIdOrException()
+        return firestoreLockSuspend {
+            getAccountsInfoCollectionRef(accountId)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, InfoPostModel>(
                             exceptionHandler = exceptionHandler,
+                            queryBuilder = { collection ->
+                                collection.orderBy(
+                                    PostShortDbEntity::createdAt.name,
+                                    // This is loading in a reverse order,
+                                    // that's for new items to appear at top of the list
+                                    // and not at the bottom.
+                                    Query.Direction.ASCENDING
+                                )
+                            },
                             mapper = {
                                 it.toFullModel(currentUserId = accountId, savePinned = true)?.let {
                                     converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
@@ -79,15 +108,18 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     override suspend fun loadInfoPost(postId: String): PostModel? {
         val accountId = userRepository.getAccountIdOrException()
         return firestoreLockSuspend {
-            firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-                    .document(accountId)
-                    .collection(DatabaseContract.TABLE_INFO_FEED)
+            getAccountsInfoCollectionRef(accountId)
                     .document(postId)
                     .await<PostShortDbEntity>()
                     .let { it?.toFullModel(currentUserId = accountId) }
                     ?: loadById(postId).receiveOrNull()
         }
     }
+
+    private fun getAccountsInfoCollectionRef(accountId: String) = firestore
+        .collection(DatabaseContract.TABLE_ACCOUNTS)
+        .document(accountId)
+        .collection(DatabaseContract.TABLE_INFO_FEED)
 
     override suspend fun preloadFeed(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
@@ -110,7 +142,13 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
-                    .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler, mapper = {
+                    .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler,
+                        queryBuilder = { collection ->
+                            collection.orderBy(
+                                PostShortDbEntity::createdAt.name,
+                                Query.Direction.DESCENDING
+                            )
+                        }, mapper = {
                         it.toFullModel(currentUserId = accountId)
                     })
         }

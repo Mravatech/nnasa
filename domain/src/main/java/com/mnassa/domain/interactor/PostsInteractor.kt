@@ -8,8 +8,11 @@ import java.io.Serializable
  * Created by Peter on 3/16/2018.
  */
 interface PostsInteractor {
+    suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>>
+
     //personal feed
-    suspend fun loadAllInfoPosts(): ReceiveChannel<ListItemEvent<InfoPostModel>>
+    suspend fun loadInfoPosts(): List<InfoPostModel>
+    suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadInfoPost(postId: String): PostModel?
     //
     suspend fun preloadFeed(): List<PostModel>
