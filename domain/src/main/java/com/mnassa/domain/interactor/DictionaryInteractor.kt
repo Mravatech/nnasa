@@ -8,6 +8,7 @@ import com.mnassa.domain.model.TranslatedWordModel
 interface DictionaryInteractor {
     suspend fun handleDictionaryUpdates()
     fun getWord(key: String): TranslatedWordModel
+    fun getPlural(key: String, quantity: Int): TranslatedWordModel
 
     val noInternetMessage: String
     val somethingWentWrongMessage: String

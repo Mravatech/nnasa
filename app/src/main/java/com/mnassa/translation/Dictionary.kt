@@ -14,10 +14,8 @@ fun fromDictionary(@StringRes stringId: Int): String {
 }
 
 fun fromDictionary(key: String): String {
-    val kodein by closestKodein(App.context)
-    val dictionaryInteractor: DictionaryInteractor by kodein.instance()
-    val result: String by dictionaryInteractor.getWord(key)
-    return result.replace("%i", "%d").replace("%@", "%s")
+    val result: String by withDictionaryInteractor { getWord(key) }
+    return result.processAttrs()
 }
 
 fun fromDictionary(key: String, defaultValue: String): String {
@@ -27,3 +25,26 @@ fun fromDictionary(key: String, defaultValue: String): String {
     }
     return result
 }
+
+// Plural
+
+fun fromDictionaryPlural(@StringRes stringId: Int, quantity: Int): String {
+    return fromDictionaryPlural(App.context.getString(stringId), quantity)
+}
+
+fun fromDictionaryPlural(key: String, quantity: Int): String {
+    val result: String by withDictionaryInteractor { getPlural(key, quantity) }
+    return result.processAttrs()
+}
+
+// Other
+
+private inline fun <T> withDictionaryInteractor(
+    crossinline block: DictionaryInteractor.() -> T
+): T {
+    val kodein by closestKodein(App.context)
+    val dictionaryInteractor: DictionaryInteractor by kodein.instance()
+    return dictionaryInteractor.block()
+}
+
+private fun String.processAttrs() = replace("%i", "%d").replace("%@", "%s")

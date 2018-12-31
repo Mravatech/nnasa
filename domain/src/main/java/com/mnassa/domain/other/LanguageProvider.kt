@@ -1,6 +1,7 @@
 package com.mnassa.domain.other
 
 import com.mnassa.domain.model.TranslatedWordModel
+import com.mnassa.domain.plurals.PluralQuantityRules
 import java.io.Serializable
 import java.util.*
 
@@ -17,5 +18,7 @@ interface LanguageProvider : Serializable {
     fun changeLocale():String
 
     fun chooseTranslate(word: TranslatedWordModel): String
+
+    fun getPluralRules(): PluralQuantityRules?
 
 }

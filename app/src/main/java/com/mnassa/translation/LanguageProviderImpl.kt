@@ -2,6 +2,8 @@ package com.mnassa.translation
 
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
+import com.mnassa.domain.plurals.PluralQuantityRules
+import com.mnassa.domain.plurals.createPluralRules
 import java.util.*
 
 /**
@@ -41,6 +43,8 @@ class LanguageProviderImpl : LanguageProvider {
         return if (language == english.language || language == arabian.language) this
         else english
     }
+
+    override fun getPluralRules(): PluralQuantityRules? = createPluralRules(locale)
 
     companion object {
         const val LANGUAGE_PREFERENCE = "LANGUAGE_PREFERENCE"
