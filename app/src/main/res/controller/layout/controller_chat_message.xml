@@ -85,12 +85,14 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <View style="@style/MnassaDivider" />
+
+        <LinearLayout
             android:id="@+id/llCreateMessageContainer"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/chat_message_send_container_height">
-
-            <View style="@style/MnassaDivider" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/chat_message_send_container_height">
 
             <!--<ImageView-->
             <!--android:id="@+id/ivAttach"-->
@@ -107,20 +109,21 @@
             <EditText
                 android:id="@+id/etWriteMessage"
                 style="@style/ChatMessage.EditText"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/btnSend"
                 android:gravity="center_vertical"
-                android:paddingEnd="4dp"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxHeight="220dp"
                 android:paddingStart="4dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="8dp"
                 tools:hint="Write a message…" />
 
             <TextView
                 android:id="@+id/btnSend"
                 style="@style/ChatMessage.SendTextView"
-                android:layout_alignParentEnd="true"
                 tools:text="POST" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </RelativeLayout>
