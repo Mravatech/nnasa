@@ -6,12 +6,11 @@ import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.ArrayChannel
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
+import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.sync.Mutex
 import timber.log.Timber
+
+private const val BATCH_SIZE = 10
 
 /**
  * Created by Peter on 4/13/2018.
@@ -52,58 +51,97 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             // will be sent in a wrong order.
             mutex.lock()
 
-            val changesDeferred = changes
-                .map { documentChange ->
-                    documentChange to async {
-                        // Map to network database model
-                        val dbEntity = try {
-                            documentChange.document.mapSingle<DbType>()
-                        } catch (e: Exception) {
-                            Timber.e(e, "Mapping exception: class: ${DbType::class.java.name} id: ${documentChange.document.id}")
-                            null
-                        }
-                            ?: return@async null // we can't do anything, we don't even know its id
-
-                        if (documentChange.type == DocumentChange.Type.REMOVED) {
-                            // Remove the model by it, instead of creating an
-                            // entity and then passing it to remove.
-                            return@async ListItemEvent.Removed<OutType>(dbEntity.id)
-                        } else {
-                            // Map to out model
-                            val outEntity = try {
-                                mapper(dbEntity)
-                            } catch (e: Exception) {
-                                null
-                            }
-
-                            return@async if (outEntity == null) {
-                                ListItemEvent.Removed(dbEntity.id)
-                            } else when (documentChange.type) {
-                                DocumentChange.Type.ADDED -> ListItemEvent.Added(outEntity)
-                                DocumentChange.Type.MODIFIED -> ListItemEvent.Changed(outEntity)
-                                else -> error("Unknown FireStore change type!")
-                            }
-                        }
+            // Groups the changes by BATCH_SIZE changes in each
+            // batch.
+            val changesBatches = ArrayList<List<DocumentChange>>()
+            run {
+                var changesBatch = ArrayList<DocumentChange>()
+                changes.forEachIndexed { i, documentChange ->
+                    if ((i + 1) % BATCH_SIZE == 0) {
+                        // Flush current group
+                        changesBatches += changesBatch
+                        changesBatch = ArrayList()
                     }
+
+                    changesBatch.add(documentChange)
                 }
 
-            changesDeferred.forEach {
+                // Flush the last group
+                changesBatches += changesBatch
+            }
+
+            // Process the changes by batches
+            for (changesBatch in changesBatches) {
                 if (channel.isClosedForSend) {
                     dispose.invoke()
-                    return@forEach
+                    break
                 }
 
-                try {
-                    val event = it.second.await()
-                    if (event != null) {
-                        channel.send(event)
+                val changesDeferred = changesBatch
+                    .map { documentChange ->
+                        documentChange to async {
+                            // Map to network database model
+                            val dbEntity = try {
+                                documentChange.document.mapSingle<DbType>()
+                            } catch (e: Exception) {
+                                val path = documentChange.document.reference.path
+                                val msg = "Mapping exception: class: ${DbType::class.java.name} id: $path"
+                                Timber.e(e, msg)
+                                null
+                            }
+                                ?: return@async null // we can't do anything, we don't even know its id
+
+                            if (documentChange.type == DocumentChange.Type.REMOVED) {
+                                // Remove the model by it, instead of creating an
+                                // entity and then passing it to remove.
+                                return@async ListItemEvent.Removed<OutType>(dbEntity.id)
+                            } else {
+                                // Map to out model
+                                val outEntity = try {
+                                    mapper(dbEntity)
+                                } catch (e: Exception) {
+                                    null
+                                }
+
+                                return@async if (outEntity == null) {
+                                    ListItemEvent.Removed(dbEntity.id)
+                                } else when (documentChange.type) {
+                                    DocumentChange.Type.ADDED -> ListItemEvent.Added(outEntity)
+                                    DocumentChange.Type.MODIFIED -> ListItemEvent.Changed(outEntity)
+                                    else -> error("Unknown FireStore change type!")
+                                }
+                            }
+                        }
                     }
-                } catch (e: Exception) {
-                    Timber.e(e, "Mapping exception: class: ${OutType::class.java.name} id: ${it.first.document.id}")
 
-                    dispose.invoke()
-                    channel.close(exceptionHandler.handle(e, path))
+                for (change in changesDeferred) {
+                    // Check if the channel is already closed to cancel
+                    // all deferred jobs.
+                    if (channel.isClosedForSend) {
+                        change.second.cancel()
+                        dispose.invoke()
+                    } else {
+                        val event: ListItemEvent<OutType>?
+                        try {
+                            event = change.second.await()
+                        } catch (e: Exception) {
+                            val path = change.first.document.reference.path
+                            val msg = "Mapping exception: class: ${OutType::class.java.name} id: $path"
+                            Timber.e(e, msg)
+                            continue
+                        }
+
+                        if (event != null) try {
+                            channel.send(event)
+                        } catch (e: ClosedSendChannelException) {
+                            // Continue to cancel all next running
+                            // jobs.
+                            dispose.invoke()
+                        }
+                    }
                 }
+
+                yield()
             }
 
             mutex.unlock()
@@ -115,7 +153,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             .addSnapshotListener { dataSnapshot, e ->
                 if (e != null) {
                     channel.close(exceptionHandler.handle(e, path))
-                    listener.remove()
+                    dispose.invoke()
                     return@addSnapshotListener
                 }
 
