@@ -191,7 +191,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         val location = event.locationType
         if (location is EventLocationType.Specified) {
             location.location?.let {
-                val gmmIntentUri = Uri.parse("geo:${it.lat},${it.lng}")
+                val gmmIntentUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=${it.lat},${it.lng}")
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                 mapIntent.`package` = "com.google.android.apps.maps"
                 if (mapIntent.resolveActivity(context.packageManager) != null) {
