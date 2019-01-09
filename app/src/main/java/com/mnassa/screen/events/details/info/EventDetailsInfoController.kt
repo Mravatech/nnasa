@@ -14,10 +14,7 @@ import android.view.ViewGroup
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.EventLocationType
-import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.EventStatus
-import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
@@ -60,9 +57,17 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             btnBuyTickets.isEnabled = false
         }
 
-        bindEvent(event, view)
+        bindEvent(event, null, view)
+
         launchCoroutineUI {
-            viewModel.eventChannel.consumeEach { bindEvent(it, getViewSuspend()) }
+            viewModel.eventChannel.consumeEach {
+                bindEvent(event = it)
+            }
+        }
+        launchCoroutineUI {
+            viewModel.boughtTicketsChannel.consumeEach {
+                bindEvent(tickets = it)
+            }
         }
     }
 
@@ -71,7 +76,14 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         super.onDestroyView(view)
     }
 
-    private fun bindEvent(event: EventModel, view: View) {
+    private suspend fun bindEvent(
+        event: EventModel = viewModel.eventChannel.valueOrNull ?: this.event,
+        tickets: List<EventTicketModel>? = viewModel.boughtTicketsChannel.valueOrNull
+    ) {
+        bindEvent(event, tickets, getViewSuspend())
+    }
+
+    private fun bindEvent(event: EventModel, boughtTickets: List<EventTicketModel>?, view: View) {
         with(view) {
             tvSchedule.text = formatTime(event)
             //
@@ -103,17 +115,18 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             //
             llEventLocation.setOnClickListener { openGoogleMaps(event, it.context) }
 
-            launchCoroutineUI { bindBuyTicketButton(event) }
+            bindBuyTicketButton(event, boughtTickets)
             launchCoroutineUI { bindTags(viewModel.loadTags(event.tags)) }
         }
     }
 
-    private suspend fun bindBuyTicketButton(event: EventModel) {
-        with(getViewSuspend()) {
-            val boughtTicketsCount = event.getBoughtTicketsCount()
-            val canBuyTickets = event.canBuyTickets(boughtTicketsCount)
+    private fun bindBuyTicketButton(event: EventModel, boughtTickets: List<EventTicketModel>?) {
+        with(view!!) {
+            val boughtTicketsCountNullable = boughtTickets?.sumBy { it.ticketCount.toInt() }?.toLong()
+            val boughtTicketsCount = boughtTicketsCountNullable ?: 0L
+            val canBuyTickets = boughtTicketsCountNullable?.let(event::canBuyTickets) ?: false
             //
-            tvTickets.text = formatTicketsText(event, context, boughtTicketsCount)
+            tvTickets.text = formatTicketsText(event, context, boughtTicketsCountNullable)
 
             // buy button logic
             btnBuyTickets.isEnabled = canBuyTickets
@@ -148,7 +161,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         return scheduleText
     }
 
-    private fun formatTicketsText(event: EventModel, context: Context, boughtTicketsCount: Long): CharSequence {
+    private fun formatTicketsText(event: EventModel, context: Context, boughtTicketsCount: Long?): CharSequence {
         val ticketsText = SpannableStringBuilder()
         ticketsText.append(fromDictionary(R.string.event_price_template).format(event.price))
         ticketsText.append("\n")
@@ -158,10 +171,19 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         ticketsText.append(fromDictionary(R.string.event_tickets_from).format(event.ticketsTotal))
         ticketsText.append("\n")
         val blueSpanStart = ticketsText.length
-        ticketsText.append(fromDictionary(R.string.event_tickets).format(boughtTicketsCount))
-        ticketsText.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.accent)), blueSpanStart, ticketsText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        ticketsText.append(" ")
-        ticketsText.append(fromDictionary(R.string.event_tickets_bought_by_me))
+        if (boughtTicketsCount != null) {
+            ticketsText.append(fromDictionary(R.string.event_tickets).format(boughtTicketsCount))
+            ticketsText.setSpan(
+                ForegroundColorSpan(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.accent
+                    )
+                ), blueSpanStart, ticketsText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            ticketsText.append(" ")
+            ticketsText.append(fromDictionary(R.string.event_tickets_bought_by_me))
+        }
         return ticketsText
     }
 

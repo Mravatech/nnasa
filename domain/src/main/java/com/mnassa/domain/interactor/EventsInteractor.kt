@@ -23,6 +23,11 @@ interface EventsInteractor {
 
     suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?>
     suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>
+    /**
+     * Same as [getTicketsChannel] but filtered by this
+     * account's id.
+     */
+    suspend fun getBoughtTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>>
 
     suspend fun onItemViewed(item: EventModel)
     suspend fun onItemOpened(item: EventModel)
