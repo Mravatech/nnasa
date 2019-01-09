@@ -2,7 +2,9 @@ package com.mnassa.data.network.bean.firebase
 
 import android.support.annotation.Nullable
 import com.google.gson.JsonObject
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import com.mnassa.data.network.bean.firebase.adapters.PostAutoSuggestJsonAdapter
 import com.mnassa.domain.model.HasId
 
 /**
@@ -60,15 +62,12 @@ internal data class PostCountersDbEntity(
         @SerializedName("views") var views: Int
 )
 
+@JsonAdapter(PostAutoSuggestJsonAdapter::class)
 internal data class PostAutoSuggest(
-        @SerializedName("total") override var total: Int,
-        @SerializedName("youCanHelp") override var youCanHelp: Boolean,
-        @SerializedName("aids") var aidsInternal: List<String>?
-) : com.mnassa.domain.model.PostAutoSuggest {
-
-    override val accountIds: List<String>
-        get() = aidsInternal ?: emptyList()
-}
+        override var total: Int,
+        override var youCanHelp: Boolean,
+        override val accountIds: List<String>
+) : com.mnassa.domain.model.PostAutoSuggest
 
 internal class PostShortDbEntity(
         @SerializedName("id") override var id: String,
