@@ -21,40 +21,40 @@ internal class PostAutoSuggestJsonAdapter : TypeAdapter<PostAutoSuggest>() {
         private const val KEY_AIDS = "aids"
     }
 
-    override fun write(out: JsonWriter, value: PostAutoSuggest) {
-        out.beginObject()
-        out.name(KEY_TOTAL).value(value.total)
-        out.name(KEY_YOU_CAN_HELP).value(value.youCanHelp)
+    override fun write(writer: JsonWriter, value: PostAutoSuggest) {
+        writer.beginObject()
+        writer.name(KEY_TOTAL).value(value.total)
+        writer.name(KEY_YOU_CAN_HELP).value(value.youCanHelp)
 
         // Write account ids array
-        out.name(KEY_AIDS)
-        out.beginArray()
+        writer.name(KEY_AIDS)
+        writer.beginArray()
         value.accountIds.forEach {
-            out.value(it)
+            writer.value(it)
         }
-        out.endArray()
+        writer.endArray()
 
-        out.endObject()
+        writer.endObject()
     }
 
-    override fun read(`in`: JsonReader): PostAutoSuggest {
+    override fun read(reader: JsonReader): PostAutoSuggest {
         var total = 0
         var youCanHelp = false
         var aids: List<String>? = null
 
         // Read the object from
         // json reader
-        `in`.beginObject()
-        while (`in`.hasNext()) {
-            val name = `in`.nextName()
+        reader.beginObject()
+        while (reader.hasNext()) {
+            val name = reader.nextName()
             when (name) {
-                KEY_TOTAL -> total = `in`.nextIntOrSkip() ?: 0
-                KEY_YOU_CAN_HELP -> youCanHelp = `in`.nextBooleanOrSkip() ?: false
-                KEY_AIDS -> aids = `in`.nextOrSkip(JsonToken.BEGIN_ARRAY) { nextStringList() }
-                else -> `in`.skipValue()
+                KEY_TOTAL -> total = reader.nextIntOrSkip() ?: 0
+                KEY_YOU_CAN_HELP -> youCanHelp = reader.nextBooleanOrSkip() ?: false
+                KEY_AIDS -> aids = reader.nextOrSkip(JsonToken.BEGIN_ARRAY) { nextStringList() }
+                else -> reader.skipValue()
             }
         }
-        `in`.endObject()
+        reader.endObject()
 
         return PostAutoSuggest(
             total = total,
