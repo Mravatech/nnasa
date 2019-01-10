@@ -12,9 +12,12 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.di.getInstance
 import com.mnassa.domain.model.*
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
@@ -213,12 +216,21 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
         val location = event.locationType
         if (location is EventLocationType.Specified) {
             location.location?.let {
-                val gmmIntentUri = Uri.parse("geo:${it.lat},${it.lng}")
-                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                mapIntent.`package` = "com.google.android.apps.maps"
-                if (mapIntent.resolveActivity(context.packageManager) != null) {
-                    startActivity(mapIntent)
+                if (it.lat != null && it.lng != null) {
+                    val uri = App.context.getInstance<AppInfoProvider>()
+                        .urlGoogleMapsSearch
+                        .format(it.lat, it.lng)
+                        .let(Uri::parse)
+                    Intent(Intent.ACTION_VIEW, uri)
+                } else {
+                    null
                 }
+                    ?.apply {
+                        // Target only Google Maps application
+                        `package` = "com.google.android.apps.maps"
+                    }
+                    ?.takeIf { it.resolveActivity(context.packageManager) != null }
+                    ?.let(::startActivity)
             }
         }
     }

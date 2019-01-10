@@ -112,6 +112,8 @@ android {
                 variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsDev']}\""
                 break
         }
+
+        variant.buildConfigField "String", "URL_GOOGLE_MAPS_SEARCH", "\"${deps.urls.google_maps_search}\""
     }
 
     sourceSets {

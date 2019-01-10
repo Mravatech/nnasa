@@ -26,4 +26,6 @@ class AppInfoProviderImpl(context: Context) : AppInfoProvider {
     override val osVersion: String = Build.VERSION.RELEASE
     override val endpoint: String = BuildConfig.ENDPOINT
     override val appName: String = context.getString(R.string.app_name)
+
+    override val urlGoogleMapsSearch: String = BuildConfig.URL_GOOGLE_MAPS_SEARCH
 }
