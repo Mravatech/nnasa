@@ -115,13 +115,13 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
             //
             llEventLocation.setOnClickListener { openGoogleMaps(event, it.context) }
 
-            bindBuyTicketButton(event, boughtTickets)
+            bindBuyTicketButton(event, boughtTickets, view)
             launchCoroutineUI { bindTags(viewModel.loadTags(event.tags)) }
         }
     }
 
-    private fun bindBuyTicketButton(event: EventModel, boughtTickets: List<EventTicketModel>?) {
-        with(view!!) {
+    private fun bindBuyTicketButton(event: EventModel, boughtTickets: List<EventTicketModel>?, view: View) {
+        with(view) {
             val boughtTicketsCountNullable = boughtTickets?.sumBy { it.ticketCount.toInt() }?.toLong()
             val boughtTicketsCount = boughtTicketsCountNullable ?: 0L
             val canBuyTickets = boughtTicketsCountNullable?.let(event::canBuyTickets) ?: false
