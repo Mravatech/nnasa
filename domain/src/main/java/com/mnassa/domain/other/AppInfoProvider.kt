@@ -12,4 +12,5 @@ interface AppInfoProvider {
     val osVersion: String
     val endpoint: String
     val appName: String
+    val urlGoogleMapsSearch: String
 }

@@ -213,6 +213,12 @@ other.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlyti
 other.plurals = project(':library-plurals')
 
 deps.other = other
+//============================================== URLS ============================================
+def urls = [:]
+
+urls.google_maps_search = 'https://www.google.com/maps/search/?api=1&query=%f,%f'
+
+deps.urls = urls
 //=============================================== TESTS ============================================
 def tests = [:]
 tests.junit = 'junit:junit:4.12'
