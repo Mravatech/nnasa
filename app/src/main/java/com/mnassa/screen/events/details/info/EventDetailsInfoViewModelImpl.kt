@@ -9,7 +9,6 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
 /**
@@ -19,8 +18,9 @@ class EventDetailsInfoViewModelImpl(
         private val eventId: String,
         private val eventsInteractor: EventsInteractor,
         private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), EventDetailsInfoViewModel {
+
     override val eventChannel: ConflatedBroadcastChannel<EventModel> = ConflatedBroadcastChannel()
-    private val ticketsChannel: ConflatedBroadcastChannel<List<EventTicketModel>> = ConflatedBroadcastChannel()
+    override val boughtTicketsChannel: ConflatedBroadcastChannel<List<EventTicketModel>> = ConflatedBroadcastChannel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +32,8 @@ class EventDetailsInfoViewModelImpl(
         }
 
         handleException {
-            eventsInteractor.getTicketsChannel(eventId).consumeEach {
-                ticketsChannel.send(it)
-                eventChannel.valueOrNull?.apply { eventChannel.send(this) }
+            eventsInteractor.getBoughtTicketsChannel(eventId).consumeEach {
+                boughtTicketsChannel.send(it)
             }
         }
     }

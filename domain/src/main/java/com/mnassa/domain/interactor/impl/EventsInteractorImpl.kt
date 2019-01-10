@@ -7,10 +7,7 @@ import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.channels.*
 import timber.log.Timber
 
 /**
@@ -21,6 +18,7 @@ class EventsInteractorImpl(
         private val userProfileInteractor: UserProfileInteractor,
         private val storageInteractor: StorageInteractor,
         private val tagInteractor: TagInteractor) : EventsInteractor {
+
     private val viewItemChannel = ArrayChannel<ListItemEvent<EventModel>>(10)
 
     init {
@@ -135,6 +133,16 @@ class EventsInteractorImpl(
     override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> = eventsRepository.getEventsChannel(eventId)
     override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> = eventsRepository.getTicketsChannel(eventId)
     override suspend fun getTickets(eventId: String): List<EventTicketModel> = eventsRepository.getTickets(eventId)
+
+    override suspend fun getBoughtTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> {
+        return getTicketsChannel(eventId)
+            .map { list ->
+                val accountId = userProfileInteractor.getAccountIdOrException()
+                return@map list
+                    .filter { it.ownerId == accountId }
+                    .toList()
+            }
+    }
 
     override suspend fun getBoughtTicketsCount(eventId: String): Long {
         val userId = userProfileInteractor.getAccountIdOrNull() ?: return 0L
