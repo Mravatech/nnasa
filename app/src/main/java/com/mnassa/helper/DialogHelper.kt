@@ -317,9 +317,9 @@ class DialogHelper {
         lateinit var dialog: AlertDialog
 
         var btnHardcodedEmailAndPassword = Button(context)
-        btnHardcodedEmailAndPassword.text = "p3@nxt.ru"
+        btnHardcodedEmailAndPassword.text = "alex@u.net"
         btnHardcodedEmailAndPassword.setOnClickListener {
-            listener("p3@nxt.ru", "123123")
+            listener("alex@u.net", "123123")
             dialog.dismiss()
         }
         container.addView(btnHardcodedEmailAndPassword)
@@ -328,6 +328,14 @@ class DialogHelper {
         btnHardcodedEmailAndPassword.text = "chas@ukr.net"
         btnHardcodedEmailAndPassword.setOnClickListener {
             listener("chas@ukr.net", "123123")
+            dialog.dismiss()
+        }
+        container.addView(btnHardcodedEmailAndPassword)
+        //
+        btnHardcodedEmailAndPassword = Button(context)
+        btnHardcodedEmailAndPassword.text = "oltr@u.net"
+        btnHardcodedEmailAndPassword.setOnClickListener {
+            listener("oltr@u.net", "123123")
             dialog.dismiss()
         }
         container.addView(btnHardcodedEmailAndPassword)
