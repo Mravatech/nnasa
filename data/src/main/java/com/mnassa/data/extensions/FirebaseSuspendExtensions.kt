@@ -64,6 +64,40 @@ internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: Exce
     return result
 }
 
+/**
+ * Gets the list of values at database reference bypassing the cache.
+ *
+ * Note that this method will result in an exception if the device is
+ * offline.
+ */
+internal suspend inline fun <reified T : Any> DatabaseReference.awaitListBypassCache(exceptionHandler: ExceptionHandler): List<T> {
+    forDebug { Timber.i("#LISTEN# awaitListBypassCache ${this.ref}") }
+    return suspendCancellableCoroutine { continuation ->
+        runTransaction(object : Transaction.Handler {
+            override fun onComplete(error: DatabaseError?, isSuccess: Boolean, snapshot: DataSnapshot?) {
+                // This is OK for `isSuccess` to be false or `error` be not null,
+                // as long as we get valid snapshot. This will happen if we don't have
+                // write access to a reference.
+                if (snapshot != null) {
+                    try {
+                        continuation.resume(snapshot.mapList())
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
+                    }
+                } else {
+                    val e = error?.toException() ?: IllegalStateException()
+                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
+                }
+            }
+
+            override fun doTransaction(data: MutableData): Transaction.Result {
+                return Transaction.abort() // we don't want to write anything
+            }
+        })
+    }
+}
+
 internal suspend inline fun <reified T : HasId> loadPortion(
         databaseReference: DatabaseReference,
         offset: String? = null,
