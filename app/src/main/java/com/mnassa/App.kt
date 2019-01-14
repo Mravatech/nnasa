@@ -5,6 +5,7 @@ import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
+import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.FirebaseApp
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
@@ -14,6 +15,7 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
+import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -46,6 +48,8 @@ class App : MultiDexApplication(), KodeinAware {
             Timber.plant(CrashReportingTree(getInstance()))
         }
         Fabric.with(this, Crashlytics())
+
+        BigImageViewer.initialize(FirebaseBigImageLoader.with(this))
 
         launchWorker {
             getInstance<DictionaryInteractor>().handleDictionaryUpdates()
