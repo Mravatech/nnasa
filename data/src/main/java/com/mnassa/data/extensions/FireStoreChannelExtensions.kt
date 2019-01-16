@@ -41,6 +41,9 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     var listenerFirestore: ListenerRegistration? = null
     var listenerPagination: PaginationObserver? = null
 
+    var querySizeCurrent = 0L
+    var isBusy = false
+
     // Removes the FireStore
     // listener.
     val doDispose = {
@@ -62,6 +65,8 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             // Synchronize the processing, so there's almost no chance that the change events
             // will be sent in a wrong order.
             mutex.lock()
+
+            val querySizeSaved = querySizeCurrent
 
             // Groups the changes by BATCH_SIZE changes in each
             // batch.
@@ -158,6 +163,10 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                 yield()
             }
 
+            if (querySizeSaved == querySizeCurrent) {
+                isBusy = false
+            }
+
             mutex.unlock()
         }
     }
@@ -192,14 +201,23 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
 
             // FIXME: With current implementation there's a small chance that
             // remove event will be lost between re-subscriptions.
-            observe({ querySizeLimit: Long ->
-                launch(DefaultDispatcher) {
-                    doSubscribe(querySizeLimit)
+            observe(
+                object : PaginationObserver {
+                    override val isBusy: Boolean
+                        get() = isBusy
+
+                    override fun onSizeChanged(size: Long) {
+                        querySizeCurrent = size
+                        isBusy = true
+
+                        launch(DefaultDispatcher) {
+                            doSubscribe(size)
+                        }
+                    }
+                }.also {
+                    listenerPagination = it
                 }
-                Unit
-            }.also {
-                listenerPagination = it
-            })
+            )
         }
         ?: run {
             // Subscribe without pagination

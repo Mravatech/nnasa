@@ -12,6 +12,7 @@ import java.util.*
 interface EventsViewModel : MnassaViewModel {
     val eventsFeedChannel: BroadcastChannel<ListItemEvent<List<EventModel>>>
     fun onAttachedToWindow(event: EventModel)
+    fun onScroll(visibleItemCount: Int, totalItemCount: Int, firstVisibleItemPosition: Int)
 
     fun saveScrollPosition(event: EventModel)
     fun restoreScrollPosition(): String?

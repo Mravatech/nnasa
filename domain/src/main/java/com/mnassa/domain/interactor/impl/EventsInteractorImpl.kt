@@ -5,6 +5,7 @@ import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
@@ -34,6 +35,8 @@ class EventsInteractorImpl(
             }
         }
     }
+
+    override val eventsPagination = PaginationController(EVENTS_INITIAL_SIZE)
 
     override suspend fun onItemViewed(item: EventModel) {
         if (item.author.id == userProfileInteractor.getAccountIdOrException()) {
@@ -123,7 +126,7 @@ class EventsInteractorImpl(
             } catch (e: Exception) {
                 Timber.e(e) //ignore exception here
             }
-            eventsRepository.getEventsFeedChannel().withBuffer().consumeEach { send(it) }
+            eventsRepository.getEventsFeedChannel(eventsPagination).withBuffer().consumeEach { send(it) }
         }
     }
 
@@ -162,5 +165,7 @@ class EventsInteractorImpl(
 
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
+
+        private const val EVENTS_INITIAL_SIZE = 100L
     }
 }

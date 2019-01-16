@@ -1,5 +1,6 @@
 package com.mnassa.domain.pagination
 
+import android.os.SystemClock
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -9,29 +10,53 @@ class PaginationController(
     var size: Long = 40
 ) {
 
+    companion object {
+        private val MIN_UPDATE_TIME = 2000L
+    }
+
     private val observers = CopyOnWriteArrayList<PaginationObserver>()
 
     /**
-     * Registers pagination observer to listen for [nextPage]
+     * `true` if any of the observers are
+     * in the "busy" state.
+     */
+    private val isBusy: Boolean
+        get() {
+            observers.forEach {
+                if (it.isBusy) return true
+            }
+            return false
+        }
+
+    private var lastNextPageTimestamp = 0L
+
+    /**
+     * Registers pagination observer to listen for [requestNextPage]
      * requests.
      * @see removeObserver
      */
     fun observe(observer: PaginationObserver) {
         observers += observer
-        observer.invoke(size)
+        observer.onSizeChanged(size)
     }
 
     fun removeObserver(observer: PaginationObserver) {
         observers -= observer
     }
 
-    fun nextPage(pageSize: Long) {
+    fun requestNextPage(pageSize: Long) {
+        val now = SystemClock.elapsedRealtime()
+        if (isBusy || now - lastNextPageTimestamp < MIN_UPDATE_TIME) {
+            return
+        }
+
+        lastNextPageTimestamp = now
         size += pageSize
 
         // Notify all of the observers about
         // size change.
         tweet {
-            invoke(size)
+            onSizeChanged(size)
         }
     }
 

@@ -12,6 +12,8 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.delay
 import java.util.*
+import java.util.Collections.min
+import kotlin.math.min
 
 /**
  * Created by Peter on 3/6/2018.
@@ -38,6 +40,14 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
         resetCounterJob = async {
             delay(1_000)
             resetCounter()
+        }
+    }
+
+    override fun onScroll(visibleItemCount: Int, totalItemCount: Int, firstVisibleItemPosition: Int) {
+        val paginationController = eventsInteractor.eventsPagination
+        val paginationSize = min(paginationController.size, totalItemCount.toLong())
+        if (visibleItemCount + firstVisibleItemPosition >= paginationSize && firstVisibleItemPosition >= 0) {
+            paginationController.requestNextPage(100)
         }
     }
 

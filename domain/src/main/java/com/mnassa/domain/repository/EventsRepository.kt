@@ -2,6 +2,7 @@ package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RawEventModel
+import com.mnassa.domain.pagination.PaginationController
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -9,7 +10,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface EventsRepository {
     suspend fun preloadEvents(): List<EventModel>
-    suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>>
+    suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<ListItemEvent<EventModel>>
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>>
     suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel>
 
