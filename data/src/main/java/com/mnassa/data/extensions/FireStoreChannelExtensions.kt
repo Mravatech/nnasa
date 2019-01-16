@@ -5,9 +5,14 @@ import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
-import kotlinx.coroutines.experimental.*
+import com.mnassa.domain.pagination.PaginationController
+import com.mnassa.domain.pagination.PaginationObserver
+import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.yield
 import timber.log.Timber
 
 private const val BATCH_SIZE = 10
@@ -26,23 +31,30 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     exceptionHandler: ExceptionHandler,
     noinline queryBuilder: (CollectionReference) -> Query = { it },
     noinline mapper: suspend (DbType) -> OutType? = { it as OutType },
+    pagination: PaginationController? = null,
     limit: Int = DEFAULT_LIMIT
 ): Channel<ListItemEvent<OutType>> {
     forDebug { Timber.i("#LISTEN# toValueChannelWithChangesHandling ${this.path}") }
     val mutex = Mutex()
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
-    lateinit var listener: ListenerRegistration
+    var listenerFirestore: ListenerRegistration? = null
+    var listenerPagination: PaginationObserver? = null
 
     // Removes the FireStore
     // listener.
-    val dispose = {
-        listener.remove()
+    val doDispose = {
+        listenerFirestore?.remove()
+        listenerFirestore = null
+
+        if (pagination != null) {
+            listenerPagination?.let(pagination::removeObserver)
+        }
     }
 
-    val processor = processor@{ changes: MutableList<DocumentChange> ->
+    val doProcess = processor@{ changes: MutableList<DocumentChange> ->
         if (channel.isClosedForSend) {
-            dispose.invoke()
+            doDispose()
             return@processor
         }
 
@@ -73,7 +85,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             // Process the changes by batches
             for (changesBatch in changesBatches) {
                 if (channel.isClosedForSend) {
-                    dispose.invoke()
+                    doDispose()
                     break
                 }
 
@@ -85,7 +97,8 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                                 documentChange.document.mapSingle<DbType>()
                             } catch (e: Exception) {
                                 val path = documentChange.document.reference.path
-                                val msg = "Mapping exception: class: ${DbType::class.java.name} id: $path"
+                                val msg =
+                                    "Mapping exception: class: ${DbType::class.java.name} id: $path"
                                 Timber.e(e, msg)
                                 null
                             }
@@ -119,14 +132,15 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                     // all deferred jobs.
                     if (channel.isClosedForSend) {
                         change.second.cancel()
-                        dispose.invoke()
+                        doDispose()
                     } else {
                         val event: ListItemEvent<OutType>?
                         try {
                             event = change.second.await()
                         } catch (e: Exception) {
                             val path = change.first.document.reference.path
-                            val msg = "Mapping exception: class: ${OutType::class.java.name} id: $path"
+                            val msg =
+                                "Mapping exception: class: ${OutType::class.java.name} id: $path"
                             Timber.e(e, msg)
                             continue
                         }
@@ -136,7 +150,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                         } catch (e: ClosedSendChannelException) {
                             // Continue to cancel all next running
                             // jobs.
-                            dispose.invoke()
+                            doDispose()
                         }
                     }
                 }
@@ -148,18 +162,50 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
         }
     }
 
-    firestoreLockSuspend {
-        listener = queryBuilder(this)
-            .addSnapshotListener { dataSnapshot, e ->
-                if (e != null) {
-                    channel.close(exceptionHandler.handle(e, path))
-                    dispose.invoke()
-                    return@addSnapshotListener
+    val doSubscribe: suspend (Long?) -> Unit = { querySizeLimit ->
+        // Create new listener on a query with
+        // set limit size.
+        firestoreLockSuspend {
+            listenerFirestore?.remove()
+            listenerFirestore = queryBuilder(this@toValueChannelWithChangesHandling)
+                .run {
+                    // Apply limit restriction only if it
+                    // is set.
+                    querySizeLimit?.let(::limit) ?: this
                 }
+                .addSnapshotListener { dataSnapshot, e ->
+                    if (e != null) {
+                        channel.close(exceptionHandler.handle(e, path))
+                        doDispose.invoke()
+                        return@addSnapshotListener
+                    }
 
-                dataSnapshot?.documentChanges?.let(processor)
-            }
+                    dataSnapshot?.documentChanges?.let(doProcess)
+                }
+        }
     }
+
+    pagination
+        ?.apply {
+            // Subscribe via the pagination
+            // controller.
+
+            // FIXME: With current implementation there's a small chance that
+            // remove event will be lost between re-subscriptions.
+            observe({ querySizeLimit: Long ->
+                launch(DefaultDispatcher) {
+                    doSubscribe(querySizeLimit)
+                }
+                Unit
+            }.also {
+                listenerPagination = it
+            })
+        }
+        ?: run {
+            // Subscribe without pagination
+            // handling.
+            doSubscribe(null)
+        }
 
     return channel
 }
