@@ -5,6 +5,7 @@ import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.domain.other.SeamlessSubscriptionController
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.pagination.PaginationObserver
 import kotlinx.coroutines.experimental.DefaultDispatcher
@@ -38,7 +39,6 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     val mutex = Mutex()
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
-    var listenerFirestore: ListenerRegistration? = null
     var listenerPagination: PaginationObserver? = null
 
     var querySizeCurrent = 0L
@@ -47,16 +47,14 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     // Removes the FireStore
     // listener.
     val doDispose = {
-        listenerFirestore?.remove()
-        listenerFirestore = null
-
         if (pagination != null) {
             listenerPagination?.let(pagination::removeObserver)
         }
     }
 
-    val doProcess = processor@{ changes: MutableList<DocumentChange> ->
+    val doProcess = processor@{ removeObserver: () -> Unit, changes: MutableList<DocumentChange> ->
         if (channel.isClosedForSend) {
+            removeObserver()
             doDispose()
             return@processor
         }
@@ -90,6 +88,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             // Process the changes by batches
             for (changesBatch in changesBatches) {
                 if (channel.isClosedForSend) {
+                    removeObserver()
                     doDispose()
                     break
                 }
@@ -137,6 +136,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                     // all deferred jobs.
                     if (channel.isClosedForSend) {
                         change.second.cancel()
+                        removeObserver()
                         doDispose()
                     } else {
                         val event: ListItemEvent<OutType>?
@@ -155,6 +155,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                         } catch (e: ClosedSendChannelException) {
                             // Continue to cancel all next running
                             // jobs.
+                            removeObserver()
                             doDispose()
                         }
                     }
@@ -171,26 +172,42 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
         }
     }
 
+    val controller = SeamlessSubscriptionController()
+
     val doSubscribe: suspend (Long?) -> Unit = { querySizeLimit ->
         // Create new listener on a query with
         // set limit size.
         firestoreLockSuspend {
-            listenerFirestore?.remove()
-            listenerFirestore = queryBuilder(this@toValueChannelWithChangesHandling)
-                .run {
-                    // Apply limit restriction only if it
-                    // is set.
-                    querySizeLimit?.let(::limit) ?: this
-                }
-                .addSnapshotListener { dataSnapshot, e ->
-                    if (e != null) {
-                        channel.close(exceptionHandler.handle(e, path))
-                        doDispose.invoke()
-                        return@addSnapshotListener
+            lateinit var listenerFirestore: () -> Unit
+            listenerFirestore = controller.register { onObserve ->
+                val registration = queryBuilder(this@toValueChannelWithChangesHandling)
+                    .run {
+                        // Apply limit restriction only if it
+                        // is set.
+                        querySizeLimit?.let(::limit) ?: this
+                    }
+                    .addSnapshotListener { dataSnapshot, e ->
+                        if (e != null) {
+                            channel.close(exceptionHandler.handle(e, path))
+                            doDispose.invoke()
+                            return@addSnapshotListener
+                        }
+
+                        dataSnapshot?.documentChanges?.let { changes ->
+                            doProcess(listenerFirestore, changes)
+                        }
+
+                        // Notify the seamless subscription controller that
+                        // we have received something.
+                        onObserve()
                     }
 
-                    dataSnapshot?.documentChanges?.let(doProcess)
+                return@register {
+                    // Unsubscribe from real observable
+                    registration.remove()
                 }
+            }
+            Unit
         }
     }
 
@@ -198,9 +215,6 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
         ?.apply {
             // Subscribe via the pagination
             // controller.
-
-            // FIXME: With current implementation there's a small chance that
-            // remove event will be lost between re-subscriptions.
             observe(
                 object : PaginationObserver {
                     override val isBusy: Boolean
