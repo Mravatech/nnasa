@@ -47,7 +47,7 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
         val paginationController = eventsInteractor.eventsPagination
         val paginationSize = min(paginationController.size, totalItemCount.toLong())
         if (visibleItemCount + firstVisibleItemPosition >= paginationSize && firstVisibleItemPosition >= 0) {
-            paginationController.requestNextPage(100)
+            paginationController.requestNextPage(EVENTS_PAGE_SIZE)
         }
     }
 
@@ -86,5 +86,7 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     private companion object {
         private const val KEY_EVENTS_POSITION = "KEY_EVENTS_POSITION"
         private const val KEY_EVENTS_LAST_VIEWED = "KEY_EVENTS_LAST_VIEWED"
+
+        private const val EVENTS_PAGE_SIZE = 100L
     }
 }

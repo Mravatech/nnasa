@@ -64,7 +64,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         val paginationController = postsInteractor.mergedInfoPostsAndFeedPagination
         val paginationSize = min(paginationController.size, totalItemCount.toLong())
         if (visibleItemCount + firstVisibleItemPosition >= paginationSize && firstVisibleItemPosition >= 0) {
-            paginationController.requestNextPage(100)
+            paginationController.requestNextPage(POSTS_PAGE_SIZE)
         }
     }
 
@@ -117,5 +117,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     companion object {
         private const val KEY_POSTS_POSITION = "KEY_POSTS_POSITION"
         private const val KEY_POSTS_LAST_VIEWED = "KEY_POSTS_LAST_VIEWED"
+
+        private const val POSTS_PAGE_SIZE = 100L
     }
 }
