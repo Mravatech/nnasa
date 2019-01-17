@@ -51,7 +51,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     private fun createMergedInfoPostsAndFeedChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        val output = ArrayChannel<ListItemEvent<List<PostModel>>>(20)
+        val output = ArrayChannel<ListItemEvent<List<PostModel>>>(MERGED_FEED_CHANNEL_CAPACITY)
 
         var feedSuspended = true
         val feedBuffer: MutableList<ListItemEvent<List<PostModel>>> = ArrayList()
@@ -279,5 +279,6 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 2_000L
 
         private const val MERGED_FEED_INITIAL_SIZE = 100L
+        private const val MERGED_FEED_CHANNEL_CAPACITY = 20
     }
 }
