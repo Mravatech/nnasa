@@ -22,6 +22,7 @@ import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.android.synthetic.main.new_items_panel.view.*
 import org.kodein.di.generic.instance
@@ -110,7 +111,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         super.onViewCreated(view)
         view.rvEvents.adapter = adapter
         view.rvEvents.attachPanel { hasNewPosts }
-        view.tvNewItemsAvailable.text = view.context.getString(R.string.events_new_items_available)
+        view.tvNewItemsAvailable.text = fromDictionary(view.context.getString(R.string.events_new_items_available))
 
         view.rvEvents.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
