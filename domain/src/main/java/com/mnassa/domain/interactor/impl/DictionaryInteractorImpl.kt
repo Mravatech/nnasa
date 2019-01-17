@@ -24,20 +24,23 @@ class DictionaryInteractorImpl(
     private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
 
     override suspend fun handleDictionaryUpdates() {
-        try {
-            repository.getMobileUiVersion().consumeEach { serverVersion ->
-                withContext(DefaultDispatcher) {
-                    val mobileVersion = repository.getLocalDictionaryVersion()
-                    if (serverVersion != mobileVersion) {
-                        repository.saveLocalDictionary(serverVersion, repository.loadDictionary())
+        while (true) {
+            try {
+                repository.getMobileUiVersion().consumeEach { serverVersion ->
+                    withContext(DefaultDispatcher) {
+                        val mobileVersion = repository.getLocalDictionaryVersion()
+                        if (serverVersion != mobileVersion) {
+                            val serverDict = repository.loadDictionary()
+                            repository.saveLocalDictionary(serverVersion, serverDict)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                //must never happen
+                Timber.e(e)
             }
-        } catch (e: Exception) {
-            //must never happen
-            Timber.e(e)
-            delay(5_000L)
-            return handleDictionaryUpdates()
+
+            delay(10_000L)
         }
     }
 

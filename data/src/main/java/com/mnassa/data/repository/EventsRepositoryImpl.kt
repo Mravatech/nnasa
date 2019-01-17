@@ -22,6 +22,7 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.impl.RawEventModel
+import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.GroupsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -55,7 +56,7 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
         }
     }
 
-    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<EventModel>> {
+    override suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<ListItemEvent<EventModel>> {
         return firestoreLockSuspend {
             firestore
                     .collection(DatabaseContract.TABLE_EVENTS)
@@ -63,6 +64,7 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                     .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
                     .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
                             exceptionHandler = exceptionHandler,
+                            pagination = pagination,
                             mapper = { mapEvent(it) }
                     )
         }

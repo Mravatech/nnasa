@@ -20,7 +20,7 @@ android {
 
         def versionMajor = 4
         def versionMinor = 0
-        def versionPatch = 13
+        def versionPatch = 14
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         versionCode (versionMajor * 100 + versionMinor * 10 + versionPatch)
 
@@ -206,7 +206,9 @@ dependencies {
     implementation deps.network.logging
 
     //ui
-    implementation deps.ui.photoView
+    implementation deps.ui.bigImageViewer
+    implementation deps.ui.bigImageViewerGlideLoader
+    implementation deps.ui.bigImageViewerGlideFactory
     implementation deps.ui.bottomnavigation
     implementation deps.ui.tablayout
     implementation deps.ui.dialogs

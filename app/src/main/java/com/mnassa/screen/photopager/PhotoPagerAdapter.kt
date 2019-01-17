@@ -1,12 +1,13 @@
 package com.mnassa.screen.photopager
 
+import android.net.Uri
 import android.support.v4.view.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import com.github.piasy.biv.view.BigImageView
+import com.github.piasy.biv.view.GlideImageViewFactory
 import com.mnassa.R
-import com.mnassa.extensions.image
 import kotlinx.android.synthetic.main.item_photo_pager.view.*
 
 /**
@@ -21,8 +22,9 @@ class PhotoPagerAdapter(private val images: List<String>, private val onClickLis
         val imageUrl = images[position]
         val view = LayoutInflater.from(context).inflate(R.layout.item_photo_pager, container, false)
 
-        val imageView = (view.photoView) as ImageView
-        imageView.image(imageUrl, crop = false)
+        val imageView = (view.bigImageView) as BigImageView
+        imageView.setImageViewFactory(GlideImageViewFactory())
+        imageView.showImage(Uri.parse(imageUrl))
         imageView.setOnClickListener(onClickListener)
         container.addView(view)
         return view

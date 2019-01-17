@@ -24,6 +24,7 @@ class OfferViewHolder(itemView: View, onClickListener: View.OnClickListener) : B
             tvUserName.text = item.author.formattedName
             tvTime.text = item.originalCreatedAt.toTimeAgo()
             tvDescription.text = item.formattedText
+            tvDescription.movementMethod = null
             tvDescription.goneIfEmpty()
 
             tvItemTitle.text = item.title

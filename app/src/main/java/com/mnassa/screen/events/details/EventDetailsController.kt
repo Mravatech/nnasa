@@ -31,6 +31,7 @@ import com.mnassa.screen.events.details.participants.EventDetailsParticipantsCon
 import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.photopager.PhotoPagerController
+import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details.view.*
 import kotlinx.android.synthetic.main.event_date.view.*
@@ -130,6 +131,9 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
             creatorText.setSpan(StyleSpan(Typeface.BOLD), spanStart, creatorText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             tvEventCreator.text = creatorText
+            tvEventCreator.setOnClickListener {
+                open(ProfileController.newInstance(event.author))
+            }
         }
     }
 

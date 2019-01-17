@@ -23,6 +23,7 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
             tvUserName.text = item.author.formattedName
             tvTime.text = item.originalCreatedAt.toTimeAgo()
             tvDescription.text = item.formattedText
+            tvDescription.movementMethod = null
             tvDescription.goneIfEmpty()
 
             tvViewsCount.text = item.counters.views.toString()

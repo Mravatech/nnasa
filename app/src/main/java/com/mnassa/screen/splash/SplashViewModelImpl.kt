@@ -3,6 +3,7 @@ package com.mnassa.screen.splash
 import android.os.Bundle
 import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.interactor.PostsInteractor
@@ -28,14 +29,16 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
         handleException {
             if (loginInteractor.isLoggedIn()) {
                 try {
-                    val feed = asyncWorker { postsInteractor.preloadFeed() }
+                    launchWorker {
+                        postsInteractor.loadMergedInfoPostsAndFeed()
+                    }
+
                     val notifications = asyncWorker { notificationsInteractor.preloadOldNotifications() }
                     val tags = asyncWorker { tagInteractor.getAll() }
                     asyncUI {
                         delay(MAX_DELAY)
                         openNextScreenChannel.send(SplashViewModel.NextScreen.MAIN)
                     }
-                    feed.await()
                     notifications.await()
                     tags.await()
                 } finally {

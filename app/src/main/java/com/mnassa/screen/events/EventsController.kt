@@ -3,6 +3,7 @@ package com.mnassa.screen.events
 import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
@@ -111,6 +112,17 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         view.rvEvents.adapter = adapter
         view.rvEvents.attachPanel { hasNewPosts }
         view.tvNewItemsAvailable.text = fromDictionary(view.context.getString(R.string.events_new_items_available))
+
+        view.rvEvents.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                viewModel.onScroll(visibleItemCount, totalItemCount, firstVisibleItemPosition)
+            }
+        })
     }
 
     private fun triggerScrollPanel() {
