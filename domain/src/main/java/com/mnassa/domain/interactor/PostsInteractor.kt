@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.*
+import com.mnassa.domain.pagination.PaginationController
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import java.io.Serializable
 
@@ -8,6 +9,9 @@ import java.io.Serializable
  * Created by Peter on 3/16/2018.
  */
 interface PostsInteractor {
+    val mergedInfoPostsAndFeedPagination: PaginationController
+
+    suspend fun cleanMergedInfoPostsAndFeed()
     suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     //personal feed
@@ -15,9 +19,6 @@ interface PostsInteractor {
     suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadInfoPost(postId: String): PostModel?
     //
-    suspend fun preloadFeed(): List<PostModel>
-    suspend fun getPreloadedFeed(): List<PostModel>
-    suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>>
     suspend fun recheckAndReloadFeeds(): ListItemEvent<List<PostModel>>
 
     //account wall

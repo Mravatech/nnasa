@@ -16,6 +16,7 @@ interface PostsViewModel : MnassaViewModel {
 
     val permissionsChannel: BroadcastChannel<PermissionsModel>
     fun onAttachedToWindow(post: PostModel)
+    fun onScroll(visibleItemCount: Int, totalItemCount: Int, firstVisibleItemPosition: Int)
     fun hideInfoPost(post: PostModel)
 
     fun saveScrollPosition(post: PostModel)

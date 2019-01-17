@@ -364,7 +364,7 @@ private val interactorModule = Kodein.Module {
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance(), instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance(), instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance(), instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }

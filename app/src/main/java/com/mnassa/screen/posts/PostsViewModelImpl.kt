@@ -1,10 +1,10 @@
 package com.mnassa.screen.posts
 
+import android.util.Log
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.InfoPostModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
@@ -17,6 +17,8 @@ import kotlinx.coroutines.experimental.channels.BroadcastChannel
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.delay
 import java.util.*
+import java.util.Collections.min
+import kotlin.math.min
 
 /**
  * Created by Peter on 3/6/2018.
@@ -32,6 +34,10 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             beforeReConsume = {
                 isCounterReset = false
                 it.send(ListItemEvent.Cleared())
+
+                // Clear cache of channels, so we won't get stuck with
+                // closed channel on re-consume.
+                postsInteractor.cleanMergedInfoPostsAndFeed()
             },
             receiveChannelProvider = {
                 postsInteractor.loadMergedInfoPostsAndFeed()
@@ -51,6 +57,14 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         resetCounterJob = async {
             delay(1_000)
             resetCounter()
+        }
+    }
+
+    override fun onScroll(visibleItemCount: Int, totalItemCount: Int, firstVisibleItemPosition: Int) {
+        val paginationController = postsInteractor.mergedInfoPostsAndFeedPagination
+        val paginationSize = min(paginationController.size, totalItemCount.toLong())
+        if (visibleItemCount + firstVisibleItemPosition >= paginationSize && firstVisibleItemPosition >= 0) {
+            paginationController.requestNextPage(POSTS_PAGE_SIZE)
         }
     }
 
@@ -103,5 +117,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     companion object {
         private const val KEY_POSTS_POSITION = "KEY_POSTS_POSITION"
         private const val KEY_POSTS_LAST_VIEWED = "KEY_POSTS_LAST_VIEWED"
+
+        private const val POSTS_PAGE_SIZE = 100L
     }
 }

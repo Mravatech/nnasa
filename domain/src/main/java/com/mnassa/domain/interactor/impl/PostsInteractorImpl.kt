@@ -4,10 +4,11 @@ import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.PostsRepository
+import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.sync.Mutex
 import timber.log.Timber
 
@@ -15,12 +16,42 @@ import timber.log.Timber
  * Created by Peter on 3/16/2018.
  */
 class PostsInteractorImpl(private val postsRepository: PostsRepository,
+                          private val userRepository: UserRepository,
                           private val storageInteractor: StorageInteractor,
                           private val tagInteractor: TagInteractor,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
+    override val mergedInfoPostsAndFeedPagination = PaginationController(MERGED_FEED_INITIAL_SIZE)
+
+    /**
+     * Cached open channels of merged info-posts
+     * and feed.
+     */
+    private var mergedInfoPostsAndFeedMap = HashMap<String, ReceiveChannel<ListItemEvent<List<PostModel>>>>()
+
+    override suspend fun cleanMergedInfoPostsAndFeed() {
+        mergedInfoPostsAndFeedMap.clear()
+        mergedInfoPostsAndFeedPagination.size = MERGED_FEED_INITIAL_SIZE
+    }
+
     override suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        val output = ArrayChannel<ListItemEvent<List<PostModel>>>(1)
+        val accountId = userRepository.getAccountIdOrException()
+
+        return mergedInfoPostsAndFeedMap[accountId]
+            ?.takeIf { !it.isClosedForReceive }
+            // Create and store new merged info posts and feed
+            // channel.
+            ?: run {
+                createMergedInfoPostsAndFeedChannel(mergedInfoPostsAndFeedPagination)
+                    .also {
+                        mergedInfoPostsAndFeedMap.clear()
+                        mergedInfoPostsAndFeedMap[accountId] = it
+                    }
+            }
+    }
+
+    private fun createMergedInfoPostsAndFeedChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        val output = ArrayChannel<ListItemEvent<List<PostModel>>>(MERGED_FEED_CHANNEL_CAPACITY)
 
         var feedSuspended = true
         val feedBuffer: MutableList<ListItemEvent<List<PostModel>>> = ArrayList()
@@ -80,7 +111,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         }
 
         launchWorker {
-            val feedChannel = loadFeedWithChangesHandling()
+            val feedChannel = createFeedWithChangesHandlingChannel(pagination)
             feedChannel.consumeEach { event ->
                 // Start loading the feed and store it in a buffer
                 // until info-posts are loaded.
@@ -102,18 +133,24 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         return output
     }
 
-    override suspend fun preloadFeed(): List<PostModel> = postsRepository.preloadFeed()
-    override suspend fun getPreloadedFeed(): List<PostModel> = postsRepository.getPreloadedFeed()
-    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+    private fun createFeedWithChangesHandlingChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return produce {
+            // Send all locally cached posts
+            // at once.
             try {
-                send(ListItemEvent.Added(getPreloadedFeed()))
-            } catch (e: Exception) {
-                Timber.e(e) //ignore exception here
+                val feedCached = postsRepository.loadFeedCached()
+                send(ListItemEvent.Added(feedCached))
+            } catch (_: Exception) {
             }
-            postsRepository.loadFeedWithChangesHandling().withBuffer().consumeEach { send(it) }
+
+            postsRepository.loadFeedWithChangesHandling(pagination)
+                .withBuffer()
+                .consumeEach {
+                    send(it)
+                }
         }
     }
+
     override suspend fun recheckAndReloadFeeds(): ListItemEvent<List<PostModel>> = postsRepository.recheckSavedPosts()
 
     override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
@@ -240,5 +277,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 2_000L
+
+        private const val MERGED_FEED_INITIAL_SIZE = 100L
+        private const val MERGED_FEED_CHANNEL_CAPACITY = 20
     }
 }

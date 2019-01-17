@@ -3,6 +3,7 @@ package com.mnassa.screen.posts
 import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
@@ -23,6 +24,9 @@ import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.util.*
+import android.nfc.tech.MifareUltralight.PAGE_SIZE
+
+
 
 /**
  * Created by Peter on 3/6/2018.
@@ -132,6 +136,17 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         view.rvNewsFeed.adapter = adapter
         view.rvNewsFeed.attachPanel { hasNewPosts }
         viewModel.recheckFeeds()
+
+        view.rvNewsFeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                viewModel.onScroll(visibleItemCount, totalItemCount, firstVisibleItemPosition)
+            }
+        })
     }
 
     private fun triggerScrollPanel() {

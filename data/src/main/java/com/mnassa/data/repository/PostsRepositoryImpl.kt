@@ -26,6 +26,7 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
+import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
@@ -49,7 +50,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
-    private var preloadedPosts = HashMap<String, List<PostModel>>() //accountId - to posts future
     private val roomDb by lazy {
         Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
                 .fallbackToDestructiveMigration()
@@ -121,21 +121,17 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         .document(accountId)
         .collection(DatabaseContract.TABLE_INFO_FEED)
 
-    override suspend fun preloadFeed(): List<PostModel> {
+    override suspend fun loadFeedCached(): List<PostModel> {
         val accountId = userRepository.getAccountIdOrException()
-        val posts = roomDb.getUserPostJoinDao().loadPostsByUserId(accountId).mapNotNull { postModel ->
-            postModel.toPostModel()
-        }
-        preloadedPosts[accountId] = posts
-        return posts
+        return roomDb
+            .getUserPostJoinDao()
+            .loadPostsByUserId(accountId)
+            .mapNotNull { postModel ->
+                postModel.toPostModel()
+            }
     }
 
-
-    override suspend fun getPreloadedFeed(): List<PostModel> {
-        return preloadedPosts.getOrPut(userRepository.getAccountIdOrException()) {  preloadFeed()  }.toList()
-    }
-
-    override suspend fun loadFeedWithChangesHandling(): ReceiveChannel<ListItemEvent<PostModel>> {
+    override suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
         val accountId = userRepository.getAccountIdOrException()
 
         return firestoreLockSuspend {
@@ -143,6 +139,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .document(accountId)
                     .collection(DatabaseContract.TABLE_FEED)
                     .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler,
+                        pagination = pagination,
                         queryBuilder = { collection ->
                             collection.orderBy(
                                 PostShortDbEntity::createdAt.name,
@@ -187,7 +184,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun clearSavedPosts() {
-        preloadedPosts.clear()
         withContext(DefaultDispatcher){
             roomDb.getUserPostJoinDao().clearAll()
             roomDb
