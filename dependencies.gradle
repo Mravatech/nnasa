@@ -197,7 +197,10 @@ ui.chipsLayoutManager = 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
 ui.timeAgo = 'com.github.marlonlom:timeago:3.0.2'
 ui.navigationDrawer = 'com.mikepenz:materialdrawer:6.0.7@aar'
 ui.durationPicker = 'mobi.upod:time-duration-picker:1.1.3'
-ui.photoView = 'com.github.chrisbanes:PhotoView:2.1.4'
+// https://github.com/Piasy/BigImageViewer
+ui.bigImageViewer = 'com.github.piasy:BigImageViewer:1.5.6'
+ui.bigImageViewerGlideLoader = 'com.github.piasy:GlideImageLoader:1.5.6'
+ui.bigImageViewerGlideFactory = 'com.github.piasy:GlideImageViewFactory:1.5.6'
 
 deps.ui = ui
 //============================================== OTHER ============================================
@@ -228,6 +231,7 @@ static def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
 
+    handler.maven { url "http://dl.bintray.com/piasy/maven" }
     handler.maven { url "https://dl.bintray.com/peterilchenko/AndroidKotlinCore/" }
     handler.maven { url "https://jitpack.io" }
     handler.maven { url "https://maven.fabric.io/public" }
