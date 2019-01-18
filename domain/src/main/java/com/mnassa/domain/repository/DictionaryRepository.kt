@@ -8,6 +8,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
  */
 interface DictionaryRepository {
     fun getMobileUiVersion(): ReceiveChannel<Int>
+    fun keepDictionarySynced(keepSynced: Boolean)
     suspend fun loadDictionary(): List<TranslatedWordModel>
 
     fun getLocalDictionaryVersion(): Int

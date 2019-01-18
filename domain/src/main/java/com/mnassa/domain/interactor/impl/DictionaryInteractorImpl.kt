@@ -26,6 +26,7 @@ class DictionaryInteractorImpl(
     override suspend fun handleDictionaryUpdates() {
         while (true) {
             try {
+                repository.keepDictionarySynced(true)
                 repository.getMobileUiVersion().consumeEach { serverVersion ->
                     withContext(DefaultDispatcher) {
                         val mobileVersion = repository.getLocalDictionaryVersion()

@@ -3,7 +3,7 @@ package com.mnassa.data.repository
 import android.content.Context
 import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
-import com.mnassa.data.extensions.awaitListBypassCache
+import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseDictionaryApi
 import com.mnassa.data.network.bean.firebase.TranslatedWordDbEntity
@@ -48,12 +48,19 @@ class DictionaryRepositoryImpl(
                 .map { requireNotNull(it) }
     }
 
+    override fun keepDictionarySynced(keepSynced: Boolean) {
+        databaseReference
+            .child(DatabaseContract.TABLE_DICTIONARY)
+            .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
+            .keepSynced(keepSynced)
+    }
+
     override suspend fun loadDictionary(): List<TranslatedWordModel> {
         return withContext(DefaultDispatcher) {
             val dictionary = databaseReference
                     .child(DatabaseContract.TABLE_DICTIONARY)
                     .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
-                    .awaitListBypassCache<TranslatedWordDbEntity>(exceptionHandler)
+                    .awaitList<TranslatedWordDbEntity>(exceptionHandler)
                     .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
             converter.convertCollection(dictionary, TranslatedWordModel::class.java)
         }
