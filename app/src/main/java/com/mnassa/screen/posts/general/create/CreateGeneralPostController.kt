@@ -17,6 +17,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RawPostModel
 import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.startCropActivityForResult
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -184,17 +185,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
-        val permissionsList = when (imageSource) {
-            CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-        val permissionResult = permissions.requestPermissions(permissionsList)
-        if (permissionResult.isAllGranted) {
-            activity?.let {
-                val intent = CropActivity.start(imageSource, it)
-                startActivityForResult(intent, REQUEST_CODE_CROP)
-            }
-        }
+        startCropActivityForResult(imageSource, REQUEST_CODE_CROP)
     }
 
     private fun setData(post: PostModel) {

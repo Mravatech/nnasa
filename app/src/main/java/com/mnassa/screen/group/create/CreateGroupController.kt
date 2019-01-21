@@ -15,6 +15,7 @@ import com.mnassa.domain.model.RawGroupModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.image
 import com.mnassa.extensions.isGone
+import com.mnassa.extensions.startCropActivityForResult
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -149,17 +150,7 @@ class CreateGroupController(args: Bundle) : MnassaControllerImpl<CreateGroupView
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
-        val permissionsList = when (imageSource) {
-            CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-        val permissionResult = permissions.requestPermissions(permissionsList)
-        if (permissionResult.isAllGranted) {
-            activity?.let {
-                val intent = CropActivity.start(imageSource, it, cropSquare = true)
-                startActivityForResult(intent, REQUEST_CODE_CROP)
-            }
-        }
+        startCropActivityForResult(imageSource, REQUEST_CODE_CROP)
     }
 
     override fun onViewDestroyed(view: View) {
