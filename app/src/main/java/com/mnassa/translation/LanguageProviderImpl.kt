@@ -1,5 +1,6 @@
 package com.mnassa.translation
 
+import android.util.Log
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.plurals.PluralQuantityRules
@@ -30,6 +31,7 @@ class LanguageProviderImpl : LanguageProvider {
     }
 
     override fun chooseTranslate(word: TranslatedWordModel): String {
+        Log.d("TRANSLATION", "is_arabian=$isArabian")
         return with(word) {
             when {
                 isArabian && !arabicTranslate.isNullOrBlank() -> arabicTranslate!!

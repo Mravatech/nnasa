@@ -1,6 +1,10 @@
 package com.mnassa
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.OnLifecycleEvent
+import android.arch.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
@@ -17,6 +21,7 @@ import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
+import kotlinx.coroutines.experimental.Job
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -27,13 +32,15 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/20/2018.
  */
-class App : MultiDexApplication(), KodeinAware {
+class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
 
     override val kodein: Kodein = Kodein.lazy {
         import(androidModule(this@App))
         registerAppModules(this)
         bind<Context>() with provider { this@App }
     }
+
+    private var dictionaryUpdateJob: Job? = null
 
     override fun onCreate() {
         APP_CONTEXT = this
@@ -52,10 +59,6 @@ class App : MultiDexApplication(), KodeinAware {
         BigImageViewer.initialize(FirebaseBigImageLoader.with(this))
 
         launchWorker {
-            getInstance<DictionaryInteractor>().handleDictionaryUpdates()
-        }
-
-        launchWorker {
             getInstance<LoginInteractor>().handleUserStatus()
         }
 
@@ -71,6 +74,24 @@ class App : MultiDexApplication(), KodeinAware {
         Timber.e("endpoint: ${appInfoProvider.endpoint}")
         Timber.e("versionCode: ${appInfoProvider.versionCode}")
         Timber.e("versionName: ${appInfoProvider.versionName}")
+
+        // Listen to the app lifecycle
+        // changes.
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForeground() {
+        Timber.i("App is now foreground")
+
+        dictionaryUpdateJob?.cancel()
+        dictionaryUpdateJob = getInstance<DictionaryInteractor>().handleDictionaryUpdates()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onAppBackground() {
+        Timber.i("App is now background")
+        dictionaryUpdateJob?.cancel()
     }
 
     override fun onTerminate() {

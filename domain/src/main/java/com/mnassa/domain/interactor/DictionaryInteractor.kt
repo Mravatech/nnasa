@@ -1,12 +1,14 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.TranslatedWordModel
+import kotlinx.coroutines.experimental.Job
 
 /**
  * Created by Peter on 2/23/2018.
  */
 interface DictionaryInteractor {
-    suspend fun handleDictionaryUpdates()
+    fun handleDictionaryUpdates(): Job
+
     fun getWord(key: String): TranslatedWordModel
     fun getPlural(key: String, quantity: Int): TranslatedWordModel
 
