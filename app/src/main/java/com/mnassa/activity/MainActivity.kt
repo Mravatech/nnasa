@@ -44,27 +44,13 @@ import android.support.v7.app.AppCompatDelegate
 import com.mnassa.core.addons.*
 
 
-open class MainActivity : AppCompatActivity(), KodeinAware, MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
-
-    @Suppress("LeakingThis")
-    override val kodeinContext: KodeinContext<*> = kcontext(this)
-    private val _parentKodein by closestKodein()
-    override val kodein: Kodein by retainedKodein {
-        extend(_parentKodein, allowOverride = true)
-    }
+open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
 
     private lateinit var router: Router
     private lateinit var onLogoutListener: (LogoutReason) -> Unit
     private val balanceChangeReceiver = BalanceChangeReceiver()
 
-    private val languageProvider: LanguageProvider by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
-        val prefs = getSharedPreferences(LanguageProviderImpl.LANGUAGE_PREFERENCE, Context.MODE_PRIVATE)
-        val lang = prefs.getString(LanguageProviderImpl.LANGUAGE_SETTINGS, null)
-        lang?.let {
-            languageProvider.locale = Locale(it)
-        }
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

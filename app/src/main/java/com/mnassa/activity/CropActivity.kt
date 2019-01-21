@@ -19,7 +19,7 @@ import java.io.File
  * Date: 2/26/2018
  */
 
-class CropActivity : AppCompatActivity() {
+class CropActivity : BaseActivity() {
 
     private var uri: Uri? = null
     private lateinit var cachedUri: Uri
