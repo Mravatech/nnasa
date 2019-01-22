@@ -274,7 +274,7 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
+    override fun getFirebaseUserId(): String? = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun getAccountIdOrNull(): String? = accountIdInternal
 

@@ -1,6 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import com.mnassa.core.addons.launchUI
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.LoginInteractor
@@ -13,12 +14,10 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
-import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
 import timber.log.Timber
 
 /**
@@ -75,52 +74,77 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    override suspend fun handleUserStatus() {
-        try {
-            val firebaseId = userRepository.getFirebaseUserId()
-            if (firebaseId == null) {
-                userProfileInteractor.onAccountChangedListener.awaitFirst()
-                handleUserStatus()
-                return
-            }
+    override fun handleUserStatus(): Job {
+        var logoutJob: Job? = null
+        var consumerJob: Job? = null
+        return handle(userRepository::getFirebaseUserId) { firebaseUserId ->
+            logoutJob?.cancel()
+            consumerJob?.cancel()
+            consumerJob = launch(coroutineContext + DefaultDispatcher) {
 
-            var logoutJob: Job? = null
+                // Listen the channel of user
+                // status.
+                userRepository.getUserStatusChannel(firebaseUserId).consumeEach {
+                    Timber.i("#USER_STATUS#: $firebaseUserId : $it")
 
-            userRepository.getUserStatusChannel(firebaseId).consumeEach {
-                Timber.i("#USER_STATUS#: $firebaseId : $it")
-                logoutJob?.cancel()
-                if (it is UserStatusModel.Disabled) {
-                    logoutJob = async(UI) {
-                        delay(1_000)
-                        signOut(LogoutReason.UserBlocked())
+                    // Log out after small delay after getting
+                    // status change.
+                    logoutJob?.cancel()
+                    logoutJob = if (it is UserStatusModel.Disabled) {
+                        async(UI) {
+                            delay(1_000)
+                            signOut(LogoutReason.UserBlocked())
+                        }
+                    } else {
+                        null
                     }
-                    return@consumeEach
                 }
             }
-        } catch (e: Exception) {
-            //do nothing
-            Timber.e(e)
         }
-        return handleUserStatus()
     }
 
-    override suspend fun handleAccountStatus() {
-        val listenAccountStatusJob: Job = async(UI) {
-            val currentAccountId = userProfileInteractor.getAccountIdOrNull() ?: return@async
-            var logoutJob: Job? = null
-            userRepository.getAccountStatusChannel(currentAccountId).consumeEach {
-                Timber.i("#ACCOUNT_STATUS#: $currentAccountId : $it")
-                logoutJob?.cancel()
-                if (it is UserStatusModel.Disabled) {
-                    logoutJob = async(UI) {
-                        delay(1_000)
-                        signOut(LogoutReason.AccountBlocked())
+    override fun handleAccountStatus(): Job {
+        var logoutJob: Job? = null
+        var consumerJob: Job? = null
+        return handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
+            logoutJob?.cancel()
+            consumerJob?.cancel()
+            consumerJob = launch(coroutineContext + DefaultDispatcher) {
+
+                // Listen the channel of account
+                // status.
+                userRepository.getAccountStatusChannel(accountId).consumeEach {
+                    Timber.i("#ACCOUNT_STATUS#: $accountId : $it")
+
+                    // Log out after small delay after getting
+                    // status change.
+                    logoutJob?.cancel()
+                    logoutJob = if (it is UserStatusModel.Disabled) {
+                        async(UI) {
+                            delay(1_000)
+                            signOut(LogoutReason.AccountBlocked())
+                        }
+                    } else {
+                        null
                     }
                 }
             }
         }
-        userProfileInteractor.onAccountChangedListener.awaitFirst()
-        listenAccountStatusJob.cancel()
-        handleAccountStatus()
+    }
+
+    private inline fun <T : Any> handle(
+        crossinline getter: () -> T?,
+        crossinline callback: suspend CoroutineScope.(T) -> Unit
+    ): Job {
+        return launchWorker {
+            while (isActive) {
+                getter()
+                    ?.let {
+                        callback(it)
+                    }
+
+                userProfileInteractor.onAccountChangedListener.awaitFirst()
+            }
+        }
     }
 }

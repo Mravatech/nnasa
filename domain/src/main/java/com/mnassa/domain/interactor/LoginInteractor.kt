@@ -4,6 +4,7 @@ import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 /**
@@ -24,6 +25,6 @@ interface LoginInteractor {
     suspend fun signIn(response: PhoneVerificationModel, verificationSMSCode: String? = null): List<ShortAccountModel>
     suspend fun signOut(reason: LogoutReason)
 
-    suspend fun handleUserStatus()
-    suspend fun handleAccountStatus()
+    fun handleUserStatus(): Job
+    fun handleAccountStatus(): Job
 }

@@ -41,6 +41,8 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
     }
 
     private var dictionaryUpdateJob: Job? = null
+    private var handleUserStatusUpdateJob: Job? = null
+    private var handleAccountStatusUpdateJob: Job? = null
 
     override fun onCreate() {
         APP_CONTEXT = this
@@ -57,14 +59,6 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
         Fabric.with(this, Crashlytics())
 
         BigImageViewer.initialize(FirebaseBigImageLoader.with(this))
-
-        launchWorker {
-            getInstance<LoginInteractor>().handleUserStatus()
-        }
-
-        launchWorker {
-            getInstance<LoginInteractor>().handleAccountStatus()
-        }
 
         getInstance<NetworkInteractor>().register()
 
@@ -86,12 +80,20 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
 
         dictionaryUpdateJob?.cancel()
         dictionaryUpdateJob = getInstance<DictionaryInteractor>().handleDictionaryUpdates()
+
+        handleUserStatusUpdateJob?.cancel()
+        handleUserStatusUpdateJob = getInstance<LoginInteractor>().handleUserStatus()
+
+        handleAccountStatusUpdateJob?.cancel()
+        handleAccountStatusUpdateJob = getInstance<LoginInteractor>().handleAccountStatus()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackground() {
         Timber.i("App is now background")
         dictionaryUpdateJob?.cancel()
+        handleUserStatusUpdateJob?.cancel()
+        handleAccountStatusUpdateJob?.cancel()
     }
 
     override fun onTerminate() {
