@@ -74,7 +74,7 @@ class EventsInteractorImpl(
     }
 
     override suspend fun changeStatus(event: EventModel, status: EventStatus) {
-
+        val groupIds = event.groups.map { it.id }.toSet()
         val model = RawEventModel(
                 id = event.id,
                 status = status,
@@ -86,13 +86,13 @@ class EventsInteractorImpl(
                 ticketsTotal = event.ticketsTotal.toInt(),
                 price = event.price.takeIf { it > 0 },
                 title = event.title,
-                privacy = PostPrivacyOptions(event.privacyType, event.privacyConnections),
+                privacy = PostPrivacyOptions(event.privacyType, event.privacyConnections, groupIds),
                 uploadedImages = event.pictures.toMutableSet(),
                 imagesToUpload = emptyList(),
                 durationMillis = event.duration?.toMillis() ?: 0L,
                 startDateTime = event.startAt,
                 description = event.text,
-                groupIds = event.groups.map { it.id }.toSet(),
+                groupIds = groupIds,
                 needPush = null
         )
 

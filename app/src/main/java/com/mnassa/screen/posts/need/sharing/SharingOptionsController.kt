@@ -10,6 +10,7 @@ import com.mnassa.R
 import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
+import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
@@ -21,6 +22,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_sharing_options.view.*
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -142,7 +144,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                         rbMyNewsFeed.isChecked -> PostPrivacyType.PUBLIC()
                         else -> PostPrivacyType.PRIVATE()
                     },
-                    privacyConnections = notUnselectableAccounts + adapter.selectedAccounts
+                    privacyConnections = notUnselectableAccounts + adapter.selectedAccounts,
+                    privacyCommunitiesIds = emptySet()
             )
         }
     }
@@ -214,23 +217,36 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 }
 
 private const val MAX_SHARE_TO_USERNAMES = 2
+private const val MAX_SHARE_TO_GROUPS = 2
 suspend fun PostPrivacyOptions.format(): CharSequence {
     val privacyType = privacyType
     return fromDictionary(R.string.need_create_share_to_prefix).format(
             when {
-                privacyType is PostPrivacyType.WORLD -> fromDictionary(R.string.need_create_to_all_mnassa)
-                privacyType is PostPrivacyType.PUBLIC -> fromDictionary(R.string.need_create_to_newsfeed)
-                privacyType is PostPrivacyType.GROUP -> privacyType.group.formattedName
+                privacyCommunitiesIds.isNotEmpty() -> {
+                    val groupsInteractor: GroupsInteractor = App.context.getInstance()
+                    val groupsFormatted = privacyCommunitiesIds
+                        .take(MAX_SHARE_TO_GROUPS)
+                        .mapNotNull { groupsInteractor.getGroupById(it) }
+                        .joinToString { it.formattedName }
+                    if (privacyCommunitiesIds.size <= MAX_SHARE_TO_GROUPS) {
+                        groupsFormatted
+                    } else {
+                        val tail = fromDictionary(R.string.need_create_to_connections_other).format(privacyCommunitiesIds.size - 2)
+                        "$groupsFormatted $tail"
+                    }
+                }
                 privacyConnections.isNotEmpty() -> {
                     val userInteractor: UserProfileInteractor = App.context.getInstance()
                     val usernames = privacyConnections.take(MAX_SHARE_TO_USERNAMES).mapNotNull { userInteractor.getProfileById(it) }.joinToString { it.formattedName }
-                    if (privacyConnections.size <= 2) {
+                    if (privacyConnections.size <= MAX_SHARE_TO_USERNAMES) {
                         usernames
                     } else {
                         val tail = fromDictionary(R.string.need_create_to_connections_other).format(privacyConnections.size - 2)
                         "$usernames $tail"
                     }
                 }
+                privacyType is PostPrivacyType.WORLD -> fromDictionary(R.string.need_create_to_all_mnassa)
+                privacyType is PostPrivacyType.PUBLIC -> fromDictionary(R.string.need_create_to_newsfeed)
                 else -> fromDictionary(R.string.posts_sharing_value_centre)
             }
     )

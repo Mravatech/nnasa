@@ -23,6 +23,7 @@ interface GroupsInteractor {
     suspend fun makeAdmin(groupId: String, memberId: String)
     suspend fun unMakeAdmin(groupId: String, memberId: String)
 
+    suspend fun getGroupById(groupId: String): GroupModel?
     suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?>
     suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>>
 

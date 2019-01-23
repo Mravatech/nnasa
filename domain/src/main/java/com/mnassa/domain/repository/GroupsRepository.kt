@@ -23,6 +23,7 @@ interface GroupsRepository {
     suspend fun makeAdmin(groupId: String, accountIds: List<String>)
     suspend fun unMakeAdmin(groupId: String, accountIds: List<String>)
     //
+    suspend fun getGroupById(groupId: String): GroupModel?
     suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?>
     suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>>
     //

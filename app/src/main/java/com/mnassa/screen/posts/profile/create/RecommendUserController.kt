@@ -130,9 +130,13 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
         }
 
         private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
-            return if (args.containsKey(EXTRA_GROUP)) {
-                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
-            } else PostPrivacyOptions.DEFAULT
+            return when {
+                args.containsKey(EXTRA_GROUP) -> {
+                    val group = args.getSerializable(EXTRA_GROUP) as GroupModel
+                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                }
+                else -> PostPrivacyOptions.DEFAULT
+            }
         }
     }
 }

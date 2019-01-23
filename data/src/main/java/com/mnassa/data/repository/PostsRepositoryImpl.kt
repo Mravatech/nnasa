@@ -273,7 +273,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 text = post.text,
                 privacyType = post.privacy.privacyType.stringValue,
                 privacyConnections = post.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
-                allConnections = post.privacy.privacyType is PostPrivacyType.PUBLIC,
+                allConnections = post.privacy.privacyType is PostPrivacyType.PUBLIC && post.privacy.privacyCommunitiesIds.isEmpty(),
                 groups = post.groupIds.toList().takeIf { it.isNotEmpty() }
         )).handleException(exceptionHandler)
     }
@@ -298,7 +298,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 tags = postModel.processedTags.takeIf { it.isNotEmpty() },
                 images = postModel.processedImages.takeIf { it.isNotEmpty() },
                 privacyType = postModel.privacy.privacyType.stringValue,
-                allConnections = postModel.privacy.privacyType is PostPrivacyType.PUBLIC,
+                allConnections = postModel.privacy.privacyType is PostPrivacyType.PUBLIC && postModel.privacy.privacyCommunitiesIds.isEmpty(),
                 privacyConnections = postModel.privacy.privacyConnections.takeIf { it.isNotEmpty() }?.toList(),
                 price = postModel.price,
                 timeOfExpiration = postModel.timeOfExpiration,
