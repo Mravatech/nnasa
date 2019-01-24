@@ -209,6 +209,7 @@ dependencies {
     implementation deps.ui.bigImageViewer
     implementation deps.ui.bigImageViewerGlideLoader
     implementation deps.ui.bigImageViewerGlideFactory
+    implementation deps.ui.exoplayer
     implementation deps.ui.bottomnavigation
     implementation deps.ui.tablayout
     implementation deps.ui.dialogs

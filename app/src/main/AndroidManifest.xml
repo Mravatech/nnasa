@@ -34,7 +34,8 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".activity.VideoViewActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="fullSensor"
+            android:configChanges="orientation|screenSize|layoutDirection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
 
         <activity android:name=".activity.SearchActivity"
