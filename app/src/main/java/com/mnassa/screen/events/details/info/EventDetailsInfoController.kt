@@ -31,6 +31,7 @@ import kotlinx.android.synthetic.main.controller_event_details_info.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -219,7 +220,7 @@ class EventDetailsInfoController(args: Bundle) : MnassaControllerImpl<EventDetai
                 if (it.lat != null && it.lng != null) {
                     val uri = App.context.getInstance<AppInfoProvider>()
                         .urlGoogleMapsSearch
-                        .format(it.lat, it.lng)
+                        .format(Locale.US, it.lat, it.lng)
                         .let(Uri::parse)
                     Intent(Intent.ACTION_VIEW, uri)
                 } else {
