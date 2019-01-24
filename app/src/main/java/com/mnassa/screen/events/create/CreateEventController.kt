@@ -370,7 +370,10 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 }
             }
 
-            sharingOptions = PostPrivacyOptions(event.privacyType, event.privacyConnections)
+            sharingOptions = PostPrivacyOptions(
+                event.privacyType,
+                event.privacyConnections,
+                event.groups.map { it.id }.toSet())
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -489,9 +492,13 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         }
 
         private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
-            return if (args.containsKey(EXTRA_GROUP)) {
-                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
-            } else PostPrivacyOptions.DEFAULT
+            return when {
+                args.containsKey(EXTRA_GROUP) -> {
+                    val group = args.getSerializable(EXTRA_GROUP) as GroupModel
+                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                }
+                else -> PostPrivacyOptions.DEFAULT
+            }
         }
     }
 }

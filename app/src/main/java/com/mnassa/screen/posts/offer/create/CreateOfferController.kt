@@ -253,7 +253,10 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
             actvPlace.setText(offer.locationPlace?.placeName?.toString())
 
             etPrice.setText(if (offer.price > 0.0) offer.price.formatAsMoney().toString() else null)
-            sharingOptions = PostPrivacyOptions(offer.privacyType, offer.privacyConnections)
+            sharingOptions = PostPrivacyOptions(
+                offer.privacyType,
+                offer.privacyConnections,
+                offer.groupIds)
             applyShareOptionsChanges()
         }
     }
@@ -311,14 +314,15 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
                         "${sharingOptions.format()} ($promotePrice)"
                     }
                     sharingOptions.privacyType is PostPrivacyType.PUBLIC -> {
-                        val connectionsCount = viewModel.getConnectionsCount()
-                        "${sharingOptions.format()} (${perPerson * connectionsCount})"
+                        if (sharingOptions.privacyCommunitiesIds.isEmpty()) {
+                            val connectionsCount = viewModel.getConnectionsCount()
+                            "${sharingOptions.format()} (${perPerson * connectionsCount})"
+                        } else {
+                            sharingOptions.format()
+                        }
                     }
                     sharingOptions.privacyType is PostPrivacyType.PRIVATE -> {
                         "${sharingOptions.format()} (${perPerson * sharingOptions.privacyConnections.size})"
-                    }
-                    sharingOptions.privacyType is PostPrivacyType.GROUP -> {
-                        sharingOptions.format()
                     }
                     else -> "(${perPerson * sharingOptions.privacyConnections.size})"
                 }
@@ -377,9 +381,13 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
         }
 
         private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
-            return if (args.containsKey(EXTRA_GROUP)) {
-                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
-            } else PostPrivacyOptions.DEFAULT
+            return when {
+                args.containsKey(EXTRA_GROUP) -> {
+                    val group = args.getSerializable(EXTRA_GROUP) as GroupModel
+                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                }
+                else -> PostPrivacyOptions.DEFAULT
+            }
         }
     }
 }

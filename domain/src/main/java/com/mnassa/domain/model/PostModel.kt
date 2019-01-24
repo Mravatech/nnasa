@@ -90,11 +90,6 @@ sealed class PostPrivacyType : Serializable {
     class PUBLIC : PostPrivacyType()
     class PRIVATE : PostPrivacyType()
     class WORLD : PostPrivacyType()
-    class GROUP(val group: GroupModel) : PostPrivacyType()
-
-    override fun equals(other: Any?): Boolean {
-        return other?.javaClass == this.javaClass
-    }
 }
 
 sealed class EntityType : Serializable {

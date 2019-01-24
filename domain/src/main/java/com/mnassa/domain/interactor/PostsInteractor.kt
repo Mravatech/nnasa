@@ -61,9 +61,10 @@ interface PostsInteractor {
 
 data class PostPrivacyOptions(
         var privacyType: PostPrivacyType,
-        var privacyConnections: Set<String>
+        var privacyConnections: Set<String>,
+        var privacyCommunitiesIds: Set<String>
 ) : Serializable {
     companion object {
-        val DEFAULT = PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet())
+        val DEFAULT = PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), emptySet())
     }
 }

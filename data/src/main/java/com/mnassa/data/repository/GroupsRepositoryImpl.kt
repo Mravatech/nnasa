@@ -133,6 +133,15 @@ class GroupsRepositoryImpl(
         )).handleException(exceptionHandler)
     }
 
+    override suspend fun getGroupById(groupId: String): GroupModel? {
+        return firestoreLockSuspend {
+            firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
+                    .document(groupId)
+                    .await<GroupDbEntity>()
+                    ?.let { converter.convert(it, GroupModel::class.java) }
+        }
+    }
+
     override suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?> {
         return firestoreLockSuspend {
             firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)

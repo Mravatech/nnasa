@@ -207,7 +207,10 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
                 placeId = post.locationPlace?.placeId
                 actvPlace.setText(post.locationPlace?.placeName?.toString())
-                sharingOptions = PostPrivacyOptions(post.privacyType, post.privacyConnections)
+                sharingOptions = PostPrivacyOptions(
+                    post.privacyType,
+                    post.privacyConnections,
+                    post.groupIds)
                 applyShareOptionsChanges()
             }
         }
@@ -272,9 +275,13 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
         }
 
         private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
-            return if (args.containsKey(EXTRA_GROUP)) {
-                PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
-            } else PostPrivacyOptions.DEFAULT
+            return when {
+                args.containsKey(EXTRA_GROUP) -> {
+                    val group = args.getSerializable(EXTRA_GROUP) as GroupModel
+                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                }
+                else -> PostPrivacyOptions.DEFAULT
+            }
         }
 
     }

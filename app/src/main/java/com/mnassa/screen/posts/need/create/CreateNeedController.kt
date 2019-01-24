@@ -217,7 +217,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             placeId = post.locationPlace?.placeId
             actvPlace.setText(post.locationPlace?.placeName?.toString())
             etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
-            sharingOptions = PostPrivacyOptions(post.privacyType, post.privacyConnections)
+            sharingOptions = PostPrivacyOptions(
+                post.privacyType,
+                post.privacyConnections,
+                post.groupIds)
             launchCoroutineUI { tvShareOptions.text = sharingOptions.format() }
             launchCoroutineUI { chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) }) }
         }
@@ -260,10 +263,13 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         private fun getSharingOptions(args: Bundle): PostPrivacyOptions {
             return when {
-                args.containsKey(EXTRA_GROUP) -> PostPrivacyOptions(PostPrivacyType.GROUP(args.getSerializable(EXTRA_GROUP) as GroupModel), emptySet())
+                args.containsKey(EXTRA_GROUP) -> {
+                    val group = args.getSerializable(EXTRA_GROUP) as GroupModel
+                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                }
                 args.containsKey(EXTRA_POST_TO_EDIT) -> {
                     val post = args.getSerializable(EXTRA_POST_TO_EDIT) as PostModel
-                    PostPrivacyOptions(post.privacyType, post.privacyConnections)
+                    PostPrivacyOptions(post.privacyType, post.privacyConnections, emptySet())
                 }
                 else -> PostPrivacyOptions.DEFAULT
             }

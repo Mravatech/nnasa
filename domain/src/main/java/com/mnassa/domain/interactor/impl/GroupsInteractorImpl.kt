@@ -41,6 +41,8 @@ class GroupsInteractorImpl(private val groupsRepository: GroupsRepository,
 
     override suspend fun unMakeAdmin(groupId: String, memberId: String) = groupsRepository.unMakeAdmin(groupId, listOf(memberId))
 
+    override suspend fun getGroupById(groupId: String): GroupModel? = groupsRepository.getGroupById(groupId)
+
     override suspend fun getGroup(groupId: String): ReceiveChannel<GroupModel?> = groupsRepository.getGroup(groupId)
 
     override suspend fun getGroupMembers(groupId: String): ReceiveChannel<List<ShortAccountModel>> = groupsRepository.getGroupMembers(groupId)
