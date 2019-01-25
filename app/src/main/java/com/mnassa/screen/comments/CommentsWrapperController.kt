@@ -442,17 +442,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     }
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
-        val permissionsList = when (imageSource) {
-            CropActivity.ImageSource.GALLERY -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            CropActivity.ImageSource.CAMERA -> listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-        val permissionResult = permissions.requestPermissions(permissionsList)
-        if (permissionResult.isAllGranted) {
-            activity?.let {
-                val intent = CropActivity.start(imageSource, it)
-                startActivityForResult(intent, REQUEST_CODE_CROP)
-            }
-        }
+        startCropActivityForResult(imageSource, REQUEST_CODE_CROP)
     }
 
     override fun open(self: Controller, controller: Controller) = mnassaRouter.open(this, controller)

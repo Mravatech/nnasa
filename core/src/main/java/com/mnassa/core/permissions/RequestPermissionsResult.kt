@@ -70,3 +70,13 @@ class RequestPermissionsResult {
         return "Permissions: Granted: ${grantedPermissions.joinToString()}; Denied: ${deniedPermissions.joinToString()}"
     }
 }
+
+/**
+ * Invokes the block if all permissions
+ * are granted.
+ */
+inline fun RequestPermissionsResult.ifAllGranted(crossinline block: () -> Unit) {
+    if (isAllGranted) {
+        block()
+    }
+}

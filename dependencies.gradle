@@ -41,6 +41,7 @@ def archComponents = [:]
 versions.archComponents = '1.1.1'
 versions.room_version = "1.0.0"
 
+archComponents.lifecycleExt = "android.arch.lifecycle:extensions:$versions.archComponents"
 archComponents.viewModel = "android.arch.lifecycle:viewmodel:$versions.archComponents"
 archComponents.roomRuntime = "android.arch.persistence.room:runtime:$versions.archComponents"
 archComponents.roomProcessor = "android.arch.persistence.room:compiler:$versions.archComponents"

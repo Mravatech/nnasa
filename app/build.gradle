@@ -188,6 +188,7 @@ dependencies {
     implementation deps.di.core
     implementation deps.di.android
 
+    implementation deps.archComponents.lifecycleExt
     implementation deps.archComponents.runtime
     implementation deps.archComponents.common
 

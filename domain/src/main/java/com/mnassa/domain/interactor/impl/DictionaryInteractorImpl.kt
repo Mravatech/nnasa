@@ -1,11 +1,13 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.model.Plural
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.withContext
@@ -23,25 +25,26 @@ class DictionaryInteractorImpl(
 
     private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
 
-    override suspend fun handleDictionaryUpdates() {
-        while (true) {
-            try {
-                repository.keepDictionarySynced(true)
-                repository.getMobileUiVersion().consumeEach { serverVersion ->
-                    withContext(DefaultDispatcher) {
-                        val mobileVersion = repository.getLocalDictionaryVersion()
-                        if (serverVersion != mobileVersion) {
-                            val serverDict = repository.loadDictionary()
-                            repository.saveLocalDictionary(serverVersion, serverDict)
+    override fun handleDictionaryUpdates(): Job {
+        return launchWorker {
+            while (isActive) {
+                try {
+                    repository.keepDictionarySynced(true)
+                    repository.getMobileUiVersion().consumeEach { serverVersion ->
+                        withContext(DefaultDispatcher) {
+                            val mobileVersion = repository.getLocalDictionaryVersion()
+                            if (serverVersion != mobileVersion) {
+                                val serverDict = repository.loadDictionary()
+                                repository.saveLocalDictionary(serverVersion, serverDict)
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
-            } catch (e: Exception) {
-                //must never happen
-                Timber.e(e)
-            }
 
-            delay(10_000L)
+                delay(10_000L)
+            }
         }
     }
 
