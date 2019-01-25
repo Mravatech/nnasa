@@ -90,8 +90,15 @@ class SearchActivity : AppCompatActivity() {
         })
         rvSearch.adapter = adapter
         btnDone.setOnClickListener {
-            intent.putExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT, ArrayList(adapter.selectedAccounts))
-            setResult(SHARING_RESULT, intent.putExtra(EXTRA_LIST_RESULT, items))
+            val intent = Intent().apply {
+                val bundle = Bundle().apply {
+                    val selectedIds = ArrayList(adapter.selectedAccounts)
+                    putStringArrayList(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT, selectedIds)
+                }
+                putExtras(bundle)
+            }
+
+            setResult(SHARING_RESULT, intent)
             finish()
         }
     }

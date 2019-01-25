@@ -127,11 +127,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
         when (resultCode) {
             SearchActivity.SHARING_RESULT -> {
-                val data = data ?: return
-                val resultCheckBoxes = data.getSerializableExtra(SearchActivity.EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT) as ArrayList<String>
-                val resultList = data.getSerializableExtra(SearchActivity.EXTRA_LIST_RESULT) as ArrayList<ShortAccountModel>
-                adapter.selectedAccounts = HashSet(resultCheckBoxes)
-                adapter.dataStorage.set(resultList)
+                data?.extras
+                    ?.getStringArrayList(SearchActivity.EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT)
+                    ?.also { selectedIds ->
+                        adapter.selectedAccounts = HashSet(selectedIds)
+                    }
             }
         }
     }
