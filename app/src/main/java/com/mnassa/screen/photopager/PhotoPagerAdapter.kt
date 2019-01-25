@@ -31,7 +31,10 @@ class PhotoPagerAdapter(private val images: List<String>, private val onClickLis
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as View)
+        val view = `object` as View
+        val imageView = (view.bigImageView) as BigImageView
+        imageView.ssiv.recycle()
+        container.removeView(view)
     }
 
     override fun getCount(): Int = images.size
