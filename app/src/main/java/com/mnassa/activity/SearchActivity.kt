@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 
 //TODO: rewrite search logic
 @Deprecated(message = "Will be removed")
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
