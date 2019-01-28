@@ -65,6 +65,7 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
         return ProfileAccountModelImpl(
                 createdAt = input.createdAt,
                 id = input.id,
+                serialNumber = input.serialNumber,
                 createdAtDate = input.createdAtDate,
                 interests = input.interests?: emptyList(),
                 offers = input.offers?: emptyList(),

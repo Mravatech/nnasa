@@ -9,6 +9,7 @@ import java.util.*
  */
 interface ShortAccountModel : Model {
     override var id: String // account ID
+    var serialNumber: Int?
     var userName: String
     var accountType: AccountType
     //
@@ -26,6 +27,7 @@ interface ShortAccountModel : Model {
     companion object {
         val EMPTY = object : ShortAccountModel {
             override var id: String = "DELETED_USER"
+            override var serialNumber: Int? = null
             override var userName: String = "Deleted user"
             override var accountType: AccountType = AccountType.PERSONAL
             override var avatar: String? = null

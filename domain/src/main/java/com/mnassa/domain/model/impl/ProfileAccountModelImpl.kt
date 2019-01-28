@@ -13,6 +13,7 @@ import java.util.*
 data class ProfileAccountModelImpl(
         override val createdAt: Long?,
         override var id: String,
+        override var serialNumber: Int?,
         override val createdAtDate: String?,
         override val interests: List<String>,
         override val offers: List<String>,

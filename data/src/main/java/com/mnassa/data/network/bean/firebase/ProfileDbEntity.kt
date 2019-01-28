@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName
 
 internal class ProfileDbEntity(
         id: String,
+        serialNumber: Int?,
         avatar: String?,
         firstName: String?,
         lastName: String?,
@@ -45,7 +46,7 @@ internal class ProfileDbEntity(
         @SerializedName("website") val website: String?,
         @SerializedName("organizationType") val organizationType: String?,
         @SerializedName("birthday") val birthday: Long?
-) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
+) : ShortAccountDbEntity(id, serialNumber, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
 
     @SerializedName("createdAt") var createdAt: Long? = createdAt
     @SerializedName("location") val location: LocationDbEntity? = location

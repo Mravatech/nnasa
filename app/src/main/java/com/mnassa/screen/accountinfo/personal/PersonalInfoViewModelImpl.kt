@@ -49,6 +49,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val personalInfo = PersonalInfoModelImpl(
                         id = accountModel.id,
+                        serialNumber = accountModel.serialNumber,
                         userName = accountModel.userName,
                         accountType = accountModel.accountType,
                         avatar = avatarSavedPath,

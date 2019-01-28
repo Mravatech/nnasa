@@ -53,6 +53,7 @@ class EditPersonalProfileViewModelImpl(
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val profile = ProfilePersonalInfoModelImpl(
                         id = profileAccountModel.id,
+                        serialNumber = profileAccountModel.serialNumber,
                         userName = userName,
                         accountType = AccountType.PERSONAL,
                         avatar = avatarSavedPath,

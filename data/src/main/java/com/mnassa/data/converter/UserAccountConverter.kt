@@ -47,6 +47,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
         return ShortAccountModelImpl(
                 id = input.id,
+                serialNumber = input.serialNumber,
                 userName = input.userName,
                 accountType = accountType,
                 avatar = input.avatar,
@@ -83,6 +84,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
         return ShortAccountModelImpl(
                 id = input.id,
+                serialNumber = input.serialNumber,
                 userName = input.userName,
                 accountType = accountType,
                 avatar = null,
@@ -126,6 +128,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
         return DeclinedShortAccountModelImpl(
                 id = input.id,
+                serialNumber = input.serialNumber,
                 userName = input.userName,
                 accountType = accountType,
                 avatar = input.avatar,
