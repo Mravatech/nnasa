@@ -9,7 +9,6 @@ import com.mnassa.R
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.screen.chats.ChatListAdapter
 import com.mnassa.screen.events.details.participants.EventParticipantItem
 import com.mnassa.screen.events.details.participants.EventParticipantsRVAdapter
@@ -40,7 +39,6 @@ class SearchActivity : AppCompatActivity() {
             ALL_PARTICIPANT_TYPE -> allParticipant()
             SELECT_PARTICIPANT_TYPE -> selectParticipant()
             CHAT_TYPE -> chat()
-            SHARING_TYPE -> sharing()
             GROUPED_ACCOUNT_TYPE -> recommend()
         }
     }
@@ -75,30 +73,6 @@ class SearchActivity : AppCompatActivity() {
         btnDone.setOnClickListener {
             intent.putExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT, ArrayList(adapter.selectedAccounts))
             setResult(GROUPED_ACCOUNT_RESULT, intent.putExtra(EXTRA_LIST_RESULT, items))
-            finish()
-        }
-    }
-
-    private fun sharing() {
-        val items = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<ShortAccountModel>
-        val checkBoxes = intent.getSerializableExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS) as ArrayList<String>
-        val adapter = BuildNetworkAdapter()
-        adapter.selectedAccounts = HashSet(checkBoxes)
-        adapter.set(items)
-        etSearch.addTextChangedListener(SimpleTextWatcher {
-            adapter.searchByName(it)
-        })
-        rvSearch.adapter = adapter
-        btnDone.setOnClickListener {
-            val intent = Intent().apply {
-                val bundle = Bundle().apply {
-                    val selectedIds = ArrayList(adapter.selectedAccounts)
-                    putStringArrayList(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT, selectedIds)
-                }
-                putExtras(bundle)
-            }
-
-            setResult(SHARING_RESULT, intent)
             finish()
         }
     }
@@ -151,8 +125,6 @@ class SearchActivity : AppCompatActivity() {
         const val SELECT_PARTICIPANT_TYPE = 2
         const val CHAT_RESULT = 103
         const val CHAT_TYPE = 3
-        const val SHARING_RESULT = 104
-        const val SHARING_TYPE = 4
         const val GROUPED_ACCOUNT_RESULT = 105
         const val GROUPED_ACCOUNT_TYPE = 5
 

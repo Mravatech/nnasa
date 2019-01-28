@@ -1,6 +1,5 @@
 package com.mnassa.screen.posts.need.sharing
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -13,8 +12,8 @@ import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PostPrivacyType
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formattedName
 import com.mnassa.extensions.isGone
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -67,9 +66,6 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 rbMyNewsFeed.isChecked = it.isEmpty()
                 ignoreCheckedListener = false
             }
-            ivSearch.setOnClickListener {
-                startActivityForResult(SearchActivity.start(context, adapter.dataStorage.toList(), SearchActivity.SHARING_TYPE, adapter.selectedAccounts), SearchActivity.REQUEST_CODE_SEARCH)
-            }
 
             rbPromotePost.setOnCheckedChangeListener { button, isChecked ->
                 if (ignoreCheckedListener) return@setOnCheckedChangeListener
@@ -100,6 +96,14 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 }
             }
 
+            etSearch.apply {
+                hint = fromDictionary(R.string.search_hint)
+                addTextChangedListener(SimpleTextWatcher(adapter::searchByName))
+                setOnFocusChangeListener { v, hasFocus ->
+                    view.ivSearch.alpha = if (hasFocus) 1.0f else 0.6f
+                }
+            }
+
             rvAllConnections.layoutManager = LinearLayoutManager(context)
             rvAllConnections.adapter = adapter
         }
@@ -118,20 +122,6 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         adapter.destroyCallbacks()
         view.rvAllConnections.adapter = null
         super.onDestroyView(view)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != SearchActivity.REQUEST_CODE_SEARCH) return
-        when (resultCode) {
-            SearchActivity.SHARING_RESULT -> {
-                data?.extras
-                    ?.getStringArrayList(SearchActivity.EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS_RESULT)
-                    ?.also { selectedIds ->
-                        adapter.selectedAccounts = HashSet(selectedIds)
-                    }
-            }
-        }
     }
 
     private fun getSelection(): PostPrivacyOptions {
@@ -171,7 +161,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
                 }
             }
 
-            rlConnectionsHeader.visibility = rvAllConnections.visibility
+            tvConnections.visibility = rvAllConnections.visibility
+            cvSearch.visibility = rvAllConnections.visibility
         }
     }
 
