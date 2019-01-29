@@ -77,6 +77,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             etPersonFirstName.setText(accountModel.personalInfo?.firstName)
             etPersonSecondName.setText(accountModel.personalInfo?.lastName)
             etPersonUserName.setText(accountModel.userName)
+            etPersonUserName.isEnabled = false
             setToolbar(toolbarEditProfile, this)
             birthday = accountModel.birthday?.time ?: 0L
             setCalendarEditText(etDateOfBirthday)
