@@ -61,6 +61,16 @@ class UserRepositoryImpl(
             }
         }
         set(value) = sharedPrefs.edit().putString(EXTRA_ACCOUNT_ID, value).apply()
+    private var serialNumberInternal: Int
+        get() {
+            return if (FirebaseAuth.getInstance().currentUser?.uid != null) {
+                sharedPrefs.getInt(EXTRA_SERIAL_NUMBER, EMPTY_SERIAL_NUMBER)
+            } else {
+                sharedPrefs.edit().remove(EXTRA_SERIAL_NUMBER).apply()
+                EMPTY_SERIAL_NUMBER
+            }
+        }
+        set(value) = sharedPrefs.edit().putInt(EXTRA_SERIAL_NUMBER, value).apply()
 
     override suspend fun getAccountStatusChannel(accountId: String): ReceiveChannel<UserStatusModel> {
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
@@ -86,9 +96,11 @@ class UserRepositoryImpl(
         if (account == null) {
             //clear account
             accountIdInternal = null
+            serialNumberInternal = EMPTY_SERIAL_NUMBER
         } else {
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
+            this.serialNumberInternal = account.serialNumber ?: EMPTY_SERIAL_NUMBER
             launchWorker {
                 addPushToken(FirebaseInstanceId.getInstance().instanceId.await(exceptionHandler).token)
             }
@@ -283,6 +295,13 @@ class UserRepositoryImpl(
                 ?: throw NotAuthorizedException("AccountId is null!", NullPointerException())
     }
 
+    override fun getSerialNumberOrNull(): Int? = serialNumberInternal
+
+    override fun getSerialNumberOrException(): Int {
+        return getSerialNumberOrNull()
+            ?: throw NotAuthorizedException("Serial Number is null!", NullPointerException())
+    }
+
     override suspend fun getAccountById(id: String): ShortAccountModel? {
         return db
                 .child(TABLE_PUBLIC_ACCOUNTS)
@@ -348,5 +367,8 @@ class UserRepositoryImpl(
         private const val ANDROID = "Android"
         private const val EXTRA_PREFS_NAME = "USER_REPOSITORY_PREFS"
         private const val EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID"
+        private const val EXTRA_SERIAL_NUMBER = "EXTRA_SERIAL_NUMBER"
+
+        private const val EMPTY_SERIAL_NUMBER = -1
     }
 }

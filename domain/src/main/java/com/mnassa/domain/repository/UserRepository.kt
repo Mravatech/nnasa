@@ -44,6 +44,8 @@ interface UserRepository {
     suspend fun addPushToken(token: String?)
     fun getAccountIdOrNull(): String?
     fun getAccountIdOrException(): String
+    fun getSerialNumberOrNull(): Int?
+    fun getSerialNumberOrException(): Int
     suspend fun getFirebaseToken(): String?
     fun getFirebaseUserId(): String?
 
