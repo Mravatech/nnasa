@@ -20,7 +20,7 @@ class InvitationConverter : ConvertersContextRegistrationCallback {
     private fun convert(input: InvitationDbEntity): PhoneContactInvitedImpl {
         return PhoneContactInvitedImpl(
                 phoneNumber = input.phone,
-                avatar = null,
+                avatar = input.avatar,
                 createdAt = input.createdAt,
                 createdAtDate = input.createdAtDate,
                 description = input.description,
