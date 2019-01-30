@@ -12,5 +12,4 @@ interface TagModel : Parcelable, Serializable {
     var status: String?
     var name: TranslatedWordModel
     var id: String?
-    var localId: Long
 }

@@ -14,14 +14,12 @@ import kotlinx.android.parcel.Parcelize
 data class TagModelImpl(
         override var status: String?,
         override var name: TranslatedWordModel,
-        override var id: String?,
-        override var localId: Long = -1
+        override var id: String?
 ) : TagModel
 
 @Parcelize
 data class AutoTagModelImpl(
         override var status: String?,
         override var name: TranslatedWordModel,
-        override var id: String?,
-        override var localId: Long = -1
+        override var id: String?
 ) : TagModel
