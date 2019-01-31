@@ -72,8 +72,11 @@ class UserProfileInteractorImpl(
 
     override suspend fun setCurrentUserAccount(account: ShortAccountModel) {
         if (userRepository.getAccountStatusChannel(account.id).consume { receive() } is UserStatusModel.Enabled) {
-            userRepository.setCurrentAccount(account)
-            onAccountChangedListener.emit(account)
+            // Load full account model, that contains the
+            // serial number.
+            val accountFullModel = userRepository.getAccountByIdChannel(account.id).consume { receive() }!!
+            userRepository.setCurrentAccount(accountFullModel)
+            onAccountChangedListener.emit(accountFullModel)
         } else throw AccountDisabledException("Account ${account.formattedName} (${account.id}) is disabled!", IllegalArgumentException())
     }
 
