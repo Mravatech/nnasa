@@ -132,9 +132,9 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    private inline fun <T : Any> handle(
-        crossinline getter: () -> T?,
-        crossinline callback: suspend CoroutineScope.(T) -> Unit
+    private fun <T : Any> handle(
+        getter: () -> T?,
+        callback: suspend CoroutineScope.(T) -> Unit
     ): Job {
         return launchWorker {
             while (isActive) {
