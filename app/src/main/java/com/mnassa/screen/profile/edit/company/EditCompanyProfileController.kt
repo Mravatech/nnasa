@@ -61,6 +61,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             etCompanyEmail.setText(accountModel.contactEmail)
             etCompanyName.setText(accountModel.organizationInfo?.organizationName)
             etCompanyUserName.setText(accountModel.userName)
+            etCompanyUserName.isEnabled = false
             etCompanyPhone.setHideMode(accountModel.showContactPhone)
             etCompanyPhone.setText(accountModel.contactPhone)
             etWebSite.setText(accountModel.website)
