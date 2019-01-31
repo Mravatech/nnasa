@@ -295,7 +295,7 @@ class UserRepositoryImpl(
                 ?: throw NotAuthorizedException("AccountId is null!", NullPointerException())
     }
 
-    override fun getSerialNumberOrNull(): Int? = serialNumberInternal
+    override fun getSerialNumberOrNull(): Int? = serialNumberInternal.takeUnless { it == EMPTY_SERIAL_NUMBER }
 
     override fun getSerialNumberOrException(): Int {
         return getSerialNumberOrNull()
