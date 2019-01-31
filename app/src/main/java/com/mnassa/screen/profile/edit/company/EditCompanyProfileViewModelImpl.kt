@@ -54,6 +54,7 @@ class EditCompanyProfileViewModelImpl(
 
                 val profile = ProfileCompanyInfoModelImpl(
                         id = profileAccountModel.id,
+                        serialNumber = profileAccountModel.serialNumber,
                         userName = userName,
                         accountType = AccountType.ORGANIZATION,
                         avatar = avatarSavedPath,

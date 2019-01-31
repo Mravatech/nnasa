@@ -89,7 +89,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                             exceptionHandler = exceptionHandler,
                             queryBuilder = { collection ->
                                 collection.orderBy(
-                                    PostShortDbEntity::createdAt.name,
+                                    PostDbEntity.PROPERTY_CREATED_AT,
                                     // This is loading in a reverse order,
                                     // that's for new items to appear at top of the list
                                     // and not at the bottom.
@@ -142,7 +142,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                         pagination = pagination,
                         queryBuilder = { collection ->
                             collection.orderBy(
-                                PostShortDbEntity::createdAt.name,
+                                PostDbEntity.PROPERTY_CREATED_AT,
                                 Query.Direction.DESCENDING
                             )
                         }, mapper = {

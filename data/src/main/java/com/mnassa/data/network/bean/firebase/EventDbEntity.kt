@@ -41,6 +41,8 @@ internal data class EventDbEntity(
 
     companion object {
         const val CREATED_AT = "createdAt"
+        const val VISIBLE_FOR_USERS = "visibleFor"
+        const val VISIBLE_FOR_GROUPS = "visibleForCommunities"
     }
 }
 

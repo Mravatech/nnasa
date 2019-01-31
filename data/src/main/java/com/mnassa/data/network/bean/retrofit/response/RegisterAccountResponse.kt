@@ -18,6 +18,7 @@ data class AccountData(
 
 data class AccountResponseBean(
         @SerializedName("id") val id: String,
+        @SerializedName("serialNumber") val serialNumber: Int?,
         @SerializedName("userID") val userId: String,
         @SerializedName("userName") val userName: String,
         @SerializedName("firstName") val firstName: String?,

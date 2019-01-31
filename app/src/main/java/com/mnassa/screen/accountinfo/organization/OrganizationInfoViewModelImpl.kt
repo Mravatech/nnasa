@@ -52,6 +52,7 @@ class OrganizationInfoViewModelImpl(
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val companyInfo = CompanyInfoModelImpl(
                         id = accountModel.id,
+                        serialNumber = accountModel.serialNumber,
                         userName = accountModel.userName,
                         accountType = accountModel.accountType,
                         avatar = avatarSavedPath,

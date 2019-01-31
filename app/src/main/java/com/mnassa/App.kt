@@ -43,6 +43,7 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
     private var dictionaryUpdateJob: Job? = null
     private var handleUserStatusUpdateJob: Job? = null
     private var handleAccountStatusUpdateJob: Job? = null
+    private var handleAccountRefreshJob: Job? = null
 
     override fun onCreate() {
         APP_CONTEXT = this
@@ -86,6 +87,9 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
 
         handleAccountStatusUpdateJob?.cancel()
         handleAccountStatusUpdateJob = getInstance<LoginInteractor>().handleAccountStatus()
+
+        handleAccountRefreshJob?.cancel()
+        handleAccountRefreshJob = getInstance<LoginInteractor>().handleAccountRefresh()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -94,6 +98,7 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
         dictionaryUpdateJob?.cancel()
         handleUserStatusUpdateJob?.cancel()
         handleAccountStatusUpdateJob?.cancel()
+        handleAccountRefreshJob?.cancel()
     }
 
     override fun onTerminate() {

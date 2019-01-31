@@ -132,19 +132,46 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    private inline fun <T : Any> handle(
-        crossinline getter: () -> T?,
-        crossinline callback: suspend CoroutineScope.(T) -> Unit
+    override fun handleAccountRefresh(): Job {
+        var consumerJob: Job? = null
+        return handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
+            consumerJob?.cancel()
+            consumerJob = launch(coroutineContext + DefaultDispatcher) {
+                run check@{
+                    userRepository.getSerialNumberOrNull() ?: return@check
+                    return@launch
+                }
+
+                // Reload the account model
+                val account = userRepository.getAccountById(accountId)
+                if (account != null) {
+                    userProfileInteractor.setCurrentUserAccount(account)
+                }
+            }
+
+            delay(ACCOUNT_REFRESH_DELAY)
+        }
+    }
+
+    private fun <T : Any> handle(
+        getter: () -> T?,
+        callback: suspend CoroutineScope.(T) -> Unit
     ): Job {
         return launchWorker {
             while (isActive) {
-                getter()
-                    ?.let {
-                        callback(it)
+                do {
+                    val model = getter()
+                    if (model != null) {
+                        callback(model)
                     }
+                } while (model != getter())
 
                 userProfileInteractor.onAccountChangedListener.awaitFirst()
             }
         }
+    }
+
+    companion object {
+        private const val ACCOUNT_REFRESH_DELAY = 60L * 1000L
     }
 }

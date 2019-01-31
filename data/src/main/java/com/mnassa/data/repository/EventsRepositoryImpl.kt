@@ -45,10 +45,10 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
 
     override suspend fun preloadEvents(): List<EventModel> {
         return firestoreLockSuspend {
+            val serialNumber = userRepository.getSerialNumberOrException()
             firestore
-                    .collection(DatabaseContract.TABLE_EVENTS)
-                    .document(userRepository.getAccountIdOrException())
-                    .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
+                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, serialNumber)
                     .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
                     .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<EventDbEntity>()
@@ -58,13 +58,17 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
 
     override suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<ListItemEvent<EventModel>> {
         return firestoreLockSuspend {
+            val serialNumber = userRepository.getSerialNumberOrException()
             firestore
-                    .collection(DatabaseContract.TABLE_EVENTS)
-                    .document(userRepository.getAccountIdOrException())
-                    .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
                     .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
                             exceptionHandler = exceptionHandler,
                             pagination = pagination,
+                            queryBuilder = {
+                                it
+                                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, serialNumber)
+                                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
+                            },
                             mapper = { mapEvent(it) }
                     )
         }
@@ -73,11 +77,14 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>> {
         return firestoreLockSuspend {
             firestore
-                    .collection(DatabaseContract.TABLE_GROUPS_ALL)
-                    .document(groupId)
-                    .collection(DatabaseContract.TABLE_GROUPS_EVENTS_FEED)
+                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
                     .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
                             exceptionHandler = exceptionHandler,
+                            queryBuilder = {
+                                it
+                                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
+                                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
+                            },
                             mapper = { mapEvent(it, groupId) }
                     )
         }
@@ -86,9 +93,9 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel> {
         return firestoreLockSuspend {
             firestore
-                    .collection(DatabaseContract.TABLE_GROUPS_ALL)
-                    .document(groupId)
-                    .collection(DatabaseContract.TABLE_GROUPS_EVENTS_FEED)
+                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
+                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
+                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
                     .awaitList<EventDbEntity>()
                     .let { it.mapNotNull { mapEvent(it, groupId) } }
         }
@@ -97,9 +104,7 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     override suspend fun getEventsChannel(eventId: String): ReceiveChannel<EventModel?> {
         return firestoreLockSuspend {
             firestore
-                    .collection(DatabaseContract.TABLE_EVENTS)
-                    .document(userRepository.getAccountIdOrException())
-                    .collection(DatabaseContract.TABLE_EVENTS_COLLECTION_FEED)
+                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
                     .document(eventId)
                     .toValueChannel<EventDbEntity>(exceptionHandler = exceptionHandler)
                     .map { it?.let { mapEvent(it) } }

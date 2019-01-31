@@ -8,6 +8,7 @@ import com.mnassa.domain.model.HasId
  */
 internal open class ShortAccountDbEntity(
         @SerializedName("id") override var id: String,
+        @SerializedName("serialNumber") var serialNumber: Int?,
         @SerializedName("avatar") var avatar: String?,
         @SerializedName("firstName") var firstName: String?,
         @SerializedName("lastName") var lastName: String?,
@@ -25,6 +26,7 @@ internal open class ShortAccountDbEntity(
 
 internal open class EventAttendeeAccountDbEntity(
         id: String,
+        serialNumber: Int?,
         avatar: String?,
         firstName: String?,
         lastName: String?,
@@ -34,10 +36,11 @@ internal open class EventAttendeeAccountDbEntity(
         abilitiesInternal: List<ShortAccountAbilityDbEntity>?,
         connectedBy: ConnectedByDbEntity?,
         @SerializedName("presence") val presence: Boolean? = null
-): ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal, connectedBy)
+): ShortAccountDbEntity(id, serialNumber, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal, connectedBy)
 
 internal open class DeclinedShortAccountDbEntity(
         id: String,
+        serialNumber: Int?,
         avatar: String?,
         firstName: String?,
         lastName: String?,
@@ -46,7 +49,7 @@ internal open class DeclinedShortAccountDbEntity(
         userName: String,
         abilitiesInternal: List<ShortAccountAbilityDbEntity>,
         @SerializedName("declinedAt") var declinedAt: Long
-) : ShortAccountDbEntity(id, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
+) : ShortAccountDbEntity(id, serialNumber, avatar, firstName, lastName, organizationName, type, userName, abilitiesInternal) {
 
     override fun toString(): String {
         return "DeclinedShortAccountDbEntity(declinedAt=$declinedAt); " + super.toString()
