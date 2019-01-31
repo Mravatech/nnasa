@@ -14,28 +14,17 @@ import kotlinx.android.synthetic.main.view_chip.view.*
  */
 
 @SuppressLint("ViewConstructor")
-class ChipView(
-        context: Context,
-        tagModel: TagModel,
-        private val key: Long,
-        private val onChipListener: OnChipListener
-) : FrameLayout(context) {
+class ChipView(context: Context, val tagModel: TagModel, private val onRemove: (TagModel) -> Unit) : FrameLayout(context) {
 
     init {
         inflate(context, R.layout.view_chip, this)
-        tvChipText.text = tagModel.name.toString()
+        bind(tagModel)
+    }
+
+    private fun bind(tag: TagModel) {
+        tvChipText.text = tag.name.toString()
         ivRemoveTag.setOnClickListener {
-            removeViewFromParent()
+            onRemove(tag)
         }
-    }
-
-    fun removeViewFromParent() {
-        val parentViewGroup: FlowLayout = parent as FlowLayout
-        parentViewGroup.removeView(this)
-        onChipListener.onViewRemoved(key)
-    }
-
-    interface OnChipListener {
-        fun onViewRemoved(key: Long)
     }
 }

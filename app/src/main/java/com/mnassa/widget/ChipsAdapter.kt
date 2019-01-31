@@ -72,7 +72,7 @@ class ChipsAdapter(
 
     private fun setResult(text: String, result: List<TagModel>) {
         //exclude already added tags
-        val alreadyAddedTags = chipListener.getAlreadyAddedTags()
+        val alreadyAddedTags = chipListener.getTags()
         val result = result.filterNot { tagToAdd ->
             val tagToAddText = tagToAdd.name.toString().toLowerCase()
             alreadyAddedTags.any { addedTag ->
@@ -89,7 +89,7 @@ class ChipsAdapter(
     interface ChipListener {
         fun onChipClick(tagModel: TagModel)
         fun onSearchResult(text: String, tags: List<TagModel>)
-        fun getAlreadyAddedTags(): Set<TagModel>
+        fun getTags(): List<TagModel>
         suspend fun getAllTags(): List<TagModel>
     }
 
