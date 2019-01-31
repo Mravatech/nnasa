@@ -82,7 +82,7 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                             exceptionHandler = exceptionHandler,
                             queryBuilder = {
                                 it
-                                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, groupId)
+                                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
                                     .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
                             },
                             mapper = { mapEvent(it, groupId) }
@@ -94,7 +94,7 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
         return firestoreLockSuspend {
             firestore
                     .collection(DatabaseContract.TABLE_ALL_EVENTS)
-                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, groupId)
+                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
                     .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
                     .awaitList<EventDbEntity>()
                     .let { it.mapNotNull { mapEvent(it, groupId) } }
