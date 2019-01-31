@@ -27,4 +27,6 @@ interface LoginInteractor {
 
     fun handleUserStatus(): Job
     fun handleAccountStatus(): Job
+
+    fun handleAccountRefresh(): Job
 }
