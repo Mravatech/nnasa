@@ -68,13 +68,6 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
         ListPopupWindow(context).apply {
             setAdapter(searchPopupAdapter)
 
-            // Set the layout params
-            val marginHorizontal =
-                context.resources.getDimension(R.dimen.padding_horizontal).toInt()
-            val rootWidth = this@ChipLayout.width
-            height = ListPopupWindow.WRAP_CONTENT
-            width = rootWidth - marginHorizontal
-
             isModal = false
             anchorView = etChipInput
             softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
@@ -187,7 +180,16 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
                 searchPopup.dismiss()
             }
         } else {
-            searchPopup.show()
+            searchPopup.apply {
+                // Set the layout params
+                val marginHorizontal =
+                    context.resources.getDimension(R.dimen.padding_horizontal).toInt()
+                val rootWidth = this@ChipLayout.width
+                height = context.resources.getDimension(R.dimen.chip_popup_height).toInt()
+                width = rootWidth - marginHorizontal
+
+                show()
+            }
         }
     }
 
@@ -205,7 +207,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     }
 
     private fun removeTagAtEnd() {
-        val index = flChipContainer.childCount - EDIT_TEXT_RESERVE
+        val index = (flChipContainer.childCount - 1) - EDIT_TEXT_RESERVE
         if (index >= 0) {
             removeTagAt(index)
         }
