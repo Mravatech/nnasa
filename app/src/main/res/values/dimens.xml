@@ -19,6 +19,7 @@
     <dimen name="chip_layout_margin">4dp</dimen>
     <dimen name="chip_layout_elevation">8dp</dimen>
     <dimen name="chip_layout_radius">3dp</dimen>
+    <dimen name="chip_popup_height">180dp</dimen>
 
     <dimen name="avatar_list_item">49dp</dimen>
     <dimen name="avatar_post_item">42dp</dimen>
