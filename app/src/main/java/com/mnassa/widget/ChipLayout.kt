@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -67,6 +68,9 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     private val searchPopup by lazy {
         ListPopupWindow(context).apply {
             setAdapter(searchPopupAdapter)
+            
+            height = context.resources.getDimension(R.dimen.chip_popup_height).toInt()
+            width = ViewGroup.LayoutParams.MATCH_PARENT
 
             isModal = false
             anchorView = etChipInput
@@ -180,16 +184,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
                 searchPopup.dismiss()
             }
         } else {
-            searchPopup.apply {
-                // Set the layout params
-                val marginHorizontal =
-                    context.resources.getDimension(R.dimen.padding_horizontal).toInt()
-                val rootWidth = this@ChipLayout.width
-                height = context.resources.getDimension(R.dimen.chip_popup_height).toInt()
-                width = rootWidth - marginHorizontal
-
-                show()
-            }
+            searchPopup.show()
         }
     }
 
