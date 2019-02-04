@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -67,13 +68,9 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     private val searchPopup by lazy {
         ListPopupWindow(context).apply {
             setAdapter(searchPopupAdapter)
-
-            // Set the layout params
-            val marginHorizontal =
-                context.resources.getDimension(R.dimen.padding_horizontal).toInt()
-            val rootWidth = this@ChipLayout.width
-            height = ListPopupWindow.WRAP_CONTENT
-            width = rootWidth - marginHorizontal
+            
+            height = context.resources.getDimension(R.dimen.chip_popup_height).toInt()
+            width = ViewGroup.LayoutParams.MATCH_PARENT
 
             isModal = false
             anchorView = etChipInput
@@ -205,7 +202,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     }
 
     private fun removeTagAtEnd() {
-        val index = flChipContainer.childCount - EDIT_TEXT_RESERVE
+        val index = (flChipContainer.childCount - 1) - EDIT_TEXT_RESERVE
         if (index >= 0) {
             removeTagAt(index)
         }
