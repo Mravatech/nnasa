@@ -1,7 +1,7 @@
 package com.mnassa.screen.buildnetwork
 
 import android.Manifest
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
 import kotlinx.coroutines.experimental.channels.BroadcastChannel

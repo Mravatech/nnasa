@@ -1,7 +1,7 @@
 package com.mnassa.screen.wallet.send
 
 import android.os.Bundle
-import android.support.design.widget.TabLayout
+import com.google.android.material.tabs.TabLayout
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
@@ -136,7 +136,7 @@ class SendPointsController(args: Bundle) : MnassaControllerImpl<SendPointsViewMo
 
     private fun updateSendButtonState() {
         with(view ?: return) {
-            toolbar.actionButtonClickable = (selectedAccount != null || selectedGroup != null) && etAmount.text.isNotBlank()
+            toolbar.actionButtonClickable = (selectedAccount != null || selectedGroup != null) && !etAmount.text.isNullOrBlank()
         }
     }
 

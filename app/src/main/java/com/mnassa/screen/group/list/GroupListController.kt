@@ -2,8 +2,8 @@ package com.mnassa.screen.group.list
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
@@ -66,7 +66,7 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
                             allGroupsAdapter.withHeader = true
                             allGroupsAdapter.notifyItemChanged(0)
                             allGroupsAdapter.finishSearch()
-                            view.fabCreateGroup.visibility = fabVisibility
+                            (view.fabCreateGroup as View).visibility = fabVisibility
                         }
                 )
             }

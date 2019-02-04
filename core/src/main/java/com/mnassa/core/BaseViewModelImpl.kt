@@ -1,8 +1,8 @@
 package com.mnassa.core
 
-import android.arch.lifecycle.ViewModel
 import android.os.Bundle
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
+import androidx.lifecycle.ViewModel
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 

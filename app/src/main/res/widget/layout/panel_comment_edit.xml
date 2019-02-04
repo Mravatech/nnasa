@@ -13,7 +13,7 @@
         android:paddingEnd="@dimen/spacing_horizontal"
         android:paddingStart="@dimen/spacing_horizontal">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivEditCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

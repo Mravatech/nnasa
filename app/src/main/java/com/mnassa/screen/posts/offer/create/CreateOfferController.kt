@@ -6,7 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.AppCompatSpinner
+import androidx.appcompat.widget.AppCompatSpinner
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
@@ -18,6 +18,7 @@ import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.formatAsMoney
+import com.mnassa.extensions.lengthOrZero
 import com.mnassa.extensions.startCropActivityForResult
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
@@ -284,8 +285,8 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
     private fun canCreatePost(): Boolean {
         return with(view ?: return false) {
-            etOffer.text.length >= MIN_OFFER_DESCRIPTION_LENGTH &&
-                    etTitle.text.length >= MIN_OFFER_TITLE_LENGTH
+            etOffer.text.lengthOrZero >= MIN_OFFER_DESCRIPTION_LENGTH &&
+                    etTitle.text.lengthOrZero >= MIN_OFFER_TITLE_LENGTH
         }
     }
 

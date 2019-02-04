@@ -25,14 +25,14 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
     val result = suspendCancellableCoroutine<List<T>> { continuation ->
         val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
-                    continuation.resumeWithException(exceptionHandler.handle(error.toException(), ref.path))
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException(), ref.path.toString()))
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 try {
                     continuation.resume(snapshot.mapList())
                 } catch (e: Exception) {
                     Timber.e(e)
-                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
+                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path.toString()))
                 }
             }
         }
@@ -47,14 +47,14 @@ internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: Exce
     val result = suspendCancellableCoroutine<T?> { continuation ->
         val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) =
-                    continuation.resumeWithException(exceptionHandler.handle(error.toException(), ref.path))
+                    continuation.resumeWithException(exceptionHandler.handle(error.toException(), ref.path.toString()))
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 try {
                     continuation.resume(snapshot.mapSingle())
                 } catch (e: Exception) {
                     Timber.e(e)
-                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
+                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path.toString()))
                 }
             }
         }
@@ -83,11 +83,11 @@ internal suspend inline fun <reified T : Any> DatabaseReference.awaitListBypassC
                         continuation.resume(snapshot.mapList())
                     } catch (e: Exception) {
                         Timber.e(e)
-                        continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
+                        continuation.resumeWithException(exceptionHandler.handle(e, ref.path.toString()))
                     }
                 } else {
                     val e = error?.toException() ?: IllegalStateException()
-                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path))
+                    continuation.resumeWithException(exceptionHandler.handle(e, ref.path.toString()))
                 }
             }
 

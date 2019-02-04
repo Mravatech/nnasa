@@ -1,6 +1,6 @@
 package com.mnassa.translation
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import com.mnassa.App
 import com.mnassa.domain.interactor.DictionaryInteractor
 import org.kodein.di.android.closestKodein

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         app:toolbar_title="@string/push_settings_title" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPushSettings"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

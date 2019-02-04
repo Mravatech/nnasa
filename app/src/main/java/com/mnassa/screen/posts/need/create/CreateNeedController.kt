@@ -16,10 +16,7 @@ import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RawPostModel
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.extensions.formatAsMoney
-import com.mnassa.extensions.requestPermissions
-import com.mnassa.extensions.startCropActivityForResult
+import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -225,7 +222,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     private fun canCreatePost(): Boolean {
         val view = view ?: return false
-        return view.etNeed.text.length >= MIN_NEED_TEXT_LENGTH
+        return view.etNeed.text.lengthOrZero >= MIN_NEED_TEXT_LENGTH
     }
 
     companion object {

@@ -14,7 +14,7 @@ suspend inline fun <reified R> Task<R>.await(exceptionHandler: ExceptionHandler)
     val result = suspendCancellableCoroutine<R> { continuation ->
         addOnCompleteListener {
             if (it.isSuccessful) {
-                continuation.resume(it.result)
+                continuation.resume(it.result as R)
             } else {
                 continuation.resumeWithException(exceptionHandler.handle(requireNotNull(it.exception)))
             }

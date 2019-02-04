@@ -9,7 +9,7 @@
     android:padding="8dp"
     tools:background="#fac6c6">
 
-    <android.support.design.widget.TextInputEditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etPromoCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

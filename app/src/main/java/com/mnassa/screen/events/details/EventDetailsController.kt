@@ -2,8 +2,8 @@ package com.mnassa.screen.events.details
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v4.view.ViewPager
+import com.google.android.material.appbar.AppBarLayout
+import androidx.viewpager.widget.ViewPager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan

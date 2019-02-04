@@ -1,7 +1,7 @@
 package com.mnassa.helper
 
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.appcompat.widget.PopupMenu
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan

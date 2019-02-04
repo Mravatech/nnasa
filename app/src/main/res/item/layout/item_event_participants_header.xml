@@ -36,7 +36,7 @@
                 tools:text="Save"
                 tools:visibility="visible" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivCheckParticipants"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
@@ -50,7 +50,7 @@
                 app:srcCompat="@drawable/ic_event_participants_check"
                 tools:visibility="visible" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

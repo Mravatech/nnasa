@@ -30,7 +30,7 @@
         android:textSize="16sp"
         tools:text="Specifying tags about yourself allows you to collaborate with Mnassa community more effectively. Besides,you will be rewarded for each added tag." />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAddTagsNow"
         style="@style/MnassaTransparentButton"
         android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
         android:padding="4dp"
         tools:text="Lets do it!" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAddTagsLate"
         style="@style/MnassaTransparentButton"
         android:layout_width="wrap_content"

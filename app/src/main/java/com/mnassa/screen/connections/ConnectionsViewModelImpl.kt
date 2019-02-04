@@ -2,7 +2,7 @@ package com.mnassa.screen.connections
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel

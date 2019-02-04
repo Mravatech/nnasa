@@ -60,26 +60,26 @@
         android:layout_marginStart="@dimen/personal_info_inner_margin_start"
         android:layout_marginTop="@dimen/personal_info_abilities_bottom_view" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCustomOccupation"
         style="@style/PersonalInfo.TextInputLayout"
         android:visibility="gone">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCustomOccupation"
             style="@style/PersonalInfo.EditText" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilWorkAt"
         style="@style/PersonalInfo.TextInputLayout"
         android:visibility="gone">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etWorkAt"
             style="@style/PersonalInfo.EditText" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

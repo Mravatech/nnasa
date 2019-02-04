@@ -22,7 +22,7 @@
         android:paddingStart="@dimen/spacing_horizontal"
         android:paddingTop="@dimen/spacing_vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivGuestAvatar"
             android:layout_width="23dp"
             android:layout_height="23dp"
@@ -38,7 +38,7 @@
             android:layout_toStartOf="@id/cbParticipantGuest"
             tools:text="Guest 1" />
 
-        <android.support.v7.widget.AppCompatCheckBox
+        <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/cbParticipantGuest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

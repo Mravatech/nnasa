@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Fragment
 import android.content.pm.PackageManager
 import android.os.Build
-import android.support.annotation.UiThread
+import androidx.annotation.UiThread
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.awaitFirst
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by Peter on 19.01.18.
  */
-typealias SupportFragment = android.support.v4.app.Fragment
+typealias SupportFragment = androidx.fragment.app.Fragment
 
 /**
  * Delegate for [PermissionsManager]

@@ -1,6 +1,6 @@
 package com.mnassa.screen.posts.profile.create
 
-import android.arch.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle
 import android.os.Bundle
 import android.view.View
 import com.mnassa.R
@@ -9,6 +9,7 @@ import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.lengthOrZero
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.posts.need.sharing.format
@@ -96,7 +97,7 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
 
     private fun canCreatePost(): Boolean {
         return with(view ?: return false) {
-            etRecommend.text.length >= MIN_TEXT_LENGTH
+            etRecommend.text.lengthOrZero >= MIN_TEXT_LENGTH
         }
     }
 

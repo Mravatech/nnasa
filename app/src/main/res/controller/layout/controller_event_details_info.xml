@@ -14,7 +14,7 @@
 
     <LinearLayout style="@style/Event.Info.Item">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             style="@style/Event.Info.ItemIcon"
             app:srcCompat="@drawable/ic_date_time" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/llEventLocation"
         style="@style/Event.Info.Item">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             style="@style/Event.Info.ItemIcon"
             app:srcCompat="@drawable/ic_location" />
 
@@ -50,7 +50,7 @@
 
     <LinearLayout style="@style/Event.Info.Item">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             style="@style/Event.Info.ItemIcon"
             app:srcCompat="@drawable/ic_tickets" />
 
@@ -65,7 +65,7 @@
 
     <LinearLayout style="@style/Event.Info.Item">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             style="@style/Event.Info.ItemIcon"
             app:srcCompat="@drawable/ic_category" />
 
@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_vertical">
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/vpImages"
             android:layout_width="match_parent"
             android:layout_height="240dp"
@@ -140,7 +140,7 @@
         android:layout_marginBottom="@dimen/spacing_vertical"
         android:layout_marginTop="@dimen/spacing_vertical" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

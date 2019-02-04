@@ -1,9 +1,9 @@
 package com.mnassa.screen.base
 
 import android.app.Dialog
-import android.arch.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R

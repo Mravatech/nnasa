@@ -1,7 +1,7 @@
 package com.mnassa.domain.repository
 
 import android.Manifest
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.model.PhoneContact
 
 /**

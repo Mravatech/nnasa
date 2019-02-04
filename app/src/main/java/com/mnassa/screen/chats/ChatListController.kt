@@ -2,8 +2,8 @@ package com.mnassa.screen.chats
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.LinearLayoutManager
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.SearchActivity

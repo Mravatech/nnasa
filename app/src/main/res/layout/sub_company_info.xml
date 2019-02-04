@@ -8,35 +8,35 @@
     android:paddingEnd="@dimen/personal_info_container_padding_horizontal"
     android:paddingStart="@dimen/personal_info_container_padding_horizontal">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCompanyNameNotEditable"
         style="@style/PersonalInfo.TextInputLayout"
         android:layout_marginTop="@dimen/spacing_vertical">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCompanyNameNotEditable"
             style="@style/PersonalInfo.EditText"
             android:enabled="false"
             android:inputType="number"
             android:textColor="@color/black" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.mnassa.widget.input.StatusSelectableEditText
         android:id="@+id/vCompanyStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilFoundation"
         style="@style/PersonalInfo.TextInputLayout">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etFoundation"
             style="@style/PersonalInfo.EditText"
             android:inputType="number" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCompanyPhone"
         style="@style/PersonalInfo.TextInputLayout">
 
@@ -46,9 +46,9 @@
             app:drawableEndCompat="@drawable/ic_eye_off"
             android:drawablePadding="@dimen/personal_info_drawable_padding"
             android:inputType="phone" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCompanyEmail"
         style="@style/PersonalInfo.TextInputLayout">
 
@@ -58,16 +58,16 @@
             app:drawableEndCompat="@drawable/ic_eye_off"
             android:drawablePadding="@dimen/personal_info_drawable_padding"
             android:inputType="textEmailAddress" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilWebSite"
         style="@style/PersonalInfo.TextInputLayout">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etWebSite"
             style="@style/PersonalInfo.EditText"
             android:imeOptions="actionDone"
             android:inputType="textUri" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

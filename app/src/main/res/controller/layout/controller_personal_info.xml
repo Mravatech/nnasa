@@ -11,7 +11,7 @@
         app:back_button_enabled="false"
         app:toolbar_title="@string/reg_personal_info_title" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
@@ -31,5 +31,5 @@
                 style="@style/PersonalInfo.TextViewSkipThisStep" />
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </RelativeLayout>

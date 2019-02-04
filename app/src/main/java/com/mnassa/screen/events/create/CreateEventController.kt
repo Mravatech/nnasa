@@ -288,7 +288,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
     private fun canCreateEvent(): Boolean {
         with(view ?: return false) {
-            if (etEventTitle.text.isBlank()) return false
+            if (etEventTitle.text.isNullOrBlank()) return false
             val dateTime = dateTime ?: return false
             if (dateTime.durationMillis == 0L || dateTime.startDateTime.time < System.currentTimeMillis()) return false
             when (sLocation.selectedItemPosition) {
@@ -297,13 +297,13 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 //                    if (etLocationDescription.text.isBlank()) return false
                 }
             }
-            if (etEventDescription.text.isBlank()) return false
+            if (etEventDescription.text.isNullOrBlank()) return false
             if (attachedImagesAdapter.dataStorage.size == 0) return false
             if (switchPaidEvent.isChecked) {
-                if (etTicketPrice.text.isBlank()) return false
+                if (etTicketPrice.text.isNullOrBlank()) return false
             }
-            if (etTicketsQuantity.text.isBlank()) return false
-            if (etTicketsPerAccountLimit.text.isBlank()) return false
+            if (etTicketsQuantity.text.isNullOrBlank()) return false
+            if (etTicketsPerAccountLimit.text.isNullOrBlank()) return false
 
             val quantity = etTicketsQuantity.text.toString().toIntOrNull() ?: return false
             val ticketsLimit = etTicketsPerAccountLimit.text.toString().toIntOrNull()

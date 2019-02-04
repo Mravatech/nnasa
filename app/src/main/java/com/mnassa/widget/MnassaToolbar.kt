@@ -2,12 +2,12 @@ package com.mnassa.widget
 
 import android.content.Context
 import android.os.Build
-import android.support.annotation.RequiresApi
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import com.mnassa.R
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.hideKeyboard

@@ -17,6 +17,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RawPostModel
 import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.lengthOrZero
 import com.mnassa.extensions.startCropActivityForResult
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
@@ -213,7 +214,7 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
 
     private fun canCreatePost(): Boolean {
         val view = view ?: return false
-        return view.etGeneralPost.text.length >= MIN_GENERAL_POST_TEXT_LENGTH
+        return view.etGeneralPost.text.lengthOrZero >= MIN_GENERAL_POST_TEXT_LENGTH
     }
 
     @SuppressLint("SetTextI18n")

@@ -1,7 +1,7 @@
 package com.mnassa.screen.home
 
-import android.support.design.widget.TabLayout
-import android.support.v4.content.ContextCompat
+import com.google.android.material.tabs.TabLayout
+import androidx.core.content.ContextCompat
 import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router

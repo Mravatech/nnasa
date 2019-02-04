@@ -17,7 +17,7 @@
         android:paddingStart="@dimen/spacing_horizontal"
         android:paddingTop="@dimen/spacing_vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivAvatar"
             android:layout_width="@dimen/avatar_list_item"
             android:layout_height="@dimen/avatar_list_item"

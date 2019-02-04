@@ -1,11 +1,11 @@
 package com.mnassa.widget
 
 import android.content.Context
-import android.support.v7.widget.AppCompatTextView
+import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
 import com.mnassa.R
 import com.mnassa.translation.fromDictionary
-import android.support.v7.content.res.AppCompatResources
+import androidx.appcompat.content.res.AppCompatResources
 import android.os.Build
 import android.graphics.drawable.Drawable
 

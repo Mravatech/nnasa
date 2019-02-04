@@ -2,7 +2,7 @@ package com.mnassa.screen.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
@@ -11,10 +11,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
-import com.mikepenz.materialdrawer.AccountHeader
-import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.DrawerBuilder
-import com.mikepenz.materialdrawer.MnassaAccountHeaderBuilder
+import com.mikepenz.materialdrawer.*
 import com.mikepenz.materialdrawer.holder.BadgeStyle
 import com.mikepenz.materialdrawer.holder.DimenHolder
 import com.mikepenz.materialdrawer.holder.StringHolder
@@ -45,6 +42,7 @@ import com.mnassa.screen.settings.SettingsController
 import com.mnassa.screen.termsandconditions.TermsAndConditionsController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.MnassaAccountHeaderBuilder
 import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -98,7 +96,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
             accountHeader = MnassaAccountHeaderBuilder()
                     .withActivity(requireNotNull(activity))
                     .withTranslucentStatusBar(true)
-                    .withAccountHeader(R.layout.drawer_header)
+                    .withProfileImagesVisible(false)
                     .withOnAccountHeaderListener { _: View, profile: IProfile<Any>, _: Boolean ->
                         val innerProfile = profile as IProfile<ProfileDrawerItem>
                         when {
