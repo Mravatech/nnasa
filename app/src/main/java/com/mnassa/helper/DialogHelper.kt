@@ -454,19 +454,6 @@ class DialogHelper {
                 .show()
     }
 
-    fun showServerIsUnderMaintenanceDialog(context: Context, onLogoutClick: () -> Unit): Dialog {
-        val dialog = MaterialDialog.Builder(context)
-                .title(context.getString(R.string._android_error_dialog_title_something_went_wrong_INFO))
-                .content(fromDictionary(R.string.server_maintenance_error))
-                .cancelable(false)
-                .positiveText(fromDictionary(R.string.side_menu_logout))
-                .onPositive { _, _ -> onLogoutClick() }
-                .show()
-        val textView = dialog.view.findViewById<TextView>(com.afollestad.materialdialogs.R.id.md_content)
-        Linkify.addLinks(textView, Linkify.ALL)
-        return dialog
-    }
-
     fun showAddTagsDialog(context: Context, onAddTagsClick: () -> Unit) {
         val dialog = Dialog(context, R.style.DefaultDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

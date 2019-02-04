@@ -33,6 +33,10 @@
         <activity android:name=".activity.SecondActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".activity.MaintenanceActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".activity.VideoViewActivity"
             android:screenOrientation="fullSensor"
             android:configChanges="orientation|screenSize|layoutDirection"

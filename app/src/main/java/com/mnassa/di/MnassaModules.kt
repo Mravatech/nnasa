@@ -115,6 +115,8 @@ import com.mnassa.screen.login.selectaccount.SelectAccountViewModel
 import com.mnassa.screen.login.selectaccount.SelectAccountViewModelIImpl
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.main.MainViewModelImpl
+import com.mnassa.screen.maintenance.MaintenanceViewModel
+import com.mnassa.screen.maintenance.MaintenanceViewModelImpl
 import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.photopager.PhotoPagerViewModel
@@ -192,6 +194,7 @@ fun registerAppModules(kodeinBuilder: Kodein.Builder) {
 }
 
 private val viewModelsModule = Kodein.Module {
+    bind<MaintenanceViewModel>() with provider { MaintenanceViewModelImpl() }
     bind<SplashViewModel>() with provider { SplashViewModelImpl(instance(), instance(), instance(), instance()) }
     bind<EnterPhoneViewModel>() with provider { EnterPhoneViewModelImpl(instance(), instance()) }
     bind<MainViewModel>() with provider { MainViewModelImpl(instance(), instance(), instance(), instance(), instance(), instance()) }

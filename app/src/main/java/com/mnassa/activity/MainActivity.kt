@@ -1,47 +1,41 @@
 package com.mnassa.activity
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
+import com.mnassa.core.addons.SubscriptionContainer
+import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
+import com.mnassa.domain.interactor.SettingsInteractor
 import com.mnassa.domain.model.LogoutReason
-import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.MnassaRouterDelegate
 import com.mnassa.screen.splash.SplashController
 import com.mnassa.service.MnassaFirebaseMessagingService
-import com.mnassa.translation.LanguageProviderImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.in_out_come_toast.view.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.KodeinContext
-import org.kodein.di.android.closestKodein
-import org.kodein.di.android.retainedKodein
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.kcontext
-import java.util.*
-import android.app.NotificationManager
-import androidx.appcompat.app.AppCompatDelegate
-import com.mnassa.core.addons.*
 
 
 open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
@@ -74,9 +68,28 @@ open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate()
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
         }
+
+        launchCoroutineUI {
+            getInstance<SettingsInteractor>()
+                .getMaintenanceServerStatus()
+                .consumeEach(::processMaintenanceStatusChange)
+        }
     }
 
     protected open fun createRootControllerInstance(): Controller = SplashController.newInstance()
+
+    protected open fun processMaintenanceStatusChange(isMaintenance: Boolean) {
+        if (isMaintenance) {
+            switchToMaintenanceActivity()
+        }
+    }
+
+    private fun switchToMaintenanceActivity() {
+        Intent(this, MaintenanceActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .let(::startActivity)
+        overridePendingTransition(0, 0)
+    }
 
     override fun onBackPressed() {
         hideKeyboard()

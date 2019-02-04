@@ -124,8 +124,6 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
         addSignInViaEmailAbility()
     }
 
-    override fun subscribeToServerMaintenanceStatus() = closeServerMaintenanceDialog()
-
     private fun addSignInViaEmailAbility() {
         if (!BuildConfig.DEBUG) return
 
