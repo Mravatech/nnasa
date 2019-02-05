@@ -41,7 +41,6 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     private val loginInteractor: LoginInteractor by instance()
     private val networkInteractor: NetworkInteractor by instance()
     private val dialogHelper: DialogHelper by instance()
-    private var serverMaintenanceDialog = WeakReference<Dialog>(null)
     private var apiNotSupportedDialog = WeakReference<Dialog>(null)
 
     override val containerView: View? get() = view
@@ -59,7 +58,6 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         super.onViewCreated(view)
         subscribeToProgressEvents()
         subscribeToErrorEvents()
-        subscribeToServerMaintenanceStatus()
         subscribeToSupportedApiStatus()
     }
 
@@ -95,25 +93,6 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         }
     }
 
-    protected open fun subscribeToServerMaintenanceStatus() {
-        val isMostParentController = parentController == null
-        if (!isMostParentController) return
-
-        launchCoroutineUI {
-            settingsInteractor.getMaintenanceServerStatus().consumeEach { isUnderMaintenance ->
-                closeServerMaintenanceDialog()
-                if (isUnderMaintenance) {
-                    val dialog = dialogHelper.showServerIsUnderMaintenanceDialog(getViewSuspend().context) {
-                        launchCoroutineUI { loginInteractor.signOut(LogoutReason.ManualLogout()) }
-                    }
-                    serverMaintenanceDialog = WeakReference(dialog)
-                }
-            }
-        }.invokeOnCompletion {
-            closeServerMaintenanceDialog()
-        }
-    }
-
     protected open fun subscribeToSupportedApiStatus() {
         val isMostParentController = parentController == null
         if (!isMostParentController) return
@@ -129,11 +108,6 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         }.invokeOnCompletion {
             closeApiNotSupportedDialog()
         }
-    }
-
-    protected fun closeServerMaintenanceDialog() {
-        serverMaintenanceDialog.get()?.dismiss()
-        serverMaintenanceDialog.clear()
     }
 
     protected fun closeApiNotSupportedDialog() {
