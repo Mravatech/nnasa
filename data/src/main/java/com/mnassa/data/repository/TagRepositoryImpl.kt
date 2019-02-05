@@ -15,10 +15,10 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
@@ -32,28 +32,61 @@ class TagRepositoryImpl(
         private val userRepository: UserRepository
 ) : TagRepository {
 
-    private val tagsCache = HashMap<String, TagModel?>()
     @Volatile
-    private var isTagsCacheLoaded = false
+    private var tagsCache: Map<String, TagModel>? = null
+
+    private val tagsMutex = Mutex()
 
     override suspend fun get(id: String): TagModel? {
-        return tagsCache.getOrPut(id) {
+        return tagsCache?.get(id) ?: run {
             databaseReference.child(DatabaseContract.TABLE_TAGS)
-                    .child(id)
-                    .await<TagDbEntity>(exceptionHandler)
-                    ?.run { converter.convert(this, TagModel::class.java) }
+                .child(id)
+                .await<TagDbEntity>(exceptionHandler)
+                ?.run { converter.convert(this, TagModel::class.java) }
         }
     }
 
     override suspend fun getAll(): List<TagModel> {
-        return if (isTagsCacheLoaded) withContext(DefaultDispatcher) { tagsCache.values.filterNotNull() }
-        else getAllAndUpdateCache()
+        return getAll(forceUpdateCache = false)
+    }
+
+    private suspend fun getAll(forceUpdateCache: Boolean): List<TagModel> {
+        return tagsMutex.withLock {
+            if (forceUpdateCache) {
+                tagsCache = null
+            }
+            // Return the list of preloaded models of
+            // tags, or load then from network.
+            tagsCache?.values?.toList()
+                ?: run {
+                    getAllFromNetwork()
+                        .also { tags ->
+                            tagsCache = HashMap<String, TagModel>().apply {
+                                tags.forEach {
+                                    val id = it.id
+                                    if (id != null) {
+                                        put(id, it)
+                                    }
+                                }
+                            }
+                        }
+                }
+        }
+    }
+
+    private suspend fun getAllFromNetwork(): List<TagModel> {
+        return databaseReference.child(DatabaseContract.TABLE_TAGS)
+            .awaitList<TagDbEntity>(exceptionHandler)
+            .run { converter.convertCollection(this, TagModel::class.java) }
     }
 
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
         return firebaseTagsApi.createCustomTagIds(CustomTagsRequest(tags))
                 .handleException(exceptionHandler).data.tags
-                .also { updateCacheIfNeeded(forceUpdate = true) }
+                .also {
+                    // Also update the cache
+                    getAll(forceUpdateCache = true)
+                }
     }
 
     override suspend fun getAddTagsDialogInterval(): Long? {
@@ -104,26 +137,6 @@ class TagRepositoryImpl(
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_OFFERS_MANDATORY)
                 .also { it.keepSynced(true) }
                 .await(exceptionHandler) ?: false
-    }
-
-    private suspend fun getAllAndUpdateCache(): List<TagModel> {
-        return withContext(DefaultDispatcher) {
-            databaseReference.child(DatabaseContract.TABLE_TAGS)
-                    .awaitList<TagDbEntity>(exceptionHandler)
-                    .run { converter.convertCollection(this, TagModel::class.java) }
-                    .also {
-                        it.forEach {
-                            val id = it.id
-                            if (id != null) tagsCache[id] = it
-                        }
-                    }
-        }
-    }
-
-    private suspend fun updateCacheIfNeeded(forceUpdate: Boolean = false) {
-        if (isTagsCacheLoaded && !forceUpdate) return
-        getAllAndUpdateCache()
-        isTagsCacheLoaded = true
     }
 
 }
