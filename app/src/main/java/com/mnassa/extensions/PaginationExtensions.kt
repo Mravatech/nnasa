@@ -3,9 +3,9 @@ package com.mnassa.extensions
 /**
  * Created by Peter on 3/15/2018.
  */
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import java.util.*
 import kotlin.math.abs
@@ -68,7 +68,7 @@ private const val DEFAULT_START_PAGINATION_COEFFICIENT = 0.7f
 suspend fun RecyclerView.waitForNewItems(
     emptyListCount: Int = 0,
     startPaginationCoefficient: Float = DEFAULT_START_PAGINATION_COEFFICIENT,
-    itemsCount: () -> Int = { adapter.itemCount }
+    itemsCount: () -> Int = { adapter!!.itemCount }
 ) {
     suspendCancellableCoroutine<Unit> { continuation ->
 
@@ -95,7 +95,7 @@ suspend fun RecyclerView.waitForNewItems(
 fun RecyclerView.isNewItemsNeeded(
     emptyListCount: Int = 0,
     startPaginationCoefficient: Float = DEFAULT_START_PAGINATION_COEFFICIENT,
-    itemsCount: () -> Int = { adapter.itemCount }
+    itemsCount: () -> Int = { adapter!!.itemCount }
 ): Boolean {
     if (emptyListCount == itemsCount()) {
         return true

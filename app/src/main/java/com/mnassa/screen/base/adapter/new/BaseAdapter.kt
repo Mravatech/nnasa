@@ -1,7 +1,7 @@
 package com.mnassa.screen.base.adapter.new
 
-import android.support.v7.util.AdapterListUpdateCallback
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.AdapterListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View

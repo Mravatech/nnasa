@@ -2,8 +2,8 @@ package com.mnassa.screen.connections.recommended
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI

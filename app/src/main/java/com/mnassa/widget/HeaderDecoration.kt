@@ -7,8 +7,8 @@ package com.mnassa.widget
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 
@@ -22,7 +22,7 @@ class HeaderDecoration(context: Context, parent: RecyclerView, @LayoutRes resId:
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
     }
 
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
+    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDraw(c, parent, state)
         // layout basically just gets drawn on the reserved space on top of the first view
         headerLayout.layout(parent.left, 0, parent.right, headerLayout.measuredHeight)
@@ -40,7 +40,7 @@ class HeaderDecoration(context: Context, parent: RecyclerView, @LayoutRes resId:
         }
     }
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State?) {
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         if (parent.getChildAdapterPosition(view) == 0) {
             outRect.set(0, headerLayout.measuredHeight, 0, 0)
         } else {

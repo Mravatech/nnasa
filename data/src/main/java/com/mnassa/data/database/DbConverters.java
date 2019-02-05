@@ -1,10 +1,11 @@
 package com.mnassa.data.database;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.TypeConverter;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
+
+import androidx.annotation.Nullable;
+import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

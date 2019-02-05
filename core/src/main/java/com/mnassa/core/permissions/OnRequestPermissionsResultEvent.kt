@@ -8,8 +8,8 @@ import android.content.pm.PackageManager
  * Created by Peter on 19.01.18.
  */
 /**
- * Raw data from [android.support.v4.app.FragmentActivity.onRequestPermissionsResult] or
- * [android.support.v4.app.Fragment.onRequestPermissionsResult]
+ * Raw data from [androidx.fragment.app.FragmentActivity.onRequestPermissionsResult] or
+ * [androidx.fragment.app.Fragment.onRequestPermissionsResult]
  *
  * @param requestCode - permissions request code
  * @param permissions - list of requested permissions

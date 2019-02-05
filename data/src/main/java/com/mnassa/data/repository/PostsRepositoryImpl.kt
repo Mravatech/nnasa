@@ -1,6 +1,6 @@
 package com.mnassa.data.repository
 
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import android.content.Context
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore

@@ -1,12 +1,12 @@
 package com.mnassa.core
 
-import android.arch.lifecycle.*
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleOwner
 import com.mnassa.core.addons.SubscriptionContainer

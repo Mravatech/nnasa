@@ -1,8 +1,8 @@
 package com.mnassa.screen.invite
 
 import android.Manifest
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.InputType
 import android.view.View
 import android.widget.AdapterView

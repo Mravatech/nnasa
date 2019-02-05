@@ -24,7 +24,7 @@
             android:visibility="invisible"
             tools:visibility="visible">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivEmpty"
                 style="@style/EmptyList.Icon"
                 app:srcCompat="@drawable/ic_connections" />
@@ -43,14 +43,14 @@
 
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRecommendedConnections"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_connection_recommended_line" />
     </FrameLayout>
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/clSnackbarParent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

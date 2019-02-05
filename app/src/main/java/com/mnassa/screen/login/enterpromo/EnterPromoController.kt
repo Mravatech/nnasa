@@ -5,6 +5,7 @@ import android.view.View
 import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.lengthOrZero
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.enterphone.EnterPhoneController
 import com.mnassa.translation.fromDictionary
@@ -44,7 +45,7 @@ class EnterPromoController(args: Bundle) : EnterPhoneController(args) {
 
             if (args.containsKey(EXTRA_PHONE_TAIL)) {
                 etPhoneNumberTail.setText(args.getString(EXTRA_PHONE_TAIL, null))
-                etPhoneNumberTail.setSelection(etPhoneNumberTail.text.length)
+                etPhoneNumberTail.setSelection(etPhoneNumberTail.text.lengthOrZero)
                 args.remove(EXTRA_PHONE_TAIL)
             }
         }

@@ -3,8 +3,8 @@ package com.mnassa.extensions
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan

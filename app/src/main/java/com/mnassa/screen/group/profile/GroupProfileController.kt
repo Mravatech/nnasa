@@ -1,7 +1,7 @@
 package com.mnassa.screen.group.profile
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.View
 import androidx.view.doOnLayout
 import com.bluelinelabs.conductor.Controller

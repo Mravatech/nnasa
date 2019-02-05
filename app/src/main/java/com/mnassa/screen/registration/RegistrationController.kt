@@ -1,7 +1,7 @@
 package com.mnassa.screen.registration
 
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -136,9 +136,9 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private suspend fun canCreatePersonInfo(): Boolean {
         with(view ?: return false) {
-            if (etPersonFirstName.text.isBlank()) return false
-            if (etPersonSecondName.text.isBlank()) return false
-            if (etPersonUserName.text.isBlank()) return false
+            if (etPersonFirstName.text.isNullOrBlank()) return false
+            if (etPersonSecondName.text.isNullOrBlank()) return false
+            if (etPersonUserName.text.isNullOrBlank()) return false
             if (personSelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
@@ -148,8 +148,8 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private suspend fun canCreateOrganizationInfo(): Boolean {
         with(view ?: return false) {
-            if (etCompanyName.text.isBlank()) return false
-            if (etCompanyUserName.text.isBlank()) return false
+            if (etCompanyName.text.isNullOrBlank()) return false
+            if (etCompanyUserName.text.isNullOrBlank()) return false
             if (companySelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false

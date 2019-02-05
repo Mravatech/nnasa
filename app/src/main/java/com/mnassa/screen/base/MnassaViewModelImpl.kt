@@ -1,7 +1,7 @@
 package com.mnassa.screen.base
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import android.util.Log
 import com.google.firebase.FirebaseException
 import com.mnassa.App

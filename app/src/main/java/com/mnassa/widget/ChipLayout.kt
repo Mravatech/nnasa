@@ -2,8 +2,8 @@ package com.mnassa.widget
 
 import android.content.Context
 import android.os.Parcelable
-import android.support.annotation.ColorRes
-import android.support.v4.content.ContextCompat
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.View

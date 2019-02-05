@@ -3,7 +3,7 @@ package com.mnassa.data.repository
 import android.Manifest
 import android.content.ContentResolver
 import android.provider.ContactsContract
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.domain.other.AppInfoProvider

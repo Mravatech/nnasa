@@ -2,7 +2,7 @@ package com.mnassa.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.LanguageProviderImpl
 import org.kodein.di.Kodein

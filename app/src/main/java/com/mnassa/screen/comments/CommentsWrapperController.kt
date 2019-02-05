@@ -233,7 +233,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         launchCoroutineUI {
             with(getCommentsContainer()) {
                 etCommentText.setText(savedViewState.getString(EXTRA_COMMENT_TEXT, null))
-                etCommentText.setSelection(etCommentText.text.length)
+                etCommentText.setSelection(etCommentText.text.lengthOrZero)
             }
         }
     }

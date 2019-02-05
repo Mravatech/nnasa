@@ -1,7 +1,7 @@
 package com.mnassa.screen.connections.recommended
 
 import android.Manifest
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel

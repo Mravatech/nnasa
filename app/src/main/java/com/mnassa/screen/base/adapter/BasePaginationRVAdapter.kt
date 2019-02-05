@@ -4,8 +4,8 @@ package com.mnassa.screen.base.adapter
  * Created by Peter on 3/7/2018.
  */
 import android.os.Bundle
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +16,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_loading.view.*
 import java.lang.ref.WeakReference
 
-//TODO: use android.support.v7.recyclerview.extensions.ListAdapter & AsyncListDiffer
+//TODO: use androidx.recyclerview.widget.ListAdapter & AsyncListDiffer
 abstract class BasePaginationRVAdapter<ITEM>(var reverseOrder: Boolean = false) : RecyclerView.Adapter<BasePaginationRVAdapter.BaseVH<ITEM>>() {
     protected var recyclerView = WeakStateExecutor<RecyclerView?, RecyclerView>(
             initState = null,

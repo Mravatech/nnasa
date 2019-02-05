@@ -1,7 +1,7 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 import android.view.View
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R

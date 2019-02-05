@@ -1,6 +1,6 @@
 package com.mnassa.data.network.bean.firebase
 
-import android.support.annotation.Nullable
+import androidx.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
 

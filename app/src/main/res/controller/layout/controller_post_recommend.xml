@@ -19,7 +19,7 @@
         android:gravity="center_vertical"
         android:visibility="invisible">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivEmpty"
             style="@style/EmptyList.Icon"
             app:srcCompat="@drawable/ic_connections" />
@@ -51,17 +51,17 @@
         android:paddingTop="@dimen/spacing_vertical"
         tools:text="Some text" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSelectedAccounts"
         android:layout_width="match_parent"
         android:layout_height="@dimen/post_recommended_accounts_height"
         android:layout_below="@id/tvRecommendHeader"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_selected_account"
         tools:orientation="horizontal" />
 
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAccountsToRecommend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

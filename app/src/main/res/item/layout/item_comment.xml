@@ -14,7 +14,7 @@
         android:clickable="true"
         android:focusable="true">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivAvatar"
             android:layout_width="@dimen/avatar_comment_item"
             android:layout_height="@dimen/avatar_comment_item"
@@ -49,7 +49,7 @@
             android:autoLink="all"
             tools:text="Dummy comment\nDummy comment\nDummy comment" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRecommendedAccounts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:layout_below="@id/tvCommentText"
             android:layout_marginTop="@dimen/spacing_vertical"
             android:visibility="gone"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:layout_height="110dp"
             tools:listitem="@layout/item_comment_recommended_account"
             tools:visibility="visible" />
@@ -81,7 +81,7 @@
             android:layout_alignTop="@id/btnUseful"
             android:layout_toStartOf="@id/btnUseful">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCreationTime"
                 style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"

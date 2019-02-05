@@ -2,11 +2,12 @@ package com.mnassa.widget.drawer
 
 import android.content.Context
 import android.os.Build
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.widget.AppCompatImageView
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
+import androidx.core.view.GravityCompat
 import com.mnassa.R
 
 /**
@@ -38,7 +39,7 @@ class DrawerMenu : AppCompatImageView {
         isClickable = true
 
         setOnClickListener {
-            drawer.openDrawer(Gravity.START)
+            drawer.openDrawer(GravityCompat.START)
         }
     }
 }

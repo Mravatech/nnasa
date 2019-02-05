@@ -1,9 +1,9 @@
 package com.mnassa.screen.base.adapter.new
 
 import android.os.Bundle
-import android.support.v7.util.DiffUtil
-import android.support.v7.util.ListUpdateCallback
-import android.support.v7.util.SortedList
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.SortedList
 import java.lang.ref.WeakReference
 
 /**

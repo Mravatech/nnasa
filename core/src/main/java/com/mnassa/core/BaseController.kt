@@ -1,6 +1,6 @@
 package com.mnassa.core
 
-import android.arch.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.OnActivityResultEvent
 import com.mnassa.core.permissions.PermissionsManager

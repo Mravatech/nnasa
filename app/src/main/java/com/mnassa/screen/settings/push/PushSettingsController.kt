@@ -1,6 +1,6 @@
 package com.mnassa.screen.settings.push
 
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI

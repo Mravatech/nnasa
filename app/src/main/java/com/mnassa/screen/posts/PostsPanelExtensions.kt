@@ -1,6 +1,6 @@
 package com.mnassa.screen.posts
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.mnassa.R
 import com.mnassa.extensions.firstVisibleItemPosition

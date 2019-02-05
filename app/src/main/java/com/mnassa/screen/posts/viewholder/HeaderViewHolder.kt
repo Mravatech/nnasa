@@ -1,7 +1,7 @@
 package com.mnassa.screen.posts.viewholder
 
 import android.graphics.Typeface
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan

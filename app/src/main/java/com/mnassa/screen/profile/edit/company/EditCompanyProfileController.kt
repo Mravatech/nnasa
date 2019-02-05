@@ -105,8 +105,8 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
 
     private suspend fun canCreateOrganizationInfo(): Boolean {
         with(view ?: return false) {
-            if (etCompanyName.text.isBlank()) return false
-            if (etCompanyUserName.text.isBlank()) return false
+            if (etCompanyName.text.isNullOrBlank()) return false
+            if (etCompanyUserName.text.isNullOrBlank()) return false
             if (companySelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false

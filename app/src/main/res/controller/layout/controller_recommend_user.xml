@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:toolbar_title="@string/recommend_title" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -38,7 +38,7 @@
                 android:textSize="14sp"
                 tools:text="Share to" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilRecommend"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,8 +55,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:maxLength="@integer/max_recommend_length" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

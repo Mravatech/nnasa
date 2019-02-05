@@ -2,7 +2,7 @@ package com.mnassa.data.database.dao
 
 import com.mnassa.data.database.entity.PostRoomEntity
 import com.mnassa.data.database.entity.UserRoomEntity
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.mnassa.data.database.entity.PostForUser
 import com.mnassa.data.database.entity.PostUserJoin
 

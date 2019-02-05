@@ -41,7 +41,7 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnVerifyMe"
                 style="@style/MnassaButton"
                 android:layout_marginTop="@dimen/spacing_vertical"

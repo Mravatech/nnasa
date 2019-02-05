@@ -11,7 +11,7 @@
         android:layout_height="24dp"
         android:background="@drawable/red_badge">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvBadgeCount"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

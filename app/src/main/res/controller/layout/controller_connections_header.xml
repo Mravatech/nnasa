@@ -15,7 +15,7 @@
         android:layout_marginTop="@dimen/spacing_vertical"
         tools:text="Requested connections" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNewConnectionRequests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,12 +37,12 @@
         android:layout_marginTop="@dimen/spacing_vertical"
         tools:text="Recommended connections" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecommendedConnections"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_vertical"
-        tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:layout_height="180dp"
         tools:listitem="@layout/item_connections_recommended"
         tools:orientation="horizontal" />

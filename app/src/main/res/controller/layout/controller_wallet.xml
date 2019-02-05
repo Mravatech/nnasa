@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             app:textDictionary="@string/wallet_balance" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvBalance"
             style="@style/Wallet.Balance"
             android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             app:textDictionary="@string/wallet_spent" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSpent"
             style="@style/Wallet.Spent"
             android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             app:textDictionary="@string/wallet_gained" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvGained"
             style="@style/Wallet.Gained"
             android:layout_width="wrap_content"
@@ -111,16 +111,16 @@
             tools:text="996699" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTransactions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/llGainedRoot"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_wallet_transaction_income" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCreateTransaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

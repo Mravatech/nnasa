@@ -3,7 +3,7 @@ package com.mnassa.screen.connections.recommended
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel

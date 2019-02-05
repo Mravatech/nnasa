@@ -1,7 +1,7 @@
 package com.mnassa.domain.interactor.impl
 
 import android.Manifest
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*

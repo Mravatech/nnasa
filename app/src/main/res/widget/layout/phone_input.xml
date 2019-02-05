@@ -32,7 +32,7 @@
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:background="@color/divider" />
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPhoneNumberTail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

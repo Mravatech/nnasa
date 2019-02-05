@@ -3,7 +3,7 @@ package com.mnassa.screen.buildnetwork
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import com.google.android.material.snackbar.Snackbar
 import android.view.View
 import org.kodein.di.generic.instance
 import com.mnassa.R
