@@ -135,6 +135,13 @@ class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) 
                 if (imgSrc == 0) ivEvent.enable() else ivEvent.disable()
 
                 tvEventType.text = item.formattedType
+                tvEventType.setBackgroundResource(when (item.status) {
+                    is EventStatus.ANNULED -> R.drawable.event_type_background_annulled
+                    is EventStatus.CLOSED -> R.drawable.event_type_background_closed
+                    is EventStatus.SUSPENDED -> R.drawable.event_type_background_suspended
+                    is EventStatus.OPENED -> R.drawable.event_type_background
+                })
+
                 ivIsTicketsBought.isInvisible = !item.participants.contains(currentAccountId)
             }
             bindGroup(item)
