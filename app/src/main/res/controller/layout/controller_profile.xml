@@ -48,7 +48,7 @@
                 android:layout_height="200dp"
                 android:foreground="@drawable/shadow_up_down">
                 <ImageView
-                    android:id="@+id/ivAvatar"
+                    android:id="@+id/ivAvatarSquare"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     app:layout_collapseMode="parallax"
