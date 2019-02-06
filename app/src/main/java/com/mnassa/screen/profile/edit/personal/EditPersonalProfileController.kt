@@ -42,6 +42,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             onPersonChanged()
         }
 
+    private val actvPersonCityError by lazy { fromDictionary(R.string.reg_person_address_error) }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
@@ -59,11 +61,16 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
             actvPersonCity.setText(accountModel.location?.formatted())
             actvPersonCity.setAdapter(placeAutocompleteAdapter)
+            actvPersonCity.addTextChangedListener {
+                personSelectedPlaceId = null
+            }
             actvPersonCity.setOnItemClickListener { _, _, i, _ ->
                 val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-                personSelectedPlaceId = item.placeId
                 personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                actvPersonCity.setText(personSelectedPlaceName ?: "")
+                    .also {
+                        actvPersonCity.setText(it)
+                    }
+                personSelectedPlaceId = item.placeId
             }
             containerSelectOccupation.setAbilities(accountModel.abilities)
             etPhoneNumber.setText(accountModel.contactPhone)
@@ -100,15 +107,22 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     }
 
     private suspend fun canCreatePersonInfo(): Boolean {
+        var isValid = true
         with(view ?: return false) {
+            if (personSelectedPlaceId == null) {
+                tilPersonCity.error = actvPersonCityError
+                isValid = false
+            } else {
+                tilPersonCity.error = null
+            }
+
             if (etPersonFirstName.text.isNullOrBlank()) return false
             if (etPersonSecondName.text.isNullOrBlank()) return false
             if (etPersonUserName.text.isNullOrBlank()) return false
-            if (personSelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
         }
-        return true
+        return isValid
     }
 
     override fun onViewDestroyed(view: View) {

@@ -223,6 +223,7 @@
     <string name="reg_person_info_female_gender">_cellGender_Female</string>
     <string name="reg_person_info_male_gender">_cellGender_male</string>
     <string name="reg_person_info_gender">_cellGender_title</string>
+    <string name="reg_person_address_error">_android_registration_address_error</string>
     <string name="reg_info_skip">_android_registration_skip</string>
     <string name="reg_info_next">_newAcc_navItem_Next</string>
     <string name="reg_dialog_other">_paccountsSelector_other_title</string>
@@ -250,6 +251,7 @@
     <string name="reg_company_status_commercial">_android_registration_company_status_commercial</string>
     <string name="reg_company_status_governmental">_android_registration_company_status_governmental</string>
     <string name="reg_company_status_non_profit">_android_registration_company_status_non_profit</string>
+    <string name="reg_company_address_error">_android_registration_address_error</string>
 
     <!-- ========================================= PROFILE ====================================== -->
     <string name="profile_edit">_profile_cellHeader_button_edit</string>

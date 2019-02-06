@@ -41,6 +41,8 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             onOrganizationChanged()
         }
 
+    private val actvCompanyCityError by lazy { fromDictionary(R.string.reg_company_address_error) }
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
@@ -73,11 +75,16 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(view.context, viewModel)
             actvCompanyCity.setText(accountModel.location?.formatted())
             actvCompanyCity.setAdapter(placeAutocompleteAdapter)
+            actvCompanyCity.addTextChangedListener {
+                companySelectedPlaceId = null
+            }
             actvCompanyCity.setOnItemClickListener { _, _, i, _ ->
                 val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-                companySelectedPlaceId = item.placeId
                 companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                actvCompanyCity.setText(companySelectedPlaceName ?: "")
+                    .also {
+                        actvCompanyCity.setText(it)
+                    }
+                companySelectedPlaceId = item.placeId
             }
             setToolbar(toolbarEditProfile, this)
             ivUserAvatar.avatarSquare(accountModel.avatar)
@@ -104,14 +111,21 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
     }
 
     private suspend fun canCreateOrganizationInfo(): Boolean {
+        var isValid = true
         with(view ?: return false) {
+            if (companySelectedPlaceId == null) {
+                tilCompanyCity.error = actvCompanyCityError
+                isValid = false
+            } else {
+                tilCompanyCity.error = null
+            }
+
             if (etCompanyName.text.isNullOrBlank()) return false
             if (etCompanyUserName.text.isNullOrBlank()) return false
-            if (companySelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false
         }
-        return true
+        return isValid
     }
 
     override fun onViewDestroyed(view: View) {

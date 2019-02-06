@@ -9,10 +9,7 @@ import android.view.View
 import android.widget.AutoCompleteTextView
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.extensions.disable
-import com.mnassa.extensions.enable
-import com.mnassa.extensions.isGone
+import com.mnassa.extensions.*
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
@@ -47,6 +44,10 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             field = value
             onOrganizationChanged()
         }
+
+    private val actvPersonCityError by lazy { fromDictionary(R.string.reg_person_address_error) }
+
+    private val actvCompanyCityError by lazy { fromDictionary(R.string.reg_company_address_error) }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -135,26 +136,41 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     private suspend fun canCreatePersonInfo(): Boolean {
+        var isValid = true
         with(view ?: return false) {
+            if (personSelectedPlaceId == null) {
+                tilPersonCity.error = actvPersonCityError
+                isValid = false
+            } else {
+                tilPersonCity.error = null
+            }
+
             if (etPersonFirstName.text.isNullOrBlank()) return false
             if (etPersonSecondName.text.isNullOrBlank()) return false
             if (etPersonUserName.text.isNullOrBlank()) return false
-            if (personSelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
         }
-        return true
+        return isValid
     }
 
     private suspend fun canCreateOrganizationInfo(): Boolean {
+        var isValid = true
         with(view ?: return false) {
+            if (companySelectedPlaceId == null) {
+                tilCompanyCity.error = actvCompanyCityError
+                isValid = false
+            } else {
+                tilCompanyCity.error = null
+            }
+
             if (etCompanyName.text.isNullOrBlank()) return false
             if (etCompanyUserName.text.isNullOrBlank()) return false
             if (companySelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false
         }
-        return true
+        return isValid
     }
 
     private var onInfoChangedJob: Job? = null
