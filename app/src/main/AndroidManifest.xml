@@ -23,6 +23,7 @@
         <!-- ==================================== ACTIVITY ==================================== -->
         <activity android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,10 +32,12 @@
         </activity>
 
         <activity android:name=".activity.SecondActivity"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".activity.MaintenanceActivity"
             android:excludeFromRecents="true"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".activity.VideoViewActivity"
