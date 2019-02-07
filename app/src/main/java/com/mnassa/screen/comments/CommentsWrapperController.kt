@@ -317,7 +317,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         return with(requireNotNull(view)) {
             RawCommentModel(
                     id = editedComment?.id,
-                    parentCommentId = replyTo?.id ?: editedComment?.parentCommentId,
+                    parentCommentId = replyTo?.let { comment ->
+                        comment.takeIf { it.parentCommentId.isNullOrBlank() }
+                            ?: run {
+                                commentsAdapter.dataStorage.find { it.id == comment.parentCommentId }
+                            }
+                    }?.id ?: editedComment?.parentCommentId,
                     text = etCommentText.text.toString().takeIf { it.isNotBlank() },
                     accountsToRecommend = accountsToRecommend.map { it.id },
                     uploadedImages = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.UploadedImage::class.java).map { it.imageUrl },
