@@ -69,7 +69,7 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 createdAtDate = input.createdAtDate,
                 interests = input.interests?: emptyList(),
                 offers = input.offers?: emptyList(),
-                userName = input.userName,
+                userName = input.userName ?: CONVERT_ERROR_MESSAGE,
                 points = input.points,
                 accountType = accountType,
                 totalIncome = input.totalIncome,

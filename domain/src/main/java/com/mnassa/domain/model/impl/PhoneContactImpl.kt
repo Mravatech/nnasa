@@ -17,7 +17,6 @@ data class PhoneContactInvitedImpl(
         override val phoneNumber: String,
         override val avatar: String?,
         override val createdAt: Long,
-        override val createdAtDate: String,
         override val description: String?,
         override val used: Boolean
 ) :  PhoneContactInvited {

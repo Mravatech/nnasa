@@ -13,7 +13,7 @@ import com.mnassa.domain.model.HasId
 internal data class NotificationDbEntity(
         @SerializedName("id") @Nullable override var id: String,
         @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
-        @SerializedName("text") var text: String,
+        @SerializedName("text") var text: String?,
         @SerializedName("type") var type: String,
         @SerializedName("extra") var extra: NotificationExtraDbEntity?
 ) : HasId {

@@ -14,6 +14,5 @@ interface PhoneContact : Serializable {
 interface PhoneContactInvited : PhoneContact {
     val description: String?
     val createdAt: Long
-    val createdAtDate: String
     val used: Boolean
 }

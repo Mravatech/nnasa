@@ -40,12 +40,12 @@ class ChatConverter : ConvertersContextRegistrationCallback {
         return ChatMessageModelImpl(
                 createdAt = Date(input.createdAt),
                 creator = input.creator,
-                text = input.text,
+                text = input.text ?: CONVERT_ERROR_MESSAGE,
                 type = input.type,
                 chatID = input.chatID,
                 replyMessage = chatPair,
                 replyPost = postPair,
-                id = input.id ?: ""
+                id = input.id
         )
     }
 

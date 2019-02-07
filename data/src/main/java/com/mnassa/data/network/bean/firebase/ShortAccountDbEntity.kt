@@ -14,7 +14,7 @@ internal open class ShortAccountDbEntity(
         @SerializedName("lastName") var lastName: String?,
         @SerializedName("organizationName") var organizationName: String?,
         @SerializedName("type") var type: String,
-        @SerializedName("userName") var userName: String,
+        @SerializedName("userName") var userName: String?,
         @SerializedName("abilities") var abilitiesInternal: List<ShortAccountAbilityDbEntity>?,
         @SerializedName("connectedBy") var connectedBy: ConnectedByDbEntity? = null
 ) : HasId {
