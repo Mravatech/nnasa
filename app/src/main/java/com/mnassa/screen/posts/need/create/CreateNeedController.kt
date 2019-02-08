@@ -201,7 +201,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private fun setData(post: PostModel, view: View) {
         this.post = post
         with(view) {
+            chipTags.cancelAutodetectTagsFrom(etNeed)
             etNeed.setText(post.text)
+            chipTags.autodetectTagsFrom(etNeed)
             attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 
             placeId = post.locationPlace?.placeId

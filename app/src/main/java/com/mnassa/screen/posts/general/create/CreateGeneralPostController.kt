@@ -193,7 +193,9 @@ class CreateGeneralPostController(args: Bundle) : MnassaControllerImpl<CreateGen
         this.post = post
         launchCoroutineUI {
             with(getViewSuspend()) {
+                chipTags.cancelAutodetectTagsFrom(etGeneralPost)
                 etGeneralPost.setText(post.text)
+                chipTags.autodetectTagsFrom(etGeneralPost)
                 chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) })
                 attachedImagesAdapter.set(post.attachments.map { AttachedImage.UploadedImage(it) })
 

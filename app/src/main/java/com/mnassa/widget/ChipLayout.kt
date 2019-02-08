@@ -292,8 +292,12 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
         }
     }
 
-    fun autodetectTagsFrom(editText: EditText) {
+    fun cancelAutodetectTagsFrom(editText: EditText) {
         editText.removeTextChangedListener(autoDetectTextWatcher)
+    }
+
+    fun autodetectTagsFrom(editText: EditText) {
+        cancelAutodetectTagsFrom(editText)
         editText.addTextChangedListener(autoDetectTextWatcher)
     }
 

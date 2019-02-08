@@ -384,7 +384,9 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 chipTags.setTags(event.tags.mapNotNull { viewModel.getTag(it) })
             }
             etEventTitle.setText(event.title)
+            chipTags.cancelAutodetectTagsFrom(etEventDescription)
             etEventDescription.setText(event.text)
+            chipTags.autodetectTagsFrom(etEventDescription)
             etTicketsPerAccountLimit.setText(event.ticketsPerAccount.toString())
             etTicketsQuantity.setText(event.ticketsTotal.toString())
             sEventType.setSelection(event.type.position)
