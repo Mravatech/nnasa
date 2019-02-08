@@ -43,9 +43,12 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
 
     private val actvCompanyCityError by lazy { fromDictionary(R.string.reg_company_address_error) }
 
+    private var actvCompanyCityUserChanged = false
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
+        actvCompanyCityUserChanged = false
         companySelectedPlaceId = accountModel.location?.placeId
         setupView(view)
         launchCoroutineUI {
@@ -76,6 +79,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
             actvCompanyCity.setText(accountModel.location?.formatted())
             actvCompanyCity.setAdapter(placeAutocompleteAdapter)
             actvCompanyCity.addTextChangedListener {
+                actvCompanyCityUserChanged = true
                 companySelectedPlaceId = null
             }
             actvCompanyCity.setOnItemClickListener { _, _, i, _ ->
@@ -114,7 +118,7 @@ class EditCompanyProfileController(data: Bundle) : BaseEditableProfileController
         var isValid = true
         with(view ?: return false) {
             if (companySelectedPlaceId == null) {
-                tilCompanyCity.error = actvCompanyCityError
+                tilCompanyCity.error = actvCompanyCityError.takeIf {actvCompanyCityUserChanged }
                 isValid = false
             } else {
                 tilCompanyCity.error = null

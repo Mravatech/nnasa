@@ -1,15 +1,19 @@
 package com.mnassa.screen.registration
 
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.AutoCompleteTextView
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.extensions.*
+import com.mnassa.domain.model.GeoPlaceModel
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.disable
+import com.mnassa.extensions.enable
+import com.mnassa.extensions.isGone
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.accountinfo.organization.OrganizationInfoController
 import com.mnassa.screen.accountinfo.personal.PersonalInfoController
@@ -47,11 +51,17 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
 
     private val actvPersonCityError by lazy { fromDictionary(R.string.reg_person_address_error) }
 
+    private var actvPersonCityUserChanged = false
+
     private val actvCompanyCityError by lazy { fromDictionary(R.string.reg_company_address_error) }
+
+    private var actvCompanyCityUserChanged = false
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
+        actvPersonCityUserChanged = false
+        actvCompanyCityUserChanged = false
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
             pbRegistration.visibility = View.VISIBLE
@@ -139,7 +149,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         var isValid = true
         with(view ?: return false) {
             if (personSelectedPlaceId == null) {
-                tilPersonCity.error = actvPersonCityError
+                tilPersonCity.error = actvPersonCityError.takeIf { actvPersonCityUserChanged }
                 isValid = false
             } else {
                 tilPersonCity.error = null
@@ -158,7 +168,7 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         var isValid = true
         with(view ?: return false) {
             if (companySelectedPlaceId == null) {
-                tilCompanyCity.error = actvCompanyCityError
+                tilCompanyCity.error = actvCompanyCityError.takeIf { actvCompanyCityUserChanged }
                 isValid = false
             } else {
                 tilCompanyCity.error = null
@@ -240,7 +250,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
         }
         onPersonChanged()
-        setupAutoComplete(view.actvPersonCity, true)
+
+        bindAutoComplete(
+            view.actvPersonCity,
+            { personSelectedPlaceId = it?.placeId },
+            { actvPersonCityUserChanged = true }
+        )
     }
 
     private fun bindOrganizationPage(view: View) {
@@ -260,27 +275,31 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
         }
         onOrganizationChanged()
-        setupAutoComplete(view.actvCompanyCity, false)
+
+        bindAutoComplete(
+            view.actvCompanyCity,
+            { companySelectedPlaceId = it?.placeId },
+            { actvCompanyCityUserChanged = true }
+        )
     }
 
-    private fun setupAutoComplete(city: AutoCompleteTextView, isPerson: Boolean) {
+    private inline fun bindAutoComplete(
+        city: AutoCompleteTextView,
+        crossinline onSetPlace: (GeoPlaceModel?) -> Unit,
+        crossinline onUserInput: (String) -> Unit
+    ) {
         val placeAutocompleteAdapter = PlaceAutocompleteAdapter(city.context, viewModel)
         city.setAdapter(placeAutocompleteAdapter)
         city.setOnItemClickListener { _, _, i, _ ->
             val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-            if (isPerson) {
-                val personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                city.setText(personSelectedPlaceName)
-                personSelectedPlaceId = item.placeId
-            } else {
-                val companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                city.setText(companySelectedPlaceName)
-                companySelectedPlaceId = item.placeId
-            }
+            val itemStr = "${item.primaryText} ${item.secondaryText}"
+            city.setText(itemStr)
+
+            onSetPlace(item)
         }
         city.addTextChangedListener(SimpleTextWatcher {
-            personSelectedPlaceId = null
-            companySelectedPlaceId = null
+            onUserInput(it)
+            onSetPlace(null)
         })
     }
 

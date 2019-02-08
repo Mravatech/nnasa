@@ -44,10 +44,13 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
 
     private val actvPersonCityError by lazy { fromDictionary(R.string.reg_person_address_error) }
 
+    private var actvPersonCityUserChanged = false
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
         playServiceHelper.googleApiClient.connect()
+        actvPersonCityUserChanged = false
         personSelectedPlaceId = accountModel.location?.placeId
 
         launchCoroutineUI {
@@ -62,6 +65,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             actvPersonCity.setText(accountModel.location?.formatted())
             actvPersonCity.setAdapter(placeAutocompleteAdapter)
             actvPersonCity.addTextChangedListener {
+                actvPersonCityUserChanged = true
                 personSelectedPlaceId = null
             }
             actvPersonCity.setOnItemClickListener { _, _, i, _ ->
@@ -110,7 +114,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
         var isValid = true
         with(view ?: return false) {
             if (personSelectedPlaceId == null) {
-                tilPersonCity.error = actvPersonCityError
+                tilPersonCity.error = actvPersonCityError.takeIf { actvPersonCityUserChanged }
                 isValid = false
             } else {
                 tilPersonCity.error = null
