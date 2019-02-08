@@ -11,5 +11,6 @@ data class RewardModelImpl(
         override var recipientId: String,
         override var amount: Long,
         override var commentId: String,
+        override var parentCommentId: String?,
         override var userDescription: String?
 ) : RewardModel

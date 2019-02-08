@@ -93,7 +93,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
         commentsAdapter.onCommentUsefulClick = {
-            open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it.id))
+            open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it))
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> openAccount(profile) }
         commentsAdapter.onCommentAuthorClick = ::openAccount

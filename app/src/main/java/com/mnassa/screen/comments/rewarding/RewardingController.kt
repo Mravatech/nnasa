@@ -5,9 +5,7 @@ import android.view.View
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.RewardModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RewardModelImpl
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -26,6 +24,7 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
     override val viewModel: RewardingViewModel by instance()
     private val accountModel: ShortAccountModel by lazy { args.getSerializable(EXTRA_REWARDING_ACCOUNT) as ShortAccountModel }
     private val commentId: String by lazy { args.getString(EXTRA_REWARDING_COMMENT) }
+    private val parentCommentId: String by lazy { args.getString(EXTRA_REWARDING_COMMENT_PARENT) }
     private val resultListener by lazy { targetController as RewardingResult }
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
@@ -36,6 +35,7 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
                         recipientId = accountModel.id,
                         amount = points.toLong(),
                         commentId = commentId,
+                        parentCommentId = parentCommentId,
                         userDescription = etComment.text.toString().takeIf { it.isNotBlank() }
                 ))
                 close()
@@ -62,11 +62,13 @@ class RewardingController(args: Bundle) : MnassaControllerImpl<RewardingViewMode
     companion object {
         private const val EXTRA_REWARDING_ACCOUNT = "EXTRA_REWARDING_ACCOUNT"
         private const val EXTRA_REWARDING_COMMENT = "EXTRA_REWARDING_COMMENT"
+        private const val EXTRA_REWARDING_COMMENT_PARENT = "EXTRA_REWARDING_COMMENT_PARENT"
         private const val ZERO_POINTS = "0"
-        fun <T> newInstance(listener: T, account: ShortAccountModel, commentId: String): RewardingController where T : RewardingResult, T : Controller {
+        fun <T> newInstance(listener: T, account: ShortAccountModel, comment: CommentModel): RewardingController where T : RewardingResult, T : Controller {
             val params = Bundle()
             params.putSerializable(EXTRA_REWARDING_ACCOUNT, account)
-            params.putString(EXTRA_REWARDING_COMMENT, commentId)
+            params.putString(EXTRA_REWARDING_COMMENT, comment.id)
+            params.putString(EXTRA_REWARDING_COMMENT_PARENT, comment.parentCommentId)
 
             val controller = RewardingController(params)
             controller.targetController = listener

@@ -19,6 +19,7 @@ data class RewardForCommentRequest(
         @SerializedName("type") val type: String = "rewardForComment",
         @SerializedName("amount") val amount: Long,
         @SerializedName("userDescription") val userDescription: String?,
+        @SerializedName("parentCommentId") val parentCommentId: String?,
         @SerializedName("commentId") var commentId: String
 )
 
