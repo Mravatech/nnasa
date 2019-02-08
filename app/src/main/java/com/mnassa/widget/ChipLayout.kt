@@ -63,6 +63,8 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     private val allAvailableTags: Deferred<List<TagModel>>
     var onChipsChangeListener = { }
 
+    private val removedTags = ArrayList<String>()
+
     private val searchPopupAdapter = ChipsAdapter(context, this)
 
     private val searchPopup by lazy {
@@ -230,6 +232,9 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
                     it.id == suggestedTag.id
                 } == null
             }
+            .filter { suggestedTag ->
+                suggestedTag.id !in removedTags
+            }
 
         // Add new tags
         tagsToAdd.forEach(::addTag)
@@ -251,6 +256,9 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
         val chipView = ChipView(context, tag) {
             removeTag(it)
             onChipsChangeListener()
+
+            // Remember removed auto-tag
+            it.id?.let(removedTags::add)
         }
         val chipPosition = flChipContainer.childCount - EDIT_TEXT_RESERVE
         val chipLp = FlowLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
