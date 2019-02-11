@@ -22,7 +22,6 @@ class InvitationConverter : ConvertersContextRegistrationCallback {
                 phoneNumber = input.phone,
                 avatar = input.avatar,
                 createdAt = input.createdAt,
-                createdAtDate = input.createdAtDate,
                 description = input.description,
                 used = input.used)
     }
