@@ -97,6 +97,7 @@ class WalletRepositoryImpl(
                 toAid = rewardModel.recipientId,
                 amount = rewardModel.amount,
                 userDescription = rewardModel.userDescription,
+                parentCommentId = rewardModel.parentCommentId,
                 commentId = rewardModel.commentId
         )).handleException(exceptionHandler)
     }

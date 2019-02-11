@@ -13,7 +13,7 @@ import com.mnassa.domain.model.HasId
 class InvitationDbEntity(
         @SerializedName("id") override var id: String = "",
         @SerializedName("createdAt") val createdAt: Long = 0L,
-        @SerializedName("createdAtDate") val createdAtDate: String = "",
+        @SerializedName("createdAtDate") val createdAtDate: String? = "",
         @SerializedName("description") val description: String? = null,
         @SerializedName("phone") val phone: String = "",
         @SerializedName("account") @JsonAdapter(InvitationAccountAvatarJsonAdapter::class) val avatar: String? = null,

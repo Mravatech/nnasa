@@ -11,5 +11,6 @@ interface RewardModel : Serializable {
     var recipientId: String
     var amount: Long
     var commentId: String
+    var parentCommentId: String?
     var userDescription: String?
 }

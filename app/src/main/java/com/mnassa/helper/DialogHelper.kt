@@ -245,21 +245,14 @@ class DialogHelper {
                                       statuses: List<String>,
                                       position: Int,
                                       onSelectClick: (position: Int) -> Unit) {
-        val dialog = Dialog(context, R.style.OccupationDialog)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_company_status)
-        fun closeDialogAfterClick(position: Int) {
-            onSelectClick(position)
-            dialog.dismiss()
-        }
-        dialog.tvCompanyStatusHeader.text = fromDictionary(R.string.reg_company_status_label)
-        for ((index, value) in statuses.withIndex()) {
-            val radioButton = dialog.rCompanyStatusContainer.getChildAt(index) as AppCompatRadioButton
-            radioButton.text = value
-            radioButton.setOnClickListener { closeDialogAfterClick(index) }
-            radioButton.isChecked = position == index
-        }
-        dialog.show()
+        MaterialDialog.Builder(context)
+                .title(fromDictionary(R.string.reg_company_status_label))
+                .items(statuses)
+                .itemsCallbackSingleChoice(position) { _, _, p, _ ->
+                    onSelectClick(p)
+                    true
+                }
+                .show()
     }
 
     fun yesNoDialog(context: Context, info: CharSequence, onOkClick: () -> Unit) {

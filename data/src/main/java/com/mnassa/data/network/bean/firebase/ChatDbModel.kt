@@ -20,7 +20,7 @@ internal data class ChatDbModel(
 
 internal data class ChatMessageDbModel(
         @SerializedName("creator") var creator: String,
-        @SerializedName("text") var text: String,
+        @SerializedName("text") var text: String?,
         @SerializedName("type") var type: String,
         @SerializedName("createdAt") var createdAt: Long,
         @SerializedName("chatID") var chatID: String?,

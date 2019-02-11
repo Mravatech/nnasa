@@ -43,7 +43,7 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
         return NotificationModelImpl(
                 id = input.id,
                 createdAt = Date(input.createdAt),
-                text = input.text,
+                text = input.text ?: CONVERT_ERROR_MESSAGE,
                 type = input.type,
                 extra = extra,
                 isOld = true

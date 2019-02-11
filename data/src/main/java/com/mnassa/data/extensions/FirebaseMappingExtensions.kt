@@ -1,8 +1,8 @@
 package com.mnassa.data.extensions
 
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
 import com.google.gson.JsonElement
+import com.mnassa.domain.exception.FirebaseMappingException
 import timber.log.Timber
 
 /**
@@ -23,8 +23,14 @@ internal inline fun <reified T : Any> mapSingleValue(dataSnapshot: DataSnapshot?
 internal inline fun <reified T : Any> DataSnapshot?.mapSingle(): T? = mapSingleValue(this)
 
 internal inline fun <reified T : Any> mapListOfValues(dataSnapshot: DataSnapshot?): List<T> {
-    if (dataSnapshot == null) return emptyList()
-    return dataSnapshot.children.map { requireNotNull(it.mapSingle<T>()) }
+    return dataSnapshot?.children?.mapNotNull {
+        try {
+            it.mapSingle<T>()
+        } catch (e: FirebaseMappingException) {
+            Timber.e(e)
+            null
+        }
+    } ?: emptyList()
 }
 
 internal inline fun <reified T : Any> DataSnapshot?.mapList(): List<T> = mapListOfValues(this)
