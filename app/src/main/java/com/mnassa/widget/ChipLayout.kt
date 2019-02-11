@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -62,6 +63,8 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
 
     private val allAvailableTags: Deferred<List<TagModel>>
     var onChipsChangeListener = { }
+
+    private var searchJob: Job? = null
 
     private val searchPopupAdapter = ChipsAdapter(context, this)
 
@@ -131,7 +134,11 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
             addTextChangedListener(SimpleTextWatcher {
                 val text = etChipInput.text.toString().trim()
                 if (text.length >= MIN_SYMBOLS_TO_START_SEARCH) {
-                    searchPopupAdapter.search(text)
+                    searchJob?.cancel()
+                    searchJob = launchUI {
+                        delay(SEARCH_DELAY_MS)
+                        searchPopupAdapter.search(text)
+                    }
                 } else {
                     searchPopup.dismiss()
                 }
@@ -353,5 +360,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
         private const val EDIT_TEXT_RESERVE = 1
         private const val MIN_SYMBOLS_TO_START_SEARCH = 3
         private const val MIN_SYMBOLS_TO_ADD_TAGS = 3
+
+        private const val SEARCH_DELAY_MS = 200L
     }
 }
