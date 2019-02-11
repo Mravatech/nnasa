@@ -88,7 +88,7 @@ class MnassaAccountHeaderBuilder : AccountHeaderBuilder() {
         super.buildProfiles()
 
         if (::backgroundImageView.isInitialized) {
-            val profile = mCurrentProfile as MnassaProfileDrawerItem?
+            val profile = mCurrentProfile as? MnassaProfileDrawerItem?
             backgroundImageView.avatarSquare(profile?.account?.avatar)
         }
     }
