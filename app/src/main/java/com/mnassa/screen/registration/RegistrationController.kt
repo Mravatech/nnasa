@@ -1,14 +1,15 @@
 package com.mnassa.screen.registration
 
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.AutoCompleteTextView
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.extensions.disable
 import com.mnassa.extensions.enable
@@ -48,9 +49,19 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             onOrganizationChanged()
         }
 
+    private val actvPersonCityError by lazy { fromDictionary(R.string.reg_person_address_error) }
+
+    private var actvPersonCityUserChanged = false
+
+    private val actvCompanyCityError by lazy { fromDictionary(R.string.reg_company_address_error) }
+
+    private var actvCompanyCityUserChanged = false
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
+        actvPersonCityUserChanged = false
+        actvCompanyCityUserChanged = false
         with(view) {
             pbRegistration.progress = RegistrationFlowProgress.SELECT_ACCOUNT_TYPE
             pbRegistration.visibility = View.VISIBLE
@@ -135,26 +146,41 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
     }
 
     private suspend fun canCreatePersonInfo(): Boolean {
+        var isValid = true
         with(view ?: return false) {
+            if (personSelectedPlaceId == null) {
+                tilPersonCity.error = actvPersonCityError.takeIf { actvPersonCityUserChanged }
+                isValid = false
+            } else {
+                tilPersonCity.error = null
+            }
+
             if (etPersonFirstName.text.isNullOrBlank()) return false
             if (etPersonSecondName.text.isNullOrBlank()) return false
             if (etPersonUserName.text.isNullOrBlank()) return false
-            if (personSelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
         }
-        return true
+        return isValid
     }
 
     private suspend fun canCreateOrganizationInfo(): Boolean {
+        var isValid = true
         with(view ?: return false) {
+            if (companySelectedPlaceId == null) {
+                tilCompanyCity.error = actvCompanyCityError.takeIf { actvCompanyCityUserChanged }
+                isValid = false
+            } else {
+                tilCompanyCity.error = null
+            }
+
             if (etCompanyName.text.isNullOrBlank()) return false
             if (etCompanyUserName.text.isNullOrBlank()) return false
             if (companySelectedPlaceId == null) return false
             if (viewModel.isOffersMandatory() && chipCompanyOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipCompanyInterests.getTags().isEmpty()) return false
         }
-        return true
+        return isValid
     }
 
     private var onInfoChangedJob: Job? = null
@@ -224,7 +250,12 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
         }
         onPersonChanged()
-        setupAutoComplete(view.actvPersonCity, true)
+
+        bindAutoComplete(
+            view.actvPersonCity,
+            { personSelectedPlaceId = it?.placeId },
+            { actvPersonCityUserChanged = true }
+        )
     }
 
     private fun bindOrganizationPage(view: View) {
@@ -244,27 +275,31 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             chipCompanyInterests.onChipsChangeListener = { onOrganizationChanged() }
         }
         onOrganizationChanged()
-        setupAutoComplete(view.actvCompanyCity, false)
+
+        bindAutoComplete(
+            view.actvCompanyCity,
+            { companySelectedPlaceId = it?.placeId },
+            { actvCompanyCityUserChanged = true }
+        )
     }
 
-    private fun setupAutoComplete(city: AutoCompleteTextView, isPerson: Boolean) {
+    private inline fun bindAutoComplete(
+        city: AutoCompleteTextView,
+        crossinline onSetPlace: (GeoPlaceModel?) -> Unit,
+        crossinline onUserInput: (String) -> Unit
+    ) {
         val placeAutocompleteAdapter = PlaceAutocompleteAdapter(city.context, viewModel)
         city.setAdapter(placeAutocompleteAdapter)
         city.setOnItemClickListener { _, _, i, _ ->
             val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
-            if (isPerson) {
-                val personSelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                city.setText(personSelectedPlaceName)
-                personSelectedPlaceId = item.placeId
-            } else {
-                val companySelectedPlaceName = "${item.primaryText} ${item.secondaryText}"
-                city.setText(companySelectedPlaceName)
-                companySelectedPlaceId = item.placeId
-            }
+            val itemStr = "${item.primaryText} ${item.secondaryText}"
+            city.setText(itemStr)
+
+            onSetPlace(item)
         }
         city.addTextChangedListener(SimpleTextWatcher {
-            personSelectedPlaceId = null
-            companySelectedPlaceId = null
+            onUserInput(it)
+            onSetPlace(null)
         })
     }
 
