@@ -93,7 +93,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         commentsAdapter.onReplyClick = { comment -> replyTo = comment }
         commentsAdapter.onCommentOptionsClick = this@CommentsWrapperController::showCommentMenu
         commentsAdapter.onCommentUsefulClick = {
-            open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it.id))
+            open(RewardingController.newInstance(this@CommentsWrapperController, it.creator, it))
         }
         commentsAdapter.onRecommendedAccountClick = { _, profile -> openAccount(profile) }
         commentsAdapter.onCommentAuthorClick = ::openAccount
@@ -317,7 +317,12 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         return with(requireNotNull(view)) {
             RawCommentModel(
                     id = editedComment?.id,
-                    parentCommentId = replyTo?.id ?: editedComment?.parentCommentId,
+                    parentCommentId = replyTo?.let { comment ->
+                        comment.takeIf { it.parentCommentId.isNullOrBlank() }
+                            ?: run {
+                                commentsAdapter.dataStorage.find { it.id == comment.parentCommentId }
+                            }
+                    }?.id ?: editedComment?.parentCommentId,
                     text = etCommentText.text.toString().takeIf { it.isNotBlank() },
                     accountsToRecommend = accountsToRecommend.map { it.id },
                     uploadedImages = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.UploadedImage::class.java).map { it.imageUrl },
