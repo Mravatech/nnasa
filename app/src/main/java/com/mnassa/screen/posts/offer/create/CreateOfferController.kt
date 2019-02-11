@@ -235,7 +235,9 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
         with(getViewSuspend()) {
             etTitle.setText(offer.title)
+            chipTags.cancelAutodetectTagsFrom(etOffer)
             etOffer.setText(offer.text)
+            chipTags.autodetectTagsFrom(etOffer)
 
             val categoryIndex = findCategoryIndex(offer.category, sCategory)
             if (categoryIndex >= 0) {
