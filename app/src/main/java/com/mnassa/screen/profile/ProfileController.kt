@@ -107,8 +107,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             rvProfile.adapter = adapter
             rvProfile.attachPanel { hasNewPosts }
 
-            initToolbar(toolbar, profile)
-
             val titleColor = ContextCompat.getColor(context, R.color.white)
             collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)
             collapsingToolbarLayout.setExpandedTitleColor(titleColor)
@@ -120,52 +118,61 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                 }
             }
 
-            bindProfile(this, profile)
-        }
-
-        launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
-        launchCoroutineUI { viewModel.profileChannel.consumeEach { bindProfile(view, it) } }
-        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindOffers(view, it) } }
-        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindInterests(view, it) } }
-        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindConnectionStatus(view, it) } }
-    }
-
-    private fun initToolbar(toolbar: Toolbar, profile: ShortAccountModel) {
-        toolbar.setNavigationOnClickListener { close() }
-        if (profile.isMyProfile) {
-            toolbar.inflateMenu(R.menu.user_profile_my)
-        } else {
-            toolbar.inflateMenu(R.menu.user_profile_other)
-        }
-        toolbar.menu.findItem(R.id.action_edit_profile)?.title = fromDictionary(R.string.profile_edit)
-        toolbar.menu.findItem(R.id.action_share_profile)?.title = fromDictionary(R.string.profile_share)
-        toolbar.menu.findItem(R.id.action_complain_about_profile)?.title = fromDictionary(R.string.profile_report)
-        toolbar.menu.findItem(R.id.action_invite_to_group_profile)?.title = fromDictionary(R.string.group_invite_profile_menu)
-
-        toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.action_edit_profile -> onEditProfileClick(profile)
-                R.id.action_share_profile -> open(RecommendUserController.newInstance(profile))
-                R.id.action_complain_about_profile -> complainAboutProfile(profile)
-                R.id.action_invite_to_group_profile -> open(SelectGroupController.newInstance(this, onlyAdmin = true))
+            toolbar.apply {
+                setNavigationOnClickListener { close() }
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.action_edit_profile -> openEditProfile()
+                        R.id.action_share_profile -> openShareProfile()
+                        R.id.action_complain_about_profile -> openComplainProfile()
+                        R.id.action_invite_to_group_profile -> openInviteToGroup()
+                    }
+                    true
+                }
             }
-            true
         }
 
         launchCoroutineUI {
-            if (!profile.canRecommend()) {
-                toolbar.menu.removeItem(R.id.action_share_profile)
-                toolbar.menu.removeItem(R.id.action_complain_about_profile)
+            bindProfile(getViewSuspend(), profile)
+            viewModel.profileChannel.consumeEach { bindProfile(getViewSuspend(), it) }
+        }
+
+        launchCoroutineUI { viewModel.closeScreenChannel.consumeEach { close() } }
+        launchCoroutineUI { viewModel.offersChannel.consumeEach { bindOffers(getViewSuspend(), it) } }
+        launchCoroutineUI { viewModel.interestsChannel.consumeEach { bindInterests(getViewSuspend(), it) } }
+        launchCoroutineUI { viewModel.statusesConnectionsChannel.consumeEach { bindConnectionStatus(getViewSuspend(), it) } }
+    }
+
+    private suspend fun bindProfileToToolbar(toolbar: Toolbar, profile: ShortAccountModel) {
+        toolbar.apply {
+            // Clear previous menu and setup it
+            // again.
+            menu?.clear()
+            inflateMenu(if (profile.isMyProfile) {
+                R.menu.user_profile_my
+            } else {
+                R.menu.user_profile_other
+            })
+            menu.apply {
+                findItem(R.id.action_edit_profile)?.title = fromDictionary(R.string.profile_edit)
+                findItem(R.id.action_share_profile)?.title = fromDictionary(R.string.profile_share)
+                findItem(R.id.action_complain_about_profile)?.title = fromDictionary(R.string.profile_report)
+                findItem(R.id.action_invite_to_group_profile)?.title = fromDictionary(R.string.group_invite_profile_menu)
+
+                if (!profile.canRecommend()) {
+                    removeItem(R.id.action_share_profile)
+                    removeItem(R.id.action_complain_about_profile)
+                }
             }
         }
     }
 
-    private fun bindProfile(view: View, profile: ShortAccountModel) {
+    private suspend fun bindProfile(view: View, profile: ShortAccountModel) {
         this.profile = profile
         adapter.profile = profile
         with(view) {
-            ivAvatar.avatarSquare(profile.avatar)
-            ivAvatar.setOnClickListener {
+            ivAvatarSquare.avatarSquare(profile.avatar)
+            ivAvatarSquare.setOnClickListener {
                 profile.avatar?.let { avatar ->
                     open(PhotoPagerController.newInstance(listOf(avatar)))
                 }
@@ -176,6 +183,8 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             } else {
                 tvPosition.text = (profile as? ProfileAccountModel)?.organizationType
             }
+
+            bindProfileToToolbar(toolbar, profile)
         }
     }
 
@@ -214,11 +223,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    override var onComplaint: String = ""
-        set(value) {
-            viewModel.sendComplaint(accountId, OTHER, value)
-        }
-
     override fun onDestroyView(view: View) {
         view.rvProfile.adapter = null
         super.onDestroyView(view)
@@ -239,43 +243,68 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         }
     }
 
-    override fun onGroupSelected(group: GroupModel) {
-        viewModel.inviteToGroup(group)
+    // ---- Edit profile ----
+
+    private fun openEditProfile() {
+        launchCoroutineUI {
+            val profile = getProfile() as? ProfileAccountModel ?: return@launchCoroutineUI
+            val offers = viewModel.offersChannel.consume { receive() }
+            val interests = viewModel.interestsChannel.consume { receive() }
+
+            openEditProfile(profile, offers, interests)
+        }
     }
 
-    private fun complainAboutProfile(profileModel: ShortAccountModel) {
+    private fun openEditProfile(profile: ProfileAccountModel, offers: List<TagModel>, interests: List<TagModel>) =
+        when (profile.accountType) {
+            AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profile, offers, interests)
+            AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profile, offers, interests)
+        }.let(::open)
+
+    // ---- Share profile ----
+
+    private fun openShareProfile() {
         launchCoroutineUI {
-            val reportsList = viewModel.retrieveComplaints()
-            dialog.showComplaintDialog(getViewSuspend().context, reportsList) {
+            val profile = getProfile()
+            RecommendUserController.newInstance(profile).let(::open)
+        }
+    }
+
+    // ---- Complain profile ----
+
+    override var onComplaint: String = ""
+        set(value) {
+            viewModel.sendComplaint(accountId, OTHER, value)
+        }
+
+    private fun openComplainProfile() {
+        launchCoroutineUI {
+            val profile = getProfile()
+            val complains = viewModel.retrieveComplaints()
+            dialog.showComplaintDialog(getViewSuspend().context, complains) {
                 if (it.id == OTHER) {
-                    val controller = ComplaintOtherController.newInstance()
-                    controller.targetController = this@ProfileController
-                    open(controller)
+                    // Open other screen
+                    ComplaintOtherController.newInstance().apply {
+                        targetController = this@ProfileController
+                    }.let(::open)
                 } else {
-                    viewModel.sendComplaint(profileModel.id, it.id, null)
+                    viewModel.sendComplaint(profile.id, it.id, null)
                 }
             }
         }
     }
 
-    @Suppress("NAME_SHADOWING")
-    private fun onEditProfileClick(profile: ShortAccountModel) {
-        var profile = profile as? ProfileAccountModel
-        launchCoroutineUI {
-            if (profile == null) {
-                profile = viewModel.profileChannel.consume { receiveOrNull() }
-            }
-            val profile = profile ?: return@launchCoroutineUI
-            val offers = viewModel.offersChannel.consume { receive() }
-            val interests = viewModel.interestsChannel.consume { receive() }
+    // ---- Invite to group ----
 
-            open(when (profile.accountType) {
-                AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profile, offers, interests)
-                AccountType.ORGANIZATION -> EditCompanyProfileController.newInstance(profile, offers, interests)
-            })
-        }
+    private fun openInviteToGroup() {
+        open(SelectGroupController.newInstance(this, onlyAdmin = true))
     }
 
+    override fun onGroupSelected(group: GroupModel) {
+        viewModel.inviteToGroup(group)
+    }
+
+    private suspend fun getProfile() = viewModel.profileChannel.consume { receiveOrNull() } ?: profile
 
     companion object {
         private const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
