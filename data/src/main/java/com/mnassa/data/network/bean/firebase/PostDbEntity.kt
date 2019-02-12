@@ -1,17 +1,16 @@
 package com.mnassa.data.network.bean.firebase
 
-import androidx.annotation.Nullable
 import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import com.mnassa.data.network.bean.firebase.adapters.PostAutoSuggestJsonAdapter
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by Peter on 3/15/2018.
  */
 internal data class PostDbEntity(
-        @SerializedName("id") @Nullable override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("allConnections") var allConnections: Boolean,
         @SerializedName("copyOwner") var copyOwner: String?,
         @SerializedName("counters") var counters: PostCountersDbEntity,
@@ -47,7 +46,7 @@ internal data class PostDbEntity(
         @SerializedName("privacyCommunitiesIds") val groupIds: Set<String>?,
         @SerializedName("privacyCommunitiesInfo") val groups: List<GroupDbEntity>?
 
-) : HasId {
+) : HasIdMaybe {
     companion object {
         const val PROPERTY_CREATED_AT = "createdAt"
     }
@@ -70,9 +69,9 @@ internal data class PostAutoSuggest(
 ) : com.mnassa.domain.model.PostAutoSuggest
 
 internal class PostShortDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
         @SerializedName("updatedAt") var updatedAt: Long,
         @SerializedName(PostDbEntity.PROPERTY_CREATED_AT) var createdAt: Long
-): HasId
+): HasIdMaybe
 

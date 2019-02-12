@@ -21,6 +21,6 @@ class TranslatedWordConverter(private val languageProvider: LanguageProvider) : 
                 id = input.id,
                 engTranslate = input.en,
                 arabicTranslate = input.ar,
-                info = input.info)
+                info = input.info ?: CONVERT_ERROR_MESSAGE)
     }
 }

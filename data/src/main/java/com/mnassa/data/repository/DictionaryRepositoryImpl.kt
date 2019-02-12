@@ -61,7 +61,7 @@ class DictionaryRepositoryImpl(
                     .child(DatabaseContract.TABLE_DICTIONARY)
                     .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)
                     .awaitList<TranslatedWordDbEntity>(exceptionHandler)
-                    .filter { !(it.info.isBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
+                    .filter { !(it.info.isNullOrBlank() && it.en.isNullOrBlank() && it.ar.isNullOrBlank()) }
             converter.convertCollection(dictionary, TranslatedWordModel::class.java)
         }
     }

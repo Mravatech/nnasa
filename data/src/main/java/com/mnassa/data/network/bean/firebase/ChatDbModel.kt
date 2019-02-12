@@ -3,6 +3,7 @@ package com.mnassa.data.network.bean.firebase
 import androidx.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,5 +27,5 @@ internal data class ChatMessageDbModel(
         @SerializedName("chatID") var chatID: String?,
         @SerializedName("linkedMessageId") var linkedMessageId: String?,
         @SerializedName("linkedPostId") var linkedPostId: String?,
-        @SerializedName("id") @Nullable override var id: String
-): HasId
+        @SerializedName("id") override var idOrNull: String?
+) : HasIdMaybe

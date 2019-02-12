@@ -1,13 +1,13 @@
 package com.mnassa.data.network.bean.firebase
 
 import com.google.gson.annotations.SerializedName
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by Peter on 3/30/2018.
  */
 internal data class TransactionDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("afterBalance") var afterBalance: Long,
         @SerializedName("amount") var amount: Long,
         @SerializedName("transactionAt") var transactionAt: Long,
@@ -20,12 +20,12 @@ internal data class TransactionDbEntity(
 /*
  fromType, toType, byType == 'account' | 'community'
  */
-): HasId
+): HasIdMaybe
 
 internal data class TransactionMemberDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("firstName") var firstName: String?,
         @SerializedName("lastName") var lastName: String?,
         @SerializedName("organizationName") var organizationName: String?,
         @SerializedName("title") val title: String?
-): HasId
+): HasIdMaybe
