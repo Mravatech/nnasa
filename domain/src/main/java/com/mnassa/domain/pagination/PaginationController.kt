@@ -37,7 +37,7 @@ class PaginationController(
      */
     fun observe(observer: PaginationObserver) {
         observers += observer
-        observer.onSizeChanged(size)
+        observer.onNextPageRequested(size)
     }
 
     fun removeObserver(observer: PaginationObserver) {
@@ -56,7 +56,7 @@ class PaginationController(
         // Notify all of the observers about
         // size change.
         tweet {
-            onSizeChanged(size)
+            onNextPageRequested(pageSize)
         }
     }
 
