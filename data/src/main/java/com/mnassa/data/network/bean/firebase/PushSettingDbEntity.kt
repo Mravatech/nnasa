@@ -1,7 +1,7 @@
 package com.mnassa.data.network.bean.firebase
 
 import com.google.gson.annotations.SerializedName
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,7 +10,7 @@ import com.mnassa.domain.model.HasId
  */
 
 data class PushSettingDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("isActive") var isActive: Boolean,
         @SerializedName("withSound") var withSound: Boolean
-) : HasId
+) : HasIdMaybe

@@ -1,13 +1,13 @@
 package com.mnassa.data.network.bean.firebase
 
 import com.google.gson.annotations.SerializedName
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by Peter on 4/13/2018.
  */
 internal data class EventDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("allConnections") val allConnections: Boolean,
         @SerializedName("author") val author: ShortAccountDbEntity,
         @SerializedName("copyOwner") val copyOwner: String,
@@ -37,7 +37,7 @@ internal data class EventDbEntity(
         @SerializedName("privacyConnections") val privacyConnections: List<String>?,
         @SerializedName("locationDescription") val locationDescription: String?,
         @SerializedName("privacyCommunitiesIds") val groups: Set<String>?
-) : HasId {
+) : HasIdMaybe {
 
     companion object {
         const val CREATED_AT = "createdAt"
@@ -47,12 +47,12 @@ internal data class EventDbEntity(
 }
 
 internal data class EventTicketDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("eventName") val eventName: String,
         @SerializedName("eventOrganizer") val eventOrganizer: String,
         @SerializedName("pricePerTicket") val pricePerTicket: Long,
         @SerializedName("ticketsCount") val ticketsCount: Long
-) : HasId
+) : HasIdMaybe
 
 internal data class EventCountersDbEntity(
         @SerializedName("comments") val comments: Int?,

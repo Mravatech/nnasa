@@ -3,7 +3,7 @@ package com.mnassa.data.network.bean.firebase
 import androidx.annotation.Nullable
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,12 +11,12 @@ import com.mnassa.domain.model.HasId
  * Date: 4/13/2018
  */
 internal data class NotificationDbEntity(
-        @SerializedName("id") @Nullable override var id: String,
+        @SerializedName("id") @Nullable override var idOrNull: String?,
         @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
         @SerializedName("text") var text: String?,
         @SerializedName("type") var type: String,
         @SerializedName("extra") var extra: NotificationExtraDbEntity?
-) : HasId {
+) : HasIdMaybe {
     companion object {
         const val PROPERTY_CREATED_AT = "createdAt"
     }

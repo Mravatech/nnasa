@@ -135,9 +135,9 @@ di.android = "org.kodein.di:kodein-di-framework-android-core:${versions.kodein}"
 deps.di = di
 
 //============================================== NETWORK ===========================================
-versions.okHttp = '3.9.1'
-versions.retrofit = '2.3.0'
-versions.retrofitGson = '2.2.0'
+versions.okHttp = '3.13.1'
+versions.retrofit = '2.5.0'
+versions.retrofitGson = '2.5.0'
 
 def network = [:]
 network.okhttp =        "com.squareup.okhttp3:okhttp:$versions.okHttp"

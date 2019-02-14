@@ -1,13 +1,13 @@
 package com.mnassa.data.network.bean.firebase
 
 import com.google.gson.annotations.SerializedName
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by Peter on 5/21/2018.
  */
 internal data class GroupDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("avatar") val avatar: String?,
         @SerializedName("description") val description: String?,
         @SerializedName("isAdmin") val isAdmin: Boolean?,
@@ -27,7 +27,7 @@ internal data class GroupDbEntity(
         @SerializedName("totalOutcome") val totalOutcome: Long? = null,
         @SerializedName("visiblePoints") val visiblePoints: Long? = null
 
-) : HasId
+) : HasIdMaybe
 
 internal data class GroupCounters(
         @SerializedName("numberOfParticipants") val numberOfParticipants: Long?,

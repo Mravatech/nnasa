@@ -1,13 +1,13 @@
 package com.mnassa.data.network.bean.firebase
 
 import com.google.gson.annotations.SerializedName
-import com.mnassa.domain.model.HasId
+import com.mnassa.domain.model.HasIdMaybe
 
 /**
  * Created by Peter on 2/22/2018.
  */
 internal open class ShortAccountDbEntity(
-        @SerializedName("id") override var id: String,
+        @SerializedName("id") override var idOrNull: String?,
         @SerializedName("serialNumber") var serialNumber: Int?,
         @SerializedName("avatar") var avatar: String?,
         @SerializedName("firstName") var firstName: String?,
@@ -17,7 +17,7 @@ internal open class ShortAccountDbEntity(
         @SerializedName("userName") var userName: String?,
         @SerializedName("abilities") var abilitiesInternal: List<ShortAccountAbilityDbEntity>?,
         @SerializedName("connectedBy") var connectedBy: ConnectedByDbEntity? = null
-) : HasId {
+) : HasIdMaybe {
 
     override fun toString(): String {
         return "ShortAccountDbEntity(id='$id', avatar=$avatar, firstName=$firstName, lastName=$lastName, organizationName=$organizationName, type='$type', userName='$userName', abilitiesInternal=$abilitiesInternal)"
