@@ -1,11 +1,12 @@
 package com.mnassa.data.extensions
 
+import android.os.SystemClock
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.*
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.other.SeamlessSubscriptionController
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.pagination.PaginationObserver
 import kotlinx.coroutines.experimental.DefaultDispatcher
@@ -13,6 +14,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.*
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 import kotlinx.coroutines.experimental.yield
 import timber.log.Timber
 
@@ -36,25 +38,21 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
     limit: Int = DEFAULT_LIMIT
 ): Channel<ListItemEvent<OutType>> {
     forDebug { Timber.i("#LISTEN# toValueChannelWithChangesHandling ${this.path}") }
-    val mutex = Mutex()
     val channel = ArrayChannel<ListItemEvent<OutType>>(limit)
 
-    var listenerPagination: PaginationObserver? = null
-
-    var querySizeCurrent = 0L
-    var isBusy = false
+    val registrations: MutableList<ListenerRegistration> = ArrayList()
 
     // Removes the FireStore
     // listener.
     val doDispose = {
-        if (pagination != null) {
-            listenerPagination?.let(pagination::removeObserver)
-        }
+        // Remove all of the existing
+        // registrations.
+        registrations.forEach(ListenerRegistration::remove)
     }
 
-    val doProcess = processor@{ removeObserver: () -> Unit, changes: MutableList<DocumentChange> ->
+    val doProcessMutex = Mutex()
+    val doProcess = processor@{ changes: MutableList<DocumentChange>, onComplete: () -> Unit ->
         if (channel.isClosedForSend) {
-            removeObserver()
             doDispose()
             return@processor
         }
@@ -62,9 +60,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
         launchWorker {
             // Synchronize the processing, so there's almost no chance that the change events
             // will be sent in a wrong order.
-            mutex.lock()
-
-            val querySizeSaved = querySizeCurrent
+            doProcessMutex.lock()
 
             // Groups the changes by BATCH_SIZE changes in each
             // batch.
@@ -88,8 +84,9 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             // Process the changes by batches
             for (changesBatch in changesBatches) {
                 if (channel.isClosedForSend) {
-                    removeObserver()
-                    doDispose()
+                    firestoreLockSuspend {
+                        doDispose()
+                    }
                     break
                 }
 
@@ -136,8 +133,10 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                     // all deferred jobs.
                     if (channel.isClosedForSend) {
                         change.second.cancel()
-                        removeObserver()
-                        doDispose()
+
+                        firestoreLockSuspend {
+                            doDispose()
+                        }
                     } else {
                         val event: ListItemEvent<OutType>?
                         try {
@@ -155,8 +154,9 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                         } catch (e: ClosedSendChannelException) {
                             // Continue to cancel all next running
                             // jobs.
-                            removeObserver()
-                            doDispose()
+                            firestoreLockSuspend {
+                                doDispose()
+                            }
                         }
                     }
                 }
@@ -164,52 +164,39 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                 yield()
             }
 
-            if (querySizeSaved == querySizeCurrent) {
-                isBusy = false
-            }
+            // Mark that we have finished loading data
+            // this time.
+            onComplete()
 
-            mutex.unlock()
+            doProcessMutex.unlock()
         }
     }
 
-    val controller = SeamlessSubscriptionController()
-
-    val doSubscribe: suspend (Long?) -> Unit = { querySizeLimit ->
-        // Create new listener on a query with
-        // set limit size.
-        firestoreLockSuspend {
-            lateinit var listenerFirestore: () -> Unit
-            listenerFirestore = controller.register { onObserve ->
+    val doSubscribe: suspend (DocumentSnapshot?, DocumentSnapshot?, () -> Unit) -> Unit =
+        { docStartAfter, docEndAt, onProcessComplete ->
+            firestoreLockSuspend {
                 val registration = queryBuilder(this@toValueChannelWithChangesHandling)
                     .run {
-                        // Apply limit restriction only if it
-                        // is set.
-                        querySizeLimit?.let(::limit) ?: this
+                        val query = docStartAfter?.let(::startAfter) ?: this
+                        return@run docEndAt?.let(query::endAt) ?: query
                     }
                     .addSnapshotListener { dataSnapshot, e ->
                         if (e != null) {
                             channel.close(exceptionHandler.handle(e, path))
-                            doDispose.invoke()
+                            doDispose()
                             return@addSnapshotListener
                         }
 
                         dataSnapshot?.documentChanges?.let { changes ->
-                            doProcess(listenerFirestore, changes)
+                            doProcess(changes, onProcessComplete)
                         }
-
-                        // Notify the seamless subscription controller that
-                        // we have received something.
-                        onObserve()
                     }
 
-                return@register {
-                    // Unsubscribe from real observable
-                    registration.remove()
-                }
+                // Add registration to global
+                // list.
+                registrations.add(registration)
             }
-            Unit
         }
-    }
 
     pagination
         ?.apply {
@@ -217,26 +204,62 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
             // controller.
             observe(
                 object : PaginationObserver {
-                    override val isBusy: Boolean
-                        get() = isBusy
+                    private val mutex = Mutex()
 
-                    override fun onSizeChanged(size: Long) {
-                        querySizeCurrent = size
+                    @Volatile
+                    private var prevDoc: DocumentSnapshot? = null
+
+                    @Volatile
+                    private var curToken: Long = 0L
+
+                    @Volatile
+                    override var isBusy: Boolean = false
+
+                    override fun onNextPageRequested(limit: Long) {
+                        if (channel.isClosedForSend) {
+                            // User will have to start from
+                            // the beginning.
+                            return
+                        }
+
+                        val token = SystemClock.elapsedRealtimeNanos()
+
                         isBusy = true
+                        curToken = token
 
                         launch(DefaultDispatcher) {
-                            doSubscribe(size)
+                            mutex.withLock {
+                                val lastDoc = try {
+                                    val task = queryBuilder(this@toValueChannelWithChangesHandling)
+                                        .run {
+                                            prevDoc?.let(::startAfter) ?: this
+                                        }
+                                        .limit(size)
+                                        .get()
+
+                                    Tasks.await(task).documents.lastOrNull()
+                                } catch (e: FirebaseFirestoreException) {
+                                    return@withLock
+                                }
+
+                                // Add the subscription
+                                doSubscribe(prevDoc, lastDoc) {
+                                    if (prevDoc == lastDoc && curToken == token) {
+                                        isBusy = false
+                                    }
+                                }
+
+                                prevDoc = lastDoc
+                            }
                         }
                     }
-                }.also {
-                    listenerPagination = it
                 }
             )
         }
         ?: run {
             // Subscribe without pagination
             // handling.
-            doSubscribe(null)
+            doSubscribe(null, null) {}
         }
 
     return channel
