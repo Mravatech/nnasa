@@ -19,10 +19,9 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         def versionMajor = 4
-        def versionMinor = 0
-        def versionPatch = 19
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-        versionCode (versionMajor * 100 + versionMinor * 10 + versionPatch)
+        def versionMinorPlusPatch = 19 // 99 max please
+        versionName "${versionMajor}.${versionMinorPlusPatch}"
+        versionCode (versionMajor * 100 + versionMinorPlusPatch)
 
         multiDexEnabled true
     }
