@@ -18,6 +18,7 @@ import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.filterNotNull
 import timber.log.Timber
 
 /**
@@ -132,26 +133,37 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    override fun handleAccountRefresh(): Job {
-        var consumerJob: Job? = null
-        return handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
-            consumerJob?.cancel()
-            consumerJob = launch(coroutineContext + DefaultDispatcher) {
-                run check@{
-                    userRepository.getSerialNumberOrNull() ?: return@check
-                    return@launch
+    override fun handleAccountRefresh(): Job =
+        launchWorker {
+            var consumerJob: Job? = null
+            var prevAccountId: String? = null
+            while (isActive) {
+                val accountId = userProfileInteractor.getAccountIdOrNull()
+                if (prevAccountId != accountId) {
+                    prevAccountId = accountId
+
+                    // Subscribe to account's model, mostly to get the
+                    // serial number.
+                    consumerJob?.cancel()
+                    consumerJob = if (accountId != null) {
+                        launch(coroutineContext + DefaultDispatcher) {
+                            userProfileInteractor.getAccountByIdChannel(accountId)
+                                .filterNotNull()
+                                .consumeEach {
+                                    val curAccountId = userProfileInteractor.getAccountIdOrNull()
+                                    if (curAccountId == accountId) {
+                                        userProfileInteractor.setCurrentUserAccount(it)
+                                    }
+                                }
+                        }
+                    } else {
+                        null
+                    }
                 }
 
-                // Reload the account model
-                val account = userRepository.getAccountById(accountId)
-                if (account != null) {
-                    userProfileInteractor.setCurrentUserAccount(account)
-                }
+                userProfileInteractor.onAccountChangedListener.awaitFirst()
             }
-
-            delay(ACCOUNT_REFRESH_DELAY)
         }
-    }
 
     private fun <T : Any> handle(
         getter: () -> T?,
@@ -169,9 +181,5 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
                 userProfileInteractor.onAccountChangedListener.awaitFirst()
             }
         }
-    }
-
-    companion object {
-        private const val ACCOUNT_REFRESH_DELAY = 60L * 1000L
     }
 }
