@@ -3,7 +3,7 @@ package com.mnassa.screen.posts.profile.create
 import com.mnassa.domain.model.RawRecommendPostModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/12/2018.

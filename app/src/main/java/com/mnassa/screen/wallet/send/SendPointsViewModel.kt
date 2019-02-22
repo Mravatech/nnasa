@@ -2,7 +2,7 @@ package com.mnassa.screen.wallet.send
 
 import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/2/2018.

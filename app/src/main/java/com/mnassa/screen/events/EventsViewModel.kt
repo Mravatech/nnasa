@@ -3,7 +3,7 @@ package com.mnassa.screen.events
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 import java.util.*
 
 /**

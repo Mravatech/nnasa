@@ -1,9 +1,9 @@
 package com.mnassa.screen.profile
 
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.appcompat.widget.Toolbar
 import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
@@ -25,8 +25,8 @@ import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_profile.view.*
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 
@@ -46,7 +46,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
         }
     private var profile: ShortAccountModel = args[EXTRA_ACCOUNT] as ShortAccountModel
-    private var adapter = ProfilePostsRVAdapter(profile)
+    private var adapter = ProfilePostsRVAdapter(this@ProfileController, profile)
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -81,7 +81,7 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             }
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.postChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().findViewById(R.id.rlEmptyView) },

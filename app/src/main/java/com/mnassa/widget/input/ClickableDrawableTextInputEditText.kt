@@ -3,13 +3,13 @@ package com.mnassa.widget.input
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import com.google.android.material.textfield.TextInputEditText
-import androidx.core.content.res.ResourcesCompat
-import androidx.appcompat.content.res.AppCompatResources
 import android.util.AttributeSet
 import android.view.MotionEvent
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.res.ResourcesCompat
+import com.google.android.material.textfield.TextInputEditText
 import com.mnassa.R
 
 

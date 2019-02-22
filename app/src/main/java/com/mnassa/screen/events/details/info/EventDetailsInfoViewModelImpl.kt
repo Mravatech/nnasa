@@ -6,9 +6,10 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -25,13 +26,13 @@ class EventDetailsInfoViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 it?.apply { eventChannel.send(this) }
             }
         }
 
-        handleException {
+        resolveExceptions {
             eventsInteractor.getBoughtTicketsChannel(eventId).consumeEach {
                 boughtTicketsChannel.send(it)
             }
@@ -44,7 +45,7 @@ class EventDetailsInfoViewModelImpl(
         Timber.e("Buy tickets: $count")
         if (count <= 0) return
 
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 eventsInteractor.buyTickets(eventId, count)
             }

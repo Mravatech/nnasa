@@ -2,7 +2,7 @@ package com.mnassa.screen.events.details.participants
 
 import com.mnassa.domain.model.EventModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/18/2018.

@@ -5,7 +5,7 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/23/2018.

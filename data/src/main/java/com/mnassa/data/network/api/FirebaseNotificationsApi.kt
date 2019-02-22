@@ -1,7 +1,7 @@
 package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.NotificationViewRequest
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
 

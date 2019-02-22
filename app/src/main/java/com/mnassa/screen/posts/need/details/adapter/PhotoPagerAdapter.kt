@@ -1,9 +1,9 @@
 package com.mnassa.screen.posts.need.details.adapter
 
-import androidx.viewpager.widget.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.mnassa.R
 import com.mnassa.extensions.image
 import kotlinx.android.synthetic.main.item_image.view.*

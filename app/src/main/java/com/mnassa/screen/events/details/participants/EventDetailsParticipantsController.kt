@@ -11,7 +11,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_event_details_participants.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -30,7 +30,7 @@ class EventDetailsParticipantsController(args: Bundle) : MnassaControllerImpl<Ev
 
         allParticipantsadAdapter.isLoadingEnabled = true
         selectParticipantAdapter.isLoadingEnabled = true
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.participantsChannel.consumeEach {
                 allParticipantsadAdapter.isLoadingEnabled = false
                 selectParticipantAdapter.isLoadingEnabled = false

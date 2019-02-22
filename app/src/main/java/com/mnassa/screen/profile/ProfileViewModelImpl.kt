@@ -6,9 +6,11 @@ import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.ComplaintModelImpl
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,16 +32,16 @@ class ProfileViewModelImpl(
     override val postChannel: ConflatedBroadcastChannel<ListItemEvent<List<PostModel>>> = ConflatedBroadcastChannel()
     override val interestsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val offersChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleException {
+        resolveExceptions {
             reportsList = complaintInteractor.getReports()
         }
 
-        handleException {
+        resolveExceptions {
             userProfileInteractor.getProfileByIdChannel(accountId).consumeEach {
                 if (it != null) {
                     profileChannel.send(it)
@@ -48,15 +50,15 @@ class ProfileViewModelImpl(
                 }
             }
         }
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getStatusesConnections(accountId).consumeEach {
                 statusesConnectionsChannel.send(it)
             }
         }
-        handleException {
+        resolveExceptions {
             postsInteractor.loadWallWithChangesHandling(accountId).consumeTo(postChannel)
         }
-        handleException {
+        resolveExceptions {
             profileChannel.consumeEach { profile ->
                 val interests = handleExceptionsSuspend { tagInteractor.get(profile.interests) } ?: emptyList()
                 interestsChannel.send(interests)
@@ -77,7 +79,7 @@ class ProfileViewModelImpl(
     }
 
     override fun sendComplaint(id: String, reason: String, authorText: String?) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
@@ -90,7 +92,7 @@ class ProfileViewModelImpl(
     }
 
     override fun sendConnectionStatus(connectionStatus: ConnectionStatus, aid: String) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 val action = when (connectionStatus) {
                     ConnectionStatus.CONNECTED -> ConnectionAction.DISCONNECT
@@ -105,7 +107,7 @@ class ProfileViewModelImpl(
     }
 
     override fun inviteToGroup(group: GroupModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.sendInvite(groupId = group.id, accountIds = listOf(accountId))
             }

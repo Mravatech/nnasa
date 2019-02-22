@@ -5,11 +5,11 @@ import android.annotation.SuppressLint
 import androidx.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by Peter on 3/6/2018.
@@ -30,7 +30,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
 
 
     override fun connect(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionConnect(listOf(account.id))
             }
@@ -38,7 +38,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     }
 
     override fun disconnect(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionDisconnect(listOf(account.id))
             }
@@ -46,7 +46,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     }
 
     override fun accept(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionAccept(listOf(account.id))
             }
@@ -54,7 +54,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     }
 
     override fun decline(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionDecline(listOf(account.id))
             }
@@ -66,7 +66,7 @@ class ConnectionsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override fun onContactPermissionsGranted() {
         sendPhoneContactsJob?.cancel()
-        sendPhoneContactsJob = handleException {
+        sendPhoneContactsJob = resolveExceptions {
             connectionsInteractor.sendPhoneContacts()
         }
     }

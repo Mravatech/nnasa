@@ -4,9 +4,10 @@ import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.GroupModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by Peter on 5/22/2018.
@@ -19,13 +20,13 @@ class GroupConnectionRequestsViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getInvitesToGroups().consumeTo(groupConnectionRequestsChannel)
         }
     }
 
     override fun accept(group: GroupModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.acceptInvite(groupId = group.id)
             }
@@ -33,7 +34,7 @@ class GroupConnectionRequestsViewModelImpl(
     }
 
     override fun decline(group: GroupModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.declineInvite(groupId = group.id)
             }

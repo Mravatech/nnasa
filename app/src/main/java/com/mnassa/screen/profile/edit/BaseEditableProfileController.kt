@@ -5,13 +5,13 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
+import androidx.core.content.ContextCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -21,12 +21,13 @@ import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.text.DateFormatSymbols
 import java.util.*
+import kotlin.coroutines.resume
 
 /**
  * Created by IntelliJ IDEA.
@@ -70,8 +71,8 @@ abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(
     protected fun addPhoto(fab: FloatingActionButton) {
         fab.setOnClickListener {
             dialog.showSelectImageSourceDialog(it.context) { imageSource ->
-                launchCoroutineUI { thisRef ->
-                    thisRef().activity?.let {
+                launchCoroutineUI {
+                    activity?.let {
                         when (imageSource) {
                             CropActivity.ImageSource.CAMERA -> {
                                 val permissionsResult = permissions.requestPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)

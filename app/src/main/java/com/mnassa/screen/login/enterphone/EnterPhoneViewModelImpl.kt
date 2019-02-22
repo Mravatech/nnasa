@@ -4,10 +4,11 @@ import android.os.Bundle
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -16,7 +17,7 @@ import timber.log.Timber
 open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor, private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: PhoneVerificationModel
 
-    override val openScreenChannel: ArrayBroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = BroadcastChannel(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor,
         showProgress()
 
         requestVerificationCodeJob?.cancel()
-        requestVerificationCodeJob = handleException {
+        requestVerificationCodeJob = resolveExceptions {
             loginInteractor.requestVerificationCode(phoneNumber = phoneNumber, promoCode = promoCode).consumeEach {
                 verificationResponse = it
                 when {
@@ -53,7 +54,7 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor,
     override fun signInByEmail(email: String, password: String) {
         requestVerificationCodeJob?.cancel()
 
-        requestVerificationCodeJob = handleException {
+        requestVerificationCodeJob = resolveExceptions {
             signIn(loginInteractor.processLoginByEmail(email, password))
         }
         requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }

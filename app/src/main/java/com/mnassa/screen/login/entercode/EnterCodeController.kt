@@ -2,22 +2,22 @@ package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
 import android.view.View
-import org.kodein.di.generic.instance
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PhoneVerificationModel
-import com.mnassa.translation.fromDictionary
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.login.RegistrationFlowProgress
 import com.mnassa.screen.login.selectaccount.SelectAccountController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.registration.RegistrationController
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_enter_code.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sms_code_input.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
+import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -92,7 +92,7 @@ class EnterCodeController(params: Bundle) : MnassaControllerImpl<EnterCodeViewMo
                 val v = view ?: return@launchCoroutineUI
                 val text = fromDictionary(R.string.login_enter_code_resend_after).format(secondsCounter)
                 v.tvResendCodeAfter.text = text
-                delay(1, TimeUnit.SECONDS)
+                delay(TimeUnit.SECONDS.toMillis(1))
                 startResendCodeTimer(secondsCounter - 1)
             }
         }

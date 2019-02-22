@@ -1,9 +1,9 @@
 package com.mnassa.widget
 
 import android.content.Context
-import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 
 /**
  * Created by Peter on 07.03.2018.

@@ -1,13 +1,15 @@
 package com.mnassa.screen.profile.edit
 
 import android.os.Bundle
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,13 +19,13 @@ import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 abstract class BaseEditableProfileViewModelImpl(private val tagInteractor: TagInteractor) : BaseEditableProfileViewModel, MnassaViewModelImpl() {
 
     override val addTagRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
-    private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
-    private val isOffersMandatory = async { tagInteractor.isOffersMandatory() }
+    private val isInterestsMandatory = GlobalScope.asyncWorker { tagInteractor.isInterestsMandatory() }
+    private val isOffersMandatory = GlobalScope.asyncWorker { tagInteractor.isOffersMandatory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
         }
     }

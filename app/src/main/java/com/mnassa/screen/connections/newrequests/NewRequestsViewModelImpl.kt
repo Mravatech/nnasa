@@ -3,9 +3,10 @@ package com.mnassa.screen.connections.newrequests
 import android.os.Bundle
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 9.03.2018.
@@ -16,7 +17,7 @@ class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getConnectionRequests().consumeEach {
                 newConnectionRequestsChannel.send(it)
             }
@@ -26,7 +27,7 @@ class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     override suspend fun getDisconnectTimeoutDays(): Int = handleExceptionsSuspend { connectionsInteractor.getDisconnectTimeoutDays() } ?: 0
 
     override fun accept(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionAccept(listOf(account.id))
             }
@@ -34,7 +35,7 @@ class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     }
 
     override fun decline(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionDecline(listOf(account.id))
             }

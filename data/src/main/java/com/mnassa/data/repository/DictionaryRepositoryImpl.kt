@@ -1,8 +1,8 @@
 package com.mnassa.data.repository
 
 import android.content.Context
-import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseDictionaryApi
@@ -16,10 +16,10 @@ import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 /**
@@ -39,8 +39,7 @@ class DictionaryRepositoryImpl(
     private val dictionaryPreferences by lazy { DictionaryPreferences(context, languageProvider) }
     private val dictionaryResources by lazy { DictionaryResources(context, appInfoProvider, languageProvider) }
 
-
-    override fun getMobileUiVersion(): ReceiveChannel<Int> {
+    override suspend fun produceDictionaryVersion(): ReceiveChannel<Int> {
         return databaseReference
                 .child(DatabaseContract.TABLE_CLIENT_DATA)
                 .child(DatabaseContract.TABLE_CLIENT_DATA_COL_UI_VERSION)
@@ -56,7 +55,7 @@ class DictionaryRepositoryImpl(
     }
 
     override suspend fun loadDictionary(): List<TranslatedWordModel> {
-        return withContext(DefaultDispatcher) {
+        return withContext(Dispatchers.Default) {
             val dictionary = databaseReference
                     .child(DatabaseContract.TABLE_DICTIONARY)
                     .child(DatabaseContract.TABLE_DICTIONARY_COL_MOBILE_UI)

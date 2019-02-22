@@ -4,10 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
@@ -33,8 +33,8 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections.view.*
 import kotlinx.android.synthetic.main.controller_connections_header.view.*
 import kotlinx.android.synthetic.main.search_view.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -131,15 +131,15 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
     @SuppressLint("MissingPermission")
     private fun askPermissions() {
         askPermissionsJob?.cancel()
-        askPermissionsJob = launchCoroutineUI { thisRef ->
-            val permissionsResult = thisRef().permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+        askPermissionsJob = launchCoroutineUI {
+            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {
-                thisRef().permissionsSnackbar?.dismiss()
-                thisRef().viewModel.onContactPermissionsGranted()
+                permissionsSnackbar?.dismiss()
+                viewModel.onContactPermissionsGranted()
             } else {
                 val view = getViewSuspend().clSnackbarParent ?: return@launchCoroutineUI
-                if (thisRef().permissionsSnackbar?.isShown != true) {
+                if (permissionsSnackbar?.isShown != true) {
                     permissionsSnackbar = Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
                             .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
                                 if (permissionsResult.isShouldShowRequestPermissionRationale) {

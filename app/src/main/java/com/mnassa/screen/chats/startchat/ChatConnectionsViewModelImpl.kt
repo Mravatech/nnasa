@@ -4,8 +4,9 @@ import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +20,7 @@ class ChatConnectionsViewModelImpl(private val connectionsInteractor: Connection
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getConnectedConnections().consumeTo(allConnectionsChannel)
         }
     }

@@ -1,11 +1,13 @@
 package com.mnassa.domain.model
 
 import com.mnassa.core.addons.launchWorker
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.consumes
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T
@@ -50,17 +52,30 @@ sealed class ListItemEvent<T : Any>() {
     abstract fun toBatched(): ListItemEvent<List<T>>
 }
 
-suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(bufferWindow: Long = 2000, sendIfEmpty: Boolean = false): ReceiveChannel<ListItemEvent<List<E>>> {
-    val input = this
+@UseExperimental(InternalCoroutinesApi::class)
+suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(
+    bufferWindow: Long = 2000,
+    sendIfEmpty: Boolean = false
+): ReceiveChannel<ListItemEvent<List<E>>> {
+    val input = this@withBuffer
+    val mutex = Mutex()
 
-    return produce(context = Unconfined) {
+    return GlobalScope.produce(context = Dispatchers.Unconfined, onCompletion = consumes()) {
         val output = this
-        val eventsBuffer = ArrayList<E>()
+        val buffer = ArrayList<E>()
+
         suspend fun flush() {
-            if (output.isActive && (sendIfEmpty || eventsBuffer.isNotEmpty())) {
-                val event: ListItemEvent<List<E>> = ListItemEvent.Added(eventsBuffer.toMutableList())
-                eventsBuffer.clear()
-                output.send(event)
+            if (output.isActive) {
+                mutex.withLock {
+                    if (sendIfEmpty || buffer.isNotEmpty()) {
+                        // Send buffered added items all
+                        // at once.
+                        val event = ListItemEvent.Added(buffer.toList())
+                        output.send(event)
+
+                        buffer.clear()
+                    }
+                }
             }
         }
 
@@ -73,19 +88,26 @@ suspend fun <E : Any> ReceiveChannel<ListItemEvent<E>>.withBuffer(bufferWindow: 
         }
 
         input.consumeEach {
-            if (!output.isActive) {
-                return@consumeEach
-            }
-            when (it) {
-                is ListItemEvent.Added -> eventsBuffer.add(it.item)
-                is ListItemEvent.Changed -> eventsBuffer.add(it.item)
-                is ListItemEvent.Moved -> eventsBuffer.add(it.item)
+            if (output.isActive) when (it) {
+                is ListItemEvent.Added,
+                is ListItemEvent.Changed,
+                is ListItemEvent.Moved -> {
+                    mutex.withLock {
+                        buffer.add(it.item)
+                    }
+                }
                 is ListItemEvent.Removed -> {
+                    // Send buffered added items before
+                    // removing this one.
                     flush()
+
                     output.send(it.toBatched())
                 }
                 is ListItemEvent.Cleared -> {
-                    eventsBuffer.clear()
+                    mutex.withLock {
+                        buffer.clear()
+                    }
+
                     output.send(it.toBatched())
                 }
             }

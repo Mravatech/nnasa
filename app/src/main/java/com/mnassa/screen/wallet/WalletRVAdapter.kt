@@ -1,9 +1,9 @@
 package com.mnassa.screen.wallet
 
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.mnassa.R
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.other.LanguageProvider

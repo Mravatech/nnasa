@@ -3,19 +3,19 @@ package com.mnassa.screen.buildnetwork
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import android.view.View
-import org.kodein.di.generic.instance
+import com.google.android.material.snackbar.Snackbar
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.helper.DialogHelper
 import com.mnassa.extensions.openApplicationSettings
+import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.main.MainController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_build_network.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 3/5/2018.

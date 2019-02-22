@@ -1,9 +1,9 @@
 package com.mnassa.extensions
 
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import androidx.core.content.ContextCompat
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance

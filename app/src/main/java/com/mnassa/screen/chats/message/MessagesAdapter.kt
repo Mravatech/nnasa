@@ -1,10 +1,10 @@
 package com.mnassa.screen.chats.message
 
-import androidx.recyclerview.widget.SortedList
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SortedList
 import com.mnassa.R
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.PostModel

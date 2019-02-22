@@ -1,9 +1,9 @@
 package com.mnassa.screen.wallet.send
 
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
 import android.view.View
 import com.bluelinelabs.conductor.Controller
+import com.google.android.material.tabs.TabLayout
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.GroupModel
@@ -17,7 +17,7 @@ import com.mnassa.screen.connections.select.SelectConnectionController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_send_points.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

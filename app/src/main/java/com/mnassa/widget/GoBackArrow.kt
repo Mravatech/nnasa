@@ -3,10 +3,10 @@ package com.mnassa.widget
 import android.app.Activity
 import android.content.Context
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import com.mnassa.R
 
 /**

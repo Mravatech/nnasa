@@ -1,11 +1,11 @@
 package com.mnassa.extensions
 
-import com.google.android.material.textfield.TextInputLayout
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
 import android.view.ViewGroup
 import android.widget.EditText
+import com.google.android.material.textfield.TextInputLayout
 
 /**
  * Created by Peter on 2/28/2018.

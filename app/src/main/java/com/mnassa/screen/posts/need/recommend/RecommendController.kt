@@ -2,21 +2,19 @@ package com.mnassa.screen.posts.need.recommend
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.InviteController
-import com.mnassa.screen.invite.InviteSource
-import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_post_recommend.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

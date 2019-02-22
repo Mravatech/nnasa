@@ -6,11 +6,8 @@ import com.mnassa.domain.model.Plural
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.domain.repository.DictionaryRepository
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -25,13 +22,13 @@ class DictionaryInteractorImpl(
 
     private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
 
-    override fun handleDictionaryUpdates(): Job {
-        return launchWorker {
+    override fun CoroutineScope.handleDictionaryUpdates() {
+        launchWorker {
             while (isActive) {
                 try {
                     repository.keepDictionarySynced(true)
-                    repository.getMobileUiVersion().consumeEach { serverVersion ->
-                        withContext(DefaultDispatcher) {
+                    repository.produceDictionaryVersion().consumeEach { serverVersion ->
+                        withContext(Dispatchers.Default) {
                             val mobileVersion = repository.getLocalDictionaryVersion()
                             if (serverVersion != mobileVersion) {
                                 val serverDict = repository.loadDictionary()

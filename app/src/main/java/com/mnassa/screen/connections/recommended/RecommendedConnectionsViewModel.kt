@@ -5,7 +5,7 @@ import androidx.annotation.RequiresPermission
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 09.03.2018.

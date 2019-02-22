@@ -9,8 +9,9 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.PersonalAccountDiffModelImpl
 import com.mnassa.domain.model.impl.ProfilePersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,7 +24,7 @@ class EditPersonalProfileViewModelImpl(
         private val placeFinderInteractor: PlaceFinderInteractor,
         private val userProfileInteractor: UserProfileInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), EditPersonalProfileViewModel {
 
-    override val openScreenChannel: ArrayBroadcastChannel<EditPersonalProfileViewModel.PersonalScreenCommander> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<EditPersonalProfileViewModel.PersonalScreenCommander> = BroadcastChannel(10)
     private var avatarSavedPath: String? = null
     private var avatarUri: Uri? = null
     override fun saveLocallyAvatarUri(uri: Uri) {
@@ -46,7 +47,7 @@ class EditPersonalProfileViewModelImpl(
             abilities: List<AccountAbility>,
             interests: List<TagModel>,
             offers: List<TagModel>) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)

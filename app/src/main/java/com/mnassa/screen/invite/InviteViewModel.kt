@@ -2,7 +2,7 @@ package com.mnassa.screen.invite
 
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.

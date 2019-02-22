@@ -1,7 +1,5 @@
 package com.mnassa.data.extensions
 
-import com.mnassa.data.BuildConfig
-
 /**
  * Created by Peter on 5/31/2018.
  */

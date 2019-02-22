@@ -3,14 +3,14 @@ package com.mnassa.screen.group.list
 import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.GroupsInteractor
-import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PermissionsModel
-import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by Peter on 5/14/2018.
@@ -28,21 +28,21 @@ class GroupListViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getInvitesToGroups().consumeTo(groupConnectionRequestsChannel)
         }
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getMyGroups().consumeTo(myGroupsChannel)
         }
 
-        handleException {
+        resolveExceptions {
             userProfileInteractor.getPermissions().consumeTo(permissionsChannel)
         }
     }
 
     override fun leave(group: GroupModel) {
-        handleException {
+        GlobalScope.resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.leaveGroup(groupId = group.id)
             }
@@ -50,7 +50,7 @@ class GroupListViewModelImpl(
     }
 
     override fun accept(group: GroupModel) {
-        handleException {
+        GlobalScope.resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.acceptInvite(groupId = group.id)
             }
@@ -58,7 +58,7 @@ class GroupListViewModelImpl(
     }
 
     override fun decline(group: GroupModel) {
-        handleException {
+        GlobalScope.resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.declineInvite(groupId = group.id)
             }

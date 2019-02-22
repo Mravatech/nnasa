@@ -3,7 +3,7 @@ package com.mnassa.domain.repository
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.TransactionSideModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 3/30/2018.

@@ -5,7 +5,7 @@ import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.domain.repository.InviteRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.

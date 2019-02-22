@@ -2,7 +2,7 @@ package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.

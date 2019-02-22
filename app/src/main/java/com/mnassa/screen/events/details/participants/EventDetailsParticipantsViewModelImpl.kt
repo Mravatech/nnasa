@@ -7,14 +7,15 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.canMarkParticipants
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentSkipListSet
 
 /**
@@ -33,9 +34,8 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             eventChannel.send(event)
-
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 if (it != null) {
                     eventChannel.send(it)
@@ -46,7 +46,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
             }
         }
 
-        handleException {
+        resolveExceptions {
             eventsInteractor.getAttendedUsersChannel(eventId).consumeEach {
                 attendedUserIds.clear()
                 attendedUserIds.addAll(it.mapNotNull { it.takeIf { it.isPresent }?.user?.id })
@@ -73,9 +73,9 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
     private var loadTicketsJob: Job? = null
     private fun loadTickets() {
         loadTicketsJob?.cancel()
-        loadTicketsJob = handleException {
+        loadTicketsJob = resolveExceptions {
             eventsInteractor.getTicketsChannel(eventId).consumeEach {
-                withContext(DefaultDispatcher) {
+                withContext(Dispatchers.Default) {
                     var hasConnections = false
                     var hasOtherUsers = false
                     val participants = it.mapNotNullTo(ArrayList<EventParticipantItem>(it.size)) {

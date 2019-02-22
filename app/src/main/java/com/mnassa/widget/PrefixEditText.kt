@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
-import androidx.core.content.ContextCompat
-import androidx.appcompat.widget.AppCompatEditText
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import com.mnassa.R
 
 class PrefixEditText : AppCompatEditText {

@@ -12,8 +12,8 @@ import com.mnassa.core.addons.await
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.ClientDataRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
 
 
 /**
@@ -36,7 +36,7 @@ class NetworkInteractorImpl(private val context: Context,
 
     override suspend fun awaitNetworkDisconnected() = disconnectedStateExecutor.await().run { Unit }
 
-    override fun isApiSupported(): ReceiveChannel<Boolean> {
+    override suspend fun isApiSupported(): ReceiveChannel<Boolean> {
         return clientDataRepository.getMinimumSupportedApiVersion().map { minApiVersion ->
             minApiVersion == null || appInfoProvider.versionCode >= minApiVersion
         }

@@ -1,11 +1,11 @@
 package com.mnassa.screen.invite
 
 import android.Manifest
-import com.google.android.material.snackbar.Snackbar
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.PhoneContactImpl
@@ -22,7 +22,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_to_mnassa.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 

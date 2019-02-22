@@ -17,7 +17,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.wallet.send.SendPointsController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_wallet.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

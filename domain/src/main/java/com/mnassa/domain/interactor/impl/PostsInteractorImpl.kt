@@ -1,16 +1,24 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.launchWorker
+import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import timber.log.Timber
+import kotlin.coroutines.coroutineContext
 
 /**
  * Created by Peter on 3/16/2018.
@@ -35,23 +43,11 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     override suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        val accountId = userRepository.getAccountIdOrException()
-
-        return mergedInfoPostsAndFeedMap[accountId]
-            ?.takeIf { !it.isClosedForReceive }
-            // Create and store new merged info posts and feed
-            // channel.
-            ?: run {
-                createMergedInfoPostsAndFeedChannel(mergedInfoPostsAndFeedPagination)
-                    .also {
-                        mergedInfoPostsAndFeedMap.clear()
-                        mergedInfoPostsAndFeedMap[accountId] = it
-                    }
-            }
+        return createMergedInfoPostsAndFeedChannel(mergedInfoPostsAndFeedPagination)
     }
 
-    private fun createMergedInfoPostsAndFeedChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        val output = ArrayChannel<ListItemEvent<List<PostModel>>>(MERGED_FEED_CHANNEL_CAPACITY)
+    private suspend fun createMergedInfoPostsAndFeedChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        val output = Channel<ListItemEvent<List<PostModel>>>(MERGED_FEED_CHANNEL_CAPACITY)
 
         var feedSuspended = true
         val feedBuffer: MutableList<ListItemEvent<List<PostModel>>> = ArrayList()
@@ -67,101 +63,86 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
             } catch (e: ClosedSendChannelException) {
                 // Close the source channel too
                 Timber.e(e)
-                source?.cancel(e)
+                source?.cancel()
             }
         }
 
-        // Load the info posts.
-        launchWorker {
-            loadInfoPosts()
-                .takeUnless { it.isEmpty() }
-                ?.toList()
-                ?.also {
-                    val event = ListItemEvent.Added<List<PostModel>>(it)
-                    send(null, event)
-                }
-
-            mutex.lock()
-
-            feedSuspended = false
-            feedBuffer.apply {
-                forEach {
-                    send(null, it)
-                }
-                clear()
-            }
-
-            mutex.unlock()
-
-            // Subscribe to info posts chanel with changes
-            // handling.
-            val infoPostsChannel = loadInfoPostsWithChangesHandling()
-            infoPostsChannel.consumeEach {
-                val batch = when (it) {
-                    is ListItemEvent.Added -> ListItemEvent.Added<PostModel>(it.item)
-                    is ListItemEvent.Changed -> ListItemEvent.Changed<PostModel>(it.item)
-                    is ListItemEvent.Moved -> ListItemEvent.Moved<PostModel>(it.item)
-                    is ListItemEvent.Cleared -> ListItemEvent.Cleared()
-                    is ListItemEvent.Removed -> it.previousChildName
-                        ?.let { key -> ListItemEvent.Removed<PostModel>(key) }
-                        ?: ListItemEvent.Removed<PostModel>(it.item)
-                }.toBatched()
-                send(infoPostsChannel, batch)
-            }
-        }
-
-        launchWorker {
-            val feedChannel = createFeedWithChangesHandlingChannel(pagination)
-            feedChannel.consumeEach { event ->
-                // Start loading the feed and store it in a buffer
-                // until info-posts are loaded.
-                if (feedSuspended) try {
-                    mutex.lock()
-
-                    if (feedSuspended) {
-                        feedBuffer += event
-                        return@consumeEach
+        val producers = coroutineContext.toCoroutineScope().launch {
+            // Load the info posts.
+            launchWorker {
+                loadInfoPosts()
+                    .takeUnless { it.isEmpty() }
+                    ?.toList()
+                    ?.also {
+                        val event = ListItemEvent.Added<List<PostModel>>(it)
+                        send(null, event)
                     }
-                } finally {
-                    mutex.unlock()
+
+                mutex.lock()
+
+                feedSuspended = false
+                feedBuffer.apply {
+                    forEach {
+                        send(null, it)
+                    }
+                    clear()
                 }
 
-                send(feedChannel, event)
+                mutex.unlock()
+
+                // Subscribe to info posts chanel with changes
+                // handling.
+                val infoPostsChannel = loadInfoPostsWithChangesHandling()
+                infoPostsChannel.consumeEach {
+                    val batch = when (it) {
+                        is ListItemEvent.Added -> ListItemEvent.Added<PostModel>(it.item)
+                        is ListItemEvent.Changed -> ListItemEvent.Changed<PostModel>(it.item)
+                        is ListItemEvent.Moved -> ListItemEvent.Moved<PostModel>(it.item)
+                        is ListItemEvent.Cleared -> ListItemEvent.Cleared()
+                        is ListItemEvent.Removed -> it.previousChildName
+                            ?.let { key -> ListItemEvent.Removed<PostModel>(key) }
+                            ?: ListItemEvent.Removed<PostModel>(it.item)
+                    }.toBatched()
+                    send(infoPostsChannel, batch)
+                }
             }
+
+            launchWorker {
+                val feedChannel = createFeedWithChangesHandlingChannel(pagination)
+                feedChannel.consumeEach { event ->
+                    // Start loading the feed and store it in a buffer
+                    // until info-posts are loaded.
+                    if (feedSuspended) try {
+                        mutex.lock()
+
+                        if (feedSuspended) {
+                            feedBuffer += event
+                            return@consumeEach
+                        }
+                    } finally {
+                        mutex.unlock()
+                    }
+
+                    send(feedChannel, event)
+                }
+            }
+        }
+
+        // Close the producers job when the
+        // channel dies.
+        output.invokeOnClose {
+            producers.cancel()
         }
 
         return output
     }
 
-    private fun createFeedWithChangesHandlingChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        return produce {
-            // Send all locally cached posts
-            // at once.
-            try {
-                val feedCached = postsRepository.loadFeedCached()
-                send(ListItemEvent.Added(feedCached))
-            } catch (_: Exception) {
-            }
-
-            postsRepository.loadFeedWithChangesHandling(pagination)
-                .withBuffer()
-                .consumeEach {
-                    send(it)
-                }
-        }
+    private suspend fun createFeedWithChangesHandlingChannel(pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return postsRepository.loadFeedWithChangesHandling(pagination).withBuffer()
     }
 
-    override suspend fun recheckAndReloadFeeds(): ListItemEvent<List<PostModel>> = postsRepository.recheckSavedPosts()
-
     override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        return produce {
-            try {
-                send(ListItemEvent.Added(postsRepository.preloadWall(accountId)))
-            } catch (e: Exception) {
-                Timber.e(e) //ignore exception here
-            }
-            postsRepository.loadWallWithChangesHandling(accountId).withBuffer().consumeEach { send(it) }
-        }
+        return postsRepository.loadWallWithChangesHandling(accountId).withBuffer()
     }
 
     override suspend fun loadInfoPosts(): List<InfoPostModel> = postsRepository.loadInfoPosts()
@@ -171,10 +152,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> = postsRepository.loadAllByGroupId(groupId)
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<PostModel> = postsRepository.preloadGroupFeed(groupId)
 
-    private val viewItemChannel = ArrayChannel<ListItemEvent<PostModel>>(100)
+    private val viewItemChannel = Channel<ListItemEvent<PostModel>>(100)
 
     init {
-        launchWorker {
+        GlobalScope.launchWorker {
             viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
@@ -268,9 +249,13 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     private suspend fun processImages(post: RawPostModel): List<String> {
-        return post.uploadedImages + post.imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
-        }.map { it.await() }
+        return post.uploadedImages + post.imagesToUpload
+            .map {
+                GlobalScope.asyncWorker { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_POSTS)) }
+            }
+            .map {
+                it.await()
+            }
     }
 
     override suspend fun getDefaultExpirationDays(): Long = postsRepository.getDefaultExpirationDays()

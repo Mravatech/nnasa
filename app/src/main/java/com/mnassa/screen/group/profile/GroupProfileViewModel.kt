@@ -1,9 +1,10 @@
 package com.mnassa.screen.group.profile
 
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.GroupModel
+import com.mnassa.domain.model.GroupPermissions
+import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 5/14/2018.

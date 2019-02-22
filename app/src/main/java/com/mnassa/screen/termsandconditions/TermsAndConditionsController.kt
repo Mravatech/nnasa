@@ -1,11 +1,11 @@
 package com.mnassa.screen.termsandconditions
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
 import com.mnassa.BuildConfig
 import com.mnassa.R
 import com.mnassa.domain.other.LanguageProvider

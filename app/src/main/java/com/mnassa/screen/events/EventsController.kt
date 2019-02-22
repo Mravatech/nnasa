@@ -1,10 +1,10 @@
 package com.mnassa.screen.events
 
-import androidx.lifecycle.Lifecycle
 import android.os.Bundle
+import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
@@ -25,6 +25,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.android.synthetic.main.new_items_panel.view.*
+import kotlinx.coroutines.GlobalScope
 import org.kodein.di.generic.instance
 import java.util.*
 
@@ -35,7 +36,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     override val layoutId: Int = R.layout.controller_events_list
     override val viewModel: EventsViewModel by instance()
     private val userInteractor: UserProfileInteractor by instance()
-    private val adapter by lazy { EventsRVAdapter(userInteractor) }
+    private val adapter by lazy { EventsRVAdapter(this@EventsController, userInteractor) }
     private val controllerSelectedExecutor = StateExecutor<Unit, Unit>(initState = Unit) {
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@EventsController)
@@ -80,7 +81,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             }
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.eventsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView },
@@ -154,7 +155,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     }
 
     private fun openEvent(event: EventModel) {
-        launchWorker {
+        GlobalScope.launchWorker {
             event.markAsOpened()
         }
 

@@ -1,9 +1,9 @@
 package com.mnassa.screen.posts.need.recommend.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.extensions.avatarRound

@@ -8,9 +8,11 @@ import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.domain.model.withBuffer
 import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
 import timber.log.Timber
 import java.util.*
 
@@ -21,8 +23,8 @@ import java.util.*
  */
 class ChatInteractorImpl(private val chatRepository: ChatRepository, private val userRepository: UserRepository) : ChatInteractor {
 
-    override suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<List<ChatRoomModel>>>  {
-        return produce {
+    override suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<List<ChatRoomModel>>> {
+        return GlobalScope.produce(Dispatchers.Unconfined) {
             try {
                 send(ListItemEvent.Added(chatRepository.preloadChatList()))
             } catch (e: Exception) {
@@ -33,7 +35,7 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
     }
 
     override suspend fun loadMessagesWithChangesHandling(chatId: String): ReceiveChannel<ListItemEvent<List<ChatMessageModel>>> {
-        return produce {
+        return GlobalScope.produce(Dispatchers.Unconfined) {
             try {
                 send(ListItemEvent.Added(chatRepository.preloadMessages(chatId)))
             } catch (e: Exception) {

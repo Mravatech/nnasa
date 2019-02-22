@@ -25,9 +25,9 @@ import kotlinx.android.synthetic.main.controller_registration.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.sub_reg_company.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

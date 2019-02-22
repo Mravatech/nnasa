@@ -18,6 +18,7 @@ import com.mnassa.screen.posts.info.details.InfoDetailsController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
 import com.mnassa.screen.posts.offer.details.OfferDetailsController
 import com.mnassa.screen.posts.profile.details.RecommendedProfileController
+import kotlinx.coroutines.GlobalScope
 
 /**
  * Created by Peter on 4/11/2018.
@@ -26,7 +27,7 @@ class PostDetailsFactory {
 
     fun newInstance(post: PostModel): Controller {
 
-        launchWorker {
+        GlobalScope.launchWorker {
             post.markAsOpened()
         }
 

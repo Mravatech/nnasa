@@ -6,11 +6,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
-import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.mnassa.R
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.in_out_come_view.view.*

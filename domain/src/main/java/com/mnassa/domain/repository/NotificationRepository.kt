@@ -2,7 +2,7 @@ package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.

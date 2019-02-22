@@ -2,7 +2,7 @@ package com.mnassa.data.network.api
 
 import com.mnassa.data.network.bean.retrofit.request.PushSettingsRequest
 import com.mnassa.data.network.bean.retrofit.response.PushSettingResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.PUT
 

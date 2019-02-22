@@ -4,7 +4,7 @@ import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 interface ChatMessageViewModel : MnassaViewModel {
     val messageChannel: BroadcastChannel<ListItemEvent<List<ChatMessageModel>>>

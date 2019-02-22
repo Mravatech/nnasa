@@ -1,10 +1,10 @@
 package com.mnassa.data.repository
 
-import com.mnassa.core.converter.ConvertersContext
-import com.mnassa.core.converter.convert
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.mnassa.core.converter.ConvertersContext
+import com.mnassa.core.converter.convert
 import com.mnassa.data.converter.EventAdditionInfo
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
@@ -26,9 +26,9 @@ import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.GroupsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.map
 import timber.log.Timber
 
 /**
@@ -44,80 +44,68 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                            private val groupsRepository: GroupsRepository) : EventsRepository {
 
     override suspend fun preloadEvents(): List<EventModel> {
-        return firestoreLockSuspend {
-            val serialNumber = userRepository.getSerialNumberOrException()
-            firestore
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
                     .collection(DatabaseContract.TABLE_ALL_EVENTS)
                     .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, serialNumber)
                     .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
                     .limit(DEFAULT_LIMIT.toLong())
                     .awaitList<EventDbEntity>()
                     .mapNotNull { mapEvent(it) }
-        }
     }
 
     override suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<ListItemEvent<EventModel>> {
-        return firestoreLockSuspend {
-            val serialNumber = userRepository.getSerialNumberOrException()
-            firestore
-                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
-                    .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
-                            exceptionHandler = exceptionHandler,
-                            pagination = pagination,
-                            queryBuilder = {
-                                it
-                                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, serialNumber)
-                                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
-                            },
-                            mapper = { mapEvent(it) }
-                    )
-        }
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_EVENTS)
+            .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
+                exceptionHandler = exceptionHandler,
+                pagination = pagination,
+                queryBuilder = {
+                    it
+                        .whereArrayContains(EventDbEntity.VISIBLE_FOR_USERS, serialNumber)
+                        .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
+                },
+                mapper = { mapEvent(it) }
+            )
     }
 
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>> {
-        return firestoreLockSuspend {
-            firestore
-                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
-                    .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
-                            exceptionHandler = exceptionHandler,
-                            queryBuilder = {
-                                it
-                                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
-                                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
-                            },
-                            mapper = { mapEvent(it, groupId) }
-                    )
-        }
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_EVENTS)
+            .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
+                exceptionHandler = exceptionHandler,
+                queryBuilder = {
+                    it
+                        .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
+                        .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
+                },
+                mapper = { mapEvent(it, groupId) }
+            )
     }
 
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel> {
-        return firestoreLockSuspend {
-            firestore
-                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
-                    .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
-                    .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
-                    .awaitList<EventDbEntity>()
-                    .let { it.mapNotNull { mapEvent(it, groupId) } }
-        }
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_EVENTS)
+            .whereArrayContains(EventDbEntity.VISIBLE_FOR_GROUPS, groupId)
+            .orderBy(EventDbEntity.CREATED_AT, Query.Direction.DESCENDING)
+            .awaitList<EventDbEntity>()
+            .let { it.mapNotNull { mapEvent(it, groupId) } }
     }
 
     override suspend fun getEventsChannel(eventId: String): ReceiveChannel<EventModel?> {
-        return firestoreLockSuspend {
-            firestore
-                    .collection(DatabaseContract.TABLE_ALL_EVENTS)
-                    .document(eventId)
-                    .toValueChannel<EventDbEntity>(exceptionHandler = exceptionHandler)
-                    .map { it?.let { mapEvent(it) } }
-        }
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_EVENTS)
+            .document(eventId)
+            .toValueChannel<EventDbEntity>(exceptionHandler = exceptionHandler)
+            .map { it?.let { mapEvent(it) } }
     }
 
     override suspend fun getTicketsChannel(eventId: String): ReceiveChannel<List<EventTicketModel>> {
-        return firestoreLockSuspend {
-            firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
-                    .document(eventId)
-                    .toListChannel<EventTicketDbEntity>(exceptionHandler)
-                    .map { converter.convertCollection(it, EventTicketModel::class.java) }
-        }
+        return firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
+            .document(eventId)
+            .toListChannel<EventTicketDbEntity>(exceptionHandler)
+            .map { converter.convertCollection(it, EventTicketModel::class.java) }
     }
 
     override suspend fun sendViewed(ids: List<String>) {
@@ -133,12 +121,10 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     }
 
     override suspend fun getTickets(eventId: String): List<EventTicketModel> {
-        return firestoreLockSuspend {
-            firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
-                    .document(eventId)
-                    .awaitList<EventTicketDbEntity>()
-                    .run { converter.convertCollection(this, EventTicketModel::class.java) }
-        }
+        return firestore.collection(DatabaseContract.TABLE_EVENT_TICKETS)
+            .document(eventId)
+            .awaitList<EventTicketDbEntity>()
+            .run { converter.convertCollection(this, EventTicketModel::class.java) }
     }
 
     override suspend fun buyTickets(eventId: String, ticketsCount: Long) {
@@ -146,23 +132,19 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
     }
 
     override suspend fun getAttendedUsers(eventId: String): List<EventAttendee> {
-        return firestoreLockSuspend {
-            firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
-                    .document(eventId)
-                    .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
-                    .awaitList<EventAttendeeAccountDbEntity>()
-                    .map { EventAttendee(converter.convert(it), it.presence ?: false) }
-        }
+        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+            .document(eventId)
+            .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+            .awaitList<EventAttendeeAccountDbEntity>()
+            .map { EventAttendee(converter.convert(it), it.presence ?: false) }
     }
 
     override suspend fun getAttendedUsersChannel(eventId: String): ReceiveChannel<List<EventAttendee>> {
-        return firestoreLockSuspend {
-            firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
-                    .document(eventId)
-                    .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
-                    .toListChannel<EventAttendeeAccountDbEntity>(exceptionHandler)
-                    .map { it.map { EventAttendee(converter.convert(it), it.presence ?: false) } }
-        }
+        return firestore.collection(DatabaseContract.TABLE_EVENT_ATTENDIES)
+            .document(eventId)
+            .collection(DatabaseContract.TABLE_EVENT_ATTENDIES_COLLECTION)
+            .toListChannel<EventAttendeeAccountDbEntity>(exceptionHandler)
+            .map { it.map { EventAttendee(converter.convert(it), it.presence ?: false) } }
     }
 
     override suspend fun saveAttendedUsers(eventId: String, presentUsers: List<String>, notPresentUsers: List<String>) {

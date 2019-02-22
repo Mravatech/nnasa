@@ -10,7 +10,7 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.event_date.view.*
-import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.channels.consume
 import timber.log.Timber
 import java.text.SimpleDateFormat
 

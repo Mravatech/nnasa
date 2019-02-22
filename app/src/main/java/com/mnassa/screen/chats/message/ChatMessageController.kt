@@ -4,10 +4,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -48,7 +49,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             view?.llNoMessages?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
             view?.rvMessages?.scrollToPosition(0)
         }
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchUI {
             viewModel.messageChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().llNoMessages }

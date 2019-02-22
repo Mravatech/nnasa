@@ -9,10 +9,10 @@ import com.mnassa.domain.model.TagModel
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.produce
 
 /**
  * Created by Peter on 3/6/2018.
@@ -22,11 +22,15 @@ class HomeViewModelImpl(private val countersInteractor: CountersInteractor,
                         private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), HomeViewModel {
 
     override val unreadEventsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
-        countersInteractor.numberOfUnreadEvents
+        with(countersInteractor) {
+            produceNumberOfUnreadEvents()
+        }
     }
 
     override val unreadNeedsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
-        countersInteractor.numberOfUnreadNeeds
+        with(countersInteractor) {
+            produceNumberOfUnreadNeeds()
+        }
     }
 
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {

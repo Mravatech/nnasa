@@ -1,13 +1,16 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -29,8 +32,8 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.controller_need_details.view.*
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -149,7 +152,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 pivImages.count = post.attachments.size
                 pivImages.selection = 0
 
-                vpImages.adapter = PostAttachmentsAdapter(post.attachments) { images, index ->
+                vpImages.adapter = PostAttachmentsAdapter(this@NeedDetailsController, post.attachments) { images, index ->
                     open(PhotoPagerController.newInstance(images, index))
                 }
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -215,19 +218,15 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             val post = viewModel.postChannel.consume { receive() }
             toolbar.title = fromDictionary(R.string.need_details_title).format(post.author.formattedName)
             if (post.isMyPost()) {
-                toolbar.onMoreClickListener = { view ->
-                    launchCoroutineUI {
-                        showMyPostMenu(view,
-                                viewModel.postChannel.consume { receive() })
-                    }
+                toolbar.onMoreClickListener = onClick { view ->
+                    val post = viewModel.postChannel.consumeOne()
+                    showMyPostMenu(view, post)
                 }
                 makePostActionsGone()
             } else {
-                toolbar.onMoreClickListener = { view ->
-                    launchCoroutineUI {
-                        showOtherUserPostMenu(view,
-                                viewModel.postChannel.consume { receive() })
-                    }
+                toolbar.onMoreClickListener = onClick { view ->
+                    val post = viewModel.postChannel.consumeOne()
+                    showOtherUserPostMenu(view, post)
                 }
                 if (post.canRecommend) makePostActionsVisible()
                 else makePostActionsGone()

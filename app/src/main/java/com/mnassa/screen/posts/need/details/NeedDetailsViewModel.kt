@@ -6,7 +6,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 3/19/2018.

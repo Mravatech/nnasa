@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.App
 import com.mnassa.R
@@ -28,7 +28,7 @@ import com.mnassa.screen.posts.need.details.adapter.PhotoPagerAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_event_details_info.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.text.SimpleDateFormat
 import java.util.*

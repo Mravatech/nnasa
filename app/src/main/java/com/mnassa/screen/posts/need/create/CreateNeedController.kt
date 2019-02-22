@@ -1,6 +1,5 @@
 package com.mnassa.screen.posts.need.create
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -10,13 +9,15 @@ import android.view.inputmethod.EditorInfo
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.core.permissions.ifAllGranted
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostPrivacyType
 import com.mnassa.domain.model.RawPostModel
-import com.mnassa.extensions.*
+import com.mnassa.extensions.SimpleTextWatcher
+import com.mnassa.extensions.formatAsMoney
+import com.mnassa.extensions.lengthOrZero
+import com.mnassa.extensions.startCropActivityForResult
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -26,7 +27,7 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 import timber.log.Timber
 

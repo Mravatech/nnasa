@@ -7,8 +7,10 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.withBuffer
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.*
 
 /**
  * Created by Peter on 09.08.2018.
@@ -25,7 +27,8 @@ class GroupEventsViewModelImpl(private val groupId: String,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleException {
+
+        resolveExceptions {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) groupChannel.send(it)
             }
@@ -33,6 +36,8 @@ class GroupEventsViewModelImpl(private val groupId: String,
     }
 
     override fun onAttachedToWindow(event: EventModel) {
-        handleException { eventsInteractor.onItemViewed(event) }
+        GlobalScope.resolveExceptions(showErrorMessage = false) {
+            eventsInteractor.onItemViewed(event)
+        }
     }
 }

@@ -2,7 +2,7 @@ package com.mnassa.screen.settings.push
 
 import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.

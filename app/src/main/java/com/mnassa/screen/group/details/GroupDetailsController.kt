@@ -24,8 +24,8 @@ import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_details.view.*
 import kotlinx.android.synthetic.main.item_group_member_round.view.*
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

@@ -8,11 +8,12 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 4/10/2018.
@@ -33,7 +34,7 @@ class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelPara
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             postChannel.consumeEach { post ->
                 loadConnectionStatus(post as RecommendedProfilePostModel)
             }
@@ -43,7 +44,7 @@ class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelPara
     private var loadConnectionStatusJob: Job? = null
     private fun loadConnectionStatus(recommendedProfilePostModel: RecommendedProfilePostModel) {
         loadConnectionStatusJob?.cancel()
-        loadConnectionStatusJob = handleException {
+        loadConnectionStatusJob = resolveExceptions {
             val profile = recommendedProfilePostModel.recommendedProfile
             if (profile != null) {
                 connectionsInteractor.getStatusesConnections(profile.id).consumeEach {
@@ -54,7 +55,7 @@ class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelPara
     }
 
     override fun connect(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionConnect(listOf(account.id))
             }

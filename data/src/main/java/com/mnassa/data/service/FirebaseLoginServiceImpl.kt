@@ -16,11 +16,11 @@ import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.PhoneValidationResult
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.service.FirebaseLoginService
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.RendezvousChannel
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -40,15 +40,16 @@ class FirebaseLoginServiceImpl(
         return PhoneValidationResult(useCustomAuth = useCustomAuth)
     }
 
-    override fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
-        val sendChannel: Channel<PhoneVerificationModel> = RendezvousChannel()
+    override suspend fun requestVerificationCode(phoneNumber: String, previousResponse: PhoneVerificationModel?): ReceiveChannel<PhoneVerificationModel> {
+        val sendChannel: Channel<PhoneVerificationModel> = Channel(Channel.RENDEZVOUS)
 
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 Timber.d("MNSA_LOGIN requestVerificationCode -> onVerificationCompleted -> ${credential.smsCode}")
-                launchWorker {
+                GlobalScope.launchWorker {
+                    signIn(credential)
+
                     try {
-                        signIn(credential)
                         sendChannel.send(OnVerificationCompleted(phoneNumber))
                         sendChannel.close()
                     } catch (e: Exception) {
@@ -63,7 +64,7 @@ class FirebaseLoginServiceImpl(
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken?) {
                 Timber.d("MNSA_LOGIN requestVerificationCode -> onCodeSent")
-                launchWorker {
+                GlobalScope.launchWorker {
                     sendChannel.send(OnCodeSent(
                             phoneNumber = phoneNumber,
                             verificationId = verificationId,
@@ -107,6 +108,6 @@ class FirebaseLoginServiceImpl(
 
     override suspend fun signOut() {
         FirebaseAuth.getInstance().signOut()
-        withContext(DefaultDispatcher) { FirebaseInstanceId.getInstance().deleteInstanceId() }
+        withContext(Dispatchers.Default) { FirebaseInstanceId.getInstance().deleteInstanceId() }
     }
 }

@@ -1,9 +1,9 @@
 package com.mnassa.screen.login.entercode
 
-import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.PhoneVerificationModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 23.02.2018.

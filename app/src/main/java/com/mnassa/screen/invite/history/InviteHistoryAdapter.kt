@@ -1,9 +1,9 @@
 package com.mnassa.screen.invite.history
 
-import androidx.recyclerview.widget.RecyclerView
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.domain.model.PhoneContactInvited
 import java.text.DateFormatSymbols

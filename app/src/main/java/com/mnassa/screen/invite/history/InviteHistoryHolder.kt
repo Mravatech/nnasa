@@ -1,8 +1,8 @@
 package com.mnassa.screen.invite.history
 
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 import com.mnassa.R
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.extensions.avatarRound

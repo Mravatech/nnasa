@@ -4,7 +4,7 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/17/2018.

@@ -3,8 +3,6 @@ package com.mnassa.extensions
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -12,6 +10,8 @@ import android.text.style.StyleSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.di.getInstance
@@ -19,7 +19,7 @@ import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.translation.fromDictionary
-import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.channels.consume
 import java.util.*
 
 /**

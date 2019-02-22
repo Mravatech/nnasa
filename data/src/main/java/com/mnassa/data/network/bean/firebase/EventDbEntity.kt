@@ -11,7 +11,7 @@ internal data class EventDbEntity(
         @SerializedName("allConnections") val allConnections: Boolean,
         @SerializedName("author") val author: ShortAccountDbEntity,
         @SerializedName("copyOwner") val copyOwner: String,
-        @SerializedName("counters") val counters: EventCountersDbEntity,
+        @SerializedName("counters") val counters: EventCountersDbEntity?,
         @SerializedName("createdAt") val createdAt: Long,
         @SerializedName("duration") val duration: EventDurationDbEntity?,
         @SerializedName("eventStartAt") val eventStartAt: Long,

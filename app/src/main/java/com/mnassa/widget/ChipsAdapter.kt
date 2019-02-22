@@ -11,10 +11,11 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.model.TagModel
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class ChipsAdapter(
         context: Context,
@@ -57,7 +58,7 @@ class ChipsAdapter(
         lastSearchText = text
         searchJob?.cancel()
 
-        searchJob = launchWorker(CoroutineStart.UNDISPATCHED) {
+        searchJob = GlobalScope.launchWorker(CoroutineStart.UNDISPATCHED) {
             searchMutex.withLock {
                 setResult(text, chipListener.getAllTags().filterLowercase(text))
             }

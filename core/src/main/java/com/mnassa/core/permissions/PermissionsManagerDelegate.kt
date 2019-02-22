@@ -8,9 +8,9 @@ import androidx.annotation.UiThread
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.core.events.awaitFirst
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -37,8 +37,7 @@ class PermissionsManagerDelegate(
      * */
     override suspend fun requestPermissions(permissions: List<String>): RequestPermissionsResult {
         //we always use UI thread to work with permissions
-        val result = async(UI) { requestPermissionsImpl(permissions) }.await()
-        return result
+        return withContext(Dispatchers.Main) { requestPermissionsImpl(permissions) }
     }
 
     /**
@@ -57,8 +56,7 @@ class PermissionsManagerDelegate(
      * */
     override suspend fun shouldShowRequestPermissionRationale(permission: String): Boolean {
         //we always use UI thread to work with permissions
-        val result = async(UI) { shouldShowRequestPermissionRationaleImpl(permission) }.await()
-        return result
+        return withContext(Dispatchers.Main) { shouldShowRequestPermissionRationaleImpl(permission) }
     }
 
     /**

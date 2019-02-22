@@ -5,8 +5,9 @@ import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by Peter on 4/2/2018.
@@ -29,13 +30,13 @@ class SelectConnectionViewModelImpl(private val additionalData: SelectConnection
     }
 
     private fun loadConnections() {
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getConnectedConnections().consumeTo(allConnectionsChannel)
         }
     }
 
     private fun loadConnectionsWithGroupMembers(groupId: String) {
-        handleException {
+        resolveExceptions {
             val connections = connectionsInteractor.getConnectedConnections().receive()
             val groupMembers = groupsInteractor.getGroupMembers(groupId).receive()
             val result = (connections + groupMembers).distinctBy { it.id }

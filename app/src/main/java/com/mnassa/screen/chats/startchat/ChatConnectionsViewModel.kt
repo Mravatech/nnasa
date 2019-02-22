@@ -2,7 +2,7 @@ package com.mnassa.screen.chats.startchat
 
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.

@@ -3,7 +3,7 @@ package com.mnassa.screen.registration
 import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 2/26/2018.

@@ -5,8 +5,11 @@ import com.mnassa.data.network.bean.retrofit.request.DeleteGroupRequest
 import com.mnassa.data.network.bean.retrofit.request.GroupConnectionRequest
 import com.mnassa.data.network.bean.retrofit.response.CreateGroupResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
-import kotlinx.coroutines.experimental.Deferred
-import retrofit2.http.*
+import kotlinx.coroutines.Deferred
+import retrofit2.http.Body
+import retrofit2.http.HTTP
+import retrofit2.http.POST
+import retrofit2.http.PUT
 
 /**
  * Created by Peter on 5/21/2018.

@@ -1,9 +1,9 @@
 package com.mnassa.data.converter
 
+import com.google.firebase.database.DataSnapshot
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.ConvertersContextRegistrationCallback
 import com.mnassa.core.converter.registerConverter
-import com.google.firebase.database.DataSnapshot
 import com.mnassa.data.extensions.mapList
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.ShortAccountDbEntity

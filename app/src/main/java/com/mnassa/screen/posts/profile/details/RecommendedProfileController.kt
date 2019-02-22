@@ -18,7 +18,7 @@ import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.controller_need_details.view.*
 import kotlinx.android.synthetic.main.recommended_profile.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

@@ -20,6 +20,10 @@
         android:theme="@style/AppTheme"
         tools:replace="allowBackup">
 
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false"/>
+
         <!-- ==================================== ACTIVITY ==================================== -->
         <activity android:name=".activity.MainActivity"
             android:screenOrientation="portrait"

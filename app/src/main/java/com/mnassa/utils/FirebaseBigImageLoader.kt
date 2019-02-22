@@ -5,14 +5,12 @@ import android.net.Uri
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * @author Artem Chepurnoy
@@ -37,10 +35,10 @@ class FirebaseBigImageLoader(
     override fun loadImage(requestId: Int, uri: Uri, callback: ImageLoader.Callback) {
         cancel(requestId)
 
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             val downloadUri: Uri
             try {
-                downloadUri = withContext(DefaultDispatcher) { uri.downloadUri() }
+                downloadUri = withContext(Dispatchers.Default) { uri.downloadUri() }
             } catch (e: Exception) {
                 callback.onFail(e)
                 return@launch
@@ -55,10 +53,10 @@ class FirebaseBigImageLoader(
     }
 
     override fun prefetch(uri: Uri) {
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             val downloadUri: Uri
             try {
-                downloadUri = withContext(DefaultDispatcher) { uri.downloadUri() }
+                downloadUri = withContext(Dispatchers.Default) { uri.downloadUri() }
             } catch (e: Exception) {
                 return@launch
             }
@@ -82,7 +80,9 @@ class FirebaseBigImageLoader(
         return suspendCoroutine { continuation ->
             ref.downloadUrl
                 .addOnSuccessListener(continuation::resume)
-                .addOnFailureListener(continuation::resumeWithException)
+                .addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
         }
     }
 }

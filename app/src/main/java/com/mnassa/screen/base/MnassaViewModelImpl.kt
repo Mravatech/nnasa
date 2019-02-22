@@ -2,28 +2,19 @@ package com.mnassa.screen.base
 
 import android.os.Bundle
 import androidx.annotation.CallSuper
-import android.util.Log
-import com.google.firebase.FirebaseException
 import com.mnassa.App
-import com.mnassa.R
 import com.mnassa.core.BaseViewModelImpl
-import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.core.addons.launchCoroutineWorker
-import com.mnassa.domain.exception.*
-import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.translation.fromDictionary
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.JobCancellationException
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import com.mnassa.exceptions.internalResolveExceptions
+import com.mnassa.exceptions.resolveExceptions
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinTrigger
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
-import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
@@ -36,7 +27,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     }
     private val appInfoProvider: AppInfoProvider by instance()
 
-    override val errorMessageChannel: ArrayBroadcastChannel<String> = ArrayBroadcastChannel(10)
+    override val errorMessageChannel: BroadcastChannel<String> = BroadcastChannel(10)
     override val isProgressEnabledChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel()
 
 
@@ -47,58 +38,17 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     }
 
     protected open suspend fun <T> handleExceptionsSuspend(function: suspend () -> T): T? {
-        var result: T? = null
-        try {
-            result = function()
-        } catch (e: JobCancellationException) {
-            //ignore
-            Timber.d(e)
-        } catch (e: FirebaseMappingException) {
-            Timber.e(e)
-            if (appInfoProvider.isDebug) {
-                val message = "Mapping exception at\n${e.path}\n${Log.getStackTraceString(e.cause)}"
+        return internalResolveExceptions(function) { message ->
+            try {
                 errorMessageChannel.send(message)
-            } else e.message.takeIf { !it.isNullOrBlank() }?.apply { errorMessageChannel.send(this) }
-        } catch (e: NetworkDisableException) {
-            Timber.d(e)
-            errorMessageChannel.send(fromDictionary(R.string.error_no_internet))
-        } catch (e: AccountDisabledException) {
-            Timber.d(e)
-            errorMessageChannel.send(fromDictionary(R.string.blocked_account_message))
-        } catch (e: NotAuthorizedException) {
-            Timber.e(e)
-            val loginInteractor by kodein.instance<LoginInteractor>()
-            loginInteractor.signOut(LogoutReason.NotAuthorized())
-        } catch (e: NetworkException) {
-            Timber.d(e)
-            e.message.takeIf { !it.isBlank() }?.apply { errorMessageChannel.send(this) }
-        } catch (e: FirebaseException) {
-            Timber.e(e)
-            val message = e.localizedMessage ?: e.message
-            message?.let { errorMessageChannel.send(it) }
-        } catch (e: Throwable) {
-            //ignore all exceptions here
-            Timber.e(e)
+            } catch (_: ClosedSendChannelException) {
+            }
         }
-        return result
     }
 
-    open fun <T> handleException(function: suspend () -> T): Job {
-        return launchCoroutineWorker { handleExceptionsSuspend(function) }
-    }
-
-    protected open fun showProgress() = handleException { isProgressEnabledChannel.send(true) }
-    protected open fun hideProgress() = handleException { isProgressEnabledChannel.send(false) }
+    protected open fun showProgress() = resolveExceptions(showErrorMessage = false) { isProgressEnabledChannel.send(true) }
+    protected open fun hideProgress() = resolveExceptions { isProgressEnabledChannel.send(false) }
     protected open suspend fun <T> withProgressSuspend(function: suspend () -> T): T {
-        showProgress()
-        return try {
-            function()
-        } finally {
-            hideProgress()
-        }
-    }
-
-    protected open fun <T> withProgress(function: () -> T): T {
         showProgress()
         return try {
             function()

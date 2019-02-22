@@ -1,16 +1,16 @@
 package com.mnassa.screen.posts.offer.create
 
 import android.os.Bundle
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Created by Peter on 5/3/2018.
@@ -22,7 +22,7 @@ class CreateOfferViewModelImpl(private val offerId: String?,
                                private val userInteractor: UserProfileInteractor,
                                private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), CreateOfferViewModel {
 
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private val categoryToSubCategory = HashMap<String, MutableList<OfferCategoryModel>>()
     private lateinit var offerCategoriesPromise: Deferred<List<OfferCategoryModel>>
     private val applyChangesMutex = Mutex()
@@ -31,7 +31,7 @@ class CreateOfferViewModelImpl(private val offerId: String?,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        offerCategoriesPromise = async {
+        offerCategoriesPromise = GlobalScope.asyncWorker {
             handleExceptionsSuspend<List<OfferCategoryModel>> {
                 val categories = mutableListOf<OfferCategoryModel>()
                 postsInteractor.loadOfferCategories().forEach {

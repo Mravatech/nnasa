@@ -3,12 +3,14 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
+import com.mnassa.domain.model.withBuffer
 import com.mnassa.domain.repository.NotificationRepository
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.channels.produce
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,12 +20,13 @@ import kotlinx.coroutines.experimental.channels.produce
 class NotificationInteractorImpl(private val notificationRepository: NotificationRepository) : NotificationInteractor {
 
     override suspend fun loadOldNotifications(): ReceiveChannel<ListItemEvent<List<NotificationModel>>> {
-        return produce(context = Unconfined) {
+        return GlobalScope.produce(Dispatchers.Unconfined) {
             send(ListItemEvent.Added(getPreloadedOldNotifications()))
-            notificationRepository.loadOldNotifications().consumeEach {
-                if (!isActive) return@consumeEach
-                send(it.toBatched())
-            }
+            notificationRepository.loadOldNotifications()
+                .withBuffer(bufferWindow = LOAD_NOTIFICATIONS_BUFFER_WINDOW)
+                .consumeEach {
+                    send(it)
+                }
         }
     }
 
@@ -32,4 +35,8 @@ class NotificationInteractorImpl(private val notificationRepository: Notificatio
 
     override suspend fun loadNewNotifications(): ReceiveChannel<ListItemEvent<List<NotificationModel>>> = notificationRepository.loadNewNotifications().map { it.toBatched() }
     override suspend fun notificationView(resetCounter: Boolean, all: Boolean, ids: List<String>) = notificationRepository.notificationView(resetCounter, all, ids)
+
+    companion object {
+        private const val LOAD_NOTIFICATIONS_BUFFER_WINDOW = 500L
+    }
 }

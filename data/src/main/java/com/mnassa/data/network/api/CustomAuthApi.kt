@@ -4,7 +4,7 @@ import com.mnassa.data.network.bean.retrofit.request.CheckSmsRequest
 import com.mnassa.data.network.bean.retrofit.request.SendSmsRequest
 import com.mnassa.data.network.bean.retrofit.response.CheckSmsResponse
 import com.mnassa.data.network.bean.retrofit.response.SendSmsResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
 

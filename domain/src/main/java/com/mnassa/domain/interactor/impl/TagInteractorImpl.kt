@@ -1,12 +1,12 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.repository.TagRepository
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consume
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ReceiveChannel
 import java.util.*
 
 /**
@@ -21,7 +21,7 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
     override suspend fun get(id: String): TagModel? = tagRepository.get(id)
 
     override suspend fun get(tagIds: List<String>): List<TagModel> {
-        return tagIds.map { async { get(it) } }.mapNotNull { it.await() }
+        return tagIds.map { GlobalScope.asyncWorker { get(it) } }.mapNotNull { it.await() }
     }
 
     override suspend fun getAll(): List<TagModel> = tagRepository.getAll()

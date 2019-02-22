@@ -39,8 +39,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
             return EventModelImpl(
                     id = input.id,
                     author = converter.convert(input.author),
-                    commentsCount = input.counters.comments ?: 0,
-                    viewsCount = input.counters.views ?: 0,
+                    commentsCount = input.counters?.comments ?: 0,
+                    viewsCount = input.counters?.views ?: 0,
                     createdAt = Date(input.createdAt),
                     duration = convertDuration(input),
                     startAt = Date(input.eventStartAt),

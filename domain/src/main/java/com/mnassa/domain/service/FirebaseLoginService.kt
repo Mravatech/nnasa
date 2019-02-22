@@ -2,7 +2,7 @@ package com.mnassa.domain.service
 
 import com.mnassa.domain.model.PhoneValidationResult
 import com.mnassa.domain.model.PhoneVerificationModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
@@ -11,7 +11,7 @@ interface FirebaseLoginService {
 
     suspend fun checkPhone(phoneNumber: String, promoCode: String? = null): PhoneValidationResult
 
-    fun requestVerificationCode(
+    suspend fun requestVerificationCode(
             phoneNumber: String,
             previousResponse: PhoneVerificationModel? = null): ReceiveChannel<PhoneVerificationModel>
 

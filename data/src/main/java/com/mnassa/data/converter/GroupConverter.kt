@@ -9,8 +9,6 @@ import com.mnassa.data.network.bean.retrofit.request.CreateGroupRequest
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.GroupModelImpl
-import com.mnassa.domain.model.impl.ShortAccountModelImpl
-import com.mnassa.domain.repository.UserRepository
 
 /**
  * Created by Peter on 6/4/2018.

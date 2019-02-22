@@ -8,8 +8,8 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RecommendedConnectionsImpl
 import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.ContactsRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
 
 /**
  * Created by Peter on 3/5/2018.

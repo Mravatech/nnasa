@@ -4,7 +4,7 @@ import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 import java.util.*
 
 /**
@@ -12,7 +12,6 @@ import java.util.*
  */
 interface PostsViewModel : MnassaViewModel {
     val newsFeedChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
-    val recheckFeedsChannel: BroadcastChannel<ListItemEvent<List<PostModel>>>
 
     val permissionsChannel: BroadcastChannel<PermissionsModel>
     fun onAttachedToWindow(post: PostModel)
@@ -25,6 +24,4 @@ interface PostsViewModel : MnassaViewModel {
 
     fun getLastViewedPostDate(): Date?
     fun setLastViewedPostDate(date: Date?)
-
-    fun recheckFeeds()
 }

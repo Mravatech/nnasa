@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
@@ -7,8 +8,10 @@ import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.EventsRepository
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 
 /**
@@ -20,10 +23,10 @@ class EventsInteractorImpl(
         private val storageInteractor: StorageInteractor,
         private val tagInteractor: TagInteractor) : EventsInteractor {
 
-    private val viewItemChannel = ArrayChannel<ListItemEvent<EventModel>>(10)
+    private val viewItemChannel = Channel<ListItemEvent<EventModel>>(10)
 
     init {
-        launchWorker {
+        GlobalScope.launchWorker {
             viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
                     try {
@@ -50,9 +53,18 @@ class EventsInteractorImpl(
     override suspend fun resetCounter() = eventsRepository.resetCounter()
 
     override suspend fun createEvent(model: RawEventModel) {
-        val allImages = model.uploadedImages + model.imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
-        }.map { it.await() }
+        val allImages = model.uploadedImages +
+                coroutineScope {
+                    model.imagesToUpload
+                        .map {
+                            asyncWorker {
+                                storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS))
+                            }
+                        }
+                        .map {
+                            it.await()
+                        }
+                }
         model.uploadedImages.clear()
         model.uploadedImages.addAll(allImages)
         model.tagIds.clear()
@@ -62,9 +74,16 @@ class EventsInteractorImpl(
     }
 
     override suspend fun editEvent(model: RawEventModel) {
-        val allImages = model.uploadedImages + model.imagesToUpload.map {
-            async { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
-        }.map { it.await() }
+        val allImages = model.uploadedImages +
+                coroutineScope {
+                    model.imagesToUpload
+                        .map {
+                            asyncWorker { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_EVENTS)) }
+                        }
+                        .map {
+                            it.await()
+                        }
+                }
         model.uploadedImages.clear()
         model.uploadedImages.addAll(allImages)
         model.tagIds.clear()
@@ -120,7 +139,7 @@ class EventsInteractorImpl(
     }
 
     override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
-        return produce {
+        return GlobalScope.produce(Dispatchers.Unconfined) {
             try {
                 send(ListItemEvent.Added(loadAllImmediately()))
             } catch (e: Exception) {

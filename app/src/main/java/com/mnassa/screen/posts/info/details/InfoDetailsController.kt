@@ -1,8 +1,8 @@
 package com.mnassa.screen.posts.info.details
 
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.InfoPostModel
@@ -14,7 +14,7 @@ import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.need.details.adapter.PostAttachmentsAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_info_post_details.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -54,7 +54,7 @@ class InfoDetailsController(args: Bundle) : MnassaControllerImpl<InfoDetailsView
                 pivImages.count = post.attachments.size
                 pivImages.selection = 0
 
-                vpImages.adapter = PostAttachmentsAdapter(post.attachments) { images, index ->
+                vpImages.adapter = PostAttachmentsAdapter(this@InfoDetailsController, post.attachments) { images, index ->
                     open(PhotoPagerController.newInstance(images, index))
                 }
                 vpImages.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {

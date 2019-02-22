@@ -1,18 +1,18 @@
 package com.mnassa.screen.events
 
-import com.mnassa.domain.exception.NetworkException
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.ListItemEvent
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.delay
 import java.util.*
-import java.util.Collections.min
 import kotlin.math.min
 
 /**
@@ -33,11 +33,13 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
             })
 
     override fun onAttachedToWindow(event: EventModel) {
-        handleException { eventsInteractor.onItemViewed(event) }
+        GlobalScope.resolveExceptions(showErrorMessage = false) {
+            eventsInteractor.onItemViewed(event)
+        }
 
         //reset counter with debounce
         resetCounterJob?.cancel()
-        resetCounterJob = async {
+        resetCounterJob = GlobalScope.asyncWorker {
             delay(1_000)
             resetCounter()
         }
@@ -52,13 +54,9 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     }
 
     private fun resetCounter() {
-        handleException {
-            try {
-                eventsInteractor.resetCounter()
-                isCounterReset = true
-            } catch (e: NetworkException) {
-                //ignore
-            }
+        resolveExceptions {
+            eventsInteractor.resetCounter()
+            isCounterReset = true
         }
     }
 

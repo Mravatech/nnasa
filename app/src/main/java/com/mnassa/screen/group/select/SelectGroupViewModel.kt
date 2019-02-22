@@ -2,7 +2,7 @@ package com.mnassa.screen.group.select
 
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 5/23/2018.

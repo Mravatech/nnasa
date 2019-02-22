@@ -1,26 +1,26 @@
 package com.mnassa.screen.base
 
 import android.app.Dialog
-import androidx.lifecycle.Lifecycle
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.View
+import androidx.annotation.UiThread
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
-import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.interactor.SettingsInteractor
-import com.mnassa.domain.model.LogoutReason
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinTrigger
@@ -69,7 +69,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     }
 
     protected open fun subscribeToErrorEvents() {
-        launchCoroutineUI {
+        launchUI {
             viewModel.errorMessageChannel.consumeEach {
                 val context = view?.context ?: return@consumeEach
                 AlertDialog.Builder(context)
@@ -82,7 +82,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     }
 
     protected open fun subscribeToProgressEvents() {
-        launchCoroutineUI {
+        launchUI {
             viewModel.isProgressEnabledChannel.consumeEach { isProgressEnabled ->
                 if (isProgressEnabled) {
                     showProgress()
@@ -97,7 +97,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         val isMostParentController = parentController == null
         if (!isMostParentController) return
 
-        launchCoroutineUI {
+        launchUI {
             networkInteractor.isApiSupported().consumeEach { isSupported ->
                 closeApiNotSupportedDialog()
                 if (!isSupported) {
@@ -144,10 +144,16 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
             }
         }
 
-    protected suspend fun getViewSuspend(): View {
-        val localView = view
-        if (localView != null) return localView
-        lifecycle.awaitFirst { it.ordinal >= Lifecycle.Event.ON_START.ordinal && it.ordinal < Lifecycle.Event.ON_STOP.ordinal }
-        return requireNotNull(view)
-    }
+    @UiThread
+    protected suspend fun getViewSuspend(): View =
+        view ?: run {
+            // Wait for the controller to
+            // start.
+            lifecycle.awaitFirst {
+                it.ordinal >= Lifecycle.Event.ON_START.ordinal &&
+                    it.ordinal < Lifecycle.Event.ON_STOP.ordinal
+            }
+
+            view!!
+        }
 }

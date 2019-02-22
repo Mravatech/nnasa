@@ -6,11 +6,10 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Created by Peter on 4/30/2018.
@@ -21,7 +20,7 @@ class CreateGeneralPostViewModelImpl(private val postId: String?,
                                      private val placeFinderInteractor: PlaceFinderInteractor,
                                      private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), CreateGeneralPostViewModel {
 
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private val applyChangesMutex = Mutex()
 
     override suspend fun applyChanges(post: RawPostModel) {

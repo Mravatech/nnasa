@@ -1,12 +1,11 @@
 package com.mnassa.screen.posts.need.sharing
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.App
 import com.mnassa.R
-import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.GroupsInteractor
@@ -21,8 +20,7 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.buildnetwork.BuildNetworkAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_sharing_options.view.*
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

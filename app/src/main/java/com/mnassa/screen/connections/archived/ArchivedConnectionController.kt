@@ -1,14 +1,14 @@
 package com.mnassa.screen.connections.archived
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
-import org.kodein.di.generic.instance
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_archived.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
+import org.kodein.di.generic.instance
 
 /**
  * Created by Peter on 9.03.2018.
@@ -33,16 +33,14 @@ class ArchivedConnectionController : MnassaControllerImpl<ArchivedConnectionView
         }
 
         adapter.isLoadingEnabled = true
-        launchCoroutineUI { thisRef ->
-            thisRef().adapter.disconnectTimeoutDays = thisRef().viewModel.getDisconnectTimeoutDays()
+        launchCoroutineUI {
+            adapter.disconnectTimeoutDays = viewModel.getDisconnectTimeoutDays()
 
-            thisRef().viewModel.declinedConnectionsChannel.consumeEach {
-                with (thisRef()) {
-                    adapter.isLoadingEnabled = false
-                    adapter.set(it)
-                    view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
-                    view.rvArchivedConnection.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
-                }
+            viewModel.declinedConnectionsChannel.consumeEach {
+                adapter.isLoadingEnabled = false
+                adapter.set(it)
+                view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+                view.rvArchivedConnection.visibility = if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
             }
         }
     }

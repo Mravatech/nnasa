@@ -1,7 +1,7 @@
 package com.mnassa.data.repository
 
-import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.data.extensions.awaitList
 import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.api.FirebaseSettingsApi
@@ -16,8 +16,8 @@ import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.domain.model.impl.PushSettingModelImpl
 import com.mnassa.domain.repository.SettingsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
 
 /**
  * Created by IntelliJ IDEA.

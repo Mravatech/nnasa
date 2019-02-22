@@ -3,7 +3,7 @@ package com.mnassa.domain.interactor.impl
 import com.mnassa.domain.interactor.SettingsInteractor
 import com.mnassa.domain.model.PushSettingModel
 import com.mnassa.domain.repository.SettingsRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.

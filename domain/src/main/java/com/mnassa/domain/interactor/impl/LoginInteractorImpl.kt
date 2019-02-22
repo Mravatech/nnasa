@@ -1,9 +1,9 @@
 package com.mnassa.domain.interactor.impl
 
+import com.mnassa.core.addons.asyncUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.LogoutReason
@@ -14,10 +14,10 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.CustomLoginService
 import com.mnassa.domain.service.FirebaseLoginService
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -31,7 +31,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
 
     private var useCustomAuth = false
 
-    override val onLogoutListener: SimpleCompositeEventListener<LogoutReason> = SimpleCompositeEventListener()
+    override val onLogoutListener: BroadcastChannel<LogoutReason> = BroadcastChannel(1)
 
     override fun isLoggedIn(): Boolean = userRepository.getAccountIdOrNull() != null
 
@@ -70,17 +70,17 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         userRepository.setCurrentAccount(null)
         postsRepository.clearSavedPosts()
         if (wasLoggedIn) {
-            launchUI { onLogoutListener.emit(reason) }
+            GlobalScope.launchUI { onLogoutListener.send(reason) }
         }
     }
 
-    override fun handleUserStatus(): Job {
+    override fun CoroutineScope.handleUserStatus() {
         var logoutJob: Job? = null
         var consumerJob: Job? = null
-        return handle(userRepository::getFirebaseUserId) { firebaseUserId ->
+        handle(userRepository::getFirebaseUserId) { firebaseUserId ->
             logoutJob?.cancel()
             consumerJob?.cancel()
-            consumerJob = launch(coroutineContext + DefaultDispatcher) {
+            consumerJob = launchWorker {
 
                 // Listen the channel of user
                 // status.
@@ -91,7 +91,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
                     // status change.
                     logoutJob?.cancel()
                     logoutJob = if (it is UserStatusModel.Disabled) {
-                        async(UI) {
+                        GlobalScope.asyncUI {
                             delay(1_000)
                             signOut(LogoutReason.UserBlocked())
                         }
@@ -103,13 +103,13 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    override fun handleAccountStatus(): Job {
+    override fun CoroutineScope.handleAccountStatus() {
         var logoutJob: Job? = null
         var consumerJob: Job? = null
-        return handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
+        handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
             logoutJob?.cancel()
             consumerJob?.cancel()
-            consumerJob = launch(coroutineContext + DefaultDispatcher) {
+            consumerJob = launchWorker {
 
                 // Listen the channel of account
                 // status.
@@ -120,7 +120,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
                     // status change.
                     logoutJob?.cancel()
                     logoutJob = if (it is UserStatusModel.Disabled) {
-                        async(UI) {
+                        GlobalScope.asyncUI {
                             delay(1_000)
                             signOut(LogoutReason.AccountBlocked())
                         }
@@ -132,14 +132,14 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    override fun handleAccountRefresh(): Job {
+    override fun CoroutineScope.handleAccountRefresh() {
         var consumerJob: Job? = null
-        return handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
+        handle(userProfileInteractor::getAccountIdOrNull) { accountId ->
             consumerJob?.cancel()
-            consumerJob = launch(coroutineContext + DefaultDispatcher) {
+            consumerJob = launchWorker {
                 run check@{
                     userRepository.getSerialNumberOrNull() ?: return@check
-                    return@launch
+                    return@launchWorker
                 }
 
                 // Reload the account model
@@ -153,7 +153,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
         }
     }
 
-    private fun <T : Any> handle(
+    private fun <T : Any> CoroutineScope.handle(
         getter: () -> T?,
         callback: suspend CoroutineScope.(T) -> Unit
     ): Job {

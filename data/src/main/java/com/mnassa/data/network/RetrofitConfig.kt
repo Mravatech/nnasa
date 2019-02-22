@@ -2,11 +2,11 @@ package com.mnassa.data.network
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.other.LanguageProvider
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor

@@ -4,9 +4,9 @@ import android.view.View
 import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.screen.base.adapter.BasePaginationRVAdapter
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 8/6/2018.

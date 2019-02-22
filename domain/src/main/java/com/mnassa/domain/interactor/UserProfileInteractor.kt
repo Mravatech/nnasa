@@ -2,7 +2,7 @@ package com.mnassa.domain.interactor
 
 import com.mnassa.core.events.CompositeEventListener
 import com.mnassa.domain.model.*
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/21/2018.
