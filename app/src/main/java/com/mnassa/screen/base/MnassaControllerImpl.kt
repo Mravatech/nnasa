@@ -83,9 +83,9 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
 
     protected open fun subscribeToProgressEvents() {
         launchUI {
-            viewModel.isProgressEnabledChannel.consumeEach { isProgressEnabled ->
-                if (isProgressEnabled) {
-                    showProgress()
+            viewModel.isProgressEnabledChannel.consumeEach { event ->
+                if (event is ShowProgressEvent) {
+                    showProgress(event.hideKeyboard)
                 } else {
                     hideProgress()
                 }
@@ -116,8 +116,11 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     }
 
     private var progressDialog: Dialog? = null
-    protected fun showProgress() {
-        hideKeyboard()
+    protected fun showProgress(hideKeyboard: Boolean) {
+        if (hideKeyboard) {
+            hideKeyboard()
+        }
+
         if (progressDialog != null) return
         progressDialog?.dismiss()
         val dialogHelper: DialogHelper by instance()

@@ -8,5 +8,5 @@ import kotlinx.coroutines.channels.BroadcastChannel
  */
 interface MnassaViewModel : BaseViewModel {
     val errorMessageChannel: BroadcastChannel<String>
-    val isProgressEnabledChannel: BroadcastChannel<Boolean>
+    val isProgressEnabledChannel: BroadcastChannel<ProgressEvent>
 }

@@ -105,7 +105,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
             rvImages.adapter = attachedImagesAdapter
 
-            showProgress()
+            showProgress(true)
             launchCoroutineUI {
                 initCategorySpinner()
                 if (args.containsKey(EXTRA_OFFER)) {

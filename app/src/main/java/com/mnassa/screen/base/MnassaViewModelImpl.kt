@@ -28,7 +28,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     private val appInfoProvider: AppInfoProvider by instance()
 
     override val errorMessageChannel: BroadcastChannel<String> = BroadcastChannel(10)
-    override val isProgressEnabledChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel()
+    override val isProgressEnabledChannel: ConflatedBroadcastChannel<ProgressEvent> = ConflatedBroadcastChannel()
 
 
     @CallSuper
@@ -46,10 +46,18 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         }
     }
 
-    protected open fun showProgress() = resolveExceptions(showErrorMessage = false) { isProgressEnabledChannel.send(true) }
-    protected open fun hideProgress() = resolveExceptions { isProgressEnabledChannel.send(false) }
-    protected open suspend fun <T> withProgressSuspend(function: suspend () -> T): T {
-        showProgress()
+    protected open fun showProgress(hideKeyboard: Boolean = ShowProgressEvent.HIDE_KEYBOARD) =
+        resolveExceptions(showErrorMessage = false) {
+            isProgressEnabledChannel.send(ShowProgressEvent(hideKeyboard))
+        }
+
+    protected open fun hideProgress() =
+        resolveExceptions {
+            isProgressEnabledChannel.send(HideProgressEvent())
+        }
+
+    protected open suspend fun <T> withProgressSuspend(hideKeyboard: Boolean = ShowProgressEvent.HIDE_KEYBOARD, function: suspend () -> T): T {
+        showProgress(hideKeyboard)
         return try {
             function()
         } finally {
