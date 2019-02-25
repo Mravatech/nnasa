@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -46,12 +47,12 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:foreground="@drawable/shadow_up_down">
+                android:foreground="@drawable/shadow_up_down"
+                app:layout_collapseMode="parallax">
                 <ImageView
                     android:id="@+id/ivAvatarSquare"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    app:layout_collapseMode="parallax"
                     tools:src="@drawable/ic_empty_ava" />
             </FrameLayout>
 
