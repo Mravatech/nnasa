@@ -40,11 +40,8 @@ deps.support = support
 def archComponents = [:]
 
 versions.archComponents = '1.1.1'
-versions.room_version = "1.0.0"
 archComponents.lifecycleExt = "androidx.lifecycle:lifecycle-extensions:2.0.0"
 archComponents.viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
-archComponents.roomRuntime = "androidx.room:room-runtime:2.1.0-alpha04"
-archComponents.roomProcessor = "androidx.room:room-compiler:2.1.0-alpha04"
 
 archComponents.runtime = "androidx.arch.core:core-runtime:2.0.0"
 archComponents.common = "androidx.arch.core:core-common:2.0.0"

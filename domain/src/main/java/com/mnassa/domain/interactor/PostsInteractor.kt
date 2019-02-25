@@ -20,7 +20,7 @@ interface PostsInteractor {
     suspend fun loadInfoPost(postId: String): PostModel?
 
     //account wall
-    suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>>
+    suspend fun loadWallWithChangesHandling(accountId: String, pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     //group wall
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>>

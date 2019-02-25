@@ -56,10 +56,6 @@ dependencies {
     implementation deps.network.gsonconverter
     implementation deps.network.logging
 
-    //room
-    implementation deps.archComponents.roomRuntime
-    kapt deps.archComponents.roomProcessor
-
     //other
     implementation deps.other.logger
     implementation deps.stetho.http

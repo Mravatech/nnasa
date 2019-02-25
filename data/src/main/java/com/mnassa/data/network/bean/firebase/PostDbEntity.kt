@@ -49,6 +49,9 @@ internal data class PostDbEntity(
 ) : HasIdMaybe {
     companion object {
         const val PROPERTY_CREATED_AT = "createdAt"
+        const val INFO_FOR_USERS = "infoFor"
+        const val VISIBLE_FOR_USERS = "visibleFor"
+        const val VISIBLE_FOR_GROUPS = "visibleForCommunities"
     }
 }
 

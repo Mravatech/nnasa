@@ -141,8 +141,8 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
         return postsRepository.loadFeedWithChangesHandling(pagination).withBuffer()
     }
 
-    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>> {
-        return postsRepository.loadWallWithChangesHandling(accountId).withBuffer()
+    override suspend fun loadWallWithChangesHandling(accountId: String, pagination: PaginationController?): ReceiveChannel<ListItemEvent<List<PostModel>>> {
+        return postsRepository.loadWallWithChangesHandling(accountId, pagination).withBuffer()
     }
 
     override suspend fun loadInfoPosts(): List<InfoPostModel> = postsRepository.loadInfoPosts()
