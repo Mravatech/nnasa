@@ -94,14 +94,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     //==============================================================================================
 
     override suspend fun preloadWall(accountId: String): List<PostModel> {
-        val tableName = if (accountId == userRepository.getAccountIdOrException()) {
-            DatabaseContract.TABLE_PRIVATE_WALL
-        } else {
-            DatabaseContract.TABLE_PUBLIC_WALL
-        }
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-            .document(accountId)
-            .collection(tableName)
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
+            .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
             .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
             .limit(DEFAULT_LIMIT.toLong())
             .awaitList<PostShortDbEntity>()
@@ -109,18 +106,15 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadWallWithChangesHandling(accountId: String, pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
-        val tableName = if (accountId == userRepository.getAccountIdOrException()) {
-            DatabaseContract.TABLE_PRIVATE_WALL
-        } else {
-            DatabaseContract.TABLE_PUBLIC_WALL
-        }
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-            .document(accountId)
-            .collection(tableName)
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
             .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                 exceptionHandler,
                 queryBuilder = { collection ->
                     collection
+                        .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
+                        .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
                         .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                 },
                 pagination = pagination,
