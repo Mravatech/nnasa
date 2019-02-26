@@ -6,6 +6,7 @@ import androidx.viewpager.widget.ViewPager
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.ShortAccountModel
@@ -32,6 +33,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
 import kotlinx.android.synthetic.main.controller_need_details.view.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -49,7 +51,12 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     protected var post: PostModel? = null
     override val viewModel: NeedDetailsViewModel by instance(arg = getParams(args))
     override var sharingOptions = PostPrivacyOptions.DEFAULT
-        set(value) = viewModel.repost(value)
+        set(value) {
+            GlobalScope.launchUI {
+                getViewSuspend()
+                viewModel.repost(value)
+            }
+        }
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
     private val tagsAdapter = PostTagRVAdapter()
