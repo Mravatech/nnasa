@@ -20,7 +20,7 @@
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Light">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
+            <com.mnassa.widget.MnassaCollapsingToolbarLayout
                 android:id="@+id/collapsingToolbarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 </androidx.appcompat.widget.Toolbar>
 
 
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
+            </com.mnassa.widget.MnassaCollapsingToolbarLayout>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tlEventTabs"
