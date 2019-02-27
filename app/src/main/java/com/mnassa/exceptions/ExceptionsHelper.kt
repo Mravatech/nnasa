@@ -28,7 +28,6 @@ fun <T : CoroutineScope> T.resolveExceptions(
 ): Job =
     launchWorker {
         internalResolveExceptions(block) { message ->
-            /*
             if (showErrorMessage) if (this@resolveExceptions is MnassaViewModel) {
                 // Send message to a dedicated error message
                 // channel.
@@ -41,7 +40,6 @@ fun <T : CoroutineScope> T.resolveExceptions(
                     Toast.makeText(App.context, message, Toast.LENGTH_LONG).show()
                 }
             }
-            */
         }
     }
 
@@ -56,11 +54,13 @@ suspend fun <T> internalResolveExceptions(
     } catch (e: Exception) {
         Timber.e("Handled exception", e)
 
-        val message = e.toMessage()
-        if (message != null) {
-            //onMessage(message)
+        if (e !is NotAuthorizedException) {
+            val message = e.toMessage()
+            if (message != null) {
+                onMessage(message)
+            }
         }
-/*
+
         when (e) {
             is NotAuthorizedException -> {
                 val interactor = App.context.getInstance<LoginInteractor>()
@@ -74,7 +74,7 @@ suspend fun <T> internalResolveExceptions(
             }
             else -> {
             }
-        }*/
+        }
 
         null
     }
