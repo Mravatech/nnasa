@@ -5,9 +5,9 @@ import androidx.room.Room
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.convert
+import com.mnassa.data.cache.Cached
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.database.MnassaDb
 import com.mnassa.data.database.entity.PostForUser
@@ -24,7 +24,6 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
-import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
@@ -32,13 +31,11 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.coroutines.coroutineContext
 
 /**
  * Created by Peter on 3/15/2018.
@@ -57,6 +54,8 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                 .fallbackToDestructiveMigration()
                 .build()
     }
+
+    private val cachedDefaultExpirationDays = Cached<Long>()
 
     override suspend fun loadInfoPosts(): List<InfoPostModel> {
         val accountId = userRepository.getAccountIdOrException()
@@ -307,9 +306,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun getDefaultExpirationDays(): Long {
-        return db.child(DatabaseContract.TABLE_CLIENT_DATA)
-                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME)
-                .await(exceptionHandler)!!
+        return cachedDefaultExpirationDays
+            .getOr {
+                db.child(DatabaseContract.TABLE_CLIENT_DATA)
+                    .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME)
+                    .await(exceptionHandler)!!
+            }
     }
 
     override suspend fun hideInfoPost(postId: String) {

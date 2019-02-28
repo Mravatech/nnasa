@@ -13,6 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
+import timber.log.Timber
 
 /**
  * Created by Peter on 2/20/2018.
@@ -26,6 +27,14 @@ class SplashViewModelImpl(private val loginInteractor: LoginInteractor,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        GlobalScope.asyncWorker {
+            try {
+                postsInteractor.getDefaultExpirationDays()
+            } catch (e: Exception) {
+                Timber.e("Failed to get default expiration days", e)
+            }
+        }
 
         resolveExceptions {
             if (loginInteractor.isLoggedIn()) {
