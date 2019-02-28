@@ -9,6 +9,8 @@ import com.mnassa.R
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.end_prefix_view.view.*
 import java.util.concurrent.TimeUnit
+import com.mnassa.extensions.addTextChangedListener
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,20 +42,17 @@ class EndPrefixEditText : LinearLayout {
         inflate(context, R.layout.end_prefix_view, this)
         tvFloatingLabel.text = fromDictionary(R.string.post_expires_in)
         tvPrefix.text = fromDictionary(R.string.post_expires_day_s).replace("%d", "")
+        etEditableText.addTextChangedListener {
+            tvEditableTextGhost.text = it
+        }
         etEditableText.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 val colorRes = ContextCompat.getColor(context, R.color.accent)
                 tvFloatingLabel.setTextColor(colorRes)
-                vFakeBottomView.setBackgroundColor(colorRes)
             } else {
                 val colorRes = ContextCompat.getColor(context, R.color.chip_edit_text_hint)
                 tvFloatingLabel.setTextColor(colorRes)
-                vFakeBottomView.setBackgroundColor(colorRes)
             }
-        }
-        this.setOnClickListener {
-            etEditableText.requestFocus()
-            etEditableText.setSelection(etEditableText.text.toString().length)
         }
     }
 
