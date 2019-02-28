@@ -1,7 +1,6 @@
 package com.mnassa.exceptions
 
 import android.widget.Toast
-import com.google.firebase.FirebaseException
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchUI
@@ -15,10 +14,7 @@ import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.translation.fromDictionary
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.net.HttpURLConnection
 
@@ -95,6 +91,6 @@ fun Throwable.toMessage(): String? =
                 null
             }
         }
-        is FirebaseException -> localizedMessage ?: message
-        else -> null
+        is CancellationException -> null
+        else -> localizedMessage ?: message
     }?.takeUnless { it.isBlank() }
