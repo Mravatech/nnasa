@@ -170,7 +170,18 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Quer
                                     null
                                 }
 
-                                return@async dbEntity?.let { mapper(it) }
+                                return@async dbEntity?.let {
+                                    try {
+                                        mapper(it)
+                                    } catch (e: Exception) {
+                                        val path = snapshot.path
+                                        val msg =
+                                            "Mapping exception: class: ${OutType::class.java.name} id: $path"
+                                        Timber.e(e, msg)
+
+                                        null
+                                    }
+                                }
                             },
                             third = eventType
                         )
