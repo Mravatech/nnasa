@@ -7,6 +7,7 @@ import com.mnassa.core.BaseViewModelImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.exceptions.internalResolveExceptions
 import com.mnassa.exceptions.resolveExceptions
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -37,7 +38,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         super.onCreate(savedInstanceState)
     }
 
-    protected open suspend fun <T> handleExceptionsSuspend(function: suspend () -> T): T? {
+    protected open suspend fun <T> handleExceptionsSuspend(function: suspend CoroutineScope.() -> T): T? {
         return internalResolveExceptions(function) { message ->
             try {
                 errorMessageChannel.send(message)

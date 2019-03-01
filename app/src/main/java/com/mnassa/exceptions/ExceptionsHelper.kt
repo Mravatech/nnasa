@@ -12,6 +12,7 @@ import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
+import com.mnassa.screen.base.MnassaController
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.*
@@ -20,27 +21,32 @@ import java.net.HttpURLConnection
 
 fun <T : CoroutineScope> T.resolveExceptions(
     showErrorMessage: Boolean = true,
-    block: suspend () -> Unit
+    block: suspend CoroutineScope.() -> Unit
 ): Job =
     launchWorker {
         internalResolveExceptions(block) { message ->
-            if (showErrorMessage) if (this@resolveExceptions is MnassaViewModel) {
-                // Send message to a dedicated error message
-                // channel.
-                try {
-                    errorMessageChannel.send(message)
-                } catch (_: Throwable) {
-                }
-            } else {
-                launchUI {
-                    Toast.makeText(App.context, message, Toast.LENGTH_LONG).show()
+            if (showErrorMessage) {
+                val viewModel = this@resolveExceptions as? MnassaViewModel
+                    ?: (this@resolveExceptions as? MnassaController<*>)
+                        ?.viewModel as? MnassaViewModel
+                if (viewModel != null) {
+                    // Send message to a dedicated error message
+                    // channel.
+                    try {
+                        viewModel.errorMessageChannel.send(message)
+                    } catch (_: Throwable) {
+                    }
+                } else {
+                    launchUI {
+                        Toast.makeText(App.context, message, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
     }
 
 suspend fun <T> internalResolveExceptions(
-    block: suspend () -> T,
+    block: suspend CoroutineScope.() -> T,
     onMessage: suspend (String) -> Unit
 ): T? =
     try {
