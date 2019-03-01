@@ -11,6 +11,8 @@ interface PaginationObserver {
      */
     val isBusy: Boolean
 
+    val isCompleted: Boolean
+
     fun onNextPageRequested(limit: Long)
 
 }

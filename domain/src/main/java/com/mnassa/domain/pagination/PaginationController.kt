@@ -28,6 +28,18 @@ class PaginationController(
             return false
         }
 
+    /**
+     * `true` if any of the observers were
+     * completed.
+     */
+    private val isCompleted: Boolean
+        get() {
+            observers.forEach {
+                if (it.isCompleted) return true
+            }
+            return false
+        }
+
     private var lastNextPageTimestamp = 0L
 
     /**
@@ -46,7 +58,7 @@ class PaginationController(
 
     fun requestNextPage(pageSize: Long) {
         val now = SystemClock.elapsedRealtime()
-        if (isBusy || now - lastNextPageTimestamp < MIN_UPDATE_TIME) {
+        if (isCompleted || isBusy || now - lastNextPageTimestamp < MIN_UPDATE_TIME) {
             return
         }
 
