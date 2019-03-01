@@ -64,13 +64,13 @@ import com.mnassa.screen.connections.sent.SentConnectionsViewModel
 import com.mnassa.screen.connections.sent.SentConnectionsViewModelImpl
 import com.mnassa.screen.deeplink.DeeplinkHandler
 import com.mnassa.screen.deeplink.DeeplinkHandlerImpl
+import com.mnassa.screen.events.EventDetailsFactory
 import com.mnassa.screen.events.EventsViewModel
 import com.mnassa.screen.events.EventsViewModelImpl
 import com.mnassa.screen.events.create.CreateEventViewModel
 import com.mnassa.screen.events.create.CreateEventViewModelImpl
 import com.mnassa.screen.events.create.date.DateTimePickerViewModel
 import com.mnassa.screen.events.create.date.DateTimePickerViewModelImpl
-import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.events.details.EventDetailsViewModel
 import com.mnassa.screen.events.details.EventDetailsViewModelImpl
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
@@ -255,7 +255,7 @@ private val viewModelsModule = Kodein.Module {
                         walletInteractor = instance())
             EventDetailsInfoController::class.java ->
                 CommentsWrapperForEventViewModelImpl(
-                        eventId = pair.second.getString(EventDetailsController.EXTRA_EVENT_ID),
+                        eventId = pair.second.getString(EventDetailsFactory.EXTRA_EVENT_ID),
                         commentsInteractor = instance(),
                         eventsInteractor = instance())
             else -> throw IllegalArgumentException("Controller ${pair.first} not supported for CommentsWrapper!")
@@ -429,6 +429,7 @@ private val otherModule = Kodein.Module {
     bind<CountryHelper>() with singleton { CountryHelper(instance()) }
     bind<PlayServiceHelper>() with singleton { PlayServiceHelper(instance()) }
     bind<PostDetailsFactory>() with singleton { PostDetailsFactory() }
+    bind<EventDetailsFactory>() with singleton { EventDetailsFactory() }
     bind<InviteSourceHolder>() with singleton { InviteSourceHolder() }
-    bind<DeeplinkHandler>() with singleton { DeeplinkHandlerImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<DeeplinkHandler>() with singleton { DeeplinkHandlerImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
 }

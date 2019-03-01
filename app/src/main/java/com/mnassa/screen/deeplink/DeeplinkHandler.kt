@@ -37,6 +37,7 @@ import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED
 import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED_BY_POST
 import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED_IN_EVENT
 import com.mnassa.screen.deeplink.NotificationType.USER_WAS_RECOMMENDED_TO_YOU
+import com.mnassa.screen.events.EventDetailsFactory
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.list.GroupListController
@@ -58,6 +59,7 @@ interface DeeplinkHandler {
 }
 
 class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
+                          private val eventDetailsFactory: EventDetailsFactory,
                           private val inviteSourceHolder: InviteSourceHolder,
                           private val postsInteractor: PostsInteractor,
                           private val eventsInteractor: EventsInteractor,
@@ -87,7 +89,7 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                 extras.containsKey(EVENT_ID) -> {
                     val eventId = extras.getAndRemove(EVENT_ID)
                     val event = loadEventByIdOrException(eventId)
-                    EventDetailsController.newInstance(event)
+                    eventDetailsFactory.newInstance(event)
                 }
                 extras.containsKey(WALLET_AMOUNT) -> {
                     extras.getAndRemove(WALLET_AMOUNT)
@@ -164,7 +166,7 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
             NEW_EVENT_ATTENDEE,
             EVENT_CANCELLING -> {
                 val event = loadEventByIdOrException(notificationModel.extra.event?.id)
-                EventDetailsController.newInstance(event)
+                eventDetailsFactory.newInstance(event)
             }
             INVITES_NUMBER_CHANGED -> {
                 inviteSourceHolder.source = InviteSource.Notification()
@@ -183,7 +185,7 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                     }
                     notificationModel.type.toLowerCase().contains(EVENT_KEYWORD) -> {
                         val event = loadEventByIdOrException(notificationModel.extra.event?.id)
-                        EventDetailsController.newInstance(event)
+                        eventDetailsFactory.newInstance(event)
                     }
                     else -> {
                         val account = (

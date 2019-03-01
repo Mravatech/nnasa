@@ -25,6 +25,8 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.CommentsRewardModel
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.complaintother.ComplaintOtherController
+import com.mnassa.screen.events.EventDetailsFactory.Companion.EXTRA_EVENT
+import com.mnassa.screen.events.EventDetailsFactory.Companion.EXTRA_EVENT_ID
 import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.events.details.info.EventDetailsInfoController
 import com.mnassa.screen.events.details.participants.EventDetailsParticipantsController
@@ -207,15 +209,6 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
     override fun close(self: Controller) = mnassaRouter.close(self)
 
     companion object {
-        private const val EXTRA_EVENT = "EXTRA_EVENT"
-        const val EXTRA_EVENT_ID = "EXTRA_EVENT_ID"
         private const val OTHER = "other"
-
-        fun newInstance(event: EventModel): EventDetailsController {
-            val args = Bundle()
-            args.putString(EXTRA_EVENT_ID, event.id)
-            args.putSerializable(EXTRA_EVENT, event)
-            return EventDetailsController(args)
-        }
     }
 }
