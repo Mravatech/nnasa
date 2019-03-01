@@ -6,7 +6,10 @@ import com.bluelinelabs.conductor.Controller
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.NotificationModel
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.chats.ChatListController
 import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.deeplink.NotificationType.AUTO_SUGGEST_YOU_CAN_HELP
@@ -76,23 +79,14 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                             ?: return ChatListController.newInstance()
                     ChatMessageController.newInstance(chatId)
                 }
-                extras.containsKey(POST_ID) && (extras.getString(NOTIFICATION_TYPE)?.contains(AWARENESS_KEYWORD) ?: false) -> {
-                    val postId = extras.getAndRemove(POST_ID)?.takeIf { it.isNotBlank() }
-                            ?: error("$POST_ID is empty (awareness)")
-                    val post = postsInteractor.loadInfoPost(postId) ?: error("Post not found $postId")
-                    postDetailsFactory.newInstance(post)
-                }
                 extras.containsKey(POST_ID) -> {
-                    val postId = extras.getAndRemove(POST_ID)?.takeIf { it.isNotBlank() }
-                            ?: error("$POST_ID is empty")
-                    val post = postsInteractor.loadById(postId).receiveOrNull() ?: error("Post not found $postId")
+                    val postId = extras.getAndRemove(POST_ID)
+                    val post = loadPostByIdOrException(postId)
                     postDetailsFactory.newInstance(post)
                 }
                 extras.containsKey(EVENT_ID) -> {
-                    val eventId = extras.getAndRemove(EVENT_ID)?.takeIf { it.isNotBlank() }
-                            ?: error("$EVENT_ID is empty")
-                    val event = eventsInteractor.loadByIdChannel(eventId).receiveOrNull()
-                            ?: error("Event not found $eventId")
+                    val eventId = extras.getAndRemove(EVENT_ID)
+                    val event = loadEventByIdOrException(eventId)
                     EventDetailsController.newInstance(event)
                 }
                 extras.containsKey(WALLET_AMOUNT) -> {
@@ -102,15 +96,13 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
                 extras.containsKey(ACCOUNT_ID_1) -> {
                     val accountId = extras.getAndRemove(ACCOUNT_ID_1)?.takeIf { it.isNotBlank() }
                             ?: error("$ACCOUNT_ID_1 is empty")
-                    val account = profileInteractor.getProfileByIdChannel(accountId).receiveOrNull()
-                            ?: error("Account with accountId not found $accountId")
+                    val account = loadProfileByIdOrException(accountId)
                     ProfileController.newInstance(account)
                 }
                 extras.containsKey(ACCOUNT_ID_2) -> {
                     val accountId = extras.getAndRemove(ACCOUNT_ID_2)?.takeIf { it.isNotBlank() }
                             ?: error("$ACCOUNT_ID_2 is empty")
-                    val account = profileInteractor.getProfileByIdChannel(accountId).receiveOrNull()
-                            ?: error("Account with id not found $accountId")
+                    val account = loadProfileByIdOrException(accountId)
                     ProfileController.newInstance(account)
                 }
                 extras.get(NOTIFICATION_TYPE) == INVITES_NUMBER_CHANGED -> {
@@ -148,7 +140,8 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
             I_WAS_RECOMMENDED,
             AUTO_SUGGEST_YOU_CAN_HELP,
             ONE_DAY_TO_EXPIRATION_OF_POST -> {
-                postDetailsFactory.newInstance(notificationModel.extra.post ?: return null)
+                val post = loadPostByIdOrException(notificationModel.extra.post?.id)
+                postDetailsFactory.newInstance(post)
             }
             NEW_USER_JOINED,
             POST_REPOST,
@@ -157,16 +150,21 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
             USER_WAS_RECOMMENDED_TO_YOU,
             PRIVATE_CHAT_MESSAGE,
             RESPONSE_CHAT_MESSAGE -> {
-                val account = notificationModel.extra.recommended
-                        ?: notificationModel.extra.reffered ?: notificationModel.extra.author
-                ProfileController.newInstance(account ?: return null)
+                val account = (
+                        notificationModel.extra.recommended
+                            ?: notificationModel.extra.reffered
+                        )?.id?.let { profileInteractor.getProfileById(it) }
+                    ?: notificationModel.extra.author
+                    ?: error("Account not found")
+                ProfileController.newInstance(account)
             }
             I_WAS_RECOMMENDED_IN_EVENT,
             USER_WAS_RECOMMENDED_IN_EVENT,
             NEW_EVENT_BY_ADMIN,
             NEW_EVENT_ATTENDEE,
             EVENT_CANCELLING -> {
-                EventDetailsController.newInstance(notificationModel.extra.event ?: return null)
+                val event = loadEventByIdOrException(notificationModel.extra.event?.id)
+                EventDetailsController.newInstance(event)
             }
             INVITES_NUMBER_CHANGED -> {
                 inviteSourceHolder.source = InviteSource.Notification()
@@ -180,26 +178,50 @@ class DeeplinkHandlerImpl(private val postDetailsFactory: PostDetailsFactory,
             else -> {
                 when {
                     notificationModel.type.toLowerCase().contains(POST_KEYWORD) -> {
-                        notificationModel.extra.post?.let { post -> postDetailsFactory.newInstance(post) }
+                        val post = loadPostByIdOrException(notificationModel.extra.post?.id)
+                        postDetailsFactory.newInstance(post)
                     }
                     notificationModel.type.toLowerCase().contains(EVENT_KEYWORD) -> {
-                        notificationModel.extra.event?.let { event -> EventDetailsController.newInstance(event) }
+                        val event = loadEventByIdOrException(notificationModel.extra.event?.id)
+                        EventDetailsController.newInstance(event)
                     }
                     else -> {
-                        val account = notificationModel.extra.recommended
-                                ?: notificationModel.extra.reffered
-                                ?: notificationModel.extra.author
-                        account?.let { ProfileController.newInstance(it) }
+                        val account = (
+                                notificationModel.extra.recommended
+                                    ?: notificationModel.extra.reffered
+                                )?.id?.let { profileInteractor.getProfileById(it) }
+                            ?: notificationModel.extra.author
+                            ?: error("Account not found")
+                        ProfileController.newInstance(account)
                     }
                 }
             }
         }
     }
 
+    private suspend fun loadPostByIdOrException(postId: String?): PostModel {
+        return postsInteractor
+            .loadById(postId?.takeIf { it.isNotBlank() } ?: error("Post ID is empty"))
+            .receive()
+            ?: error("Post[$postId] not found")
+    }
+
+    private suspend fun loadEventByIdOrException(eventId: String?): EventModel {
+        return eventsInteractor
+            .loadByIdChannel(eventId?.takeIf { it.isNotBlank() } ?: error("Event ID is empty"))
+            .receive()
+            ?: error("Event[$eventId] not found")
+    }
+
+    private suspend fun loadProfileByIdOrException(accountId: String?): ShortAccountModel {
+        return profileInteractor
+            .getProfileById(accountId?.takeIf { it.isNotBlank() } ?: error("Account ID is empty"))
+            ?: error("Account[$accountId] not found")
+    }
+
     private companion object {
         const val POST_KEYWORD = "post"
         const val EVENT_KEYWORD = "event"
-        const val AWARENESS_KEYWORD = "awareness"
 
         const val NOTIFICATION_TYPE = "type"
         const val CHAT_ID = "chatId"

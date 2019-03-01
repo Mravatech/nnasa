@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.deeplink.DeeplinkHandler
@@ -93,16 +95,24 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         view?.rvNotifications?.scrollToPosition(0)
     }
 
-    private val isNotificationClickProcessed = AtomicBoolean(false)
     private fun onNotificationClickHandle(item: NotificationModel) {
         if (!item.isOld) {
             viewModel.notificationView(item.id)
         }
-        if (isNotificationClickProcessed.getAndSet(true)) return
-        launchCoroutineUI(CoroutineStart.UNDISPATCHED) {
-            deeplinkHandler.handle(item)?.let { open(it) }
-            delay(500)
-        }.invokeOnCompletion { isNotificationClickProcessed.set(false) }
+
+        resolveExceptions {
+            launchUI {
+                showProgress()
+                try {
+                    val controller = deeplinkHandler.handle(item)
+                    if (controller != null) {
+                        open(controller)
+                    }
+                } finally {
+                    hideProgress()
+                }
+            }
+        }
     }
 
     companion object {

@@ -117,7 +117,7 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
             }
             USER_WAS_RECOMMENDED_TO_YOU -> {
                 val authorName = item.extra.author?.formattedName ?: ""
-                val name = item.extra.recommended?.formattedName ?: ""
+                val name = getRecommendedName(item)
                 val recommend = fromDictionary(fromDictionary(R.string.notification_user_was_recommended_to_you), fromDictionary(R.string.notification_recommended_you))
                 val text = "$authorName $recommend $name"
                 itemView.tvNotificationInfo.text = getTwoSpanText(text, authorName, name, Color.BLACK)
@@ -174,13 +174,14 @@ class NotificationHolder(itemView: View, private val onClickListener: View.OnCli
     }
 
     private fun getRecommendedName(item: NotificationModel): String {
-        val recommended = item.extra.recommended ?: return ""
-        val name = if (recommended.accountType == AccountType.PERSONAL) {
-            "${recommended.personalInfo?.firstName} ${recommended.personalInfo?.lastName}"
-        } else {
-            recommended.organizationInfo?.organizationName
-        }
-        return requireNotNull(name)
+        return item.extra.recommended
+            ?.let { recommended ->
+                recommended.organizationInfo?.organizationName
+                    ?: recommended.personalInfo
+                        ?.let {
+                            "${it.firstName} ${it.lastName}"
+                        }
+            } ?: ""
     }
 
     private fun getOneSpanText(text: String, spanText: String, color: Int): SpannableString {
