@@ -135,7 +135,7 @@ di.android = "org.kodein.di:kodein-di-framework-android-core:${versions.kodein}"
 deps.di = di
 
 //============================================== NETWORK ===========================================
-versions.okHttp = '3.13.1'
+versions.okHttp = '3.12.0' // don't update, latest versions do not support KitKat
 versions.retrofit = '2.5.0'
 versions.retrofitGson = '2.5.0'
 
