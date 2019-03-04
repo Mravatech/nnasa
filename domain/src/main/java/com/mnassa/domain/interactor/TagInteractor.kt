@@ -1,7 +1,7 @@
 package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.TagModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by IntelliJ IDEA.

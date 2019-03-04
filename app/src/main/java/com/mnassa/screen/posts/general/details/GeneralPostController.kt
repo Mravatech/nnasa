@@ -6,13 +6,12 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.formattedName
+import com.mnassa.extensions.consumeOne
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.general.create.CreateGeneralPostController
 import com.mnassa.screen.posts.need.details.NeedDetailsController
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
-import kotlinx.coroutines.experimental.channels.consume
 import org.kodein.di.generic.instance
 
 /**
@@ -26,7 +25,7 @@ class GeneralPostController(args: Bundle) : NeedDetailsController(args) {
     override fun bindToolbar(toolbar: MnassaToolbar) {
         super.bindToolbar(toolbar)
         launchCoroutineUI {
-            val post = viewModel.postChannel.openSubscription().consume { receive() }
+            val post = viewModel.postChannel.consumeOne()
             toolbar.title = "${post.author.formattedName} ${fromDictionary(R.string.general_post_title)}"
         }
     }

@@ -7,11 +7,15 @@ import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.delay
-import timber.log.Timber
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.delay
 
 /**
  * Created by Peter on 2/21/2018.
@@ -25,22 +29,22 @@ class MainViewModelImpl(
         private val groupsInteractor: GroupsInteractor
 ) : MnassaViewModelImpl(), MainViewModel {
 
-    override val openScreenChannel: ArrayBroadcastChannel<MainViewModel.ScreenType> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<MainViewModel.ScreenType> = BroadcastChannel(10)
 
     override val unreadChatsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
-        countersInteractor.numberOfUnreadChats
+        countersInteractor.produceNumberOfUnreadChats()
     }
     override val unreadNotificationsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
-        countersInteractor.numberOfUnreadNotifications
+        countersInteractor.produceNumberOfUnreadNotifications()
     }
     override val unreadConnectionsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel {
-        countersInteractor.numberOfRequested
+        countersInteractor.produceNumberOfRequested()
     }
     private val unreadEventsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel(
-            receiveChannelProvider = { countersInteractor.numberOfUnreadEvents }
+            receiveChannelProvider = { countersInteractor.produceNumberOfUnreadEvents() }
     )
     private val unreadNeedsCountChannel: ConflatedBroadcastChannel<Int> by ProcessAccountChangeConflatedBroadcastChannel(
-            receiveChannelProvider = { countersInteractor.numberOfUnreadNeeds }
+            receiveChannelProvider = { countersInteractor.produceNumberOfUnreadNeeds() }
     )
     override val unreadEventsAndNeedsCountChannel: ConflatedBroadcastChannel<Int> = ConflatedBroadcastChannel(0)
 
@@ -59,21 +63,21 @@ class MainViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             userProfileInteractor.getAllAccounts().consumeTo(availableAccountsChannel)
         }
 
         var unreadEventsCount = 0
         var unreadNeedsCount = 0
 
-        handleException {
+        resolveExceptions {
             unreadEventsCountChannel.consumeEach {
                 unreadEventsCount = it
                 unreadEventsAndNeedsCountChannel.send(unreadNeedsCount + it)
             }
         }
 
-        handleException {
+        resolveExceptions {
             unreadNeedsCountChannel.consumeEach {
                 unreadNeedsCount = it
                 unreadEventsAndNeedsCountChannel.send(unreadEventsCount + it)
@@ -82,7 +86,7 @@ class MainViewModelImpl(
     }
 
     override fun selectAccount(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             try {
                 if (!networkInteractor.isConnected) throw NetworkDisableException("Network is required to change account!", IllegalStateException())
 
@@ -98,13 +102,13 @@ class MainViewModelImpl(
     }
 
     override fun logout() {
-        handleException {
+        GlobalScope.resolveExceptions {
             loginInteractor.signOut(LogoutReason.ManualLogout())
         }
     }
 
     override fun resetAllNotifications() {
-        handleException {
+        GlobalScope.resolveExceptions {
             notificationInteractor.notificationView(true, true, emptyList())
         }
     }

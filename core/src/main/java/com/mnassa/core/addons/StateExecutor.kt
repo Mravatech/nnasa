@@ -1,8 +1,9 @@
 package com.mnassa.core.addons
 
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.coroutines.resume
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

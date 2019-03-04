@@ -6,6 +6,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.UserProfileInteractor
+import kotlinx.coroutines.GlobalScope
 import timber.log.Timber
 
 
@@ -32,7 +33,7 @@ class MnassaFirebaseMessagingService : FirebaseMessagingService() {
 
         val userProfileInteractor: UserProfileInteractor = applicationContext.getInstance()
 
-        launchWorker {
+        GlobalScope.launchWorker {
             userProfileInteractor.addPushToken(token)
         }
     }

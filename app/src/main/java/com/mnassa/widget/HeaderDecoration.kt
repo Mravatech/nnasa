@@ -7,10 +7,10 @@ package com.mnassa.widget
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 
 class HeaderDecoration(context: Context, parent: RecyclerView, @LayoutRes resId: Int) : RecyclerView.ItemDecoration() {
 

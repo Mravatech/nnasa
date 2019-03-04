@@ -4,13 +4,13 @@ import android.net.Uri
 import com.mnassa.domain.model.AccountAbility
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModel
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 2/27/2018.
  */
 interface PersonalInfoViewModel : BaseEditableProfileViewModel {
-    val openScreenChannel: ArrayBroadcastChannel<OpenScreenCommand>
+    val openScreenChannel: BroadcastChannel<OpenScreenCommand>
     fun skipThisStep()
     fun saveLocallyAvatarUri(uri: Uri)
     fun processAccount(accountModel: ShortAccountModel,

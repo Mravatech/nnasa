@@ -3,7 +3,7 @@ package com.mnassa.screen.posts.offer.create
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 5/3/2018.

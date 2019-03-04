@@ -2,9 +2,9 @@ package com.mnassa.screen.chats
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.View
 import com.mnassa.R
 import com.mnassa.activity.SearchActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -41,7 +41,7 @@ class ChatListController : MnassaControllerImpl<ChatListViewModel>(), OnPageSele
             view?.llEmptyMessages?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.listMessagesChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().llEmptyMessages }

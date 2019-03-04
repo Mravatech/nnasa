@@ -1,15 +1,15 @@
 package com.mnassa.screen.posts
 
-import androidx.lifecycle.Lifecycle
 import android.os.Bundle
+import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
@@ -20,12 +20,9 @@ import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consume
 import org.kodein.di.generic.instance
 import java.util.*
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
-
 
 
 /**
@@ -34,7 +31,7 @@ import android.nfc.tech.MifareUltralight.PAGE_SIZE
 class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_posts_list
     override val viewModel: PostsViewModel by instance()
-    private val adapter = PostsRVAdapter()
+    private val adapter = PostsRVAdapter(this)
     private val controllerSelectedExecutor = StateExecutor<Unit, Unit>(initState = Unit) {
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
@@ -68,7 +65,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             open(postDetailsFactory.newInstance(it))
         }
         adapter.onCreateNeedClickListener = {
-            controllerSubscriptionContainer.launchCoroutineUI {
+            launchCoroutineUI {
                 if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
                     open(CreateNeedController.newInstance())
                 }
@@ -93,21 +90,17 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
             }
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        resolveExceptions {
+
+        launchCoroutineUI {
             viewModel.newsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView },
                     onAdded = { triggerScrollPanel() },
                     onCleared = { lastViewedPostDate = null })
         }
-
-        controllerSubscriptionContainer.launchCoroutineUI {
-            viewModel.recheckFeedsChannel.consumeEach {
-                when (it) {
-                    is ListItemEvent.Removed -> adapter.dataStorage.removeAll(it.item)
-                }
-            }
         }
+
         //scroll to element logic
         lifecycle.subscribe {
             if (it == Lifecycle.Event.ON_PAUSE) {
@@ -135,7 +128,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         view.rvNewsFeed.itemAnimator = null
         view.rvNewsFeed.adapter = adapter
         view.rvNewsFeed.attachPanel { hasNewPosts }
-        viewModel.recheckFeeds()
 
         view.rvNewsFeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

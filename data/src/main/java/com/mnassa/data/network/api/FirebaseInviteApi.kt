@@ -4,7 +4,7 @@ import com.mnassa.data.network.bean.retrofit.request.ConnectionActionRequest
 import com.mnassa.data.network.bean.retrofit.request.ContactsRequest
 import com.mnassa.data.network.bean.retrofit.request.SendContactsRequest
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
 

@@ -9,11 +9,10 @@ import com.mnassa.domain.model.LocationPlaceModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Created by Peter on 4/23/2018.
@@ -24,7 +23,7 @@ class CreateEventViewModelImpl(private val eventId: String?,
                                private val tagInteractor: TagInteractor,
                                private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), CreateEventViewModel {
 
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private val publichMutex = Mutex()
 
     override suspend fun publish(model: RawEventModel) {

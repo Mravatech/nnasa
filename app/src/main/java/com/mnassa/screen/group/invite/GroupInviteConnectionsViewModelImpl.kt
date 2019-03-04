@@ -4,11 +4,13 @@ import android.os.Bundle
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 5/23/2018.
@@ -29,21 +31,21 @@ class GroupInviteConnectionsViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getConnectedConnections().consumeEach {
                 userConnections.send(it)
                 refreshData()
             }
         }
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getGroupMembers(groupId).consumeEach {
                 groupMembers.send(it)
                 refreshData()
             }
         }
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getInvitedUsers(groupId).consumeEach {
                 invitedUsers.send(it)
                 refreshData()
@@ -65,7 +67,7 @@ class GroupInviteConnectionsViewModelImpl(
     }
 
     override fun sendInvite(user: ShortAccountModel) {
-        handleException {
+        GlobalScope.resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.sendInvite(groupId, listOf(user.id))
             }
@@ -73,7 +75,7 @@ class GroupInviteConnectionsViewModelImpl(
     }
 
     override fun revokeInvite(user: ShortAccountModel) {
-        handleException {
+        GlobalScope.resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.revokeInvite(groupId, listOf(user.id))
             }
@@ -81,7 +83,7 @@ class GroupInviteConnectionsViewModelImpl(
     }
 
     override fun removeUser(user: ShortAccountModel) {
-        handleException {
+        GlobalScope.resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.removeMember(groupId, user.id)
             }

@@ -4,9 +4,8 @@ import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
-import androidx.core.content.ContextCompat
 import android.widget.ImageView
-import com.bumptech.glide.Glide
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.storage.FirebaseStorage

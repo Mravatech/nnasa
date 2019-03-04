@@ -12,7 +12,7 @@ import com.mnassa.core.addons.SubscriptionsContainerDelegate
 abstract class BaseViewModelImpl : ViewModel(), BaseViewModel, SubscriptionContainer by SubscriptionsContainerDelegate() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        openSubscriptionsScope()
     }
 
     override fun saveInstanceState(outBundle: Bundle) {
@@ -21,7 +21,7 @@ abstract class BaseViewModelImpl : ViewModel(), BaseViewModel, SubscriptionConta
 
     @CallSuper
     final override fun onCleared() {
+        closeSubscriptionsScope()
         super.onCleared()
-        cancelAllSubscriptions()
     }
 }

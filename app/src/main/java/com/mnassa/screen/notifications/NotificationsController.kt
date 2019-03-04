@@ -13,10 +13,10 @@ import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
 import org.kodein.di.generic.instance
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -41,10 +41,10 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         }
         adapter.onItemClickListener = ::onNotificationClickHandle
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             subscribeToUpdates(viewModel.oldNotificationChannel.openSubscription())
         }
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             subscribeToUpdates(viewModel.newNotificationChannel.openSubscription())
         }
     }

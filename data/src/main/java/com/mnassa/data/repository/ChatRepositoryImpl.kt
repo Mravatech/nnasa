@@ -5,7 +5,7 @@ import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.data.extensions.DEFAULT_LIMIT
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.awaitList
-import com.mnassa.data.extensions.toValueChannelWithChangesHandling
+import com.mnassa.data.extensions.toListItemEventChannel
 import com.mnassa.data.network.api.FirebaseChatApi
 import com.mnassa.data.network.bean.firebase.ChatDbModel
 import com.mnassa.data.network.bean.firebase.ChatMessageDbModel
@@ -26,7 +26,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 
 class ChatRepositoryImpl(private val db: DatabaseReference,
@@ -69,7 +69,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(TABLE_CHAT_TYPE_PRIVATE)
                 .child(myUserId)
                 .child(chatId)
-                .toValueChannelWithChangesHandling<ChatMessageDbModel, ChatMessageModel>(
+                .toListItemEventChannel<ChatMessageDbModel, ChatMessageModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = { mapChatMessage(converter.convert(it, ChatMessageModel::class.java), chatId) }
                 )
@@ -95,7 +95,7 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 .child(TABLE_CHAT_LIST)
                 .child(TABLE_CHAT_TYPE_PRIVATE)
                 .child(userId)
-                .toValueChannelWithChangesHandling<ChatDbModel, ChatRoomModel>(
+                .toListItemEventChannel<ChatDbModel, ChatRoomModel>(
                         exceptionHandler = exceptionHandler,
                         mapper = { mapChatModel(it, userId) }
                 )

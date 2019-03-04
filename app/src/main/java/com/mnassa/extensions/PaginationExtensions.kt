@@ -6,8 +6,9 @@ package com.mnassa.extensions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.*
+import kotlin.coroutines.resume
 import kotlin.math.abs
 
 val RecyclerView.lastVisibleItemPosition: Int
@@ -81,12 +82,13 @@ suspend fun RecyclerView.waitForNewItems(
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (isNewItemsNeeded(emptyListCount, startPaginationCoefficient, itemsCount)) {
                     continuation.resume(Unit)
+                    removeOnScrollListener(this)
                 }
             }
         }
         addOnScrollListener(onScrollListener)
 
-        continuation.invokeOnCompletion {
+        continuation.invokeOnCancellation {
             removeOnScrollListener(onScrollListener)
         }
     }

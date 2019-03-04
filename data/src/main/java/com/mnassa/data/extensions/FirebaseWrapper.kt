@@ -3,7 +3,9 @@ package com.mnassa.data.extensions
 import com.google.android.gms.tasks.Task
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.exception.FirebaseMappingException
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Created by Peter on 2/26/2018.

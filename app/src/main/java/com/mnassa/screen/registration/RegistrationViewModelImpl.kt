@@ -1,6 +1,7 @@
 package com.mnassa.screen.registration
 
 import android.os.Bundle
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
@@ -8,14 +9,14 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.TagModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Created by Peter on 2/26/2018.
@@ -26,17 +27,17 @@ class RegistrationViewModelImpl(
         private val placeFinderInteractor: PlaceFinderInteractor
 ) : MnassaViewModelImpl(), RegistrationViewModel {
 
-    override val openScreenChannel: ArrayBroadcastChannel<RegistrationViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<RegistrationViewModel.OpenScreenCommand> = BroadcastChannel(10)
     override val addTagRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
 
-    private val isInterestsMandatory = async { tagInteractor.isInterestsMandatory() }
-    private val isOffersMandatory = async { tagInteractor.isOffersMandatory() }
+    private val isInterestsMandatory = GlobalScope.asyncWorker { tagInteractor.isInterestsMandatory() }
+    private val isOffersMandatory = GlobalScope.asyncWorker { tagInteractor.isOffersMandatory() }
     private val createAccountMutex = Mutex()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
         }
     }

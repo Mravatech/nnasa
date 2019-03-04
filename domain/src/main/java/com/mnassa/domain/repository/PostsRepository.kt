@@ -3,7 +3,7 @@ package com.mnassa.domain.repository
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 3/13/2018.
@@ -15,9 +15,7 @@ interface PostsRepository {
     suspend fun loadInfoPost(postId: String): PostModel?
 
     //
-    suspend fun loadFeedCached(): List<PostModel>
     suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>>
-    suspend fun recheckSavedPosts(): ListItemEvent<List<PostModel>>
     suspend fun clearSavedPosts()
     //account wall
     suspend fun preloadWall(accountId: String): List<PostModel>

@@ -1,10 +1,10 @@
 package com.mnassa.domain.repository
 
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 10/3/2018.
  */
 interface ClientDataRepository {
-    fun getMinimumSupportedApiVersion(): ReceiveChannel<Int?>
+    suspend fun getMinimumSupportedApiVersion(): ReceiveChannel<Int?>
 }

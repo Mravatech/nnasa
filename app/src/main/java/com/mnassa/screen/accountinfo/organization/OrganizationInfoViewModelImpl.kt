@@ -9,9 +9,10 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.CompanyInfoModelImpl
 import com.mnassa.domain.model.impl.OrganizationAccountDiffModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 2/28/2018.
@@ -21,7 +22,7 @@ class OrganizationInfoViewModelImpl(
         private val userProfileInteractor: UserProfileInteractor,
         tagInteractor: TagInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), OrganizationInfoViewModel {
 
-    override val openScreenChannel: ArrayBroadcastChannel<OrganizationInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<OrganizationInfoViewModel.OpenScreenCommand> = BroadcastChannel(10)
 
     private var avatarSavedPath: String? = null
     private var avatarUri: Uri? = null
@@ -30,7 +31,7 @@ class OrganizationInfoViewModelImpl(
     }
 
     override fun skipThisStep() {
-        handleException {
+        resolveExceptions {
             openScreenChannel.send(OrganizationInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
@@ -47,7 +48,7 @@ class OrganizationInfoViewModelImpl(
             contactPhone: String?,
             website: String?) {
         processAccountJob?.cancel()
-        processAccountJob = handleException {
+        processAccountJob = resolveExceptions {
             withProgressSuspend {
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val companyInfo = CompanyInfoModelImpl(

@@ -7,12 +7,12 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.GroupPermissions
 import com.mnassa.domain.model.TagModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isAdmin
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 5/14/2018.
@@ -24,7 +24,7 @@ class GroupProfileViewModelImpl(
         private val tagInteractor: TagInteractor) : MnassaViewModelImpl(), GroupProfileViewModel {
 
     override val groupChannel: BroadcastChannel<GroupModel> = ConflatedBroadcastChannel()
-    override val closeScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     override val tagsChannel: BroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
     override val groupPermissionsChannel: BroadcastChannel<GroupPermissions> = ConflatedBroadcastChannel()
     override val isMemberChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
@@ -32,7 +32,7 @@ class GroupProfileViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) {
                     groupChannel.send(it)
@@ -43,13 +43,13 @@ class GroupProfileViewModelImpl(
             }
         }
 
-        handleException {
+        resolveExceptions {
             groupChannel.consumeEach {
                 groupPermissionsChannel.send(if (it.isAdmin) GroupPermissions.ADMIN_PERMISSIONS else it.permissions)
             }
         }
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getGroupMembers(groupId).consumeEach { members ->
                 val userId = userProfileInteractor.getAccountIdOrException()
                 isMemberChannel.send(members.any { it.id == userId })
@@ -59,7 +59,7 @@ class GroupProfileViewModelImpl(
     }
 
     override fun leave() {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.leaveGroup(groupId)
             }
@@ -68,7 +68,7 @@ class GroupProfileViewModelImpl(
     }
 
     override fun delete() {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.deleteGroup(groupId)
             }

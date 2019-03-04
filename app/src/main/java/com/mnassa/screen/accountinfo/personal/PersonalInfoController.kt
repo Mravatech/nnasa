@@ -16,7 +16,7 @@ import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 class PersonalInfoController(data: Bundle) : BaseEditableProfileController<PersonalInfoViewModel>(data) {

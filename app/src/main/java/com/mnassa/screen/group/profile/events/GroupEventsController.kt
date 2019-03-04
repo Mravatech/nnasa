@@ -16,6 +16,7 @@ import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_group_profile_events.view.*
+import kotlinx.coroutines.GlobalScope
 import org.kodein.di.generic.instance
 
 /**
@@ -27,7 +28,7 @@ class GroupEventsController(args: Bundle) : MnassaControllerImpl<GroupEventsView
     override val viewModel: GroupEventsViewModel by instance(arg = groupId)
 
     private val userInteractor: UserProfileInteractor by instance()
-    private val adapter by lazy { EventsRVAdapter(userInteractor) }
+    private val adapter by lazy { EventsRVAdapter(this@GroupEventsController, userInteractor) }
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
@@ -40,7 +41,7 @@ class GroupEventsController(args: Bundle) : MnassaControllerImpl<GroupEventsView
         adapter.onDataChangedListener = { itemsCount ->
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.newsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView }
@@ -77,7 +78,7 @@ class GroupEventsController(args: Bundle) : MnassaControllerImpl<GroupEventsView
     }
 
     private fun openEvent(event: EventModel) {
-        launchWorker {
+        GlobalScope.launchWorker {
             event.markAsOpened()
         }
 

@@ -5,7 +5,7 @@ import com.mnassa.data.network.bean.retrofit.request.ChatUnreadCountRequest
 import com.mnassa.data.network.bean.retrofit.request.MessageFromChatRequest
 import com.mnassa.data.network.bean.retrofit.request.MessageRequest
 import com.mnassa.data.network.bean.retrofit.response.ChatResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.HTTP
 import retrofit2.http.POST

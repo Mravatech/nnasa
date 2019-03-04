@@ -3,9 +3,10 @@ package com.mnassa.screen.connections.archived
 import android.os.Bundle
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.DeclinedShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 9.03.2018.
@@ -19,9 +20,8 @@ class ArchivedConnectionViewModelImpl(private val connectionsInteractor: Connect
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getDisconnectTimeoutDays()
-
             connectionsInteractor.getDisconnectedConnections().consumeEach {
                 declinedConnectionsChannel.send(it)
             }
@@ -29,7 +29,7 @@ class ArchivedConnectionViewModelImpl(private val connectionsInteractor: Connect
     }
 
     override fun connect(account: DeclinedShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionConnect(listOf(account.id))
             }

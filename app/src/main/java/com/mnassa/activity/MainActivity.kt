@@ -15,9 +15,6 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.mnassa.R
-import com.mnassa.core.addons.SubscriptionContainer
-import com.mnassa.core.addons.SubscriptionsContainerDelegate
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.domain.interactor.LoginInteractor
@@ -31,17 +28,16 @@ import com.mnassa.service.MnassaFirebaseMessagingService
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.in_out_come_toast.view.*
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
-
-open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate(), SubscriptionContainer by SubscriptionsContainerDelegate() {
+open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate() {
 
     private lateinit var router: Router
-    private lateinit var onLogoutListener: (LogoutReason) -> Unit
+
     private val balanceChangeReceiver = BalanceChangeReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,27 +45,34 @@ open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate()
         setContentView(R.layout.activity_main)
 
         router = Conductor.attachRouter(this, container, savedInstanceState)
-        if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(createRootControllerInstance()))
-        }
-
-        onLogoutListener = getInstance<LoginInteractor>().onLogoutListener.subscribe { reason ->
-            when (reason) {
-                is LogoutReason.NotAuthorized -> {
-                }
-                is LogoutReason.ManualLogout -> {
-                }
-                is LogoutReason.AccountBlocked, is LogoutReason.UserBlocked -> {
-                    Toast.makeText(applicationContext, fromDictionary(R.string.blocked_account_message), Toast.LENGTH_LONG).show()
+            .apply {
+                if (hasRootController()) {
+                } else {
+                    val root = createRootControllerInstance()
+                    setRoot(RouterTransaction.with(root))
                 }
             }
-            startActivity(
-                    Intent(this@MainActivity, MainActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
+
+        launchUI {
+            getInstance<LoginInteractor>().onLogoutListener
+                .openSubscription()
+                .consumeEach { reason ->
+                    when (reason) {
+                        is LogoutReason.AccountBlocked,
+                        is LogoutReason.UserBlocked -> {
+                            Toast.makeText(
+                                applicationContext,
+                                fromDictionary(R.string.blocked_account_message),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                    switchToMainActivity()
+                }
         }
 
-        launchCoroutineUI {
+        launchUI {
             getInstance<SettingsInteractor>()
                 .getMaintenanceServerStatus()
                 .consumeEach(::processMaintenanceStatusChange)
@@ -89,6 +92,12 @@ open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate()
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             .let(::startActivity)
         overridePendingTransition(0, 0)
+    }
+
+    private fun switchToMainActivity() {
+        Intent(this, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .let(::startActivity)
     }
 
     override fun onBackPressed() {
@@ -114,36 +123,31 @@ open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate()
         super.onPause()
     }
 
-    override fun onDestroy() {
-        getInstance<LoginInteractor>().onLogoutListener.unSubscribe(onLogoutListener)
-        cancelAllSubscriptions()
-        super.onDestroy()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-//        SavedInstanceFragment.getInstance(fragmentManager).pushData(outState.clone() as Bundle)
         // advise was taken from here = https://www.devsbedevin.com/avoiding-transactiontoolargeexception-on-android-nougat-and-up/
         outState.clear() // We don't want a TransactionTooLargeException, so we handle things via the SavedInstanceFragment
     }
 
     private class BalanceChangeReceiver : BroadcastReceiver() {
-        private var notificationsQueue: Deferred<Unit>? = null
+        private val mutex = Mutex()
 
         override fun onReceive(context: Context, intent: Intent) {
-            launchUI {
-                notificationsQueue?.await()
-                notificationsQueue = async(UI) {
+            GlobalScope.launchUI {
+                mutex.withLock {
                     val fromName = intent.getStringExtra(MnassaFirebaseMessagingService.FROM_USER)
-                    val amount = intent.getStringExtra(MnassaFirebaseMessagingService.AMOUNT).toLong()
-                    if (amount == 0L) return@async
-                    val layout = View.inflate(context, R.layout.in_out_come_toast, null)
-                    layout.iocView.showView(amount, fromName)
-                    val toast = Toast(context.applicationContext)
-                    toast.setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
-                    toast.duration = Toast.LENGTH_LONG
-                    toast.view = layout
-                    toast.show()
+                    val amount = intent.getStringExtra(MnassaFirebaseMessagingService.AMOUNT)
+                        .toLongOrNull()
+                        ?.takeUnless { it == 0L }
+                        ?: return@withLock
+
+                    Toast(context.applicationContext).apply {
+                        setGravity(Gravity.FILL, START_OFFSET, START_OFFSET)
+                        duration = Toast.LENGTH_LONG
+                        view = View.inflate(context, R.layout.in_out_come_toast, null).apply {
+                            iocView.showView(amount, fromName)
+                        }
+                    }.show()
 
                     delay(LONG_TOAST_DURATION_MILLIS)
                 }
@@ -153,7 +157,7 @@ open class MainActivity : BaseActivity(), MnassaRouter by MnassaRouterDelegate()
 
     companion object {
         private const val START_OFFSET = 0
-        private const val LONG_TOAST_DURATION_MILLIS = 4_500
+        private const val LONG_TOAST_DURATION_MILLIS = 4_500L
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

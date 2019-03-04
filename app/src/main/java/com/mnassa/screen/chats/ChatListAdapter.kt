@@ -1,11 +1,11 @@
 package com.mnassa.screen.chats
 
 import android.graphics.Typeface
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.formattedName

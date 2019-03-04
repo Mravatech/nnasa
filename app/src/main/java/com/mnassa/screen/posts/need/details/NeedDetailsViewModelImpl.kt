@@ -11,8 +11,12 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -33,13 +37,13 @@ open class NeedDetailsViewModelImpl(
         postInitValue?.let { ConflatedBroadcastChannel(it) } ?: ConflatedBroadcastChannel()
     }
     override val postTagsChannel: ConflatedBroadcastChannel<List<TagModel>> = ConflatedBroadcastChannel()
-    override val finishScreenChannel: BroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val finishScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             postsInteractor.loadById(postId).consumeEach {
                 if (it != null) {
                     it.timeOfExpiration = getExpiration(it)
@@ -48,7 +52,7 @@ open class NeedDetailsViewModelImpl(
                 }
             }
         }
-        handleException {
+        resolveExceptions {
             reportsList = complaintInteractor.getReports()
         }
     }
@@ -69,7 +73,7 @@ open class NeedDetailsViewModelImpl(
 
 
     override fun delete() {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.removePost(postId)
                 finishScreenChannel.send(Unit)
@@ -78,7 +82,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun repost(sharingOptions: PostPrivacyOptions) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.repostPost(postId, null, sharingOptions)
             }
@@ -86,7 +90,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun sendComplaint(id: String, reason: String, authorText: String?) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
@@ -100,7 +104,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun changeStatus(status: ExpirationType) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.changeStatus(postId, status)
             }
@@ -108,7 +112,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun promote() {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.promote(postChannel.consume { receive() })
             }

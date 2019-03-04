@@ -4,11 +4,12 @@ import android.os.Bundle
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 5/14/2018.
@@ -23,13 +24,13 @@ class GroupMembersViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             groupsInteractor.getGroupMembers(groupId).consumeEach { members ->
                 val group = groupChannel.consume { receive() }
                 groupMembersChannel.send(members.map { GroupMemberItem(it, group.admins.contains(it.id)) })
             }
         }
-        handleException {
+        resolveExceptions {
             groupsInteractor.getGroup(groupId).consumeEach { group ->
                 if (group != null) {
                     groupChannel.send(group)
@@ -42,7 +43,7 @@ class GroupMembersViewModelImpl(
     }
 
     override fun removeMember(member: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.removeMember(groupId, member.id)
             }
@@ -50,7 +51,7 @@ class GroupMembersViewModelImpl(
     }
 
     override fun makeAdmin(member: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.makeAdmin(groupId, member.id)
             }
@@ -58,7 +59,7 @@ class GroupMembersViewModelImpl(
     }
 
     override fun unMakeAdmin(member: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 groupsInteractor.unMakeAdmin(groupId, member.id)
             }

@@ -1,8 +1,8 @@
 package com.mnassa.data.repository
 
-import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
@@ -21,10 +21,12 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RecommendedConnectionsImpl
 import com.mnassa.domain.repository.ConnectionsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.channels.produce
 import java.util.*
 
 /**
@@ -69,7 +71,7 @@ class ConnectionsRepositoryImpl(
     }
 
     override suspend fun getConnectedConnections(): ReceiveChannel<List<ShortAccountModel>> {
-        return produce {
+        return GlobalScope.produce(Dispatchers.Unconfined) {
             val accountId = userRepository.getAccountIdOrException()
             connectionsCache[accountId]?.takeIf { it.isNotEmpty() }?.let { send(it) }
 
@@ -157,7 +159,7 @@ class ConnectionsRepositoryImpl(
                 .handleException(exceptionHandler)
     }
 
-    private fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
+    private suspend fun getConnections(columnName: String): ReceiveChannel<List<ShortAccountModel>> {
         return databaseReference.child(DatabaseContract.TABLE_CONNECTIONS)
                 .child(userRepository.getAccountIdOrException())
                 .child(columnName)

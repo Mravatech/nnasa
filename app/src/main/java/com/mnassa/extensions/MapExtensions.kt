@@ -5,7 +5,8 @@ import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 /**
  * Created by Peter on 4/25/2018.
@@ -18,12 +19,14 @@ suspend fun GoogleApiClient.getLatLng(placeId: String): LatLng? {
                 val place = it.firstOrNull()
                 if (place != null) {
                     continuation.resume(place.latLng)
+                    task.cancel()
                     return@setResultCallback
                 }
             }
             continuation.resume(null)
+            task.cancel()
         }
-        continuation.invokeOnCompletion { task.cancel() }
+        continuation.invokeOnCancellation { task.cancel() }
     }
     return result
 }

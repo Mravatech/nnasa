@@ -3,9 +3,10 @@ package com.mnassa.screen.notifications
 import com.mnassa.domain.interactor.NotificationInteractor
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 3/6/2018.
@@ -22,13 +23,13 @@ class NotificationsViewModelImpl(
             receiveChannelProvider = { notificationInteractor.loadOldNotifications() })
 
     override fun notificationView(id: String) {
-        handleException {
+        resolveExceptions {
             notificationInteractor.notificationView(true, false, listOf(id))
         }
     }
 
     override fun resetCounter() {
-        handleException {
+        resolveExceptions {
             notificationInteractor.notificationView(true, true, emptyList())
         }
     }

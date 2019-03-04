@@ -4,8 +4,9 @@ import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by Peter on 3/14/2018.
@@ -17,13 +18,13 @@ class AllConnectionsViewModelImpl(private val connectionsInteractor: Connections
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             connectionsInteractor.getConnectedConnections().consumeTo(allConnectionsChannel)
         }
     }
 
     override fun disconnect(account: ShortAccountModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 connectionsInteractor.actionDisconnect(listOf(account.id))
             }

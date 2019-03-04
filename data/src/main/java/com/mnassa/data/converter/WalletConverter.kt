@@ -9,7 +9,6 @@ import com.mnassa.domain.interactor.DictionaryInteractor
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.domain.model.impl.TransactionModelImpl
-import com.mnassa.domain.repository.DictionaryRepository
 import java.util.*
 
 /**

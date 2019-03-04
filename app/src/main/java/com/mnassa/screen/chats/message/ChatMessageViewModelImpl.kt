@@ -7,11 +7,11 @@ import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 class ChatMessageViewModelImpl(
         private val params: ChatMessageViewModel.Params, //if null - this is chat with admin
@@ -21,13 +21,21 @@ class ChatMessageViewModelImpl(
     override val messageChannel: BroadcastChannel<ListItemEvent<List<ChatMessageModel>>> = BroadcastChannel(10)
     override val currentUserAccountId: String get() = userProfileInteractor.getAccountIdOrException()
 
-    private val chatId = asyncUI { params.chatId ?: handleExceptionsSuspend { chatInteractor.getChatIdByUserId(params.accountId) } ?: "UNDEFINED" }
+    private val chatId = GlobalScope.asyncUI {
+        params.chatId
+            ?: handleExceptionsSuspend {
+                withContext(Dispatchers.Default) {
+                    chatInteractor.getChatIdByUserId(params.accountId)
+                }
+            }
+            ?: "UNDEFINED"
+    }
     private var resetCounterJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             chatInteractor.loadMessagesWithChangesHandling(chatId.await()).consumeEach {
                 messageChannel.send(it)
                 resetChatUnreadCount()
@@ -37,7 +45,7 @@ class ChatMessageViewModelImpl(
 
     private fun resetChatUnreadCount() {
         resetCounterJob?.cancel()
-        resetCounterJob = handleException {
+        resetCounterJob = resolveExceptions(showErrorMessage = false) {
             delay(1_000)
             chatInteractor.resetChatUnreadCount(chatId.await())
         }
@@ -45,7 +53,7 @@ class ChatMessageViewModelImpl(
 
     override suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?) =
             handleExceptionsSuspend {
-                withProgressSuspend {
+                withProgressSuspend(hideKeyboard = false) {
                     chatInteractor.sendMessage(
                             chatID = chatId.await(),
                             text = text,
@@ -57,7 +65,7 @@ class ChatMessageViewModelImpl(
             } ?: false
 
     override fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean) {
-        handleException {
+        GlobalScope.resolveExceptions {
             chatInteractor.deleteMessage(item.id, chatId.await(), isDeleteForBothMessages)
         }
     }

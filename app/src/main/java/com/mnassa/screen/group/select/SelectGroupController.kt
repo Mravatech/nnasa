@@ -10,7 +10,7 @@ import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.group.list.adapters.AllGroupsRecyclerViewAdapter
 import kotlinx.android.synthetic.main.controller_group_select.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

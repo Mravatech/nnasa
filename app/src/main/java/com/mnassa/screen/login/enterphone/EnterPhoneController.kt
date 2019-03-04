@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.controller_enter_phone.view.*
 import kotlinx.android.synthetic.main.header_login.view.*
 import kotlinx.android.synthetic.main.or_layout.view.*
 import kotlinx.android.synthetic.main.phone_input.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -52,7 +52,7 @@ open class EnterPhoneController(args: Bundle = Bundle()) : MnassaControllerImpl<
         super.onCreated(savedInstanceState)
 
         //open next screen even if current controller in the back stack
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
                 hideProgress()
                 when (it) {

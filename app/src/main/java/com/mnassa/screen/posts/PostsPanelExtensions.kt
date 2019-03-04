@@ -1,7 +1,7 @@
 package com.mnassa.screen.posts
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.extensions.firstVisibleItemPosition
 import kotlin.math.abs

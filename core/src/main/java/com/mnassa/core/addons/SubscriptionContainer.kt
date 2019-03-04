@@ -1,163 +1,86 @@
 package com.mnassa.core.addons
 
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.coroutines.CoroutineContext
 
 /**
- * Created by Peter on 2/20/2018.
+ * A coroutine scope.
+ *
+ * @author Artem Chepurnoy
  */
-/**
- * Container for subscriptions.
- * Should be cleared in [com.androidkotlincore.mvp.MVPPresenter.onDestroyed] or in similar methods
- * */
-interface SubscriptionContainer {
-    /**
-     * Adds job to container
-     * @param job - coroutine job; [Job]
-     * @return itself
-     * */
-    fun addJob(job: Job): Job
+interface SubscriptionContainer : CoroutineScope {
+    val coroutineScope: CoroutineScope
 
-    /**
-     * Removes job from container
-     * @param job - coroutine job; [Job]
-     * @return itself
-     * */
-    fun removeJob(job: Job): Job
-
-    /**
-     * Clears job container
-     * */
-    fun cancelAllSubscriptions()
-
-    /**
-     * Overloads plus operator to add job into container
-     * @param job - [Job]
-     * */
-    operator fun plusAssign(job: Job)
-
-    /**
-     * Overloads minus operator to remove job from container
-     * @param job - [Job]
-     * */
-    operator fun minusAssign(job: Job)
+    fun openSubscriptionsScope()
+    fun closeSubscriptionsScope()
 }
 
 /**
  * Simple [SubscriptionContainer] implementation
+ *
+ * @author Artem Chepurnoy
  */
-open class SubscriptionsContainerDelegate : SubscriptionContainer {
-    private val jobs = ConcurrentLinkedQueue<Job>()
+open class SubscriptionsContainerDelegate : SubscriptionContainer, CoroutineScope {
+    private lateinit var job: Job
 
-    override fun addJob(job: Job): Job = job.also { jobs.add(it) }
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
-    override fun removeJob(job: Job): Job = job.also { jobs.remove(it) }
+    override val coroutineScope: CoroutineScope
+        get() = this
 
-    override fun cancelAllSubscriptions() {
-        jobs.forEach { it.cancel() }
-        jobs.clear()
+    override fun openSubscriptionsScope() {
+        job = Job()
     }
 
-    override fun plusAssign(job: Job) {
-        addJob(job)
-    }
-
-    override fun minusAssign(job: Job) {
-        removeJob(job)
+    override fun closeSubscriptionsScope() {
+        job.cancel()
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-private val WORKER_POOL = CommonPool
-private val UI_POOL = UI
-private val WORKER_POOL_WITH_EXCEPTION_HANDLING = WORKER_POOL + CoroutineExceptionHandler { context, exception ->
-    if (exception !is JobCancellationException) {
-        Timber.e(exception, "Unhandled exception in the WORKER pool $context")
+private fun createCoroutineExceptionHandler(tag: String) =
+    CoroutineExceptionHandler { context, exception ->
+        if (exception !is CancellationException) {
+            Timber.e(exception, "Unhandled exception in the $tag context; $context")
+        }
     }
-}
-private val UI_POOL_WITH_EXCEPTION_HANDLING = UI_POOL + CoroutineExceptionHandler { context, exception ->
-    if (exception !is JobCancellationException) {
-        Timber.e(exception, "Unhandled exception in the UI pool $context")
-    }
-}
 
-/**
- * Extension to add job into container
- * @param subscriptionContainer - [SubscriptionContainer]
- * @return [Job]
- * */
-fun Job.bind(subscriptionContainer: SubscriptionContainer): Job {
-    subscriptionContainer += this
-    return this
-}
+// Worker
 
-/**
- * Creates coroutine, which will be automatically added to the subscription container
- */
+val COROUTINE_WORKER_DISPATCHER = Dispatchers.Default
 
-fun <CancellableContext> CancellableContext.launchCoroutineWorker(
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Unit): Job where CancellableContext : SubscriptionContainer {
-    val thisReference = this.asReference()
-    val coroutineBlockWrapper: suspend CoroutineScope.() -> Unit = { block(this, thisReference) }
-    return launch(context = WORKER_POOL_WITH_EXCEPTION_HANDLING, start = start, block = coroutineBlockWrapper).bind(this)
-}
+val COROUTINE_WORKER_CONTEXT = COROUTINE_WORKER_DISPATCHER +
+        createCoroutineExceptionHandler("Worker")
 
-fun launchWorker(start: CoroutineStart = CoroutineStart.DEFAULT,
-                 block: suspend CoroutineScope.() -> Unit): Job {
-    return launch(context = WORKER_POOL_WITH_EXCEPTION_HANDLING, start = start, block = block)
-}
+fun CoroutineScope.launchWorker(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+) = launch(context = COROUTINE_WORKER_CONTEXT, start = start, block = block)
 
-/**
- * Creates coroutine, which will be automatically added to the subscription container
- */
-fun <CancellableContext> CancellableContext.launchCoroutineUI(
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Unit): Job where CancellableContext : SubscriptionContainer {
-    val thisReference = this.asReference()
-    val coroutineBlockWrapper: suspend CoroutineScope.() -> Unit = { block(this, thisReference) }
-    return launch(context = UI_POOL_WITH_EXCEPTION_HANDLING, start = start, block = coroutineBlockWrapper).bind(this)
-}
+fun <Result> CoroutineScope.asyncWorker(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Result
+) = async(context = COROUTINE_WORKER_CONTEXT, start = start, block = block)
 
-fun launchUI(start: CoroutineStart = CoroutineStart.DEFAULT,
-                 block: suspend CoroutineScope.() -> Unit): Job {
-    return launch(context = UI_POOL_WITH_EXCEPTION_HANDLING, start = start, block = block)
-}
+// Main
 
-fun <Result, CancellableContext> CancellableContext.asyncWorker(
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Result): Deferred<Result> where CancellableContext : SubscriptionContainer {
-    val thisReference = this.asReference()
-    val coroutineBlockWrapper: suspend CoroutineScope.() -> Result = { block(this, thisReference) }
+val COROUTINE_MAIN_DISPATCHER = Dispatchers.Main
 
-    val result = async(context = WORKER_POOL, start = start, block = coroutineBlockWrapper)
-    result.bind(this)
-    return result
-}
+val COROUTINE_MAIN_CONTEXT = COROUTINE_MAIN_DISPATCHER +
+        createCoroutineExceptionHandler("Main")
 
-fun <Result, CancellableContext> CancellableContext.asyncUI(
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Result): Deferred<Result> where CancellableContext : SubscriptionContainer {
-    val thisReference = this.asReference()
-    val coroutineBlockWrapper: suspend CoroutineScope.() -> Result = { block(this, thisReference) }
+fun CoroutineScope.launchCoroutineUI(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+) = launchUI(start = start, block = block)
 
-    val result = async(context = UI_POOL, start = start, block = coroutineBlockWrapper)
-    result.bind(this)
-    return result
-}
+fun CoroutineScope.launchUI(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+) = launch(context = COROUTINE_MAIN_CONTEXT, start = start, block = block)
 
-//private fun <Result, CancellableContext> CancellableContext.handleException(
-//        block: suspend CoroutineScope.(ref: Ref<CancellableContext>) -> Result): suspend CoroutineScope.() -> Result?
-//        where CancellableContext : SubscriptionContainer {
-//    val thisReference = this.asReference()
-//    return {
-//        try {
-//            block(this, thisReference)
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//            null
-//        }
-//    }
-//}
+fun <Result> CoroutineScope.asyncUI(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Result
+) = async(context = COROUTINE_MAIN_CONTEXT, start = start, block = block)

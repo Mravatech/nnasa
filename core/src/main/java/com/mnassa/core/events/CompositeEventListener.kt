@@ -1,6 +1,7 @@
 package com.mnassa.core.events
 
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 /**
  * Created by Peter on 31.01.18.

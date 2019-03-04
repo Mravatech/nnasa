@@ -4,7 +4,7 @@ import com.mnassa.data.network.bean.retrofit.request.AddTagsDialogShowingTimeReq
 import com.mnassa.data.network.bean.retrofit.request.CustomTagsRequest
 import com.mnassa.data.network.bean.retrofit.response.CustomTagsResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.PUT

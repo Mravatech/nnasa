@@ -11,7 +11,7 @@ import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_invite_connections.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

@@ -1,10 +1,10 @@
 package com.mnassa.data.network.api
 
-import com.mnassa.data.network.bean.retrofit.response.RegisterAccountInfoResponse
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.bean.retrofit.response.CheckPhoneResponse
+import com.mnassa.data.network.bean.retrofit.response.RegisterAccountInfoResponse
 import com.mnassa.data.network.bean.retrofit.response.RegisterAccountResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.PUT

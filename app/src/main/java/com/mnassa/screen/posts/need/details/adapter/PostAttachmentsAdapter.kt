@@ -1,9 +1,9 @@
 package com.mnassa.screen.posts.need.details.adapter
 
-import androidx.viewpager.widget.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
 import com.mnassa.activity.VideoViewActivity
@@ -14,12 +14,13 @@ import com.mnassa.domain.model.PostAttachment
 import com.mnassa.extensions.image
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_video.view.*
+import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
 
 /**
  * Created by Peter on 4/30/2018.
  */
-class PostAttachmentsAdapter(private val attachments: List<PostAttachment>, private val onImageClick: (images: List<String>, index: Int) -> Unit) : PagerAdapter() {
+class PostAttachmentsAdapter(private val coroutineScope: CoroutineScope, private val attachments: List<PostAttachment>, private val onImageClick: (images: List<String>, index: Int) -> Unit) : PagerAdapter() {
     override fun isViewFromObject(view: View, obj: Any): Boolean = view == obj
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -53,7 +54,7 @@ class PostAttachmentsAdapter(private val attachments: List<PostAttachment>, priv
 
         view.ivPreview.image(video)
         val listener = View.OnClickListener {
-            launchUI {
+            coroutineScope.launchUI {
                 try {
                     val storage = it.context.getInstance<FirebaseStorage>()
                     val uri = storage.getReferenceFromUrl(video.videoUrl).downloadUrl.await(it.context.getInstance())

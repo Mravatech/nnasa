@@ -1,13 +1,13 @@
 package com.mnassa.screen.home
 
-import com.google.android.material.tabs.TabLayout
-import androidx.core.content.ContextCompat
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.github.clans.fab.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.AccountType
@@ -28,7 +28,7 @@ import com.mnassa.screen.profile.edit.company.EditCompanyProfileController
 import com.mnassa.screen.profile.edit.personal.EditPersonalProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_home.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -85,10 +85,10 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
             launchCoroutineUI {
                 viewModel.showAddTagsDialog.consumeEach {
                     dialogHelper.showAddTagsDialog(getViewSuspend().context) {
-                        launchCoroutineUI {
+                        coroutineScope.launchCoroutineUI addTags@{
                             val offers = viewModel.getOffers()
                             val interests = viewModel.getInterests()
-                            val profileModel = viewModel.getProfile() ?: return@launchCoroutineUI
+                            val profileModel = viewModel.getProfile() ?: return@addTags
 
                             open(when (profileModel.accountType) {
                                 AccountType.PERSONAL -> EditPersonalProfileController.newInstance(profileModel, offers, interests)

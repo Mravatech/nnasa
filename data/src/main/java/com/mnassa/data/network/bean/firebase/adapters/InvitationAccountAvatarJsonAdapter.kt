@@ -4,11 +4,8 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import com.mnassa.data.extensions.nextBooleanOrSkip
-import com.mnassa.data.extensions.nextIntOrSkip
 import com.mnassa.data.extensions.nextOrSkip
 import com.mnassa.data.extensions.nextStringOrSkip
-import com.mnassa.data.network.bean.firebase.PostAutoSuggest
 
 /**
  * @author Artem Chepurnoy

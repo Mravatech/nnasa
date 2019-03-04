@@ -3,7 +3,7 @@ package com.mnassa.screen.posts.offer.details.buy
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 5/2/2018.

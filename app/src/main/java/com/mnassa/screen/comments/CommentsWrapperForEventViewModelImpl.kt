@@ -2,19 +2,20 @@ package com.mnassa.screen.comments
 
 import android.net.Uri
 import android.os.Bundle
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.RawCommentModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Created by Peter on 4/18/2018.
@@ -24,7 +25,7 @@ class CommentsWrapperForEventViewModelImpl(
         private val commentsInteractor: CommentsInteractor,
         private val eventsInteractor: EventsInteractor
 ) : MnassaViewModelImpl(), CommentsWrapperViewModel {
-    override val scrollToChannel: ArrayBroadcastChannel<CommentModel> = ArrayBroadcastChannel(1)
+    override val scrollToChannel: BroadcastChannel<CommentModel> = BroadcastChannel(1)
     override val commentsChannel: ConflatedBroadcastChannel<List<CommentModel>> = ConflatedBroadcastChannel()
     override val canReadCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
     override val canWriteCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
@@ -34,7 +35,7 @@ class CommentsWrapperForEventViewModelImpl(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             loadComments() //load comments even if event is not available
             eventsInteractor.loadByIdChannel(eventId).consumeEach { event ->
                 if (event != null) {
@@ -77,7 +78,7 @@ class CommentsWrapperForEventViewModelImpl(
     }
 
     override fun deleteComment(commentModel: CommentModel) {
-        handleException {
+        resolveExceptions {
             commentMutex.withLock {
                 withProgressSuspend {
                     commentsInteractor.deleteEventComment(commentModel)
@@ -89,13 +90,13 @@ class CommentsWrapperForEventViewModelImpl(
     }
 
     override fun preloadImage(imageFile: Uri) {
-        handleException {
+        resolveExceptions {
             uploadImageIfNeeded(imageFile)
         }
     }
 
     private suspend fun uploadImageIfNeeded(imageFile: Uri) = preloadedImages.getOrPut(imageFile) {
-        async {
+        asyncWorker {
             handleExceptionsSuspend { commentsInteractor.preloadCommentImage(imageFile) }
         }
     }

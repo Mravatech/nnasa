@@ -4,10 +4,12 @@ import android.os.Bundle
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 import timber.log.Timber
 
 /**
@@ -15,7 +17,7 @@ import timber.log.Timber
  */
 class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor, private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), EnterCodeViewModel {
 
-    override val openScreenChannel: ArrayBroadcastChannel<EnterCodeViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<EnterCodeViewModel.OpenScreenCommand> = BroadcastChannel(10)
     override lateinit var verificationResponse: PhoneVerificationModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +35,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor, priva
     private var requestVerificationCodeJob: Job? = null
     override fun resendCode() {
         requestVerificationCodeJob?.cancel()
-        requestVerificationCodeJob = handleException {
+        requestVerificationCodeJob = GlobalScope.resolveExceptions {
             val phoneNumber = verificationResponse.phoneNumber
             loginInteractor.requestVerificationCode(phoneNumber).consumeEach {
                 verificationResponse = it
@@ -51,8 +53,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor, priva
     private var signInJob: Job? = null
     private fun signIn(code: String? = null) {
         signInJob?.cancel()
-
-        signInJob = handleException {
+        signInJob = resolveExceptions {
             withProgressSuspend {
                 Timber.d("MNSA_LOGIN EnterCodeViewModelImpl->signIn with code $code")
 

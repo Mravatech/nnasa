@@ -4,7 +4,7 @@ import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.TransactionSideModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 import java.io.Serializable
 
 /**

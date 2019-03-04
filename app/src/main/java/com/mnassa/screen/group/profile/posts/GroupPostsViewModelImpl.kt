@@ -7,11 +7,13 @@ import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.withBuffer
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
 
 /**
  * Created by Peter on 09.08.2018.
@@ -29,7 +31,7 @@ class GroupPostsViewModelImpl(private val groupId: String,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleException {
+        resolveExceptions {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) groupChannel.send(it)
             }
@@ -37,7 +39,7 @@ class GroupPostsViewModelImpl(private val groupId: String,
     }
 
     override fun removePost(post: PostModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.removePost(postId = post.id)
             }
@@ -45,11 +47,13 @@ class GroupPostsViewModelImpl(private val groupId: String,
     }
 
     override fun onAttachedToWindow(post: PostModel) {
-        handleException { postsInteractor.onItemViewed(post) }
+        GlobalScope.resolveExceptions(showErrorMessage = false) {
+            postsInteractor.onItemViewed(post)
+        }
     }
 
     override fun hideInfoPost(post: PostModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.hideInfoPost(post.id)
             }

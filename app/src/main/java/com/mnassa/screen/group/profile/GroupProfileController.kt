@@ -1,8 +1,8 @@
 package com.mnassa.screen.group.profile
 
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.view.doOnLayout
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -29,8 +29,8 @@ import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.wallet.WalletController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_group_profile.view.*
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 import kotlin.math.roundToInt
 

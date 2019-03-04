@@ -8,7 +8,7 @@ import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_invite_history.view.*
 import kotlinx.android.synthetic.main.search_view.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 

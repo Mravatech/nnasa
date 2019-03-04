@@ -4,11 +4,11 @@ package com.mnassa.screen.base.adapter
  * Created by Peter on 3/7/2018.
  */
 import android.os.Bundle
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.core.addons.WeakStateExecutor
 import com.mnassa.translation.fromDictionary

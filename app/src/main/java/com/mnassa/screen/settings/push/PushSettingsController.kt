@@ -1,13 +1,13 @@
 package com.mnassa.screen.settings.push
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.impl.PushSettingModelImpl
 import com.mnassa.screen.base.MnassaControllerImpl
 import kotlinx.android.synthetic.main.controller_push_settings.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

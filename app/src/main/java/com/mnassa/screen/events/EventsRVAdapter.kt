@@ -1,6 +1,5 @@
 package com.mnassa.screen.events
 
-import androidx.recyclerview.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
@@ -9,20 +8,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.UserProfileInteractor
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.EventStatus
+import com.mnassa.domain.model.GroupModel
+import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.event_date.view.*
 import kotlinx.android.synthetic.main.item_event.view.*
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Created by Peter on 4/16/2018.
  */
-class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) : BaseSortedPaginationRVAdapter<EventModel>(), View.OnClickListener {
+class EventsRVAdapter(private val coroutineScope: CoroutineScope, private val userProfileInteractor: UserProfileInteractor) : BaseSortedPaginationRVAdapter<EventModel>(), View.OnClickListener {
     override val itemsComparator: (item1: EventModel, item2: EventModel) -> Int = { item1, item2 ->
         item1.createdAt.compareTo(item2.createdAt) * -1
     }
@@ -70,7 +75,9 @@ class EventsRVAdapter(private val userProfileInteractor: UserProfileInteractor) 
         val dataItem = dataStorage[position]
         onAttachedToWindow(dataItem)
         holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
-            it.startUpdateTimeJob(dataItem.originalCreatedAt)
+            coroutineScope.launchUI {
+                it.startUpdateTimeJob(dataItem.originalCreatedAt)
+            }
         }
     }
 

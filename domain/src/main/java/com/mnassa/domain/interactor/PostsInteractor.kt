@@ -2,7 +2,7 @@ package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 import java.io.Serializable
 
 /**
@@ -18,8 +18,6 @@ interface PostsInteractor {
     suspend fun loadInfoPosts(): List<InfoPostModel>
     suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>>
     suspend fun loadInfoPost(postId: String): PostModel?
-    //
-    suspend fun recheckAndReloadFeeds(): ListItemEvent<List<PostModel>>
 
     //account wall
     suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<List<PostModel>>>

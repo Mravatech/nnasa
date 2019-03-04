@@ -2,9 +2,9 @@ package com.mnassa.screen.connections.recommended
 
 import android.Manifest
 import android.annotation.SuppressLint
-import com.google.android.material.snackbar.Snackbar
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.openApplicationSettings
@@ -12,8 +12,8 @@ import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_recommended.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -54,15 +54,15 @@ class RecommendedConnectionsController : MnassaControllerImpl<RecommendedConnect
     @SuppressLint("MissingPermission")
     private fun sendContacts() {
         sendContactsJob?.cancel()
-        sendContactsJob = launchCoroutineUI { thisRef ->
-            val permissionsResult = thisRef().permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
+        sendContactsJob = launchCoroutineUI {
+            val permissionsResult = permissions.requestPermissions(Manifest.permission.READ_CONTACTS)
 
             if (permissionsResult.isAllGranted) {
-                thisRef().permissionsSnackbar?.dismiss()
-                thisRef().viewModel.onContactPermissionsGranted()
+                permissionsSnackbar?.dismiss()
+                viewModel.onContactPermissionsGranted()
             } else {
-                val view = thisRef().view?.clSnackbarParent ?: return@launchCoroutineUI
-                if (thisRef().permissionsSnackbar?.isShown != true) {
+                val view = view?.clSnackbarParent ?: return@launchCoroutineUI
+                if (permissionsSnackbar?.isShown != true) {
                     permissionsSnackbar = Snackbar.make(view, fromDictionary(R.string.tab_connections_contact_permissions_description), Snackbar.LENGTH_INDEFINITE)
                             .setAction(fromDictionary(R.string.tab_connections_contact_permissions_button)) {
                                 if (permissionsResult.isShouldShowRequestPermissionRationale) {

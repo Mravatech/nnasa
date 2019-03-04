@@ -2,9 +2,9 @@ package com.mnassa.screen.group.list
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
 import com.mnassa.core.addons.launchCoroutineUI
@@ -22,8 +22,8 @@ import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.group.requests.GroupConnectionRequestsController
 import kotlinx.android.synthetic.main.controller_group_list.view.*
 import kotlinx.android.synthetic.main.controller_groups_header.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -72,13 +72,13 @@ class GroupListController : MnassaControllerImpl<GroupListViewModel>() {
             }
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.myGroupsChannel.consumeEach {
                 allGroupsAdapter.isLoadingEnabled = false
                 allGroupsAdapter.setGroups(it)
             }
         }
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.groupConnectionRequestsChannel.consumeEach {
                 newConnectionRequestsAdapter.setWithMaxRange(it, MAX_REQUESTS_COUNT)
             }

@@ -32,9 +32,11 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_USERS_COL_STATE_DISABLE
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.channels.produce
 import timber.log.Timber
 
 /**
@@ -86,7 +88,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> {
-        val uid = getFirebaseUserId() ?: return produce { }
+        val uid = getFirebaseUserId() ?: return GlobalScope.produce(Dispatchers.Unconfined) { }
         return db.child(DatabaseContract.TABLE_ACCOUNT_LINKS).child(uid)
                 .toListChannel<ShortAccountDbEntity>(exceptionHandler)
                 .map { converter.convertCollection(it, ShortAccountModel::class.java) }
@@ -101,7 +103,8 @@ class UserRepositoryImpl(
             require(!account.id.isBlank())
             this.accountIdInternal = account.id
             this.serialNumberInternal = account.serialNumber ?: EMPTY_SERIAL_NUMBER
-            launchWorker {
+
+            GlobalScope.launchWorker {
                 addPushToken(FirebaseInstanceId.getInstance().instanceId.await(exceptionHandler).token)
             }
         }

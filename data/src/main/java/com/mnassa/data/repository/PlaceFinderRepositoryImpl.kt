@@ -1,9 +1,9 @@
 package com.mnassa.data.repository
 
-import com.mnassa.core.converter.ConvertersContext
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.data.DataBufferUtils
 import com.google.android.gms.location.places.Places
+import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.repository.PlaceFinderRepository
 import timber.log.Timber

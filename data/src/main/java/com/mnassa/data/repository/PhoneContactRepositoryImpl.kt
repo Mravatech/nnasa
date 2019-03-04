@@ -8,7 +8,8 @@ import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.impl.PhoneContactImpl
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.ContactsRepository
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -19,7 +20,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override suspend fun getPhoneContacts(): List<PhoneContact> {
-        return async {
+        return withContext(Dispatchers.Default) {
             val result = ArrayList<PhoneContact>()
 
             val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
@@ -35,7 +36,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
                     selection,
                     null,
                     ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
-            ).use { cursor ->
+            )?.use { cursor ->
                 if (cursor.moveToFirst()) {
                     val numberColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                     val nameColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
@@ -59,7 +60,7 @@ class PhoneContactRepositoryImpl(private val contentResolver: ContentResolver,
             }
 
             result.distinctBy { it.phoneNumber }
-        }.await()
+        }
     }
 
     companion object {

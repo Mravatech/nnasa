@@ -8,7 +8,7 @@ import com.mnassa.data.network.bean.retrofit.MnassaErrorBody
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.exception.NotAuthorizedException
-import kotlinx.coroutines.experimental.JobCancellationException
+import kotlinx.coroutines.CancellationException
 import okhttp3.Headers
 import retrofit2.HttpException
 import timber.log.Timber
@@ -30,7 +30,7 @@ open class NetworkExceptionHandlerImpl(private val gson: Gson, private val conte
 
         return when {
             throwable is NetworkException -> throwable
-            throwable is JobCancellationException -> throwable
+            throwable is CancellationException -> throwable
             isNetworkDisabledException(throwable) -> NetworkDisableException(networkDisabledMessage, throwable)
             getCode(throwable) == NetworkContract.ResponseCode.UNAUTHORIZED -> NotAuthorizedException(getMessage(throwable) ?: "Not authorized!", throwable)
             else -> {

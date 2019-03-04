@@ -1,12 +1,12 @@
 package com.mnassa.extensions
 
 import android.graphics.Typeface
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.mnassa.R
 import com.mnassa.translation.fromDictionary
 

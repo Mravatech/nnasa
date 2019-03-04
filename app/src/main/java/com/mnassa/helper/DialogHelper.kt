@@ -9,9 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatRadioButton
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -22,6 +19,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatRadioButton
+import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mnassa.BuildConfig
 import com.mnassa.R
@@ -37,17 +37,17 @@ import com.mnassa.screen.invite.InviteController.Companion.INVITE_WITH_WHATS_APP
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.dialog_add_tags.*
 import kotlinx.android.synthetic.main.dialog_buy_ticket.view.*
-import kotlinx.android.synthetic.main.dialog_company_status.*
 import kotlinx.android.synthetic.main.dialog_delete_chat_message.*
 import kotlinx.android.synthetic.main.dialog_invite_with.*
 import kotlinx.android.synthetic.main.dialog_occupation.*
 import kotlinx.android.synthetic.main.dialog_welcome.view.*
 import kotlinx.android.synthetic.main.dialog_yes_no.*
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import mobi.upod.timedurationpicker.TimeDurationPicker
 import mobi.upod.timedurationpicker.TimeDurationPickerDialog
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
 
 class DialogHelper {
 
@@ -429,7 +429,7 @@ class DialogHelper {
             }
 
             dialog.show()
-            continuation.invokeOnCompletion { dialog.dismiss() }
+            continuation.invokeOnCancellation { dialog.dismiss() }
         }
     }
 

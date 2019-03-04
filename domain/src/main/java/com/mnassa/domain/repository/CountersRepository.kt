@@ -1,21 +1,20 @@
 package com.mnassa.domain.repository
 
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 3/7/2018.
  */
 interface CountersRepository {
-    val numberOfCommunities: ReceiveChannel<Int>
-    val numberOfConnections: ReceiveChannel<Int>
-    val numberOfDisconnected: ReceiveChannel<Int>
-    val numberOfRecommendations: ReceiveChannel<Int>
-    val numberOfRequested: ReceiveChannel<Int>
-    val numberOfSent: ReceiveChannel<Int>
-    val numberOfUnreadChats: ReceiveChannel<Int>
-    val numberOfUnreadEvents: ReceiveChannel<Int>
-    val numberOfUnreadNeeds: ReceiveChannel<Int>
-    val numberOfUnreadNotifications: ReceiveChannel<Int>
-    val numberOfUnreadResponses: ReceiveChannel<Int>
-
+    suspend fun produceNumberOfCommunities(): ReceiveChannel<Int>
+    suspend fun produceNumberOfConnections(): ReceiveChannel<Int>
+    suspend fun produceNumberOfDisconnected(): ReceiveChannel<Int>
+    suspend fun produceNumberOfRecommendations(): ReceiveChannel<Int>
+    suspend fun produceNumberOfRequested(): ReceiveChannel<Int>
+    suspend fun produceNumberOfSent(): ReceiveChannel<Int>
+    suspend fun produceNumberOfUnreadChats(): ReceiveChannel<Int>
+    suspend fun produceNumberOfUnreadEvents(): ReceiveChannel<Int>
+    suspend fun produceNumberOfUnreadNeeds(): ReceiveChannel<Int>
+    suspend fun produceNumberOfUnreadNotifications(): ReceiveChannel<Int>
+    suspend fun produceNumberOfUnreadResponses(): ReceiveChannel<Int>
 }

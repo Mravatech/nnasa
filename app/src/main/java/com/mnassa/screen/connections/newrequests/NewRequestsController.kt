@@ -1,7 +1,7 @@
 package com.mnassa.screen.connections.newrequests
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.isInvisible
@@ -11,7 +11,7 @@ import com.mnassa.screen.connections.adapters.NewConnectionRequestsRecyclerViewA
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_connections_new_requests.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -28,8 +28,8 @@ class NewRequestsController : MnassaControllerImpl<NewRequestsViewModel>() {
 
         adapter.onAcceptClickListener = { viewModel.accept(it) }
         adapter.onDeclineClickListener = {
-            launchCoroutineUI { thisRef ->
-                val disconnectDays = thisRef().viewModel.getDisconnectTimeoutDays()
+            launchCoroutineUI {
+                val disconnectDays = viewModel.getDisconnectTimeoutDays()
                 dialog.showDeclineConnectionDialog(view.context, disconnectDays) {
                     viewModel.decline(it)
                 }

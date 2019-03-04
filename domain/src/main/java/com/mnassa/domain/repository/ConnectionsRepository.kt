@@ -1,7 +1,7 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.*
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 3/5/2018.

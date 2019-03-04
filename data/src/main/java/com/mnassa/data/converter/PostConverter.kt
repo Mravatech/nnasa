@@ -1,10 +1,10 @@
 package com.mnassa.data.converter
 
+import com.google.gson.Gson
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.ConvertersContextRegistrationCallback
 import com.mnassa.core.converter.convert
 import com.mnassa.core.converter.registerConverter
-import com.google.gson.Gson
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.bean.firebase.*
 import com.mnassa.data.network.bean.retrofit.response.PostData

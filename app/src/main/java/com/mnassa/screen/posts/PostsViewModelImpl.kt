@@ -1,23 +1,22 @@
 package com.mnassa.screen.posts
 
-import android.util.Log
-import com.mnassa.domain.exception.NetworkException
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.delay
 import java.util.*
-import java.util.Collections.min
 import kotlin.math.min
 
 /**
@@ -47,14 +46,14 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         userProfileInteractor.getPermissions()
     }
 
-    override val recheckFeedsChannel: BroadcastChannel<ListItemEvent<List<PostModel>>> = BroadcastChannel(10)
-
     override fun onAttachedToWindow(post: PostModel) {
-        handleException { postsInteractor.onItemViewed(post) }
+        GlobalScope.resolveExceptions(showErrorMessage = false) {
+            postsInteractor.onItemViewed(post)
+        }
 
         //reset counter with debounce
         resetCounterJob?.cancel()
-        resetCounterJob = async {
+        resetCounterJob = GlobalScope.asyncWorker {
             delay(1_000)
             resetCounter()
         }
@@ -68,15 +67,8 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         }
     }
 
-    override fun recheckFeeds() {
-        handleException {
-            val removedPosts = postsInteractor.recheckAndReloadFeeds()
-            recheckFeedsChannel.send(removedPosts)
-        }
-    }
-
     override fun hideInfoPost(post: PostModel) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 postsInteractor.hideInfoPost(post.id)
             }
@@ -104,13 +96,9 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     private fun resetCounter() {
-        handleException {
-            try {
-                postsInteractor.resetCounter()
-                isCounterReset = true
-            } catch (e: NetworkException) {
-                //ignore
-            }
+        resolveExceptions {
+            postsInteractor.resetCounter()
+            isCounterReset = true
         }
     }
 

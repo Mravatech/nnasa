@@ -10,15 +10,16 @@ import com.mnassa.domain.model.Gender
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.impl.PersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
 
 class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor,
                                 private val userProfileInteractor: UserProfileInteractor,
                                 tagInteractor: TagInteractor) : BaseEditableProfileViewModelImpl(tagInteractor), PersonalInfoViewModel {
 
-    override val openScreenChannel: ArrayBroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = ArrayBroadcastChannel(10)
+    override val openScreenChannel: BroadcastChannel<PersonalInfoViewModel.OpenScreenCommand> = BroadcastChannel(10)
 
     private var avatarSavedPath: String? = null
     private var avatarUri: Uri? = null
@@ -27,7 +28,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     }
 
     override fun skipThisStep() {
-        handleException {
+        resolveExceptions {
             openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
@@ -44,7 +45,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                                 isMale: Boolean
     ) {
         processAccountJob?.cancel()
-        processAccountJob = handleException {
+        processAccountJob = resolveExceptions {
             withProgressSuspend {
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val personalInfo = PersonalInfoModelImpl(

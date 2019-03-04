@@ -7,11 +7,12 @@ import androidx.annotation.RequiresPermission
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContact
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -30,7 +31,7 @@ class InviteViewModelImpl(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleException {
+        resolveExceptions {
             inviteInteractor.getInvitesCountChannel().consumeEach {
                 invitesCountChannel.send(it)
             }
@@ -42,7 +43,7 @@ class InviteViewModelImpl(
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override fun retrievePhoneContacts() {
         retrievePhoneJob?.cancel()
-        retrievePhoneJob = handleException {
+        retrievePhoneJob = resolveExceptions {
             val contacts = connectionsInteractor.retrievePhoneContacts()
             phoneContactChannel.send(contacts)
         }
@@ -51,7 +52,7 @@ class InviteViewModelImpl(
     private var checkPhoneContactJob: Job? = null
     override fun checkPhoneContact(contact: PhoneContact) {
         checkPhoneContactJob?.cancel()
-        checkPhoneContactJob = handleException {
+        checkPhoneContactJob = resolveExceptions {
             withProgressSuspend {
                 val inviteSourceHolder: InviteSourceHolder by instance()
                 val inviteSource = inviteSourceHolder.source

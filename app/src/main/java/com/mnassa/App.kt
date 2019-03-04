@@ -1,17 +1,18 @@
 package com.mnassa
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import android.content.Context
 import androidx.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.FirebaseApp
-import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.SubscriptionContainer
+import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
 import com.mnassa.domain.interactor.DictionaryInteractor
@@ -21,7 +22,6 @@ import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
-import kotlinx.coroutines.experimental.Job
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -32,7 +32,8 @@ import timber.log.Timber
 /**
  * Created by Peter on 2/20/2018.
  */
-class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
+class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
+    SubscriptionContainer by SubscriptionsContainerDelegate() {
 
     override val kodein: Kodein = Kodein.lazy {
         import(androidModule(this@App))
@@ -40,15 +41,9 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
         bind<Context>() with provider { this@App }
     }
 
-    private var dictionaryUpdateJob: Job? = null
-    private var handleUserStatusUpdateJob: Job? = null
-    private var handleAccountStatusUpdateJob: Job? = null
-    private var handleAccountRefreshJob: Job? = null
-
     override fun onCreate() {
         APP_CONTEXT = this
         super.onCreate()
-
         val appInfoProvider = getInstance<AppInfoProvider>()
         if (!appInfoProvider.isDebug) FirebaseApp.initializeApp(this)
         if (appInfoProvider.isDebug) {
@@ -78,27 +73,24 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForeground() {
         Timber.i("App is now foreground")
+        openSubscriptionsScope()
 
-        dictionaryUpdateJob?.cancel()
-        dictionaryUpdateJob = getInstance<DictionaryInteractor>().handleDictionaryUpdates()
-
-        handleUserStatusUpdateJob?.cancel()
-        handleUserStatusUpdateJob = getInstance<LoginInteractor>().handleUserStatus()
-
-        handleAccountStatusUpdateJob?.cancel()
-        handleAccountStatusUpdateJob = getInstance<LoginInteractor>().handleAccountStatus()
-
-        handleAccountRefreshJob?.cancel()
-        handleAccountRefreshJob = getInstance<LoginInteractor>().handleAccountRefresh()
+        // Launch background tasks on foreground app
+        // scope.
+        getInstance<DictionaryInteractor>().apply {
+            handleDictionaryUpdates()
+        }
+        getInstance<LoginInteractor>().apply {
+            handleUserStatus()
+            handleAccountStatus()
+            handleAccountRefresh()
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackground() {
+        closeSubscriptionsScope()
         Timber.i("App is now background")
-        dictionaryUpdateJob?.cancel()
-        handleUserStatusUpdateJob?.cancel()
-        handleAccountStatusUpdateJob?.cancel()
-        handleAccountRefreshJob?.cancel()
     }
 
     override fun onTerminate() {

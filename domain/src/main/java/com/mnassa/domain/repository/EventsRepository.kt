@@ -1,9 +1,12 @@
 package com.mnassa.domain.repository
 
-import com.mnassa.domain.model.*
+import com.mnassa.domain.model.EventAttendee
+import com.mnassa.domain.model.EventModel
+import com.mnassa.domain.model.EventTicketModel
+import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.pagination.PaginationController
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 4/13/2018.

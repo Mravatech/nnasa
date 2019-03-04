@@ -7,16 +7,16 @@ import com.github.marlonlom.utilities.timeago.TimeAgoMessages
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.asReference
-import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
+import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.fromDictionary
 import com.mnassa.translation.fromDictionaryPlural
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 
 /**
@@ -109,24 +109,24 @@ fun Date.formatAsDateTime(): CharSequence {
     return localDateFormat.format(this)
 }
 
-fun TextView.startUpdateTimeJob(time: Date) = startUpdateTimeJob(time, this)
+suspend fun TextView.startUpdateTimeJob(time: Date) = startUpdateTimeJob(time, this)
 
-private fun startUpdateTimeJob(time: Date, textView: TextView) {
+private suspend fun startUpdateTimeJob(time: Date, textView: TextView) {
     textView.stopUpdateTimeJob()
     val textViewRef = textView.asReference()
 
-    textView.tag = launchUI {
+    textView.tag = coroutineContext.toCoroutineScope().launch(Dispatchers.Main) {
         while (TimeUnit.MILLISECONDS.toMinutes(abs(System.currentTimeMillis() - time.time)) < 1) {
             textViewRef().text = time.toTimeAgo()
-            delay(1, TimeUnit.SECONDS)
+            delay(TimeUnit.SECONDS.toMillis(1))
         }
         while (TimeUnit.MILLISECONDS.toHours(abs(System.currentTimeMillis() - time.time)) < 1) {
             textViewRef().text = time.toTimeAgo()
-            delay(1, TimeUnit.MINUTES)
+            delay(TimeUnit.MINUTES.toMillis(1))
         }
         while (TimeUnit.MILLISECONDS.toDays(abs(System.currentTimeMillis() - time.time)) < 1) {
             textViewRef().text = time.toTimeAgo()
-            delay(1, TimeUnit.HOURS)
+            delay(TimeUnit.HOURS.toMillis(1))
         }
         textViewRef().text = time.toTimeAgo()
     }

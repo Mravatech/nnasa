@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.*
+import androidx.lifecycle.GenericLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.LifecycleRegistryOwner
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.archlifecycle.ControllerLifecycleOwner
 import com.mnassa.core.addons.SubscriptionContainer
@@ -24,16 +27,10 @@ import com.mnassa.core.permissions.PermissionsManagerDelegate
  */
 
 @Suppress("LeakingThis", "DEPRECATION")
-abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
-                                                      private val viewSubscriptionContainer: SubscriptionContainer,
-                                                      protected val controllerSubscriptionContainer: SubscriptionContainer)
-    : Controller(args),
-        BaseController<VM>,
-        LifecycleRegistryOwner,
-        SubscriptionContainer by viewSubscriptionContainer {
-
-    constructor() : this(Bundle())
-    constructor(args: Bundle) : this(args, SubscriptionsContainerDelegate(), SubscriptionsContainerDelegate())
+abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle = Bundle()) : Controller(args),
+    BaseController<VM>,
+    LifecycleRegistryOwner,
+    SubscriptionContainer by SubscriptionsContainerDelegate() {
 
     /**
      * Provides xml layout id
@@ -75,13 +72,11 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
             }
 
             override fun preDestroyView(controller: Controller, view: View) {
-                viewSubscriptionContainer.cancelAllSubscriptions() //clear View subscriptions
                 onViewDestroyed(view)
             }
 
             override fun preDestroy(controller: Controller) {
                 viewModel.onCleared()
-                controllerSubscriptionContainer.cancelAllSubscriptions()
             }
 
             override fun onSaveInstanceState(controller: Controller, outState: Bundle) {
@@ -119,15 +114,22 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle,
     }
 
     /**
-     * Invokes once after [BaseControllerImpl] creation, when it has [getApplicationContext]
+     * Invokes once after [BaseControllerImpl] creation,
+     * when it has [getApplicationContext]
      */
     open fun onCreated(savedInstanceState: Bundle?) {
         viewModel.onCreate(savedInstanceState)
+        openSubscriptionsScope()
     }
 
     open fun onViewCreated(view: View) {
     }
 
     open fun onViewDestroyed(view: View) {
+    }
+
+    override fun onDestroy() {
+        closeSubscriptionsScope()
+        super.onDestroy()
     }
 }

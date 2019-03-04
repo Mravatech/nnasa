@@ -2,10 +2,10 @@ package com.mnassa.data.converter
 
 import android.graphics.Typeface
 import android.text.style.StyleSpan
+import com.google.android.gms.location.places.AutocompletePrediction
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.ConvertersContextRegistrationCallback
 import com.mnassa.core.converter.registerConverter
-import com.google.android.gms.location.places.AutocompletePrediction
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.impl.GeoPlaceModelImpl
 

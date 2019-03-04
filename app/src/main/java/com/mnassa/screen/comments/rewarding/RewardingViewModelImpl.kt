@@ -2,9 +2,10 @@ package com.mnassa.screen.comments.rewarding
 
 import android.os.Bundle
 import com.mnassa.domain.interactor.WalletInteractor
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +17,7 @@ class RewardingViewModelImpl(private val walletInteractor: WalletInteractor) : M
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 val defaultCount = walletInteractor.getDefaultRewardingPoints()
                 defaultRewardChannel.send(defaultCount)

@@ -2,9 +2,10 @@ package com.mnassa.screen.settings.push
 
 import com.mnassa.domain.interactor.SettingsInteractor
 import com.mnassa.domain.model.PushSettingModel
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,7 +21,7 @@ class PushSettingsViewModelImpl(private val settingsInteractor: SettingsInteract
     private var changePushJob: Job? = null
     override fun changeSetting(setting: PushSettingModel) {
         changePushJob?.cancel()
-        changePushJob = handleException {
+        changePushJob = resolveExceptions {
             withProgressSuspend {
                 val result = settingsInteractor.changeSetting(setting)
                 notificationChangeChannel.send(result)

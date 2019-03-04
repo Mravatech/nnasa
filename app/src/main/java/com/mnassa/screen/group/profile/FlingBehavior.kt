@@ -1,12 +1,12 @@
 package com.mnassa.screen.group.profile
 
 import android.content.Context
-import androidx.annotation.Keep
-import com.google.android.material.appbar.AppBarLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.Keep
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 
 @Keep
 class FlingBehavior : AppBarLayout.Behavior {

@@ -6,7 +6,7 @@ import com.mnassa.domain.model.ProfileAccountModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +14,7 @@ import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
  * Date: 3/26/2018
  */
 interface EditPersonalProfileViewModel : BaseEditableProfileViewModel, PlaceAutocompleteAdapter.PlaceAutoCompleteListener {
-    val openScreenChannel: ArrayBroadcastChannel<PersonalScreenCommander>
+    val openScreenChannel: BroadcastChannel<PersonalScreenCommander>
     fun saveLocallyAvatarUri(uri: Uri)
     fun updatePersonalAccount(
             profileAccountModel: ProfileAccountModel,

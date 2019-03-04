@@ -3,8 +3,10 @@ package com.mnassa.data.extensions
 import com.google.firebase.database.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.model.HasId
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Created by Peter on 2/26/2018.
@@ -37,7 +39,8 @@ internal suspend inline fun <reified T : Any> Query.awaitList(exceptionHandler: 
             }
         }
         addListenerForSingleValueEvent(listener)
-        continuation.invokeOnCompletion { removeEventListener(listener) }
+
+        continuation.invokeOnCancellation { removeEventListener(listener) }
     }
     return result
 }
@@ -59,7 +62,7 @@ internal suspend inline fun <reified T : Any> Query.await(exceptionHandler: Exce
             }
         }
         addListenerForSingleValueEvent(listener)
-        continuation.invokeOnCompletion { removeEventListener(listener) }
+        continuation.invokeOnCancellation { removeEventListener(listener) }
     }
     return result
 }

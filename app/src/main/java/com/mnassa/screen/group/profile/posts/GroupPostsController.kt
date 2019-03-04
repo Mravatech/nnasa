@@ -16,7 +16,7 @@ import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.profile.ProfileController
 import kotlinx.android.synthetic.main.controller_group_profile_posts.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -27,7 +27,7 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
     private val groupId: String by lazy { args.getString(EXTRA_GROUP_ID) }
     override val viewModel: GroupPostsViewModel by instance(arg = groupId)
 
-    private val adapter = PostsRVAdapter(withHeader = false)
+    private val adapter = PostsRVAdapter(this@GroupPostsController, withHeader = false)
     private val popupMenuHelper: PopupMenuHelper by instance()
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -48,7 +48,7 @@ class GroupPostsController(args: Bundle) : MnassaControllerImpl<GroupPostsViewMo
             view?.rlEmptyView?.isInvisible = itemsCount > 0 || adapter.isLoadingEnabled
         }
 
-        controllerSubscriptionContainer.launchCoroutineUI {
+        launchCoroutineUI {
             viewModel.newsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView }

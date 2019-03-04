@@ -1,22 +1,24 @@
 package com.mnassa.screen.posts
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.isRepost
 import com.mnassa.extensions.startUpdateTimeJob
 import com.mnassa.extensions.stopUpdateTimeJob
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Created by Peter on 3/14/2018.
  */
-open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
+open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private val withHeader: Boolean = true) : BaseSortedPaginationRVAdapter<PostModel>(), View.OnClickListener {
     var onAttachedToWindow: (item: PostModel) -> Unit = {}
     var onDetachedFromWindow: (item: PostModel) -> Unit = {}
     var onItemClickListener = { item: PostModel -> }
@@ -128,11 +130,15 @@ open class PostsRVAdapter(private val withHeader: Boolean = true) : BaseSortedPa
         onAttachedToWindow(dataItem)
 
         holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
-            it.startUpdateTimeJob(dataItem.originalCreatedAt)
+            coroutineScope.launchUI {
+                it.startUpdateTimeJob(dataItem.originalCreatedAt)
+            }
         }
 
         holder.itemView.findViewById<TextView?>(R.id.tvReplyTime)?.let {
-            it.startUpdateTimeJob(dataItem.createdAt)
+            coroutineScope.launchUI {
+                it.startUpdateTimeJob(dataItem.createdAt)
+            }
         }
     }
 

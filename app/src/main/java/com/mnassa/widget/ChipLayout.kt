@@ -2,8 +2,6 @@ package com.mnassa.widget
 
 import android.content.Context
 import android.os.Parcelable
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.View
@@ -16,9 +14,12 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
 import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 import androidx.view.get
 import androidx.view.iterator
 import com.mnassa.R
+import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.TagModel
@@ -30,10 +31,10 @@ import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.chip_layout.view.*
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -85,7 +86,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     }
 
     init {
-        allAvailableTags = async { tagInteractor.getAll() }
+        allAvailableTags = GlobalScope.asyncWorker { tagInteractor.getAll() }
 
         View.inflate(context, R.layout.chip_layout, this)
 
@@ -137,7 +138,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
                 val text = etChipInput.text.toString().trim()
                 if (text.length >= MIN_SYMBOLS_TO_START_SEARCH) {
                     searchJob?.cancel()
-                    searchJob = launchUI {
+                    searchJob = GlobalScope.launchUI {
                         delay(SEARCH_DELAY_MS)
                         searchPopupAdapter.search(text)
                     }
@@ -292,8 +293,8 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     private var scanForTagsJob: Job? = null
     private val autoDetectTextWatcher = SimpleTextWatcher { text ->
         scanForTagsJob?.cancel()
-        scanForTagsJob = launchUI {
-            val tags = async { scanForTags(text) }
+        scanForTagsJob = GlobalScope.launchUI {
+            val tags = asyncWorker { scanForTags(text) }
             suggestTags(tags.await())
             onChipsChangeListener()
         }

@@ -19,8 +19,8 @@ import kotlinx.android.synthetic.main.controller_edit_personal_profile.view.*
 import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 import java.util.*
 

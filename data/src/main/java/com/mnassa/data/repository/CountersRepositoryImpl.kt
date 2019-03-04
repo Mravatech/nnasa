@@ -5,32 +5,58 @@ import com.mnassa.data.extensions.toValueChannel
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.domain.repository.CountersRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.filterNotNull
 
 /**
  * Created by Peter on 3/7/2018.
  */
-class CountersRepositoryImpl(private val db: DatabaseReference, private val userRepository: UserRepository, private val exceptionHandler: ExceptionHandler) : CountersRepository {
-    override val numberOfCommunities: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_COMMUNITIES)
-    override val numberOfConnections: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_CONNECTIONS)
-    override val numberOfDisconnected: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_DISCONNECTED)
-    override val numberOfRecommendations: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_RECOMMENDATIONS)
-    override val numberOfRequested: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_REQUESTED)
-    override val numberOfSent: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_SENT)
-    override val numberOfUnreadChats: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_CHATS)
-    override val numberOfUnreadEvents: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_EVENTS)
-    override val numberOfUnreadNeeds: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_NEEDS)
-    override val numberOfUnreadNotifications: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_NOTIFICATIONS)
-    override val numberOfUnreadResponses: ReceiveChannel<Int> get() = getCounter(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_RESPONSES)
+class CountersRepositoryImpl(
+    private val db: DatabaseReference,
+    private val userRepository: UserRepository,
+    private val exceptionHandler: ExceptionHandler
+) : CountersRepository {
 
-    private fun getCounter(key: String): ReceiveChannel<Int> {
+    override suspend fun produceNumberOfCommunities(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_COMMUNITIES)
+
+    override suspend fun produceNumberOfConnections(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_CONNECTIONS)
+
+    override suspend fun produceNumberOfDisconnected(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_DISCONNECTED)
+
+    override suspend fun produceNumberOfRecommendations(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_RECOMMENDATIONS)
+
+    override suspend fun produceNumberOfRequested(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_REQUESTED)
+
+    override suspend fun produceNumberOfSent(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_SENT)
+
+    override suspend fun produceNumberOfUnreadChats(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_CHATS)
+
+    override suspend fun produceNumberOfUnreadEvents(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_EVENTS)
+
+    override suspend fun produceNumberOfUnreadNeeds(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_NEEDS)
+
+    override suspend fun produceNumberOfUnreadNotifications(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_NOTIFICATIONS)
+
+    override suspend fun produceNumberOfUnreadResponses(): ReceiveChannel<Int> =
+        produceNumberOf(DatabaseContract.TABLE_ACCOUNTS_COL_NUM_UNREAD_RESPONSES)
+
+    private suspend fun produceNumberOf(key: String): ReceiveChannel<Int> {
         val accountId = userRepository.getAccountIdOrException()
-
         return db.child(DatabaseContract.TABLE_ACCOUNTS)
-                .child(accountId)
-                .child(key)
-                .toValueChannel<Int>(exceptionHandler)
-                .map { requireNotNull(it) }
+            .child(accountId)
+            .child(key)
+            .toValueChannel<Int>(exceptionHandler)
+            .filterNotNull()
     }
+
 }

@@ -1,11 +1,11 @@
 package com.mnassa.screen.base.adapter.new
 
-import androidx.recyclerview.widget.AdapterListUpdateCallback
-import androidx.recyclerview.widget.RecyclerView
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AdapterListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.core.addons.WeakStateExecutor
 import java.lang.ref.WeakReference
 

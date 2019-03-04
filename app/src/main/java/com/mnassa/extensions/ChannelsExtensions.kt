@@ -2,10 +2,11 @@ package com.mnassa.extensions
 
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.interactor.UserProfileInteractor
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.yield
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.yield
 import org.kodein.di.generic.instance
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -36,7 +37,7 @@ abstract class ReConsumableBroadcastChannel<T>(
 
     override fun getValue(thisRef: MnassaViewModelImpl, property: KProperty<*>): BroadcastChannel<T> {
         previousWaitForReConsumeJob?.cancel()
-        previousWaitForReConsumeJob = thisRef.handleException {
+        previousWaitForReConsumeJob = thisRef.resolveExceptions {
             while (true) {
                 yield()
                 reConsumableEvent(thisRef)
@@ -52,7 +53,7 @@ abstract class ReConsumableBroadcastChannel<T>(
 
         val wasConsumedBefore = previousConsumeJob != null
 
-        previousConsumeJob = thisRef.handleException {
+        previousConsumeJob = thisRef.resolveExceptions {
             if (wasConsumedBefore || invokeReConsumeFirstly) beforeReConsume(outputChannel)
             val inputChannel = receiveChannelProvider()
             previousReceiveChannel = inputChannel
@@ -69,7 +70,7 @@ class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (out
                                                    invokeReConsumeFirstly: Boolean = false,
                                                    onEachEvent: suspend (event: T) -> Unit = {},
                                                    receiveChannelProvider: suspend () -> ReceiveChannel<T>) : ReConsumableBroadcastChannel<T>(
-        outputChannelInstanceCreator = { ArrayBroadcastChannel(100) },
+        outputChannelInstanceCreator = { BroadcastChannel(100) },
         beforeReConsume = beforeReConsume,
         onEachEvent = onEachEvent,
         receiveChannelProvider = receiveChannelProvider,
@@ -78,11 +79,7 @@ class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (out
             userProfileInteractor.onAccountChangedListener.awaitFirst()
         },
         invokeReConsumeFirstly = invokeReConsumeFirstly
-) {
-    override fun getValue(thisRef: MnassaViewModelImpl, property: KProperty<*>): ArrayBroadcastChannel<T> {
-        return super.getValue(thisRef, property) as ArrayBroadcastChannel
-    }
-}
+)
 
 class ProcessAccountChangeConflatedBroadcastChannel<T>(beforeReConsume: suspend (outputChannel: BroadcastChannel<T>) -> Unit = { },
                                                        invokeReConsumeFirstly: Boolean = false,
@@ -103,3 +100,6 @@ class ProcessAccountChangeConflatedBroadcastChannel<T>(beforeReConsume: suspend 
     }
 }
 
+suspend fun <T> BroadcastChannel<T>.consumeOne(): T {
+    return consume { receive() }
+}

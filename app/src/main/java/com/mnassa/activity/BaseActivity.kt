@@ -3,6 +3,8 @@ package com.mnassa.activity
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.mnassa.core.addons.SubscriptionContainer
+import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.domain.other.LanguageProvider
 import com.mnassa.translation.LanguageProviderImpl
 import org.kodein.di.Kodein
@@ -17,7 +19,7 @@ import java.util.*
 /**
  * @author Artem Chepurnoy
  */
-abstract class BaseActivity : AppCompatActivity(), KodeinAware {
+abstract class BaseActivity : AppCompatActivity(), KodeinAware, SubscriptionContainer by SubscriptionsContainerDelegate() {
 
     @Suppress("LeakingThis")
     override val kodeinContext: KodeinContext<*> = kcontext(this)
@@ -31,6 +33,7 @@ abstract class BaseActivity : AppCompatActivity(), KodeinAware {
     private val languageProvider: LanguageProvider by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        openSubscriptionsScope()
         setupLanguageProvider()
         super.onCreate(savedInstanceState)
     }
@@ -42,6 +45,11 @@ abstract class BaseActivity : AppCompatActivity(), KodeinAware {
         lang?.let {
             languageProvider.locale = Locale(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        closeSubscriptionsScope()
     }
 
 }

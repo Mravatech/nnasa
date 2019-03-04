@@ -8,10 +8,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.exception.handler.ExceptionHandler
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.translation.fromDictionary
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Created by Peter on 9/11/2018.
@@ -23,9 +24,9 @@ class PhotoPagerViewModelImpl(
 ) : MnassaViewModelImpl(), PhotoPagerViewModel {
 
     override fun loadImage(imageUrl: String) {
-        handleException {
+        resolveExceptions {
             val uri = firebaseStorage.getReferenceFromUrl(imageUrl).downloadUrl.await(exceptionHandler)
-                    ?: return@handleException
+                    ?: return@resolveExceptions
             val srcFileName = uri.lastPathSegment.substringAfterLast("/")
             val destFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/" + appContext.getString(R.string.app_name)
 
@@ -41,7 +42,7 @@ class PhotoPagerViewModelImpl(
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, dest)
             val manager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             manager.enqueue(request)
-            withContext(UI) {
+            withContext(Dispatchers.Main) {
                 Toast.makeText(appContext, fromDictionary(R.string.gallery_image_saved).format(destFolder), Toast.LENGTH_LONG).show()
             }
         }

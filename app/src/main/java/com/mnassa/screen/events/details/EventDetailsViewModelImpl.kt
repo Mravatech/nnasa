@@ -8,11 +8,11 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
+import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.ArrayBroadcastChannel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Created by Peter on 4/17/2018.
@@ -21,13 +21,13 @@ class EventDetailsViewModelImpl(private val eventId: String,
                                 private val eventsInteractor: EventsInteractor,
                                 private val complaintInteractor: ComplaintInteractor) : MnassaViewModelImpl(), EventDetailsViewModel {
     override val eventChannel: ConflatedBroadcastChannel<EventModel> = ConflatedBroadcastChannel()
-    override val finishScreenChannel: ArrayBroadcastChannel<Unit> = ArrayBroadcastChannel(1)
+    override val finishScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        handleException {
+        resolveExceptions {
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 if (it != null) {
                     eventChannel.send(it)
@@ -36,13 +36,13 @@ class EventDetailsViewModelImpl(private val eventId: String,
                 }
             }
         }
-        handleException {
+        resolveExceptions {
             reportsList = complaintInteractor.getReports()
         }
     }
 
     override fun changeStatus(event: EventModel, status: EventStatus) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 eventsInteractor.changeStatus(event, status)
             }
@@ -50,7 +50,7 @@ class EventDetailsViewModelImpl(private val eventId: String,
     }
 
     override fun sendComplaint(eventId: String, reason: String, authorText: String?) {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = eventId,
@@ -72,7 +72,7 @@ class EventDetailsViewModelImpl(private val eventId: String,
     }
 
     override fun promote() {
-        handleException {
+        resolveExceptions {
             withProgressSuspend {
                 eventsInteractor.promote(eventId)
             }

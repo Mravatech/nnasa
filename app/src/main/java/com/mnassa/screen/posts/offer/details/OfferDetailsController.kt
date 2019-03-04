@@ -11,7 +11,6 @@ import com.mnassa.extensions.isGone
 import com.mnassa.extensions.isMyPost
 import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.posts.need.details.NeedDetailsController
-import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.offer.create.CreateOfferController
 import com.mnassa.screen.posts.offer.details.buy.BuyOfferController
 import com.mnassa.translation.fromDictionary

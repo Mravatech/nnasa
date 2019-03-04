@@ -3,7 +3,7 @@ package com.mnassa.data.network.api
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.bean.retrofit.response.CreatePostResponse
 import com.mnassa.data.network.bean.retrofit.response.MnassaResponse
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.http.*
 
 /**

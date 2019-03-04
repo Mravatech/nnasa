@@ -1,7 +1,6 @@
 package com.mnassa.domain.model
 
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * Created by Peter on 2/23/2018.

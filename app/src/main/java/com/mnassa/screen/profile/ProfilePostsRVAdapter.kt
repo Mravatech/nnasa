@@ -19,11 +19,12 @@ import com.mnassa.screen.posts.PostsRVAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.sub_profile_header.view.*
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Created by Peter on 8/17/2018.
  */
-class ProfilePostsRVAdapter(profile: ShortAccountModel) : PostsRVAdapter(withHeader = true) {
+class ProfilePostsRVAdapter(coroutineScope: CoroutineScope, profile: ShortAccountModel) : PostsRVAdapter(coroutineScope = coroutineScope, withHeader = true) {
 
     var profile: ShortAccountModel = profile
         set(value) {

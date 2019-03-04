@@ -5,7 +5,7 @@ import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.RawCommentModel
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 4/17/2018.

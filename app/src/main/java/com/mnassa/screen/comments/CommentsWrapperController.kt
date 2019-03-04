@@ -1,6 +1,5 @@
 package com.mnassa.screen.comments
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -41,7 +40,7 @@ import kotlinx.android.synthetic.main.panel_comment_attachments.view.*
 import kotlinx.android.synthetic.main.panel_comment_edit.view.*
 import kotlinx.android.synthetic.main.panel_recommend.view.*
 import kotlinx.android.synthetic.main.panel_reply.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -201,7 +200,9 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                 btnCommentPost.setOnClickListener(::onPostCommentClick)
                 ivCommentRecommend.setOnClickListener { openRecommendScreen() }
                 ivCommentAttach.setOnClickListener {
-                    dialogHelper.showSelectImageSourceDialog(it.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+                    dialogHelper.showSelectImageSourceDialog(it.context) { imageSource ->
+                        coroutineScope.launchCoroutineUI { selectImage(imageSource) }
+                    }
                 }
                 updatePostCommentButtonState()
 

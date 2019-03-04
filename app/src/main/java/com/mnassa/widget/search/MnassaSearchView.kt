@@ -2,10 +2,10 @@ package com.mnassa.widget.search
 
 import android.content.Context
 import android.graphics.Color
-import androidx.core.graphics.drawable.DrawableCompat
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.graphics.drawable.DrawableCompat
 import com.mnassa.R
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.extensions.showKeyboard

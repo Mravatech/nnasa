@@ -2,8 +2,8 @@ package com.mnassa.screen.photopager
 
 import android.Manifest
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.bundleOf

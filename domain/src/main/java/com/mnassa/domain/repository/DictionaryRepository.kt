@@ -1,13 +1,14 @@
 package com.mnassa.domain.repository
 
 import com.mnassa.domain.model.TranslatedWordModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 2/23/2018.
  */
 interface DictionaryRepository {
-    fun getMobileUiVersion(): ReceiveChannel<Int>
+    suspend fun produceDictionaryVersion(): ReceiveChannel<Int>
+
     fun keepDictionarySynced(keepSynced: Boolean)
     suspend fun loadDictionary(): List<TranslatedWordModel>
 

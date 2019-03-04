@@ -1,7 +1,7 @@
 package com.mnassa.data.repository
 
-import com.mnassa.core.converter.ConvertersContext
 import com.google.firebase.database.DatabaseReference
+import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.data.extensions.await
 import com.mnassa.data.extensions.toListChannel
 import com.mnassa.data.extensions.toValueChannel
@@ -17,8 +17,8 @@ import com.mnassa.domain.model.PhoneContact
 import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.domain.repository.InviteRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.map
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
 
 /**
  * Created by IntelliJ IDEA.
@@ -63,16 +63,15 @@ class InviteRepositoryImpl(
         inviteApi.inviteContact(ContactsRequest(request)).handleException(exceptionHandler)
     }
 
-    override suspend fun getInvitedContacts(userId: String): ReceiveChannel<List<PhoneContactInvited>> {
-        return databaseReference
+    override suspend fun getInvitedContacts(userId: String): ReceiveChannel<List<PhoneContactInvited>> =
+        databaseReference
                     .child(DatabaseContract.TABLE_INVITETION)
                     .child(userId)
                     .toListChannel<InvitationDbEntity>(exceptionHandler)
                     .map {
                         converter.convertCollection(it, PhoneContactInvited::class.java)
-                                .sortedWith(compareBy(PhoneContactInvited::createdAt))
+                            .sortedWith(compareBy(PhoneContactInvited::createdAt))
                     }
-    }
 
     override suspend fun getInvitesCountChannel(): ReceiveChannel<Int> {
         return db.child(DatabaseContract.TABLE_ACCOUNTS)

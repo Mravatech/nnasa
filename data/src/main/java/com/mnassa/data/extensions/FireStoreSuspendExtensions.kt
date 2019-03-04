@@ -1,85 +1,80 @@
 package com.mnassa.data.extensions
 
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import com.google.firebase.firestore.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Created by Peter on 4/19/2018.
  */
 internal suspend inline fun <reified T : Any> DocumentReference.await(): T? {
     forDebug { Timber.i("#LISTEN# await ${this.path}") }
-    val result = firestoreLockSuspend {
-        suspendCancellableCoroutine<T?> { continuation ->
-            lateinit var listener: ListenerRegistration
-            listener = addSnapshotListener { snapshot, firebaseFirestoreException ->
-                firebaseFirestoreException?.let {
-                    continuation.resumeWithException(it)
-                    return@addSnapshotListener
-                }
-                try {
-                    continuation.resume(snapshot.mapSingle())
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    continuation.resumeWithException(e)
-                }
-            }
-            continuation.invokeOnCompletion {
-                listener.remove()
+    return internalAwait<T?, DocumentSnapshot>(
+        { addSnapshotListener(it) },
+        {
+            try {
+                it?.mapSingle()
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
             }
         }
-    }
-    return result
+    )
 }
 
 internal suspend inline fun <reified T : Any> DocumentReference.awaitList(): List<T> {
     forDebug { Timber.i("#LISTEN# awaitList ${this.path}") }
-    val result = firestoreLockSuspend {
-        suspendCancellableCoroutine<List<T>> { continuation ->
-            lateinit var listener: ListenerRegistration
-            listener = addSnapshotListener { snapshot, firebaseFirestoreException ->
-                firebaseFirestoreException?.let {
-                    continuation.resumeWithException(it)
-                    return@addSnapshotListener
-                }
-                try {
-                    continuation.resume(snapshot.mapList())
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    continuation.resumeWithException(e)
-                }
-            }
-            continuation.invokeOnCompletion {
-                listener.remove()
-            }
+    return internalAwait<List<T>, DocumentSnapshot>(
+        { addSnapshotListener(it) },
+        {
+            it.mapList()
         }
-    }
-    return result
+    )
 }
 
 internal suspend inline fun <reified T : Any> Query.awaitList(): List<T> {
     forDebug { Timber.i("#LISTEN# awaitList ${this}") }
-    val result = firestoreLockSuspend {
-        suspendCancellableCoroutine<List<T>> { continuation ->
-            lateinit var listener: ListenerRegistration
-            listener = addSnapshotListener { snapshot, firebaseFirestoreException ->
-                firebaseFirestoreException?.let {
-                    continuation.resumeWithException(it)
-                    return@addSnapshotListener
-                }
-                try {
-                    continuation.resume(snapshot.mapList())
-                } catch (e: Exception) {
-                    Timber.e(e)
-                    continuation.resumeWithException(e)
+    return internalAwait<List<T>, QuerySnapshot>(
+        { addSnapshotListener(it) },
+        {
+            it.mapList()
+        }
+    )
+}
+
+private suspend inline fun <T, L> internalAwait(
+    crossinline subscribe: (EventListener<L>) -> ListenerRegistration,
+    crossinline transform: (L?) -> T
+): T {
+    return withContext(Dispatchers.Main) {
+        suspendCancellableCoroutine<T> { continuation ->
+            lateinit var registration: ListenerRegistration
+
+            val listener = object : EventListener<L> {
+                override fun onEvent(snapshot: L?, e: FirebaseFirestoreException?) {
+                    if (e != null) {
+                        continuation.resumeWithException(e)
+                        return
+                    }
+
+                    registration.remove() // we should wait only for one event
+
+                    if (continuation.isActive) {
+                        val value = snapshot.let(transform)
+                        continuation.resume(value)
+                    }
                 }
             }
-            continuation.invokeOnCompletion {
-                listener.remove()
+
+            registration = subscribe(listener)
+
+            continuation.invokeOnCancellation {
+                registration.remove()
             }
         }
     }
-    return result
 }

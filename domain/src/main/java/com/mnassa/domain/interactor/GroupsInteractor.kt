@@ -3,7 +3,7 @@ package com.mnassa.domain.interactor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.RawGroupModel
 import com.mnassa.domain.model.ShortAccountModel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
  * Created by Peter on 5/21/2018.

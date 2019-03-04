@@ -2,7 +2,7 @@ package com.mnassa.screen.connections.archived
 
 import com.mnassa.domain.model.DeclinedShortAccountModel
 import com.mnassa.screen.base.MnassaViewModel
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 9.03.2018.

@@ -10,7 +10,7 @@ import com.mnassa.screen.main.MainController
 import com.mnassa.screen.splash.SplashViewModel.NextScreen.LOGIN
 import com.mnassa.screen.splash.SplashViewModel.NextScreen.MAIN
 import kotlinx.android.synthetic.main.controller_splash.view.*
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**

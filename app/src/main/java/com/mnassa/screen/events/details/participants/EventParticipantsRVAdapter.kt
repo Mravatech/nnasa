@@ -1,10 +1,10 @@
 package com.mnassa.screen.events.details.participants
 
 import android.annotation.SuppressLint
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*

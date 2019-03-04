@@ -5,7 +5,7 @@ import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
+import kotlinx.coroutines.channels.BroadcastChannel
 
 /**
  * Created by Peter on 3/6/2018.

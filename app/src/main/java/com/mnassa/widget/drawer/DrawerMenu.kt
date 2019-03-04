@@ -2,12 +2,11 @@ package com.mnassa.widget.drawer
 
 import android.content.Context
 import android.os.Build
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.Gravity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.mnassa.R
 
 /**
