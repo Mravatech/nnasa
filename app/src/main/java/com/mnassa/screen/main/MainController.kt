@@ -253,7 +253,7 @@ class MainController : MnassaControllerImpl<MainViewModel>(), MnassaRouter, Page
     }
 
     private fun handleDeepLink(intent: Intent) {
-        if (deeplinkHandler.hasDeeplink(intent)) showProgress()
+        if (deeplinkHandler.hasDeeplink(intent)) showProgress(true)
         else return
         launchCoroutineUI {
             val controller = deeplinkHandler.handle(intent)?.also { open(it) }

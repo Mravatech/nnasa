@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.Lifecycle
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.core.events.awaitFirst
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
@@ -15,6 +16,7 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_recommend_user.view.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -35,9 +37,8 @@ class RecommendUserController(args: Bundle) : MnassaControllerImpl<RecommendUser
             field = value
 
             waitForResumeJob?.cancel()
-            waitForResumeJob = launchCoroutineUI {
-                lifecycle.awaitFirst { it == Lifecycle.Event.ON_RESUME }
-                view?.tvShareOptions?.text = value.format()
+            waitForResumeJob = GlobalScope.launchUI {
+                getViewSuspend().tvShareOptions?.text = value.format()
             }
         }
 

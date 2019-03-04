@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatSpinner
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.extensions.SimpleTextWatcher
@@ -30,6 +31,7 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_offer_create.view.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 import timber.log.Timber
@@ -105,7 +107,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
             rvImages.adapter = attachedImagesAdapter
 
-            showProgress()
+            showProgress(true)
             launchCoroutineUI {
                 initCategorySpinner()
                 if (args.containsKey(EXTRA_OFFER)) {
@@ -293,7 +295,7 @@ class CreateOfferController(args: Bundle) : MnassaControllerImpl<CreateOfferView
 
     @SuppressLint("SetTextI18n")
     private fun applyShareOptionsChanges() {
-        launchCoroutineUI {
+        GlobalScope.launchUI {
             val perPost = viewModel.getShareOfferPostPrice()
             val perPerson = viewModel.getShareOfferPostPerUserPrice() ?: 0L
 

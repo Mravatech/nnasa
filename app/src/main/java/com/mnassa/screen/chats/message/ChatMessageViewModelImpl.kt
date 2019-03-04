@@ -53,7 +53,7 @@ class ChatMessageViewModelImpl(
 
     override suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?) =
             handleExceptionsSuspend {
-                withProgressSuspend {
+                withProgressSuspend(hideKeyboard = false) {
                     chatInteractor.sendMessage(
                             chatID = chatId.await(),
                             text = text,
