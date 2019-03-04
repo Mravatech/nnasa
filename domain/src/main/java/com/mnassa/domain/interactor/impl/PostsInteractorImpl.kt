@@ -9,15 +9,13 @@ import com.mnassa.domain.model.impl.StoragePhotoDataImpl
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ClosedSendChannelException
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import java.util.*
 import kotlin.coroutines.coroutineContext
 
 /**
@@ -26,21 +24,15 @@ import kotlin.coroutines.coroutineContext
 class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val userRepository: UserRepository,
                           private val storageInteractor: StorageInteractor,
+                          private val preferencesInteractor: PreferencesInteractor,
                           private val tagInteractor: TagInteractor,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
     override val mergedInfoPostsAndFeedPagination = PaginationController(MERGED_FEED_INITIAL_SIZE)
 
-    /**
-     * Cached open channels of merged info-posts
-     * and feed.
-     */
-    private var mergedInfoPostsAndFeedMap = HashMap<String, ReceiveChannel<ListItemEvent<List<PostModel>>>>()
+    override val feedOutOfTimeUpperBoundCounter = BroadcastChannel<Int>(Channel.CONFLATED)
 
-    override suspend fun cleanMergedInfoPostsAndFeed() {
-        mergedInfoPostsAndFeedMap.clear()
-        mergedInfoPostsAndFeedPagination.size = MERGED_FEED_INITIAL_SIZE
-    }
+    override val feedTimeUpperBound = BroadcastChannel<Date>(Channel.CONFLATED)
 
     override suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>> {
         return createMergedInfoPostsAndFeedChannel(mergedInfoPostsAndFeedPagination)
@@ -51,6 +43,10 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
         var feedSuspended = true
         val feedBuffer: MutableList<ListItemEvent<List<PostModel>>> = ArrayList()
+
+        var feedBarrierMaxTime = feedTimeUpperBound.openSubscription().receive()
+        val feedBarrierMap = HashMap<String, PostModel>()
+        val feedBarrierMutex = Mutex()
 
         val mutex = Mutex()
 
@@ -65,6 +61,49 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 Timber.e(e)
                 source?.cancel()
             }
+        }
+
+        // Sends non-info-post to an output channel, if it passes
+        // the `feedTimeUpperBound` restrictions.
+        suspend fun sendFeedPost(
+            source: ReceiveChannel<*>?,
+            event: ListItemEvent<List<PostModel>>
+        ) {
+            var pendingPostsSize = 0
+            when (event) {
+                is ListItemEvent.Added<*>,
+                is ListItemEvent.Moved<*>,
+                is ListItemEvent.Changed<*> -> {
+                    val postsToSendNow = ArrayList<PostModel>()
+                    feedBarrierMutex.withLock {
+                        for (item in event.item) {
+                            if (item.createdAt > feedBarrierMaxTime) {
+                                feedBarrierMap[item.id] = item
+                            } else {
+                                // We will send this post
+                                // immediately.
+                                postsToSendNow.add(item)
+                            }
+                        }
+
+                        pendingPostsSize = feedBarrierMap.size
+                    }
+
+                    val eventDecomposed = ListItemEvent.Added(postsToSendNow.toList())
+                    send(source, eventDecomposed)
+                }
+                is ListItemEvent.Removed<List<PostModel>> -> {
+                    feedBarrierMutex.withLock {
+//                        for (item in event.item) feedBarrierMap.remove(item.id)
+
+                        pendingPostsSize = feedBarrierMap.size
+                    }
+
+                    send(source, event)
+                }
+            }
+
+            feedOutOfTimeUpperBoundCounter.send(pendingPostsSize)
         }
 
         val producers = coroutineContext.toCoroutineScope().launch {
@@ -83,7 +122,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                 feedSuspended = false
                 feedBuffer.apply {
                     forEach {
-                        send(null, it)
+                        sendFeedPost(null, it)
                     }
                     clear()
                 }
@@ -123,7 +162,36 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                         mutex.unlock()
                     }
 
-                    send(feedChannel, event)
+                    sendFeedPost(feedChannel, event)
+                }
+            }
+
+            launchWorker {
+                this@PostsInteractorImpl.feedTimeUpperBound.consumeEach { date ->
+                    feedBarrierMutex.withLock {
+                        feedBarrierMaxTime = date
+
+                        // Send new posts right
+                        // now.
+                        val postsToSendNow = ArrayList<PostModel>()
+
+                        val keys = feedBarrierMap.keys.toSet()
+                        for (key in keys) {
+                            val post = feedBarrierMap[key]!!
+                            if (post.createdAt <= date) {
+                                postsToSendNow.add(post)
+                                feedBarrierMap.remove(key)
+                            }
+                        }
+
+                        val event = ListItemEvent.Added(postsToSendNow.toList())
+                        send(null, event)
+
+                        // Update the size of a list
+                        // of pending posts
+                        val pendingPostsSize = feedBarrierMap.size
+                        feedOutOfTimeUpperBoundCounter.send(pendingPostsSize)
+                    }
                 }
             }
         }
@@ -155,6 +223,17 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     private val viewItemChannel = Channel<ListItemEvent<PostModel>>(100)
 
     init {
+        GlobalScope.launchWorker {
+            val newItemsSavedTime = preferencesInteractor
+                .getLong(KEY_FEED_TIME_UPPER_BOUND, Date().time)
+                .let(::Date)
+            feedTimeUpperBound.apply {
+                send(newItemsSavedTime)
+                consumeEach {
+                    preferencesInteractor.saveLong(KEY_FEED_TIME_UPPER_BOUND, it.time)
+                }
+            }
+        }
         GlobalScope.launchWorker {
             viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
@@ -265,5 +344,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
 
         private const val MERGED_FEED_INITIAL_SIZE = 100L
         private const val MERGED_FEED_CHANNEL_CAPACITY = 20
+
+        private const val KEY_FEED_TIME_UPPER_BOUND = "posts::feed_time_upper_bound"
     }
 }

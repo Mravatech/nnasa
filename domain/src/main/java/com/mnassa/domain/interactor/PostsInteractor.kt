@@ -2,8 +2,10 @@ package com.mnassa.domain.interactor
 
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 import java.io.Serializable
+import java.util.*
 
 /**
  * Created by Peter on 3/16/2018.
@@ -11,7 +13,10 @@ import java.io.Serializable
 interface PostsInteractor {
     val mergedInfoPostsAndFeedPagination: PaginationController
 
-    suspend fun cleanMergedInfoPostsAndFeed()
+    val feedOutOfTimeUpperBoundCounter: BroadcastChannel<Int>
+
+    val feedTimeUpperBound: BroadcastChannel<Date>
+
     suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>>
 
     //personal feed

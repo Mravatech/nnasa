@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
@@ -20,19 +21,20 @@ import com.mnassa.screen.group.profile.GroupProfileController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
-import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.newpanel.NewPanelView
 import kotlinx.android.synthetic.main.controller_events_list.view.*
 import kotlinx.android.synthetic.main.new_items_panel.view.*
 import kotlinx.coroutines.GlobalScope
 import org.kodein.di.generic.instance
-import java.util.*
+import java.lang.Exception
 
 /**
  * Created by Peter on 3/6/2018.
  */
-class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected, OnScrollToTop {
+class EventsController : MnassaControllerImpl<EventsViewModel>(), NewPanelView, OnPageSelected, OnScrollToTop {
+
     override val layoutId: Int = R.layout.controller_events_list
     override val viewModel: EventsViewModel by instance()
     private val userInteractor: UserProfileInteractor by instance()
@@ -41,15 +43,6 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@EventsController)
     }
-    private var lastViewedPostDate: Date?
-        get() = viewModel.getLastViewedEventDate()
-        set(value) = viewModel.setLastViewedEventDate(value)
-    private var hasNewPosts: Boolean = false
-        get() {
-            val firstVisibleItem = getFirstItem()?.createdAt ?: return false
-            val lastViewedItem = lastViewedPostDate ?: return true
-            return firstVisibleItem > lastViewedItem
-        }
     private var postIdToScroll: String? = null
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -58,9 +51,6 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
 
         adapter.onAttachedToWindow = { post ->
             controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
-            if (lastViewedPostDate == null || post.createdAt > lastViewedPostDate) {
-                lastViewedPostDate = post.createdAt
-            }
         }
         adapter.onAuthorClickListener = { open(ProfileController.newInstance(it.author)) }
         adapter.onItemClickListener = { openEvent(it) }
@@ -85,8 +75,7 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
             viewModel.eventsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView },
-                    onAdded = { triggerScrollPanel() },
-                    onCleared = { lastViewedPostDate = null }
+                    onAdded = { triggerScrollPanel() }
             )
         }
 
@@ -111,8 +100,10 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         view.rvEvents.adapter = adapter
-        view.rvEvents.attachPanel { hasNewPosts }
-        view.tvNewItemsAvailable.text = fromDictionary(view.context.getString(R.string.events_new_items_available))
+
+        launchUI {
+            view.rvEvents.setupNewPanel(viewModel)
+        }
 
         view.rvEvents.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -126,13 +117,17 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), OnPageSelected
         })
     }
 
-    private fun triggerScrollPanel() {
-        view?.rvEvents?.scrollBy(0, 0)
+    override fun formatNewPanelLabel(counter: Int): String? {
+        val text = fromDictionary(resources!!.getString(R.string.events_new_items_available))
+        return try {
+            text.format(counter)
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    private fun getFirstItem(): EventModel? {
-        if (adapter.dataStorage.isEmpty()) return null
-        return adapter.dataStorage[0]
+    private fun triggerScrollPanel() {
+        view?.rvEvents?.scrollBy(0, 0)
     }
 
     override fun scrollToTop() {

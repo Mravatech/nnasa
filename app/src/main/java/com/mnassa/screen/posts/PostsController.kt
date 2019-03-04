@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
+import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.model.PostModel
 import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
@@ -19,16 +20,22 @@ import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.profile.ProfileController
+import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.newpanel.NewPanelView
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.generic.instance
+import java.lang.Exception
 import java.util.*
 
 
 /**
  * Created by Peter on 3/6/2018.
  */
-class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, OnScrollToTop {
+class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, OnPageSelected, OnScrollToTop {
     override val layoutId: Int = R.layout.controller_posts_list
     override val viewModel: PostsViewModel by instance()
     private val adapter = PostsRVAdapter(this)
@@ -36,15 +43,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
     }
-    private var lastViewedPostDate: Date?
-        get() = viewModel.getLastViewedPostDate()
-        set(value) = viewModel.setLastViewedPostDate(value)
-    private var hasNewPosts: Boolean = false
-        get() {
-            val firstVisibleItem = getFirstItem()?.createdAt ?: return false
-            val lastViewedItem = lastViewedPostDate ?: return true
-            return firstVisibleItem > lastViewedItem
-        }
     private var postIdToScroll: String? = null
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -56,9 +54,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
 
         adapter.onAttachedToWindow = { post ->
             controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
-            if (lastViewedPostDate == null || post.createdAt > lastViewedPostDate) {
-                lastViewedPostDate = post.createdAt
-            }
         }
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
@@ -91,14 +86,13 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         }
 
         resolveExceptions {
-
-        launchCoroutineUI {
-            viewModel.newsFeedChannel.subscribeToUpdates(
+            launchCoroutineUI {
+                viewModel.newsFeedChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView },
-                    onAdded = { triggerScrollPanel() },
-                    onCleared = { lastViewedPostDate = null })
-        }
+                    onAdded = { triggerScrollPanel() }
+                )
+            }
         }
 
         //scroll to element logic
@@ -117,17 +111,15 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
         viewModel.resetScrollPosition()
     }
 
-    private fun getFirstItem(): PostModel? {
-        if (adapter.dataStorage.isEmpty()) return null
-        return adapter.dataStorage[0]
-    }
-
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
         view.rvNewsFeed.itemAnimator = null
         view.rvNewsFeed.adapter = adapter
-        view.rvNewsFeed.attachPanel { hasNewPosts }
+
+        launchUI {
+            view.rvNewsFeed.setupNewPanel(viewModel)
+        }
 
         view.rvNewsFeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -139,6 +131,15 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), OnPageSelected, 
                 viewModel.onScroll(visibleItemCount, totalItemCount, firstVisibleItemPosition)
             }
         })
+    }
+
+    override fun formatNewPanelLabel(counter: Int): String? {
+        val text = fromDictionary(resources!!.getString(R.string.posts_new_items_available))
+        return try {
+            text.format(counter)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun triggerScrollPanel() {

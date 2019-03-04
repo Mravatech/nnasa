@@ -3,7 +3,12 @@ package com.mnassa.screen.posts
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
-import com.mnassa.extensions.firstVisibleItemPosition
+import com.mnassa.core.addons.launchUI
+import com.mnassa.domain.extensions.toCoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 
 /**
@@ -17,8 +22,32 @@ private const val PANEL_ANIMATION_END_ALPHA = 0f
 private const val VERTICAL_SCROLL_MIN_EPSOLON = 10
 private const val VERTICAL_SCROLL_IDLE = 0
 
-fun RecyclerView.attachPanel(hasNewPosts: () -> Boolean) {
+suspend fun RecyclerView.attachPanel(
+    shouldBeShown: ReceiveChannel<Boolean>,
+    onClick: (View) -> Unit
+) {
+    var panelIsShown = false
     val panel = (parent as View).findViewById<View>(R.id.flNewItemsPanel)
+
+    fun updatePanelIsShown(shown: Boolean) {
+        if (panelIsShown != shown) {
+            panelIsShown = shown
+
+            if (shown) {
+                showNewItemsPanel(panel)
+            } else {
+                hideNewItemsPanel(panel)
+            }
+        }
+    }
+
+    // Observe the `Should be changed` emitter and
+    // handle the events.
+    coroutineContext.toCoroutineScope().launchUI {
+        shouldBeShown.consumeEach {
+            updatePanelIsShown(it)
+        }
+    }
 
     addOnScrollListener(object : RecyclerView.OnScrollListener() {
         private var isShown = false
@@ -27,8 +56,9 @@ fun RecyclerView.attachPanel(hasNewPosts: () -> Boolean) {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (dy != VERTICAL_SCROLL_IDLE && abs(dy) < VERTICAL_SCROLL_MIN_EPSOLON) return
 
+            /*
             //to hide panel when scrolling to bottom, add (dy > 0 &&)
-            if (firstVisibleItemPosition > 1 && hasNewPosts()) {
+            if (shouldBeShown()) {
                 if (isShown) return
                 showNewItemsPanel(panel)
                 isShown = true
@@ -39,11 +69,12 @@ fun RecyclerView.attachPanel(hasNewPosts: () -> Boolean) {
                 isHidden = true
                 isShown = false
             }
+            */
         }
     })
 
     panel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
-    panel.setOnClickListener { scrollToPosition(0) }
+    panel.setOnClickListener { onClick(it) }
 }
 
 private fun showNewItemsPanel(panel: View) {

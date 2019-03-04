@@ -32,6 +32,14 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
                 eventsInteractor.getEventsFeedChannel()
             })
 
+    override val scrollToTopChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
+
+    override val newItemsTimeChannel: BroadcastChannel<Date>
+        get() = eventsInteractor.eventsTimeUpperBound
+
+    override val newItemsCounterChannel: BroadcastChannel<Int>
+        get() = eventsInteractor.eventsOutOfTimeUpperBoundCounter
+
     override fun onAttachedToWindow(event: EventModel) {
         GlobalScope.resolveExceptions(showErrorMessage = false) {
             eventsInteractor.onItemViewed(event)
@@ -70,20 +78,11 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
         preferencesInteractor.saveString(KEY_EVENTS_POSITION, null)
     }
 
-    override fun getLastViewedEventDate(): Date? {
-        return preferencesInteractor.getLong(KEY_EVENTS_LAST_VIEWED, -1).takeIf { it >= 0 }?.let { Date(it) }
-    }
-
-    override fun setLastViewedEventDate(date: Date?) {
-        preferencesInteractor.saveLong(KEY_EVENTS_LAST_VIEWED, date?.time ?: -1)
-    }
-
     private suspend fun getAllEvents() = handleExceptionsSuspend { eventsInteractor.loadAllImmediately() }
             ?: emptyList()
 
     private companion object {
         private const val KEY_EVENTS_POSITION = "KEY_EVENTS_POSITION"
-        private const val KEY_EVENTS_LAST_VIEWED = "KEY_EVENTS_LAST_VIEWED"
 
         private const val EVENTS_PAGE_SIZE = 100L
     }

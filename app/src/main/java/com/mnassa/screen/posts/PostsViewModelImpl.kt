@@ -25,7 +25,6 @@ import kotlin.math.min
 class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                          private val userProfileInteractor: UserProfileInteractor,
                          private val preferencesInteractor: PreferencesInteractor) : MnassaViewModelImpl(), PostsViewModel {
-
     private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
@@ -33,10 +32,6 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
             beforeReConsume = {
                 isCounterReset = false
                 it.send(ListItemEvent.Cleared())
-
-                // Clear cache of channels, so we won't get stuck with
-                // closed channel on re-consume.
-                postsInteractor.cleanMergedInfoPostsAndFeed()
             },
             receiveChannelProvider = {
                 postsInteractor.loadMergedInfoPostsAndFeed()
@@ -45,6 +40,14 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     override val permissionsChannel: ConflatedBroadcastChannel<PermissionsModel> by ProcessAccountChangeConflatedBroadcastChannel {
         userProfileInteractor.getPermissions()
     }
+
+    override val scrollToTopChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
+
+    override val newItemsTimeChannel: BroadcastChannel<Date>
+        get() = postsInteractor.feedTimeUpperBound
+
+    override val newItemsCounterChannel: BroadcastChannel<Int>
+        get() = postsInteractor.feedOutOfTimeUpperBoundCounter
 
     override fun onAttachedToWindow(post: PostModel) {
         GlobalScope.resolveExceptions(showErrorMessage = false) {
@@ -87,14 +90,6 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
         preferencesInteractor.saveString(KEY_POSTS_POSITION, null)
     }
 
-    override fun getLastViewedPostDate(): Date? {
-        return preferencesInteractor.getLong(KEY_POSTS_LAST_VIEWED, -1).takeIf { it >= 0 }?.let { Date(it) }
-    }
-
-    override fun setLastViewedPostDate(date: Date?) {
-        preferencesInteractor.saveLong(KEY_POSTS_LAST_VIEWED, date?.time ?: -1)
-    }
-
     private fun resetCounter() {
         resolveExceptions {
             postsInteractor.resetCounter()
@@ -104,7 +99,6 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
 
     companion object {
         private const val KEY_POSTS_POSITION = "KEY_POSTS_POSITION"
-        private const val KEY_POSTS_LAST_VIEWED = "KEY_POSTS_LAST_VIEWED"
 
         private const val POSTS_PAGE_SIZE = 100L
     }
