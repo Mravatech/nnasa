@@ -102,7 +102,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
 
         resolveExceptions {
             launchUI {
-                showProgress()
+                showProgress(hideKeyboard = true)
                 try {
                     val controller = deeplinkHandler.handle(item)
                     if (controller != null) {
