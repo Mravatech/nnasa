@@ -20,16 +20,18 @@ class MnassaCollapsingToolbarLayout @JvmOverloads constructor(
             val appBarHeight = appBarLayout.measuredHeight
             val dy = appBarHeight.toFloat() - scrimVisibleHeightTrigger
 
-            scrimAlpha = (1f - (dy + offset) / dy).pow(2)
+            val scrimAlphaLinearInverted = (dy + offset) / dy
+            val scrimAlphaLinear = MAX_COLOR_CHANNEL_FLOAT - scrimAlphaLinearInverted
+            scrimAlpha = scrimAlphaLinear.pow(2)
         }
 
     private var scrimAlpha: Float = 0f
         set(value) {
-            field = min(max(value, 0f), 1f)
+            field = min(max(value, MIN_COLOR_CHANNEL_FLOAT), MAX_COLOR_CHANNEL_FLOAT)
 
             // Convert to integer representation and
             // update the drawable.
-            val alpha = (field * 255).toInt()
+            val alpha = (field * MAX_COLOR_CHANNEL_INT).toInt()
             setScrimAlpha(alpha)
         }
 
@@ -54,6 +56,12 @@ class MnassaCollapsingToolbarLayout @JvmOverloads constructor(
 
     override fun setScrimsShown(shown: Boolean, animate: Boolean) {
         // ignored
+    }
+
+    companion object {
+        private const val MAX_COLOR_CHANNEL_INT = 255
+        private const val MAX_COLOR_CHANNEL_FLOAT = 1f
+        private const val MIN_COLOR_CHANNEL_FLOAT = 0f
     }
 
 }
