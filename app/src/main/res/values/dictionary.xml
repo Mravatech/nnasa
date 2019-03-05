@@ -63,8 +63,8 @@
     <string name="tab_home_button_create_general_post">_android_home_button_create_general</string>
 
     <!-- ========================================= POSTS ======================================== -->
-    <string name="posts_new_items_available">_newsfeed_new_posts_available</string>
-    <string name="events_new_items_available">_newsfeed_new_events_available</string>
+    <string name="posts_new_items_available">_posts_refreshButton_mask</string>
+    <string name="events_new_items_available">_events_refreshButton_mask</string>
     <string name="need_prefix">_post_type_need_Info</string>
     <string name="recommend_prefix">_android_post_recommends_prefix</string>
     <string name="recommend_title">_profile_menu_recommendUser</string>

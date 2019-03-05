@@ -3,7 +3,12 @@ package com.mnassa.screen.posts
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
+import com.mnassa.core.addons.launchUI
+import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.extensions.firstVisibleItemPosition
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 
 /**
@@ -16,34 +21,67 @@ private const val PANEL_ANIMATION_END_POSITION = -100f
 private const val PANEL_ANIMATION_END_ALPHA = 0f
 private const val VERTICAL_SCROLL_MIN_EPSOLON = 10
 private const val VERTICAL_SCROLL_IDLE = 0
+private const val VERTICAL_THRESHOLD = 100
 
-fun RecyclerView.attachPanel(hasNewPosts: () -> Boolean) {
+suspend fun RecyclerView.attachPanel(
+    shouldBeShown: ReceiveChannel<Boolean>,
+    onClick: (View) -> Unit
+) {
+    var y = 0
+    var panelIsShownY = 0
+
+    var panelShouldBeShown = false
+    var panelIsShown = false
     val panel = (parent as View).findViewById<View>(R.id.flNewItemsPanel)
 
-    addOnScrollListener(object : RecyclerView.OnScrollListener() {
-        private var isShown = false
-        private var isHidden = false
+    fun updatePanelIsShown(shown: Boolean) {
+        if (panelIsShown != shown) {
+            panelIsShown = shown
 
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            if (dy != VERTICAL_SCROLL_IDLE && abs(dy) < VERTICAL_SCROLL_MIN_EPSOLON) return
-
-            //to hide panel when scrolling to bottom, add (dy > 0 &&)
-            if (firstVisibleItemPosition > 1 && hasNewPosts()) {
-                if (isShown) return
+            if (shown) {
                 showNewItemsPanel(panel)
-                isShown = true
-                isHidden = false
             } else {
-                if (isHidden) return
                 hideNewItemsPanel(panel)
-                isHidden = true
-                isShown = false
+            }
+        }
+    }
+
+    // Observe the `Should be changed` emitter and
+    // handle the events.
+    coroutineContext.toCoroutineScope().launchUI {
+        shouldBeShown.consumeEach {
+            updatePanelIsShown(it)
+            panelShouldBeShown = it
+            panelIsShownY = y
+        }
+    }
+
+    addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (dy == VERTICAL_SCROLL_IDLE) {
+                return
+            }
+
+            y += dy
+
+            if (firstVisibleItemPosition == 0 && panelShouldBeShown) {
+                updatePanelIsShown(true)
+            } else {
+                if (abs(y - panelIsShownY) > VERTICAL_THRESHOLD) {
+                    if (y > panelIsShownY) {
+                        updatePanelIsShown(false)
+                    } else if (panelShouldBeShown) {
+                        updatePanelIsShown(true)
+                    }
+
+                    panelIsShownY = y
+                }
             }
         }
     })
 
     panel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
-    panel.setOnClickListener { scrollToPosition(0) }
+    panel.setOnClickListener { onClick(it) }
 }
 
 private fun showNewItemsPanel(panel: View) {

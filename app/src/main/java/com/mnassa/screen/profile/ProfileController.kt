@@ -42,11 +42,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
     override val viewModel: ProfileViewModel by instance(arg = accountId)
 
     private val dialog: DialogHelper by instance()
-    private var lastViewedPostDate: Long = -1
-    private var hasNewPosts: Boolean = false
-        get() {
-            return lastViewedPostDate < getFirstItem()?.createdAt?.time ?: -1
-        }
     private var profile: ShortAccountModel = args[EXTRA_ACCOUNT] as ShortAccountModel
     private var adapter = ProfilePostsRVAdapter(this@ProfileController, profile)
 
@@ -55,11 +50,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
         adapter.isLoadingEnabled = savedInstanceState == null
         adapter.onDataChangedListener = { itemsCount ->
             view?.findViewById<View>(R.id.rlEmptyView)?.isGone = !adapter.dataStorage.isEmpty()
-        }
-        adapter.onAttachedToWindow = { post ->
-            if (post.createdAt.time > lastViewedPostDate) {
-                lastViewedPostDate = post.createdAt.time
-            }
         }
         adapter.onCreateNeedClickListener = { open(CreateNeedController.newInstance()) }
         adapter.onPostedByClickListener = { if (it.id != profile.id) open(ProfileController.newInstance(it)) }
@@ -87,15 +77,9 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
             viewModel.postChannel.subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().findViewById(R.id.rlEmptyView) },
-                    onAdded = { triggerScrollPanel() },
-                    onCleared = { lastViewedPostDate = -1 }
+                    onAdded = { triggerScrollPanel() }
             )
         }
-    }
-
-    private fun getFirstItem(): PostModel? {
-        if (adapter.dataStorage.isEmpty()) return null
-        return adapter.dataStorage[0]
     }
 
     private fun triggerScrollPanel() {
@@ -107,7 +91,6 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
 
         with(view) {
             rvProfile.adapter = adapter
-            rvProfile.attachPanel { hasNewPosts }
 
             val titleColor = ContextCompat.getColor(context, R.color.white)
             collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor)

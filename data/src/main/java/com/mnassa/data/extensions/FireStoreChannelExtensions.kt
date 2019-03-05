@@ -235,6 +235,9 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                 @Volatile
                 override var isBusy: Boolean = false
 
+                @Volatile
+                override var isCompleted: Boolean = false
+
                 override fun onNextPageRequested(limit: Long) {
                     if (channel.isClosedForSend) {
                         // User will have to start from
@@ -265,6 +268,10 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                                 return@withLock
                             }
 
+                            if (isCompleted) {
+                                return@withLock
+                            }
+
                             doSubscribe(prevDoc, lastDoc) {
                                 if (prevDoc == lastDoc && curToken == token) {
                                     isBusy = false
@@ -272,6 +279,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                             }
 
                             prevDoc = lastDoc
+                            isCompleted = isCompleted || lastDoc == null
                         }
                     }
                 }

@@ -3,13 +3,19 @@ package com.mnassa.domain.interactor
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.pagination.PaginationController
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
+import java.util.*
 
 /**
  * Created by Peter on 4/13/2018.
  */
 interface EventsInteractor {
     val eventsPagination: PaginationController
+
+    val eventsOutOfTimeUpperBoundCounter: BroadcastChannel<Int>
+
+    val eventsTimeUpperBound: BroadcastChannel<Date>
 
     suspend fun loadAllImmediately(): List<EventModel>
     suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>>
