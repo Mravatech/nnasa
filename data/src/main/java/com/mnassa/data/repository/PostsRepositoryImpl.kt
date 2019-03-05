@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.convert
+import com.mnassa.data.cache.Cached
 import com.mnassa.data.converter.PostAdditionInfo
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
@@ -42,6 +43,14 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val converter: ConvertersContext,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
+
+    private val roomDb by lazy {
+        Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
+                .fallbackToDestructiveMigration()
+                .build()
+    }
+
+    private val cachedDefaultExpirationDays = Cached<Long>()
 
     override suspend fun loadInfoPosts(): List<InfoPostModel> {
         val serialNumber = userRepository.getSerialNumberOrException()
@@ -260,9 +269,12 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun getDefaultExpirationDays(): Long {
-        return db.child(DatabaseContract.TABLE_CLIENT_DATA)
-                .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME)
-                .await(exceptionHandler)!!
+        return cachedDefaultExpirationDays
+            .getOr {
+                db.child(DatabaseContract.TABLE_CLIENT_DATA)
+                    .child(DatabaseContract.TABLE_CLIENT_DATA_COL_DEFAULT_EXPIRATION_TIME)
+                    .await(exceptionHandler)!!
+            }
     }
 
     override suspend fun hideInfoPost(postId: String) {

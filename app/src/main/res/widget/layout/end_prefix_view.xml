@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:orientation="vertical"
+    tools:parentTag="android.widget.LinearLayout">
 
     <TextView
         android:id="@+id/tvFloatingLabel"
@@ -10,31 +13,55 @@
         android:layout_height="wrap_content"
         tools:text="Expired in" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/etEditableText"
+        <TextView
+            android:id="@+id/tvEditableTextGhost"
+            style="?editTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
             android:background="@color/transparent"
-            android:inputType="number"
+            android:textColor="@color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="10" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEditableText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEditableText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-3dp"
+                android:layout_marginEnd="-3dp"
+                android:inputType="number"
+                android:paddingEnd="56dp"
+                tools:text="10" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/tvPrefix"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvEditableTextGhost"
+            app:layout_constraintStart_toEndOf="@id/tvEditableTextGhost"
             tools:text=" day(s)" />
-    </LinearLayout>
 
-    <View
-        android:id="@+id/vFakeBottomView"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:layout_marginTop="4dp"
-        android:background="@color/chip_edit_text_hint" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </merge>
