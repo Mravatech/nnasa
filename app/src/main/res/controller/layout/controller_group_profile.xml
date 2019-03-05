@@ -12,7 +12,7 @@
         android:layout_height="150dp"
         app:layout_behavior="com.mnassa.screen.group.profile.FlingBehavior">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <com.mnassa.widget.MnassaCollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -106,7 +106,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.mnassa.widget.MnassaCollapsingToolbarLayout>
 
 
     </com.google.android.material.appbar.AppBarLayout>
