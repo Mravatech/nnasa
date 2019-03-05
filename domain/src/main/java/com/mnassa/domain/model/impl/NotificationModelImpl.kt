@@ -20,16 +20,41 @@ data class NotificationModelImpl(
 
 data class NotificationExtraImpl(
         override var author: ShortAccountModel?,
-        override val post: PostModel?,
-        override var reffered: ShortAccountModel?,
-        override var recommended: ShortAccountModel?,
+        override val post: NotificationExtra.Post?,
+        override var reffered: NotificationExtra.UserReferred?,
+        override var recommended: NotificationExtra.UserRecommended?,
         override var group: GroupModel?,
         override val eventName: String?,
         override val ticketsPrice: String?,
         override val totalPrice: String?,
         override val attendee: String?,
-        override val event: EventModel?,
+        override val event: NotificationExtra.Event?,
         override val newInviteNumber: Int?
-) : NotificationExtra {
+) : NotificationExtra
 
-}
+data class NotificationExtraUserReferredImpl(
+        override var id: String,
+        override var userName: String,
+        override var personalInfo: PersonalAccountDiffModel?,
+        override var organizationInfo: OrganizationAccountDiffModel?
+) : NotificationExtra.UserReferred
+
+data class NotificationExtraUserRecommendedImpl(
+        override var id: String,
+        override var userName: String,
+        override var personalInfo: PersonalAccountDiffModel?,
+        override var organizationInfo: OrganizationAccountDiffModel?
+) : NotificationExtra.UserRecommended
+
+data class NotificationExtraPostImpl(
+        override var id: String,
+        override var author: ShortAccountModel?,
+        override var type: String,
+        override var text: String
+) : NotificationExtra.Post
+
+data class NotificationExtraEventImpl(
+        override var id: String,
+        override var author: ShortAccountModel?,
+        override var title: String
+) : NotificationExtra.Event
