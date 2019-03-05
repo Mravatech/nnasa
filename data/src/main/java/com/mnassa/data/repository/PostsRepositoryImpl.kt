@@ -1,18 +1,12 @@
 package com.mnassa.data.repository
 
 import android.content.Context
-import androidx.room.Room
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.convert
 import com.mnassa.data.converter.PostAdditionInfo
-import com.mnassa.data.database.MnassaDb
-import com.mnassa.data.database.entity.PostForUser
-import com.mnassa.data.database.entity.PostRoomEntity
-import com.mnassa.data.database.entity.UserRoomEntity
 import com.mnassa.data.extensions.*
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.data.network.api.FirebasePostApi
@@ -24,7 +18,6 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
-import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
@@ -32,13 +25,11 @@ import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.coroutines.coroutineContext
 
 /**
  * Created by Peter on 3/15/2018.
@@ -52,123 +43,81 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
-    private val roomDb by lazy {
-        Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
-                .fallbackToDestructiveMigration()
-                .build()
-    }
-
     override suspend fun loadInfoPosts(): List<InfoPostModel> {
-        val accountId = userRepository.getAccountIdOrException()
-        return getAccountsInfoCollectionRef(accountId)
-            .awaitList<PostShortDbEntity>()
-            .mapNotNull {
-                it.toFullModel(currentUserId = accountId, savePinned = true)
-                    ?.let {
-                        val additionalInfo = PostAdditionInfo()
-                        return@let converter.convert(
-                            it,
-                            additionalInfo,
-                            InfoPostModel::class.java
-                        ).apply {
-                            isPinned = true
-                        }
-                    }
-            }
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .whereArrayContains(PostDbEntity.INFO_FOR_USERS, serialNumber)
+            .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+            .awaitList<PostDbEntity>()
+            .mapNotNull { mapInfoPost(it) }
             .toList()
     }
 
     override suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
-        val accountId = userRepository.getAccountIdOrException()
-        return getAccountsInfoCollectionRef(accountId)
-            .toValueChannelWithChangesHandling<PostShortDbEntity, InfoPostModel>(
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
                 exceptionHandler = exceptionHandler,
                 queryBuilder = { collection ->
-                    collection.orderBy(
-                        PostDbEntity.PROPERTY_CREATED_AT,
-                        // This is loading in a reverse order,
-                        // that's for new items to appear at top of the list
-                        // and not at the bottom.
-                        Query.Direction.ASCENDING
-                    )
+                    collection
+                        .whereArrayContains(PostDbEntity.INFO_FOR_USERS, serialNumber)
+                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
                 },
                 mapper = {
-                    it.toFullModel(currentUserId = accountId, savePinned = true)?.let {
-                        converter.convert(it, PostAdditionInfo(), InfoPostModel::class.java)
-                    }?.also { it.isPinned = true }
+                    mapInfoPost(it)
                 }
             )
 
     }
 
     override suspend fun loadInfoPost(postId: String): PostModel? {
-        val accountId = userRepository.getAccountIdOrException()
-        return getAccountsInfoCollectionRef(accountId)
-            .document(postId)
-            .await<PostShortDbEntity>()
-            .let {
-                it?.toFullModel(currentUserId = accountId)
-            }
-            ?: loadById(postId).receiveOrNull()
+        return loadById(postId).consume { receiveOrNull() }
     }
-
-    private fun getAccountsInfoCollectionRef(accountId: String) = firestore
-        .collection(DatabaseContract.TABLE_ACCOUNTS)
-        .document(accountId)
-        .collection(DatabaseContract.TABLE_INFO_FEED)
 
     override suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
-        val accountId = userRepository.getAccountIdOrException()
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-            .document(accountId)
-            .collection(DatabaseContract.TABLE_FEED)
-            .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(exceptionHandler,
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(exceptionHandler,
                 pagination = pagination,
                 queryBuilder = { collection ->
-                    collection.orderBy(
-                        PostDbEntity.PROPERTY_CREATED_AT,
-                        Query.Direction.DESCENDING
-                    )
-                }, mapper = {
-                    it.toFullModel(currentUserId = accountId)
+                    collection
+                        .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
+                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                }, mapper = { postDb ->
+                    mapPost(postDb, null)
                 })
-    }
-
-    override suspend fun clearSavedPosts() {
-        withContext(Dispatchers.Default) {
-            roomDb.getUserPostJoinDao().clearAll()
-            roomDb
-        }
     }
 
     //==============================================================================================
 
     override suspend fun preloadWall(accountId: String): List<PostModel> {
-        val tableName = if (accountId == userRepository.getAccountIdOrException()) {
-            DatabaseContract.TABLE_PRIVATE_WALL
-        } else {
-            DatabaseContract.TABLE_PUBLIC_WALL
-        }
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-            .document(accountId)
-            .collection(tableName)
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
+            .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
             .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
             .limit(DEFAULT_LIMIT.toLong())
             .awaitList<PostShortDbEntity>()
             .mapNotNull { it.toFullModel() }
     }
 
-    override suspend fun loadWallWithChangesHandling(accountId: String): ReceiveChannel<ListItemEvent<PostModel>> {
-        val tableName = if (accountId == userRepository.getAccountIdOrException()) {
-            DatabaseContract.TABLE_PRIVATE_WALL
-        } else {
-            DatabaseContract.TABLE_PUBLIC_WALL
-        }
-        return firestore.collection(DatabaseContract.TABLE_ACCOUNTS)
-            .document(accountId)
-            .collection(tableName)
+    override suspend fun loadWallWithChangesHandling(accountId: String, pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
+        val serialNumber = userRepository.getSerialNumberOrException()
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
             .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                 exceptionHandler,
+                queryBuilder = { collection ->
+                    collection
+                        .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
+                        .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
+                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                },
+                pagination = pagination,
                 mapper = {
                     it.toFullModel()
                 }
@@ -176,23 +125,27 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-            .document(groupId)
-            .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
-            .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(
                 exceptionHandler = exceptionHandler,
-                mapper = { it.toFullModel(groupId = groupId) }
+                queryBuilder = { collection ->
+                    collection
+                        .whereArrayContains(PostDbEntity.VISIBLE_FOR_GROUPS, groupId)
+                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                },
+                mapper = { mapPost(it, groupId) }
             )
     }
 
     override suspend fun preloadGroupFeed(groupId: String): List<PostModel> {
-        return firestore.collection(DatabaseContract.TABLE_GROUPS_ALL)
-            .document(groupId)
-            .collection(DatabaseContract.TABLE_GROUPS_ALL_COL_FEED)
+        return firestore
+            .collection(DatabaseContract.TABLE_ALL_POSTS)
+            .whereArrayContains(PostDbEntity.VISIBLE_FOR_GROUPS, groupId)
             .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
             .limit(DEFAULT_LIMIT.toLong())
-            .awaitList<PostShortDbEntity>()
-            .mapNotNull { it.toFullModel(groupId = groupId) }
+            .awaitList<PostDbEntity>()
+            .mapNotNull { mapPost(it, groupId) }
     }
 
     override suspend fun loadById(id: String): ReceiveChannel<PostModel?> = getFromFirestoreChannel(id)
@@ -322,18 +275,20 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             .map { converter.convert(it, OfferCategoryModel::class.java) }
     }
 
+    private suspend fun mapInfoPost(input: PostDbEntity): InfoPostModel? {
+        return mapPost(input, null)
+            ?.let { it as InfoPostModel }
+            ?.apply {
+                isPinned = true
+            }
+    }
+
     private suspend fun mapPost(input: PostDbEntity, groupId: String? = null): PostModel? {
         return try {
             return converter.convert(input.withAutoSuggest(), PostAdditionInfo.withGroup(groupId))
         } catch (e: Exception) {
             Timber.e(e, "Error while mapping post ${input.id}; groupId = $groupId")
             null
-        }
-    }
-
-    private suspend fun getFromDb(postId: String): PostModel? {
-        return withContext(Dispatchers.Default) {
-            roomDb.getUserPostJoinDao().getPostById(postId)?.toPostModel()
         }
     }
 
@@ -344,17 +299,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                     .map {
                         withContext(Dispatchers.Default) {
                             if (it == null) {
-                                currentUserId?.let { userId ->
-                                    roomDb.getUserPostJoinDao().deleteJoin(userId, postId)
-                                }
                                 null
                             } else {
                                 mapPost(it, groupId)?.also {
                                     if (savePinned) {
                                         (it as InfoPostModel).isPinned = true
-                                    }
-                                    currentUserId?.let { userId ->
-                                        roomDb.getUserPostJoinDao().insert(PostForUser(UserRoomEntity(userId), PostRoomEntity(it)))
                                     }
                                 }
                             }
@@ -363,10 +312,7 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     }
 
     private suspend fun PostShortDbEntity.toFullModel(groupId: String? = null, currentUserId: String? = null, savePinned: Boolean = false): PostModel? {
-        var result = getFromDb(id)
-        if ((result?.updatedAt?.time ?: 0) < updatedAt) {
-            result = getFromFirestoreChannel(id, groupId, currentUserId, savePinned).consume { receive() }
-        }
+        var result = getFromFirestoreChannel(id, groupId, currentUserId, savePinned).consume { receive() }
         result?.autoSuggest = this.autoSuggest ?: PostAutoSuggest.EMPTY
 
         return result

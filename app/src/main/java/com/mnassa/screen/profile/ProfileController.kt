@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.*
@@ -117,6 +119,17 @@ class ProfileController(data: Bundle) : MnassaControllerImpl<ProfileViewModel>(d
                     viewModel.profileChannel.consume { receiveOrNull() }?.apply { open(ChatMessageController.newInstance(this)) }
                 }
             }
+
+            rvProfile.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                    val visibleItemCount = layoutManager.childCount
+                    val totalItemCount = layoutManager.itemCount
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                    viewModel.onScroll(visibleItemCount, totalItemCount, firstVisibleItemPosition)
+                }
+            })
 
             toolbar.apply {
                 setNavigationOnClickListener { close() }

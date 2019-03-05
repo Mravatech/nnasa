@@ -69,7 +69,6 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
             loginService.signOut()
         }
         userRepository.setCurrentAccount(null)
-        postsRepository.clearSavedPosts()
         if (wasLoggedIn) {
             GlobalScope.launchUI { onLogoutListener.send(reason) }
         }
