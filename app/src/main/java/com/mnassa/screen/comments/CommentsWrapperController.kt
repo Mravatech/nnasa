@@ -23,7 +23,7 @@ import com.mnassa.helper.PopupMenuHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.comments.rewarding.RewardingController
-import com.mnassa.screen.events.details.EventDetailsController
+import com.mnassa.screen.events.EventDetailsFactory
 import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.PostDetailsFactory
 import com.mnassa.screen.posts.need.create.AttachedImage
@@ -329,7 +329,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
                     uploadedImages = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.UploadedImage::class.java).map { it.imageUrl },
                     imagesToUpload = attachmentsAdapter.dataStorage.filterIsInstance(AttachedImage.LocalImage::class.java).map { it.imageUri },
                     postId = wrappedControllerParams.getString(PostDetailsFactory.EXTRA_POST_ID, null)
-                            ?: wrappedControllerParams.getString(EventDetailsController.EXTRA_EVENT_ID)
+                            ?: wrappedControllerParams.getString(EventDetailsFactory.EXTRA_EVENT_ID)
             )
         }
     }

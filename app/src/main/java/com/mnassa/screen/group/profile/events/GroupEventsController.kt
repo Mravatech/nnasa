@@ -11,6 +11,7 @@ import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.markAsOpened
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.events.EventDetailsFactory
 import com.mnassa.screen.events.EventsRVAdapter
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.group.details.GroupDetailsController
@@ -78,11 +79,8 @@ class GroupEventsController(args: Bundle) : MnassaControllerImpl<GroupEventsView
     }
 
     private fun openEvent(event: EventModel) {
-        GlobalScope.launchWorker {
-            event.markAsOpened()
-        }
-
-        open(EventDetailsController.newInstance(event))
+        val eventDetailsFactory: EventDetailsFactory by instance()
+        open(eventDetailsFactory.newInstance(event))
     }
 
     companion object {

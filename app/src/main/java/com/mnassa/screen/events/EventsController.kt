@@ -150,11 +150,8 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), NewPanelView, 
     }
 
     private fun openEvent(event: EventModel) {
-        GlobalScope.launchWorker {
-            event.markAsOpened()
-        }
-
-        open(EventDetailsController.newInstance(event))
+        val eventDetailsFactory: EventDetailsFactory by instance()
+        open(eventDetailsFactory.newInstance(event))
     }
 
     companion object {
