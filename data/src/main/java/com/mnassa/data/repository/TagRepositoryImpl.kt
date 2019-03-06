@@ -13,6 +13,7 @@ import com.mnassa.data.network.bean.retrofit.request.CustomTagsRequest
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.TagStatus
 import com.mnassa.domain.repository.TagRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -49,6 +50,8 @@ class TagRepositoryImpl(
     override suspend fun getAll(): List<TagModel> {
         return getAll(forceUpdateCache = false)
     }
+
+    override suspend fun getAllPublic() = getAll().filter { it.status is TagStatus.Public }
 
     private suspend fun getAll(forceUpdateCache: Boolean): List<TagModel> {
         return tagsMutex.withLock {

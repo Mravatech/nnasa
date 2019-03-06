@@ -13,6 +13,7 @@ interface TagInteractor{
     suspend fun get(id: String): TagModel?
     suspend fun get(tagIds: List<String>): List<TagModel>
     suspend fun getAll(): List<TagModel>
+    suspend fun getAllPublic(): List<TagModel>
     suspend fun createCustomTagIds(tags: List<String>): List<String>
     suspend fun shouldShowAddTagsDialog(): Boolean
 

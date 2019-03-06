@@ -26,6 +26,8 @@ class TagInteractorImpl(private val tagRepository: TagRepository,
 
     override suspend fun getAll(): List<TagModel> = tagRepository.getAll()
 
+    override suspend fun getAllPublic(): List<TagModel> = tagRepository.getAllPublic()
+
     override suspend fun createCustomTagIds(tags: List<String>): List<String> {
         return tagRepository.createCustomTagIds(tags)
     }

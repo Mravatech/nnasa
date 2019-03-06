@@ -62,7 +62,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
         defStyleAttr
     )
 
-    private val allAvailableTags: Deferred<List<TagModel>>
+    private val allPublicTags: Deferred<List<TagModel>>
     var onChipsChangeListener = { }
 
     private val removedTags = ArrayList<String>()
@@ -86,7 +86,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     }
 
     init {
-        allAvailableTags = GlobalScope.asyncWorker { tagInteractor.getAll() }
+        allPublicTags = GlobalScope.asyncWorker { tagInteractor.getAllPublic() }
 
         View.inflate(context, R.layout.chip_layout, this)
 
@@ -198,7 +198,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
         }
     }
 
-    override suspend fun getAllTags(): List<TagModel> = allAvailableTags.await()
+    override suspend fun getAllPublicTags(): List<TagModel> = allPublicTags.await()
 
     private fun removeTag(tag: TagModel) {
         val chipsSize = flChipContainer.childCount - EDIT_TEXT_RESERVE
@@ -338,7 +338,7 @@ class ChipLayout : LinearLayout, ChipsAdapter.ChipListener, KodeinAware {
     }
 
     private suspend fun findTagWhichStartsWith(prefix: String): List<TagModel> {
-        return allAvailableTags.await().filter {
+        return allPublicTags.await().filter {
             it.name.toString().replace("#", "").startsWith(prefix, ignoreCase = true) ||
                     it.name.engTranslate?.replace("#", "")?.startsWith(prefix, ignoreCase = true) == true ||
                     it.name.arabicTranslate?.replace("#", "")?.startsWith(prefix, ignoreCase = true) == true

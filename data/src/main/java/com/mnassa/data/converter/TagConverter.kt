@@ -4,6 +4,7 @@ import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.ConvertersContextRegistrationCallback
 import com.mnassa.core.converter.registerConverter
 import com.mnassa.data.network.bean.firebase.TagDbEntity
+import com.mnassa.domain.model.TagStatus
 import com.mnassa.domain.model.impl.TagModelImpl
 import com.mnassa.domain.model.impl.TranslatedWordModelImpl
 import com.mnassa.domain.other.LanguageProvider
@@ -21,7 +22,7 @@ class TagConverter(private val languageProvider: LanguageProvider) : ConvertersC
 
     private fun convertTag(input: TagDbEntity): TagModelImpl {
         return TagModelImpl(
-                status = input.status,
+                status = TagStatus.of(input.status),
                 name = TranslatedWordModelImpl(
                         languageProvider = languageProvider,
                         id = input.id,
