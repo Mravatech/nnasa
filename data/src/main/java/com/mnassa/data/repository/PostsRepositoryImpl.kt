@@ -44,12 +44,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
-    private val roomDb by lazy {
-        Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
-                .fallbackToDestructiveMigration()
-                .build()
-    }
-
     private val cachedDefaultExpirationDays = Cached<Long>()
 
     override suspend fun loadInfoPosts(): List<InfoPostModel> {
