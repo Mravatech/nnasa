@@ -1,16 +1,19 @@
 package com.mnassa.screen.events
 
+import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
+import com.mnassa.domain.aggregator.AggregatorLive
+import com.mnassa.domain.aggregator.produce
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.model.EventModel
-import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.exceptions.resolveExceptions
-import com.mnassa.extensions.ProcessAccountChangeArrayBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.min
@@ -20,25 +23,24 @@ import kotlin.math.min
  */
 class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, private val preferencesInteractor: PreferencesInteractor) : MnassaViewModelImpl(), EventsViewModel {
 
-    private var isCounterReset = false
     private var resetCounterJob: Job? = null
 
-    override val eventsFeedChannel: BroadcastChannel<ListItemEvent<List<EventModel>>> by ProcessAccountChangeArrayBroadcastChannel(
-            beforeReConsume = {
-                isCounterReset = false
-                it.send(ListItemEvent.Cleared())
-            },
-            receiveChannelProvider = {
-                eventsInteractor.getEventsFeedChannel()
-            })
+    override val eventsLive: AggregatorLive<EventModel>
+        get() = eventsInteractor.eventsLive
 
     override val scrollToTopChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
 
-    override val newItemsTimeChannel: BroadcastChannel<Date>
-        get() = eventsInteractor.eventsTimeUpperBound
+    override val newItemsCounterChannel: BroadcastChannel<Int> = BroadcastChannel(Channel.CONFLATED)
 
-    override val newItemsCounterChannel: BroadcastChannel<Int>
-        get() = eventsInteractor.eventsOutOfTimeUpperBoundCounter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        resolveExceptions {
+            eventsLive.produce().consumeEach { state ->
+                newItemsCounterChannel.send(state.modelsAllDeltaCount)
+            }
+        }
+    }
 
     override fun onAttachedToWindow(event: EventModel) {
         GlobalScope.resolveExceptions(showErrorMessage = false) {
@@ -64,8 +66,11 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     private fun resetCounter() {
         resolveExceptions {
             eventsInteractor.resetCounter()
-            isCounterReset = true
         }
+    }
+
+    override fun setNewItemsTimeUpperBound(date: Date) {
+        eventsInteractor.eventsLiveTimeUpperBound = date
     }
 
     override fun saveScrollPosition(event: EventModel) {
@@ -77,9 +82,6 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     override fun resetScrollPosition() {
         preferencesInteractor.saveString(KEY_EVENTS_POSITION, null)
     }
-
-    private suspend fun getAllEvents() = handleExceptionsSuspend { eventsInteractor.loadAllImmediately() }
-            ?: emptyList()
 
     private companion object {
         private const val KEY_EVENTS_POSITION = "KEY_EVENTS_POSITION"

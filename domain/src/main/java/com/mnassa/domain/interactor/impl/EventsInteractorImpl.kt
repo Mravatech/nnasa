@@ -2,6 +2,9 @@ package com.mnassa.domain.interactor.impl
 
 import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.events.awaitFirst
+import com.mnassa.domain.aggregator.AggregatorLive
+import com.mnassa.domain.extensions.produceAccountChangedEvents
 import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
@@ -12,6 +15,7 @@ import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -31,22 +35,36 @@ class EventsInteractorImpl(
 
     private val viewItemChannel = Channel<ListItemEvent<EventModel>>(10)
 
-    override val eventsOutOfTimeUpperBoundCounter = BroadcastChannel<Int>(Channel.CONFLATED)
+    override var eventsLiveTimeUpperBound: Date =
+        preferencesInteractor
+            .getLong(KEY_EVENTS_TIME_UPPER_BOUND, Date().time)
+            .let {
+                Date(it)
+            }
+        set(value) {
+            if (value < field) {
+                return
+            }
 
-    override val eventsTimeUpperBound = BroadcastChannel<Date>(Channel.CONFLATED)
+            field = value
+
+            GlobalScope.launchWorker {
+                eventsLive.revalidate()
+            }
+
+            // Save to shared
+            // preferences
+            preferencesInteractor.saveLong(KEY_EVENTS_TIME_UPPER_BOUND, value.time)
+        }
+
+    override val eventsLive = AggregatorLive(
+        source = { eventsRepository.getEventsFeedChannel(eventsPagination) },
+        reconsume = { userProfileInteractor.produceAccountChangedEvents() },
+        comparator = compareBy { it.createdAt },
+        isValid = { it.createdAt <= eventsLiveTimeUpperBound }
+    )
 
     init {
-        GlobalScope.launchWorker {
-            val newItemsSavedTime = preferencesInteractor
-                .getLong(KEY_EVENTS_TIME_UPPER_BOUND, Date().time)
-                .let(::Date)
-            eventsTimeUpperBound.apply {
-                send(newItemsSavedTime)
-                consumeEach {
-                    preferencesInteractor.saveLong(KEY_EVENTS_TIME_UPPER_BOUND, it.time)
-                }
-            }
-        }
         GlobalScope.launchWorker {
             viewItemChannel.withBuffer(bufferWindow = SEND_VIEWED_ITEMS_BUFFER_DELAY).consumeEach {
                 if (it.item.isNotEmpty()) {
@@ -159,121 +177,6 @@ class EventsInteractorImpl(
         return tags
     }
 
-    override suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>> {
-        val output = Channel<ListItemEvent<List<EventModel>>>(EVENTS_CHANNEL_CAPACITY)
-
-        var feedBarrierMaxTime = eventsTimeUpperBound.openSubscription().receive()
-        val feedBarrierMap = HashMap<String, EventModel>()
-        val feedBarrierMutex = Mutex()
-
-        suspend fun send(
-            source: ReceiveChannel<*>?,
-            event: ListItemEvent<List<EventModel>>
-        ) {
-            try {
-                output.send(event)
-            } catch (e: ClosedSendChannelException) {
-                // Close the source channel too
-                Timber.e(e)
-                source?.cancel()
-            }
-        }
-
-        suspend fun sendEvent(
-            source: ReceiveChannel<*>?,
-            event: ListItemEvent<List<EventModel>>
-        ) {
-            var pendingPostsSize = 0
-            when (event) {
-                is ListItemEvent.Added<*>,
-                is ListItemEvent.Moved<*>,
-                is ListItemEvent.Changed<*> -> {
-                    val postsToSendNow = ArrayList<EventModel>()
-                    feedBarrierMutex.withLock {
-                        for (item in event.item) {
-                            if (item.createdAt > feedBarrierMaxTime) {
-                                feedBarrierMap[item.id] = item
-                            } else {
-                                // We will send this post
-                                // immediately.
-                                postsToSendNow.add(item)
-                            }
-                        }
-
-                        pendingPostsSize = feedBarrierMap.size
-                    }
-
-                    val eventDecomposed = ListItemEvent.Added(postsToSendNow.toList())
-                    send(source, eventDecomposed)
-                }
-                is ListItemEvent.Removed<List<EventModel>> -> {
-                    feedBarrierMutex.withLock {
-                        //                        for (item in event.item) feedBarrierMap.remove(item.id)
-
-                        pendingPostsSize = feedBarrierMap.size
-                    }
-
-                    send(source, event)
-                }
-            }
-
-            eventsOutOfTimeUpperBoundCounter.send(pendingPostsSize)
-        }
-
-        val producers = coroutineContext.toCoroutineScope().launch {
-            launchWorker {
-                try {
-                    sendEvent(null, ListItemEvent.Added(loadAllImmediately()))
-                } catch (e: Exception) {
-                    Timber.e(e) //ignore exception here
-                }
-
-                val eventsChannel = eventsRepository.getEventsFeedChannel(eventsPagination).withBuffer()
-                eventsChannel.consumeEach { event ->
-                    sendEvent(eventsChannel, event)
-                }
-            }
-
-            launchWorker {
-                eventsTimeUpperBound.consumeEach { date ->
-                    feedBarrierMutex.withLock {
-                        feedBarrierMaxTime = date
-
-                        // Send new events right
-                        // now.
-                        val eventsToSendNow = ArrayList<EventModel>()
-
-                        val keys = feedBarrierMap.keys.toSet()
-                        for (key in keys) {
-                            val event = feedBarrierMap[key]!!
-                            if (event.createdAt <= date) {
-                                eventsToSendNow.add(event)
-                                feedBarrierMap.remove(key)
-                            }
-                        }
-
-                        val event = ListItemEvent.Added(eventsToSendNow.toList())
-                        send(null, event)
-
-                        // Update the size of a list
-                        // of pending posts
-                        val pendingPostsSize = feedBarrierMap.size
-                        eventsOutOfTimeUpperBoundCounter.send(pendingPostsSize)
-                    }
-                }
-            }
-        }
-
-        // Close the producers job when the
-        // channel dies.
-        output.invokeOnClose {
-            producers.cancel()
-        }
-
-        return output
-    }
-
-    override suspend fun loadAllImmediately(): List<EventModel> = eventsRepository.preloadEvents()
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>> = eventsRepository.loadAllByGroupId(groupId)
     override suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel> = eventsRepository.loadAllByGroupIdImmediately(groupId)
     override suspend fun loadByIdChannel(eventId: String): ReceiveChannel<EventModel?> = eventsRepository.getEventsChannel(eventId)
@@ -309,8 +212,7 @@ class EventsInteractorImpl(
     private companion object {
         private const val SEND_VIEWED_ITEMS_BUFFER_DELAY = 1_000L
 
-        private const val EVENTS_INITIAL_SIZE = 100L
-        private const val EVENTS_CHANNEL_CAPACITY = 20
+        private const val EVENTS_INITIAL_SIZE = 30L
 
         private const val KEY_EVENTS_TIME_UPPER_BOUND = "events::events_time_upper_bound"
     }

@@ -19,6 +19,20 @@ class UserProfileInteractorImpl(
 
     override val onAccountChangedListener: SimpleCompositeEventListener<ShortAccountModel> = SimpleCompositeEventListener()
 
+    override val onAccountIdChangedListener: SimpleCompositeEventListener<ShortAccountModel> = SimpleCompositeEventListener<ShortAccountModel>()
+        .apply {
+            var oldAccountId = userRepository.getAccountIdOrNull()
+            var oldSerialNumber = userRepository.getSerialNumberOrNull()
+            onAccountChangedListener.subscribe { account ->
+                if (account.serialNumber != oldSerialNumber || account.id != oldAccountId) {
+                    oldSerialNumber = account.serialNumber
+                    oldAccountId = account.id
+
+                    emit(account)
+                }
+            }
+        }
+
     override suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>> = userRepository.getAllAccounts()
 
     override suspend fun createPersonalAccount(firstName: String,

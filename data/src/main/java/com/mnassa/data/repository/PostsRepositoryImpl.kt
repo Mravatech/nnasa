@@ -19,6 +19,7 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
+import com.mnassa.domain.aggregator.AggregatorInEvent
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
@@ -57,11 +58,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             .toList()
     }
 
-    override suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+    override suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<AggregatorInEvent<InfoPostModel>> {
         val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_POSTS)
-            .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
+            .toAggregatorEvents<PostDbEntity, InfoPostModel>(
                 exceptionHandler = exceptionHandler,
                 queryBuilder = { collection ->
                     collection
@@ -79,11 +80,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         return loadById(postId).consume { receiveOrNull() }
     }
 
-    override suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
+    override suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<AggregatorInEvent<PostModel>> {
         val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_POSTS)
-            .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(exceptionHandler,
+            .toAggregatorEvents<PostDbEntity, PostModel>(exceptionHandler,
                 pagination = pagination,
                 queryBuilder = { collection ->
                     collection

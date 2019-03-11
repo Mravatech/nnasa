@@ -80,6 +80,7 @@ suspend fun RecyclerView.attachPanel(
         }
     })
 
+    panel.visibility = View.VISIBLE
     panel.animate().alpha(PANEL_ANIMATION_END_ALPHA).setDuration(0L).start()
     panel.setOnClickListener { onClick(it) }
 }

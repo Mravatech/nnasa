@@ -1,5 +1,6 @@
 package com.mnassa.domain.interactor
 
+import com.mnassa.domain.aggregator.AggregatorLive
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.pagination.PaginationController
@@ -13,12 +14,9 @@ import java.util.*
 interface EventsInteractor {
     val eventsPagination: PaginationController
 
-    val eventsOutOfTimeUpperBoundCounter: BroadcastChannel<Int>
+    var eventsLiveTimeUpperBound: Date
 
-    val eventsTimeUpperBound: BroadcastChannel<Date>
-
-    suspend fun loadAllImmediately(): List<EventModel>
-    suspend fun getEventsFeedChannel(): ReceiveChannel<ListItemEvent<List<EventModel>>>
+    val eventsLive: AggregatorLive<EventModel>
 
     //group wall
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>>

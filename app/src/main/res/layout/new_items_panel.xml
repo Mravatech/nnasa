@@ -16,6 +16,7 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
+        android:visibility="invisible"
         app:cardBackgroundColor="?colorAccent"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp">

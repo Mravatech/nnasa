@@ -15,14 +15,14 @@ import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
-import com.mnassa.domain.interactor.DictionaryInteractor
-import com.mnassa.domain.interactor.LoginInteractor
-import com.mnassa.domain.interactor.NetworkInteractor
+import com.mnassa.domain.live.consume
+import com.mnassa.domain.interactor.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -85,6 +85,11 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
             handleUserStatus()
             handleAccountStatus()
             handleAccountRefresh()
+        }
+
+        // Keep posts in sync
+        launch {
+            getInstance<PostsInteractor>().mergedInfoPostsAndFeedLive.consume { }
         }
     }
 

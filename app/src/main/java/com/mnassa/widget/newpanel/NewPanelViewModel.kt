@@ -12,7 +12,6 @@ import kotlin.coroutines.coroutineContext
  */
 interface NewPanelViewModel {
     val scrollToTopChannel: BroadcastChannel<Unit>
-    val newItemsTimeChannel: BroadcastChannel<Date>
     val newItemsCounterChannel: BroadcastChannel<Int>
 
     suspend fun onNewPanelClick() {
@@ -20,7 +19,7 @@ interface NewPanelViewModel {
         scope.resolveExceptions {
             launchUI {
                 val date = Calendar.getInstance().time
-                newItemsTimeChannel.send(date)
+                setNewItemsTimeUpperBound(date)
 
                 // Ask the list to scroll itself to
                 // the top.
@@ -28,4 +27,6 @@ interface NewPanelViewModel {
             }
         }
     }
+
+    fun setNewItemsTimeUpperBound(date: Date)
 }

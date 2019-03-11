@@ -1,5 +1,6 @@
 package com.mnassa.domain.repository
 
+import com.mnassa.domain.aggregator.AggregatorInEvent
 import com.mnassa.domain.model.EventAttendee
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
@@ -13,7 +14,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
  */
 interface EventsRepository {
     suspend fun preloadEvents(): List<EventModel>
-    suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<ListItemEvent<EventModel>>
+    suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<AggregatorInEvent<EventModel>>
     suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<EventModel>>
     suspend fun loadAllByGroupIdImmediately(groupId: String): List<EventModel>
 
