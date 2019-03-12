@@ -8,12 +8,7 @@ import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.domain.model.withBuffer
 import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.produce
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -24,25 +19,15 @@ import java.util.*
 class ChatInteractorImpl(private val chatRepository: ChatRepository, private val userRepository: UserRepository) : ChatInteractor {
 
     override suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<List<ChatRoomModel>>> {
-        return GlobalScope.produce(Dispatchers.Unconfined) {
-            try {
-                send(ListItemEvent.Added(chatRepository.preloadChatList()))
-            } catch (e: Exception) {
-                Timber.e(e) //ignore exceptions here
-            }
-            chatRepository.loadChatListWithChangesHandling().withBuffer().consumeEach { send(it) }
-        }
+        return chatRepository
+            .loadChatListWithChangesHandling()
+            .withBuffer(CHAT_BUFFER_WINDOW_MILLIS)
     }
 
     override suspend fun loadMessagesWithChangesHandling(chatId: String): ReceiveChannel<ListItemEvent<List<ChatMessageModel>>> {
-        return GlobalScope.produce(Dispatchers.Unconfined) {
-            try {
-                send(ListItemEvent.Added(chatRepository.preloadMessages(chatId)))
-            } catch (e: Exception) {
-                Timber.e(e) //ignore exceptions here
-            }
-            chatRepository.loadMessagesWithChangesHandling(chatId).withBuffer().consumeEach { send(it) }
-        }
+        return chatRepository
+            .loadMessagesWithChangesHandling(chatId)
+            .withBuffer(MESSAGE_BUFFER_WINDOW_MILLIS)
     }
 
     override suspend fun sendMessage(chatID: String, text: String, type: String, linkedMessageId: String?, linkedPostId: String?) {
@@ -69,5 +54,10 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
 
     override suspend fun resetChatUnreadCount(chatId: String) {
         chatRepository.resetChatUnreadMessagesCount(chatId)
+    }
+
+    companion object {
+        private const val CHAT_BUFFER_WINDOW_MILLIS = 400L
+        private const val MESSAGE_BUFFER_WINDOW_MILLIS = 400L
     }
 }
