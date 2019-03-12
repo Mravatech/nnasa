@@ -233,7 +233,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                 private var curToken: Long = 0L
 
                 @Volatile
-                override var isBusy: Boolean = false
+                override var isBusy: Boolean = true
 
                 @Volatile
                 override var isCompleted: Boolean = false
@@ -525,7 +525,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : HasId> Co
                 private var curToken: Long = 0L
 
                 @Volatile
-                override var isBusy: Boolean = false
+                override var isBusy: Boolean = true
 
                 @Volatile
                 override var isCompleted: Boolean = false
