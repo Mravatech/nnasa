@@ -77,27 +77,27 @@ class PostConverter(private val languageProvider: LanguageProvider,
             else PostAttachment.PostPhotoAttachment(image)
         }
 
-        val postType: PostType = converter.convert(input.type)
+        val postType: PostType = input.type?.let { converter.convert<PostType>(it) } ?: PostType.INFO()
         return when (postType) {
             is PostType.PROFILE -> RecommendedProfilePostModelImpl(
                     id = input.id,
-                    allConnections = input.allConnections,
+                    allConnections = input.allConnections ?: PostModel.DEFAULT_ALL_CONNECTIONS,
                     type = postType,
-                    createdAt = Date(input.createdAt),
+                    createdAt = Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
-                    privacyType = converter.convert(input.privacyType),
+                    privacyType = input.privacyType?.let { converter.convert<PostPrivacyType>(it) } ?: PostPrivacyType.PRIVATE(),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
-                    updatedAt = Date(input.updatedAt),
-                    counters = converter.convert(input.counters),
+                    updatedAt = Date(input.updatedAt ?: PostModel.DEFAULT_UPDATED_AT),
+                    counters = input.counters?.let { converter.convert<PostCounters>(it) } ?: PostCountersImpl.EMPTY,
                     author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
@@ -110,21 +110,21 @@ class PostConverter(private val languageProvider: LanguageProvider,
             )
             is PostType.INFO -> InfoPostImpl(
                     id = input.id,
-                    allConnections = input.allConnections,
+                    allConnections = input.allConnections ?: PostModel.DEFAULT_ALL_CONNECTIONS,
                     type = postType,
-                    createdAt = Date(input.createdAt),
+                    createdAt = Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
-                    privacyType = converter.convert(input.privacyType),
+                    privacyType = input.privacyType?.let { converter.convert<PostPrivacyType>(it) } ?: PostPrivacyType.PRIVATE(),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
-                    updatedAt = Date(input.updatedAt),
-                    counters = converter.convert(input.counters),
+                    updatedAt = Date(input.updatedAt ?: PostModel.DEFAULT_UPDATED_AT),
+                    counters = input.counters?.let { converter.convert<PostCounters>(it) } ?: PostCountersImpl.EMPTY,
                     author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
@@ -139,21 +139,21 @@ class PostConverter(private val languageProvider: LanguageProvider,
             )
             is PostType.OFFER -> OfferPostModelImpl(
                     id = input.id,
-                    allConnections = input.allConnections,
+                    allConnections = input.allConnections ?: PostModel.DEFAULT_ALL_CONNECTIONS,
                     type = postType,
-                    createdAt = Date(input.createdAt),
+                    createdAt = Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
-                    privacyType = converter.convert(input.privacyType),
+                    privacyType = input.privacyType?.let { converter.convert<PostPrivacyType>(it) } ?: PostPrivacyType.PRIVATE(),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
-                    updatedAt = Date(input.updatedAt),
-                    counters = converter.convert(input.counters),
+                    updatedAt = Date(input.updatedAt ?: PostModel.DEFAULT_UPDATED_AT),
+                    counters = input.counters?.let { converter.convert<PostCounters>(it) } ?: PostCountersImpl.EMPTY,
                     author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
@@ -170,23 +170,23 @@ class PostConverter(private val languageProvider: LanguageProvider,
             )
             else -> PostModelImpl(
                     id = input.id,
-                    allConnections = input.allConnections,
+                    allConnections = input.allConnections ?: PostModel.DEFAULT_ALL_CONNECTIONS,
                     type = postType,
-                    createdAt = Date(input.createdAt),
+                    createdAt = Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     attachments = attachments,
                     locationPlace = input.location?.takeIf { it.en != null && it.ar != null }?.let {
                         converter.convert<LocationPlaceModel>(it)
                     },
-                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt),
+                    originalCreatedAt = input.originalCreatedAt?.takeIf { it > 0 }?.let { Date(it) } ?: Date(input.createdAt ?: PostModel.DEFAULT_CREATED_AT),
                     originalId = input.originalId ?: input.id,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
-                    privacyType = converter.convert(input.privacyType),
+                    privacyType = input.privacyType?.let { converter.convert<PostPrivacyType>(it) } ?: PostPrivacyType.PRIVATE(),
                     tags = input.tags?.filter { !it.isNullOrBlank() } ?: emptyList(),
                     text = input.text,
                     statusOfExpiration = convertExpiration(input.statusOfExpiration),
                     timeOfExpiration = input.timeOfExpiration?.let { Date(it) },
-                    updatedAt = Date(input.updatedAt),
-                    counters = converter.convert(input.counters),
+                    updatedAt = Date(input.updatedAt ?: PostModel.DEFAULT_UPDATED_AT),
+                    counters = input.counters?.let { converter.convert<PostCounters>(it) } ?: PostCountersImpl.EMPTY,
                     author = convertAuthor(input.author.parseObject(), converter),
                     copyOwnerId = input.copyOwner,
                     price = input.price ?: 0.0,
@@ -280,19 +280,19 @@ class PostConverter(private val languageProvider: LanguageProvider,
 
     private fun convertNewsFeedItemCounters(input: PostCountersDbEntity): PostCountersImpl {
         return PostCountersImpl(
-                comments = input.comments,
-                likes = input.likes,
-                recommend = input.recommend,
-                reposts = input.reposts,
-                unreadResponse = input.unreadResponse,
-                views = input.views
+                comments = input.comments ?: PostCounters.DEFAULT_COMMENTS,
+                likes = input.likes ?: PostCounters.DEFAULT_LIKES,
+                recommend = input.recommend ?: PostCounters.DEFAULT_RECOMMEND,
+                reposts = input.reposts ?: PostCounters.DEFAULT_REPOSTS,
+                unreadResponse = input.unreadResponse ?: PostCounters.DEFAULT_UNREAD_RESPONSE,
+                views = input.views ?: PostCounters.DEFAULT_VIEWS
         )
     }
 
     private fun convertOfferCategory(input: OfferCategoryDbModel): OfferCategoryModel {
         return OfferCategoryModel(
                 id = input.id,
-                name = TranslatedWordModelImpl(languageProvider, "", input.en, input.en, input.ar),
+                name = TranslatedWordModelImpl(languageProvider, "", input.en ?: CONVERT_ERROR_MESSAGE, input.en, input.ar),
                 parentId = input.parentId
         )
     }

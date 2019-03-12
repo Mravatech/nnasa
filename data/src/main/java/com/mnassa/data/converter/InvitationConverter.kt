@@ -4,6 +4,7 @@ import com.mnassa.core.converter.ConvertersContext
 import com.mnassa.core.converter.ConvertersContextRegistrationCallback
 import com.mnassa.core.converter.registerConverter
 import com.mnassa.data.network.bean.firebase.InvitationDbEntity
+import com.mnassa.domain.model.PhoneContactInvited
 import com.mnassa.domain.model.impl.PhoneContactInvitedImpl
 
 /**
@@ -21,8 +22,8 @@ class InvitationConverter : ConvertersContextRegistrationCallback {
         return PhoneContactInvitedImpl(
                 phoneNumber = input.phone ?: CONVERT_ERROR_MESSAGE,
                 avatar = input.avatar,
-                createdAt = input.createdAt,
+                createdAt = input.createdAt ?: PhoneContactInvited.DEFAULT_CREATED_AT_DATE,
                 description = input.description,
-                used = input.used)
+                used = input.used ?: PhoneContactInvited.DEFAULT_USED)
     }
 }

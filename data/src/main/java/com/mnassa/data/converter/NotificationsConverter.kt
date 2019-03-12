@@ -43,9 +43,9 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
         }
         return NotificationModelImpl(
                 id = input.id,
-                createdAt = Date(input.createdAt),
+                createdAt = Date(input.createdAt ?: NotificationModel.DEFAULT_CREATED_AT_DATE),
                 text = input.text ?: CONVERT_ERROR_MESSAGE,
-                type = input.type,
+                type = input.type ?: NotificationModel.DEFAULT_TYPE,
                 extra = extra,
                 isOld = true
         )
@@ -56,14 +56,14 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
             id = input.id,
             author = input.author.parseObject<ShortAccountDbEntity>()?.let { converter.convert(it, ShortAccountModel::class.java) },
             text = input.text ?: CONVERT_ERROR_MESSAGE,
-            type = input.type
+            type = input.type ?: NotificationModel.DEFAULT_TYPE
         )
     }
 
     private fun convertNotificationEvent(input: EventDbEntity, token: Any?, converter: ConvertersContext): NotificationExtraEventImpl {
         return NotificationExtraEventImpl(
             id = input.id,
-            author = input.author.let { converter.convert(it, ShortAccountModel::class.java) },
+            author = input.author?.let { converter.convert(it, ShortAccountModel::class.java) },
             title = input.title ?: CONVERT_ERROR_MESSAGE
         )
     }
@@ -74,16 +74,21 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
         when (input.type) {
             NetworkContract.AccountType.ORGANIZATION -> {
                 organizationInfo = OrganizationAccountDiffModelImpl(
-                    organizationName = requireNotNull(input.organizationName)
+                    organizationName = input.organizationName ?: CONVERT_ERROR_MESSAGE
                 )
             }
             NetworkContract.AccountType.PERSONAL -> {
                 personalInfo = PersonalAccountDiffModelImpl(
-                    firstName = requireNotNull(input.firstName),
-                    lastName = requireNotNull(input.lastName)
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
                 )
             }
-            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+            else -> {
+                personalInfo = PersonalAccountDiffModelImpl(
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
+                )
+            }
         }
 
         return NotificationExtraUserReferredImpl(
@@ -100,16 +105,21 @@ class NotificationsConverter : ConvertersContextRegistrationCallback {
         when (input.type) {
             NetworkContract.AccountType.ORGANIZATION -> {
                 organizationInfo = OrganizationAccountDiffModelImpl(
-                    organizationName = requireNotNull(input.organizationName)
+                    organizationName = input.organizationName ?: CONVERT_ERROR_MESSAGE
                 )
             }
             NetworkContract.AccountType.PERSONAL -> {
                 personalInfo = PersonalAccountDiffModelImpl(
-                    firstName = requireNotNull(input.firstName),
-                    lastName = requireNotNull(input.lastName)
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
                 )
             }
-            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+            else -> {
+                personalInfo = PersonalAccountDiffModelImpl(
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
+                )
+            }
         }
 
         return NotificationExtraUserRecommendedImpl(

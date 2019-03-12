@@ -11,4 +11,8 @@ interface AccountAbility : Parcelable, Serializable {
     val isMain: Boolean
     val name: String?
     val place: String?
+
+    companion object {
+        const val DEFAULT_IS_MAIN = false
+    }
 }

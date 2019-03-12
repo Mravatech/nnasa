@@ -90,6 +90,11 @@ interface ConnectedByModel : Serializable {
     val id: String?
     val type: String
     val value: String
+
+    companion object {
+        const val DEFAULT_TYPE = "phone"
+        const val DEFAULT_VALUE = ""
+    }
 }
 
 enum class AccountType {

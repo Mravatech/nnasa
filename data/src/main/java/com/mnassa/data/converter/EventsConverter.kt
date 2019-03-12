@@ -38,31 +38,31 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
             return EventModelImpl(
                     id = input.id,
-                    author = converter.convert(input.author),
+                    author = input.author?.let { converter.convert<ShortAccountModel>(it) } ?: ShortAccountModel.EMPTY,
                     commentsCount = input.counters?.comments ?: 0,
                     viewsCount = input.counters?.views ?: 0,
-                    createdAt = Date(input.createdAt),
+                    createdAt = Date(input.createdAt ?: EventModel.DEFAULT_CREATED_AT),
                     duration = convertDuration(input),
-                    startAt = Date(input.eventStartAt),
+                    startAt = Date(input.eventStartAt ?: EventModel.DEFAULT_START_AT),
                     locationType = convertLocation(input, converter),
-                    allConnections = input.allConnections,
+                    allConnections = input.allConnections ?: EventModel.DEFAULT_ALL_CONNECTIONS,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
                     itemType = input.itemType?.let { converter.convert(it, ItemType::class.java) } ?: ItemType.ORIGINAL,
                     originalId = input.originalId ?: input.id,
-                    originalCreatedAt = Date(input.originalCreatedAt),
-                    pictures = input.pictures,
-                    price = input.price,
+                    originalCreatedAt = Date(input.originalCreatedAt ?: EventModel.DEFAULT_ORIGINAL_CREATED_AT),
+                    pictures = input.pictures ?: emptyList(),
+                    price = input.price ?: EventModel.DEFAULT_PRICE,
                     privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) }
                             ?: PostPrivacyType.PUBLIC(),
-                    status = converter.convert(input.status),
+                    status = input.status?.let { converter.convert<EventStatus>(it) } ?: EventStatus.OPENED(),
                     tags = input.tags ?: emptyList(),
                     title = input.title ?: CONVERT_ERROR_MESSAGE,
                     text = input.text ?: CONVERT_ERROR_MESSAGE,
-                    ticketsPerAccount = input.ticketsPerAccount,
-                    ticketsSold = input.ticketsSold,
-                    ticketsTotal = input.ticketsTotal,
-                    type = converter.convert(input.type),
-                    updatedAt = Date(input.updatedAt),
+                    ticketsPerAccount = input.ticketsPerAccount ?: EventModel.DEFAULT_TICKETS_PER_ACCOUNT,
+                    ticketsSold = input.ticketsSold ?: EventModel.DEFAULT_TICKETS_SOLD,
+                    ticketsTotal = input.ticketsTotal ?: EventModel.DEFAULT_TICKETS_TOTAL,
+                    type = input.type?.let { converter.convert<EventType>(it) } ?: EventType.LECTURE(),
+                    updatedAt = Date(input.updatedAt ?: EventModel.DEFAULT_UPDATED_AT),
                     participants = input.participants ?: emptyList(),
                     groups = tag.groupIds)
         } catch (e: Exception) {
@@ -72,11 +72,16 @@ class EventsConverter : ConvertersContextRegistrationCallback {
     }
 
     private fun convertDuration(input: EventDbEntity?): EventDuration? {
-        return when (input?.duration?.type ?: return null) {
-            NetworkContract.EventDuration.DAY -> EventDuration.Day(input.duration.value)
-            NetworkContract.EventDuration.MINUTE -> EventDuration.Minute(input.duration.value)
-            NetworkContract.EventDuration.HOUR -> EventDuration.Hour(input.duration.value)
-            else -> throw IllegalArgumentException("Invalid event duration ${input.duration.type}. Event: $input")
+        val duration = input?.duration
+        if (duration?.type == null || duration?.value == null) {
+            return null
+        }
+
+        return when (duration.type) {
+            NetworkContract.EventDuration.DAY -> EventDuration.Day(duration.value)
+            NetworkContract.EventDuration.MINUTE -> EventDuration.Minute(duration.value)
+            NetworkContract.EventDuration.HOUR -> EventDuration.Hour(duration.value)
+            else -> throw IllegalArgumentException("Invalid event duration ${duration.type}. Event: $input")
         }
     }
 
@@ -151,10 +156,10 @@ class EventsConverter : ConvertersContextRegistrationCallback {
         return EventTicketModelImpl(
                 id = input.id,
                 ownerId = input.id,
-                eventName = input.eventName,
-                eventOrganizerId = input.eventOrganizer,
-                pricePerTicket = input.pricePerTicket,
-                ticketCount = input.ticketsCount
+                eventName = input.eventName ?: EventTicketModel.DEFAULT_EVENT_NAME,
+                eventOrganizerId = input.eventOrganizer ?: EventTicketModel.DEFAULT_EVENT_ORGANIZER_ID,
+                pricePerTicket = input.pricePerTicket ?: EventTicketModel.DEFAULT_PRICE_PER_TICKET,
+                ticketCount = input.ticketsCount ?: EventTicketModel.DEFAULT_TICKET_COUNT
         )
     }
 

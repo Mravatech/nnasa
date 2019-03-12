@@ -14,6 +14,11 @@ interface NotificationModel : Model {
     val type: String
     val extra: NotificationExtra
     var isOld: Boolean
+
+    companion object {
+        const val DEFAULT_CREATED_AT_DATE = 0L
+        const val DEFAULT_TYPE = "post"
+    }
 }
 
 interface NotificationExtra : Serializable {

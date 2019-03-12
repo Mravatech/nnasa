@@ -8,10 +8,10 @@ import com.mnassa.domain.model.HasIdMaybe
  */
 internal data class TransactionDbEntity(
         @SerializedName("id") override var idOrNull: String?,
-        @SerializedName("afterBalance") var afterBalance: Long,
-        @SerializedName("amount") var amount: Long,
-        @SerializedName("transactionAt") var transactionAt: Long,
-        @SerializedName("type") internal var type: String,
+        @SerializedName("afterBalance") var afterBalance: Long?,
+        @SerializedName("amount") var amount: Long?,
+        @SerializedName("transactionAt") var transactionAt: Long?,
+        @SerializedName("type") internal var type: String?,
         @SerializedName("by") internal var by: Map<String, TransactionMemberDbEntity>?,
         @SerializedName("from") internal var from: Map<String, TransactionMemberDbEntity>?,
         @SerializedName("to") internal var to: Map<String, TransactionMemberDbEntity>?,

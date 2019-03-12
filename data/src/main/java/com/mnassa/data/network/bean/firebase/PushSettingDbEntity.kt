@@ -11,6 +11,6 @@ import com.mnassa.domain.model.HasIdMaybe
 
 data class PushSettingDbEntity(
         @SerializedName("id") override var idOrNull: String?,
-        @SerializedName("isActive") var isActive: Boolean,
-        @SerializedName("withSound") var withSound: Boolean
+        @SerializedName("isActive") var isActive: Boolean?,
+        @SerializedName("withSound") var withSound: Boolean?
 ) : HasIdMaybe

@@ -48,17 +48,23 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
             NetworkContract.AccountType.ORGANIZATION -> {
                 accountType = AccountType.ORGANIZATION
                 organizationInfo = OrganizationAccountDiffModelImpl(
-                        organizationName = requireNotNull(input.organizationName)
+                        organizationName = input.organizationName ?: CONVERT_ERROR_MESSAGE
                 )
             }
             NetworkContract.AccountType.PERSONAL -> {
                 accountType = AccountType.PERSONAL
                 personalInfo = PersonalAccountDiffModelImpl(
-                        firstName = requireNotNull(input.firstName),
-                        lastName = requireNotNull(input.lastName)
+                        firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                        lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
                 )
             }
-            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+            else -> {
+                accountType = AccountType.PERSONAL
+                personalInfo = PersonalAccountDiffModelImpl(
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
+                )
+            }
         }
         val location: LocationPlaceModel? = input.location?.let { convertLocationPlace(input.location) }
         val gender: Gender = if (input.gender == Gender.MALE.toString().toLowerCase()) Gender.MALE else Gender.FEMALE
@@ -82,8 +88,8 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 abilities = convertersContext.convertCollection(input.abilitiesInternal
                         ?: emptyList(), AccountAbility::class.java),
                 contactEmail = input.contactEmail,
-                showContactEmail = input.showContactEmail,
-                showContactPhone = input.showContactPhone,
+                showContactEmail = input.showContactEmail ?: ProfileAccountModel.DEFAULT_SHOW_CONTACT_EMAIL,
+                showContactPhone = input.showContactPhone ?: ProfileAccountModel.DEFAULT_SHOW_CONTACT_PHONE,
                 numberOfCommunities = input.numberOfCommunities,
                 numberOfConnections = input.numberOfConnections,
                 numberOfDisconnected = input.numberOfDisconnected,
@@ -95,7 +101,7 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
                 numberOfUnreadNeeds = input.numberOfUnreadNeeds,
                 numberOfUnreadNotifications = input.numberOfUnreadNotifications,
                 numberOfUnreadResponses = input.numberOfUnreadResponses,
-                visiblePoints = input.visiblePoints,
+                visiblePoints = input.visiblePoints ?: ProfileAccountModel.DEFAULT_VISIBLE_POINTS,
                 location = location,
                 gender = gender,
                 website = input.website,
@@ -108,8 +114,8 @@ class ProfileConverter(private val languageProvider: LanguageProvider) : Convert
     private fun convertConnectedBy(input: ConnectedByDbEntity): ConnectedByModelImpl {
         return ConnectedByModelImpl(
                 id = input.id,
-                type = input.type,
-                value = input.value
+                type = input.type ?: ConnectedByModel.DEFAULT_TYPE,
+                value = input.value ?: ConnectedByModel.DEFAULT_VALUE
         )
     }
 }

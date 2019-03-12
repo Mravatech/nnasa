@@ -21,8 +21,8 @@ class PushSettingsConverter : ConvertersContextRegistrationCallback {
 
     private fun convertPushSettings(input: PushSettingDbEntity): PushSettingModel {
         return PushSettingModelImpl(
-                isActive = input.isActive,
-                withSound = input.withSound,
+                isActive = input.isActive ?: PushSettingModel.DEFAULT_IS_ACTIVE,
+                withSound = input.withSound ?: PushSettingModel.DEFAULT_WITH_SOUND,
                 name = input.id
         )
     }
