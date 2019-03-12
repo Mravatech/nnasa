@@ -251,15 +251,13 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.deletePost(postId).handleException(exceptionHandler)
     }
 
-    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel {
-        return postApi.repostComment(RepostCommentRequest(
+    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions) {
+        postApi.repostComment(RepostCommentRequest(
                 postId = postId,
                 text = text?.takeIf { it.isNotBlank() },
                 privacyConnections = privacy.privacyConnections.toList(),
                 allConnections = privacy.privacyType is PostPrivacyType.PUBLIC))
                 .handleException(exceptionHandler)
-                .data
-                .run { converter.convert(this) }
     }
 
     override suspend fun getDefaultExpirationDays(): Long {

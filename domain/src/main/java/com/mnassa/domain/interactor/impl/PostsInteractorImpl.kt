@@ -306,7 +306,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     override suspend fun getShareOfferPostPerUserPrice(): Long? = postsRepository.getShareOfferPostPerUserPrice()
     override suspend fun getPromotePostPrice(): Long = postsRepository.getPromotePostPrice() ?: 0L
     override suspend fun removePost(postId: String) = postsRepository.removePost(postId)
-    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel =
+    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions) =
             postsRepository.repostPost(postId, text, privacy)
 
     override suspend fun hideInfoPost(postId: String) = postsRepository.hideInfoPost(postId)
