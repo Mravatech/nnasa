@@ -9,6 +9,7 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
 import com.mnassa.extensions.isMyPost
 import com.mnassa.extensions.markAsOpened
+import com.mnassa.extensions.markAsViewed
 import com.mnassa.screen.comments.CommentsRewardModel
 import com.mnassa.screen.comments.CommentsWrapperController
 import com.mnassa.screen.invite.InviteSource
@@ -29,6 +30,7 @@ class PostDetailsFactory {
 
         GlobalScope.launchWorker {
             post.markAsOpened()
+            post.markAsViewed()
         }
 
         App.context.getInstance<InviteSourceHolder>().source = InviteSource.Post(post)

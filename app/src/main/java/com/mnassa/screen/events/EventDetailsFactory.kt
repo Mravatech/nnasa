@@ -7,6 +7,7 @@ import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.EventModel
 import com.mnassa.extensions.markAsOpened
+import com.mnassa.extensions.markAsViewed
 import com.mnassa.screen.events.details.EventDetailsController
 import com.mnassa.screen.invite.InviteSource
 import com.mnassa.screen.invite.InviteSourceHolder
@@ -20,6 +21,7 @@ class EventDetailsFactory {
     fun newInstance(event: EventModel): Controller {
         GlobalScope.launchWorker {
             event.markAsOpened()
+            event.markAsViewed()
         }
 
         App.context.getInstance<InviteSourceHolder>().source = InviteSource.Event(event)
