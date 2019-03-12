@@ -86,6 +86,6 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     private companion object {
         private const val KEY_EVENTS_POSITION = "KEY_EVENTS_POSITION"
 
-        private const val EVENTS_PAGE_SIZE = 100L
+        private const val EVENTS_PAGE_SIZE = 60L
     }
 }

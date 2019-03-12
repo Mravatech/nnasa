@@ -106,6 +106,6 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     companion object {
         private const val KEY_POSTS_POSITION = "KEY_POSTS_POSITION"
 
-        private const val POSTS_PAGE_SIZE = 100L
+        private const val POSTS_PAGE_SIZE = 60L
     }
 }
