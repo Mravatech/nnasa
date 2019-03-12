@@ -1,17 +1,15 @@
 package com.mnassa.domain.aggregator
 
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.live.Live
 import com.mnassa.domain.live.consume
 import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.model.HasId
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import java.lang.Exception
 import kotlin.coroutines.coroutineContext
 
@@ -111,9 +109,9 @@ class AggregatorLive<T : HasId>(
 
 suspend fun <T : HasId> AggregatorLive<T>.produce(): Channel<AggregatorOutState<T>> {
     val output = Channel<AggregatorOutState<T>>()
-    val producers = coroutineContext.toCoroutineScope().launch {
+    val producers = coroutineContext.toCoroutineScope().launchWorker {
         consume {
-            launch {
+            runBlocking {
                 output.send(it)
             }
         }
