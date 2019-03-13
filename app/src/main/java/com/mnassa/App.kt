@@ -22,6 +22,7 @@ import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
+import kotlinx.coroutines.SupervisorJob
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -33,7 +34,7 @@ import timber.log.Timber
  * Created by Peter on 2/20/2018.
  */
 class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
-    SubscriptionContainer by SubscriptionsContainerDelegate() {
+    SubscriptionContainer by SubscriptionsContainerDelegate(jobFactory = { SupervisorJob() }) {
 
     override val kodein: Kodein = Kodein.lazy {
         import(androidModule(this@App))

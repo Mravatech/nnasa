@@ -21,7 +21,9 @@ interface SubscriptionContainer : CoroutineScope {
  *
  * @author Artem Chepurnoy
  */
-open class SubscriptionsContainerDelegate : SubscriptionContainer, CoroutineScope {
+open class SubscriptionsContainerDelegate(
+    private val jobFactory: () -> Job = { Job() }
+) : SubscriptionContainer, CoroutineScope {
     private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
@@ -31,7 +33,7 @@ open class SubscriptionsContainerDelegate : SubscriptionContainer, CoroutineScop
         get() = this
 
     override fun openSubscriptionsScope() {
-        job = Job()
+        job = jobFactory()
     }
 
     override fun closeSubscriptionsScope() {
