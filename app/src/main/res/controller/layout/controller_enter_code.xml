@@ -24,18 +24,25 @@
                 style="@style/MnassaText"
                 tools:text="Enter a validation code below" />
 
-            <include
-                android:id="@+id/codeInput"
-                layout="@layout/sms_code_input"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/codeInputContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvEnterValidationCode"
-                android:layout_marginTop="@dimen/spacing_vertical" />
+                android:layout_marginTop="@dimen/spacing_vertical">
+
+                <include
+                    android:id="@+id/codeInput"
+                    layout="@layout/sms_code_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/tvResendCodeAfter"
                 style="@style/MnassaTransparentButton"
-                android:layout_below="@id/codeInput"
+                android:layout_below="@id/codeInputContainer"
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:enabled="false"
                 tools:text="Resend Code after 24…" />

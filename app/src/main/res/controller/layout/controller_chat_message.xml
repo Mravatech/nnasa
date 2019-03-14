@@ -9,7 +9,8 @@
     <com.mnassa.widget.MnassaToolbar
         android:id="@+id/toolbarChatMessage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:shadow_enabled="false" />
 
     <LinearLayout
         android:id="@+id/llNoMessages"
@@ -43,11 +44,17 @@
         android:layout_below="@+id/toolbarChatMessage"
         tools:listitem="@layout/item_chat_message_my" />
 
+    <View
+        android:id="@+id/vShadow"
+        style="@style/MnassaShadow"
+        android:layout_below="@id/toolbarChatMessage" />
+
     <LinearLayout
         android:id="@+id/llBottomContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="@color/background_highlighted"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -57,11 +64,6 @@
             android:visibility="gone"
             tools:visibility="visible">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider" />
-
             <TextView
                 android:id="@+id/tvReplyMessageText"
                 android:layout_width="match_parent"
@@ -69,8 +71,8 @@
                 android:layout_centerVertical="true"
                 android:layout_margin="@dimen/chat_message_half_base_margin"
                 android:layout_toStartOf="@+id/ivReplyClose"
-                android:paddingEnd="@dimen/chat_message_base_padding"
-                android:paddingStart="@dimen/chat_message_base_padding"
+                android:paddingEnd="@dimen/chat_message_horizontal_padding"
+                android:paddingStart="@dimen/chat_message_horizontal_padding"
                 tools:text="Some text" />
 
             <ImageView
@@ -83,9 +85,13 @@
                 android:padding="@dimen/chat_message_half_base_padding"
                 app:srcCompat="@drawable/ic_close_black_24dp" />
 
-        </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:layout_below="@id/ivReplyClose"
+                android:background="@color/divider" />
 
-        <View style="@style/MnassaDivider" />
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/llCreateMessageContainer"
@@ -112,7 +118,7 @@
                 android:gravity="center_vertical"
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxHeight="220dp"
-                android:paddingStart="4dp"
+                android:paddingStart="@dimen/spacing_horizontal"
                 android:paddingTop="8dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="8dp"
@@ -126,4 +132,10 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/vShadowUpDown"
+        style="@style/MnassaShadowUpDown"
+        android:layout_above="@id/llBottomContainer" />
+
 </RelativeLayout>

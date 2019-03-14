@@ -20,7 +20,12 @@
         android:layout_margin="@dimen/chat_message_half_base_margin"
         android:autoLink="all"
         android:background="@drawable/income_chat_message_background"
-        android:padding="@dimen/chat_message_base_padding"
+        android:paddingStart="@dimen/chat_message_horizontal_padding"
+        android:paddingTop="@dimen/chat_message_vertical_padding"
+        android:paddingEnd="@dimen/chat_message_horizontal_padding"
+        android:paddingBottom="@dimen/chat_message_vertical_padding"
+        android:textColor="?android:textColorPrimary"
         android:textColorLink="@color/black"
+        android:textSize="@dimen/chat_message_text_size"
         tools:text="test message big message test test testtest" />
 </LinearLayout>

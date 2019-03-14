@@ -42,7 +42,7 @@
                 android:layout_alignBottom="@id/ivAvatar"
                 android:layout_alignTop="@id/ivAvatar"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginStart="@dimen/spacing_large"
                 android:layout_toEndOf="@id/ivAvatar"
                 android:layout_toStartOf="@id/tvTime"
                 android:ellipsize="end"

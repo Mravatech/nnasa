@@ -20,12 +20,6 @@ class GoBackArrow : AppCompatImageView {
     init {
         setImageResource(R.drawable.ic_arrow_back_white_24dp)
 
-        val outValue = TypedValue()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
-            setBackgroundResource(outValue.resourceId)
-        }
-
         isClickable = true
 
         setOnClickListener {

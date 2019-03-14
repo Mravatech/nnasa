@@ -10,6 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:shadow_enabled="false"
         app:drawer_button_enabled="true" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,11 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         tools:listitem="@layout/item_chat_room"/>
+
+    <View
+        android:id="@+id/vShadow"
+        style="@style/MnassaShadow"
+        android:layout_below="@id/toolbar" />
 
     <LinearLayout
         android:id="@+id/llEmptyMessages"
