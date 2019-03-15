@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:clipToPadding="false"
+    android:paddingTop="@dimen/spacing_vertical"
+    android:paddingBottom="@dimen/spacing_vertical">
 
-    <FrameLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/flNewItemsPanel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/new_items_panel_background"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        app:cardBackgroundColor="?colorAccent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
 
         <com.mnassa.widget.MnassaTextView
             android:id="@+id/tvNewItemsAvailable"
@@ -20,14 +26,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingBottom="8dp"
-            android:paddingEnd="@dimen/spacing_horizontal"
+            android:gravity="center"
+            android:minHeight="32dp"
             android:paddingStart="@dimen/spacing_horizontal"
             android:paddingTop="8dp"
-            app:textDictionary="@string/posts_new_items_available"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingBottom="8dp"
             android:textColor="@color/white"
+            app:textDictionary="@string/posts_new_items_available"
             tools:text="New items are available" />
 
-    </FrameLayout>
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>

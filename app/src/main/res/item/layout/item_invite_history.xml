@@ -59,4 +59,9 @@
             android:gravity="end"
             tools:text="REGISTERED" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/vShadowBottom"
+        style="@style/MnassaShadow" />
+
 </LinearLayout>

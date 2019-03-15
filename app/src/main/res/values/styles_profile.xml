@@ -130,7 +130,7 @@
     <dimen name="profile_header_item_more_text_size">14sp</dimen>
     <dimen name="profile_header_item_text_size">16sp</dimen>
     <dimen name="profile_header_item_interests_margin_top">16dp</dimen>
-    <dimen name="profile_header_item_offers_margin_bottom">20dp</dimen>
-    <dimen name="profile_header_item_tags_margin_bottom">8dp</dimen>
+    <dimen name="profile_header_item_offers_margin_bottom">16dp</dimen>
+    <dimen name="profile_header_item_tags_margin_bottom">16dp</dimen>
 
 </resources>

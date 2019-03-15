@@ -43,8 +43,7 @@
 
     <include layout="@layout/new_items_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_vertical"/>
+        android:layout_height="wrap_content" />
 
 </FrameLayout>
 

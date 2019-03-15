@@ -29,7 +29,8 @@ class InviteHistoryAdapter : RecyclerView.Adapter<InviteHistoryHolder>() {
 
     override fun onBindViewHolder(holder: InviteHistoryHolder, position: Int) {
         val date: String? = positions[position]
-        holder.setup(filtered[position], date)
+        val showBottomShadow = positions[position + 1] != null || data.size - 1 == position
+        holder.setup(filtered[position], date, showBottomShadow)
     }
 
     fun setData(data: List<PhoneContactInvited>) {

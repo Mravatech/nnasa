@@ -96,7 +96,7 @@ class ProfilePostsRVAdapter(coroutineScope: CoroutineScope, profile: ShortAccoun
 
             with(itemView) {
                 flMoreInformation.isGone = profile !is ProfileAccountModel
-                llAdditionalInformation.isGone = !adapter.isAdditionalInfoExpanded
+                clMore.isGone = !adapter.isAdditionalInfoExpanded
                 rvICanHelpHorizontalTags.isGone = adapter.isAdditionalInfoExpanded
                 tvMoreInformation.text = if (adapter.isAdditionalInfoExpanded)
                     fromDictionary(R.string.profile_less_information)
@@ -119,8 +119,9 @@ class ProfilePostsRVAdapter(coroutineScope: CoroutineScope, profile: ShortAccoun
                 //mobile phone
                 tvMobilePhone.text = profile.contactPhone
                 tvMobilePhone.isGone = tvMobilePhone.text.isBlank()
-                tvMobilePhoneLabel.isGone = tvMobilePhone.text.isBlank()
-                vMobilePhoneDivider.isGone = tvMobilePhone.text.isBlank()
+                ivMobilePhone.isGone = tvMobilePhone.isGone
+                tvMobilePhoneLabel.isGone = tvMobilePhone.isGone
+                vMobilePhoneDivider.isGone = tvMobilePhone.isGone
 
                 //date of birth
                 tvDateOfBirthLabel.text =
@@ -138,24 +139,29 @@ class ProfilePostsRVAdapter(coroutineScope: CoroutineScope, profile: ShortAccoun
                 //date of birth
                 tvDateOfBirth.text = profile.birthday?.formatAsDate()
                 tvDateOfBirth.isGone = tvDateOfBirth.text.isBlank()
-                tvDateOfBirthLabel.isGone = tvDateOfBirth.text.isBlank()
-                vDateOfBirthDivider.isGone = tvDateOfBirth.text.isBlank()
+                ivDateOfBirth.isGone = tvDateOfBirth.isGone
+                tvDateOfBirthLabel.isGone = tvDateOfBirth.isGone
+                vDateOfBirthDivider.isGone = tvDateOfBirth.isGone
 
                 //email
                 tvEmail.text = profile.contactEmail
                 tvEmail.isGone = tvEmail.text.isBlank()
-                tvEmailLabel.isGone = tvEmail.text.isBlank()
-                vEmailDivider.isGone = tvEmail.text.isBlank()
+                ivEmail.isGone = tvEmail.isGone
+                tvEmailLabel.isGone = tvEmail.isGone
+                vEmailDivider.isGone = tvEmail.isGone
 
                 //web site
                 tvWebSite.text = profile.website
                 tvWebSite.isGone = tvWebSite.text.isBlank()
-                tvWebSiteLabel.isGone = tvWebSite.text.isBlank()
+                ivWebSite.isGone = tvWebSite.isGone
+                tvWebSiteDivider.isGone = tvWebSite.isGone
+                tvWebSiteLabel.isGone = tvWebSite.isGone
 
                 //location
                 tvLocation.text = profile.location?.formatted()
                 tvLocation.isGone = profile.location == null
-                vLocationDivider.isGone = profile.location == null
+                ivLocation.isGone = tvLocation.isGone
+                vLocationDivider.isGone = tvLocation.isGone
             }
         }
 

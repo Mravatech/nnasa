@@ -29,7 +29,7 @@ class EnterPromoController(args: Bundle) : EnterPhoneController(args) {
 
             orLayout.visibility = View.GONE
             btnEnterPromo.visibility = View.GONE
-            coneInput.visibility = View.VISIBLE
+            coneInputContainer.visibility = View.VISIBLE
 
             etPromoCode.hint = fromDictionary(R.string.login_your_code)
             etPromoCode.addTextChangedListener(SimpleTextWatcher { onInputChanged() })

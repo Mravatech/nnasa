@@ -93,7 +93,7 @@ class MnassaToolbar : FrameLayout {
     var shadowEnabled: Boolean
         get() = vShadow.visibility == View.VISIBLE
         set(value) {
-            vShadow.visibility = if (value) View.VISIBLE else View.INVISIBLE
+            vShadow.visibility = if (value) View.VISIBLE else View.GONE
         }
 
     var drawerButtonEnabled: Boolean

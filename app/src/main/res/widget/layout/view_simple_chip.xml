@@ -4,7 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/chip_layout_margin"
-    card_view:cardCornerRadius="@dimen/chip_layout_radius">
+    card_view:cardCornerRadius="@dimen/chip_layout_radius"
+    card_view:contentPaddingLeft="8dp"
+    card_view:contentPaddingRight="8dp">
 
     <TextView
         android:id="@+id/tvChipText"
