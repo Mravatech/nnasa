@@ -1,5 +1,7 @@
 package com.mnassa.domain.interactor
 
+import com.mnassa.domain.aggregator.AggregatorInEvent
+import com.mnassa.domain.aggregator.AggregatorLive
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -13,15 +15,13 @@ import java.util.*
 interface PostsInteractor {
     val mergedInfoPostsAndFeedPagination: PaginationController
 
-    val feedOutOfTimeUpperBoundCounter: BroadcastChannel<Int>
+    var mergedInfoPostsAndFeedLiveTimeUpperBound: Date
 
-    val feedTimeUpperBound: BroadcastChannel<Date>
-
-    suspend fun loadMergedInfoPostsAndFeed(): ReceiveChannel<ListItemEvent<List<PostModel>>>
+    val mergedInfoPostsAndFeedLive: AggregatorLive<PostModel>
 
     //personal feed
     suspend fun loadInfoPosts(): List<InfoPostModel>
-    suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>>
+    suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<AggregatorInEvent<InfoPostModel>>
     suspend fun loadInfoPost(postId: String): PostModel?
 
     //account wall

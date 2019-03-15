@@ -18,13 +18,6 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/item_news_feed_need" />
-
-        <include
-            layout="@layout/new_items_panel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </RelativeLayout>
 
     <com.google.android.material.appbar.AppBarLayout
