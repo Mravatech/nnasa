@@ -19,10 +19,7 @@ import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_LIST
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_MESSAGES
 import com.mnassa.data.repository.DatabaseContract.TABLE_CHAT_TYPE_PRIVATE
-import com.mnassa.domain.model.ChatMessageModel
-import com.mnassa.domain.model.ChatRoomModel
-import com.mnassa.domain.model.ListItemEvent
-import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.*
 import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -75,20 +72,6 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                 )
     }
 
-    override suspend fun preloadMessages(chatId: String): List<ChatMessageModel> {
-        val myUserId = userRepository.getAccountIdOrException()
-        return db.child(TABLE_CHAT)
-                .child(TABLE_CHAT_MESSAGES)
-                .child(TABLE_CHAT_TYPE_PRIVATE)
-                .child(myUserId)
-                .child(chatId)
-                .limitToLast(DEFAULT_LIMIT)
-                .awaitList<ChatMessageDbModel>(exceptionHandler)
-                .let { converter.convertCollection(it, ChatMessageModel::class.java) }
-                .map { mapChatMessage(it, chatId) }
-    }
-
-
     override suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<ChatRoomModel>> {
         val userId = userRepository.getAccountIdOrException()
         return db.child(TABLE_CHAT)
@@ -99,16 +82,6 @@ class ChatRepositoryImpl(private val db: DatabaseReference,
                         exceptionHandler = exceptionHandler,
                         mapper = { mapChatModel(it, userId) }
                 )
-    }
-
-    override suspend fun preloadChatList(): List<ChatRoomModel> {
-        val userId = userRepository.getAccountIdOrException()
-        return db.child(TABLE_CHAT)
-                .child(TABLE_CHAT_LIST)
-                .child(TABLE_CHAT_TYPE_PRIVATE)
-                .child(userId)
-                .awaitList<ChatDbModel>(exceptionHandler)
-                .mapNotNull { mapChatModel(it, userId) }
     }
 
     private suspend fun mapChatModel(chat: ChatDbModel, userId: String): ChatRoomModel? {
