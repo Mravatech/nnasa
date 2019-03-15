@@ -16,9 +16,18 @@ class FirebaseExceptionHandlerImpl : FirebaseExceptionHandler {
         return when (firebaseException) {
             is FirebaseAuthInvalidCredentialsException -> firebaseException //invalid phone number or invalid code
             is FirebaseTooManyRequestsException -> firebaseException //too many requests
-            is FirebaseFirestoreException -> NotAuthorizedException(
-                    (firebaseException.message ?: "not authorized (database exception)") + "; path: [$tag]",
-                    firebaseException)
+            is FirebaseFirestoreException -> {
+                when (firebaseException.code) {
+                    FirebaseFirestoreException.Code.PERMISSION_DENIED -> {
+                        // Normal flow of the application should never
+                        // cause this exception.
+                        val message = "${firebaseException.message
+                            ?: "not authorized (database exception)"}; path: [$tag]"
+                        NotAuthorizedException(message, firebaseException)
+                    }
+                    else -> firebaseException
+                }
+            }
             else -> firebaseException
         }
     }
