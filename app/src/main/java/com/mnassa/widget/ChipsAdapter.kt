@@ -60,7 +60,7 @@ class ChipsAdapter(
 
         searchJob = GlobalScope.launchWorker(CoroutineStart.UNDISPATCHED) {
             searchMutex.withLock {
-                setResult(text, chipListener.getAllTags().filterLowercase(text))
+                setResult(text, chipListener.getAllPublicTags().filterLowercase(text))
             }
         }
     }
@@ -91,7 +91,7 @@ class ChipsAdapter(
         fun onChipClick(tagModel: TagModel)
         fun onSearchResult(text: String, tags: List<TagModel>)
         fun getTags(): List<TagModel>
-        suspend fun getAllTags(): List<TagModel>
+        suspend fun getAllPublicTags(): List<TagModel>
     }
 
 }

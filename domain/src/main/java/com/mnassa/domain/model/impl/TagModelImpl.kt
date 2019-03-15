@@ -1,6 +1,7 @@
 package com.mnassa.domain.model.impl
 
 import com.mnassa.domain.model.TagModel
+import com.mnassa.domain.model.TagStatus
 import com.mnassa.domain.model.TranslatedWordModel
 import kotlinx.android.parcel.Parcelize
 
@@ -12,14 +13,14 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class TagModelImpl(
-        override var status: String?,
+        override var status: TagStatus?,
         override var name: TranslatedWordModel,
         override var id: String?
 ) : TagModel
 
 @Parcelize
 data class AutoTagModelImpl(
-        override var status: String?,
+        override var status: TagStatus?,
         override var name: TranslatedWordModel,
         override var id: String?
 ) : TagModel
