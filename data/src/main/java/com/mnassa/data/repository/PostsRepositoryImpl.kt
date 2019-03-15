@@ -2,6 +2,7 @@ package com.mnassa.data.repository
 
 import android.content.Context
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.mnassa.core.converter.ConvertersContext
@@ -98,34 +99,45 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
     //==============================================================================================
 
     override suspend fun preloadWall(accountId: String): List<PostModel> {
-        val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_POSTS)
-            .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
-            .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
-            .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+            .accountWallQuery(accountId)
             .limit(DEFAULT_LIMIT.toLong())
             .awaitList<PostShortDbEntity>()
             .mapNotNull { it.toFullModel() }
     }
 
     override suspend fun loadWallWithChangesHandling(accountId: String, pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
-        val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_POSTS)
             .toValueChannelWithChangesHandling<PostShortDbEntity, PostModel>(
                 exceptionHandler,
                 queryBuilder = { collection ->
-                    collection
-                        .whereArrayContains(PostDbEntity.VISIBLE_FOR_USERS, serialNumber)
-                        .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
-                        .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
+                    collection.accountWallQuery(accountId)
                 },
                 pagination = pagination,
                 mapper = {
                     it.toFullModel()
                 }
             )
+    }
+
+    private fun CollectionReference.accountWallQuery(accountId: String): Query {
+        return run {
+            val myAccountId = userRepository.getAccountIdOrException()
+            return@run if (myAccountId == accountId) {
+                this
+            } else {
+                this
+                    .orderBy(PostDbEntity.PRIVACY_TYPE)
+                    .whereGreaterThanOrEqualTo(
+                        PostDbEntity.PRIVACY_TYPE,
+                        DatabaseContract.NEWS_FEED_PRIVACY_TYPE_PUBLIC
+                    )
+            }
+        }
+            .whereEqualTo(PostDbEntity.AUTHOR_ID, accountId)
+            .orderBy(PostDbEntity.PROPERTY_CREATED_AT, Query.Direction.DESCENDING)
     }
 
     override suspend fun loadAllByGroupId(groupId: String): ReceiveChannel<ListItemEvent<PostModel>> {
