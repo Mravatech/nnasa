@@ -12,6 +12,7 @@ import com.mnassa.domain.exception.NetworkException
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.screen.base.MnassaController
 import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.translation.fromDictionary
@@ -99,4 +100,20 @@ fun Throwable.toMessage(): String? =
         }
         is CancellationException -> null
         else -> localizedMessage ?: message
-    }?.takeUnless { it.isBlank() }
+    }
+        ?.takeUnless { it.isBlank() }
+        ?.let {
+            val appInfoProvider = App.context.getInstance<AppInfoProvider>()
+            if (appInfoProvider.isDebug) {
+                """
+                    Error message: $it
+                    Cause: $cause
+
+                    Stacktrace:
+                    ${stackTrace.joinToString()}
+                """.trimIndent()
+            } else {
+                it
+            }
+        }
+
