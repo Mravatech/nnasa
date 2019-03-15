@@ -22,7 +22,7 @@ internal data class PostDbEntity(
         @SerializedName("originalCreatedAt") var originalCreatedAt: Long?,
         @SerializedName("originalId", alternate = ["originalPostId"]) var originalId: String?,
         @SerializedName("privacyConnections") var privacyConnections: List<String>?,
-        @SerializedName("privacyType") var privacyType: String?,
+        @SerializedName(PRIVACY_TYPE) var privacyType: String?,
         @SerializedName("text") var text: String?,
         @SerializedName("updatedAt") var updatedAt: Long?,
         @SerializedName("location") var location: LocationDbEntity?,
@@ -49,6 +49,7 @@ internal data class PostDbEntity(
 ) : HasIdMaybe {
     companion object {
         const val PROPERTY_CREATED_AT = "createdAt"
+        const val PRIVACY_TYPE = "privacyType"
         const val AUTHOR_ID = "authorId"
         const val INFO_FOR_USERS = "infoFor"
         const val VISIBLE_FOR_USERS = "visibleFor"
