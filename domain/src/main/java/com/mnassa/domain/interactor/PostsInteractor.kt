@@ -55,7 +55,7 @@ interface PostsInteractor {
     suspend fun getPromotePostPrice(): Long
 
     suspend fun getDefaultExpirationDays(): Long
-    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
+    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions)
 
     suspend fun hideInfoPost(postId: String)
     suspend fun loadOfferCategories(): List<OfferCategoryModel>

@@ -53,7 +53,7 @@ interface PostsRepository {
     suspend fun promote(post: PostModel)
 
     suspend fun removePost(postId: String)
-    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel
+    suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions)
     suspend fun hideInfoPost(postId: String)
 
     suspend fun loadOfferCategories(): List<OfferCategoryModel>
