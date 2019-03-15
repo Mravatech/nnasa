@@ -13,7 +13,7 @@ internal open class ShortAccountDbEntity(
         @SerializedName("firstName") var firstName: String?,
         @SerializedName("lastName") var lastName: String?,
         @SerializedName("organizationName") var organizationName: String?,
-        @SerializedName("type") var type: String,
+        @SerializedName("type") var type: String?,
         @SerializedName("userName") var userName: String?,
         @SerializedName("abilities") var abilitiesInternal: List<ShortAccountAbilityDbEntity>?,
         @SerializedName("connectedBy") var connectedBy: ConnectedByDbEntity? = null
@@ -57,13 +57,13 @@ internal open class DeclinedShortAccountDbEntity(
 }
 
 internal data class ShortAccountAbilityDbEntity(
-        @SerializedName("isMain") var isMain: Boolean,
-        @SerializedName("name") var name: String,
+        @SerializedName("isMain") var isMain: Boolean?,
+        @SerializedName("name") var name: String?,
         @SerializedName("place") var place: String?
 )
 
 data class ConnectedByDbEntity(
-        @SerializedName("id") var id: String,
-        @SerializedName("type") var type: String,
-        @SerializedName("value") var value: String
+        @SerializedName("id") var id: String?,
+        @SerializedName("type") var type: String?,
+        @SerializedName("value") var value: String?
 )

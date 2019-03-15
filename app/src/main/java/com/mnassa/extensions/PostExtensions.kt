@@ -92,6 +92,11 @@ fun PostModel.isMyPost(): Boolean = author.id == App.context.getInstance<UserPro
 val PostModel.isRepost: Boolean get() = originalId != id
 
 
+suspend fun PostModel.markAsViewed() {
+    val postInteractor = App.context.getInstance<PostsInteractor>()
+    postInteractor.onItemViewed(this)
+}
+
 suspend fun PostModel.markAsOpened() {
     val postInteractor = App.context.getInstance<PostsInteractor>()
     postInteractor.onItemOpened(this)

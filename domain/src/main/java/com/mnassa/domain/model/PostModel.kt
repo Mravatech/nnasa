@@ -31,6 +31,12 @@ interface PostModel : Model {
     val repostAuthor: ShortAccountModel?
     var groupIds: Set<String>
     var groups: List<GroupModel>
+
+    companion object {
+        const val DEFAULT_ALL_CONNECTIONS = false
+        const val DEFAULT_CREATED_AT = 0L
+        const val DEFAULT_UPDATED_AT = 0L
+    }
 }
 
 interface InfoPostModel : PostModel {
@@ -61,6 +67,14 @@ interface PostCounters : Serializable {
     val reposts: Int
     val unreadResponse: Int
     val views: Int
+    companion object {
+        const val DEFAULT_COMMENTS = 0
+        const val DEFAULT_LIKES = 0
+        const val DEFAULT_RECOMMEND = 0
+        const val DEFAULT_REPOSTS = 0
+        const val DEFAULT_UNREAD_RESPONSE = 0
+        const val DEFAULT_VIEWS = 0
+    }
 }
 
 interface PostAutoSuggest : Serializable {

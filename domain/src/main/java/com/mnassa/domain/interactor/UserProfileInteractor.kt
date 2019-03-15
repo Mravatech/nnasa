@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
  */
 interface UserProfileInteractor {
     val onAccountChangedListener: CompositeEventListener<ShortAccountModel>
+    val onAccountIdChangedListener: CompositeEventListener<ShortAccountModel>
 
     suspend fun getAllAccounts(): ReceiveChannel<List<ShortAccountModel>>
 

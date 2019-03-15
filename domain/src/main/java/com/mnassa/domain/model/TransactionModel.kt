@@ -14,6 +14,12 @@ interface TransactionModel : Model {
     val byAccount: TransactionSideModel?
     val fromAccount: TransactionSideModel?
     val toAccount: TransactionSideModel?
+
+    companion object {
+        const val DEFAULT_AMOUNT = 0L
+        const val DEFAULT_TIME = 0L
+        const val DEFAULT_AFTER_BALANCE = 0L
+    }
 }
 
 data class TransactionSideModel(

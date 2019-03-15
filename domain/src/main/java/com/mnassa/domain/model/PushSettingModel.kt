@@ -11,4 +11,9 @@ interface PushSettingModel : Serializable{
     val name: String
     val isActive: Boolean
     val withSound: Boolean
+
+    companion object {
+        const val DEFAULT_IS_ACTIVE = false
+        const val DEFAULT_WITH_SOUND = false
+    }
 }

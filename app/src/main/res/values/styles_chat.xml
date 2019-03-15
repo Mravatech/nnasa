@@ -117,7 +117,10 @@
     <dimen name="chat_message_base_margin">16dp</dimen>
     <dimen name="chat_message_time_min_width">70dp</dimen>
     <dimen name="chat_message_half_base_margin">2dp</dimen>
-    <dimen name="chat_message_base_padding">10dp</dimen>
+    <dimen name="chat_message_text_size">16sp</dimen>
+    <dimen name="chat_message_vertical_padding">8dp</dimen>
+    <dimen name="chat_message_horizontal_padding">12dp</dimen>
+    <dimen name="chat_message_base_padding">12dp</dimen>
     <dimen name="chat_message_half_base_padding">8dp</dimen>
     <dimen name="chat_message_send_container_height">58dp</dimen>
     <dimen name="chat_message_attach_size">20dp</dimen>

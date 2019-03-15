@@ -1,48 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/vShadow"
-        android:layout_alignParentTop="true"
-        android:background="@color/accent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/accent"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/rlHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.mnassa.widget.drawer.DrawerMenu
             android:id="@+id/ivToolbarDrawer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingBottom="@dimen/spacing_vertical"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal"
-            android:paddingTop="@dimen/spacing_vertical"
+            style="?actionButtonStyle"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:visibility="gone" />
 
         <com.mnassa.widget.GoBackArrow
             android:id="@+id/ivToolbarBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingBottom="@dimen/spacing_vertical"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal"
-            android:paddingTop="@dimen/spacing_vertical"
+            style="?actionButtonStyle"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:visibility="visible" />
 
         <TextView
@@ -50,10 +41,10 @@
             style="@style/MnassaHeader1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/padding_vertical"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
-            android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginStart="@dimen/padding_horizontal"
             android:layout_marginTop="@dimen/padding_vertical"
+            android:layout_marginEnd="@dimen/padding_horizontal"
+            android:layout_marginBottom="@dimen/padding_vertical"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
@@ -65,8 +56,8 @@
             layout="@layout/red_badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -77,10 +68,10 @@
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:paddingBottom="@dimen/spacing_vertical"
-            android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
             android:paddingTop="@dimen/spacing_vertical"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingBottom="@dimen/spacing_vertical"
             android:tint="@color/white"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_more_vert_black_24dp"
@@ -101,21 +92,21 @@
         android:id="@+id/llSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/rlHeader"
-        android:layout_alignTop="@id/rlHeader"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/rlHeader"
+        app:layout_constraintTop_toTopOf="@id/rlHeader"
         tools:visibility="gone">
 
         <EditText
             android:id="@+id/etSearchSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/padding_vertical"
-            android:layout_marginEnd="@dimen/spacing_horizontal"
             android:layout_marginStart="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/padding_vertical"
+            android:layout_marginEnd="@dimen/spacing_horizontal"
+            android:layout_marginBottom="@dimen/padding_vertical"
             android:layout_weight="1"
             android:background="@color/transparent"
             android:imeOptions="actionDone"
@@ -138,10 +129,17 @@
 
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="rlHeader,llSearch" />
+
     <View
         android:id="@+id/vShadow"
         style="@style/MnassaShadow"
         android:layout_width="match_parent"
-        android:layout_below="@id/rlHeader" />
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:clipToPadding="false"
             android:paddingEnd="@dimen/padding_horizontal"
             android:paddingStart="@dimen/padding_horizontal">
 
@@ -25,21 +26,34 @@
                 style="@style/MnassaText"
                 tools:text="Enter your phone number to receive validation code" />
 
-            <include
-                android:id="@+id/phoneInput"
-                layout="@layout/phone_input"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_vertical" />
+                android:layout_marginTop="@dimen/spacing_vertical">
 
-            <include
-                android:id="@+id/coneInput"
-                layout="@layout/promo_code_input"
+                <include
+                    android:id="@+id/phoneInput"
+                    layout="@layout/phone_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/coneInputContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+
+                <include
+                    android:id="@+id/coneInput"
+                    layout="@layout/promo_code_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </androidx.cardview.widget.CardView>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnVerifyMe"

@@ -34,6 +34,18 @@ interface EventModel : Model {
     val updatedAt: Date
     val participants: List<String>
     val groups: List<GroupModel>
+
+    companion object {
+        const val DEFAULT_CREATED_AT = 0L
+        const val DEFAULT_START_AT = 0L
+        const val DEFAULT_ALL_CONNECTIONS = false
+        const val DEFAULT_ORIGINAL_CREATED_AT = 0L
+        const val DEFAULT_PRICE = 0L
+        const val DEFAULT_TICKETS_PER_ACCOUNT = 0L
+        const val DEFAULT_TICKETS_SOLD = 0L
+        const val DEFAULT_TICKETS_TOTAL = 0L
+        const val DEFAULT_UPDATED_AT = 0L
+    }
 }
 
 interface EventTicketModel : Model {
@@ -42,6 +54,13 @@ interface EventTicketModel : Model {
     val pricePerTicket: Long
     val ticketCount: Long
     val ownerId: String
+
+    companion object {
+        const val DEFAULT_EVENT_NAME = ""
+        const val DEFAULT_EVENT_ORGANIZER_ID = HasIdMaybe.EMPTY_KEY
+        const val DEFAULT_PRICE_PER_TICKET = 0L
+        const val DEFAULT_TICKET_COUNT = 0L
+    }
 }
 
 val EventModel.isActive: Boolean

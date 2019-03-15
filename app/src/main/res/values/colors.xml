@@ -21,6 +21,7 @@
     <color name="black_transparent_40">#6a000000</color>
     <color name="black_transparent_35">#52000000</color>
     <color name="black_transparent_20">#32000000</color>
+    <color name="black_transparent_10">#10000000</color>
     <!-- GRAY -->
     <color name="gray_cool">#abafb3</color>
     <color name="gray_cool_transparent">#82abafb3</color>

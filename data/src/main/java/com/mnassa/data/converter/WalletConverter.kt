@@ -23,10 +23,10 @@ class WalletConverter(private val lazyDictionaryInteractor: () -> DictionaryInte
     private fun convertTransaction(input: TransactionDbEntity, token: Any?, convertersContext: ConvertersContext): TransactionModel {
         return TransactionModelImpl(
                 id = input.id,
-                time = Date(input.transactionAt),
+                time = Date(input.transactionAt ?: TransactionModel.DEFAULT_TIME),
                 type = fromDictionary("_transaction_" + input.type),
-                afterBalance = input.afterBalance,
-                amount = input.amount,
+                afterBalance = input.afterBalance ?: TransactionModel.DEFAULT_AFTER_BALANCE,
+                amount = input.amount ?: TransactionModel.DEFAULT_AMOUNT,
                 byAccount = input.by?.run { convertUser(this, convertersContext) },
                 fromAccount = input.from?.run { convertUser(this, convertersContext) },
                 toAccount = input.to?.run { convertUser(this, convertersContext) },

@@ -20,6 +20,8 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             android:paddingBottom="@dimen/spacing_vertical"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"

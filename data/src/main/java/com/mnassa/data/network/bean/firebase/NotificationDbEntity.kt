@@ -12,9 +12,9 @@ import com.mnassa.domain.model.HasIdMaybe
  */
 internal data class NotificationDbEntity(
         @SerializedName("id") @Nullable override var idOrNull: String?,
-        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
+        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long?,
         @SerializedName("text") var text: String?,
-        @SerializedName("type") var type: String,
+        @SerializedName("type") var type: String?,
         @SerializedName("extra") var extra: NotificationExtraDbEntity?
 ) : HasIdMaybe {
     companion object {

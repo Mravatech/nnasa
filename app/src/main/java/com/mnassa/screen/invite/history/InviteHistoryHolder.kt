@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.item_invite_history.view.*
 
 class InviteHistoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun setup(contact: PhoneContactInvited, date: String?) {
+    fun setup(contact: PhoneContactInvited, date: String?, showBottomShadow: Boolean) {
         date?.let {
             itemView.tvInviteHistoryHeader.visibility = View.VISIBLE
             itemView.vShadow.visibility = View.VISIBLE
@@ -26,6 +26,7 @@ class InviteHistoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             itemView.tvInviteHistoryHeader.visibility = View.GONE
             itemView.vShadow.visibility = View.GONE
         }
+        itemView.vShadowBottom.visibility = if (showBottomShadow) View.VISIBLE else View.GONE
         itemView.ivPhoneContactAvatar.avatarRound(contact.avatar)
         contact.description?.let {
             itemView.tvInviteContactName.visibility = View.VISIBLE

@@ -64,7 +64,7 @@
                 app:layout_collapseParallaxMultiplier="1">
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline"
+                    android:id="@+id/guidelineStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -75,7 +75,7 @@
                     android:layout_width="@dimen/group_profile_avatar_expanded"
                     android:layout_height="@dimen/group_profile_avatar_expanded"
                     android:padding="1dp"
-                    app:layout_constraintBottom_toTopOf="@+id/guideline"
+                    app:layout_constraintBottom_toTopOf="@+id/guidelineStart"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"

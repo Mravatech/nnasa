@@ -19,6 +19,7 @@ import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
 import com.mnassa.data.network.stringValue
+import com.mnassa.domain.aggregator.AggregatorInEvent
 import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.*
 import com.mnassa.domain.pagination.PaginationController
@@ -44,12 +45,6 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
                           private val postApi: FirebasePostApi,
                           private val context: Context) : PostsRepository {
 
-    private val roomDb by lazy {
-        Room.databaseBuilder(context, MnassaDb::class.java, "MnassaDB")
-                .fallbackToDestructiveMigration()
-                .build()
-    }
-
     private val cachedDefaultExpirationDays = Cached<Long>()
 
     override suspend fun loadInfoPosts(): List<InfoPostModel> {
@@ -63,11 +58,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
             .toList()
     }
 
-    override suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<ListItemEvent<InfoPostModel>> {
+    override suspend fun loadInfoPostsWithChangesHandling(): ReceiveChannel<AggregatorInEvent<InfoPostModel>> {
         val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_POSTS)
-            .toValueChannelWithChangesHandling<PostDbEntity, InfoPostModel>(
+            .toAggregatorEvents<PostDbEntity, InfoPostModel>(
                 exceptionHandler = exceptionHandler,
                 queryBuilder = { collection ->
                     collection
@@ -85,11 +80,11 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         return loadById(postId).consume { receiveOrNull() }
     }
 
-    override suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<ListItemEvent<PostModel>> {
+    override suspend fun loadFeedWithChangesHandling(pagination: PaginationController?): ReceiveChannel<AggregatorInEvent<PostModel>> {
         val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_POSTS)
-            .toValueChannelWithChangesHandling<PostDbEntity, PostModel>(exceptionHandler,
+            .toAggregatorEvents<PostDbEntity, PostModel>(exceptionHandler,
                 pagination = pagination,
                 queryBuilder = { collection ->
                     collection
@@ -257,15 +252,13 @@ class PostsRepositoryImpl(private val db: DatabaseReference,
         postApi.deletePost(postId).handleException(exceptionHandler)
     }
 
-    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions): PostModel {
-        return postApi.repostComment(RepostCommentRequest(
+    override suspend fun repostPost(postId: String, text: String?, privacy: PostPrivacyOptions) {
+        postApi.repostComment(RepostCommentRequest(
                 postId = postId,
                 text = text?.takeIf { it.isNotBlank() },
                 privacyConnections = privacy.privacyConnections.toList(),
                 allConnections = privacy.privacyType is PostPrivacyType.PUBLIC))
                 .handleException(exceptionHandler)
-                .data
-                .run { converter.convert(this) }
     }
 
     override suspend fun getDefaultExpirationDays(): Long {

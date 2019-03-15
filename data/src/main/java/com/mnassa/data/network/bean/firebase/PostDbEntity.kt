@@ -11,31 +11,31 @@ import com.mnassa.domain.model.HasIdMaybe
  */
 internal data class PostDbEntity(
         @SerializedName("id") override var idOrNull: String?,
-        @SerializedName("allConnections") var allConnections: Boolean,
+        @SerializedName("allConnections") var allConnections: Boolean?,
         @SerializedName("copyOwner") var copyOwner: String?,
-        @SerializedName("counters") var counters: PostCountersDbEntity,
-        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long,
+        @SerializedName("counters") var counters: PostCountersDbEntity?,
+        @SerializedName(PROPERTY_CREATED_AT) var createdAt: Long?,
         @SerializedName("images") var images: List<String>?,
         @SerializedName("videos") var videos: List<String>?,
-        @SerializedName("itemType") var itemType: String,
-        @SerializedName("type") var type: String,
+        @SerializedName("itemType") var itemType: String?,
+        @SerializedName("type") var type: String?,
         @SerializedName("originalCreatedAt") var originalCreatedAt: Long?,
         @SerializedName("originalId", alternate = ["originalPostId"]) var originalId: String?,
         @SerializedName("privacyConnections") var privacyConnections: List<String>?,
-        @SerializedName("privacyType") var privacyType: String,
+        @SerializedName("privacyType") var privacyType: String?,
         @SerializedName("text") var text: String?,
-        @SerializedName("updatedAt") var updatedAt: Long,
+        @SerializedName("updatedAt") var updatedAt: Long?,
         @SerializedName("location") var location: LocationDbEntity?,
         @SerializedName("tags") var tags: List<String>?,
         @SerializedName("original") var original: String?,
-        @SerializedName("statusOfExpiration") var statusOfExpiration: String,
+        @SerializedName("statusOfExpiration") var statusOfExpiration: String?,
         @SerializedName("timeOfExpiration") var timeOfExpiration: Long?,
-        @SerializedName("author") var author: JsonObject,
+        @SerializedName("author") var author: JsonObject?,
         @SerializedName("price") var price: Double?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("repostAuthor") var repostAuthor: JsonObject,
+        @SerializedName("repostAuthor") var repostAuthor: JsonObject?,
         //posted account
-        @SerializedName("postedAccount") var postedAccount: JsonObject,
+        @SerializedName("postedAccount") var postedAccount: JsonObject?,
         //info post
         @SerializedName("title") var title: String?, //offer post
         //offer post
@@ -57,12 +57,12 @@ internal data class PostDbEntity(
 }
 
 internal data class PostCountersDbEntity(
-        @SerializedName("comments") var comments: Int,
-        @SerializedName("likes") var likes: Int,
-        @SerializedName("recommend") var recommend: Int,
-        @SerializedName("reposts") var reposts: Int,
-        @SerializedName("unreadResponse") var unreadResponse: Int,
-        @SerializedName("views") var views: Int
+        @SerializedName("comments") var comments: Int?,
+        @SerializedName("likes") var likes: Int?,
+        @SerializedName("recommend") var recommend: Int?,
+        @SerializedName("reposts") var reposts: Int?,
+        @SerializedName("unreadResponse") var unreadResponse: Int?,
+        @SerializedName("views") var views: Int?
 )
 
 @JsonAdapter(PostAutoSuggestJsonAdapter::class)
@@ -75,7 +75,7 @@ internal data class PostAutoSuggest(
 internal class PostShortDbEntity(
         @SerializedName("id") override var idOrNull: String?,
         @SerializedName("autoSuggest") var autoSuggest: PostAutoSuggest?,
-        @SerializedName("updatedAt") var updatedAt: Long,
-        @SerializedName(PostDbEntity.PROPERTY_CREATED_AT) var createdAt: Long
+        @SerializedName("updatedAt") var updatedAt: Long?,
+        @SerializedName(PostDbEntity.PROPERTY_CREATED_AT) var createdAt: Long?
 ): HasIdMaybe
 

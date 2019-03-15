@@ -76,7 +76,7 @@ class ProcessAccountChangeArrayBroadcastChannel<T>(beforeReConsume: suspend (out
         receiveChannelProvider = receiveChannelProvider,
         reConsumableEvent = { viewModel ->
             val userProfileInteractor: UserProfileInteractor by viewModel.instance()
-            userProfileInteractor.onAccountChangedListener.awaitFirst()
+            userProfileInteractor.onAccountIdChangedListener.awaitFirst()
         },
         invokeReConsumeFirstly = invokeReConsumeFirstly
 )
@@ -91,7 +91,7 @@ class ProcessAccountChangeConflatedBroadcastChannel<T>(beforeReConsume: suspend 
         receiveChannelProvider = receiveChannelProvider,
         reConsumableEvent = { viewModel ->
             val userProfileInteractor: UserProfileInteractor by viewModel.instance()
-            userProfileInteractor.onAccountChangedListener.awaitFirst()
+            userProfileInteractor.onAccountIdChangedListener.awaitFirst()
         },
         invokeReConsumeFirstly = invokeReConsumeFirstly
 ) {

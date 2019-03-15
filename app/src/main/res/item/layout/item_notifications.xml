@@ -22,7 +22,7 @@
     <TextView
         android:id="@+id/tvUserName"
         style="@style/Notifications.UserName"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/spacing_vertical"
         android:layout_toEndOf="@id/ivUserIcon"
         android:layout_toStartOf="@id/tvNotificationCame"
         tools:text="Gordon Baker Long long long long" />

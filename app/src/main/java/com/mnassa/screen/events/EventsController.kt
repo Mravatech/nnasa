@@ -10,6 +10,7 @@ import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.core.addons.launchWorker
+import com.mnassa.domain.aggregator.produce
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.extensions.isInvisible
@@ -72,10 +73,10 @@ class EventsController : MnassaControllerImpl<EventsViewModel>(), NewPanelView, 
         }
 
         launchCoroutineUI {
-            viewModel.eventsFeedChannel.subscribeToUpdates(
-                    adapter = adapter,
-                    emptyView = { getViewSuspend().rlEmptyView },
-                    onAdded = { triggerScrollPanel() }
+            viewModel.eventsLive.produce().subscribeToUpdates(
+                adapter = adapter,
+                emptyView = { getViewSuspend().rlEmptyView },
+                onAdded = { triggerScrollPanel() }
             )
         }
 

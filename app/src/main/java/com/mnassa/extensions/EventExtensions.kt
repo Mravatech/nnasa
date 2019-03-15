@@ -110,6 +110,10 @@ suspend fun EventModel.markAsOpened() {
     App.context.getInstance<EventsInteractor>().onItemOpened(this)
 }
 
+suspend fun EventModel.markAsViewed() {
+    App.context.getInstance<EventsInteractor>().onItemViewed(this)
+}
+
 suspend fun EventModel?.canBePromoted(): Boolean {
     if (this?.privacyType is PostPrivacyType.WORLD) return false
     if (this?.isMyEvent() == false) return false

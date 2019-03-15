@@ -344,4 +344,15 @@ data class PostCountersImpl(
         override val reposts: Int,
         override val unreadResponse: Int,
         override val views: Int
-) : PostCounters
+) : PostCounters {
+    companion object {
+        val EMPTY = PostCountersImpl(
+            comments = PostCounters.DEFAULT_COMMENTS,
+            likes = PostCounters.DEFAULT_COMMENTS,
+            recommend = PostCounters.DEFAULT_COMMENTS,
+            reposts = PostCounters.DEFAULT_COMMENTS,
+            unreadResponse = PostCounters.DEFAULT_COMMENTS,
+            views = PostCounters.DEFAULT_COMMENTS
+        )
+    }
+}

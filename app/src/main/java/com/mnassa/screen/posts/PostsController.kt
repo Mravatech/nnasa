@@ -9,6 +9,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
+import com.mnassa.domain.aggregator.produce
 import com.mnassa.domain.model.PostModel
 import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
@@ -87,7 +88,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
 
         resolveExceptions {
             launchCoroutineUI {
-                viewModel.newsFeedChannel.subscribeToUpdates(
+                viewModel.postsLive.produce().subscribeToUpdates(
                     adapter = adapter,
                     emptyView = { getViewSuspend().rlEmptyView },
                     onAdded = { triggerScrollPanel() }

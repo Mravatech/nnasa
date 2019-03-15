@@ -57,11 +57,11 @@ class GroupConverter(userInteractorLazy: () -> UserProfileInteractor) : Converte
 
     private fun makeRequest(group: RawGroupModel): CreateGroupRequest {
         val permissions = GroupPermissionsEntity(
-                canCreateEvent = group.permissions.canCreateEvent,
-                canCreateAccountPost = group.permissions.canCreateAccountPost,
-                canCreateOfferPost = group.permissions.canCreateOfferPost,
-                canCreateNeedPost = group.permissions.canCreateNeedPost,
-                canCreateGeneralPost = group.permissions.canCreateGeneralPost
+                canCreateEventOrNull = group.permissions.canCreateEvent,
+                canCreateAccountPostOrNull = group.permissions.canCreateAccountPost,
+                canCreateOfferPostOrNull = group.permissions.canCreateOfferPost,
+                canCreateNeedPostOrNull = group.permissions.canCreateNeedPost,
+                canCreateGeneralPostOrNull = group.permissions.canCreateGeneralPost
         )
 
         return CreateGroupRequest(

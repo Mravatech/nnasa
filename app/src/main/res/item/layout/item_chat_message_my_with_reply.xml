@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,35 +13,55 @@
         style="@style/ChatMessage.Time"
         tools:text="12:00 PM" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rlMyMessageWithReplyContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/chat_message_half_base_margin"
         android:background="@drawable/income_chat_message_background"
         android:orientation="vertical"
-        android:padding="@dimen/chat_message_base_padding">
+        android:paddingStart="@dimen/chat_message_horizontal_padding"
+        android:paddingTop="@dimen/chat_message_vertical_padding"
+        android:paddingEnd="@dimen/chat_message_horizontal_padding"
+        android:paddingBottom="@dimen/chat_message_vertical_padding">
 
         <TextView
             android:id="@+id/tvMyReplyMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:autoLink="all"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:textColorPrimary"
             android:textColorLink="@color/black"
-            tools:text="Reply message gge gge gge gge gge long long long" />
+            android:textSize="@dimen/chat_message_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Reply message  long long text  long long text" />
 
         <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_width"
-            android:background="@color/black" />
+            android:id="@+id/vDivider"
+            android:layout_width="3dp"
+            android:layout_height="0dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/tvMyReplyMessage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvMyReplyMessage" />
 
         <TextView
             android:id="@+id/tvMyMessageWithReply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:autoLink="all"
+            android:textColor="?android:textColorPrimary"
             android:textColorLink="@color/black"
-            tools:text="myMessage with reply long long long long long long long" />
-    </LinearLayout>
+            android:textSize="@dimen/chat_message_text_size"
+            app:layout_constraintStart_toStartOf="@dimen/padding_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tvMyReplyMessage"
+            tools:text="Message long long text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

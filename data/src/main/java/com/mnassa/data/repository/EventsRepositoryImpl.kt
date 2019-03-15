@@ -17,6 +17,7 @@ import com.mnassa.data.network.bean.firebase.PriceDbEntity
 import com.mnassa.data.network.bean.retrofit.request.*
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.data.network.exception.handler.handleException
+import com.mnassa.domain.aggregator.AggregatorInEvent
 import com.mnassa.domain.model.EventAttendee
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
@@ -26,9 +27,9 @@ import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.EventsRepository
 import com.mnassa.domain.repository.GroupsRepository
 import com.mnassa.domain.repository.UserRepository
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.consume
-import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.*
 import timber.log.Timber
 
 /**
@@ -54,11 +55,11 @@ class EventsRepositoryImpl(private val firestore: FirebaseFirestore,
                     .mapNotNull { mapEvent(it) }
     }
 
-    override suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<ListItemEvent<EventModel>> {
+    override suspend fun getEventsFeedChannel(pagination: PaginationController): ReceiveChannel<AggregatorInEvent<EventModel>> {
         val serialNumber = userRepository.getSerialNumberOrException()
         return firestore
             .collection(DatabaseContract.TABLE_ALL_EVENTS)
-            .toValueChannelWithChangesHandling<EventDbEntity, EventModel>(
+            .toAggregatorEvents<EventDbEntity, EventModel>(
                 exceptionHandler = exceptionHandler,
                 pagination = pagination,
                 queryBuilder = {

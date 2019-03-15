@@ -53,7 +53,7 @@
 
     <style name="Invite.RecyclerViewInvite">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/white</item>
     </style>
 
@@ -152,7 +152,7 @@
     <dimen name="invite_item_view_main_margin">12dp</dimen>
     <dimen name="invite_item_phone_number_text_size">12sp</dimen>
     <dimen name="invite_item_contact_name_text_size">16sp</dimen>
-    <dimen name="invite_item_view_image_size">50dp</dimen>
+    <dimen name="invite_item_view_image_size">40dp</dimen>
 
     <dimen name="invite_main_screen_margin">8dp</dimen>
     <dimen name="invite_toolbar_height">56dp</dimen>
