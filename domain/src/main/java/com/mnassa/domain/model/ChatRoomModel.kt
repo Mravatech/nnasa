@@ -14,6 +14,11 @@ interface ChatRoomModel : Model {
     val chatMessageModel: ChatMessageModel?
     var members: List<String>?
     var account: ShortAccountModel?
+
+    companion object {
+        const val DEFAULT_VIEWED_AT_DATE = 0L
+        const val DEFAULT_UNREAD_COUNT = 0
+    }
 }
 
 
@@ -25,4 +30,10 @@ interface ChatMessageModel : Model {
     val chatID: String?
     var replyMessage: Pair<String, ChatMessageModel?>?
     var replyPost: Pair<String, PostModel?>?
+
+    companion object {
+        const val DEFAULT_CREATED_AT_DATE = 0L
+        const val DEFAULT_CREATOR = HasIdMaybe.EMPTY_KEY
+        const val DEFAULT_TYPE = "text"
+    }
 }

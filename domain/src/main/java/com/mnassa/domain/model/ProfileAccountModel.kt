@@ -37,4 +37,10 @@ interface ProfileAccountModel : ShortAccountModel, Parcelable {
     val website: String?
     val organizationType: String?
     val birthday: Date?
+
+    companion object {
+        const val DEFAULT_SHOW_CONTACT_EMAIL = true
+        const val DEFAULT_SHOW_CONTACT_PHONE = true
+        const val DEFAULT_VISIBLE_POINTS = 0
+    }
 }

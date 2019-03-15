@@ -12,10 +12,10 @@ import com.mnassa.domain.model.HasIdMaybe
  */
 class InvitationDbEntity(
         @SerializedName("id") override var idOrNull: String?,
-        @SerializedName("createdAt") val createdAt: Long,
-        @SerializedName("createdAtDate") val createdAtDate: String? = "",
-        @SerializedName("description") val description: String? = null,
+        @SerializedName("createdAt") val createdAt: Long?,
+        @SerializedName("createdAtDate") val createdAtDate: String?,
+        @SerializedName("description") val description: String?,
         @SerializedName("phone") val phone: String?,
         @SerializedName("account") @JsonAdapter(InvitationAccountAvatarJsonAdapter::class) val avatar: String?,
-        @SerializedName("used") val used: Boolean
+        @SerializedName("used") val used: Boolean?
 ) : HasIdMaybe

@@ -32,17 +32,23 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
             NetworkContract.AccountType.ORGANIZATION -> {
                 accountType = AccountType.ORGANIZATION
                 organizationInfo = OrganizationAccountDiffModelImpl(
-                        organizationName = requireNotNull(input.organizationName)
+                        organizationName = input.organizationName ?: CONVERT_ERROR_MESSAGE
                 )
             }
             NetworkContract.AccountType.PERSONAL -> {
                 accountType = AccountType.PERSONAL
                 personalInfo = PersonalAccountDiffModelImpl(
-                        firstName = requireNotNull(input.firstName),
-                        lastName = requireNotNull(input.lastName)
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
                 )
             }
-            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+            else -> {
+                accountType = AccountType.PERSONAL
+                personalInfo = PersonalAccountDiffModelImpl(
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
+                )
+            }
         }
 
         return ShortAccountModelImpl(
@@ -69,17 +75,23 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
             NetworkContract.AccountType.ORGANIZATION -> {
                 accountType = AccountType.ORGANIZATION
                 organizationInfo = OrganizationAccountDiffModelImpl(
-                        organizationName = requireNotNull(input.organizationName)
+                        organizationName = input.organizationName ?: CONVERT_ERROR_MESSAGE
                 )
             }
             NetworkContract.AccountType.PERSONAL -> {
                 accountType = AccountType.PERSONAL
                 personalInfo = PersonalAccountDiffModelImpl(
-                        firstName = requireNotNull(input.firstName),
-                        lastName = requireNotNull(input.lastName)
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
                 )
             }
-            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+            else -> {
+                accountType = AccountType.PERSONAL
+                personalInfo = PersonalAccountDiffModelImpl(
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
+                )
+            }
         }
 
         return ShortAccountModelImpl(
@@ -99,7 +111,7 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
 
     private fun convertAccountAbility(input: ShortAccountAbilityDbEntity): AccountAbilityImpl {
         return AccountAbilityImpl(
-                isMain = input.isMain,
+                isMain = input.isMain ?: AccountAbility.DEFAULT_IS_MAIN,
                 name = input.name,
                 place = input.place
         )
@@ -113,17 +125,23 @@ class UserAccountConverter : ConvertersContextRegistrationCallback {
             NetworkContract.AccountType.ORGANIZATION -> {
                 accountType = AccountType.ORGANIZATION
                 organizationInfo = OrganizationAccountDiffModelImpl(
-                        organizationName = requireNotNull(input.organizationName)
+                        organizationName = input.organizationName ?: CONVERT_ERROR_MESSAGE
                 )
             }
             NetworkContract.AccountType.PERSONAL -> {
                 accountType = AccountType.PERSONAL
                 personalInfo = PersonalAccountDiffModelImpl(
-                        firstName = requireNotNull(input.firstName),
-                        lastName = requireNotNull(input.lastName)
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
                 )
             }
-            else -> throw IllegalArgumentException("Illegal account type ${input.type}")
+            else -> {
+                accountType = AccountType.PERSONAL
+                personalInfo = PersonalAccountDiffModelImpl(
+                    firstName = input.firstName ?: CONVERT_ERROR_MESSAGE,
+                    lastName = input.lastName ?: CONVERT_ERROR_MESSAGE
+                )
+            }
         }
 
         return DeclinedShortAccountModelImpl(

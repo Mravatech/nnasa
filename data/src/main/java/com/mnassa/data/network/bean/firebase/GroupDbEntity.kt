@@ -35,9 +35,20 @@ internal data class GroupCounters(
 )
 
 data class GroupPermissionsEntity(
-        @SerializedName("createAccountPost") val canCreateAccountPost: Boolean = false,
-        @SerializedName("createEvent") val canCreateEvent: Boolean = false,
-        @SerializedName("createGeneralPost") val canCreateGeneralPost: Boolean = false,
-        @SerializedName("createNeedPost") val canCreateNeedPost: Boolean = false,
-        @SerializedName("createOfferPost") val canCreateOfferPost: Boolean = false
-)
+        @SerializedName("createAccountPost") val canCreateAccountPostOrNull: Boolean? = null,
+        @SerializedName("createEvent") val canCreateEventOrNull: Boolean? = null,
+        @SerializedName("createGeneralPost") val canCreateGeneralPostOrNull: Boolean? = null,
+        @SerializedName("createNeedPost") val canCreateNeedPostOrNull: Boolean? = null,
+        @SerializedName("createOfferPost") val canCreateOfferPostOrNull: Boolean? = null
+) {
+        val canCreateAccountPost: Boolean
+                get() = canCreateAccountPostOrNull ?: false
+        val canCreateEvent: Boolean
+                get() = canCreateEventOrNull ?: false
+        val canCreateGeneralPost: Boolean
+                get() = canCreateGeneralPostOrNull ?: false
+        val canCreateNeedPost: Boolean
+                get() = canCreateNeedPostOrNull ?: false
+        val canCreateOfferPost: Boolean
+                get() = canCreateOfferPostOrNull ?: false
+}

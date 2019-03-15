@@ -9,6 +9,6 @@ import com.mnassa.domain.model.HasIdMaybe
 data class OfferCategoryDbModel(
         @SerializedName("id") override var idOrNull: String?,
         @SerializedName("ar") val ar: String?,
-        @SerializedName("en") val en: String,
+        @SerializedName("en") val en: String?,
         @SerializedName("parentId") val parentId: String?
 ) : HasIdMaybe
