@@ -60,7 +60,7 @@ open class NetworkExceptionHandlerImpl(private val gson: Gson, private val conte
                     ?.error ?: unknownErrorMessage
         "Canceled".equals(throwable.cause?.message, ignoreCase = true) -> null
         isNetworkDisabledException(throwable) -> networkDisabledMessage
-        else -> unknownErrorMessage
+        else -> throwable.localizedMessage ?: throwable.message
     }
 
     private fun isNetworkDisabledException(throwable: Throwable): Boolean {
