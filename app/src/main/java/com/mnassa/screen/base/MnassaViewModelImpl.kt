@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import com.mnassa.App
 import com.mnassa.core.BaseViewModelImpl
+import com.mnassa.domain.errorMessagesLive
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.exceptions.internalResolveExceptions
 import com.mnassa.exceptions.resolveExceptions
@@ -28,7 +29,6 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     }
     private val appInfoProvider: AppInfoProvider by instance()
 
-    override val errorMessageChannel: BroadcastChannel<String> = BroadcastChannel(10)
     override val isProgressEnabledChannel: ConflatedBroadcastChannel<ProgressEvent> = ConflatedBroadcastChannel()
 
 
@@ -41,7 +41,7 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     protected open suspend fun <T> handleExceptionsSuspend(function: suspend CoroutineScope.() -> T): T? {
         return internalResolveExceptions(function) { message ->
             try {
-                errorMessageChannel.send(message)
+                errorMessagesLive.push(message)
             } catch (_: ClosedSendChannelException) {
             }
         }

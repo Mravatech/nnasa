@@ -1,11 +1,10 @@
 package com.mnassa.exceptions
 
-import android.widget.Toast
 import com.mnassa.App
 import com.mnassa.R
-import com.mnassa.core.addons.launchUI
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
+import com.mnassa.domain.errorMessagesLive
 import com.mnassa.domain.exception.AccountDisabledException
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException
@@ -13,8 +12,6 @@ import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.other.AppInfoProvider
-import com.mnassa.screen.base.MnassaController
-import com.mnassa.screen.base.MnassaViewModel
 import com.mnassa.translation.fromDictionary
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -27,20 +24,10 @@ fun <T : CoroutineScope> T.resolveExceptions(
     launchWorker {
         internalResolveExceptions(block) { message ->
             if (showErrorMessage) {
-                val viewModel = this@resolveExceptions as? MnassaViewModel
-                    ?: (this@resolveExceptions as? MnassaController<*>)
-                        ?.viewModel as? MnassaViewModel
-                if (viewModel != null) {
-                    // Send message to a dedicated error message
-                    // channel.
-                    try {
-                        viewModel.errorMessageChannel.send(message)
-                    } catch (_: Throwable) {
-                    }
-                } else {
-                    launchUI {
-                        Toast.makeText(App.context, message, Toast.LENGTH_LONG).show()
-                    }
+                try {
+                    errorMessagesLive.push(message)
+                } catch (e: Exception) {
+                    throw RuntimeException("Failed to send error message", e)
                 }
             }
         }

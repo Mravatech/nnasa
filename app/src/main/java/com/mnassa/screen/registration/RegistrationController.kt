@@ -104,16 +104,18 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
             }
         }
         launchCoroutineUI {
-            viewModel.errorMessageChannel.consumeEach {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
-            }
-        }
-        launchCoroutineUI {
             val hasPersonalAccount = viewModel.hasPersonalAccountChannel()
             view.llAccountTypePersonal.isEnabled = !hasPersonalAccount
             if (hasPersonalAccount) view.llAccountTypeOrganization.performClick()
             else view.llAccountTypePersonal.performClick()
         }
+    }
+
+    override fun showErrorMessage(message: String): Boolean {
+        return view?.let {
+            Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
+            return@let true
+        } ?: super.showErrorMessage(message)
     }
 
     private fun updateAccountTypeSwitch() {

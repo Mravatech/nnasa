@@ -2,6 +2,7 @@ package com.mnassa
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -13,8 +14,10 @@ import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.FirebaseApp
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
+import com.mnassa.domain.errorMessagesLive
 import com.mnassa.domain.live.consume
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.other.AppInfoProvider
@@ -23,6 +26,7 @@ import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -90,6 +94,18 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
         // Keep posts in sync
         launch {
             getInstance<PostsInteractor>().mergedInfoPostsAndFeedLive.consume { }
+        }
+
+        // Show toast error messages
+        launch {
+            errorMessagesLive.consume {
+                runBlocking {
+                    launchUI {
+                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                true
+            }
         }
     }
 

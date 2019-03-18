@@ -4,23 +4,28 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.UiThread
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchUI
 import com.mnassa.core.events.awaitFirst
+import com.mnassa.domain.errorMessagesLive
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.interactor.SettingsInteractor
+import com.mnassa.domain.live.consume
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinTrigger
@@ -70,15 +75,29 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
 
     protected open fun subscribeToErrorEvents() {
         launchUI {
-            viewModel.errorMessageChannel.consumeEach {
-                val context = view?.context ?: return@consumeEach
-                AlertDialog.Builder(context)
-                        .setTitle(fromDictionary(R.string.error_dialog_title))
-                        .setMessage(it)
-                        .setPositiveButton(context.getString(android.R.string.ok)) { _, _ -> }
-                        .show()
+            errorMessagesLive.consume {
+                runBlocking {
+                    withContext(Dispatchers.Main) {
+                        showErrorMessage(it)
+                    }
+                }
             }
         }
+    }
+
+    /** Returns`true` if the error message was handled successfully */
+    protected open fun showErrorMessage(message: String): Boolean {
+        if (isBeingDestroyed || !isAttached) {
+            return false
+        }
+
+        val context = view?.context ?: return false
+        MaterialDialog.Builder(context)
+            .title(fromDictionary(R.string.error_dialog_title))
+            .content(message)
+            .positiveText(android.R.string.ok)
+            .show()
+        return true
     }
 
     protected open fun subscribeToProgressEvents() {
