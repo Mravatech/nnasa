@@ -11,11 +11,11 @@ import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchUI
 import com.mnassa.core.events.awaitFirst
-import com.mnassa.domain.errorMessagesLive
+import com.mnassa.core.errorMessagesLive
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.interactor.SettingsInteractor
-import com.mnassa.domain.live.consume
+import com.mnassa.core.live.consume
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter

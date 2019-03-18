@@ -1,4 +1,4 @@
-package com.mnassa.domain.live
+package com.mnassa.core.live
 
 import java.util.*
 

@@ -4,7 +4,7 @@ import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchWorker
 import com.mnassa.di.getInstance
-import com.mnassa.domain.errorMessagesLive
+import com.mnassa.core.errorMessagesLive
 import com.mnassa.domain.exception.AccountDisabledException
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NetworkException

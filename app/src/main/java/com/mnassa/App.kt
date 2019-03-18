@@ -17,8 +17,8 @@ import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
-import com.mnassa.domain.errorMessagesLive
-import com.mnassa.domain.live.consume
+import com.mnassa.core.errorMessagesLive
+import com.mnassa.core.live.consume
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
