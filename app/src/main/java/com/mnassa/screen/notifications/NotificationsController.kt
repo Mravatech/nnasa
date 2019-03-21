@@ -5,6 +5,7 @@ import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
+import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
 import com.mnassa.exceptions.resolveExceptions
@@ -60,7 +61,13 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                 }
                 is ListItemEvent.Changed -> adapter.addNotifications(it.item)
                 is ListItemEvent.Moved -> adapter.addNotifications(it.item)
-                is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
+                is ListItemEvent.Removed -> {
+                    adapter
+                        .dataStorage
+                        .find { model -> model.key == it.key }
+                        ?.let { model -> model as? NotificationAdapter.NotificationItem.ContentItem }
+                        ?.let { model -> adapter.removeNotifications(listOf(model.content)) }
+                }
                 is ListItemEvent.Cleared -> {
                     adapter.isLoadingEnabled = true
                     adapter.dataStorage.clear()

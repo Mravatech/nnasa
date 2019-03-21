@@ -11,15 +11,9 @@ import kotlinx.coroutines.sync.withLock
 
 sealed class ListItemEvent<T : Any>() {
     lateinit var item: T
-    var previousChildName: String? = null
 
     constructor(item: T) : this() {
         this.item = item
-        this.previousChildName = null
-    }
-
-    constructor(previousChildName: String): this() {
-        this.previousChildName = previousChildName
     }
 
     class Added<T : Any>(item: T) : ListItemEvent<T>(item) {
@@ -34,11 +28,8 @@ sealed class ListItemEvent<T : Any>() {
         override fun toBatched(): ListItemEvent<List<T>> = Changed(listOf(item))
     }
 
-    class Removed<T : Any> : ListItemEvent<T> {
-        constructor(item: T): super(item)
-        constructor(previousChildName: String): super(previousChildName = previousChildName)
-
-        override fun toBatched(): ListItemEvent<List<T>> = if (previousChildName != null) Removed(previousChildName!!) else Removed(listOf(item))
+    class Removed<T : Any>(val key: String) : ListItemEvent<T>() {
+        override fun toBatched(): ListItemEvent<List<T>> = Removed(key)
     }
 
     class Cleared<T : Any> : ListItemEvent<T>() {
