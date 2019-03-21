@@ -1,6 +1,7 @@
 package com.mnassa.screen.login.entercode
 
 import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
@@ -35,7 +36,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor, priva
     private var requestVerificationCodeJob: Job? = null
     override fun resendCode() {
         requestVerificationCodeJob?.cancel()
-        requestVerificationCodeJob = GlobalScope.resolveExceptions {
+        requestVerificationCodeJob = launchWorker {
             val phoneNumber = verificationResponse.phoneNumber
             loginInteractor.requestVerificationCode(phoneNumber).consumeEach {
                 verificationResponse = it
@@ -53,7 +54,7 @@ class EnterCodeViewModelImpl(private val loginInteractor: LoginInteractor, priva
     private var signInJob: Job? = null
     private fun signIn(code: String? = null) {
         signInJob?.cancel()
-        signInJob = resolveExceptions {
+        signInJob = launchWorker {
             withProgressSuspend {
                 Timber.d("MNSA_LOGIN EnterCodeViewModelImpl->signIn with code $code")
 

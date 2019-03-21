@@ -14,15 +14,12 @@ import com.mnassa.domain.model.HasId
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.pagination.PaginationObserver
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.yield
 import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.coroutineContext
@@ -264,7 +261,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : Any> Coll
                                     .documents
                                     .lastOrNull()
                             } catch (e: Exception) {
-                                Timber.e(e)
+                                channel.close(exceptionHandler.handle(e, path))
                                 return@withLock
                             }
 
@@ -556,7 +553,7 @@ internal suspend inline fun <reified DbType : HasId, reified OutType : HasId> Co
                                     .documents
                                     .lastOrNull()
                             } catch (e: Exception) {
-                                Timber.e(e)
+                                channel.close(exceptionHandler.handle(e, path))
                                 return@withLock
                             }
 

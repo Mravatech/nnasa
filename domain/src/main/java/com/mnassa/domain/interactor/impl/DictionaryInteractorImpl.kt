@@ -24,23 +24,15 @@ class DictionaryInteractorImpl(
 
     override fun CoroutineScope.handleDictionaryUpdates() {
         launchWorker {
-            while (isActive) {
-                try {
-                    repository.keepDictionarySynced(true)
-                    repository.produceDictionaryVersion().consumeEach { serverVersion ->
-                        withContext(Dispatchers.Default) {
-                            val mobileVersion = repository.getLocalDictionaryVersion()
-                            if (serverVersion != mobileVersion) {
-                                val serverDict = repository.loadDictionary()
-                                repository.saveLocalDictionary(serverVersion, serverDict)
-                            }
-                        }
+            repository.keepDictionarySynced(true)
+            repository.produceDictionaryVersion().consumeEach { serverVersion ->
+                withContext(Dispatchers.Default) {
+                    val mobileVersion = repository.getLocalDictionaryVersion()
+                    if (serverVersion != mobileVersion) {
+                        val serverDict = repository.loadDictionary()
+                        repository.saveLocalDictionary(serverVersion, serverDict)
                     }
-                } catch (e: Exception) {
-                    Timber.e(e)
                 }
-
-                delay(10_000L)
             }
         }
     }

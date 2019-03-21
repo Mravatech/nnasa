@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.App
 import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.PostType
@@ -27,8 +28,7 @@ import kotlinx.coroutines.GlobalScope
 class PostDetailsFactory {
 
     fun newInstance(post: PostModel): Controller {
-
-        GlobalScope.launchWorker {
+        GlobalScope.launchWorkerNoExceptions {
             post.markAsOpened()
             post.markAsViewed()
         }

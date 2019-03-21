@@ -210,7 +210,7 @@ private val viewModelsModule = Kodein.Module {
     bind<PostsViewModel>() with provider { PostsViewModelImpl(instance(), instance(), instance()) }
     bind<EventsViewModel>() with provider { EventsViewModelImpl(instance(), instance()) }
     bind<ConnectionsViewModel>() with provider { ConnectionsViewModelImpl(instance()) }
-    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance()) }
+    bind<NotificationsViewModel>() with provider { NotificationsViewModelImpl(instance(), instance()) }
     bind<ChatListViewModel>() with provider { ChatListViewModelImpl(instance()) }
     bind<ChatMessageViewModel>() with factory { params: ChatMessageViewModel.Params -> ChatMessageViewModelImpl(params = params, chatInteractor = instance(), userProfileInteractor = instance()) }
     bind<RecommendedConnectionsViewModel>() with provider { RecommendedConnectionsViewModelImpl(instance()) }

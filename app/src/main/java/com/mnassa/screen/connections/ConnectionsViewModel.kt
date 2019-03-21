@@ -13,12 +13,13 @@ interface ConnectionsViewModel : MnassaViewModel {
     val newConnectionRequestsChannel: BroadcastChannel<List<ShortAccountModel>>
     val recommendedConnectionsChannel: BroadcastChannel<List<ShortAccountModel>>
     val allConnectionsChannel: BroadcastChannel<List<ShortAccountModel>>
+    val showDeclineConnection: BroadcastChannel<DeclineConnection>
 
     fun connect(account: ShortAccountModel)
     fun disconnect(account: ShortAccountModel)
     fun accept(account: ShortAccountModel)
     fun decline(account: ShortAccountModel)
-    suspend fun getDisconnectTimeoutDays(): Int
+    fun declineWithPrompt(account: ShortAccountModel)
 
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     fun onContactPermissionsGranted()

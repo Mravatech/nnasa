@@ -1,10 +1,10 @@
 package com.mnassa.screen.login.enterphone
 
 import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PhoneVerificationModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -16,6 +16,7 @@ import timber.log.Timber
  */
 open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor, private val userProfileInteractor: UserProfileInteractor) : MnassaViewModelImpl(), EnterPhoneViewModel {
     private lateinit var verificationResponse: PhoneVerificationModel
+    private var signInJob: Job? = null
 
     override val openScreenChannel: BroadcastChannel<EnterPhoneViewModel.OpenScreenCommand> = BroadcastChannel(10)
 
@@ -29,54 +30,49 @@ open class EnterPhoneViewModelImpl(private val loginInteractor: LoginInteractor,
         }
     }
 
-    private var requestVerificationCodeJob: Job? = null
     override fun requestVerificationCode(phoneNumber: String, promoCode: String?) {
-        showProgress()
-
-        requestVerificationCodeJob?.cancel()
-        requestVerificationCodeJob = resolveExceptions {
-            loginInteractor.requestVerificationCode(phoneNumber = phoneNumber, promoCode = promoCode).consumeEach {
-                verificationResponse = it
-                when {
-                    it.isVerified -> signIn(it)
-                    else -> {
-                        Timber.d("MNSA_LOGIN requestVerificationCode -> openScreenChannel.send EnterVerificationCode")
-                        hideProgress()
-                        openScreenChannel.send(
-                                EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
+        signInJob?.cancel()
+        signInJob = launchWorker {
+            withProgressSuspend {
+                loginInteractor.requestVerificationCode(phoneNumber = phoneNumber, promoCode = promoCode).consumeEach {
+                    verificationResponse = it
+                    when {
+                        it.isVerified -> performSignIn(it)
+                        else -> {
+                            Timber.d("MNSA_LOGIN requestVerificationCode -> openScreenChannel.send EnterVerificationCode")
+                            openScreenChannel.send(EnterPhoneViewModel.OpenScreenCommand.EnterVerificationCode(it))
+                        }
                     }
                 }
             }
         }
-        requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
     }
 
     override fun signInByEmail(email: String, password: String) {
-        requestVerificationCodeJob?.cancel()
-
-        requestVerificationCodeJob = resolveExceptions {
-            signIn(loginInteractor.processLoginByEmail(email, password))
+        signInJob?.cancel()
+        signInJob = launchWorker {
+            withProgressSuspend {
+                val verificationModel = loginInteractor.processLoginByEmail(email, password)
+                performSignIn(verificationModel)
+            }
         }
-        requestVerificationCodeJob?.invokeOnCompletion { hideProgress() }
     }
 
-    private suspend fun signIn(phoneVerificationModel: PhoneVerificationModel) {
-        withProgressSuspend {
-            Timber.d("MNSA_LOGIN signIn $phoneVerificationModel")
-            val accounts = loginInteractor.signIn(phoneVerificationModel)
+    private suspend fun performSignIn(phoneVerificationModel: PhoneVerificationModel) {
+        Timber.d("MNSA_LOGIN signIn $phoneVerificationModel")
+        val accounts = loginInteractor.signIn(phoneVerificationModel)
 
-            val nextScreen = when {
-                accounts.isEmpty() -> EnterPhoneViewModel.OpenScreenCommand.Registration()
-                accounts.size == 1 -> {
-                    userProfileInteractor.setCurrentUserAccount(accounts.first())
-                    EnterPhoneViewModel.OpenScreenCommand.MainScreen()
-                }
-                else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)
+        val nextScreen = when {
+            accounts.isEmpty() -> EnterPhoneViewModel.OpenScreenCommand.Registration()
+            accounts.size == 1 -> {
+                userProfileInteractor.setCurrentUserAccount(accounts.first())
+                EnterPhoneViewModel.OpenScreenCommand.MainScreen()
             }
-
-            Timber.d("MNSA_LOGIN signIn -> open $nextScreen")
-            openScreenChannel.send(nextScreen)
+            else -> EnterPhoneViewModel.OpenScreenCommand.SelectAccount(accounts)
         }
+
+        Timber.d("MNSA_LOGIN signIn -> open $nextScreen")
+        openScreenChannel.send(nextScreen)
     }
 
     override fun saveInstanceState(outBundle: Bundle) {

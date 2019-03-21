@@ -1,8 +1,8 @@
 package com.mnassa.screen.comments
 
 import android.net.Uri
-import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
@@ -12,6 +12,7 @@ import com.mnassa.domain.model.RawCommentModel
 import com.mnassa.domain.model.RewardModel
 import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -34,10 +35,9 @@ class CommentsWrapperForPostViewModelImpl(
     override val canWriteCommentsChannel: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel(true)
     private val preloadedImages = HashMap<Uri, Deferred<String>>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             postsInteractor.loadById(postId).consumeEach { post ->
                 if (post != null) {
                     loadComments()
@@ -50,7 +50,7 @@ class CommentsWrapperForPostViewModelImpl(
     }
 
     override fun sendPointsForComment(rewardModel: RewardModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 walletInteractor.sendPointsForComment(rewardModel)
                 loadComments()
@@ -95,7 +95,7 @@ class CommentsWrapperForPostViewModelImpl(
     }
 
     override fun preloadImage(imageFile: Uri) {
-        resolveExceptions {
+        launchWorker {
             uploadImageIfNeeded(imageFile)
         }
     }

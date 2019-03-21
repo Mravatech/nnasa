@@ -35,5 +35,5 @@ class InviteInteractorImpl(
     override suspend fun getInvitesCountChannel(): ReceiveChannel<Int> =
             inviteRepository.getInvitesCountChannel()
 
-    override suspend fun getRewardPerInvite(): Long? = inviteRepository.getRewardPerInvite()
+    override suspend fun getRewardPerInvite(): ReceiveChannel<Long?> = inviteRepository.getRewardPerInvite()
 }

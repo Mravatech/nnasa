@@ -1,14 +1,15 @@
 package com.mnassa.screen.group.profile.posts
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.withBuffer
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -29,9 +30,9 @@ class GroupPostsViewModelImpl(private val groupId: String,
             postsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) groupChannel.send(it)
             }
@@ -39,7 +40,7 @@ class GroupPostsViewModelImpl(private val groupId: String,
     }
 
     override fun removePost(post: PostModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.removePost(postId = post.id)
             }
@@ -47,13 +48,13 @@ class GroupPostsViewModelImpl(private val groupId: String,
     }
 
     override fun onAttachedToWindow(post: PostModel) {
-        GlobalScope.resolveExceptions(showErrorMessage = false) {
+        GlobalScope.launchWorkerNoExceptions {
             postsInteractor.onItemViewed(post)
         }
     }
 
     override fun hideInfoPost(post: PostModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.hideInfoPost(post.id)
             }

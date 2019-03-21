@@ -111,11 +111,10 @@ class RegistrationController : MnassaControllerImpl<RegistrationViewModel>() {
         }
     }
 
-    override fun showErrorMessage(message: String): Boolean {
-        return view?.let {
+    override fun showGeneralErrorMessage(message: String) {
+        view?.let {
             Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
-            return@let true
-        } ?: super.showErrorMessage(message)
+        } ?: super.showGeneralErrorMessage(message)
     }
 
     private fun updateAccountTypeSwitch() {

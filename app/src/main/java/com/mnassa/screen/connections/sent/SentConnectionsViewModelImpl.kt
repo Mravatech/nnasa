@@ -1,10 +1,10 @@
 package com.mnassa.screen.connections.sent
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
 
@@ -15,10 +15,9 @@ class SentConnectionsViewModelImpl(private val connectionsInteractor: Connection
 
     override val sentConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             connectionsInteractor.getSentConnections().consumeEach {
                 sentConnectionsChannel.send(it)
             }
@@ -26,7 +25,7 @@ class SentConnectionsViewModelImpl(private val connectionsInteractor: Connection
     }
 
     override fun cancelRequest(account: ShortAccountModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 connectionsInteractor.actionRevoke(listOf(account.id))
             }

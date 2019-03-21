@@ -6,6 +6,7 @@ import android.os.Environment
 import android.widget.Toast
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.extensions.await
 import com.mnassa.data.network.exception.handler.ExceptionHandler
 import com.mnassa.exceptions.resolveExceptions
@@ -24,9 +25,9 @@ class PhotoPagerViewModelImpl(
 ) : MnassaViewModelImpl(), PhotoPagerViewModel {
 
     override fun loadImage(imageUrl: String) {
-        resolveExceptions {
+        launchWorker {
             val uri = firebaseStorage.getReferenceFromUrl(imageUrl).downloadUrl.await(exceptionHandler)
-                    ?: return@resolveExceptions
+                    ?: return@launchWorker
             val srcFileName = uri.lastPathSegment.substringAfterLast("/")
             val destFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/" + appContext.getString(R.string.app_name)
 

@@ -80,12 +80,13 @@ class InviteRepositoryImpl(
                 .toValueChannel<Int>(exceptionHandler).map { it ?: 0 }
     }
 
-    override suspend fun getRewardPerInvite(): Long? {
+    override suspend fun getRewardPerInvite(): ReceiveChannel<Long?> {
         return db.child(DatabaseContract.TABLE_DICTIONARY)
                 .child(DatabaseContract.TABLE_DICTIONARY_COL_REWARD_INVITE_USER)
-                .await<PriceDbEntity>(exceptionHandler)
-                .takeIf { it?.state == true }
-                ?.amount
+                .toValueChannel<PriceDbEntity>(exceptionHandler)
+                .map {
+                    it?.takeIf { it.state }?.amount
+                }
     }
 
     private fun PhoneContact.toInviteRequest(): PhoneContactRequest {

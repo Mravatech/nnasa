@@ -24,6 +24,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.kodein.di.Kodein
@@ -62,7 +63,8 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         subscribeToProgressEvents()
-        subscribeToErrorEvents()
+        subscribeToGeneralErrorEvents()
+        subscribeToSetupErrorEvents()
         subscribeToSupportedApiStatus()
     }
 
@@ -73,31 +75,40 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         super.onDestroyView(view)
     }
 
-    protected open fun subscribeToErrorEvents() {
+    protected open fun subscribeToGeneralErrorEvents() {
         launchUI {
             errorMessagesLive.consume {
-                runBlocking {
-                    withContext(Dispatchers.Main) {
-                        showErrorMessage(it)
+                if (isAttached && view?.context != null) {
+                    launch(Dispatchers.Main) {
+                        showGeneralErrorMessage(it)
                     }
+                    // Don't let the event to pass to
+                    // the other observers.
+                    return@consume true
+                } else {
+                    return@consume false
                 }
             }
         }
     }
 
-    /** Returns`true` if the error message was handled successfully */
-    protected open fun showErrorMessage(message: String): Boolean {
-        if (isBeingDestroyed || !isAttached) {
-            return false
-        }
-
-        val context = view?.context ?: return false
+    protected open fun showGeneralErrorMessage(message: String) {
+        val context = view?.context ?: return
         MaterialDialog.Builder(context)
             .title(fromDictionary(R.string.error_dialog_title))
             .content(message)
             .positiveText(android.R.string.ok)
             .show()
-        return true
+    }
+
+    protected open fun subscribeToSetupErrorEvents() {
+        launchUI {
+            viewModel.setupErrorChannel.consumeEach {
+                // TODO: Show an error that blocks the interface and prompts user
+                // to reload the viewmodel.
+                showGeneralErrorMessage(it)
+            }
+        }
     }
 
     protected open fun subscribeToProgressEvents() {

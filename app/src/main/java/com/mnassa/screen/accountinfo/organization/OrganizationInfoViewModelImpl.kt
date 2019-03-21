@@ -1,6 +1,7 @@
 package com.mnassa.screen.accountinfo.organization
 
 import android.net.Uri
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -31,7 +32,7 @@ class OrganizationInfoViewModelImpl(
     }
 
     override fun skipThisStep() {
-        resolveExceptions {
+        launchWorker {
             openScreenChannel.send(OrganizationInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
@@ -48,7 +49,7 @@ class OrganizationInfoViewModelImpl(
             contactPhone: String?,
             website: String?) {
         processAccountJob?.cancel()
-        processAccountJob = resolveExceptions {
+        processAccountJob = launchWorker {
             withProgressSuspend {
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val companyInfo = CompanyInfoModelImpl(

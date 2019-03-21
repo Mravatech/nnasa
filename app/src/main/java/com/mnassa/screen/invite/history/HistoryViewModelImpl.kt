@@ -1,10 +1,10 @@
 package com.mnassa.screen.invite.history
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContactInvited
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -16,14 +16,11 @@ class HistoryViewModelImpl(
     override val phoneContactChannel: BroadcastChannel<List<PhoneContactInvited>> =
         ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        showProgress()
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             inviteInteractor.getInvitedContacts().consumeEach {
                 phoneContactChannel.send(it)
-                hideProgress()
             }
         }
     }

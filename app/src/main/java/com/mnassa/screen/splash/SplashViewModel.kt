@@ -8,7 +8,6 @@ import kotlinx.coroutines.channels.BroadcastChannel
  */
 interface SplashViewModel : MnassaViewModel {
     val openNextScreenChannel: BroadcastChannel<NextScreen>
-    val showMessageChannel: BroadcastChannel<String>
 
     enum class NextScreen {
         LOGIN,

@@ -37,9 +37,7 @@ class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(arg
             rvTransactions.adapter = transactionsAdapter
 
             btnCreateTransaction.setOnClickListener {
-                launchCoroutineUI {
-                    open(SendPointsController.newInstance(this@WalletController, viewModel.getTransactionSide()))
-                }
+                viewModel.createTransaction()
             }
         }
 
@@ -57,6 +55,12 @@ class WalletController(args: Bundle) : MnassaControllerImpl<WalletViewModel>(arg
 
         launchCoroutineUI {
             viewModel.gainedPointsChannel.consumeEach { view.tvGained.text = it.toString() }
+        }
+
+        launchCoroutineUI {
+            viewModel.createTransaction.consumeEach {
+                open(SendPointsController.newInstance(this@WalletController, it))
+            }
         }
 
         transactionsAdapter.isLoadingEnabled = true

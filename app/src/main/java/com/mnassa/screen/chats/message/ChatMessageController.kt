@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mnassa.R
-import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.model.ChatMessageModel
 import com.mnassa.domain.model.PostModel
@@ -23,6 +22,7 @@ import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_chat_message.view.*
 import kotlinx.android.synthetic.main.header_main.view.*
+import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 
@@ -55,6 +55,14 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
                     emptyView = { getViewSuspend().llNoMessages }
             )
             view?.rvMessages?.scrollToPosition(0)
+        }
+        launchUI {
+            viewModel.clearInputChannel.openSubscription().consumeEach {
+                getViewSuspend().apply {
+                    etWriteMessage?.text = null
+                    ivReplyClose?.callOnClick()
+                }
+            }
         }
     }
 
@@ -130,12 +138,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         view.btnSend.setOnClickListener {
             val text = view.etWriteMessage.text.toString().trim()
             if (text.isNotBlank()) {
-                launchCoroutineUI {
-                    if (viewModel.sendMessage(text, MessagesAdapter.TEXT_TYPE, replyMessageModel, replyPostModel)) {
-                        view.etWriteMessage.text = null
-                        view.ivReplyClose.callOnClick()
-                    }
-                }
+                viewModel.sendMessage(text, MessagesAdapter.TEXT_TYPE, replyMessageModel, replyPostModel)
             }
         }
     }

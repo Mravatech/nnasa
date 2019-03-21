@@ -11,9 +11,8 @@ import kotlinx.coroutines.channels.BroadcastChannel
  */
 interface PushSettingsViewModel : MnassaViewModel {
 
-    val notificationChangeChannel: BroadcastChannel<List<PushSettingModel>>
-    suspend fun getSettings(): List<PushSettingModel>
-    fun changeSetting(setting: PushSettingModel)
+    val settingsChannel: BroadcastChannel<List<PushSettingModel>>
 
+    fun changeSetting(setting: PushSettingModel)
 
 }

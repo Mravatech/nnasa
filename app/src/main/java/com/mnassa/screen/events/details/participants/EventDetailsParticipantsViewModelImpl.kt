@@ -1,15 +1,15 @@
 package com.mnassa.screen.events.details.participants
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.canMarkParticipants
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -31,10 +31,9 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
     override val participantsChannel: ConflatedBroadcastChannel<List<EventParticipantItem>> = ConflatedBroadcastChannel()
     private val attendedUserIds = ConcurrentSkipListSet<String>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             eventChannel.send(event)
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 if (it != null) {
@@ -45,8 +44,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
                 loadTickets()
             }
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             eventsInteractor.getAttendedUsersChannel(eventId).consumeEach {
                 attendedUserIds.clear()
                 attendedUserIds.addAll(it.mapNotNull { it.takeIf { it.isPresent }?.user?.id })
@@ -73,7 +71,7 @@ class EventDetailsParticipantsViewModelImpl(private val eventId: String,
     private var loadTicketsJob: Job? = null
     private fun loadTickets() {
         loadTicketsJob?.cancel()
-        loadTicketsJob = resolveExceptions {
+        loadTicketsJob = launchWorker {
             eventsInteractor.getTicketsChannel(eventId).consumeEach {
                 withContext(Dispatchers.Default) {
                     var hasConnections = false

@@ -1,15 +1,15 @@
 package com.mnassa.screen.wallet
 
-import android.os.Bundle
 import com.mnassa.R
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.TransactionSideModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.translation.fromDictionary
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
@@ -23,29 +23,30 @@ class UserWalletViewModelImpl(private val walletInteractor: WalletInteractor, pr
     override val transactionsChannel: ConflatedBroadcastChannel<List<TransactionModel>> = ConflatedBroadcastChannel()
     override val screenTitleChannel: BroadcastChannel<String> = ConflatedBroadcastChannel(fromDictionary(R.string.wallet_title))
 
-    override suspend fun getTransactionSide(): TransactionSideModel {
-        return handleExceptionsSuspend {
-            val user = userProfileInteractor.getProfileById(userProfileInteractor.getAccountIdOrException())
-            TransactionSideModel(user!!)
-        }!!
+    override val createTransaction: BroadcastChannel<TransactionSideModel> = BroadcastChannel(1)
+
+    override fun createTransaction() {
+        launchWorker {
+            withProgressSuspend {
+                val user = userProfileInteractor.getProfileById(userProfileInteractor.getAccountIdOrException())!!
+                val model = TransactionSideModel(user)
+                createTransaction.send(model)
+            }
+        }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             walletInteractor.getBalance().consumeTo(currentBalanceChannel)
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getSpentPointsCount().consumeTo(spentPointsChannel)
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getGainedPointsCount().consumeTo(gainedPointsChannel)
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getTransactions().consumeTo(transactionsChannel)
         }
     }

@@ -5,6 +5,7 @@ import com.mnassa.core.addons.asyncWorker
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -26,7 +27,6 @@ class CreateOfferViewModelImpl(private val offerId: String?,
     private val categoryToSubCategory = HashMap<String, MutableList<OfferCategoryModel>>()
     private lateinit var offerCategoriesPromise: Deferred<List<OfferCategoryModel>>
     private val applyChangesMutex = Mutex()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

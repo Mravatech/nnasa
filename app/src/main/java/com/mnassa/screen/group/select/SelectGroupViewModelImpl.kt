@@ -1,11 +1,11 @@
 package com.mnassa.screen.group.select
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.GroupModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isAdmin
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -17,10 +17,9 @@ class SelectGroupViewModelImpl(private val params: SelectGroupViewModel.Params,
                                private val groupsInteractor: GroupsInteractor) : MnassaViewModelImpl(), SelectGroupViewModel {
     override val groupChannel: BroadcastChannel<List<GroupModel>> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             groupsInteractor.getMyGroups().consumeEach {
                 val result = if (params.adminOnly) it.filter { it.isAdmin } else it
                 groupChannel.send(result)

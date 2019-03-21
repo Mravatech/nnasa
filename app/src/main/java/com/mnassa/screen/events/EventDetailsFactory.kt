@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.App
 import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.di.getInstance
 import com.mnassa.domain.model.EventModel
 import com.mnassa.extensions.markAsOpened
@@ -19,7 +20,7 @@ import kotlinx.coroutines.GlobalScope
 class EventDetailsFactory {
 
     fun newInstance(event: EventModel): Controller {
-        GlobalScope.launchWorker {
+        GlobalScope.launchWorkerNoExceptions {
             event.markAsOpened()
             event.markAsViewed()
         }
