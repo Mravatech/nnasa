@@ -19,7 +19,7 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         def versionMajor = 4
-        def versionMinorPlusPatch = 20 // 99 max please
+        def versionMinorPlusPatch = 21 // 99 max please
         versionName "${versionMajor}.${versionMinorPlusPatch}"
         versionCode (versionMajor * 100 + versionMinorPlusPatch)
 
