@@ -10,6 +10,7 @@ import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.RawEventModel
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.EventsRepository
 import kotlinx.coroutines.GlobalScope
@@ -31,6 +32,7 @@ class EventsInteractorImpl(
         private val userProfileInteractor: UserProfileInteractor,
         private val storageInteractor: StorageInteractor,
         private val preferencesInteractor: PreferencesInteractor,
+        private val appInfoProvider: AppInfoProvider,
         private val tagInteractor: TagInteractor) : EventsInteractor {
 
     private val viewItemChannel = Channel<ListItemEvent<EventModel>>(10)
@@ -81,15 +83,22 @@ class EventsInteractorImpl(
     override val eventsPagination = PaginationController(EVENTS_INITIAL_SIZE)
 
     override suspend fun onItemViewed(item: EventModel) {
+        if (appInfoProvider.isGhost) return
         if (item.author.id == userProfileInteractor.getAccountIdOrException()) {
             return
         }
         viewItemChannel.send(ListItemEvent.Added(item))
     }
 
-    override suspend fun onItemOpened(item: EventModel) = eventsRepository.sendOpened(listOf(item.id))
+    override suspend fun onItemOpened(item: EventModel) {
+        if (appInfoProvider.isGhost) return
+        eventsRepository.sendOpened(listOf(item.id))
+    }
 
-    override suspend fun resetCounter() = eventsRepository.resetCounter()
+    override suspend fun resetCounter() {
+        if (appInfoProvider.isGhost) return
+        eventsRepository.resetCounter()
+    }
 
     override suspend fun createEvent(model: RawEventModel) {
         val allImages = model.uploadedImages +

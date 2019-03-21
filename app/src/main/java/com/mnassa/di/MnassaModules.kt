@@ -359,22 +359,22 @@ private val serviceModule = Kodein.Module {
 }
 
 private val interactorModule = Kodein.Module {
-    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl({ instance() }) }
-    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<UserProfileInteractor>() with singleton { UserProfileInteractorImpl(instance(), { instance() }) }
+    bind<LoginInteractor>() with singleton { LoginInteractorImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<DictionaryInteractor>() with singleton { DictionaryInteractorImpl({ instance() }, { instance() }) }
     bind<ConnectionsInteractor>() with singleton { ConnectionsInteractorImpl(instance(), instance(), instance()) }
     bind<StorageInteractor>() with singleton { StorageInteractorImpl(instance(), instance()) }
     bind<TagInteractor>() with singleton { TagInteractorImpl(instance(), instance()) }
     bind<CountersInteractor>() with singleton { CountersInteractorImpl(instance()) }
     bind<PlaceFinderInteractor>() with singleton { PlaceFinderInteractorImpl(instance()) }
-    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<PostsInteractor>() with singleton { PostsInteractorImpl(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bind<CommentsInteractor>() with singleton { CommentsInteractorImpl(instance(), instance()) }
     bind<WalletInteractor>() with singleton { WalletInteractorImpl(instance()) }
     bind<InviteInteractor>() with singleton { InviteInteractorImpl(instance(), instance()) }
-    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance(), instance(), instance(), instance()) }
-    bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance()) }
+    bind<EventsInteractor>() with singleton { EventsInteractorImpl(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bind<ChatInteractor>() with singleton { ChatInteractorImpl(instance(), instance(), instance()) }
     bind<ComplaintInteractor>() with singleton { ComplaintInteractorImpl(instance()) }
-    bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance()) }
+    bind<NotificationInteractor>() with singleton { NotificationInteractorImpl(instance(), instance()) }
     bind<SettingsInteractor>() with singleton { SettingsInteractorImpl(instance()) }
     bind<GroupsInteractor>() with singleton { GroupsInteractorImpl(instance(), instance(), instance(), instance()) }
     bind<NetworkInteractor>() with singleton { NetworkInteractorImpl(instance(), instance(), instance()) }

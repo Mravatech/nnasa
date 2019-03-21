@@ -9,6 +9,7 @@ import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.pagination.PaginationController
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
@@ -30,6 +31,7 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
                           private val storageInteractor: StorageInteractor,
                           private val preferencesInteractor: PreferencesInteractor,
                           private val tagInteractor: TagInteractor,
+                          private val appInfoProvider: AppInfoProvider,
                           private val userProfileInteractorImpl: UserProfileInteractor) : PostsInteractor {
 
     override val mergedInfoPostsAndFeedPagination = PaginationController(MERGED_FEED_INITIAL_SIZE)
@@ -165,15 +167,22 @@ class PostsInteractorImpl(private val postsRepository: PostsRepository,
     }
 
     override suspend fun onItemViewed(item: PostModel) {
+        if (appInfoProvider.isGhost) return
         if (item.author.id == userProfileInteractorImpl.getAccountIdOrException()) {
             return
         }
         viewItemChannel.send(ListItemEvent.Added(item))
     }
 
-    override suspend fun onItemOpened(item: PostModel) = postsRepository.sendOpened(listOf(item.id))
+    override suspend fun onItemOpened(item: PostModel) {
+        if (appInfoProvider.isGhost) return
+        postsRepository.sendOpened(listOf(item.id))
+    }
 
-    override suspend fun resetCounter() = postsRepository.resetCounter()
+    override suspend fun resetCounter() {
+        if (appInfoProvider.isGhost) return
+        postsRepository.resetCounter()
+    }
 
     override suspend fun createNeed(post: RawPostModel) {
         return postsRepository.createNeed(post.copy(

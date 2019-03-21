@@ -96,20 +96,29 @@ android {
         }
     }
 
+    flavorDimensions "access"
+
+    productFlavors {
+        fbi {
+            dimension "access"
+            versionNameSuffix "-fbi"
+        }
+        normal {
+            dimension "access"
+        }
+    }
+
     applicationVariants.all { variant ->
-        switch (variant.getName()) {
-            case 'release':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointProd']}\""
-                variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsProd']}\""
-                break
-            case 'stage':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreProd']}\""
-                variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsPreProd']}\""
-                break
-            case 'debug':
-                variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointDev']}\""
-                variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsDev']}\""
-                break
+        def variantNameLower = variant.getName().toLowerCase()
+        if (variantNameLower.contains("release")) {
+            variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointProd']}\""
+            variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsProd']}\""
+        } else if (variantNameLower.contains("stage")) {
+            variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointPreProd']}\""
+            variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsPreProd']}\""
+        } else if (variantNameLower.contains("debug")) {
+            variant.buildConfigField "String", "ENDPOINT", "\"${globalConfiguration['endpointDev']}\""
+            variant.buildConfigField "String", "TERMS_AND_CONDITIONS", "\"${globalConfiguration['termsAndConditionsDev']}\""
         }
 
         variant.buildConfigField "String", "URL_GOOGLE_MAPS_SEARCH", "\"${deps.urls.google_maps_search}\""

@@ -19,6 +19,8 @@ class AppInfoProviderImpl(context: Context) : AppInfoProvider {
     override val androidId: String = androidIdVal
     override val deviceName: String = deviceNameVal
     override val isDebug: Boolean = BuildConfig.DEBUG
+    override val isGhost: Boolean = BuildConfig.FLAVOR == FLAVOR_FBI
+    override val isCustomAuth: Boolean = BuildConfig.FLAVOR == FLAVOR_FBI
     override val applicationId: String = BuildConfig.APPLICATION_ID
     override val buildType: String = BuildConfig.BUILD_TYPE
     override val versionCode: Int = BuildConfig.VERSION_CODE
@@ -28,4 +30,9 @@ class AppInfoProviderImpl(context: Context) : AppInfoProvider {
     override val appName: String = context.getString(R.string.app_name)
 
     override val urlGoogleMapsSearch: String = BuildConfig.URL_GOOGLE_MAPS_SEARCH
+
+    companion object {
+        private const val FLAVOR_FBI = "fbi"
+        private const val FLAVOR_NORMAL = "normal"
+    }
 }
