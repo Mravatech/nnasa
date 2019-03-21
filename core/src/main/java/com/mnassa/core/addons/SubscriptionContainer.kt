@@ -1,7 +1,8 @@
 package com.mnassa.core.addons
 
+import com.mnassa.core.errorHandler
+import com.mnassa.core.errorMessagesLive
 import kotlinx.coroutines.*
-import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -22,12 +23,13 @@ interface SubscriptionContainer : CoroutineScope {
  * @author Artem Chepurnoy
  */
 open class SubscriptionsContainerDelegate(
+    private val dispatcher: CoroutineContext = Dispatchers.Main,
     private val jobFactory: () -> Job = { Job() }
 ) : SubscriptionContainer, CoroutineScope {
     private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+        get() = dispatcher + job
 
     override val coroutineScope: CoroutineScope
         get() = this
@@ -41,24 +43,40 @@ open class SubscriptionsContainerDelegate(
     }
 }
 
-private fun createCoroutineExceptionHandler(tag: String) =
-    CoroutineExceptionHandler { context, exception ->
-        if (exception !is CancellationException) {
-            Timber.e(exception, "Unhandled exception in the $tag context; $context")
-        }
-    }
-
 // Worker
 
 val COROUTINE_WORKER_DISPATCHER = Dispatchers.Default
 
-val COROUTINE_WORKER_CONTEXT = COROUTINE_WORKER_DISPATCHER +
-        createCoroutineExceptionHandler("Worker")
+val COROUTINE_WORKER_CONTEXT = COROUTINE_WORKER_DISPATCHER
+
+val COROUTINE_WORKER_CONTEXT_HANDLE_EXCEPTIONS =
+    COROUTINE_WORKER_DISPATCHER + CoroutineExceptionHandler { coroutineContext, throwable ->
+        errorHandler(throwable) {
+            errorMessagesLive.push(it)
+        }
+    }
+
+val COROUTINE_WORKER_CONTEXT_NO_EXCEPTIONS =
+    COROUTINE_WORKER_DISPATCHER + CoroutineExceptionHandler { coroutineContext, throwable ->
+        errorHandler(throwable) {
+            // ignore error messages
+        }
+    }
 
 fun CoroutineScope.launchWorker(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
 ) = launch(context = COROUTINE_WORKER_CONTEXT, start = start, block = block)
+
+fun CoroutineScope.launchWorkerNoExceptions(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+) = launch(context = COROUTINE_WORKER_CONTEXT_NO_EXCEPTIONS, start = start, block = block)
+
+fun CoroutineScope.launchWorkerHandleExceptions(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+) = launch(context = COROUTINE_WORKER_CONTEXT_HANDLE_EXCEPTIONS, start = start, block = block)
 
 fun <Result> CoroutineScope.asyncWorker(
     start: CoroutineStart = CoroutineStart.DEFAULT,
@@ -69,8 +87,7 @@ fun <Result> CoroutineScope.asyncWorker(
 
 val COROUTINE_MAIN_DISPATCHER = Dispatchers.Main
 
-val COROUTINE_MAIN_CONTEXT = COROUTINE_MAIN_DISPATCHER +
-        createCoroutineExceptionHandler("Main")
+val COROUTINE_MAIN_CONTEXT = COROUTINE_MAIN_DISPATCHER
 
 fun CoroutineScope.launchCoroutineUI(
     start: CoroutineStart = CoroutineStart.DEFAULT,
