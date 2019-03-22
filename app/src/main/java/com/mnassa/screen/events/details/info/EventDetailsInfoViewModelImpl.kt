@@ -1,13 +1,13 @@
 package com.mnassa.screen.events.details.info
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventTicketModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
 import timber.log.Timber
@@ -23,16 +23,14 @@ class EventDetailsInfoViewModelImpl(
     override val eventChannel: ConflatedBroadcastChannel<EventModel> = ConflatedBroadcastChannel()
     override val boughtTicketsChannel: ConflatedBroadcastChannel<List<EventTicketModel>> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 it?.apply { eventChannel.send(this) }
             }
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             eventsInteractor.getBoughtTicketsChannel(eventId).consumeEach {
                 boughtTicketsChannel.send(it)
             }
@@ -45,7 +43,7 @@ class EventDetailsInfoViewModelImpl(
         Timber.e("Buy tickets: $count")
         if (count <= 0) return
 
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 eventsInteractor.buyTickets(eventId, count)
             }

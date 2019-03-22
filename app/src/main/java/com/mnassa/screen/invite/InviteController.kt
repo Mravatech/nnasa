@@ -65,6 +65,13 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
                 view.toolbar.title = fromDictionary(R.string.invite_invite_invites_left).format(it)
             }
         }
+        launchCoroutineUI {
+            viewModel.inviteRewardChannel.consumeEach { reward ->
+                view.tvEnterTextSuggest.text = reward
+                    ?.let { fromDictionary(R.string.invite_reward).format(it) }
+                    ?: fromDictionary(R.string.invite_text_suggest)
+            }
+        }
         adapter.onItemClickListener = {
             val numberWithoutPlus = it.phoneNumber.replace("+", "")
             //set country code
@@ -113,12 +120,6 @@ class InviteController : MnassaControllerImpl<InviteViewModel>() {
 
     private fun initViews(view: View) {
         with(view) {
-            launchCoroutineUI {
-                val reward = viewModel.getInviteReward()
-                tvEnterTextSuggest.text = if (reward == null) fromDictionary(R.string.invite_text_suggest)
-                else fromDictionary(R.string.invite_reward).format(reward)
-            }
-
             toolbar.title = fromDictionary(R.string.invite_invite_header)
             etInviteSearch.hint = fromDictionary(R.string.invite_search_hint)
             etPhoneNumberTail.hint = fromDictionary(R.string.invite_phone_number_hint)

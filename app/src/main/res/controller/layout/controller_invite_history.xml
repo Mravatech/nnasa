@@ -39,6 +39,13 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:listitem="@layout/item_invite_history" />
 
+    <include
+        android:id="@+id/loaderView"
+        layout="@layout/item_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
     <View
         android:id="@+id/vShadow"
         style="@style/MnassaShadow"

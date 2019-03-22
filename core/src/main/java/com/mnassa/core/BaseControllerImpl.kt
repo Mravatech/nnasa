@@ -21,6 +21,9 @@ import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.core.permissions.OnRequestPermissionsResultEvent
 import com.mnassa.core.permissions.PermissionsManager
 import com.mnassa.core.permissions.PermissionsManagerDelegate
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /**
  * Created by Peter on 2/20/2018.
@@ -30,7 +33,16 @@ import com.mnassa.core.permissions.PermissionsManagerDelegate
 abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle = Bundle()) : Controller(args),
     BaseController<VM>,
     LifecycleRegistryOwner,
-    SubscriptionContainer by SubscriptionsContainerDelegate() {
+    SubscriptionContainer by SubscriptionsContainerDelegate(
+        dispatcher = Dispatchers.Main + CoroutineExceptionHandler { context, throwable ->
+            // By default show all error messages we got
+            // here.
+            errorHandler(throwable) {
+                errorMessagesLive.push("⚠ $it")
+            }
+        },
+        jobFactory = { SupervisorJob() }
+    ) {
 
     /**
      * Provides xml layout id

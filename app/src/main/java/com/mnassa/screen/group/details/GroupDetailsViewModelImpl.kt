@@ -1,7 +1,7 @@
 package com.mnassa.screen.group.details
 
-import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -9,8 +9,8 @@ import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -33,10 +33,9 @@ class GroupDetailsViewModelImpl(private val groupId: String,
     override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     override val openScreenChannel: BroadcastChannel<GroupDetailsViewModel.ScreenToOpen> = BroadcastChannel(1)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) {
                     groupChannel.send(it)
@@ -45,25 +44,25 @@ class GroupDetailsViewModelImpl(private val groupId: String,
                 } else closeScreenChannel.send(Unit)
             }
         }
-        resolveExceptions {
+        setupScope.launchWorker {
             groupsInteractor.getGroupMembers(groupId).consumeTo(membersChannel)
         }
-        resolveExceptions {
+        setupScope.launchWorker {
             membersChannel.consumeEach { members ->
                 val userId = userProfileInteractor.getAccountIdOrException()
                 isMemberChannel.send(members.any { it.id == userId })
             }
         }
-        resolveExceptions {
+        setupScope.launchWorker {
             groupsInteractor.getHasInviteToGroupChannel(groupId).consumeTo(hasInviteChannel)
         }
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getGroupBalance(groupId).consumeTo(pointsChannel)
         }
     }
 
     override fun acceptInvite() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 groupsInteractor.acceptInvite(groupId)
                 openScreenChannel.send(GroupDetailsViewModel.ScreenToOpen.GROUP_PROFILE)
@@ -72,7 +71,7 @@ class GroupDetailsViewModelImpl(private val groupId: String,
     }
 
     override fun declineInvite() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 groupsInteractor.declineInvite(groupId)
                 closeScreenChannel.send(Unit)

@@ -1,6 +1,6 @@
 package com.mnassa.screen.posts.need.details
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.PostPrivacyOptions
@@ -11,8 +11,8 @@ import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.TagModel
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consume
@@ -40,10 +40,9 @@ open class NeedDetailsViewModelImpl(
     override val finishScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             postsInteractor.loadById(postId).consumeEach {
                 if (it != null) {
                     it.timeOfExpiration = getExpiration(it)
@@ -52,7 +51,7 @@ open class NeedDetailsViewModelImpl(
                 }
             }
         }
-        resolveExceptions {
+        setupScope.launchWorker {
             reportsList = complaintInteractor.getReports()
         }
     }
@@ -73,7 +72,7 @@ open class NeedDetailsViewModelImpl(
 
 
     override fun delete() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.removePost(postId)
                 finishScreenChannel.send(Unit)
@@ -82,7 +81,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun repost(sharingOptions: PostPrivacyOptions) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.repostPost(postId, null, sharingOptions)
             }
@@ -90,7 +89,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun sendComplaint(id: String, reason: String, authorText: String?) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = id,
@@ -104,7 +103,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun changeStatus(status: ExpirationType) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.changeStatus(postId, status)
             }
@@ -112,7 +111,7 @@ open class NeedDetailsViewModelImpl(
     }
 
     override fun promote() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.promote(postChannel.consume { receive() })
             }

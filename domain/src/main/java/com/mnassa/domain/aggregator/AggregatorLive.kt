@@ -1,8 +1,8 @@
 package com.mnassa.domain.aggregator
 
 import com.mnassa.core.addons.launchWorker
-import com.mnassa.domain.live.Live
-import com.mnassa.domain.live.consume
+import com.mnassa.core.live.Live
+import com.mnassa.core.live.consume
 import com.mnassa.domain.extensions.toCoroutineScope
 import com.mnassa.domain.model.HasId
 import kotlinx.coroutines.*

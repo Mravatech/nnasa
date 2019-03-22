@@ -1,8 +1,8 @@
 package com.mnassa.screen.posts.info.details
 
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.model.PostModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
 import kotlinx.coroutines.channels.BroadcastChannel
 
@@ -14,7 +14,7 @@ class InfoDetailsViewModelImpl(
     override val closeScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
 
     override fun hidePost(post: PostModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.hideInfoPost(post.id)
             }

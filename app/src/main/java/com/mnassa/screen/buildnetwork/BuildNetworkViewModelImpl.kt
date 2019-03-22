@@ -2,12 +2,12 @@ package com.mnassa.screen.buildnetwork
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.annotation.RequiresPermission
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -25,10 +25,9 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
     private var inviteUsersJob: Job? = null
     private var isPhonesWereSent: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             connectionsInteractor.getRecommendedConnections().consumeEach {
                 usersToInviteChannel.send(it)
 
@@ -43,7 +42,7 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override fun onContactPermissionsGranted() {
         sendPhoneContactsJob?.cancel()
-        sendPhoneContactsJob = resolveExceptions {
+        sendPhoneContactsJob = launchWorker {
             connectionsInteractor.sendPhoneContacts()
             isPhonesWereSent = true
 
@@ -54,7 +53,7 @@ class BuildNetworkViewModelImpl(private val connectionsInteractor: ConnectionsIn
     }
 
     override fun inviteUsers(accountIds: List<String>) {
-        inviteUsersJob = resolveExceptions {
+        inviteUsersJob = launchWorker {
             withProgressSuspend {
                 connectionsInteractor.actionConnect(accountIds)
             }

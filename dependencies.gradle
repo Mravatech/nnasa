@@ -204,13 +204,13 @@ deps.ui = ui
 //============================================== OTHER ============================================
 def other = [:]
 
-versions.crashlyticsVersion = '2.9.1'
+versions.crashlyticsVersion = '2.9.9'
 
 other.billing = 'com.android.billingclient:billing:1.0'
 other.leakDebug =    'com.squareup.leakcanary:leakcanary-android:1.6.1'
 other.leakRelease =  'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
 other.logger =  'com.jakewharton.timber:timber:4.6.1'
-other.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlyticsVersion@aar"
+other.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlyticsVersion"
 other.plurals = project(':library-plurals')
 
 deps.other = other

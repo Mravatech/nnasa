@@ -4,23 +4,29 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.UiThread
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
 import com.mnassa.core.BaseControllerImpl
 import com.mnassa.core.addons.launchUI
 import com.mnassa.core.events.awaitFirst
+import com.mnassa.core.errorMessagesLive
 import com.mnassa.domain.interactor.LoginInteractor
 import com.mnassa.domain.interactor.NetworkInteractor
 import com.mnassa.domain.interactor.SettingsInteractor
+import com.mnassa.core.live.consume
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.KodeinTrigger
@@ -57,7 +63,8 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         subscribeToProgressEvents()
-        subscribeToErrorEvents()
+        subscribeToGeneralErrorEvents()
+        subscribeToSetupErrorEvents()
         subscribeToSupportedApiStatus()
     }
 
@@ -68,15 +75,38 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         super.onDestroyView(view)
     }
 
-    protected open fun subscribeToErrorEvents() {
+    protected open fun subscribeToGeneralErrorEvents() {
         launchUI {
-            viewModel.errorMessageChannel.consumeEach {
-                val context = view?.context ?: return@consumeEach
-                AlertDialog.Builder(context)
-                        .setTitle(fromDictionary(R.string.error_dialog_title))
-                        .setMessage(it)
-                        .setPositiveButton(context.getString(android.R.string.ok)) { _, _ -> }
-                        .show()
+            errorMessagesLive.consume {
+                if (isAttached && view?.context != null) {
+                    launch(Dispatchers.Main) {
+                        showGeneralErrorMessage(it)
+                    }
+                    // Don't let the event to pass to
+                    // the other observers.
+                    return@consume true
+                } else {
+                    return@consume false
+                }
+            }
+        }
+    }
+
+    protected open fun showGeneralErrorMessage(message: String) {
+        val context = view?.context ?: return
+        MaterialDialog.Builder(context)
+            .title(fromDictionary(R.string.error_dialog_title))
+            .content(message)
+            .positiveText(android.R.string.ok)
+            .show()
+    }
+
+    protected open fun subscribeToSetupErrorEvents() {
+        launchUI {
+            viewModel.setupErrorChannel.consumeEach {
+                // TODO: Show an error that blocks the interface and prompts user
+                // to reload the viewmodel.
+                showGeneralErrorMessage(it)
             }
         }
     }

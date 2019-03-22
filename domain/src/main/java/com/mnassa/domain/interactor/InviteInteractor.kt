@@ -18,5 +18,5 @@ interface InviteInteractor {
 
     suspend fun getInvitedContacts(): ReceiveChannel<List<PhoneContactInvited>>
     suspend fun getInvitesCountChannel(): ReceiveChannel<Int>
-    suspend fun getRewardPerInvite(): Long?
+    suspend fun getRewardPerInvite(): ReceiveChannel<Long?>
 }

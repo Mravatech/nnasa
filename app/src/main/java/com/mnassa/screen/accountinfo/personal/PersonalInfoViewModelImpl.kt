@@ -1,6 +1,7 @@
 package com.mnassa.screen.accountinfo.personal
 
 import android.net.Uri
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -28,7 +29,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
     }
 
     override fun skipThisStep() {
-        resolveExceptions {
+        launchWorker {
             openScreenChannel.send(PersonalInfoViewModel.OpenScreenCommand.InviteScreen())
         }
     }
@@ -45,7 +46,7 @@ class PersonalInfoViewModelImpl(private val storageInteractor: StorageInteractor
                                 isMale: Boolean
     ) {
         processAccountJob?.cancel()
-        processAccountJob = resolveExceptions {
+        processAccountJob = launchWorker {
             withProgressSuspend {
                 avatarSavedPath = avatarUri?.let { storageInteractor.sendImage(StoragePhotoDataImpl(it, FOLDER_AVATARS)) }
                 val personalInfo = PersonalInfoModelImpl(

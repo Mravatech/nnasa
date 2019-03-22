@@ -1,7 +1,7 @@
 package com.mnassa.screen.posts
 
-import android.os.Bundle
-import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.domain.aggregator.AggregatorLive
 import com.mnassa.domain.aggregator.produce
 import com.mnassa.domain.interactor.PostsInteractor
@@ -9,9 +9,9 @@ import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -42,10 +42,9 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
 
     override val newItemsCounterChannel: BroadcastChannel<Int> = BroadcastChannel(Channel.CONFLATED)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             postsLive.produce().consumeEach { state ->
                 newItemsCounterChannel.send(state.modelsAllDeltaCount)
             }
@@ -53,13 +52,13 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     override fun onAttachedToWindow(post: PostModel) {
-        GlobalScope.resolveExceptions(showErrorMessage = false) {
+        GlobalScope.launchWorkerNoExceptions {
             postsInteractor.onItemViewed(post)
         }
 
         //reset counter with debounce
         resetCounterJob?.cancel()
-        resetCounterJob = GlobalScope.asyncWorker {
+        resetCounterJob = GlobalScope.launchWorkerNoExceptions {
             delay(1_000)
             resetCounter()
         }
@@ -78,7 +77,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     override fun hideInfoPost(post: PostModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 postsInteractor.hideInfoPost(post.id)
             }
@@ -98,7 +97,7 @@ class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
     }
 
     private fun resetCounter() {
-        resolveExceptions {
+        GlobalScope.launchWorkerNoExceptions {
             postsInteractor.resetCounter()
         }
     }

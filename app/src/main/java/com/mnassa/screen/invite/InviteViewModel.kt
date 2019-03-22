@@ -13,8 +13,7 @@ interface InviteViewModel : MnassaViewModel {
     val phoneContactChannel: BroadcastChannel<List<PhoneContact>>
     val checkPhoneContactChannel: BroadcastChannel<Boolean>
     val invitesCountChannel: BroadcastChannel<Int>
+    val inviteRewardChannel: BroadcastChannel<Long?>
     fun retrievePhoneContacts()
     fun checkPhoneContact(contact: PhoneContact)
-
-    suspend fun getInviteReward(): Long?
 }

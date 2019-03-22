@@ -1,15 +1,15 @@
 package com.mnassa.screen.group.profile
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.GroupPermissions
 import com.mnassa.domain.model.TagModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isAdmin
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -29,10 +29,9 @@ class GroupProfileViewModelImpl(
     override val groupPermissionsChannel: BroadcastChannel<GroupPermissions> = ConflatedBroadcastChannel()
     override val isMemberChannel: BroadcastChannel<Boolean> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) {
                     groupChannel.send(it)
@@ -42,24 +41,21 @@ class GroupProfileViewModelImpl(
                 }
             }
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             groupChannel.consumeEach {
                 groupPermissionsChannel.send(if (it.isAdmin) GroupPermissions.ADMIN_PERMISSIONS else it.permissions)
             }
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             groupsInteractor.getGroupMembers(groupId).consumeEach { members ->
                 val userId = userProfileInteractor.getAccountIdOrException()
                 isMemberChannel.send(members.any { it.id == userId })
             }
         }
-
     }
 
     override fun leave() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 groupsInteractor.leaveGroup(groupId)
             }
@@ -68,7 +64,7 @@ class GroupProfileViewModelImpl(
     }
 
     override fun delete() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 groupsInteractor.deleteGroup(groupId)
             }

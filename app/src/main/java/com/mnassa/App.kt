@@ -2,6 +2,7 @@ package com.mnassa
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -13,16 +14,20 @@ import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.FirebaseApp
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
+import com.mnassa.core.addons.launchUI
 import com.mnassa.di.getInstance
 import com.mnassa.di.registerAppModules
-import com.mnassa.domain.live.consume
+import com.mnassa.core.errorMessagesLive
+import com.mnassa.core.live.consume
+import com.mnassa.di.registerErrorHandler
+import com.mnassa.domain.extensions.launchRepeatOnError
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.helper.CrashReportingTree
 import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -44,6 +49,8 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
 
     override fun onCreate() {
         APP_CONTEXT = this
+        registerErrorHandler()
+
         super.onCreate()
         val appInfoProvider = getInstance<AppInfoProvider>()
         if (!appInfoProvider.isDebug) FirebaseApp.initializeApp(this)
@@ -79,17 +86,27 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
         // Launch background tasks on foreground app
         // scope.
         getInstance<DictionaryInteractor>().apply {
-            handleDictionaryUpdates()
+            launchRepeatOnError { handleDictionaryUpdates() }
         }
         getInstance<LoginInteractor>().apply {
-            handleUserStatus()
-            handleAccountStatus()
-            handleAccountRefresh()
+            launchRepeatOnError { handleUserStatus() }
+            launchRepeatOnError { handleAccountStatus() }
+            launchRepeatOnError { handleAccountRefresh() }
         }
 
         // Keep posts in sync
-        launch {
+        launchRepeatOnError {
             getInstance<PostsInteractor>().mergedInfoPostsAndFeedLive.consume { }
+        }
+
+        // Show toast error messages
+        launchRepeatOnError {
+            errorMessagesLive.consume {
+                launchUI {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
         }
     }
 

@@ -16,7 +16,10 @@ interface WalletViewModel : MnassaViewModel {
     val gainedPointsChannel: BroadcastChannel<Long>
     val transactionsChannel: BroadcastChannel<List<TransactionModel>>
     val screenTitleChannel: BroadcastChannel<String>
-    suspend fun getTransactionSide(): TransactionSideModel
+
+    val createTransaction: BroadcastChannel<TransactionSideModel>
+
+    fun createTransaction()
 
     open class WalletSource : Serializable {
         class User : WalletSource()

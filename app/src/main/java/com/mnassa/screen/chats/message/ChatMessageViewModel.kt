@@ -8,9 +8,10 @@ import kotlinx.coroutines.channels.BroadcastChannel
 
 interface ChatMessageViewModel : MnassaViewModel {
     val messageChannel: BroadcastChannel<ListItemEvent<List<ChatMessageModel>>>
+    val clearInputChannel: BroadcastChannel<Unit>
     val currentUserAccountId: String
 
-    suspend fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?): Boolean
+    fun sendMessage(text: String, type: String, linkedMessage: ChatMessageModel?, linkedPost: PostModel?)
     fun deleteMessage(item: ChatMessageModel, isDeleteForBothMessages: Boolean)
 
     data class Params(

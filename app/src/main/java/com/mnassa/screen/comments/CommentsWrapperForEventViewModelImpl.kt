@@ -1,15 +1,15 @@
 package com.mnassa.screen.comments
 
 import android.net.Uri
-import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.exception.NoRightsToComment
 import com.mnassa.domain.interactor.CommentsInteractor
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.model.CommentModel
 import com.mnassa.domain.model.RawCommentModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -32,10 +32,9 @@ class CommentsWrapperForEventViewModelImpl(
     private val preloadedImages = HashMap<Uri, Deferred<String?>>()
     private val commentMutex = Mutex()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             loadComments() //load comments even if event is not available
             eventsInteractor.loadByIdChannel(eventId).consumeEach { event ->
                 if (event != null) {
@@ -78,7 +77,7 @@ class CommentsWrapperForEventViewModelImpl(
     }
 
     override fun deleteComment(commentModel: CommentModel) {
-        resolveExceptions {
+        launchWorker {
             commentMutex.withLock {
                 withProgressSuspend {
                     commentsInteractor.deleteEventComment(commentModel)
@@ -90,7 +89,7 @@ class CommentsWrapperForEventViewModelImpl(
     }
 
     override fun preloadImage(imageFile: Uri) {
-        resolveExceptions {
+        launchWorker {
             uploadImageIfNeeded(imageFile)
         }
     }

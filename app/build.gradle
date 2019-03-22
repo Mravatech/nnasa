@@ -237,9 +237,7 @@ dependencies {
     implementation deps.kotlin.androidExtensions
 
     //crashlytics
-    implementation (deps.other.crashlytics) {
-        transitive = true
-    }
+    implementation (deps.other.crashlytics)
 }
 
 apply plugin: 'com.google.gms.google-services'

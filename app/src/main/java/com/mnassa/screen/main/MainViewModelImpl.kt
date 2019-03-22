@@ -1,15 +1,16 @@
 package com.mnassa.screen.main
 
-import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerHandleExceptions
 import com.mnassa.domain.exception.NetworkDisableException
 import com.mnassa.domain.exception.NotAuthorizedException
 import com.mnassa.domain.interactor.*
 import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.ProcessAccountChangeConflatedBroadcastChannel
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -60,24 +61,23 @@ class MainViewModelImpl(
         groupsInteractor.getInvitesToGroups().map { it.size }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             userProfileInteractor.getAllAccounts().consumeTo(availableAccountsChannel)
         }
 
         var unreadEventsCount = 0
         var unreadNeedsCount = 0
 
-        resolveExceptions {
+        setupScope.launchWorker {
             unreadEventsCountChannel.consumeEach {
                 unreadEventsCount = it
                 unreadEventsAndNeedsCountChannel.send(unreadNeedsCount + it)
             }
         }
 
-        resolveExceptions {
+        setupScope.launchWorker {
             unreadNeedsCountChannel.consumeEach {
                 unreadNeedsCount = it
                 unreadEventsAndNeedsCountChannel.send(unreadEventsCount + it)
@@ -86,7 +86,7 @@ class MainViewModelImpl(
     }
 
     override fun selectAccount(account: ShortAccountModel) {
-        resolveExceptions {
+        launchWorker {
             try {
                 if (!networkInteractor.isConnected) throw NetworkDisableException("Network is required to change account!", IllegalStateException())
 
@@ -102,13 +102,13 @@ class MainViewModelImpl(
     }
 
     override fun logout() {
-        GlobalScope.resolveExceptions {
+        GlobalScope.launchWorkerHandleExceptions {
             loginInteractor.signOut(LogoutReason.ManualLogout())
         }
     }
 
     override fun resetAllNotifications() {
-        GlobalScope.resolveExceptions {
+        GlobalScope.launchWorkerHandleExceptions {
             notificationInteractor.notificationView(true, true, emptyList())
         }
     }

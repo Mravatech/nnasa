@@ -2,13 +2,13 @@ package com.mnassa.screen.connections.recommended
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.annotation.RequiresPermission
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.RecommendedConnections
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -21,10 +21,9 @@ class RecommendedConnectionsViewModelImpl(private val connectionsInteractor: Con
 
     override val recommendedConnectionsChannel: ConflatedBroadcastChannel<RecommendedConnections> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             connectionsInteractor.getRecommendedConnectionsWithGrouping().consumeEach {
                 recommendedConnectionsChannel.send(it)
             }
@@ -32,7 +31,7 @@ class RecommendedConnectionsViewModelImpl(private val connectionsInteractor: Con
     }
 
     override fun connect(accountModel: ShortAccountModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 connectionsInteractor.actionConnect(listOf(accountModel.id))
             }
@@ -44,7 +43,7 @@ class RecommendedConnectionsViewModelImpl(private val connectionsInteractor: Con
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override fun onContactPermissionsGranted() {
         sendPhoneContactsJob?.cancel()
-        sendPhoneContactsJob = resolveExceptions {
+        sendPhoneContactsJob = launchWorker {
             connectionsInteractor.sendPhoneContacts()
         }
     }

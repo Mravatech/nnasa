@@ -1,4 +1,4 @@
-package com.mnassa.domain.live
+package com.mnassa.core.live
 
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -19,7 +19,7 @@ abstract class Live<Observer> {
              }
          }
 
-    private val monitor = Object()
+    protected val monitor = Object()
 
     private val observers = ArrayList<Observer>()
 
@@ -49,7 +49,20 @@ abstract class Live<Observer> {
         updateIsActive()
     }
 
-    protected fun forEachObserver(block: (Observer) -> Unit) = observers.forEach(block)
+    protected fun <T> forEachObserver(
+        iteratorFactory: (Iterable<Observer>) -> Iterator<Observer> = { it.iterator() },
+        block: (Observer) -> T
+    ) {
+        synchronized(monitor) {
+            val iterator = iteratorFactory(observers)
+            while (iterator.hasNext()) {
+                val shouldBreak = block(iterator.next()) as? Boolean ?: false
+                if (shouldBreak) {
+                    break
+                }
+            }
+        }
+    }
 
     private fun updateIsActive() {
         val shouldBeActive = observers.size > 0

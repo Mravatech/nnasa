@@ -4,23 +4,17 @@ import android.os.Bundle
 import android.view.View
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
-import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.NotificationModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
 import com.mnassa.screen.base.MnassaControllerImpl
-import com.mnassa.screen.deeplink.DeeplinkHandler
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_notifications.view.*
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.delay
 import org.kodein.di.generic.instance
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by Peter on 3/6/2018.
@@ -29,7 +23,6 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
     override val layoutId: Int = R.layout.controller_notifications
     override val viewModel: NotificationsViewModel by instance()
 
-    private val deeplinkHandler: DeeplinkHandler by instance()
     private val adapter = NotificationAdapter()
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -49,6 +42,9 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
         launchCoroutineUI {
             subscribeToUpdates(viewModel.newNotificationChannel.openSubscription())
         }
+        launchCoroutineUI {
+            viewModel.openController.consumeEach(::open)
+        }
     }
 
     private suspend fun subscribeToUpdates(channel: ReceiveChannel<ListItemEvent<List<NotificationModel>>>) {
@@ -60,7 +56,13 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
                 }
                 is ListItemEvent.Changed -> adapter.addNotifications(it.item)
                 is ListItemEvent.Moved -> adapter.addNotifications(it.item)
-                is ListItemEvent.Removed -> adapter.removeNotifications(it.item)
+                is ListItemEvent.Removed -> {
+                    adapter
+                        .dataStorage
+                        .find { model -> model.key == it.key }
+                        ?.let { model -> model as? NotificationAdapter.NotificationItem.ContentItem }
+                        ?.let { model -> adapter.removeNotifications(listOf(model.content)) }
+                }
                 is ListItemEvent.Cleared -> {
                     adapter.isLoadingEnabled = true
                     adapter.dataStorage.clear()
@@ -96,23 +98,7 @@ class NotificationsController : MnassaControllerImpl<NotificationsViewModel>(), 
     }
 
     private fun onNotificationClickHandle(item: NotificationModel) {
-        if (!item.isOld) {
-            viewModel.notificationView(item.id)
-        }
-
-        resolveExceptions {
-            launchUI {
-                showProgress(hideKeyboard = true)
-                try {
-                    val controller = deeplinkHandler.handle(item)
-                    if (controller != null) {
-                        open(controller)
-                    }
-                } finally {
-                    hideProgress()
-                }
-            }
-        }
+        viewModel.openNotification(item)
     }
 
     companion object {

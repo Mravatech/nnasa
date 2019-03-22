@@ -7,6 +7,5 @@ import kotlinx.coroutines.channels.BroadcastChannel
  * Created by Peter on 2/20/2018.
  */
 interface MnassaViewModel : BaseViewModel {
-    val errorMessageChannel: BroadcastChannel<String>
     val isProgressEnabledChannel: BroadcastChannel<ProgressEvent>
 }

@@ -1,10 +1,10 @@
 package com.mnassa.screen.connections.newrequests
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
 
@@ -14,10 +14,9 @@ import kotlinx.coroutines.channels.consumeEach
 class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInteractor) : MnassaViewModelImpl(), NewRequestsViewModel {
     override val newConnectionRequestsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             connectionsInteractor.getConnectionRequests().consumeEach {
                 newConnectionRequestsChannel.send(it)
             }
@@ -27,7 +26,7 @@ class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     override suspend fun getDisconnectTimeoutDays(): Int = handleExceptionsSuspend { connectionsInteractor.getDisconnectTimeoutDays() } ?: 0
 
     override fun accept(account: ShortAccountModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 connectionsInteractor.actionAccept(listOf(account.id))
             }
@@ -35,7 +34,7 @@ class NewRequestsViewModelImpl(private val connectionsInteractor: ConnectionsInt
     }
 
     override fun decline(account: ShortAccountModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 connectionsInteractor.actionDecline(listOf(account.id))
             }

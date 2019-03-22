@@ -1,16 +1,16 @@
 package com.mnassa.screen.wallet
 
-import android.os.Bundle
 import com.mnassa.R
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.TransactionModel
 import com.mnassa.domain.model.TransactionSideModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.formattedName
 import com.mnassa.screen.base.MnassaViewModelImpl
 import com.mnassa.translation.fromDictionary
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
@@ -25,24 +25,27 @@ class GroupWalletViewModelImpl(private val group: GroupModel, private val wallet
     override val transactionsChannel: ConflatedBroadcastChannel<List<TransactionModel>> = ConflatedBroadcastChannel()
     override val screenTitleChannel: BroadcastChannel<String> = ConflatedBroadcastChannel(fromDictionary(R.string.wallet_title_group).format(group.formattedName))
 
-    override suspend fun getTransactionSide(): TransactionSideModel = TransactionSideModel(group)
+    override val createTransaction: BroadcastChannel<TransactionSideModel> = BroadcastChannel(1)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun createTransaction() {
+        launchWorker {
+            val model = TransactionSideModel(group)
+            createTransaction.send(model)
+        }
+    }
 
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             walletInteractor.getGroupBalance(groupId).consumeTo(currentBalanceChannel)
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getGroupSpentPointsCount(groupId).consumeTo(spentPointsChannel)
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getGroupGainedPointsCount(groupId).consumeTo(gainedPointsChannel)
         }
-
-        resolveExceptions {
+        setupScope.launchWorker {
             walletInteractor.getGroupTransactions(groupId).consumeTo(transactionsChannel)
         }
     }

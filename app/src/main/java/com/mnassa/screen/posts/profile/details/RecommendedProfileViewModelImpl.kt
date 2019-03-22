@@ -1,6 +1,6 @@
 package com.mnassa.screen.posts.profile.details
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.PostsInteractor
@@ -8,9 +8,9 @@ import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.model.ConnectionStatus
 import com.mnassa.domain.model.RecommendedProfilePostModel
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModel
 import com.mnassa.screen.posts.need.details.NeedDetailsViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -31,10 +31,9 @@ class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelPara
 
     override val connectionStatusChannel: ConflatedBroadcastChannel<ConnectionStatus> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             postChannel.consumeEach { post ->
                 loadConnectionStatus(post as RecommendedProfilePostModel)
             }
@@ -44,7 +43,7 @@ class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelPara
     private var loadConnectionStatusJob: Job? = null
     private fun loadConnectionStatus(recommendedProfilePostModel: RecommendedProfilePostModel) {
         loadConnectionStatusJob?.cancel()
-        loadConnectionStatusJob = resolveExceptions {
+        loadConnectionStatusJob = launchWorker {
             val profile = recommendedProfilePostModel.recommendedProfile
             if (profile != null) {
                 connectionsInteractor.getStatusesConnections(profile.id).consumeEach {
@@ -55,7 +54,7 @@ class RecommendedProfileViewModelImpl(params: NeedDetailsViewModel.ViewModelPara
     }
 
     override fun connect(account: ShortAccountModel) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 connectionsInteractor.actionConnect(listOf(account.id))
             }

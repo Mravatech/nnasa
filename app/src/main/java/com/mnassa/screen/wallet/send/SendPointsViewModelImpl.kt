@@ -1,6 +1,7 @@
 package com.mnassa.screen.wallet.send
 
 import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.interactor.WalletInteractor
 import com.mnassa.domain.model.TransactionSideModel
@@ -20,16 +21,20 @@ class SendPointsViewModelImpl(private val walletInteractor: WalletInteractor,
     override suspend fun hasAnyGroup(): Boolean = hasAnyGroup.await()
 
     override fun sendPoints(amount: Long, sender: TransactionSideModel, recipient: TransactionSideModel, description: String?) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 walletInteractor.sendPoints(amount = amount, sender = sender, recipient = recipient, description = description)
-                resultListenerChannel.send(SendPointsViewModel.SendPointsResult(
-                        amount = amount,
-                        sender = sender,
-                        recipient = recipient,
-                        description = description
-                ))
             }
+
+            // Send the result of this
+            // operation back to the view.
+            val result = SendPointsViewModel.SendPointsResult(
+                amount = amount,
+                sender = sender,
+                recipient = recipient,
+                description = description
+            )
+            resultListenerChannel.send(result)
         }
     }
 }

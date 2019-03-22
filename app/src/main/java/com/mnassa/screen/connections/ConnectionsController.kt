@@ -64,18 +64,20 @@ class ConnectionsController : MnassaControllerImpl<ConnectionsViewModel>(), OnPa
         recommendedConnectionsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
 
         newConnectionRequestsAdapter.onAcceptClickListener = { viewModel.accept(it) }
-        newConnectionRequestsAdapter.onDeclineClickListener = { account ->
-            view?.let { view ->
-                launchCoroutineUI {
-                    val disconnectDays = viewModel.getDisconnectTimeoutDays()
-                    dialog.showDeclineConnectionDialog(view.context, disconnectDays) {
-                        viewModel.decline(account)
-                    }
+        newConnectionRequestsAdapter.onDeclineClickListener = { viewModel.declineWithPrompt(it) }
+        newConnectionRequestsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
+        newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
+
+        launchCoroutineUI {
+            viewModel.showDeclineConnection.consumeEach { (account, timeoutDays) ->
+                dialog.showDeclineConnectionDialog(
+                    view?.context ?: return@consumeEach,
+                    timeoutDays
+                ) {
+                    viewModel.decline(account)
                 }
             }
         }
-        newConnectionRequestsAdapter.onItemClickListener = { open(ProfileController.newInstance(it)) }
-        newConnectionRequestsAdapter.onShowAllClickListener = { openNewRequestsScreen() }
 
         allConnectionsAdapter.isLoadingEnabled = savedInstanceState == null
         allConnectionsAdapter.onBindHeader = { bindHeader(it) }

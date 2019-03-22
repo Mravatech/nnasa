@@ -1,14 +1,15 @@
 package com.mnassa.screen.group.profile.events
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.GroupModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.withBuffer
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.*
 
@@ -25,10 +26,9 @@ class GroupEventsViewModelImpl(private val groupId: String,
             eventsInteractor.loadAllByGroupId(groupId).withBuffer().consumeEach { send(it) }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             groupsInteractor.getGroup(groupId).consumeEach {
                 if (it != null) groupChannel.send(it)
             }
@@ -36,7 +36,7 @@ class GroupEventsViewModelImpl(private val groupId: String,
     }
 
     override fun onAttachedToWindow(event: EventModel) {
-        GlobalScope.resolveExceptions(showErrorMessage = false) {
+        GlobalScope.launchWorkerNoExceptions {
             eventsInteractor.onItemViewed(event)
         }
     }

@@ -1,18 +1,16 @@
 package com.mnassa.screen.invite
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.annotation.RequiresPermission
+import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.InviteInteractor
 import com.mnassa.domain.model.PhoneContact
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
 /**
@@ -24,35 +22,31 @@ class InviteViewModelImpl(
         private val connectionsInteractor: ConnectionsInteractor,
         private val inviteInteractor: InviteInteractor
 ) : MnassaViewModelImpl(), InviteViewModel {
-
+    override val inviteRewardChannel: BroadcastChannel<Long?> = ConflatedBroadcastChannel()
     override val invitesCountChannel: BroadcastChannel<Int> = ConflatedBroadcastChannel()
     override val phoneContactChannel: BroadcastChannel<List<PhoneContact>> = ConflatedBroadcastChannel()
     override val checkPhoneContactChannel: BroadcastChannel<Boolean> = BroadcastChannel(10)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        resolveExceptions {
-            inviteInteractor.getInvitesCountChannel().consumeEach {
-                invitesCountChannel.send(it)
-            }
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
+            inviteInteractor.getInvitesCountChannel().consumeTo(invitesCountChannel)
+        }
+        setupScope.launchWorker {
+            inviteInteractor.getRewardPerInvite().consumeTo(inviteRewardChannel)
         }
     }
 
-    private var retrievePhoneJob: Job? = null
-    @SuppressLint("MissingPermission")
     @RequiresPermission(Manifest.permission.READ_CONTACTS)
     override fun retrievePhoneContacts() {
-        retrievePhoneJob?.cancel()
-        retrievePhoneJob = resolveExceptions {
+        launchWorker {
             val contacts = connectionsInteractor.retrievePhoneContacts()
             phoneContactChannel.send(contacts)
         }
     }
 
-    private var checkPhoneContactJob: Job? = null
     override fun checkPhoneContact(contact: PhoneContact) {
-        checkPhoneContactJob?.cancel()
-        checkPhoneContactJob = resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 val inviteSourceHolder: InviteSourceHolder by instance()
                 val inviteSource = inviteSourceHolder.source
@@ -67,6 +61,4 @@ class InviteViewModelImpl(
             }
         }
     }
-
-    override suspend fun getInviteReward(): Long? = inviteInteractor.getRewardPerInvite()
 }

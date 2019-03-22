@@ -1,6 +1,7 @@
 package com.mnassa.screen.profile.edit.personal
 
 import android.net.Uri
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.StorageInteractor
 import com.mnassa.domain.interactor.TagInteractor
@@ -9,7 +10,6 @@ import com.mnassa.domain.model.*
 import com.mnassa.domain.model.impl.PersonalAccountDiffModelImpl
 import com.mnassa.domain.model.impl.ProfilePersonalInfoModelImpl
 import com.mnassa.domain.model.impl.StoragePhotoDataImpl
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.profile.edit.BaseEditableProfileViewModelImpl
 import kotlinx.coroutines.channels.BroadcastChannel
 
@@ -47,7 +47,7 @@ class EditPersonalProfileViewModelImpl(
             abilities: List<AccountAbility>,
             interests: List<TagModel>,
             offers: List<TagModel>) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 val offersWithIds = getFilteredTags(offers)
                 val interestsWithIds = getFilteredTags(interests)

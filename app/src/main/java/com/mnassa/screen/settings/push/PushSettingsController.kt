@@ -43,14 +43,9 @@ class PushSettingsController : MnassaControllerImpl<PushSettingsViewModel>() {
             ))
         }
         launchCoroutineUI {
-            viewModel.notificationChangeChannel.consumeEach {
+            viewModel.settingsChannel.consumeEach {
                 adapter.dataStorage.addAll(it)
             }
-        }
-        launchCoroutineUI {
-            val settings = viewModel.getSettings()
-            adapter.set(settings)
-            adapter.notifyDataSetChanged()
         }
     }
 

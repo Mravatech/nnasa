@@ -1,16 +1,16 @@
 package com.mnassa.screen.registration
 
-import android.os.Bundle
 import com.mnassa.core.addons.asyncWorker
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.PlaceFinderInteractor
 import com.mnassa.domain.interactor.TagInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.AccountType
 import com.mnassa.domain.model.GeoPlaceModel
 import com.mnassa.domain.model.TagModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -34,10 +34,9 @@ class RegistrationViewModelImpl(
     private val isOffersMandatory = GlobalScope.asyncWorker { tagInteractor.isOffersMandatory() }
     private val createAccountMutex = Mutex()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             tagInteractor.getAddTagPrice().consumeTo(addTagRewardChannel)
         }
     }

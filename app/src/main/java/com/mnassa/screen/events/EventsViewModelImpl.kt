@@ -1,14 +1,14 @@
 package com.mnassa.screen.events
 
-import android.os.Bundle
-import com.mnassa.core.addons.asyncWorker
+import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.domain.aggregator.AggregatorLive
 import com.mnassa.domain.aggregator.produce
 import com.mnassa.domain.interactor.EventsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.model.EventModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -32,10 +32,9 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
 
     override val newItemsCounterChannel: BroadcastChannel<Int> = BroadcastChannel(Channel.CONFLATED)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             eventsLive.produce().consumeEach { state ->
                 newItemsCounterChannel.send(state.modelsAllDeltaCount)
             }
@@ -43,13 +42,13 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     }
 
     override fun onAttachedToWindow(event: EventModel) {
-        GlobalScope.resolveExceptions(showErrorMessage = false) {
+        GlobalScope.launchWorkerNoExceptions {
             eventsInteractor.onItemViewed(event)
         }
 
         //reset counter with debounce
         resetCounterJob?.cancel()
-        resetCounterJob = GlobalScope.asyncWorker {
+        resetCounterJob = GlobalScope.launchWorkerNoExceptions {
             delay(1_000)
             resetCounter()
         }
@@ -64,7 +63,7 @@ class EventsViewModelImpl(private val eventsInteractor: EventsInteractor, privat
     }
 
     private fun resetCounter() {
-        resolveExceptions {
+        launchWorker {
             eventsInteractor.resetCounter()
         }
     }

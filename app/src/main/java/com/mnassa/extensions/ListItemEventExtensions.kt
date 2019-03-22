@@ -29,14 +29,10 @@ suspend fun <T : Any> ReceiveChannel<ListItemEvent<List<T>>>.subscribeToUpdates(
             is ListItemEvent.Changed -> adapter.dataStorage.addAll(it.item)
             is ListItemEvent.Moved -> adapter.dataStorage.addAll(it.item)
             is ListItemEvent.Removed -> {
-                if (it.previousChildName != null) {
-                    adapter.dataStorage.find { model -> model is HasId && model.id == it.previousChildName }?.let { model ->
-                        adapter.dataStorage.remove(model)
-                    }
-
-                } else {
-                    adapter.dataStorage.removeAll(it.item)
-                }
+                adapter
+                    .dataStorage
+                    .find { model -> model is HasId && model.id == it.key }
+                    ?.let { model -> adapter.dataStorage.remove(model) }
             }
             is ListItemEvent.Cleared -> {
                 adapter.isLoadingEnabled = true

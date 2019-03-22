@@ -1,12 +1,12 @@
 package com.mnassa.screen.connections.select
 
-import android.os.Bundle
 import com.mnassa.core.addons.consumeTo
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.domain.interactor.ConnectionsInteractor
 import com.mnassa.domain.interactor.GroupsInteractor
 import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 
 /**
@@ -18,25 +18,25 @@ class SelectConnectionViewModelImpl(private val additionalData: SelectConnection
 
     override val allConnectionsChannel: ConflatedBroadcastChannel<List<ShortAccountModel>> = ConflatedBroadcastChannel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
 
         val data = additionalData
         if (data is SelectConnectionViewModel.AdditionalData.IncludeGroupMembers) {
-            loadConnectionsWithGroupMembers(data.groupId)
+            setupScope.loadConnectionsWithGroupMembers(data.groupId)
         } else {
-            loadConnections()
+            setupScope.loadConnections()
         }
     }
 
-    private fun loadConnections() {
-        resolveExceptions {
+    private fun CoroutineScope.loadConnections() {
+        launchWorker {
             connectionsInteractor.getConnectedConnections().consumeTo(allConnectionsChannel)
         }
     }
 
-    private fun loadConnectionsWithGroupMembers(groupId: String) {
-        resolveExceptions {
+    private fun CoroutineScope.loadConnectionsWithGroupMembers(groupId: String) {
+        launchWorker {
             val connections = connectionsInteractor.getConnectedConnections().receive()
             val groupMembers = groupsInteractor.getGroupMembers(groupId).receive()
             val result = (connections + groupMembers).distinctBy { it.id }

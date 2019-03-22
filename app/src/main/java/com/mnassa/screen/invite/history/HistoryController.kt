@@ -6,7 +6,9 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.extensions.SimpleTextWatcher
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_invite_history.view.*
+import kotlinx.android.synthetic.main.item_loading.view.*
 import kotlinx.android.synthetic.main.search_view.view.*
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -22,6 +24,7 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
 
         launchCoroutineUI {
             viewModel.phoneContactChannel.consumeEach {
+                view?.loaderView?.visibility = View.GONE
                 adapter.setData(it)
             }
         }
@@ -30,6 +33,7 @@ class HistoryController : MnassaControllerImpl<HistoryViewModel>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         with(view) {
+            loaderView.tvLoading.text = fromDictionary(R.string.loading)
             searchView.visibility = View.VISIBLE
             searchView.etSearch.addTextChangedListener(SimpleTextWatcher { adapter.search(it) })
             rvInviteHistory.adapter = adapter

@@ -1,6 +1,6 @@
 package com.mnassa.screen.events.details
 
-import android.os.Bundle
+import com.mnassa.core.addons.launchWorker
 import com.mnassa.data.network.NetworkContract
 import com.mnassa.domain.interactor.ComplaintInteractor
 import com.mnassa.domain.interactor.EventsInteractor
@@ -8,8 +8,8 @@ import com.mnassa.domain.model.EventModel
 import com.mnassa.domain.model.EventStatus
 import com.mnassa.domain.model.TranslatedWordModel
 import com.mnassa.domain.model.impl.ComplaintModelImpl
-import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.screen.base.MnassaViewModelImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -24,10 +24,9 @@ class EventDetailsViewModelImpl(private val eventId: String,
     override val finishScreenChannel: BroadcastChannel<Unit> = BroadcastChannel(1)
     private var reportsList = emptyList<TranslatedWordModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        resolveExceptions {
+    override fun onSetup(setupScope: CoroutineScope) {
+        super.onSetup(setupScope)
+        setupScope.launchWorker {
             eventsInteractor.loadByIdChannel(eventId).consumeEach {
                 if (it != null) {
                     eventChannel.send(it)
@@ -36,13 +35,13 @@ class EventDetailsViewModelImpl(private val eventId: String,
                 }
             }
         }
-        resolveExceptions {
+        setupScope.launchWorker {
             reportsList = complaintInteractor.getReports()
         }
     }
 
     override fun changeStatus(event: EventModel, status: EventStatus) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 eventsInteractor.changeStatus(event, status)
             }
@@ -50,7 +49,7 @@ class EventDetailsViewModelImpl(private val eventId: String,
     }
 
     override fun sendComplaint(eventId: String, reason: String, authorText: String?) {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 complaintInteractor.sendComplaint(ComplaintModelImpl(
                         id = eventId,
@@ -72,7 +71,7 @@ class EventDetailsViewModelImpl(private val eventId: String,
     }
 
     override fun promote() {
-        resolveExceptions {
+        launchWorker {
             withProgressSuspend {
                 eventsInteractor.promote(eventId)
             }

@@ -4,12 +4,11 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import com.mnassa.App
 import com.mnassa.core.BaseViewModelImpl
+import com.mnassa.core.addons.launchWorker
+import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.exceptions.internalResolveExceptions
-import com.mnassa.exceptions.resolveExceptions
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -28,7 +27,6 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     }
     private val appInfoProvider: AppInfoProvider by instance()
 
-    override val errorMessageChannel: BroadcastChannel<String> = BroadcastChannel(10)
     override val isProgressEnabledChannel: ConflatedBroadcastChannel<ProgressEvent> = ConflatedBroadcastChannel()
 
 
@@ -39,21 +37,16 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
     }
 
     protected open suspend fun <T> handleExceptionsSuspend(function: suspend CoroutineScope.() -> T): T? {
-        return internalResolveExceptions(function) { message ->
-            try {
-                errorMessageChannel.send(message)
-            } catch (_: ClosedSendChannelException) {
-            }
-        }
+        return internalResolveExceptions(true, function)
     }
 
     protected open fun showProgress(hideKeyboard: Boolean = ShowProgressEvent.HIDE_KEYBOARD) =
-        resolveExceptions(showErrorMessage = false) {
+        launchWorkerNoExceptions {
             isProgressEnabledChannel.send(ShowProgressEvent(hideKeyboard))
         }
 
     protected open fun hideProgress() =
-        resolveExceptions {
+        launchWorker {
             isProgressEnabledChannel.send(HideProgressEvent())
         }
 
