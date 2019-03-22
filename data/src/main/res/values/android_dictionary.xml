@@ -8,6 +8,7 @@
     <string name="_android_country_ukraine_INFO">Ukraine</string>
     <string name="_android_country_united_states_INFO">United States</string>
     <string name="_android_country_canada_INFO">Canada</string>
+    <string name="_android_country_egypt_INFO">Egypt</string>
 
     <string name="_android_cancel_INFO">Cancel</string>
     <string name="_android_ok_INFO">OK</string>
@@ -290,6 +291,10 @@ Check it in http://MNASSA.com</string>
     <string name="_country_code_usa_INFO">+1</string>
     <string name="_country_code_usa_ENG">+1</string>
     <string name="_country_code_usa_AR">+١</string>
+
+    <string name="_country_code_egypt_INFO">+20</string>
+    <string name="_country_code_egypt_ENG">+20</string>
+    <string name="_country_code_egypt_AR">+٢٠</string>
 
     <string name="_android_open_google_play_INFO">Open Google Play</string>
 
