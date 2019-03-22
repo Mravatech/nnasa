@@ -5,6 +5,7 @@
     <string name="country_ukraine">_android_country_ukraine</string>
     <string name="country_united_states">_android_country_united_states</string>
     <string name="country_canada">_android_country_canada</string>
+    <string name="country_egypt">_android_country_egypt</string>
 
     <string name="image_source_camera">_newAccDetails_cellAvatar_sourceCamera</string>
     <string name="image_source_gallery">_newAccDetails_cellAvatar_sourceCameraRoll</string>
@@ -635,6 +636,7 @@
     <string name="country_code_ukraine">_country_code_ukraine</string>
     <string name="country_code_usa">_country_code_usa</string>
     <string name="country_code_canada">_country_code_usa</string>
+    <string name="country_code_egypt">_country_code_egypt</string>
 
     <string name="update_app">_maintenance_updateMessage</string>
     <string name="open_google_play">_android_open_google_play</string>

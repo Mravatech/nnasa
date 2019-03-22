@@ -25,6 +25,10 @@ class CountryHelper(languageProvider: LanguageProvider) {
                 CountryCode(
                         flagRes = R.drawable.ic_flag_of_canada,
                         name = TranslatedWordModelImpl(languageProvider, fromDictionary(R.string.country_canada)),
-                        phonePrefix = PhonePrefix.Canada)
+                        phonePrefix = PhonePrefix.Canada),
+                CountryCode(
+                        flagRes = R.drawable.ic_flag_of_egypt,
+                        name = TranslatedWordModelImpl(languageProvider, fromDictionary(R.string.country_egypt)),
+                        phonePrefix = PhonePrefix.Egypt)
         )
 }

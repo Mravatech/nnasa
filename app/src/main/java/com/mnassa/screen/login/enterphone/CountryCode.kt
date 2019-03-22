@@ -38,6 +38,11 @@ sealed class PhonePrefix : Serializable {
         override val normalizedCode: String = "1"
         override val visibleCode: String get() = fromDictionary(R.string.country_code_canada)
     }
+
+    object Egypt : PhonePrefix() { //+1 +١
+        override val normalizedCode: String = "20"
+        override val visibleCode: String get() = fromDictionary(R.string.country_code_egypt)
+    }
 }
 
 class PhoneNumber(
@@ -80,6 +85,10 @@ class PhoneNumber(
                         normalizedPhone.startsWith(PhonePrefix.Canada.normalizedCode) -> {
                     //+1 888-452-1505
                     return normalizedPhone.length == 11
+                }
+                normalizedPhone.startsWith(PhonePrefix.Egypt.normalizedCode) -> {
+                    //+20 10-xxxx-xxxx
+                    return normalizedPhone.length == 12 || normalizedPhone.length == 11
                 }
             }
             return false
