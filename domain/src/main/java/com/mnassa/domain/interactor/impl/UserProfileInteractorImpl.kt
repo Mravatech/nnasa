@@ -4,6 +4,7 @@ import com.mnassa.core.events.impl.SimpleCompositeEventListener
 import com.mnassa.domain.exception.AccountDisabledException
 import com.mnassa.domain.interactor.UserProfileInteractor
 import com.mnassa.domain.model.*
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consume
@@ -12,7 +13,8 @@ import kotlinx.coroutines.channels.consume
  * Created by Peter on 2/21/2018.
  */
 class UserProfileInteractorImpl(
-        userRepositoryLazy: () -> UserRepository
+    private val appInfoProvider: AppInfoProvider,
+    userRepositoryLazy: () -> UserRepository
 ) : UserProfileInteractor {
 
     private val userRepository: UserRepository by lazy(userRepositoryLazy)
@@ -94,7 +96,10 @@ class UserProfileInteractorImpl(
         } else throw AccountDisabledException("Account ${account.formattedName} (${account.id}) is disabled!", IllegalArgumentException())
     }
 
-    override suspend fun addPushToken(token: String?) = userRepository.addPushToken(token)
+    override suspend fun addPushToken(token: String?) {
+        if (appInfoProvider.isGhost) return
+        userRepository.addPushToken(token)
+    }
 
     override suspend fun getToken(): String? = userRepository.getFirebaseToken()
     override fun getAccountIdOrNull(): String? = userRepository.getAccountIdOrNull()

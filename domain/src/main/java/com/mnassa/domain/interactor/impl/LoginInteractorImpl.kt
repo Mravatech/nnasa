@@ -10,6 +10,7 @@ import com.mnassa.domain.model.LogoutReason
 import com.mnassa.domain.model.PhoneVerificationModel
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.UserStatusModel
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.PostsRepository
 import com.mnassa.domain.repository.UserRepository
 import com.mnassa.domain.service.CustomLoginService
@@ -28,6 +29,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
                           private val userProfileInteractor: UserProfileInteractor,
                           private val postsRepository: PostsRepository,
                           private val loginService: FirebaseLoginService,
+                          private val appInfoProvider: AppInfoProvider,
                           private val customLoginService: CustomLoginService) : LoginInteractor {
 
     private var useCustomAuth = false
@@ -42,7 +44,7 @@ class LoginInteractorImpl(private val userRepository: UserRepository,
             promoCode: String?
     ): ReceiveChannel<PhoneVerificationModel> {
 
-        useCustomAuth = loginService.checkPhone(phoneNumber, promoCode).useCustomAuth
+        useCustomAuth = loginService.checkPhone(phoneNumber, promoCode).useCustomAuth || appInfoProvider.isCustomAuth
         return if (useCustomAuth) {
             customLoginService.requestVerificationCode(phoneNumber)
         } else loginService.requestVerificationCode("+$phoneNumber", previousResponse)

@@ -28,7 +28,7 @@ class CustomLoginServiceImpl(
 
     override suspend fun requestVerificationCode(phoneNumber: String): ReceiveChannel<PhoneVerificationModel> {
         return GlobalScope.produce(Dispatchers.Unconfined) {
-            val authId = authApi.sendSms(SendSmsRequest(phone = phoneNumber, isTest = appInfoProvider.isDebug)).handleException(exceptionHandler).data.id
+            val authId = authApi.sendSms(SendSmsRequest(phone = phoneNumber, isTest = appInfoProvider.isDebug || appInfoProvider.isCustomAuth)).handleException(exceptionHandler).data.id
             send(OnCodeSent(phoneNumber = phoneNumber, verificationId = authId, token = null))
         }
     }

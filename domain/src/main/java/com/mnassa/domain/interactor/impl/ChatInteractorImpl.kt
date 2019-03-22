@@ -6,6 +6,7 @@ import com.mnassa.domain.model.ChatRoomModel
 import com.mnassa.domain.model.ListItemEvent
 import com.mnassa.domain.model.impl.ChatMessageModelImpl
 import com.mnassa.domain.model.withBuffer
+import com.mnassa.domain.other.AppInfoProvider
 import com.mnassa.domain.repository.ChatRepository
 import com.mnassa.domain.repository.UserRepository
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -16,7 +17,11 @@ import java.util.*
  * User: okli
  * Date: 4/2/2018
  */
-class ChatInteractorImpl(private val chatRepository: ChatRepository, private val userRepository: UserRepository) : ChatInteractor {
+class ChatInteractorImpl(
+    private val chatRepository: ChatRepository,
+    private val userRepository: UserRepository,
+    private val appInfoProvider: AppInfoProvider
+) : ChatInteractor {
 
     override suspend fun loadChatListWithChangesHandling(): ReceiveChannel<ListItemEvent<List<ChatRoomModel>>> {
         return chatRepository
@@ -53,6 +58,7 @@ class ChatInteractorImpl(private val chatRepository: ChatRepository, private val
             accountId?.run { chatRepository.getChatIdByUserId(this) } ?: chatRepository.getSupportChat()
 
     override suspend fun resetChatUnreadCount(chatId: String) {
+        if (appInfoProvider.isGhost) return
         chatRepository.resetChatUnreadMessagesCount(chatId)
     }
 
