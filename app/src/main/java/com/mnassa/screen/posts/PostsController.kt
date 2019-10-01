@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,7 +11,6 @@ import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.aggregator.produce
-import com.mnassa.domain.model.PostModel
 import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
@@ -25,12 +25,7 @@ import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.newpanel.NewPanelView
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
 import kotlinx.coroutines.channels.consume
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.map
-import kotlinx.coroutines.runBlocking
 import org.kodein.di.generic.instance
-import java.lang.Exception
-import java.util.*
 
 
 /**
@@ -59,6 +54,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
+        }
+        adapter.onRepostClickListener = {
+           Log.e("REPOST_CLICKED", it.counters.reposts.toString())
         }
         adapter.onCreateNeedClickListener = {
             launchCoroutineUI {

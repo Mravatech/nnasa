@@ -30,7 +30,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/ivAvatar"
-            android:layout_toStartOf="@id/cbInvite"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingEnd="@dimen/spacing_horizontal"

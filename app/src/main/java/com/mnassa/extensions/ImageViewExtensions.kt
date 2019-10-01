@@ -11,7 +11,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.storage.FirebaseStorage
 import com.mnassa.R
 import com.mnassa.di.getInstance
-import com.mnassa.helper.GlideApp
+//import com.mnassa.helper.GlideApp
 import timber.log.Timber
 
 /**
@@ -38,58 +38,58 @@ fun ImageView.avatarRound(avatarUrl: String?) {
     val placeholder = ContextCompat.getDrawable(context, R.drawable.empty_ava)
     val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder).apply(RequestOptions.circleCropTransform())
 
-    GlideApp.with(this)
-            .load(context.processFirebaseUrl(avatarUrl))
-            .apply(requestOptions)
-            .apply(RequestOptions.circleCropTransform())
-            .into(this)
+//    GlideApp.with(this)
+//            .load(context.processFirebaseUrl(avatarUrl))
+//            .apply(requestOptions)
+//            .apply(RequestOptions.circleCropTransform())
+//            .into(this)
 }
 
 fun ImageView.avatarSquare(avatarUrl: String?) {
     val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_ava)
     val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
-    GlideApp.with(this)
-            .load(context.processFirebaseUrl(avatarUrl))
-            .apply(requestOptions)
-            .apply(RequestOptions.centerCropTransform())
-            .into(this)
+//    GlideApp.with(this)
+//            .load(context.processFirebaseUrl(avatarUrl))
+//            .apply(requestOptions)
+//            .apply(RequestOptions.centerCropTransform())
+//            .into(this)
 }
 
 fun ImageView.avatarSquare(avatarUrl: Uri?) {
     val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_ava)
     val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
-    GlideApp.with(this)
-            .load(avatarUrl ?: "")
-            .apply(requestOptions)
-            .apply(RequestOptions.centerCropTransform())
-            .into(this)
+//    GlideApp.with(this)
+//            .load(avatarUrl ?: "")
+//            .apply(requestOptions)
+//            .apply(RequestOptions.centerCropTransform())
+//            .into(this)
 }
 
 fun ImageView.image(url: String?, crop: Boolean = true) {
     val requestOptions = RequestOptions().placeholder(R.drawable.btn_main).error(R.drawable.btn_main)
 
-    var builder = GlideApp.with(this)
-            .load(context.processFirebaseUrl(url))
-            .apply(requestOptions)
-
-    if (crop) {
-        builder = builder.apply(RequestOptions.centerCropTransform())
-    }
-
-    builder.into(this)
+//    var builder = GlideApp.with(this)
+//            .load(context.processFirebaseUrl(url))
+//            .apply(requestOptions)
+//
+//    if (crop) {
+//        builder = builder.apply(RequestOptions.centerCropTransform())
+//    }
+//
+//    builder.into(this)
 }
 
 fun ImageView.image(uri: Uri) {
     val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_avatar_placeholder)
     val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
-    GlideApp.with(this)
-            .load(uri)
-            .apply(requestOptions)
-            .apply(RequestOptions.centerCropTransform())
-            .into(this)
+//    GlideApp.with(this)
+//            .load(uri)
+//            .apply(requestOptions)
+//            .apply(RequestOptions.centerCropTransform())
+//            .into(this)
 }
 
 private fun Context.processFirebaseUrl(url: String?): Any {

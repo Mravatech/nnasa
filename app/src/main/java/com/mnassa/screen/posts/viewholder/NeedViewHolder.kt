@@ -5,11 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import com.mnassa.R
-import com.mnassa.domain.model.ExpirationType
 import com.mnassa.domain.model.PostModel
 import com.mnassa.domain.model.formattedName
 import com.mnassa.extensions.*
-import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.item_news_feed_need.view.*
 
 /**
@@ -28,29 +26,15 @@ class NeedViewHolder(itemView: View, onClickListener: View.OnClickListener) : Ba
 
             tvViewsCount.text = item.counters.views.toString()
             tvCommentsCount.text = item.counters.comments.toString()
+            tvOffersCount.text = item.counters.offers.toString()
+            tvRecomendationsCount.text = item.counters.recommend.toString()
+            tvRepostCount.text = item.counters.reposts.toString()
 
             rlClickableRoot.setOnClickListener(onClickListener)
             rlClickableRoot.tag = this@NeedViewHolder
 
-            if (item.statusOfExpiration is ExpirationType.ACTIVE) {
-                tvAction.visibility = if (item.autoSuggest.youCanHelp || item.autoSuggest.accountIds.isNotEmpty()) View.VISIBLE else View.GONE
-                tvExpiration.visibility = View.GONE
-
-                tvAction.text = when {
-                    item.autoSuggest.youCanHelp && item.autoSuggest.accountIds.isNotEmpty() ->
-                        fromDictionary(R.string.need_item_btn_you_and_connections_can_help).format(item.autoSuggest.accountIds.size)
-                    item.autoSuggest.youCanHelp -> fromDictionary(R.string.need_item_btn_you_can_help)
-                    item.autoSuggest.accountIds.isNotEmpty() -> fromDictionary(R.string.need_item_btn_connections_can_help).format(item.autoSuggest.accountIds.size)
-                    else -> null
-                }
-            } else {
-                tvAction.visibility = View.GONE
-                tvExpiration.visibility = View.VISIBLE
-                tvExpiration.bindExpireType(item.statusOfExpiration, item.timeOfExpiration)
-            }
-
-            tvAction.setOnClickListener(onClickListener)
-            tvAction.tag = this@NeedViewHolder
+            tvRepostCount.setOnClickListener(onClickListener)
+            tvRepostCount.tag = this@NeedViewHolder
 
             rlAuthorRoot.setOnClickListener(onClickListener)
             rlAuthorRoot.tag = this@NeedViewHolder

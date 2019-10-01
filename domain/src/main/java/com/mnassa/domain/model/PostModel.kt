@@ -65,6 +65,7 @@ interface PostCounters : Serializable {
     val likes: Int
     val recommend: Int
     val reposts: Int
+    val offers: Int
     val unreadResponse: Int
     val views: Int
     companion object {
@@ -74,6 +75,7 @@ interface PostCounters : Serializable {
         const val DEFAULT_REPOSTS = 0
         const val DEFAULT_UNREAD_RESPONSE = 0
         const val DEFAULT_VIEWS = 0
+        const val DEFAULT_OFFERS = 0
     }
 }
 

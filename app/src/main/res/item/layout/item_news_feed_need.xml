@@ -191,7 +191,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/drawable_padding"
-                    app:drawableStartCompat="@drawable/ic_eye_18dp"
+                    app:drawableStartCompat="@drawable/ic_eye"
                     tools:text="12" />
 
                 <com.mnassa.widget.MnassaTextView
@@ -204,23 +204,42 @@
                     app:drawableStartCompat="@drawable/ic_comment"
                     tools:text="12" />
 
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvRepostCount"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    app:drawableStartCompat="@drawable/ic_repost_feed"
+                    tools:text="12" />
+
                 <Space
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"/>
 
                 <com.mnassa.widget.MnassaTextView
-                    android:id="@+id/tvAction"
+                    android:id="@+id/tvRecomendationsCount"
+                    style="@style/MnassaTextTiny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:drawableEndCompat="@drawable/ic_post_button_arrow_blue"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
                     android:drawablePadding="@dimen/drawable_padding"
-                    android:fontFamily="@font/roboto_medium"
-                    android:gravity="end"
-                    android:textAllCaps="true"
-                    android:textColor="@color/accent"
-                    tools:visibility="visible"
-                    tools:text="You can help lolong lon" />
+                    app:drawableStartCompat="@drawable/ic_recommend"
+                    tools:text="12" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvOffersCount"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    app:drawableStartCompat="@drawable/ic_offer"
+                    tools:text="12" />
 
                 <TextView
                     android:id="@+id/tvExpiration"

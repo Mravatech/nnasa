@@ -342,6 +342,7 @@ data class PostCountersImpl(
         override val likes: Int,
         override val recommend: Int,
         override val reposts: Int,
+        override val offers: Int,
         override val unreadResponse: Int,
         override val views: Int
 ) : PostCounters {
@@ -351,7 +352,8 @@ data class PostCountersImpl(
             likes = PostCounters.DEFAULT_COMMENTS,
             recommend = PostCounters.DEFAULT_COMMENTS,
             reposts = PostCounters.DEFAULT_COMMENTS,
-            unreadResponse = PostCounters.DEFAULT_COMMENTS,
+                offers = PostCounters.DEFAULT_OFFERS,
+                unreadResponse = PostCounters.DEFAULT_COMMENTS,
             views = PostCounters.DEFAULT_COMMENTS
         )
     }

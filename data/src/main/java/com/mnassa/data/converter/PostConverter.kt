@@ -284,6 +284,7 @@ class PostConverter(private val languageProvider: LanguageProvider,
                 likes = input.likes ?: PostCounters.DEFAULT_LIKES,
                 recommend = input.recommend ?: PostCounters.DEFAULT_RECOMMEND,
                 reposts = input.reposts ?: PostCounters.DEFAULT_REPOSTS,
+                offers = input.offers ?: PostCounters.DEFAULT_OFFERS,
                 unreadResponse = input.unreadResponse ?: PostCounters.DEFAULT_UNREAD_RESPONSE,
                 views = input.views ?: PostCounters.DEFAULT_VIEWS
         )

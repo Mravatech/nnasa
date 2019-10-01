@@ -205,6 +205,28 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvReccomendationsCount"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    app:drawableStartCompat="@drawable/ic_comment"
+                    tools:text="12" />
+
+                <com.mnassa.widget.MnassaTextView
+                    android:id="@+id/tvOffersCount"
+                    style="@style/MnassaTextTiny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    app:drawableStartCompat="@drawable/ic_comment"
+                    tools:text="12" />
+
             </LinearLayout>
 
         </LinearLayout>

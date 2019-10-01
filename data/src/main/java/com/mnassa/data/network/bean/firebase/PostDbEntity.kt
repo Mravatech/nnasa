@@ -62,6 +62,7 @@ internal data class PostCountersDbEntity(
         @SerializedName("likes") var likes: Int?,
         @SerializedName("recommend") var recommend: Int?,
         @SerializedName("reposts") var reposts: Int?,
+        @SerializedName("offers") var offers: Int?,
         @SerializedName("unreadResponse") var unreadResponse: Int?,
         @SerializedName("views") var views: Int?
 )

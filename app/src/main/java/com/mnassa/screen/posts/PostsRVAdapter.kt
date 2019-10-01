@@ -28,6 +28,7 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
     var onHideInfoPostClickListener = { post: PostModel -> }
     var onGroupClickListener = { group: GroupModel -> }
     var onMoreItemClickListener = { item: PostModel, view: View -> }
+    var onRepostClickListener = { item: PostModel -> }
 
     var showMoreOptions: Boolean = false
         set(value) {
@@ -208,16 +209,16 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
             onGroupClickListener(tag)
             return
         }
-
+        // R.id.tvRepostCount -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
         val position = (tag as RecyclerView.ViewHolder).adapterPosition
         if (position < 0) return
         when (view.id) {
             R.id.rlClickableRoot -> onItemClickListener(getDataItemByAdapterPosition(position))
             R.id.flCreateNeed -> onCreateNeedClickListener()
-            R.id.rlRepostRoot -> onRepostedByClickListener(requireNotNull(getDataItemByAdapterPosition(position).repostAuthor))
             R.id.rlAuthorRoot -> onPostedByClickListener(getDataItemByAdapterPosition(position).author)
             R.id.btnHidePost -> onHideInfoPostClickListener(getDataItemByAdapterPosition(position))
             R.id.btnMoreOptions -> onMoreItemClickListener(getDataItemByAdapterPosition(position), view)
+            R.id.tvRepostCount -> onRepostClickListener(getDataItemByAdapterPosition(position))
         }
     }
 

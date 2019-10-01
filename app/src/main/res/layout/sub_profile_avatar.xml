@@ -6,7 +6,6 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivUserAvatar"
         style="@style/PersonalInfo.Image"
-        android:layout_below="@id/tvTitle"
         android:background="@color/white"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
