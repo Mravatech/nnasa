@@ -33,6 +33,9 @@ class OfferViewHolder(itemView: View, onClickListener: View.OnClickListener) : B
 
             tvViewsCount.text = item.counters.views.toString()
             tvCommentsCount.text = item.counters.comments.toString()
+            tvOffersCount.text = item.counters.offers.toString()
+            tvRecomendationsCount.text = item.counters.recommend.toString()
+            tvRepostCount.text = item.counters.reposts.toString()
 
             rlClickableRoot.setOnClickListener(onClickListener)
             rlClickableRoot.tag = this@OfferViewHolder
