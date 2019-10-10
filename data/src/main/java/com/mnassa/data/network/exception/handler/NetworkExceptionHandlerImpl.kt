@@ -28,6 +28,7 @@ open class NetworkExceptionHandlerImpl(private val gson: Gson, private val conte
     override fun handle(throwable: Throwable): Throwable {
         Timber.d(throwable)
 
+
         return when {
             throwable is NetworkException -> throwable
             throwable is CancellationException -> throwable
