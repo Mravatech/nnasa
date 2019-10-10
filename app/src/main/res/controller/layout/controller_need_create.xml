@@ -27,15 +27,80 @@
                 android:id="@+id/tvShareOptions"
                 style="@style/ShareToButton"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:visibility="gone"
                 tools:text="Share to" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_pics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:src="@drawable/user_pics_dummy" />
+
+                <TextView
+                    android:id="@+id/user_name_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/user_pics"
+                    android:text="Heba Attar"
+                    android:textColor="#313131" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="7dp"
+                    android:background="@drawable/spinner_border"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/dummy_face_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        app:srcCompat="@drawable/ic_dummy_face" />
+
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/need_create_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/dummy_face_img"
+                        android:background="@android:color/transparent"
+                        tools:listitem="hi" />
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="12dp"
+                        android:layout_toEndOf="@id/need_create_spinner"
+                        app:srcCompat="@drawable/ic_arrow_down" />
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilNeed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
                 app:counterEnabled="true"
                 app:counterMaxLength="@integer/max_need_length"
                 tools:hint="I need something new">
@@ -44,6 +109,7 @@
                     android:id="@+id/etNeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/camera_icon_and_bg"
                     android:inputType="textMultiLine"
                     android:maxLength="@integer/max_need_length" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -52,80 +118,189 @@
             <com.mnassa.widget.ChipLayout
                 android:id="@+id/chipTags"
                 style="@style/Registration.ChipLayout"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal" />
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginEnd="@dimen/spacing_horizontal" />
 
-            <FrameLayout
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvImages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_vertical"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                tools:layout_height="260dp">
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:text="Suggested Tags"
+                android:textSize="14sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvImages"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_post_add_image"/>
-            </FrameLayout>
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
 
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/MnassaTextTiny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:background="@drawable/tag_bg"
+                        android:foreground="@drawable/blue_ripple_effect"
+                        android:paddingStart="30dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="30dp"
+                        android:paddingBottom="10dp"
+                        android:text="Moving"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/MnassaTextTiny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:background="@drawable/tag_bg"
+                        android:foreground="@drawable/blue_ripple_effect"
+                        android:paddingStart="30dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="30dp"
+                        android:paddingBottom="10dp"
+                        android:text="Logistics"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/MnassaTextTiny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:background="@drawable/tag_bg"
+                        android:foreground="@drawable/blue_ripple_effect"
+                        android:maxLines="1"
+                        android:paddingStart="30dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="30dp"
+                        android:paddingBottom="10dp"
+                        android:text="Moving Company"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/MnassaTextTiny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:background="@drawable/tag_bg"
+                        android:foreground="@drawable/blue_ripple_effect"
+                        android:maxLines="1"
+                        android:paddingStart="30dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="30dp"
+                        android:paddingBottom="10dp"
+                        android:text="Cleaning"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/MnassaTextTiny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        android:background="@drawable/tag_bg"
+                        android:foreground="@drawable/blue_ripple_effect"
+                        android:maxLines="1"
+                        android:paddingStart="30dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="30dp"
+                        android:paddingBottom="10dp"
+                        android:text="Tech"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/tvExtraDetails"
                 style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:paddingEnd="4dp"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
+                android:gravity="center"
                 android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:textSize="14sp"
-                tools:text="Extra details" />
+                tools:text="View more details" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPlace"
-                style="@style/Registration.TextInputLayout"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                app:errorEnabled="false"
-                tools:hint="City">
-
-                <AutoCompleteTextView
-                    android:id="@+id/actvPlace"
-                    style="@style/Registration.EditText" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPrice"
+            <LinearLayout
+                android:id="@+id/more_details_linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical">
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPrice"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPlace"
+                    style="@style/Registration.TextInputLayout"
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:layout_marginEnd="@dimen/spacing_horizontal"
+                    app:errorEnabled="false"
+                    tools:hint="City">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/actvPlace"
+                        style="@style/Registration.EditText" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    tools:text="Price" />
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:layout_marginEnd="@dimen/spacing_horizontal">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        tools:text="Price" />
 
-            <com.mnassa.widget.text.EndPrefixEditText
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:id="@+id/postExpiresIn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
+                <com.mnassa.widget.text.EndPrefixEditText
+                    android:id="@+id/postExpiresIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -35,23 +35,23 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
                 set(emptyList())
             }
 
-            override fun add(element: AttachedImage): Boolean {
-                set((filter { it.typeId != AttachedImage.TYPE_ADD } + element + AttachedImage.AddImage))
-                return true
-            }
+//            override fun add(element: AttachedImage): Boolean {
+//                set((filter { it.typeId != AttachedImage.TYPE_ADD } + element + AttachedImage.AddImage))
+//                return true
+//            }
+//
+//            override fun addAll(elements: Collection<AttachedImage>): Boolean {
+//                set((filter { it.typeId != AttachedImage.TYPE_ADD } + elements + AttachedImage.AddImage))
+//                return true
+//            }
 
-            override fun addAll(elements: Collection<AttachedImage>): Boolean {
-                set((filter { it.typeId != AttachedImage.TYPE_ADD } + elements + AttachedImage.AddImage))
-                return true
-            }
-
-            override fun set(elements: List<AttachedImage>) {
-                if (elements.size >= MAX_PHOTOS_COUNT || elements.contains(AttachedImage.AddImage)) {
-                    super.set(elements.take(MAX_PHOTOS_COUNT))
-                } else {
-                    super.set((elements + AttachedImage.AddImage).take(MAX_PHOTOS_COUNT))
-                }
-            }
+//            override fun set(elements: List<AttachedImage>) {
+//                if (elements.size >= MAX_PHOTOS_COUNT || elements.contains(AttachedImage.AddImage)) {
+//                    super.set(elements.take(MAX_PHOTOS_COUNT))
+//                } else {
+//                    super.set((elements + AttachedImage.AddImage).take(MAX_PHOTOS_COUNT))
+//                }
+//            }
 
             override fun remove(element: AttachedImage): Boolean {
                 val copy = toMutableList()
@@ -76,7 +76,7 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<AttachedImage> {
         return when (viewType) {
             AttachedImage.TYPE_UPLOADED -> UploadedImageVH.newInstance(parent, this)
-            AttachedImage.TYPE_ADD -> AddImageVH.newInstance(parent, this)
+//            AttachedImage.TYPE_ADD -> AddImageVH.newInstance(parent, this)
             AttachedImage.TYPE_LOCAL -> LocalImageVH.newInstance(parent, this)
             else -> throw IllegalArgumentException("Illegal view type: $viewType")
         }
@@ -146,21 +146,21 @@ class AttachedImagesRVAdapter : BasePaginationRVAdapter<AttachedImage>(), View.O
         }
     }
 
-    class AddImageVH(itemView: View) : BaseVH<AttachedImage>(itemView) {
-
-        override fun bind(item: AttachedImage) {
-        }
-
-        companion object {
-            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): AddImageVH {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_add_image, parent, false)
-                val viewHolder = AddImageVH(view)
-                view.vAddImage.setOnClickListener(onClickListener)
-                view.vAddImage.tag = viewHolder
-                return viewHolder
-            }
-        }
-    }
+//    class AddImageVH(itemView: View) : BaseVH<AttachedImage>(itemView) {
+//
+//        override fun bind(item: AttachedImage) {
+//        }
+//
+//        companion object {
+//            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener): AddImageVH {
+//                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_add_image, parent, false)
+//                val viewHolder = AddImageVH(view)
+//                view.vAddImage.setOnClickListener(onClickListener)
+//                view.vAddImage.tag = viewHolder
+//                return viewHolder
+//            }
+//        }
+//    }
 
     companion object {
         private const val MAX_PHOTOS_COUNT = 5
@@ -173,11 +173,11 @@ sealed class AttachedImage(val typeId: Int) : Serializable {
     }
 
     class LocalImage(val imageUri: Uri) : AttachedImage(TYPE_LOCAL)
-    object AddImage : AttachedImage(TYPE_ADD)
+//    object AddImage : AttachedImage(TYPE_ADD)
 
     companion object {
         const val TYPE_UPLOADED = 1
         const val TYPE_LOCAL = 2
-        const val TYPE_ADD = 3
+//        const val TYPE_ADD = 3
     }
 }
