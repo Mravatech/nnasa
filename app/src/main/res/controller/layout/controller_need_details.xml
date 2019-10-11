@@ -312,6 +312,85 @@
             android:layout_marginTop="@dimen/spacing_vertical"
             android:background="@color/divider" />
 
+        <LinearLayout
+            android:id="@+id/odour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/myText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_done_accent_24dp"
+                android:text="@string/fufiled"
+                android:gravity="center"
+                android:textSize="21sp"
+                android:textColor="#00ACCD"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/odour1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/spacing_horizontal"
+                android:paddingStart="@dimen/spacing_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/longText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/you_can_keep_posting_comments_only_to_this_post"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="#000000"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/odour4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/longText4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/you_can_keep_posting_comments_only_to_this_post"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="#000000"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/vfufile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
+            android:background="@color/divider" />
+
         <com.mnassa.widget.MnassaTextView
             android:id="@+id/tvExpiration"
             android:layout_width="wrap_content"
@@ -323,7 +402,10 @@
             app:drawableStartCompat="@drawable/ic_expiration_active"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal"
+            android:textAlignment="center"
             tools:text="Expiration" />
+
+
 
         <View
             android:id="@+id/vExpirationSeparator"

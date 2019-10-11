@@ -189,6 +189,8 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             btnFufifl.bindText(post.statusOfExpiration, post.timeOfExpiration, true)
             btnFufiflAct.bindText(post.statusOfExpiration, post.timeOfExpiration, false)
 
+            myText.bindStatus(post.statusOfExpiration, post.timeOfExpiration, false)
+
             btnComment.text = fromDictionary(R.string.need_comment_button)
             ivComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
 
