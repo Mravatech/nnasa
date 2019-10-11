@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -141,6 +142,38 @@ fun TextView.bindExpireType(statusOfExpiration: ExpirationType?, timeOfExpiratio
     setTextColor(Color.BLACK)
 
     text = fromDictionary(key + statusOfExpiration.text)
+}
+
+fun Button.bindText(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?, status: Boolean) {
+    val key: String = resources.getString(R.string.post_expires_text_key)
+
+    if (statusOfExpiration is ExpirationType.FULFILLED && status) {
+        timeOfExpiration?.let {
+            text =  fromDictionary(R.string.fufiled)
+            visibility = View.VISIBLE
+//            val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_done_accent_24dp, null)
+//            setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+        }
+        return
+    }
+
+    if (statusOfExpiration is ExpirationType.ACTIVE && !status) {
+        timeOfExpiration?.let {
+            text =  fromDictionary(R.string.fufiled_ques)
+            visibility = View.VISIBLE
+        }
+        return
+    }
+    val img: Drawable? = when (statusOfExpiration) {
+        is ExpirationType.EXPIRED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_expired, null)
+        is ExpirationType.CLOSED -> null
+        is ExpirationType.FULFILLED -> ResourcesCompat.getDrawable(resources, R.drawable.ic_done_black_24dp, null)
+        else -> null
+    }
+
+    setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+    setTextColor(getResources().getColor(R.color.full_light_blue))
+
 }
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0

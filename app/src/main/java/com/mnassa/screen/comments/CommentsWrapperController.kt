@@ -260,7 +260,8 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
     suspend fun bindCanRecommend(canRecommend: Boolean) {
         //
         initializedContainer.await()
-        getCommentsContainer().ivCommentRecommend?.isGone = !canRecommend
+        getCommentsContainer().ivCommentRecommend?.isGone = true
+//        getCommentsContainer().ivCommentRecommend?.isGone = !canRecommend
     }
 
     private fun inflateHeader(parent: ViewGroup): View {
@@ -430,7 +431,7 @@ class CommentsWrapperController(args: Bundle) : MnassaControllerImpl<CommentsWra
         }
 
         with(view ?: return) {
-            btnCommentPost.text = text
+//            btnCommentPost.text = text
             btnCommentPost.isEnabled = canPostComment
 
             ivCommentAttach.isGone = attachmentsAdapter.dataStorage.size >= MAX_ATTACHED_IMAGES_COUNT

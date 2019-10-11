@@ -8,10 +8,7 @@ import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.ShortAccountModel
-import com.mnassa.domain.model.TagModel
-import com.mnassa.domain.model.formattedName
+import com.mnassa.domain.model.*
 import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PopupMenuHelper
@@ -181,17 +178,21 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             //views count
             tvViewsCount.text = fromDictionary(R.string.need_views_count).format(post.counters.views)
             ivRepost.setOnClickListener { openSharingOptionsScreen() }
-            tvRepostsCount.text = post.counters.reposts.toString()
+            ivRepost.text = fromDictionary(R.string.need_repost_count).format(post.counters.reposts)
+            ivComment.text = fromDictionary(R.string.need_comments_count_new).format(post.counters.comments)
             ivRepost.isInvisible = !post.canBeShared
-            tvRepostsCount.visibility = ivRepost.visibility
+//            tvRepostsCount.visibility = ivRepost.visibility
 
             //expiration
             tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)
 
-            btnComment.text = fromDictionary(R.string.need_comment_button)
-            btnComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
+            btnFufifl.bindText(post.statusOfExpiration, post.timeOfExpiration, true)
+            btnFufiflAct.bindText(post.statusOfExpiration, post.timeOfExpiration, false)
 
-            val recommendWithCount = StringBuilder(fromDictionary(R.string.need_recommend_button))
+            btnComment.text = fromDictionary(R.string.need_comment_button)
+            ivComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
+
+            val recommendWithCount = StringBuilder(fromDictionary(R.string.need_fine_someone_button))
             if (post.autoSuggest.total > 0) {
                 recommendWithCount.append(" (")
                 recommendWithCount.append(post.autoSuggest.total.toString())
@@ -201,7 +202,19 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             btnRecommend.text = recommendWithCount
             btnRecommend.setOnClickListener { openRecommendScreen(post, commentsWrapper.accountsToRecommend.map { it.id }) }
 
+            btnFufiflAct.setOnClickListener {
+                viewModel.changeStatus(ExpirationType.FULFILLED)
+                btnFufiflAct.visibility =   View.GONE
+            }
+
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
+
+            //show button
+            ivChat.visibility = if (!post.isMyPost()) View.VISIBLE else View.GONE
+            btnFufifl.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
+            btnFufiflAct.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
+
+
 
             val parentController = parentController
             if (parentController is CommentsWrapperController) {
@@ -267,14 +280,14 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
     protected open suspend fun makePostActionsGone() {
         getViewSuspend().let {
-            it.llOtherPersonPostActions.isGone = true
+//            it.llOtherPersonPostActions.isGone = true
             it.vOtherPersonPostActionsSeparator.isGone = true
         }
     }
 
     protected open suspend fun makePostActionsVisible() {
         getViewSuspend().let {
-            it.llOtherPersonPostActions.visibility = View.VISIBLE
+//            it.llOtherPersonPostActions.visibility = View.VISIBLE
             it.vOtherPersonPostActionsSeparator.visibility = View.VISIBLE
         }
     }

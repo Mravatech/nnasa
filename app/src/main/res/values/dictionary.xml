@@ -147,13 +147,18 @@
     <!-- need details -->
     <string name="need_details_title">_android_need_details_title</string>
     <string name="need_views_count">_post_details_numOfViews</string>
+    <string name="need_repost_count">_post_details_numOfReposts</string>
     <string name="need_comment_button">_post_details_comment</string>
     <string name="need_recommend_button">_post_details_recommend</string>
+    <string name="need_fine_someone_button">_post_details_find_someone</string>
     <string name="need_action_repost">_post_details_alert_repost</string>
     <string name="need_action_report">_post_details_alert_report</string>
     <string name="need_action_edit">_post_details_alert_edit_post</string>
     <string name="need_action_delete">_android_create_post_delete_photo</string>
     <string name="need_comments_count">_post_details_comments_header</string>
+    <string name="need_comments_count_new">_post_details_numOfComment</string>
+    <string name="fufiled">Fulfilled</string>
+    <string name="fufiled_ques">Fulfilled?</string>
 
     <!-- sharing options -->
     <string name="sharing_options_title">_privacy_connections_nav_title</string>

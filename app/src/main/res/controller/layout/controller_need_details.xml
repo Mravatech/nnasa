@@ -41,7 +41,7 @@
                 android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_toEndOf="@id/ivAvatar"
-                android:layout_toStartOf="@id/ivChat"
+                android:layout_toStartOf="@id/ivChatold"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
@@ -62,7 +62,7 @@
             </LinearLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/ivChat"
+                android:id="@+id/ivChatold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -71,6 +71,7 @@
                 android:focusable="true"
                 android:foreground="?selectableItemBackgroundBorderless"
                 app:fab_size="mini"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_chat" />
 
         </RelativeLayout>
@@ -107,6 +108,7 @@
 
         <include layout="@layout/recommended_profile" />
 
+
         <Button
             android:id="@+id/btnConnectNow"
             style="@style/MnassaButton"
@@ -119,6 +121,7 @@
             android:visibility="gone"
             tools:text="Connect now"
             tools:visibility="visible" />
+
 
         <FrameLayout
             android:id="@+id/flImages"
@@ -218,6 +221,95 @@
             android:layout_height="@dimen/divider_width"
             android:layout_marginBottom="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/spacing_vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:id="@+id/llOtherPersonPostActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/spacing_horizontal"
+            android:paddingStart="@dimen/spacing_horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            tools:visibility="visible">
+
+            <Button
+                android:id="@+id/btnRecommend"
+                android:drawablePadding="20dp"
+                style="@style/MnassaButton"
+                android:paddingRight="1dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/round_button"
+                tools:text="Recommend" />
+
+
+
+
+            <androidx.legacy.widget.Space
+                android:id="@+id/spacePostAction"
+                android:layout_width="@dimen/spacing_horizontal"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/ivChat"
+                style="@style/MnassaButton"
+                android:layout_width="0dp"
+                android:textColor="#ffffff"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button_colored"
+                android:layout_weight="1"
+                android:text="@string/i_offer" />
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/btnComment"
+                style="@style/MnassaButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button_colored"
+                android:layout_weight="1"
+                tools:text="Comment" />
+            <Button
+                android:id="@+id/btnFufifl"
+                android:drawablePadding="20dp"
+                style="@style/MnassaButton"
+                android:paddingRight="1dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/round_button"
+                android:visibility="gone"
+                android:textColor="#00ACCD"
+                android:text="@string/fulfilled" />
+
+
+            <Button
+                android:id="@+id/btnFufiflAct"
+                android:drawablePadding="20dp"
+                style="@style/MnassaButton"
+                android:paddingRight="1dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/round_button"
+                android:visibility="gone"
+                android:textColor="#00ACCD"
+                android:text="@string/fulfilled" />
+        </LinearLayout>
+
+
+
+        <View
+            android:id="@+id/vActionsSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:layout_marginBottom="@dimen/spacing_horizontal"
+            android:layout_marginTop="@dimen/spacing_vertical"
             android:background="@color/divider" />
 
         <com.mnassa.widget.MnassaTextView
@@ -245,6 +337,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:paddingEnd="@dimen/spacing_horizontal"
             android:paddingStart="@dimen/spacing_horizontal">
 
@@ -256,7 +350,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:drawablePadding="@dimen/drawable_padding"
-                app:drawableStartCompat="@drawable/ic_eye_18dp"
+                app:drawableTopCompat="@drawable/ic_eye_18dp"
                 android:focusable="true"
                 tools:text="Views " />
 
@@ -265,13 +359,44 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.mnassa.widget.MnassaTextView
+                android:id="@+id/ivComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:drawablePadding="@dimen/drawable_padding"
+                app:drawableTopCompat="@drawable/ic_comment"
+                android:focusable="true"
+                tools:text="commetn " />
+
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.mnassa.widget.MnassaTextView
                 android:id="@+id/ivRepost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/ic_repost" />
+                android:clickable="true"
+                android:drawablePadding="@dimen/drawable_padding"
+                app:drawableTopCompat="@drawable/repost_img"
+                android:focusable="true"
+                tools:text="repost " />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivRepostold"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/repost_img" />
 
             <TextView
                 android:id="@+id/tvRepostsCount"
@@ -289,39 +414,41 @@
             android:layout_height="@dimen/divider_width"
             android:layout_marginBottom="@dimen/spacing_horizontal"
             android:layout_marginTop="@dimen/spacing_vertical"
-            android:background="@color/divider" />
+            android:background="@color/divider"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
 
-        <LinearLayout
-            android:id="@+id/llOtherPersonPostActions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingEnd="@dimen/spacing_horizontal"
-            android:paddingStart="@dimen/spacing_horizontal"
-            android:visibility="gone"
-            tools:visibility="visible">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/llOtherPersonPostActions"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingEnd="@dimen/spacing_horizontal"-->
+<!--            android:paddingStart="@dimen/spacing_horizontal"-->
+<!--            android:visibility="gone"-->
+<!--            tools:visibility="visible">-->
 
-            <Button
-                android:id="@+id/btnComment"
-                style="@style/MnassaButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="Comment" />
+<!--            <Button-->
+<!--                android:id="@+id/btnComment"-->
+<!--                style="@style/MnassaButton"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                tools:text="Comment" />-->
 
-            <androidx.legacy.widget.Space
-                android:id="@+id/spacePostAction"
-                android:layout_width="@dimen/spacing_horizontal"
-                android:layout_height="wrap_content" />
+<!--            <androidx.legacy.widget.Space-->
+<!--                android:id="@+id/spacePostAction"-->
+<!--                android:layout_width="@dimen/spacing_horizontal"-->
+<!--                android:layout_height="wrap_content" />-->
 
-            <Button
-                android:id="@+id/btnRecommend"
-                style="@style/MnassaButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="Comment" />
-        </LinearLayout>
+<!--            <Button-->
+<!--                android:id="@+id/btnRecommend"-->
+<!--                style="@style/MnassaButton"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                tools:text="Comment" />-->
+<!--        </LinearLayout>-->
 
     </LinearLayout>
 
@@ -336,6 +463,7 @@
         android:layout_marginEnd="@dimen/spacing_horizontal"
         android:layout_marginStart="@dimen/spacing_horizontal"
         android:layout_marginTop="@dimen/spacing_vertical"
+        android:visibility="gone"
         tools:text="Comments" />
 
 </LinearLayout>

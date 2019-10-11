@@ -956,6 +956,8 @@
     <string name="_post_details_numOfViews_ENG">null</string>
     <string name="_post_details_numOfViews_AR">%i مشاهدات</string>
     <string name="_post_details_numOfViews_INFO">%i Views</string>
+    <string name="_post_details_numOfRepost_INFO">%i Repost</string>
+    <string name="_post_details_numOfComment_INFO">%i Comments</string>
     <string name="_post_details_price_ENG">null</string>
     <string name="_post_details_price_AR">null</string>
     <string name="_post_details_price_INFO">%.2f Points</string>
@@ -965,6 +967,7 @@
     <string name="_post_details_recommend_ENG">null</string>
     <string name="_post_details_recommend_AR">ترشيح</string>
     <string name="_post_details_recommend_INFO">Recommend</string>
+    <string name="_post_details_find_someone_INFO">Find Someone</string>
     <string name="_post_details_recommendations_ENG">null</string>
     <string name="_post_details_recommendations_AR">ترشيحات</string>
     <string name="_post_details_recommendations_INFO">Recommendations</string>

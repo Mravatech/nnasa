@@ -141,5 +141,6 @@
     <dimen name="image_container_height">196dp</dimen>
     <dimen name="bottom_view">28dp</dimen>
     <color name="light_blue_color">@color/background_main</color>
+    <color name="full_light_blue">#00ACCD</color>
 
 </resources>
