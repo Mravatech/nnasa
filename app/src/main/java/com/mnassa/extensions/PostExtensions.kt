@@ -10,6 +10,7 @@ import android.text.style.StyleSpan
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -149,7 +150,7 @@ fun Button.bindText(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?
 
     if (statusOfExpiration is ExpirationType.FULFILLED && status) {
         timeOfExpiration?.let {
-            text =  fromDictionary(R.string.fufiled)
+            text = fromDictionary(R.string.fufiled)
             visibility = View.VISIBLE
 //            val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_done_accent_24dp, null)
 //            setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
@@ -159,7 +160,7 @@ fun Button.bindText(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?
 
     if (statusOfExpiration is ExpirationType.ACTIVE && !status) {
         timeOfExpiration?.let {
-            text =  fromDictionary(R.string.fufiled_ques)
+            text = fromDictionary(R.string.fufiled_ques)
             visibility = View.VISIBLE
         }
         return
@@ -176,14 +177,49 @@ fun Button.bindText(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?
 
 }
 
+fun LinearLayout.bindStat(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?, status: Boolean = true) {
 
-fun TextView.bindStatus(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?) {
+    if (statusOfExpiration is ExpirationType.FULFILLED && status) {
+        timeOfExpiration?.let {
+            visibility = View.VISIBLE
+        }
+        return
+    }
+
+    if (statusOfExpiration is ExpirationType.EXPIRED && status) {
+        timeOfExpiration?.let {
+            visibility = View.VISIBLE
+        }
+        return
+    }
+
+
+    if (statusOfExpiration is ExpirationType.FULFILLED || statusOfExpiration is ExpirationType.EXPIRED && !status) {
+        timeOfExpiration?.let {
+            visibility = View.GONE
+        }
+        return
+    }
+
+}
+
+
+fun TextView.bindStatus(statusOfExpiration: ExpirationType?, timeOfExpiration: Date?, type: String) {
     val key: String = resources.getString(R.string.post_expires_text_key)
 
     if (statusOfExpiration is ExpirationType.FULFILLED) {
         timeOfExpiration?.let {
-            text =  fromDictionary(R.string.fufiled)
-            visibility = View.VISIBLE
+            if (type === "heading") {
+                text = fromDictionary(R.string.fufiled)
+                visibility = View.VISIBLE
+            }
+
+            if (type === "body") {
+                text = fromDictionary(R.string.you_can_keep_posting_comments_only_to_this_post)
+                visibility = View.VISIBLE
+            }
+
+
 //            val img = ResourcesCompat.getDrawable(resources, R.drawable.ic_done_accent_24dp, null)
 //            setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
         }
@@ -192,8 +228,15 @@ fun TextView.bindStatus(statusOfExpiration: ExpirationType?, timeOfExpiration: D
 
     if (statusOfExpiration is ExpirationType.EXPIRED) {
         timeOfExpiration?.let {
-            text =  fromDictionary(R.string.expire)
-            visibility = View.VISIBLE
+            if (type === "heading") {
+                text = fromDictionary(R.string.expire)
+                visibility = View.VISIBLE
+            }
+
+            if (type === "body") {
+                text = fromDictionary(R.string.you_can_keep_posting_comments_only_to_this_post)
+                visibility = View.VISIBLE
+            }
         }
         return
     }
@@ -218,9 +261,10 @@ val PostModel.canBeShared: Boolean
             this !is OfferPostModel &&
             (if (this is RecommendedProfilePostModel) this.recommendedProfile != null else true)
 
-val PostModel.canRecommend: Boolean get() =
-    statusOfExpiration == null ||
-            statusOfExpiration is ExpirationType.ACTIVE
+val PostModel.canRecommend: Boolean
+    get() =
+        statusOfExpiration == null ||
+                statusOfExpiration is ExpirationType.ACTIVE
 
 val PostModel.canBeEdited: Boolean get() = isMyPost() && (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE)
 

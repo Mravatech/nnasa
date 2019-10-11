@@ -186,10 +186,11 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             //expiration
             tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)
 
-            btnFufifl.bindText(post.statusOfExpiration, post.timeOfExpiration, true)
             btnFufiflAct.bindText(post.statusOfExpiration, post.timeOfExpiration, false)
 
-            myText.bindStatus(post.statusOfExpiration, post.timeOfExpiration, false)
+            myText.bindStatus(post.statusOfExpiration, post.timeOfExpiration, "heading")
+
+            longText.bindStatus(post.statusOfExpiration, post.timeOfExpiration, "body")
 
             btnComment.text = fromDictionary(R.string.need_comment_button)
             ivComment.setOnClickListener { commentsWrapper.openKeyboardOnComment() }
@@ -213,8 +214,15 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
             //show button
             ivChat.visibility = if (!post.isMyPost()) View.VISIBLE else View.GONE
-            btnFufifl.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
             btnFufiflAct.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
+            odour.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
+            odour1.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
+
+
+
+            llOtherPersonPostActions.bindStat(post.statusOfExpiration, post.timeOfExpiration, false)
+
+
 
 
 
