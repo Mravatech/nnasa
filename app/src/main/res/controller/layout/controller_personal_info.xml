@@ -24,6 +24,8 @@
 
             <include layout="@layout/sub_profile_avatar" />
 
+
+
             <include layout="@layout/sub_personal_info" />
 
             <TextView

@@ -1,9 +1,11 @@
 package com.mnassa.screen.profile.edit.personal
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.domain.model.Gender
@@ -32,6 +34,10 @@ import java.util.*
 
 class EditPersonalProfileController(data: Bundle) : BaseEditableProfileController<EditPersonalProfileViewModel>(data) {
 
+    val profileSharedPrefs = App.context.getSharedPreferences("profile-shared-pref", Context.MODE_PRIVATE).edit()
+
+
+
     override val layoutId = R.layout.controller_edit_personal_profile
     override val viewModel: EditPersonalProfileViewModel by instance()
     private val playServiceHelper: PlayServiceHelper by instance()
@@ -49,6 +55,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
+
+
         playServiceHelper.googleApiClient.connect()
         actvPersonCityUserChanged = false
         personSelectedPlaceId = accountModel.location?.placeId
@@ -87,6 +95,11 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             chipPersonOffers.setTags(offers)
             etPersonFirstName.setText(accountModel.personalInfo?.firstName)
             etPersonSecondName.setText(accountModel.personalInfo?.lastName)
+
+            profileSharedPrefs.putString("userFirstName", accountModel.personalInfo?.firstName)
+            profileSharedPrefs.putString("userSecondName", accountModel.personalInfo?.lastName)
+            profileSharedPrefs.commit()
+
             etPersonUserName.setText(accountModel.userName)
             etPersonUserName.isEnabled = false
             setToolbar(toolbarEditProfile, this)
