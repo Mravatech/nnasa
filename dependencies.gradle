@@ -10,7 +10,7 @@ deps.data = project(':data')
 deps.domain = project(':domain')
 
 //============================================== BUILD =============================================
-versions.androidGradlePluginVersion = '3.4.1'
+versions.androidGradlePluginVersion = '3.5.1'
 deps.androidGradlePlugin = "com.android.tools.build:gradle:$versions.androidGradlePluginVersion"
 
 def build_versions = [:]

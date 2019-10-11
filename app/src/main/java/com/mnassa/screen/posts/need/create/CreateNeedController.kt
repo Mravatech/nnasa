@@ -1,11 +1,20 @@
 package com.mnassa.screen.posts.need.create
 
 import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.method.TextKeyListener.clear
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
+import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -22,10 +31,13 @@ import com.mnassa.extensions.startCropActivityForResult
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.main.MainController
+import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.GlobalScope
@@ -56,13 +68,22 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private var imageToReplace: AttachedImage? = null
     private var post: PostModel? = null
 
+    val prefs = context.getSharedPreferences("shared-pref", MODE_PRIVATE)
+    val photoUri = prefs.getString("photoUri", "")
+
+
+
+
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
 
-        attachedImagesAdapter.onAddImageClickListener = {
-            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
-        }
+
+
+//        attachedImagesAdapter.onAddImageClickListener = {
+//            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+//        }
         attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
             attachedImagesAdapter.dataStorage.remove(item)
         }
@@ -72,6 +93,33 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         }
 
         with(view) {
+
+            Log.d("photoUri", photoUri)
+
+            if (photoUri == ""){
+                user_pics.setImageDrawable(resources.getDrawable(R.drawable.user_pics_dummy))
+            }else{
+                user_pics.setImageURI(Uri.parse(photoUri))
+
+            }
+
+            share_to_btn.setOnClickListener(::openShareOptionsScreen)
+
+            etNeed.setOnTouchListener(View.OnTouchListener { v, event ->
+                val DRAWABLE_RIGHT = 2
+                if (event.action == MotionEvent.ACTION_UP) {
+                    if (event.rawX >= etNeed.right - etNeed.compoundDrawables.get(
+                                    DRAWABLE_RIGHT
+                            ).bounds.width()
+                    ) {
+                        dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+
+                        return@OnTouchListener true
+                    }
+                }
+                false
+            })
+
             toolbar.withActionButton(fromDictionary(R.string.need_create_action_button)) {
                 view.toolbar.actionButtonClickable = false
                 launchCoroutineUI {
@@ -102,11 +150,29 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             }
             tilPlace.hint = fromDictionary(R.string.need_create_city_hint)
 
+            tvExtraDetails.setOnClickListener {
+
+                if (more_details_linearLayout.visibility == View.GONE){
+                    more_details_linearLayout.visibility = View.VISIBLE
+                    tvExtraDetails.text = "View Less Details"
+                }else{
+                    more_details_linearLayout.visibility = View.GONE
+                    tvExtraDetails.text = "View More Details"
+                }
+
+            }
             tvExtraDetails.text = fromDictionary(R.string.need_create_extra)
             tilPrice.hint = fromDictionary(R.string.need_create_price_hint)
             launchCoroutineUI {
                 postExpiresIn.dayTo = viewModel.getDefaultExpirationDays().toString()
             }
+            val mGridLayoutInflater = object : GridLayoutManager(context,2){
+                override fun isLayoutRTL(): Boolean {
+                    return true
+                }
+            }
+            rvImages.layoutManager = mGridLayoutInflater
+            rvImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
             rvImages.adapter = attachedImagesAdapter
         }
 

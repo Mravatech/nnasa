@@ -238,6 +238,15 @@ dependencies {
 
     //crashlytics
     implementation (deps.other.crashlytics)
+
+    //Dependency to handle colors
+    implementation 'com.oluwatobi.android:peppercolor:2.1'
+
+    //Dependency for circular image
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
+
+    //Dependency for Material Design
+//    implementation 'com.google.android.material:material:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

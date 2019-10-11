@@ -3,6 +3,7 @@ package com.mnassa.screen.profile.edit
 import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
@@ -11,7 +12,9 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat
+import com.google.android.exoplayer2.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -36,6 +39,10 @@ import kotlin.coroutines.resume
  */
 abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(data: Bundle) : MnassaControllerImpl<VM>(data) {
 
+    val mSharedPrefName = "shared-pref"
+
+    val editor = App.context.getSharedPreferences(mSharedPrefName, Context.MODE_PRIVATE).edit()
+
     protected val accountModel: ProfileAccountModel by lazy {
         args.getSerializable(EXTRA_PROFILE) as ProfileAccountModel
     }
@@ -55,6 +62,9 @@ abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(
                             val uri: Uri? = it.data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
                             uri?.let {
                                 photoResult(it, view)
+                                editor.putString("photoUri", it.toString())
+                                editor.commit()
+                                Log.d("photoUri", it.toString())
                             } ?: run {
                                 Timber.i("uri is null")
                             }
