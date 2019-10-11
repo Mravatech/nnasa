@@ -61,11 +61,11 @@ fun ImageView.avatarSquare(avatarUrl: Uri?) {
     val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_ava)
     val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
-//    GlideApp.with(this)
-//            .load(avatarUrl ?: "")
-//            .apply(requestOptions)
-//            .apply(RequestOptions.centerCropTransform())
-//            .into(this)
+    GlideApp.with(this)
+            .load(avatarUrl ?: "")
+            .apply(requestOptions)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
 }
 
 fun ImageView.image(url: String?, crop: Boolean = true) {
