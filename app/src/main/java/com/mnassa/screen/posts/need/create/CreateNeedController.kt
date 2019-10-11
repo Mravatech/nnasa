@@ -1,10 +1,12 @@
 package com.mnassa.screen.posts.need.create
 
 import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.TextKeyListener.clear
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -12,6 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
+import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
@@ -65,6 +68,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private var imageToReplace: AttachedImage? = null
     private var post: PostModel? = null
 
+    val prefs = context.getSharedPreferences("shared-pref", MODE_PRIVATE)
+    val photoUri = prefs.getString("photoUri", "")
+
+
+
 
 
     override fun onViewCreated(view: View) {
@@ -86,10 +94,16 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
 
+            Log.d("photoUri", photoUri)
 
-            val needCreateArrayListSpin = ArrayAdapter(context!!,android.R.layout.simple_spinner_dropdown_item, arrayOf("All", "Some"))
+            if (photoUri == ""){
+                user_pics.setImageDrawable(resources.getDrawable(R.drawable.user_pics_dummy))
+            }else{
+                user_pics.setImageURI(Uri.parse(photoUri))
 
-            need_create_spinner.adapter = needCreateArrayListSpin
+            }
+
+            share_to_btn.setOnClickListener(::openShareOptionsScreen)
 
             etNeed.setOnTouchListener(View.OnTouchListener { v, event ->
                 val DRAWABLE_RIGHT = 2

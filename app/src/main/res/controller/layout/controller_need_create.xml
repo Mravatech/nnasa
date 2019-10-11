@@ -37,11 +37,12 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_pics"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="-10dp"
                     android:layout_alignParentStart="true"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:src="@drawable/user_pics_dummy" />
 
                 <TextView
@@ -49,15 +50,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:layout_toEndOf="@id/user_pics"
                     android:text="Heba Attar"
                     android:textColor="#313131" />
 
-                <RelativeLayout
+
+                <Button
+                    android:id="@+id/share_to_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/share_to_btn_bg"
+                    android:foreground="@drawable/white_ripple_effect"
+                    android:text="Share TO"
+                    android:textColor="@android:color/white" />
                     android:layout_marginRight="7dp"
                     android:background="@drawable/spinner_border"
                     android:padding="2dp">
@@ -90,9 +98,8 @@
                         app:srcCompat="@drawable/ic_arrow_down" />
 
 
-                </RelativeLayout>
-
             </RelativeLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilNeed"
@@ -128,7 +135,6 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:visibility="invisible"
                 style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,105 +146,104 @@
                 android:text="Suggested Tags"
                 android:textSize="14sp" />
 
-            <HorizontalScrollView
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
+            <!--            <HorizontalScrollView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:scrollbars="none">-->
 
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal" >
+            <!--                <LinearLayout-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:orientation="horizontal">-->
 
-                    <TextView
-                        style="@style/MnassaTextTiny"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="@dimen/spacing_vertical"
-                        android:layout_marginEnd="@dimen/spacing_horizontal"
-                        android:background="@drawable/tag_bg"
-                        android:foreground="@drawable/blue_ripple_effect"
-                        android:paddingStart="30dp"
-                        android:paddingTop="10dp"
-                        android:paddingEnd="30dp"
-                        android:paddingBottom="10dp"
-                        android:text="Moving"
-                        android:textSize="14sp" />
+            <!--                    <TextView-->
+            <!--                        style="@style/MnassaTextTiny"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_marginStart="10dp"-->
+            <!--                        android:layout_marginTop="@dimen/spacing_vertical"-->
+            <!--                        android:layout_marginEnd="@dimen/spacing_horizontal"-->
+            <!--                        android:background="@drawable/tag_bg"-->
+            <!--                        android:foreground="@drawable/blue_ripple_effect"-->
+            <!--                        android:paddingStart="30dp"-->
+            <!--                        android:paddingTop="10dp"-->
+            <!--                        android:paddingEnd="30dp"-->
+            <!--                        android:paddingBottom="10dp"-->
+            <!--                        android:text="Moving"-->
+            <!--                        android:textSize="14sp" />-->
 
-                    <TextView
-                        style="@style/MnassaTextTiny"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="@dimen/spacing_vertical"
-                        android:layout_marginEnd="@dimen/spacing_horizontal"
-                        android:background="@drawable/tag_bg"
-                        android:foreground="@drawable/blue_ripple_effect"
-                        android:paddingStart="30dp"
-                        android:paddingTop="10dp"
-                        android:paddingEnd="30dp"
-                        android:paddingBottom="10dp"
-                        android:text="Logistics"
-                        android:textSize="14sp" />
+            <!--                    <TextView-->
+            <!--                        style="@style/MnassaTextTiny"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_marginStart="10dp"-->
+            <!--                        android:layout_marginTop="@dimen/spacing_vertical"-->
+            <!--                        android:layout_marginEnd="@dimen/spacing_horizontal"-->
+            <!--                        android:background="@drawable/tag_bg"-->
+            <!--                        android:foreground="@drawable/blue_ripple_effect"-->
+            <!--                        android:paddingStart="30dp"-->
+            <!--                        android:paddingTop="10dp"-->
+            <!--                        android:paddingEnd="30dp"-->
+            <!--                        android:paddingBottom="10dp"-->
+            <!--                        android:text="Logistics"-->
+            <!--                        android:textSize="14sp" />-->
 
-                    <TextView
-                        style="@style/MnassaTextTiny"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="@dimen/spacing_vertical"
-                        android:layout_marginEnd="@dimen/spacing_horizontal"
-                        android:background="@drawable/tag_bg"
-                        android:foreground="@drawable/blue_ripple_effect"
-                        android:maxLines="1"
-                        android:paddingStart="30dp"
-                        android:paddingTop="10dp"
-                        android:paddingEnd="30dp"
-                        android:paddingBottom="10dp"
-                        android:text="Moving Company"
-                        android:textSize="14sp" />
+            <!--                    <TextView-->
+            <!--                        style="@style/MnassaTextTiny"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_marginStart="5dp"-->
+            <!--                        android:layout_marginTop="@dimen/spacing_vertical"-->
+            <!--                        android:layout_marginEnd="@dimen/spacing_horizontal"-->
+            <!--                        android:background="@drawable/tag_bg"-->
+            <!--                        android:foreground="@drawable/blue_ripple_effect"-->
+            <!--                        android:maxLines="1"-->
+            <!--                        android:paddingStart="30dp"-->
+            <!--                        android:paddingTop="10dp"-->
+            <!--                        android:paddingEnd="30dp"-->
+            <!--                        android:paddingBottom="10dp"-->
+            <!--                        android:text="Moving Company"-->
+            <!--                        android:textSize="14sp" />-->
 
-                    <TextView
-                        style="@style/MnassaTextTiny"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="@dimen/spacing_vertical"
-                        android:layout_marginEnd="@dimen/spacing_horizontal"
-                        android:background="@drawable/tag_bg"
-                        android:foreground="@drawable/blue_ripple_effect"
-                        android:maxLines="1"
-                        android:paddingStart="30dp"
-                        android:paddingTop="10dp"
-                        android:paddingEnd="30dp"
-                        android:paddingBottom="10dp"
-                        android:text="Cleaning"
-                        android:textSize="14sp" />
+            <!--                    <TextView-->
+            <!--                        style="@style/MnassaTextTiny"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_marginStart="5dp"-->
+            <!--                        android:layout_marginTop="@dimen/spacing_vertical"-->
+            <!--                        android:layout_marginEnd="@dimen/spacing_horizontal"-->
+            <!--                        android:background="@drawable/tag_bg"-->
+            <!--                        android:foreground="@drawable/blue_ripple_effect"-->
+            <!--                        android:maxLines="1"-->
+            <!--                        android:paddingStart="30dp"-->
+            <!--                        android:paddingTop="10dp"-->
+            <!--                        android:paddingEnd="30dp"-->
+            <!--                        android:paddingBottom="10dp"-->
+            <!--                        android:text="Cleaning"-->
+            <!--                        android:textSize="14sp" />-->
 
-                    <TextView
-                        style="@style/MnassaTextTiny"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="@dimen/spacing_vertical"
-                        android:layout_marginEnd="@dimen/spacing_horizontal"
-                        android:background="@drawable/tag_bg"
-                        android:foreground="@drawable/blue_ripple_effect"
-                        android:maxLines="1"
-                        android:paddingStart="30dp"
-                        android:paddingTop="10dp"
-                        android:paddingEnd="30dp"
-                        android:paddingBottom="10dp"
-                        android:text="Tech"
-                        android:textSize="14sp" />
+            <!--                    <TextView-->
+            <!--                        style="@style/MnassaTextTiny"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_marginStart="5dp"-->
+            <!--                        android:layout_marginTop="@dimen/spacing_vertical"-->
+            <!--                        android:layout_marginEnd="@dimen/spacing_horizontal"-->
+            <!--                        android:background="@drawable/tag_bg"-->
+            <!--                        android:foreground="@drawable/blue_ripple_effect"-->
+            <!--                        android:maxLines="1"-->
+            <!--                        android:paddingStart="30dp"-->
+            <!--                        android:paddingTop="10dp"-->
+            <!--                        android:paddingEnd="30dp"-->
+            <!--                        android:paddingBottom="10dp"-->
+            <!--                        android:text="Tech"-->
+            <!--                        android:textSize="14sp" />-->
 
 
-                </LinearLayout>
+            <!--                </LinearLayout>-->
 
-            </HorizontalScrollView>
+            <!--            </HorizontalScrollView>-->
 
             <TextView
                 android:id="@+id/tvExtraDetails"
