@@ -35,6 +35,8 @@ import com.mnassa.screen.main.MainController
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.posts.need.sharing.format
+import com.mnassa.screen.profile.edit.BaseEditableProfileController
+import com.mnassa.screen.profile.edit.personal.EditPersonalProfileViewModel
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
@@ -71,6 +73,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     val prefs = context.getSharedPreferences("shared-pref", MODE_PRIVATE)
     val photoUri = prefs.getString("photoUri", "")
 
+    val userPrefs = context.getSharedPreferences("profile-shared-pref", MODE_PRIVATE)
+    val firstNamePrefs = userPrefs.getString("userFirstName", "")
+    val secondNamePrefs = userPrefs.getString("userSecondName", "")
+
 
 
 
@@ -100,6 +106,13 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
                 user_pics.setImageDrawable(resources.getDrawable(R.drawable.user_pics_dummy))
             }else{
                 user_pics.setImageURI(Uri.parse(photoUri))
+
+            }
+
+            if (firstNamePrefs == "" && secondNamePrefs == ""){
+                user_name_txt.text = "Your name"
+            }else{
+                user_name_txt.text = "$firstNamePrefs $secondNamePrefs"
 
             }
 
