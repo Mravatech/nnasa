@@ -3,8 +3,13 @@ package com.mnassa.screen.profile.edit.personal
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.EditText
+import android.widget.Toast
 import com.mnassa.App
 import com.mnassa.R
 import com.mnassa.core.addons.launchCoroutineUI
@@ -20,10 +25,12 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_edit_personal_profile.view.*
 import kotlinx.android.synthetic.main.sub_personal_info.view.*
 import kotlinx.android.synthetic.main.sub_profile_avatar.view.*
+import kotlinx.android.synthetic.main.sub_reg_personal.*
 import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -34,7 +41,6 @@ import java.util.*
 
 class EditPersonalProfileController(data: Bundle) : BaseEditableProfileController<EditPersonalProfileViewModel>(data) {
 
-    val profileSharedPrefs = App.context.getSharedPreferences("profile-shared-pref", Context.MODE_PRIVATE).edit()
 
 
 
@@ -48,6 +54,9 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             onPersonChanged()
         }
 
+    private lateinit var firstName: String
+    private lateinit var secondName: String
+
     private val actvPersonCityError by lazy { fromDictionary(R.string.reg_person_address_error) }
 
     private var actvPersonCityUserChanged = false
@@ -55,6 +64,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         setupViews(view)
+
 
 
         playServiceHelper.googleApiClient.connect()
@@ -66,6 +76,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 close()
             }
         }
+
         with(view) {
             rInfoBtnFemale.isChecked = accountModel.gender == Gender.FEMALE
             rInfoBtnMale.isChecked = accountModel.gender == Gender.MALE
@@ -93,12 +104,9 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             etDateOfBirthday.setText(getDateByTimeMillis(accountModel.birthday?.time ?: 0L))
             chipPersonInterests.setTags(interests)
             chipPersonOffers.setTags(offers)
+
             etPersonFirstName.setText(accountModel.personalInfo?.firstName)
             etPersonSecondName.setText(accountModel.personalInfo?.lastName)
-
-            profileSharedPrefs.putString("userFirstName", accountModel.personalInfo?.firstName)
-            profileSharedPrefs.putString("userSecondName", accountModel.personalInfo?.lastName)
-            profileSharedPrefs.commit()
 
             etPersonUserName.setText(accountModel.userName)
             etPersonUserName.isEnabled = false
@@ -108,15 +116,34 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             ivUserAvatar.avatarSquare(accountModel.avatar)
             chipPersonOffers.onChipsChangeListener = { onPersonChanged() }
             chipPersonInterests.onChipsChangeListener = { onPersonChanged() }
-            etPersonFirstName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
-            etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
+            etPersonFirstName.addTextChangedListener(SimpleTextWatcher {
+                onPersonChanged()
+                firstName = etPersonFirstName.text.toString()
+                secondName = etPersonSecondName.text.toString()
+
+                getUserDetails()})
+            etPersonSecondName.addTextChangedListener(SimpleTextWatcher { onPersonChanged()
+                secondName = etPersonSecondName.text.toString()
+                firstName = etPersonFirstName.text.toString()
+                getUserDetails()
+            })
             etPersonUserName.addTextChangedListener(SimpleTextWatcher { onPersonChanged() })
             onPersonChanged()
         }
     }
 
+    private fun getUserDetails(){
+        val prefs = App.context.getSharedPreferences("name-shared-pref", Context.MODE_PRIVATE).edit()
+        prefs.putString("fname", firstName)
+        prefs.putString("sname", secondName)
+        prefs.apply()
+
+        Log.d("assert", "$firstName $secondName")
+    }
+
     private var onPersonChangedJob: Job? = null
     private fun onPersonChanged() {
+
         onPersonChangedJob?.cancel()
         onPersonChangedJob = launchCoroutineUI {
             getViewSuspend().toolbarEditProfile.actionButtonClickable = canCreatePersonInfo()
@@ -138,6 +165,8 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
             if (etPersonUserName.text.isNullOrBlank()) return false
             if (viewModel.isOffersMandatory() && chipPersonOffers.getTags().isEmpty()) return false
             if (viewModel.isInterestsMandatory() && chipPersonInterests.getTags().isEmpty()) return false
+
+
         }
         return isValid
     }
@@ -182,6 +211,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
                 interests = getEnteredInterests(),
                 offers = getEnteredOffers()
         )
+
     }
 
     override suspend fun getEnteredInterests(): List<TagModel> = getViewSuspend().chipPersonInterests.getTags()
@@ -189,6 +219,7 @@ class EditPersonalProfileController(data: Bundle) : BaseEditableProfileControlle
     override suspend fun getEnteredOffers(): List<TagModel> = getViewSuspend().chipPersonOffers.getTags()
 
     private fun setupViews(view: View) {
+
         with(view) {
             toolbarEditProfile.title = fromDictionary(R.string.edit_profile_title)
             tvEditProfileMoreInfo.text = fromDictionary(R.string.edit_profile_main_info)
