@@ -24,6 +24,7 @@ import com.mnassa.helper.DialogHelper
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaToolbar
+import kotlinx.android.synthetic.main.sub_reg_personal.view.*
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.kodein.di.generic.instance
@@ -141,6 +142,8 @@ abstract class BaseEditableProfileController<VM : BaseEditableProfileViewModel>(
     }
 
     private suspend fun preProcessProfile(view: View) {
+
+
         val interestsDiff = maxOf(interests.size - getEnteredInterests().size, 0)
         val offersDiff = maxOf(offers.size - getEnteredOffers().size, 0)
 

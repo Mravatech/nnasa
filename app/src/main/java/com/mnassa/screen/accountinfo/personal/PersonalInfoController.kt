@@ -49,7 +49,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
             setCalendarEditText(etDateOfBirthday)
             addPhoto(fabInfoAddPhoto)
             toolbar.withActionButton(fromDictionary(R.string.reg_info_next)) { launchCoroutineUI { processProfile(getViewSuspend())
-            getUserDetails()} }
+                getUserDetails()} }
         }
         launchCoroutineUI {
             viewModel.openScreenChannel.consumeEach {
@@ -68,6 +68,7 @@ class PersonalInfoController(data: Bundle) : BaseEditableProfileController<Perso
     }
 
     override suspend fun processProfile(view: View) {
+
 
 
         val email = view.etYourEmail.text.toString()

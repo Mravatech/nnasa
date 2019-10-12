@@ -5,15 +5,11 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
@@ -74,17 +70,16 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     val photoUri = prefs.getString("photoUri", "")
 
     val userPrefs = context.getSharedPreferences("profile-shared-pref", MODE_PRIVATE)
-    val firstNamePrefs = userPrefs.getString("userFirstName", "")
-    val secondNamePrefs = userPrefs.getString("userSecondName", "")
+    val userNamePrefs = userPrefs.getString("userName", "")
 
-
-
+    val userPrefs1 = context.getSharedPreferences("name-shared-pref", MODE_PRIVATE)
+    val userNamePrefs1 = userPrefs1.getString("fname", "")
+    val userNamePrefs2 = userPrefs1.getString("sname", "")
 
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
-
 
 
 //        attachedImagesAdapter.onAddImageClickListener = {
@@ -100,21 +95,25 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
 
-            Log.d("photoUri", photoUri)
+            Log.d("photoUriUri", photoUri)
 
-            if (photoUri == ""){
+            if (photoUri == "") {
                 user_pics.setImageDrawable(resources.getDrawable(R.drawable.user_pics_dummy))
-            }else{
+            } else {
                 user_pics.setImageURI(Uri.parse(photoUri))
 
             }
 
-            if (firstNamePrefs == "" && secondNamePrefs == ""){
+            if (userNamePrefs1 == "" && userNamePrefs2 == "" && userNamePrefs == "") {
                 user_name_txt.text = "Your name"
-            }else{
-                user_name_txt.text = "$firstNamePrefs $secondNamePrefs"
+
+            } else if (userNamePrefs1 == "" && userNamePrefs2 == "") {
+                user_name_txt.text = userNamePrefs
+            } else {
+                user_name_txt.text = "$userNamePrefs1 $userNamePrefs2"
 
             }
+
 
             share_to_btn.setOnClickListener(::openShareOptionsScreen)
 
@@ -165,10 +164,10 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             tvExtraDetails.setOnClickListener {
 
-                if (more_details_linearLayout.visibility == View.GONE){
+                if (more_details_linearLayout.visibility == View.GONE) {
                     more_details_linearLayout.visibility = View.VISIBLE
                     tvExtraDetails.text = "View Less Details"
-                }else{
+                } else {
                     more_details_linearLayout.visibility = View.GONE
                     tvExtraDetails.text = "View More Details"
                 }
@@ -179,7 +178,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             launchCoroutineUI {
                 postExpiresIn.dayTo = viewModel.getDefaultExpirationDays().toString()
             }
-            val mGridLayoutInflater = object : GridLayoutManager(context,2){
+            val mGridLayoutInflater = object : GridLayoutManager(context, 2) {
                 override fun isLayoutRTL(): Boolean {
                     return true
                 }
@@ -292,9 +291,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             actvPlace.setText(post.locationPlace?.placeName?.toString())
             etPrice.setText(if (post.price > 0.0) post.price.formatAsMoney().toString() else null)
             sharingOptions = PostPrivacyOptions(
-                post.privacyType,
-                post.privacyConnections,
-                post.groupIds)
+                    post.privacyType,
+                    post.privacyConnections,
+                    post.groupIds)
             launchCoroutineUI { tvShareOptions.text = sharingOptions.format() }
             launchCoroutineUI { chipTags.setTags(post.tags.mapNotNull { viewModel.getTag(it) }) }
         }
