@@ -15,18 +15,19 @@ import kotlinx.android.synthetic.main.item_chat_message_my.view.*
  * Date: 4/2/2018
  */
 
-class MyMessagesViewHolder(itemView: View, private val onLongClickListener: View.OnLongClickListener) : BasePaginationRVAdapter.BaseVH<ChatMessageModel>(itemView) {
+class MyMessagesViewHolder(itemView: View, private val onLongClickListener: View.OnLongClickListener, var needString: String) : BasePaginationRVAdapter.BaseVH<ChatMessageModel>(itemView) {
     override fun bind(item: ChatMessageModel) {
         itemView.tvMyMessage.text = item.text//todo add date to message
+        itemView.tvReplyMessage.text = needString
         itemView.tvMyMessage.setOnLongClickListener(onLongClickListener)
         itemView.tvMyMessage.tag = this@MyMessagesViewHolder
         itemView.tvMyMessageSent.text = item.createdAt.formatAsTime()
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup, onLongClickListener: View.OnLongClickListener): MyMessagesViewHolder {
+        fun newInstance(parent: ViewGroup, onLongClickListener: View.OnLongClickListener, needString: String): MyMessagesViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat_message_my, parent, false)
-            return MyMessagesViewHolder(view, onLongClickListener)
+            return MyMessagesViewHolder(view, onLongClickListener, needString)
         }
     }
 
