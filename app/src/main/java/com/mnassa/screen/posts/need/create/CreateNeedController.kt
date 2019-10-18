@@ -16,17 +16,12 @@ import com.mnassa.activity.CropActivity
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.interactor.PostPrivacyOptions
-import com.mnassa.domain.model.GroupModel
-import com.mnassa.domain.model.PostModel
-import com.mnassa.domain.model.PostPrivacyType
-import com.mnassa.domain.model.RawPostModel
-import com.mnassa.extensions.SimpleTextWatcher
-import com.mnassa.extensions.formatAsMoney
-import com.mnassa.extensions.lengthOrZero
-import com.mnassa.extensions.startCropActivityForResult
+import com.mnassa.domain.model.*
+import com.mnassa.extensions.*
 import com.mnassa.helper.DialogHelper
 import com.mnassa.helper.PlayServiceHelper
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.main.MainController
 import com.mnassa.screen.main.MainViewModel
 import com.mnassa.screen.posts.need.sharing.SharingOptionsController
@@ -51,6 +46,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     override val layoutId: Int = R.layout.controller_need_create
     private val postId: String? by lazy { args.getString(EXTRA_POST_ID, null) }
     private val groupIds by lazy { args.getStringArrayList(EXTRA_GROUP_ID) ?: emptyList<String>() }
+    private val accountModel by lazy {  ShortAccountModel }
+
     override val viewModel: CreateNeedViewModel by instance(arg = postId)
     override var sharingOptions = getSharingOptions(args)
         set(value) {
@@ -65,6 +62,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     private var placeId: String? = null
     private var imageToReplace: AttachedImage? = null
     private var post: PostModel? = null
+    private var uuserFullnamee = ShortAccountModel;
 
     val prefs = context.getSharedPreferences("shared-pref", MODE_PRIVATE)
     val photoUri = prefs.getString("photoUri", "")
@@ -75,11 +73,14 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
     val userPrefs1 = context.getSharedPreferences("name-shared-pref", MODE_PRIVATE)
     val userNamePrefs1 = userPrefs1.getString("fname", "")
     val userNamePrefs2 = userPrefs1.getString("sname", "")
+    lateinit var account: ShortAccountModel
 
 
-    override fun onViewCreated(view: View) {
+     fun onViewCreated(view: View, shortAccountModel: ShortAccountModel) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
+         account = shortAccountModel
+
 
 
 //        attachedImagesAdapter.onAddImageClickListener = {
@@ -96,6 +97,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         with(view) {
 
             Log.d("photoUriUri", photoUri)
+            Log.d("account", account.toString())
 
             if (photoUri == "") {
                 user_pics.setImageDrawable(resources.getDrawable(R.drawable.user_pics_dummy))
@@ -104,15 +106,17 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
             }
 
-            if (userNamePrefs1 == "" && userNamePrefs2 == "" && userNamePrefs == "") {
-                user_name_txt.text = "Your name"
+            user_name_txt.text =  UserFullName(account);
 
-            } else if (userNamePrefs1 == "" && userNamePrefs2 == "") {
-                user_name_txt.text = userNamePrefs
-            } else {
-                user_name_txt.text = "$userNamePrefs1 $userNamePrefs2"
-
-            }
+//            if (userNamePrefs1 == "" && userNamePrefs2 == "" && userNamePrefs == "") {
+//                user_name_txt .text = "Your name"
+//
+//            } else if (userNamePrefs1 == "" && userNamePrefs2 == "") {
+//                user_name_txt.text = userNamePrefs
+//            } else {
+//                user_name_txt.text = "$userNamePrefs1 $userNamePrefs2"
+//
+//            }
 
 
             share_to_btn.setOnClickListener(::openShareOptionsScreen)
@@ -277,6 +281,13 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
     private suspend fun selectImage(imageSource: CropActivity.ImageSource) {
         startCropActivityForResult(imageSource, REQUEST_CODE_CROP)
+    }
+
+    fun UserFullName(shortAccountModel: ShortAccountModel): String {
+        account = shortAccountModel
+
+
+        return account.formattedName;
     }
 
     private fun setData(post: PostModel, view: View) {

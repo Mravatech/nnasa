@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mnassa.R
@@ -42,6 +43,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
 
     override fun onCreated(savedInstanceState: Bundle?) {
         super.onCreated(savedInstanceState)
+
         savedInstanceState?.apply {
             adapter.restoreState(this)
         }

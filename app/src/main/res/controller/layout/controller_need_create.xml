@@ -52,7 +52,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@id/user_pics"
-                    android:text="Heba Attar"
+                    tools:text="Heba Attar"
                     android:textColor="#313131" />
 
 

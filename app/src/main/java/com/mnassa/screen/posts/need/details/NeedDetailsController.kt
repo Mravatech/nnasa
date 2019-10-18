@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts.need.details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
@@ -137,6 +138,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         this.post = post
 
         with(view) {
+            Log.d("postDebug", post.toString());
             //author block
             ivAvatar.avatarRound(post.author.avatar)
             tvUserName.text = post.author.formattedName
@@ -267,6 +269,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     override fun openRecommendScreen(recommendedAccountIds: List<String>, self: CommentsWrapperController) {
         post?.let { openRecommendScreen(it, recommendedAccountIds) }
     }
+
 
     private fun openRecommendScreen(post: PostModel, recommendedAccountIds: List<String>) {
         open(RecommendController.newInstance(
