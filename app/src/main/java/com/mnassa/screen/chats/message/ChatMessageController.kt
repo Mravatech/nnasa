@@ -37,7 +37,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
     private val postModel: PostModel? by lazy { args.getSerializable(CHAT_POST) as PostModel? }
     private val dialog: DialogHelper by instance()
 
-    private val adapter = MessagesAdapter()
+    private val adapter = MessagesAdapter(postModel?.formattedText.toString())
     private var replyMessageModel: ChatMessageModel? = null
     private var replyPostModel: PostModel? = null
 
@@ -79,11 +79,13 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
             rvMessages.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
             rvMessages.adapter = adapter
         }
-        postModel?.let {
-            view.rlReplyMessageContainer.visibility = View.VISIBLE
-            view.tvReplyMessageText.text = it.formattedText
-            replyPostModel = postModel
-        }
+
+
+//        postModel?.let {
+//            view.rlReplyMessageContainer.visibility = View.VISIBLE
+//            view.tvReplyMessageText.text = it.formattedText
+//            replyPostModel = postModel
+//        }
         adapter.accountId = viewModel.currentUserAccountId
         adapter.onUserMessageLongClick = { callDialog(view, false, it) }
         adapter.onMyMessageLongClick = { callDialog(view, true, it) }
@@ -147,7 +149,7 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
 
     private fun setupView(view: View) {
         view.tvNoMessages.text = fromDictionary(R.string.chats_no_messages)
-        view.btnSend.text = fromDictionary(R.string.chats_send_messages_post)
+//        view.btnSend.text = fromDictionary(R.string.chats_send_messages_post)
         view.etWriteMessage.hint = fromDictionary(R.string.chats_send_messages_write)
     }
 

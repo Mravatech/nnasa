@@ -61,8 +61,7 @@
             android:id="@+id/rlReplyMessageContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvReplyMessageText"
@@ -71,8 +70,8 @@
                 android:layout_centerVertical="true"
                 android:layout_margin="@dimen/chat_message_half_base_margin"
                 android:layout_toStartOf="@+id/ivReplyClose"
-                android:paddingEnd="@dimen/chat_message_horizontal_padding"
                 android:paddingStart="@dimen/chat_message_horizontal_padding"
+                android:paddingEnd="@dimen/chat_message_horizontal_padding"
                 tools:text="Some text" />
 
             <ImageView
@@ -97,8 +96,15 @@
             android:id="@+id/llCreateMessageContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:minHeight="@dimen/chat_message_send_container_height">
+            android:minHeight="@dimen/chat_message_send_container_height"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/attachment" />
+
 
             <!--<ImageView-->
             <!--android:id="@+id/ivAttach"-->
@@ -112,21 +118,33 @@
             <!--android:visibility="gone"-->
             <!--app:srcCompat="@drawable/ic_attach" />-->
 
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/coment_rec">
+
             <EditText
                 android:id="@+id/etWriteMessage"
-                style="@style/ChatMessage.EditText"
-                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:inputType="textMultiLine|textCapSentences"
-                android:maxHeight="220dp"
                 android:paddingStart="@dimen/spacing_horizontal"
                 android:paddingTop="8dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="8dp"
-                tools:hint="Write a message…" />
+                android:backgroundTint="@android:color/transparent"
+                tools:hint="Write your message" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/btnSend"
-                style="@style/ChatMessage.SendTextView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_send_post"
                 tools:text="POST" />
 
         </LinearLayout>

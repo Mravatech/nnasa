@@ -15,7 +15,7 @@
         android:layout_margin="@dimen/chat_message_half_base_margin"
         android:layout_toStartOf="@+id/tvMyMessageSent"
         android:autoLink="all"
-        android:background="@drawable/outcome_chat_message_background"
+        android:background="@drawable/ic_users_bubble"
         android:paddingStart="@dimen/chat_message_horizontal_padding"
         android:paddingTop="@dimen/chat_message_vertical_padding"
         android:paddingEnd="@dimen/chat_message_horizontal_padding"

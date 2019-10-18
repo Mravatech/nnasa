@@ -23,7 +23,7 @@ import kotlin.collections.HashMap
  * Date: 4/2/2018
  */
 
-class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.OnClickListener, View.OnLongClickListener {
+class MessagesAdapter(var needString: String) : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.OnClickListener, View.OnLongClickListener {
 
     lateinit var accountId: String
     var onMyMessageLongClick = { item: ChatMessageModel -> }
@@ -60,7 +60,7 @@ class MessagesAdapter : BaseSortedPaginationRVAdapter<ChatMessageModel>(), View.
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<ChatMessageModel> {
         return when (viewType) {
-            MY_MESSAGE -> MyMessagesViewHolder.newInstance(parent, this)
+            MY_MESSAGE -> MyMessagesViewHolder.newInstance(parent, this, needString)
             USER_MESSAGE -> UserMessagesViewHolder.newInstance(parent, this)
             USER_MESSAGE_WITH_REPLY -> UserMessagesWithReplyViewHolder.newInstance(parent, this, onReplyClick)
             MY_MESSAGE_WITH_REPLY -> MyMessagesWithReplyViewHolder.newInstance(parent, this, onReplyClick)
