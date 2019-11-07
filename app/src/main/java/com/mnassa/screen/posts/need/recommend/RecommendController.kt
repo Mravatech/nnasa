@@ -3,6 +3,7 @@ package com.mnassa.screen.posts.need.recommend
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.Controller
 import com.mnassa.R
@@ -11,6 +12,7 @@ import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.screen.base.MnassaControllerImpl
 import com.mnassa.screen.invite.InviteController
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
+import com.mnassa.screen.posts.need.recommend.adapter.CheckboxCount
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.controller_post_recommend.view.*
@@ -25,7 +27,7 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
     private val bestMatchesAccounts: List<String> by lazy { args.getStringArrayList(EXTRA_BEST_MATCHES) }
     private val excludedAccounts: List<String> by lazy { args.getStringArrayList(EXTRA_EXCLUDED_ACCOUNTS) }
     override val viewModel: RecommendViewModel by instance(arg = RecommendViewModel.RecommendViewModelParams(excludedAccounts))
-    private val allAccountsAdapter = AccountsToRecommendRVAdapter(bestMatchesAccounts)
+    private lateinit var allAccountsAdapter: AccountsToRecommendRVAdapter
     private val selectedAccountsAdapter = SelectedAccountRVAdapter()
     private val resultListener by lazy { targetController as OnRecommendPostResult }
 
@@ -38,7 +40,8 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         }
 
         with(view) {
-            toolbar.title = fromDictionary(R.string.posts_recommend_title)
+              allAccountsAdapter = AccountsToRecommendRVAdapter(bestMatchesAccounts)
+
 
             toolbar.withActionButton(fromDictionary(R.string.posts_recommend_button)) {
                 resultListener.onRecommendedAccountResult(allAccountsAdapter.selectedAccounts.toList())

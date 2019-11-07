@@ -13,6 +13,7 @@ import com.mnassa.screen.events.details.participants.EventParticipantItem
 import com.mnassa.screen.events.details.participants.EventParticipantsRVAdapter
 import com.mnassa.screen.events.details.participants.EventSelectParticipantsRVAdapter
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
+import com.mnassa.screen.posts.need.recommend.adapter.CheckboxCount
 import com.mnassa.screen.posts.need.recommend.adapter.GroupedAccount
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_search.*

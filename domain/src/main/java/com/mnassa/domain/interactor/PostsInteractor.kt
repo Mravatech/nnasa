@@ -68,6 +68,7 @@ data class PostPrivacyOptions(
         var privacyCommunitiesIds: Set<String>
 ) : Serializable {
     companion object {
-        val DEFAULT = PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), emptySet())
+//        val DEFAULT = PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), emptySet())
+        val DEFAULT = PostPrivacyOptions(PostPrivacyType.PRIVATE(), emptySet(), emptySet())
     }
 }

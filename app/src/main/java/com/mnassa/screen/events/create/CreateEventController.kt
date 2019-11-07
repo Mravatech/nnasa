@@ -1,12 +1,19 @@
 package com.mnassa.screen.events.create
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -31,8 +38,14 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.ChipLayout
 import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_event_create.view.*
+import kotlinx.android.synthetic.main.controller_event_create.view.chipTags
+import kotlinx.android.synthetic.main.controller_event_create.view.rvImages
+import kotlinx.android.synthetic.main.controller_event_create.view.toolbar
+import kotlinx.android.synthetic.main.controller_event_create.view.tvShareOptions
+import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
 
@@ -70,6 +83,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     private val googleMap = StateExecutor<GoogleMap?, GoogleMap>(initState = null, executionPredicate = { it != null })
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         playServiceHelper.googleApiClient.connect()
@@ -86,37 +100,63 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         }
 
         with(view) {
+
+            event_title_icon.showDescDialog("\"Your \"event title\" refers to the name of the event you want to post.\"")
+            event_city_icon.showDescDialog("This refers to the city where your event will take place.")
+            event_address_icon.showDescDialog("Your \"event address\" refers to the accurate location where the event will take place.")
+            event_desc_icon.showDescDialog("Your \"event description\" refers to the entire overview of the event.")
+            event_price_icon.showDescDialog("Your \"ticket price\" is the price you want to charge for one event ticket.")
+            event_ticket_quantity_icon.showDescDialog("Your \"ticket quanity\" is the quantity or amount of ticket you have for the event.")
+            event_ticket_limit_icon.showDescDialog("Your \"ticket limit\" is the amount of tickets that an individual can buy.")
+            choose_image_btn.setOnClickListener {
+                dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+            }
+
+
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
                 view.toolbar.actionButtonClickable = false
-                launchCoroutineUI {
-                    val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
-                    val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
 
-                    val model = RawEventModel(
-                            id = eventId,
-                            title = etEventTitle.text.toString(),
-                            description = etEventDescription.text.toString(),
-                            type = (sEventType.selectedItem as FormattedEventType).eventType,
-                            startDateTime = requireNotNull(dateTime).startDateTime,
-                            durationMillis = requireNotNull(dateTime).durationMillis,
-                            imagesToUpload = imagesToUpload,
-                            uploadedImages = uploadedImages.toMutableSet(),
-                            privacy = sharingOptions,
-                            ticketsTotal = etTicketsQuantity.text.toString().toInt(),
-                            ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
-                            price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
-                            locationType = getLocationType(),
-                            tagModels = chipTags.getTags(),
-                            status = eventStatus,
-                            groupIds = groupIds.toSet(),
-                            needPush = cbSendNotification.isChecked
-                    )
-                    viewModel.publish(model)
-                }.invokeOnCompletion {
-                    onEventChanged()
-                }
+                val alertDialog = AlertDialog.Builder(context).apply {
+                    setTitle("DISCLAIMER")
+
+                    setMessage("This is a disclaimer that describes our policies, accept to continue or decline to cancel.")
+                    setPositiveButton("ACCEPT") { dialogInterface, i ->
+
+                        launchCoroutineUI {
+                            val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
+                            val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
+
+                            val model = RawEventModel(
+                                    id = eventId,
+                                    title = etEventTitle.text.toString(),
+                                    description = etEventDescription.text.toString(),
+                                    type = (sEventType.selectedItem as FormattedEventType).eventType,
+                                    startDateTime = requireNotNull(dateTime).startDateTime,
+                                    durationMillis = requireNotNull(dateTime).durationMillis,
+                                    imagesToUpload = imagesToUpload,
+                                    uploadedImages = uploadedImages.toMutableSet(),
+                                    privacy = sharingOptions,
+                                    ticketsTotal = etTicketsQuantity.text.toString().toInt(),
+                                    ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
+                                    price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
+                                    locationType = getLocationType(),
+                                    tagModels = chipTags.getTags(),
+                                    status = eventStatus,
+                                    groupIds = groupIds.toSet(),
+                                    needPush = cbSendNotification.isChecked
+                            )
+                            viewModel.publish(model)
+                        }.invokeOnCompletion {
+                            onEventChanged()
+                        }
+                    }
+                    setNegativeButton("DECLINE") { dialogInterface, i ->
+                        dialogInterface.dismiss()
+                        etTicketPrice.setText("")
+                    }
+                }.create().show()
             }
-            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
+//            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -153,7 +193,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             val placeAutocompleteAdapter = PlaceAutocompleteAdapter(context, viewModel)
             actvCity.setAdapter(placeAutocompleteAdapter)
             actvCity.setOnItemClickListener { _, _, i, _ ->
-                val item = placeAutocompleteAdapter.getItem(i) ?: return@setOnItemClickListener
+                val item = placeAutocompleteAdapter.getItem(i)
+                        ?: return@setOnItemClickListener
                 placeId = item.placeId
                 val placeName = "${item.primaryText} ${item.secondaryText}"
                 actvCity.setText(placeName)
@@ -164,12 +205,14 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             mapView.onCreate(null)
             mapView.getMapAsync {
                 with(it) {
-                    uiSettings.isMapToolbarEnabled = false
-                    uiSettings.isRotateGesturesEnabled = false
-                    uiSettings.isScrollGesturesEnabled = false
-                    uiSettings.isTiltGesturesEnabled = false
-                    uiSettings.isZoomControlsEnabled = false
-                    uiSettings.isZoomGesturesEnabled = false
+                    with(uiSettings) {
+                        isMapToolbarEnabled = false
+                        isRotateGesturesEnabled = false
+                        isScrollGesturesEnabled = false
+                        isTiltGesturesEnabled = false
+                        isZoomControlsEnabled = false
+                        isZoomGesturesEnabled = false
+                    }
                     setOnMapLoadedCallback {
                         googleMap.value = it
                     }
@@ -249,8 +292,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             open(SharingOptionsController.newInstance(
                     options = sharingOptions,
                     listener = this@CreateEventController,
-                    accountsToExclude = if (event != null) listOf(event.author.id) else emptyList(),
-                    restrictShareReduction = eventId != null,
+                    accountsToExclude =  emptyList(),
+                    restrictShareReduction = eventId == null,
                     canBePromoted = canBePromoted,
                     promotePrice = promotePrice))
         }
@@ -370,9 +413,9 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             }
 
             sharingOptions = PostPrivacyOptions(
-                event.privacyType,
-                event.privacyConnections,
-                event.groups.map { it.id }.toSet())
+                    event.privacyType,
+                    event.privacyConnections,
+                    event.groups.map { it.id }.toSet())
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -394,7 +437,9 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         }
     }
 
-    private var marker: Marker? = null
+    private
+    var marker: Marker? = null
+
     private fun centerMapOn(placeId: String) {
         launchCoroutineUI {
             playServiceHelper.googleApiClient.getLatLng(placeId)?.let { latLng ->
@@ -449,7 +494,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         startCropActivityForResult(imageSource, REQUEST_CODE_CROP)
     }
 
-    class FormattedEventType(val eventType: EventType) {
+    class FormattedEventType(
+            val eventType: EventType) {
         override fun toString(): String = eventType.formatted.toString()
     }
 
@@ -486,10 +532,34 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             return when {
                 args.containsKey(EXTRA_GROUP) -> {
                     val group = args.getSerializable(EXTRA_GROUP) as GroupModel
-                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+//                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                    PostPrivacyOptions(PostPrivacyType.PRIVATE(), emptySet(), emptySet())
                 }
                 else -> PostPrivacyOptions.DEFAULT
             }
         }
     }
+
+
 }
+
+@SuppressLint("ClickableViewAccessibility")
+fun ImageView.showDescDialog(str: String) {
+
+    this.setOnClickListener {
+
+        val alertDialog = AlertDialog.Builder(context).apply {
+            setMessage(str)
+            setPositiveButton("OK") { dialogInterface, i ->
+                dialogInterface.dismiss()
+            }
+        }.create().show()
+
+
+    }
+}
+
+
+
+
+    

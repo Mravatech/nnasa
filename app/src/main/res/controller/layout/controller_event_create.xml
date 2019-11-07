@@ -30,30 +30,45 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 tools:text="Share to" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilEventTitle"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                app:counterEnabled="true"
-                app:counterMaxLength="@integer/max_event_title_length"
-                tools:hint="Event title">
+                android:layout_height="wrap_content">
 
-                <com.mnassa.widget.PrefixEditText
-                    android:id="@+id/etEventTitle"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilEventTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:maxLength="@integer/max_event_title_length" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_marginEnd="@dimen/spacing_horizontal"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="@integer/max_event_title_length"
+                    tools:hint="Event title">
+
+                    <com.mnassa.widget.PrefixEditText
+                        android:id="@+id/etEventTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:maxLength="@integer/max_event_title_length" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/event_title_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    app:srcCompat="@drawable/ic_event_title_24dp" />
+
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/flDateTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal">
+                android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginEnd="@dimen/spacing_horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilEventDateTime"
@@ -76,8 +91,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/spacing_horizontal"
                     android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_marginEnd="@dimen/spacing_horizontal"
                     app:srcCompat="@drawable/ic_arrow" />
             </FrameLayout>
 
@@ -85,130 +100,192 @@
                 style="@style/MnassaTextTiny"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/padding_horizontal"
                 android:layout_marginStart="@dimen/padding_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:paddingEnd="4dp"
+                android:layout_marginEnd="@dimen/padding_horizontal"
                 android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 app:textDictionary="@string/event_create_location_placeholder" />
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/sLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
             <View
                 style="@style/MnassaDivider"
-                android:layout_marginEnd="@dimen/padding_horizontal"
-                android:layout_marginStart="@dimen/padding_horizontal" />
+                android:layout_marginStart="@dimen/padding_horizontal"
+                android:layout_marginEnd="@dimen/padding_horizontal" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilCity"
-                style="@style/Registration.TextInputLayout"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                app:errorEnabled="false"
-                tools:hint="City">
 
-                <AutoCompleteTextView
-                    android:id="@+id/actvCity"
-                    style="@style/Registration.EditText" />
-            </com.google.android.material.textfield.TextInputLayout>
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilLocationDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                tools:hint="Address">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilCity"
+                                style="@style/Registration.TextInputLayout"
+                                android:layout_marginEnd="@dimen/spacing_horizontal"
+                                android:layout_marginStart="@dimen/spacing_horizontal"
+                                android:layout_marginTop="@dimen/spacing_vertical"
+                                app:errorEnabled="false"
+                                tools:hint="City">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etLocationDescription"
+                                <AutoCompleteTextView
+                                    android:id="@+id/actvCity"
+                                    style="@style/Registration.EditText" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                                <ImageView
+                                    android:id="@+id/event_city_icon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end"
+                                    android:layout_marginTop="33dp"
+                                    android:layout_marginEnd="20dp"
+                                    app:srcCompat="@drawable/ic_event_city_24dp"/>
+
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilLocationDescription"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/spacing_horizontal"
+                                android:layout_marginStart="@dimen/spacing_horizontal"
+                                tools:hint="Address">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etLocationDescription"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:imeOptions="actionDone" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                                <ImageView
+                                    android:id="@+id/event_address_icon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end"
+                                    android:layout_marginTop="20dp"
+                                    android:layout_marginEnd="20dp"
+                                    app:srcCompat="@drawable/ic_event_address_24dp"/>
+
+                            </FrameLayout>
+
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:foreground="@drawable/avatar_shadow">
+
+                                <com.google.android.gms.maps.MapView
+                                    android:id="@+id/mapView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="240dp" />
+                            </FrameLayout>
+
+
+                            <com.mnassa.widget.MnassaTextView
+                                style="@style/MnassaTextTiny"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/spacing_horizontal"
+                                android:layout_marginStart="@dimen/spacing_horizontal"
+                                android:layout_marginTop="@dimen/spacing_vertical"
+                                android:paddingEnd="4dp"
+                                android:paddingStart="4dp"
+                                app:textDictionary="@string/event_create_type" />
+
+                            <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/sEventType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/spacing_horizontal"
+                                android:layout_marginStart="@dimen/spacing_horizontal"
+                                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+                            <View
+                                style="@style/MnassaDivider"
+                                android:layout_marginEnd="@dimen/padding_horizontal"
+                                android:layout_marginStart="@dimen/padding_horizontal" />
+
+                            <com.mnassa.widget.ChipLayout
+                                android:id="@+id/chipTags"
+                                style="@style/Registration.ChipLayout"
+                                android:layout_marginEnd="@dimen/spacing_horizontal"
+                                android:layout_marginStart="@dimen/spacing_horizontal"
+                                android:layout_marginTop="@dimen/spacing_vertical"
+                                android:drawableRight="@drawable/ic_event_tags_24dp"/>
+
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content">
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilEventDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_horizontal"
+                        android:layout_marginTop="@dimen/spacing_vertical"
+                        android:layout_marginEnd="@dimen/spacing_horizontal"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="@integer/max_event_description_length"
+                        tools:hint="EventDescription">
+
+                        <com.mnassa.widget.PrefixEditText
+                            android:id="@+id/etEventDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:maxLength="@integer/max_event_description_length" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/event_desc_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="20dp"
+                        app:srcCompat="@drawable/ic_event_description_24dp" />
+
+                </FrameLayout>
+
+            <Button
+                android:id="@+id/choose_image_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_share_to"
+                android:text="Choose Image"
+                android:textColor="@color/white"
+                android:padding="10dp"
+                android:layout_gravity="center"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:foreground="@drawable/avatar_shadow">
-
-                <com.google.android.gms.maps.MapView
-                    android:id="@+id/mapView"
-                    android:layout_width="match_parent"
-                    android:layout_height="240dp" />
-            </FrameLayout>
-
-
-            <com.mnassa.widget.MnassaTextView
-                style="@style/MnassaTextTiny"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:paddingEnd="4dp"
-                android:paddingStart="4dp"
-                app:textDictionary="@string/event_create_type" />
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/sEventType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+                android:layout_marginBottom="@dimen/spacing_vertical">
 
-            <View
-                style="@style/MnassaDivider"
-                android:layout_marginEnd="@dimen/padding_horizontal"
-                android:layout_marginStart="@dimen/padding_horizontal" />
-
-            <com.mnassa.widget.ChipLayout
-                android:id="@+id/chipTags"
-                style="@style/Registration.ChipLayout"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilEventDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                app:counterEnabled="true"
-                app:counterMaxLength="@integer/max_event_description_length"
-                tools:hint="EventDescription">
-
-                <com.mnassa.widget.PrefixEditText
-                    android:id="@+id/etEventDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:maxLength="@integer/max_event_description_length" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_vertical"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvImages"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:layout_height="100dp"
                     tools:listitem="@layout/item_post_add_image" />
@@ -217,9 +294,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
                 android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:orientation="horizontal">
 
                 <com.mnassa.widget.MnassaTextView
@@ -239,78 +316,127 @@
                 android:id="@+id/flTicketPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical">
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_marginEnd="@dimen/spacing_horizontal">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTicketPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:hint="Price per ticket">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTicketPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="8" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <ImageView
+                        android:id="@+id/event_price_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="7dp"
+                        app:srcCompat="@drawable/ic_event_price_24dp" />
+
+                </FrameLayout>
+
+                <!--                <com.mnassa.widget.MnassaTextView-->
+                <!--                    style="@style/MnassaText"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_gravity="end|center_vertical"-->
+                <!--                    android:layout_marginEnd="@dimen/spacing_horizontal"-->
+                <!--                    android:layout_marginStart="@dimen/spacing_horizontal"-->
+                <!--                    app:textDictionary="@string/event_points_placeholder" />-->
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilTicketPrice"
+                    android:id="@+id/tilTicketsQuantity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:hint="Price per ticket">
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:layout_marginEnd="@dimen/spacing_horizontal"
+                    tools:hint="Tickets quantity">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etTicketPrice"
+                        android:id="@+id/etTicketsQuantity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
-                        android:maxLength="8" />
+                        android:maxLength="5" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.mnassa.widget.MnassaTextView
-                    style="@style/MnassaText"
+
+                <ImageView
+                    android:id="@+id/event_ticket_quantity_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/spacing_horizontal"
-                    android:layout_marginStart="@dimen/spacing_horizontal"
-                    app:textDictionary="@string/event_points_placeholder" />
+                    android:layout_gravity="end"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="18dp"
+                    app:srcCompat="@drawable/ic_event_quantity_24dp" />
+
             </FrameLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilTicketsQuantity"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                tools:hint="Tickets quantity">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTicketsQuantity"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilTicketsPerAccountLimit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:maxLength="5" />
+                    android:layout_marginStart="@dimen/spacing_horizontal"
+                    android:layout_marginTop="@dimen/spacing_vertical"
+                    android:layout_marginEnd="@dimen/spacing_horizontal"
+                    tools:hint="Limit of tickets per person">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTicketsPerAccountLimit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:maxLength="5" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilTicketsPerAccountLimit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
-                android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"
-                tools:hint="Limit of tickets per person">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTicketsPerAccountLimit"
-                    android:layout_width="match_parent"
+
+                <ImageView
+                    android:id="@+id/event_ticket_limit_icon"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:maxLength="5" />
+                    android:layout_gravity="end"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="18dp"
+                    app:srcCompat="@drawable/ic_event_ticket_limit_24dp" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/cbSendNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/spacing_horizontal"
                 android:layout_marginStart="@dimen/spacing_horizontal"
-                android:layout_marginTop="@dimen/spacing_vertical"/>
+                android:layout_marginTop="@dimen/spacing_vertical"
+                android:layout_marginEnd="@dimen/spacing_horizontal" />
 
 
         </LinearLayout>

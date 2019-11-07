@@ -1,5 +1,6 @@
 package com.mnassa.screen.posts.need.recommend.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,7 +110,11 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GroupedAccount> =
             when (viewType) {
-                TYPE_ITEM -> AccountViewHolder.newInstance(parent, this, selectedAccounts)
+                TYPE_ITEM -> AccountViewHolder.newInstance(parent, this, selectedAccounts, object : CheckboxCount{
+                    override fun checkBoxCount(sum: Int) {
+                        Log.d("sumsum", sum.toString())
+                    }
+                })
                 TYPE_GROUP -> GroupViewHolder.newInstance(parent, this)
                 else -> throw IllegalArgumentException("Illegal view type $viewType")
             }
@@ -140,6 +145,7 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
             val account = (item as GroupedAccount.Recommendation).account
 
             with(itemView) {
+
                 ivAvatar.avatarRound(account.avatar)
                 tvUserName.text = account.formattedName
                 tvPosition.text = account.formattedPosition
@@ -147,11 +153,20 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
                 tvEventName.text = account.formattedFromEvent
                 tvEventName.goneIfEmpty()
                 cbInvite.isChecked = selectedAccount.contains(account)
+//
+//                var sum = 0
+//                if (cbInvite.isChecked){
+//                    sum++
+//                    checkBoxCount.checkBoxCount(sum)
+//                }
+
+
             }
         }
 
         companion object {
-            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, selectedAccount: Set<ShortAccountModel>): AccountViewHolder {
+            fun newInstance(parent: ViewGroup, onClickListener: View.OnClickListener, selectedAccount: Set<ShortAccountModel>,
+                            checkboxCount: CheckboxCount): AccountViewHolder {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_build_network, parent, false)
 
                 val viewHolder = AccountViewHolder(selectedAccount, view)
@@ -160,6 +175,8 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 
                 view.setOnClickListener(onClickListener)
                 view.cbInvite.setOnClickListener(onClickListener)
+
+                checkboxCount.checkBoxCount(20)
 
                 return viewHolder
             }
@@ -176,4 +193,8 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 sealed class GroupedAccount : Serializable {
     data class Group(val name: String) : GroupedAccount()
     data class Recommendation(val account: ShortAccountModel) : GroupedAccount()
+}
+
+interface CheckboxCount{
+    fun checkBoxCount(sum: Int)
 }

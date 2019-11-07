@@ -111,6 +111,7 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle = Bundle()) :
         onActivityResultEmitter.emit(OnActivityResultEvent(requestCode, resultCode, data))
     }
 
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
