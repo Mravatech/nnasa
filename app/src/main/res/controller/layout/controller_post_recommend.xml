@@ -10,13 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+
+
     <RelativeLayout
         android:id="@+id/rlEmptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:gravity="center_vertical"
-        android:visibility="invisible">
+        android:visibility="visible">
+
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivEmpty"

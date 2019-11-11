@@ -33,7 +33,7 @@ android {
     }
 
     kotlin {
-        experimental { coroutines 'enable' }
+//        experimental { coroutines 'enable' }
         androidExtensions { experimental = true }
     }
 

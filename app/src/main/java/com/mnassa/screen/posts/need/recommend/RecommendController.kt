@@ -2,7 +2,9 @@ package com.mnassa.screen.posts.need.recommend
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.Controller
@@ -15,6 +17,7 @@ import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapt
 import com.mnassa.screen.posts.need.recommend.adapter.CheckboxCount
 import com.mnassa.screen.posts.need.recommend.adapter.SelectedAccountRVAdapter
 import com.mnassa.translation.fromDictionary
+import kotlinx.android.synthetic.main.controller_post_recommend.*
 import kotlinx.android.synthetic.main.controller_post_recommend.view.*
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
@@ -40,7 +43,15 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
         }
 
         with(view) {
-              allAccountsAdapter = AccountsToRecommendRVAdapter(bestMatchesAccounts)
+
+            toolbar.title = "Recommend[0/20]"
+
+            allAccountsAdapter = AccountsToRecommendRVAdapter(bestMatchesAccounts, checkboxCount = object : CheckboxCount {
+                override fun checkBoxCount(sum: Int) {
+                    toolbar.title = "Recommended[$sum/20]"
+                }
+            })
+
 
 
             toolbar.withActionButton(fromDictionary(R.string.posts_recommend_button)) {
@@ -72,12 +83,17 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
 
             btnInvite.text = fromDictionary(R.string.invite_new_connection)
             btnInvite.setOnClickListener { open(InviteController.newInstance()) }
+
         }
 
         allAccountsAdapter.isLoadingEnabled = true
         launchCoroutineUI {
             viewModel.connectionsChannel.consumeEach {
+
+
+
                 allAccountsAdapter.setAccounts(it)
+                Log.d("people", "${it.size}")
                 allAccountsAdapter.isLoadingEnabled = false
                 view.rlEmptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
 
@@ -87,6 +103,10 @@ class RecommendController(args: Bundle) : MnassaControllerImpl<RecommendViewMode
                 }
             }
         }
+    }
+
+    interface People{
+        fun total(all: Int)
     }
 
     override fun onDestroyView(view: View) {

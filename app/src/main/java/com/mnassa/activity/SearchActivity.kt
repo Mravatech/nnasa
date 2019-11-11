@@ -63,7 +63,10 @@ class SearchActivity : BaseActivity() {
     private fun recommend() {
         val items = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<GroupedAccount>
         val checkBoxes = intent.getSerializableExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS) as ArrayList<ShortAccountModel>
-        val adapter = AccountsToRecommendRVAdapter(intent.getSerializableExtra(EXTRA_BEST_MATCHES_ITEMS) as ArrayList<String>)
+        val adapter = AccountsToRecommendRVAdapter(intent.getSerializableExtra(EXTRA_BEST_MATCHES_ITEMS) as ArrayList<String>, checkboxCount = object : CheckboxCount{
+            override fun checkBoxCount(sum: Int) {
+            }
+        })
         adapter.selectedAccounts = HashSet(checkBoxes)
         adapter.set(items)
         etSearch.addTextChangedListener(SimpleTextWatcher {
