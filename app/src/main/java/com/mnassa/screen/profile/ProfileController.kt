@@ -19,7 +19,6 @@ import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.group.select.SelectGroupController
 import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.attachPanel
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.edit.company.EditCompanyProfileController

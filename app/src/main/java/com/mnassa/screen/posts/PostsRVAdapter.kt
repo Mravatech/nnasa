@@ -1,8 +1,10 @@
 package com.mnassa.screen.posts
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.R
@@ -29,6 +31,8 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
     var onGroupClickListener = { group: GroupModel -> }
     var onMoreItemClickListener = { item: PostModel, view: View -> }
     var onRepostClickListener = { item: PostModel -> }
+    var onOffersClickListener = { account: PostModel, account1: ShortAccountModel -> }
+    var onRecommendationClickListener = { item: PostModel -> }
 
     var showMoreOptions: Boolean = false
         set(value) {
@@ -78,8 +82,13 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVH<PostModel> {
-        return if (viewType == TYPE_HEADER && withHeader) HeaderViewHolder.newInstance(parent, this) else super.onCreateViewHolder(parent, viewType)
+        return if (viewType == TYPE_HEADER && withHeader) {
+            HeaderViewHolder.newInstance(parent, this)
+        } else {
+            super.onCreateViewHolder(parent, viewType)
+        }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<PostModel> {
         return when {
@@ -130,10 +139,24 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
         val dataItem = dataStorage[position]
         onAttachedToWindow(dataItem)
 
+        holder.itemView.findViewById<TextView>(R.id.tvRecomendationsCount)?.setOnClickListener {
+
+            onRecommendationClickListener(getDataItemByAdapterPosition(holder.adapterPosition))
+        }
+
         holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
             coroutineScope.launchUI {
                 it.startUpdateTimeJob(dataItem.originalCreatedAt)
             }
+        }
+
+        holder.itemView.findViewById<TextView>(R.id.tvOffersCount)?.setOnClickListener {
+            onOffersClickListener(getDataItemByAdapterPosition(holder.adapterPosition), getDataItemByAdapterPosition(holder.adapterPosition).author )
+        }
+
+        holder.itemView.findViewById<TextView>(R.id.tvRepostCount)?.setOnClickListener {
+
+            onRepostClickListener(getDataItemByAdapterPosition(holder.adapterPosition))
         }
 
         holder.itemView.findViewById<TextView?>(R.id.tvReplyTime)?.let {
@@ -220,6 +243,7 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
             R.id.btnHidePost -> onHideInfoPostClickListener(getDataItemByAdapterPosition(position))
             R.id.btnMoreOptions -> onMoreItemClickListener(getDataItemByAdapterPosition(position), view)
             R.id.tvRepostCount -> onRepostClickListener(getDataItemByAdapterPosition(position))
+//            R.id.tvOffersCount -> onOffersClickListener(getDataItemByAdapterPosition(position))
         }
     }
 

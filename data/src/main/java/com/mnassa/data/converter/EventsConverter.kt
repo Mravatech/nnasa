@@ -38,7 +38,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
 
             return EventModelImpl(
                     id = input.id,
-                    author = input.author?.let { converter.convert<ShortAccountModel>(it) } ?: ShortAccountModel.EMPTY,
+                    author = input.author?.let { converter.convert<ShortAccountModel>(it) }
+                            ?: ShortAccountModel.EMPTY,
                     commentsCount = input.counters?.comments ?: 0,
                     viewsCount = input.counters?.views ?: 0,
                     createdAt = Date(input.createdAt ?: EventModel.DEFAULT_CREATED_AT),
@@ -47,21 +48,26 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                     locationType = convertLocation(input, converter),
                     allConnections = input.allConnections ?: EventModel.DEFAULT_ALL_CONNECTIONS,
                     privacyConnections = input.privacyConnections?.toSet() ?: emptySet(),
-                    itemType = input.itemType?.let { converter.convert(it, ItemType::class.java) } ?: ItemType.ORIGINAL,
+                    itemType = input.itemType?.let { converter.convert(it, ItemType::class.java) }
+                            ?: ItemType.ORIGINAL,
                     originalId = input.originalId ?: input.id,
-                    originalCreatedAt = Date(input.originalCreatedAt ?: EventModel.DEFAULT_ORIGINAL_CREATED_AT),
+                    originalCreatedAt = Date(input.originalCreatedAt
+                            ?: EventModel.DEFAULT_ORIGINAL_CREATED_AT),
                     pictures = input.pictures ?: emptyList(),
                     price = input.price ?: EventModel.DEFAULT_PRICE,
                     privacyType = input.privacyType?.run { converter.convert(this, PostPrivacyType::class.java) }
                             ?: PostPrivacyType.PUBLIC(),
-                    status = input.status?.let { converter.convert<EventStatus>(it) } ?: EventStatus.OPENED(),
+                    status = input.status?.let { converter.convert<EventStatus>(it) }
+                            ?: EventStatus.OPENED(),
                     tags = input.tags ?: emptyList(),
                     title = input.title ?: CONVERT_ERROR_MESSAGE,
                     text = input.text ?: CONVERT_ERROR_MESSAGE,
-                    ticketsPerAccount = input.ticketsPerAccount ?: EventModel.DEFAULT_TICKETS_PER_ACCOUNT,
+                    ticketsPerAccount = input.ticketsPerAccount
+                            ?: EventModel.DEFAULT_TICKETS_PER_ACCOUNT,
                     ticketsSold = input.ticketsSold ?: EventModel.DEFAULT_TICKETS_SOLD,
                     ticketsTotal = input.ticketsTotal ?: EventModel.DEFAULT_TICKETS_TOTAL,
-                    type = input.type?.let { converter.convert<EventType>(it) } ?: EventType.LECTURE(),
+                    type = input.type?.let { converter.convert<EventType>(it) }
+                            ?: EventType.LECTURE(),
                     updatedAt = Date(input.updatedAt ?: EventModel.DEFAULT_UPDATED_AT),
                     participants = input.participants ?: emptyList(),
                     groups = tag.groupIds)
@@ -157,7 +163,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 id = input.id,
                 ownerId = input.id,
                 eventName = input.eventName ?: EventTicketModel.DEFAULT_EVENT_NAME,
-                eventOrganizerId = input.eventOrganizer ?: EventTicketModel.DEFAULT_EVENT_ORGANIZER_ID,
+                eventOrganizerId = input.eventOrganizer
+                        ?: EventTicketModel.DEFAULT_EVENT_ORGANIZER_ID,
                 pricePerTicket = input.pricePerTicket ?: EventTicketModel.DEFAULT_PRICE_PER_TICKET,
                 ticketCount = input.ticketsCount ?: EventTicketModel.DEFAULT_TICKET_COUNT
         )
@@ -186,7 +193,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC,
                 privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() && input.privacy.privacyType is PostPrivacyType.PRIVATE }?.toList(),
                 groups = input.groupIds.toList().takeIf { it.isNotEmpty() },
-                needPush = input.needPush
+                needPush = input.needPush,
+                contact_via_mnassa = input.contact_via_mnassa
         )
     }
 }

@@ -66,5 +66,6 @@ data class RawEventModel(
         val tagIds: MutableSet<String> = mutableSetOf(),
         val status: EventStatus,
         val groupIds: Set<String>,
-        val needPush: Boolean?
+        val needPush: Boolean?,
+        val contact_via_mnassa: Boolean
 )

@@ -1,6 +1,7 @@
 package com.mnassa.screen.home
 
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -140,7 +141,18 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
                         button.setOnClickListener {
                             famHome.close(false)
-                            open(CreateEventController.newInstance())
+
+                            val alertDialog = AlertDialog.Builder(context).apply {
+
+                                setMessage("This is a disclaimer showing our policies. This is our terms and conditions.")
+                                setPositiveButton("ACCEPT"){dialogInterface, i ->
+                                    open(CreateEventController.newInstance())
+                                    dialogInterface.dismiss()
+                                }
+                                setNegativeButton("DECLINE"){ dialogInterface, i ->
+                                    dialogInterface.dismiss()
+                                }
+                            }.create().show()
                         }
                         famHome.addMenuButton(button)
                     }

@@ -1,25 +1,34 @@
 package com.mnassa.screen.posts
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.aggregator.produce
+import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.exceptions.resolveExceptions
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
+import com.mnassa.screen.events.create.CreateEventController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.need.recommend.RecommendController
+import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.newpanel.NewPanelView
@@ -31,7 +40,12 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, OnPageSelected, OnScrollToTop {
+class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, OnPageSelected, OnScrollToTop, SharingOptionsController.OnSharingOptionsResult,
+        RecommendController.OnRecommendPostResult {
+    override fun onRecommendedAccountResult(recommendedAccounts: List<ShortAccountModel>) {
+
+    }
+
     override val layoutId: Int = R.layout.controller_posts_list
     override val viewModel: PostsViewModel by instance()
     private val adapter = PostsRVAdapter(this)
@@ -39,6 +53,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
     }
+    override var sharingOptions: PostPrivacyOptions = PostPrivacyOptions.DEFAULT
     private var postIdToScroll: String? = null
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -54,9 +69,36 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
+
+//            val alertDialog = AlertDialog.Builder(applicationContext).apply {
+//
+//                setMessage("This is a disclaimer showing our policies. This is our terms and conditions.")
+//                setPositiveButton("ACCEPT"){dialogInterface, i ->
+//                    open(CreateEventController.newInstance())
+//                    Log.d("positive button", "clicked")
+//                }
+//                setNegativeButton("DECLINE"){ dialogInterface, i ->
+//                    dialogInterface.dismiss()
+//                }
+//            }.create().show()
         }
         adapter.onRepostClickListener = {
-           Log.e("REPOST_CLICKED", it.counters.reposts.toString())
+            open(SharingOptionsController.newInstance(
+                    listener = this@PostsController,
+                    accountsToExclude = listOf(it.author.id),
+                    restrictShareReduction = false,
+                    canBePromoted = false,
+                    promotePrice = 0L
+            ))
+            Log.e("REPOST_CLICKED", it.counters.reposts.toString())
+        }
+        adapter.onOffersClickListener = { post, account ->
+
+            open(ChatMessageController.newInstance(post, account))
+        }
+        adapter.onRecommendationClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
         }
         adapter.onCreateNeedClickListener = {
             launchCoroutineUI {
@@ -65,7 +107,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
                 }
             }
         }
-        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
+        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it))}
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
@@ -87,9 +129,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
         resolveExceptions {
             launchCoroutineUI {
                 viewModel.postsLive.produce().subscribeToUpdates(
-                    adapter = adapter,
-                    emptyView = { getViewSuspend().rlEmptyView },
-                    onAdded = { triggerScrollPanel() }
+                        adapter = adapter,
+                        emptyView = { getViewSuspend().rlEmptyView },
+                        onAdded = { triggerScrollPanel() }
                 )
             }
         }

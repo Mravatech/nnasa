@@ -160,7 +160,8 @@ class EventsInteractorImpl(
                 startDateTime = event.startAt,
                 description = event.text,
                 groupIds = groupIds,
-                needPush = null
+                needPush = null,
+                contact_via_mnassa = true
         )
 
         return eventsRepository.editEvent(model)
