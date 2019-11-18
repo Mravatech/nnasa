@@ -41,6 +41,7 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.ChipLayout
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.android.synthetic.main.controller_event_create.*
 import kotlinx.android.synthetic.main.controller_event_create.view.*
 import kotlinx.android.synthetic.main.controller_event_create.view.chipTags
 import kotlinx.android.synthetic.main.controller_event_create.view.rvImages
@@ -117,6 +118,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
 
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
+
                 view.toolbar.actionButtonClickable = true
 
                 launchCoroutineUI {
@@ -130,7 +132,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                             type = (sEventType.selectedItem as FormattedEventType).eventType,
                             startDateTime = if (dateTime?.startDateTime == null) Date(2019, 11, 18) else (dateTime)!!.startDateTime,
                             durationMillis = if (dateTime?.durationMillis == null) 0L else (dateTime)!!.durationMillis,
-                            imagesToUpload = if (imagesToUpload.isEmpty()) listOf( Uri.parse("android.resource://${context.packageName}/${R.drawable.camera_icon_and_bg}")) else imagesToUpload,
+                            imagesToUpload = if (imagesToUpload.isEmpty()) listOf(Uri.parse("android.resource://${context.packageName}/${R.drawable.camera_icon_and_bg}")) else imagesToUpload,
                             uploadedImages = if (uploadedImages.toMutableSet().isEmpty()) mutableSetOf("null") else uploadedImages.toMutableSet(),
                             privacy = sharingOptions,
                             ticketsTotal = if (etTicketsQuantity.text.toString().isEmpty()) 1 else etTicketsQuantity.text.toString().toInt(),
