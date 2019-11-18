@@ -40,6 +40,7 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.ChipLayout
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.android.synthetic.main.controller_event_create.*
 import kotlinx.android.synthetic.main.controller_event_create.view.*
 import kotlinx.android.synthetic.main.controller_event_create.view.chipTags
 import kotlinx.android.synthetic.main.controller_event_create.view.rvImages
@@ -116,11 +117,6 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
                 view.toolbar.actionButtonClickable = false
 
-                val alertDialog = AlertDialog.Builder(context).apply {
-                    setTitle("DISCLAIMER")
-
-                    setMessage("This is a disclaimer that describes our policies, accept to continue or decline to cancel.")
-                    setPositiveButton("ACCEPT") { dialogInterface, i ->
 
                         launchCoroutineUI {
                             val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
@@ -149,12 +145,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                         }.invokeOnCompletion {
                             onEventChanged()
                         }
-                    }
-                    setNegativeButton("DECLINE") { dialogInterface, i ->
-                        dialogInterface.dismiss()
-                        etTicketPrice.setText("")
-                    }
-                }.create().show()
+
             }
 //            tvShareOptions.setOnClickListener(::openShareOptionsScreen)
             launchCoroutineUI {
