@@ -104,8 +104,11 @@ class DateTimePickerController(args: Bundle) : MnassaControllerImpl<DateTimePick
 
     private fun validateInput() {
         launchCoroutineUI {
-            getViewSuspend().toolbar.actionButtonClickable = durationMillis > 0L &&
-                    startDateTime.timeInMillis > System.currentTimeMillis()
+            getViewSuspend().toolbar.actionButtonClickable = true
+
+//            getViewSuspend().toolbar.actionButtonClickable = durationMillis > 0L &&
+//                    startDateTime.timeInMillis > System.currentTimeMillis()
+
         }
     }
 

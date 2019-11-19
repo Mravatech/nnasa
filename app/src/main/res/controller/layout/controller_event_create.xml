@@ -59,7 +59,7 @@
                     android:layout_gravity="end"
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="20dp"
-                    app:srcCompat="@drawable/ic_event_title_24dp" />
+                    app:srcCompat="@drawable/ic_question_mark" />
 
             </FrameLayout>
 
@@ -147,7 +147,7 @@
                                     android:layout_gravity="end"
                                     android:layout_marginTop="33dp"
                                     android:layout_marginEnd="20dp"
-                                    app:srcCompat="@drawable/ic_event_city_24dp"/>
+                                    app:srcCompat="@drawable/ic_question_mark"/>
 
                             </FrameLayout>
 
@@ -178,7 +178,7 @@
                                     android:layout_gravity="end"
                                     android:layout_marginTop="20dp"
                                     android:layout_marginEnd="20dp"
-                                    app:srcCompat="@drawable/ic_event_address_24dp"/>
+                                    app:srcCompat="@drawable/ic_question_mark"/>
 
                             </FrameLayout>
 
@@ -259,7 +259,7 @@
                         android:layout_gravity="end"
                         android:layout_marginTop="25dp"
                         android:layout_marginEnd="20dp"
-                        app:srcCompat="@drawable/ic_event_description_24dp" />
+                        app:srcCompat="@drawable/ic_question_mark" />
 
                 </FrameLayout>
 
@@ -348,7 +348,7 @@
                         android:layout_gravity="end"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="7dp"
-                        app:srcCompat="@drawable/ic_event_price_24dp" />
+                        app:srcCompat="@drawable/ic_question_mark" />
 
                 </FrameLayout>
 
@@ -392,7 +392,7 @@
                     android:layout_gravity="end"
                     android:layout_marginTop="30dp"
                     android:layout_marginEnd="18dp"
-                    app:srcCompat="@drawable/ic_event_quantity_24dp" />
+                    app:srcCompat="@drawable/ic_question_mark" />
 
             </FrameLayout>
 
@@ -426,7 +426,7 @@
                     android:layout_gravity="end"
                     android:layout_marginTop="30dp"
                     android:layout_marginEnd="18dp"
-                    app:srcCompat="@drawable/ic_event_ticket_limit_24dp" />
+                    app:srcCompat="@drawable/ic_question_mark" />
 
             </FrameLayout>
 
@@ -438,24 +438,33 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:layout_marginEnd="@dimen/spacing_horizontal" />
 
-            <RadioGroup
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:text="Contact Me Via:"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="20dp"/>
 
-                <RadioButton
-                    android:id="@+id/contactMePhone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Phone"/>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/contactMeMnassa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mnassa"/>
+        <RadioButton
+            android:id="@+id/contactMePhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone"/>
 
-            </RadioGroup>
+        <RadioButton
+            android:id="@+id/contactMeMnassa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mnassa"/>
+
+    </RadioGroup>
+
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

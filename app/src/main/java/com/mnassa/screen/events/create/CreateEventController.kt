@@ -120,9 +120,9 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
                 view.toolbar.actionButtonClickable = true
 
 
-                        launchCoroutineUI {
-                            val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
-                            val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
+                launchCoroutineUI {
+                    val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
+                    val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
 
 
                             val model = RawEventModel(
@@ -288,7 +288,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             open(SharingOptionsController.newInstance(
                     options = sharingOptions,
                     listener = this@CreateEventController,
-                    accountsToExclude =  emptyList(),
+                    accountsToExclude = emptyList(),
                     restrictShareReduction = eventId == null,
                     canBePromoted = canBePromoted,
                     promotePrice = promotePrice))
@@ -463,7 +463,7 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        view?.mapView?.onSaveInstanceState(outState)
+        view?.mapView!!.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 

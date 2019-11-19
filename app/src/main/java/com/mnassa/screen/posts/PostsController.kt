@@ -1,6 +1,5 @@
 package com.mnassa.screen.posts
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -69,8 +68,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
         adapter.onItemClickListener = {
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
-
-
         }
         adapter.onRepostClickListener = {
             open(SharingOptionsController.newInstance(
@@ -97,7 +94,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
                 }
             }
         }
-        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it))}
+        adapter.onRepostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onPostedByClickListener = { open(ProfileController.newInstance(it)) }
         adapter.onHideInfoPostClickListener = viewModel::hideInfoPost
         adapter.onGroupClickListener = { open(GroupDetailsController.newInstance(it)) }
