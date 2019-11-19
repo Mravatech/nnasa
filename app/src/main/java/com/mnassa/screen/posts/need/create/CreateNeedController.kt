@@ -37,6 +37,7 @@ import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.MnassaProfileDrawerItem
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.android.synthetic.main.controller_need_create.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.consumeEach

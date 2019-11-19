@@ -86,11 +86,11 @@ fun ImageView.image(uri: Uri) {
     val placeholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_avatar_placeholder)
     val requestOptions = RequestOptions().placeholder(placeholder).error(placeholder)
 
-//    GlideApp.with(this)
-//            .load(uri)
-//            .apply(requestOptions)
-//            .apply(RequestOptions.centerCropTransform())
-//            .into(this)
+    GlideApp.with(this)
+            .load(uri)
+            .apply(requestOptions)
+            .apply(RequestOptions.centerCropTransform())
+            .into(this)
 }
 
 private fun Context.processFirebaseUrl(url: String?): Any {

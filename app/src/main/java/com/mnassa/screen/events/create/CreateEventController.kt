@@ -49,6 +49,8 @@ import kotlinx.android.synthetic.main.controller_event_create.view.tvShareOption
 import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by Peter on 4/23/2018.
@@ -115,32 +117,35 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
 
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
-                view.toolbar.actionButtonClickable = false
+                view.toolbar.actionButtonClickable = true
 
 
                         launchCoroutineUI {
                             val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
                             val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
 
+
                             val model = RawEventModel(
                                     id = eventId,
-                                    title = etEventTitle.text.toString(),
-                                    description = etEventDescription.text.toString(),
+                                    title = if (etEventTitle.text.toString().isEmpty()) "null" else etEventTitle.text.toString(),
+                                    description = if (etEventDescription.text.toString().isEmpty()) "null" else etEventDescription.text.toString(),
                                     type = (sEventType.selectedItem as FormattedEventType).eventType,
-                                    startDateTime = requireNotNull(dateTime).startDateTime,
-                                    durationMillis = requireNotNull(dateTime).durationMillis,
-                                    imagesToUpload = imagesToUpload,
-                                    uploadedImages = uploadedImages.toMutableSet(),
+                                    startDateTime = if (dateTime?.startDateTime == null) Date(2019, 11, 18) else (dateTime)!!.startDateTime,
+                                    durationMillis = if (dateTime?.durationMillis == null) 0L else (dateTime)!!.durationMillis,
+                                    imagesToUpload = if (imagesToUpload.isEmpty()) listOf(Uri.parse("android.resource://${context.packageName}/${R.drawable.camera_icon_and_bg}")) else imagesToUpload,
+                                    uploadedImages = if (uploadedImages.toMutableSet().isEmpty()) mutableSetOf("null") else uploadedImages.toMutableSet(),
                                     privacy = sharingOptions,
-                                    ticketsTotal = etTicketsQuantity.text.toString().toInt(),
-                                    ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
-                                    price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
-                                    locationType = getLocationType(),
-                                    tagModels = chipTags.getTags(),
+                                    ticketsTotal = if (etTicketsQuantity.text.toString().isEmpty()) 1 else etTicketsQuantity.text.toString().toInt(),
+                                    ticketsPerAccount = if (etTicketsPerAccountLimit.text.toString().isEmpty()) 1 else etTicketsPerAccountLimit.text.toString().toInt(),
+                                    price = if (etTicketPrice.text.toString().isEmpty()) 0 else etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
+                                    locationType = if (sLocation.selectedItemPosition == EVENT_LOCATION_SPECIFY) EventLocationType.NotDefined() else getLocationType(),
+                                    tagModels = if (chipTags.getTags().isEmpty()) emptyList() else chipTags.getTags(),
                                     status = eventStatus,
                                     groupIds = groupIds.toSet(),
-                                    needPush = cbSendNotification.isChecked
+                                    needPush = cbSendNotification.isChecked,
+                                    contact_via_mnassa = contactMeMnassa.isChecked
                             )
+
                             viewModel.publish(model)
                         }.invokeOnCompletion {
                             onEventChanged()
@@ -316,7 +321,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
     private fun onEventChanged() {
         val view = view ?: return
-        view.toolbar.actionButtonClickable = canCreateEvent()
+        view.toolbar.actionButtonClickable = true
+//        view.toolbar.actionButtonClickable = canCreateEvent()
     }
 
     private fun canCreateEvent(): Boolean {

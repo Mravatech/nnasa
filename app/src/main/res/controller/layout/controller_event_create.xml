@@ -438,6 +438,24 @@
                 android:layout_marginTop="@dimen/spacing_vertical"
                 android:layout_marginEnd="@dimen/spacing_horizontal" />
 
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/contactMePhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone"/>
+
+                <RadioButton
+                    android:id="@+id/contactMeMnassa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mnassa"/>
+
+            </RadioGroup>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

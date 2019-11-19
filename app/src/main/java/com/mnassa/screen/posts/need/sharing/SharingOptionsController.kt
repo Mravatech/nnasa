@@ -39,9 +39,9 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        require(targetController is OnSharingOptionsResult) {
-            "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
-        }
+//        require(targetController is OnSharingOptionsResult) {
+//            "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
+//        }
 
         if (args.containsKey(EXTRA_PREDEFINED_OPTIONS)) {
             setSelection(args.getSerializable(EXTRA_PREDEFINED_OPTIONS) as PostPrivacyOptions)
@@ -141,7 +141,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     private fun setSelection(options: PostPrivacyOptions) {
         if (options.privacyConnections.isEmpty() && options.privacyType is PostPrivacyType.PRIVATE) {
             //server side logic bug
-            setSelection(PostPrivacyOptions.DEFAULT)
+//            setSelection(PostPrivacyOptions.DEFAULT)
             return
         }
 

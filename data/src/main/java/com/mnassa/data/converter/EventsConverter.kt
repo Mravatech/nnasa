@@ -64,7 +64,8 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                     type = input.type?.let { converter.convert<EventType>(it) } ?: EventType.LECTURE(),
                     updatedAt = Date(input.updatedAt ?: EventModel.DEFAULT_UPDATED_AT),
                     participants = input.participants ?: emptyList(),
-                    groups = tag.groupIds)
+                    groups = tag.groupIds,
+                    contact_via_mnassa = input.contact_via_mnassa)
         } catch (e: Exception) {
             Timber.e(e, "WRONG EVENT STRUCTURE >>> ${input.id}")
             throw e
@@ -186,7 +187,9 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                 allConnections = input.privacy.privacyType is PostPrivacyType.PUBLIC,
                 privacyConnections = input.privacy.privacyConnections.takeIf { it.isNotEmpty() && input.privacy.privacyType is PostPrivacyType.PRIVATE }?.toList(),
                 groups = input.groupIds.toList().takeIf { it.isNotEmpty() },
-                needPush = input.needPush
+                needPush = input.needPush,
+                contact_via_mnassa = input.contact_via_mnassa
+
         )
     }
 }

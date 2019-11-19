@@ -35,7 +35,9 @@ data class EventModelImpl(
         override val type: EventType,
         override val updatedAt: Date,
         override val participants: List<String>,
-        override val groups: List<GroupModel>
+        override val groups: List<GroupModel>,
+        override val contact_via_mnassa: Boolean
+
 
 ) : EventModel
 
@@ -66,5 +68,7 @@ data class RawEventModel(
         val tagIds: MutableSet<String> = mutableSetOf(),
         val status: EventStatus,
         val groupIds: Set<String>,
-        val needPush: Boolean?
+        val needPush: Boolean?,
+        val contact_via_mnassa: Boolean
+
 )

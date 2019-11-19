@@ -25,7 +25,9 @@ data class CreateOrEditEventRequest(
         @SerializedName("allConnections") val allConnections: Boolean,
         @SerializedName("privacyConnections") val privacyConnections: List<String>? = null,
         @SerializedName("privacyCommunitiesIds") val groups: List<String>? = null,
-        @SerializedName("needPush") val needPush: Boolean?
+        @SerializedName("needPush") val needPush: Boolean?,
+        @SerializedName("contact_via_mnassa") val contact_via_mnassa: Boolean
+
 )
 
 data class EventDuration(
