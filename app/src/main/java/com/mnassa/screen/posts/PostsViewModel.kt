@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts
 
 import com.mnassa.domain.aggregator.AggregatorLive
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.model.PermissionsModel
 import com.mnassa.domain.model.PostModel
 import com.mnassa.screen.base.MnassaViewModel
@@ -21,4 +22,7 @@ interface PostsViewModel : MnassaViewModel, NewPanelViewModel {
     fun saveScrollPosition(post: PostModel)
     fun restoreScrollPosition(): String?
     fun resetScrollPosition()
+
+    fun repost(sharingOptions: PostPrivacyOptions)
+
 }

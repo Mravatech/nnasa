@@ -34,6 +34,8 @@ interface EventModel : Model {
     val updatedAt: Date
     val participants: List<String>
     val groups: List<GroupModel>
+    val contact_via_mnassa: Boolean
+
 
     companion object {
         const val DEFAULT_CREATED_AT = 0L

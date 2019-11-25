@@ -27,7 +27,7 @@
                 android:id="@+id/tvShareOptions"
                 style="@style/ShareToButton"
                 android:layout_marginTop="@dimen/spacing_vertical"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:text="Share to" />
 
             <RelativeLayout
@@ -52,7 +52,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@id/user_pics"
-                    tools:text="Heba Attar"
+                    android:text="Heba Attar"
                     android:textColor="#313131" />
 
 
@@ -69,7 +69,9 @@
 
 
 
+
             </RelativeLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilNeed"

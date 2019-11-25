@@ -3,6 +3,7 @@ package com.mnassa.screen.posts
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,19 +12,29 @@ import com.mnassa.core.addons.StateExecutor
 import com.mnassa.core.addons.launchCoroutineUI
 import com.mnassa.core.addons.launchUI
 import com.mnassa.domain.aggregator.produce
+import com.mnassa.domain.interactor.PostPrivacyOptions
+import com.mnassa.domain.model.PostModel
+import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.exceptions.resolveExceptions
+import com.mnassa.extensions.canBeShared
 import com.mnassa.extensions.isInvisible
 import com.mnassa.extensions.subscribeToUpdates
 import com.mnassa.screen.base.MnassaControllerImpl
+import com.mnassa.screen.chats.message.ChatMessageController
 import com.mnassa.screen.group.details.GroupDetailsController
 import com.mnassa.screen.main.OnPageSelected
 import com.mnassa.screen.main.OnScrollToTop
 import com.mnassa.screen.main.PageContainer
 import com.mnassa.screen.posts.need.create.CreateNeedController
+import com.mnassa.screen.posts.need.details.NeedDetailsController
+import com.mnassa.screen.posts.need.sharing.SharingOptionsController
+import com.mnassa.screen.posts.profile.create.RecommendUserController
 import com.mnassa.screen.profile.ProfileController
 import com.mnassa.translation.fromDictionary
 import com.mnassa.widget.newpanel.NewPanelView
 import kotlinx.android.synthetic.main.controller_posts_list.view.*
+import kotlinx.android.synthetic.main.sub_profile_header.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.consume
 import org.kodein.di.generic.instance
 
@@ -31,14 +42,30 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 3/6/2018.
  */
-class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, OnPageSelected, OnScrollToTop {
+class PostsController : MnassaControllerImpl<PostsViewModel>(),
+        NewPanelView,
+        OnPageSelected,
+        OnScrollToTop,
+        SharingOptionsController.OnSharingOptionsResult {
     override val layoutId: Int = R.layout.controller_posts_list
     override val viewModel: PostsViewModel by instance()
+    protected var post: PostModel? = null
+
     private val adapter = PostsRVAdapter(this)
     private val controllerSelectedExecutor = StateExecutor<Unit, Unit>(initState = Unit) {
         val parent = parentController
         parent is PageContainer && parent.isPageSelected(this@PostsController)
     }
+
+    override var sharingOptions: PostPrivacyOptions = PostPrivacyOptions.PUBLIC
+        set(value) {
+            field = value
+            GlobalScope.launchUI {
+                getViewSuspend()
+                viewModel.repost(value)
+            }
+        }
+
     private var postIdToScroll: String? = null
 
     override fun onCreated(savedInstanceState: Bundle?) {
@@ -48,6 +75,39 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
             adapter.restoreState(this)
         }
 
+
+
+        adapter.onRepostClickListener = {
+            Log.e("REPOST_CLICKED", it.counters.reposts.toString())
+
+
+            val sharingOptionsController = SharingOptionsController.newInstance(
+                    listener = this@PostsController,
+                    accountsToExclude = listOf(it.author.id),
+                    restrictShareReduction = false,
+                    canBePromoted = false,
+                    promotePrice = 0L)
+
+            if (this is SharingOptionsController.OnSharingOptionsResult){
+                Log.e("is it", "Yes, it is!")
+            }else{
+                Log.e("is it", "No, it is not!")
+
+            }
+
+            open(sharingOptionsController)
+
+        }
+        adapter.onOffersClickListener = { post, account ->
+
+            open(ChatMessageController.newInstance(post, account))
+        }
+
+        adapter.onRecommendationClickListener = {
+            val postDetailsFactory: PostDetailsFactory by instance()
+            open(postDetailsFactory.newInstance(it))
+        }
+
         adapter.onAttachedToWindow = { post ->
             controllerSelectedExecutor.invoke { viewModel.onAttachedToWindow(post) }
         }
@@ -55,9 +115,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
             val postDetailsFactory: PostDetailsFactory by instance()
             open(postDetailsFactory.newInstance(it))
         }
-        adapter.onRepostClickListener = {
-           Log.e("REPOST_CLICKED", it.counters.reposts.toString())
-        }
+
         adapter.onCreateNeedClickListener = {
             launchCoroutineUI {
                 if (viewModel.permissionsChannel.consume { receive() }.canCreateNeedPost) {
@@ -87,9 +145,9 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
         resolveExceptions {
             launchCoroutineUI {
                 viewModel.postsLive.produce().subscribeToUpdates(
-                    adapter = adapter,
-                    emptyView = { getViewSuspend().rlEmptyView },
-                    onAdded = { triggerScrollPanel() }
+                        adapter = adapter,
+                        emptyView = { getViewSuspend().rlEmptyView },
+                        onAdded = { triggerScrollPanel() }
                 )
             }
         }
@@ -167,4 +225,6 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(), NewPanelView, On
     companion object {
         fun newInstance() = PostsController()
     }
+
+
 }

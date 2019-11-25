@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
@@ -117,10 +118,12 @@ class EventDetailsController(args: Bundle) : MnassaControllerImpl<EventDetailsVi
         eventModel = event
         initToolbarMenu(event)
         with(getViewSuspend()) {
-            val mainImage = event.pictures.firstOrNull()
-            ivEventImage.image(mainImage)
+//            val mainImage = event.pictures.firstOrNull()
+            val mainImage = if (event.pictures.size > 1) event.pictures.takeLast(event.pictures.size - 1) else emptyList()
+
+            ivEventImage.image(mainImage.firstOrNull())
             ivEventImage.setOnClickListener {
-                if (mainImage != null) open(PhotoPagerController.newInstance(listOf(mainImage)))
+                if (mainImage != null) open(PhotoPagerController.newInstance(listOf(mainImage.first())))
             }
 
             event.bindDate(llEventDateRoot)

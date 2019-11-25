@@ -36,7 +36,9 @@ internal data class EventDbEntity(
         @SerializedName("participants") val participants: List<String>?,
         @SerializedName("privacyConnections") val privacyConnections: List<String>?,
         @SerializedName("locationDescription") val locationDescription: String?,
-        @SerializedName("privacyCommunitiesIds") val groups: Set<String>?
+        @SerializedName("privacyCommunitiesIds") val groups: Set<String>?,
+        @SerializedName("contact_via_mnassa") val contact_via_mnassa: Boolean
+
 ) : HasIdMaybe {
 
     companion object {

@@ -254,12 +254,16 @@ fun TextView.bindStatus(statusOfExpiration: ExpirationType?, timeOfExpiration: D
 
 suspend fun OfferPostModel.getBoughtItemsCount(): Int = 0
 
+
 val PostModel.canBeShared: Boolean
-    get() = privacyType !is PostPrivacyType.PRIVATE &&
-            !isMyPost() &&
-            (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE) &&
-            this !is OfferPostModel &&
-            (if (this is RecommendedProfilePostModel) this.recommendedProfile != null else true)
+    get() = true
+            
+//val PostModel.canBeShared: Boolean
+//    get() = privacyType is PostPrivacyType.PRIVATE &&
+//            !isMyPost() &&
+//            (statusOfExpiration == null || statusOfExpiration is ExpirationType.ACTIVE) &&
+//            this !is OfferPostModel &&
+//            (if (this is RecommendedProfilePostModel) this.recommendedProfile != null else true)
 
 val PostModel.canRecommend: Boolean
     get() =

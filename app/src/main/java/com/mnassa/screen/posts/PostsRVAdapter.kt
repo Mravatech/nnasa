@@ -13,6 +13,7 @@ import com.mnassa.extensions.startUpdateTimeJob
 import com.mnassa.extensions.stopUpdateTimeJob
 import com.mnassa.screen.base.adapter.BaseSortedPaginationRVAdapter
 import com.mnassa.screen.posts.viewholder.*
+import kotlinx.android.synthetic.main.header_main.*
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -29,6 +30,10 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
     var onGroupClickListener = { group: GroupModel -> }
     var onMoreItemClickListener = { item: PostModel, view: View -> }
     var onRepostClickListener = { item: PostModel -> }
+    var onOffersClickListener = { account: PostModel, account1: ShortAccountModel -> }
+    var onRecommendationClickListener = { item: PostModel -> }
+
+
 
     var showMoreOptions: Boolean = false
         set(value) {
@@ -129,6 +134,28 @@ open class PostsRVAdapter(private val coroutineScope: CoroutineScope, private va
                 ?: return
         val dataItem = dataStorage[position]
         onAttachedToWindow(dataItem)
+
+        val postModel = getDataItemByAdapterPosition(holder.adapterPosition)
+
+        val tvRepostCounttv =  holder.itemView.findViewById<TextView>(R.id.tvRepostCount)
+
+        tvRepostCounttv.text = "${postModel.counters.reposts}"
+        tvRepostCounttv.setOnClickListener {
+
+            onRepostClickListener(postModel)
+        }
+
+
+        holder.itemView.findViewById<TextView>(R.id.tvOffersCount)?.setOnClickListener {
+            onOffersClickListener(getDataItemByAdapterPosition(holder.adapterPosition), getDataItemByAdapterPosition(holder.adapterPosition).author )
+        }
+
+        holder.itemView.findViewById<TextView>(R.id.tvRecomendationsCount)?.setOnClickListener {
+
+            onRecommendationClickListener(getDataItemByAdapterPosition(holder.adapterPosition))
+        }
+
+
 
         holder.itemView.findViewById<TextView?>(R.id.tvTime)?.let {
             coroutineScope.launchUI {

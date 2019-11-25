@@ -16,13 +16,18 @@ import org.kodein.di.generic.instance
 /**
  * Created by Peter on 2/20/2018.
  */
-class SplashController : MnassaControllerImpl<SplashViewModel>() {
+class SplashController : MnassaControllerImpl<SplashViewModel>(){
+
     override val layoutId: Int = R.layout.controller_splash
     override val viewModel: SplashViewModel by instance()
     private val appInfoProvider: AppInfoProvider by instance()
 
+
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
+
 
         view.tvApplicationName.text = String.format("%s %s", appInfoProvider.appName, appInfoProvider.versionName)
 

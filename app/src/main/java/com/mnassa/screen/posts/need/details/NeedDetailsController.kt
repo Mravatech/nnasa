@@ -22,6 +22,7 @@ import com.mnassa.screen.photopager.PhotoPagerController
 import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_AUTHOR_ID
 import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_ID
 import com.mnassa.screen.posts.PostDetailsFactory.Companion.EXTRA_POST_MODEL
+import com.mnassa.screen.posts.PostsController
 import com.mnassa.screen.posts.need.create.CreateNeedController
 import com.mnassa.screen.posts.need.details.adapter.PostAttachmentsAdapter
 import com.mnassa.screen.posts.need.details.adapter.PostTagRVAdapter
@@ -54,6 +55,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
                 getViewSuspend()
                 viewModel.repost(value)
             }
+            field = value
         }
     private val popupMenuHelper: PopupMenuHelper by instance()
     private val dialogHelper: DialogHelper by instance()
@@ -66,6 +68,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
+
 
         with(view) {
             rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
@@ -182,8 +185,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             ivRepost.setOnClickListener { openSharingOptionsScreen() }
             ivRepost.text = fromDictionary(R.string.need_repost_count).format(post.counters.reposts)
             ivComment.text = fromDictionary(R.string.need_comments_count_new).format(post.counters.comments)
-            ivRepost.isInvisible = !post.canBeShared
-//            tvRepostsCount.visibility = ivRepost.visibility
+            ivRepost.isInvisible = false
+            tvRepostsCount.visibility = ivRepost.visibility
+
+//            ivRepost.isInvisible = !post.canBeShared
 
             //expiration
             tvExpiration.bindExpireType(post.statusOfExpiration, post.timeOfExpiration)

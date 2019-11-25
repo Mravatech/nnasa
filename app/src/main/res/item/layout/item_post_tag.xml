@@ -11,19 +11,19 @@
         android:layout_margin="5dp"
         app:cardCornerRadius="25dp">
 
-        <TextView
-            android:id="@+id/tvTagName"
-            style="@style/MnassaText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/tag_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingLeft="33dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:paddingRight="33dp"
-            tools:text="Tagg1!" />
+<!--        <TextView-->
+<!--            android:id="@+id/tvTagName"-->
+<!--            style="@style/MnassaText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/tag_background"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:paddingLeft="33dp"-->
+<!--            android:paddingTop="15dp"-->
+<!--            android:paddingBottom="15dp"-->
+<!--            android:paddingRight="33dp"-->
+<!--            tools:text="Tagg1!" />-->
     </androidx.cardview.widget.CardView>
 
 </FrameLayout>

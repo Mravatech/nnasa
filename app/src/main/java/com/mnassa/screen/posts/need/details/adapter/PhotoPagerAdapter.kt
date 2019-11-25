@@ -1,5 +1,6 @@
 package com.mnassa.screen.posts.need.details.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ class PhotoPagerAdapter(private val images: List<String>, private val onClickLis
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val imageUrl = images[position]
+
         val view = LayoutInflater.from(container.context).inflate(R.layout.item_image, container, false)
         view.ivImage.image(imageUrl)
         view.setOnClickListener { onClickListener(imageUrl) }

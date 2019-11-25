@@ -29,7 +29,10 @@ class OfferDetailsController(args: Bundle) : NeedDetailsController(args) {
         super.onViewCreated(view)
 
         with(view) {
-            ivRepost.visibility = View.INVISIBLE
+            ivRepost.visibility = View.VISIBLE
+            tvRepostsCount.visibility = View.VISIBLE
+
+//            ivRepost.visibility = View.INVISIBLE
             tvRepostsCount.visibility = View.INVISIBLE
         }
     }

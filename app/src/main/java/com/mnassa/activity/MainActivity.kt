@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
@@ -23,6 +24,8 @@ import com.mnassa.domain.model.LogoutReason
 import com.mnassa.extensions.hideKeyboard
 import com.mnassa.screen.MnassaRouter
 import com.mnassa.screen.MnassaRouterDelegate
+import com.mnassa.screen.home.HomeController
+import com.mnassa.screen.main.MainController
 import com.mnassa.screen.splash.SplashController
 import com.mnassa.service.MnassaFirebaseMessagingService
 import com.mnassa.translation.fromDictionary

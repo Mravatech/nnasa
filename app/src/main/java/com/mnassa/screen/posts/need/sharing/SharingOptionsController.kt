@@ -1,6 +1,7 @@
 package com.mnassa.screen.posts.need.sharing
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.Controller
@@ -39,6 +40,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+
+
         require(targetController is OnSharingOptionsResult) {
             "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
         }
@@ -50,8 +53,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
         with(view) {
             toolbar.withActionButton(fromDictionary(R.string.sharing_options_button)) {
+
                 resultListener.sharingOptions = getSelection()
+
                 close()
+
             }
             tvPromotePostTitle.text = fromDictionary(R.string.sharing_options_promote_title)
             tvMyNewsFeed.text = fromDictionary(R.string.sharing_options_newsfeed_title)
@@ -125,6 +131,8 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
     }
 
     private fun getSelection(): PostPrivacyOptions {
+
+
         with(requireNotNull(view)) {
             return PostPrivacyOptions(
                     privacyType = when {
@@ -138,10 +146,11 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
         }
     }
 
+
     private fun setSelection(options: PostPrivacyOptions) {
         if (options.privacyConnections.isEmpty() && options.privacyType is PostPrivacyType.PRIVATE) {
             //server side logic bug
-            setSelection(PostPrivacyOptions.DEFAULT)
+            setSelection(PostPrivacyOptions.PUBLIC)
             return
         }
 
@@ -177,7 +186,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
         fun <T> newInstance(
                 accountsToExclude: List<String>,
-                options: PostPrivacyOptions = PostPrivacyOptions.DEFAULT,
+                options: PostPrivacyOptions = PostPrivacyOptions.PUBLIC,
                 listener: T,
                 restrictShareReduction: Boolean,
                 canBePromoted: Boolean,
@@ -195,6 +204,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
             args.putLong(EXTRA_PROMOTE_PRICE, promotePrice)
 
             val result = SharingOptionsController(args)
+            Log.d("listener-controller", "$listener")
             result.targetController = listener
             return result
         }
@@ -214,9 +224,9 @@ suspend fun PostPrivacyOptions.format(): CharSequence {
                 privacyCommunitiesIds.isNotEmpty() -> {
                     val groupsInteractor: GroupsInteractor = App.context.getInstance()
                     val groupsFormatted = privacyCommunitiesIds
-                        .take(MAX_SHARE_TO_GROUPS)
-                        .mapNotNull { groupsInteractor.getGroupById(it) }
-                        .joinToString { it.formattedName }
+                            .take(MAX_SHARE_TO_GROUPS)
+                            .mapNotNull { groupsInteractor.getGroupById(it) }
+                            .joinToString { it.formattedName }
                     if (privacyCommunitiesIds.size <= MAX_SHARE_TO_GROUPS) {
                         groupsFormatted
                     } else {

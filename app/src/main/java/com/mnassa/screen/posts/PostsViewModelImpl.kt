@@ -4,6 +4,7 @@ import com.mnassa.core.addons.launchWorker
 import com.mnassa.core.addons.launchWorkerNoExceptions
 import com.mnassa.domain.aggregator.AggregatorLive
 import com.mnassa.domain.aggregator.produce
+import com.mnassa.domain.interactor.PostPrivacyOptions
 import com.mnassa.domain.interactor.PostsInteractor
 import com.mnassa.domain.interactor.PreferencesInteractor
 import com.mnassa.domain.interactor.UserProfileInteractor
@@ -28,6 +29,17 @@ import kotlin.math.min
 class PostsViewModelImpl(private val postsInteractor: PostsInteractor,
                          private val userProfileInteractor: UserProfileInteractor,
                          private val preferencesInteractor: PreferencesInteractor) : MnassaViewModelImpl(), PostsViewModel {
+
+
+
+        override fun repost(sharingOptions: PostPrivacyOptions) {
+            launchWorker {
+                withProgressSuspend {
+                    postsInteractor.repostPost("", null, sharingOptions)
+                }
+            }
+        }
+
 
     private var resetCounterJob: Job? = null
 

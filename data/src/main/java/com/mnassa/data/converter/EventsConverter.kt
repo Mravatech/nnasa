@@ -64,7 +64,9 @@ class EventsConverter : ConvertersContextRegistrationCallback {
                     type = input.type?.let { converter.convert<EventType>(it) } ?: EventType.LECTURE(),
                     updatedAt = Date(input.updatedAt ?: EventModel.DEFAULT_UPDATED_AT),
                     participants = input.participants ?: emptyList(),
-                    groups = tag.groupIds)
+                    groups = tag.groupIds,
+                    contact_via_mnassa = input.contact_via_mnassa
+            )
         } catch (e: Exception) {
             Timber.e(e, "WRONG EVENT STRUCTURE >>> ${input.id}")
             throw e

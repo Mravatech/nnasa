@@ -4,6 +4,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,7 +119,11 @@ class EventsRVAdapter(private val coroutineScope: CoroutineScope, private val us
                 tvUserName.text = item.author.formattedName
                 tvTime.text = item.createdAt.toTimeAgo()
 
-                ivEvent.image(item.pictures.firstOrNull())
+//                ivEvent.image(item.pictures.firstOrNull())
+
+                val pictures = if (item.pictures.size > 1) item.pictures.takeLast(item.pictures.size - 1) else emptyList()
+
+                ivEvent.image(pictures.firstOrNull())
 
                 tvEventTitle.text = item.title
                 tvEventDescription.text = item.text
@@ -138,8 +143,11 @@ class EventsRVAdapter(private val coroutineScope: CoroutineScope, private val us
                     }
                 }
                 ivEventStatus.setImageResource(imgSrc)
-                flEventDisabled.isInvisible = imgSrc == 0
-                if (imgSrc == 0) ivEvent.enable() else ivEvent.disable()
+//                flEventDisabled.isInvisible = false
+//                if (imgSrc == 0) ivEvent.enable() else ivEvent.enable()
+
+//                flEventDisabled.isInvisible = imgSrc == 0
+//                if (imgSrc == 0) ivEvent.enable() else ivEvent.disable()
 
                 tvEventType.text = item.formattedType
                 tvEventType.setBackgroundResource(when (item.status) {

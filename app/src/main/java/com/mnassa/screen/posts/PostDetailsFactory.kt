@@ -25,7 +25,7 @@ import kotlinx.coroutines.GlobalScope
 /**
  * Created by Peter on 4/11/2018.
  */
-class PostDetailsFactory {
+class PostDetailsFactory{
 
     fun newInstance(post: PostModel): Controller {
         GlobalScope.launchWorkerNoExceptions {

@@ -1,12 +1,15 @@
 package com.mnassa.screen.events.create
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -35,6 +38,8 @@ import kotlinx.android.synthetic.main.chip_layout.view.*
 import kotlinx.android.synthetic.main.controller_event_create.view.*
 import kotlinx.coroutines.channels.consumeEach
 import org.kodein.di.generic.instance
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by Peter on 4/23/2018.
@@ -86,30 +91,46 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
         }
 
         with(view) {
+
+            event_title_icon.showDescDialog("\"Your \"event title\" refers to the name of the event you want to post.\"")
+            event_city_icon.showDescDialog("This refers to the city where your event will take place.")
+            event_address_icon.showDescDialog("Your \"event address\" refers to the accurate location where the event will take place.")
+            event_desc_icon.showDescDialog("Your \"event description\" refers to the entire overview of the event.")
+            event_price_icon.showDescDialog("Your \"ticket price\" is the price you want to charge for one event ticket.")
+            event_ticket_quantity_icon.showDescDialog("Your \"ticket quanity\" is the quantity or amount of ticket you have for the event.")
+            event_ticket_limit_icon.showDescDialog("Your \"ticket limit\" is the amount of tickets that an individual can buy.")
+            choose_image_btn.setOnClickListener {
+                dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
+            }
+
+
             toolbar.withActionButton(fromDictionary(R.string.event_post_button)) {
-                view.toolbar.actionButtonClickable = false
+                view.toolbar.actionButtonClickable = true
+//                view.toolbar.actionButtonClickable = false
                 launchCoroutineUI {
                     val imagesToUpload = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.LocalImage>().map { it.imageUri }
                     val uploadedImages = attachedImagesAdapter.dataStorage.filterIsInstance<AttachedImage.UploadedImage>().map { it.imageUrl }
 
+
                     val model = RawEventModel(
                             id = eventId,
-                            title = etEventTitle.text.toString(),
-                            description = etEventDescription.text.toString(),
+                            title = if (etEventTitle.text.toString().isEmpty()) "null" else etEventTitle.text.toString(),
+                            description = if (etEventDescription.text.toString().isEmpty()) "null" else etEventDescription.text.toString(),
                             type = (sEventType.selectedItem as FormattedEventType).eventType,
-                            startDateTime = requireNotNull(dateTime).startDateTime,
-                            durationMillis = requireNotNull(dateTime).durationMillis,
-                            imagesToUpload = imagesToUpload,
-                            uploadedImages = uploadedImages.toMutableSet(),
+                            startDateTime = if (dateTime?.startDateTime == null) Date(2000, 0, 0, 0, 0) else (dateTime)!!.startDateTime,
+                            durationMillis = if (dateTime?.durationMillis == null) 0L else (dateTime)!!.durationMillis,
+                            imagesToUpload = if (imagesToUpload.isEmpty()) listOf(Uri.parse("android.resource://${context.packageName}/${R.drawable.camera_icon_and_bg}")) else imagesToUpload,
+                            uploadedImages = if (uploadedImages.toMutableSet().isEmpty()) mutableSetOf("null") else uploadedImages.toMutableSet(),
                             privacy = sharingOptions,
-                            ticketsTotal = etTicketsQuantity.text.toString().toInt(),
-                            ticketsPerAccount = etTicketsPerAccountLimit.text.toString().toInt(),
-                            price = etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
-                            locationType = getLocationType(),
-                            tagModels = chipTags.getTags(),
+                            ticketsTotal = if (etTicketsQuantity.text.toString().isEmpty()) 1 else etTicketsQuantity.text.toString().toInt(),
+                            ticketsPerAccount = if (etTicketsPerAccountLimit.text.toString().isEmpty()) 1 else etTicketsPerAccountLimit.text.toString().toInt(),
+                            price = if (etTicketPrice.text.toString().isEmpty()) 0 else etTicketPrice.text.toString().toLongOrNull()?.takeIf { switchPaidEvent.isChecked },
+                            locationType = if (sLocation.selectedItemPosition == EVENT_LOCATION_SPECIFY) EventLocationType.NotDefined() else getLocationType(),
+                            tagModels = if (chipTags.getTags().isEmpty()) emptyList() else chipTags.getTags(),
                             status = eventStatus,
                             groupIds = groupIds.toSet(),
-                            needPush = cbSendNotification.isChecked
+                            needPush = cbSendNotification.isChecked,
+                            contact_via_mnassa = contactMeMnassa.isChecked
                     )
                     viewModel.publish(model)
                 }.invokeOnCompletion {
@@ -282,7 +303,8 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
 
     private fun onEventChanged() {
         val view = view ?: return
-        view.toolbar.actionButtonClickable = canCreateEvent()
+        view.toolbar.actionButtonClickable = true
+//        view.toolbar.actionButtonClickable = canCreateEvent()
     }
 
     private fun canCreateEvent(): Boolean {
@@ -370,9 +392,9 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             }
 
             sharingOptions = PostPrivacyOptions(
-                event.privacyType,
-                event.privacyConnections,
-                event.groups.map { it.id }.toSet())
+                    event.privacyType,
+                    event.privacyConnections,
+                    event.groups.map { it.id }.toSet())
             launchCoroutineUI {
                 tvShareOptions.text = sharingOptions.format()
             }
@@ -486,10 +508,28 @@ class CreateEventController(args: Bundle) : MnassaControllerImpl<CreateEventView
             return when {
                 args.containsKey(EXTRA_GROUP) -> {
                     val group = args.getSerializable(EXTRA_GROUP) as GroupModel
-                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
+                    PostPrivacyOptions(PostPrivacyType.PRIVATE(), emptySet(), emptySet())
+//                    PostPrivacyOptions(PostPrivacyType.PUBLIC(), emptySet(), setOf(group.id))
                 }
                 else -> PostPrivacyOptions.DEFAULT
             }
         }
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun ImageView.showDescDialog(str: String) {
+
+        this.setOnClickListener {
+
+            val alertDialog = AlertDialog.Builder(context).apply {
+                setMessage(str)
+                setPositiveButton("OK") { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                }
+            }.create().show()
+
+
+        }
+    }
 }
+

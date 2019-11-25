@@ -1,6 +1,8 @@
 package com.mnassa.screen.home
 
+import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
@@ -47,6 +49,7 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                     HomePage.EVENTS.ordinal -> EventsController.newInstance()
                     else -> throw IllegalArgumentException("Invalid page position $position")
                 }
+                Log.d("what is page", page.toString())
                 router.setRoot(RouterTransaction.with(page).tag(formatTabControllerTag(position)))
             }
         }
@@ -55,7 +58,8 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
 
         override fun getPageTitle(position: Int): CharSequence = when (position) {
             HomePage.NEEDS.ordinal -> fromDictionary(R.string.tab_home_posts_title)
-            HomePage.EVENTS.ordinal -> fromDictionary(R.string.tab_home_events_title)
+            HomePage.EVENTS.ordinal -> fromDictionary("ACTIVITIES")
+//            HomePage.EVENTS.ordinal -> fromDictionary(R.string.tab_home_events_title)
             else -> throw IllegalArgumentException("Invalid page position $position")
         }
     }
@@ -134,12 +138,22 @@ class HomeController : MnassaControllerImpl<HomeViewModel>(), MnassaRouter, OnPa
                         }
                         famHome.addMenuButton(button)
                     }
-
                     if (permission.canCreateEvent) {
                         val button = inflateMenuButton(fromDictionary(R.string.tab_home_button_create_event))
                         button.setOnClickListener {
                             famHome.close(false)
-                            open(CreateEventController.newInstance())
+
+                            val alertDialog = AlertDialog.Builder(context).apply {
+
+                                setMessage("This is a disclaimer showing our policies. This is our terms and conditions.")
+                                setPositiveButton("ACCEPT"){dialogInterface, i ->
+                                    open(CreateEventController.newInstance())
+                                    dialogInterface.dismiss()
+                                }
+                                setNegativeButton("DECLINE"){ dialogInterface, i ->
+                                    dialogInterface.dismiss()
+                                }
+                            }.create().show()
                         }
                         famHome.addMenuButton(button)
                     }
