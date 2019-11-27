@@ -78,24 +78,29 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(),
 
 
         adapter.onRepostClickListener = {
-            Log.e("REPOST_CLICKED", it.counters.reposts.toString())
+            Log.e("REPOST_CLICKED", adapter.toString())
 
 
             val sharingOptionsController = SharingOptionsController.newInstance(
-                    listener = this@PostsController,
+                    listener = this,
                     accountsToExclude = listOf(it.author.id),
                     restrictShareReduction = false,
                     canBePromoted = false,
                     promotePrice = 0L)
 
-            if (this is SharingOptionsController.OnSharingOptionsResult){
-                Log.e("is it", "Yes, it is!")
-            }else{
-                Log.e("is it", "No, it is not!")
+//            if (this is SharingOptionsController.OnSharingOptionsResult){
+//                Log.e("is it", "Yes, it is!")
+//            }else{
+//                Log.e("is it", "No, it is not!")
+//
+//            }
 
-            }
-
-            open(sharingOptionsController)
+            open(SharingOptionsController.newInstance(
+                    listener = this,
+                    accountsToExclude = listOf(it.author.id),
+                    restrictShareReduction = false,
+                    canBePromoted = false,
+                    promotePrice = 0L))
 
         }
         adapter.onOffersClickListener = { post, account ->

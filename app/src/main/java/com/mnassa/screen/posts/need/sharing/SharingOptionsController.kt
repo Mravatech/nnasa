@@ -42,9 +42,9 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
 
 
-        require(targetController is OnSharingOptionsResult) {
-            "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
-        }
+//        require(targetController is OnSharingOptionsResult) {
+//            "$targetController must implement ${OnSharingOptionsResult::class.java.name}"
+//        }
 
         if (args.containsKey(EXTRA_PREDEFINED_OPTIONS)) {
             setSelection(args.getSerializable(EXTRA_PREDEFINED_OPTIONS) as PostPrivacyOptions)
@@ -205,6 +205,7 @@ class SharingOptionsController(args: Bundle) : MnassaControllerImpl<SharingOptio
 
             val result = SharingOptionsController(args)
             Log.d("listener-controller", "$listener")
+
             result.targetController = listener
             return result
         }
