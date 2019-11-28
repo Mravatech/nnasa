@@ -13,6 +13,7 @@ import com.mnassa.screen.events.details.participants.EventParticipantItem
 import com.mnassa.screen.events.details.participants.EventParticipantsRVAdapter
 import com.mnassa.screen.events.details.participants.EventSelectParticipantsRVAdapter
 import com.mnassa.screen.posts.need.recommend.adapter.AccountsToRecommendRVAdapter
+import com.mnassa.screen.posts.need.recommend.adapter.CheckboxCount
 import com.mnassa.screen.posts.need.recommend.adapter.GroupedAccount
 import com.mnassa.translation.fromDictionary
 import kotlinx.android.synthetic.main.activity_search.*
@@ -62,7 +63,12 @@ class SearchActivity : BaseActivity() {
     private fun recommend() {
         val items = intent.getSerializableExtra(EXTRA_LIST_ITEMS) as ArrayList<GroupedAccount>
         val checkBoxes = intent.getSerializableExtra(EXTRA_LIST_CHECK_BOX_CONTAINER_ITEMS) as ArrayList<ShortAccountModel>
-        val adapter = AccountsToRecommendRVAdapter(intent.getSerializableExtra(EXTRA_BEST_MATCHES_ITEMS) as ArrayList<String>)
+//        val adapter = AccountsToRecommendRVAdapter(intent.getSerializableExtra(EXTRA_BEST_MATCHES_ITEMS) as ArrayList<String>)
+        val adapter = AccountsToRecommendRVAdapter(intent.getSerializableExtra(EXTRA_BEST_MATCHES_ITEMS) as ArrayList<String>, checkboxCount = object : CheckboxCount{
+            override fun checkBoxCount(sum: Int) {
+            }
+        })
+
         adapter.selectedAccounts = HashSet(checkBoxes)
         adapter.set(items)
         etSearch.addTextChangedListener(SimpleTextWatcher {

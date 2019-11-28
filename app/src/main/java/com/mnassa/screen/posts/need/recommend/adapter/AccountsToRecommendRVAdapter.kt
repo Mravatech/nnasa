@@ -1,8 +1,10 @@
 package com.mnassa.screen.posts.need.recommend.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import com.mnassa.R
 import com.mnassa.domain.model.ShortAccountModel
 import com.mnassa.domain.model.formattedName
@@ -22,7 +24,9 @@ import kotlin.collections.ArrayList
 /**
  * Created by Peter on 3/27/2018.
  */
-class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<String>) : BasePaginationRVAdapter<GroupedAccount>(), View.OnClickListener {
+class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<String>,
+                                   var sum: Int = 0,
+                                   var checkboxCount: CheckboxCount) : BasePaginationRVAdapter<GroupedAccount>(), View.OnClickListener {
 
     private val selectedAccountsInternal: MutableSet<ShortAccountModel> = TreeSet(Comparator { first, second -> first.id.compareTo(second.id) })
     var onSelectedAccountsChangedListener = { selectedAccountIds: List<ShortAccountModel> -> }
@@ -80,11 +84,14 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
         set(result)
     }
 
+
     override fun onClick(view: View) {
         if (view.id == R.id.ivSearch) {
             onSearchClickListener()
             return
         }
+
+        val checkBox: CheckBox = view.findViewById(R.id.cbInvite) as CheckBox
 
 
         val viewHolder = view.tag as? AccountViewHolder
@@ -105,7 +112,13 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 
             onSelectedAccountsChangedListener(selectedAccountsInternal.toList())
         }
+
+        sum = selectedAccountsInternal.size
+        checkboxCount.checkBoxCount(sum)
+
+
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): BaseVH<GroupedAccount> =
             when (viewType) {
@@ -147,6 +160,8 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
                 tvEventName.text = account.formattedFromEvent
                 tvEventName.goneIfEmpty()
                 cbInvite.isChecked = selectedAccount.contains(account)
+
+
             }
         }
 
@@ -176,4 +191,8 @@ class AccountsToRecommendRVAdapter(private val bestMatchesAccountIds: List<Strin
 sealed class GroupedAccount : Serializable {
     data class Group(val name: String) : GroupedAccount()
     data class Recommendation(val account: ShortAccountModel) : GroupedAccount()
+}
+
+interface CheckboxCount {
+    fun checkBoxCount(sum: Int)
 }

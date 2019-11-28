@@ -79,6 +79,7 @@ class PostsController : MnassaControllerImpl<PostsViewModel>(),
 
         adapter.onRepostClickListener = {
             Log.e("REPOST_CLICKED", adapter.toString())
+//            Log.e("REPOST_CLICKED", it.counters.reposts.toString())
 
 
             val sharingOptionsController = SharingOptionsController.newInstance(
