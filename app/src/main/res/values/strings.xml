@@ -2,6 +2,7 @@
     <string name="jpg_dimension">.jpg</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="i_offer">I Offer</string>
+    <string name="my_offer">My Offer</string>
     <string name="fulfilled">Fulfilled?</string>
     <string name="you_can_keep_posting_comments_only_to_this_post">You can keep posting comments only to this post</string>
     <string name="expire">Expired</string>

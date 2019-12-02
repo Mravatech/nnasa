@@ -1,5 +1,6 @@
 package com.mnassa.data.network
 
+import android.util.Log
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -9,10 +10,13 @@ import com.mnassa.domain.other.LanguageProvider
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+
+
 
 /**
  * Created by Peter on 2/26/2018.
@@ -27,6 +31,7 @@ class RetrofitConfig(
     private val languageProvider: LanguageProvider by lazy(languageProviderLazy)
     private val userProfileInteractor: UserProfileInteractor by lazy(userProfileInteractorLazy)
     private val gson: Gson by lazy(gsonLazy)
+
 
     fun makeRetrofit(): Retrofit {
         val baseUrl = appInfoProvider.endpoint
@@ -45,6 +50,7 @@ class RetrofitConfig(
         }
 
         okHttpBuilder.addInterceptor { chain ->
+
             val request = chain.request()
             val newRequest: Request.Builder = request.newBuilder()
 
@@ -59,10 +65,13 @@ class RetrofitConfig(
                 userProfileInteractor.getAccountIdOrNull()?.let { newRequest.addHeader(NetworkContract.Base.ACCOUNT_ID_HEADER, it) }
             }
 
+
             val response = chain.proceed(newRequest.build())
 
             response
+
         }
+
 
         val retrofitBuilder = Retrofit.Builder()
                 .baseUrl(baseUrl)

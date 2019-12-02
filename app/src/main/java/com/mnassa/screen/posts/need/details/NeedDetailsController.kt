@@ -1,5 +1,7 @@
 package com.mnassa.screen.posts.need.details
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -66,9 +68,22 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         }
     private val commentsWrapper by lazy { parentController as CommentsWrapperListener }
 
+    val I_OFFER = "I-OFFER"
+
+    //To get an instance of Shared Preference
+    private var offerSharedPreference: SharedPreferences? = null
+    private var offerSharedPreferenceEditor: SharedPreferences.Editor? = null
+    private var offerSharedPreferenceContent: String? = ""
+
+
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
+       offerSharedPreference = applicationContext?.getSharedPreferences("Offer-Shared-Prefs", Context.MODE_PRIVATE)
+       offerSharedPreferenceEditor = offerSharedPreference?.edit()
+
+        offerSharedPreferenceContent = offerSharedPreference?.getString(I_OFFER, "")
 
         with(view) {
             rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
@@ -149,7 +164,23 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvPosition.goneIfEmpty()
             tvEventName.text = post.author.formattedFromEvent
             tvEventName.goneIfEmpty()
-            ivChat.setOnClickListener { open(ChatMessageController.newInstance(post, post.author)) }
+
+            if (offerSharedPreferenceContent != null) {
+                if (offerSharedPreferenceContent!!.isNotEmpty()) {
+                    ivChat.text = applicationContext?.resources?.getString(R.string.my_offer)
+
+                } else {
+                    ivChat.text = applicationContext?.resources?.getString(R.string.i_offer)
+
+                }
+            }
+
+
+            ivChat.setOnClickListener {
+                offerSharedPreferenceEditor?.putString(I_OFFER, "MY-OFFER")
+                offerSharedPreferenceEditor?.commit()
+                open(ChatMessageController.newInstance(post, post.author))
+            }
             rlCreatorRoot.setOnClickListener { open(ProfileController.newInstance(post.author)) }
 
             //
@@ -214,23 +245,20 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
             btnFufiflAct.setOnClickListener {
                 viewModel.changeStatus(ExpirationType.FULFILLED)
-                btnFufiflAct.visibility =   View.GONE
+                btnFufiflAct.visibility = View.GONE
             }
 
             tvCommentsCount.setHeaderWithCounter(R.string.need_comments_count, post.counters.comments)
 
             //show button
             ivChat.visibility = if (!post.isMyPost()) View.VISIBLE else View.GONE
-            btnFufiflAct.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
-            odour.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
-            odour1.visibility =  if (post.isMyPost()) View.VISIBLE else View.GONE
+            btnFufiflAct.visibility = if (post.isMyPost()) View.VISIBLE else View.GONE
+            odour.visibility = if (post.isMyPost()) View.VISIBLE else View.GONE
+            odour1.visibility = if (post.isMyPost()) View.VISIBLE else View.GONE
 
 
 
             llOtherPersonPostActions.bindStat(post.statusOfExpiration, post.timeOfExpiration, false)
-
-
-
 
 
             val parentController = parentController
@@ -298,14 +326,14 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
 
     protected open suspend fun makePostActionsGone() {
         getViewSuspend().let {
-//            it.llOtherPersonPostActions.isGone = true
+            //            it.llOtherPersonPostActions.isGone = true
             it.vOtherPersonPostActionsSeparator.isGone = true
         }
     }
 
     protected open suspend fun makePostActionsVisible() {
         getViewSuspend().let {
-//            it.llOtherPersonPostActions.visibility = View.VISIBLE
+            //            it.llOtherPersonPostActions.visibility = View.VISIBLE
             it.vOtherPersonPostActionsSeparator.visibility = View.VISIBLE
         }
     }
@@ -328,7 +356,7 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
         //to create instance, use PostDetailsFactory
 
         fun getParams(args: Bundle): NeedDetailsViewModel.ViewModelParams {
-            return NeedDetailsViewModel.ViewModelParams (
+            return NeedDetailsViewModel.ViewModelParams(
                     postId = args.getString(EXTRA_POST_ID),
                     postAuthorId = args.getString(EXTRA_POST_AUTHOR_ID),
                     post = args.getSerializable(EXTRA_POST_MODEL) as PostModel?

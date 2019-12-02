@@ -52,6 +52,7 @@ abstract class BaseControllerImpl<VM : BaseViewModel>(args: Bundle = Bundle()) :
     private var isViewModelInitialized = false
 
 
+
     //Lifecycle
     private val lifecycleRegistryOwner = ControllerLifecycleOwner(this)
     private val lifecycleEmitter: EmitableCompositeEventListener<Lifecycle.Event> = SimpleCompositeEventListener()

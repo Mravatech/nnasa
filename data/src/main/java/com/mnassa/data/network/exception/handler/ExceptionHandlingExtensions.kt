@@ -2,6 +2,7 @@ package com.mnassa.data.network.exception.handler
 
 import com.google.firebase.FirebaseException
 import kotlinx.coroutines.Deferred
+import java.lang.RuntimeException
 
 /**
  * Created by Peter on 28.02.2018.

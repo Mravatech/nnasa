@@ -12,6 +12,7 @@ import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
 import com.mnassa.core.addons.SubscriptionContainer
 import com.mnassa.core.addons.SubscriptionsContainerDelegate
 import com.mnassa.core.addons.launchUI
@@ -27,7 +28,6 @@ import com.mnassa.helper.CrashReportingTree
 import com.mnassa.utils.FirebaseBigImageLoader
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.runBlocking
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
@@ -39,7 +39,7 @@ import timber.log.Timber
  * Created by Peter on 2/20/2018.
  */
 class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
-    SubscriptionContainer by SubscriptionsContainerDelegate(jobFactory = { SupervisorJob() }) {
+        SubscriptionContainer by SubscriptionsContainerDelegate(jobFactory = { SupervisorJob() }) {
 
     override val kodein: Kodein = Kodein.lazy {
         import(androidModule(this@App))
@@ -62,6 +62,8 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
         }
         Fabric.with(this, Crashlytics())
 
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+
         BigImageViewer.initialize(FirebaseBigImageLoader.with(this))
 
         getInstance<NetworkInteractor>().register()
@@ -76,6 +78,8 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
         // Listen to the app lifecycle
         // changes.
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -126,4 +130,6 @@ class App : MultiDexApplication(), KodeinAware, LifecycleObserver,
         private lateinit var APP_CONTEXT: Context
         val context by lazy { APP_CONTEXT }
     }
+
 }
+

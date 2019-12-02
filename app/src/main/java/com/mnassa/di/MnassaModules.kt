@@ -121,9 +121,7 @@ import com.mnassa.screen.notifications.NotificationsViewModel
 import com.mnassa.screen.notifications.NotificationsViewModelImpl
 import com.mnassa.screen.photopager.PhotoPagerViewModel
 import com.mnassa.screen.photopager.PhotoPagerViewModelImpl
-import com.mnassa.screen.posts.PostDetailsFactory
-import com.mnassa.screen.posts.PostsViewModel
-import com.mnassa.screen.posts.PostsViewModelImpl
+import com.mnassa.screen.posts.*
 import com.mnassa.screen.posts.general.create.CreateGeneralPostViewModel
 import com.mnassa.screen.posts.general.create.CreateGeneralPostViewModelImpl
 import com.mnassa.screen.posts.general.details.GeneralPostController

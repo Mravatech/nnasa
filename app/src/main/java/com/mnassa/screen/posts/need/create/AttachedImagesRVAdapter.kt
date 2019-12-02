@@ -180,4 +180,5 @@ sealed class AttachedImage(val typeId: Int) : Serializable {
         const val TYPE_LOCAL = 2
 //        const val TYPE_ADD = 3
     }
+
 }

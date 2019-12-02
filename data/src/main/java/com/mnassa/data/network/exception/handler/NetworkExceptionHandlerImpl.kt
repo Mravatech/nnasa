@@ -32,7 +32,7 @@ open class NetworkExceptionHandlerImpl(private val gson: Gson, private val conte
         return when {
             throwable is NetworkException -> throwable
             throwable is CancellationException -> throwable
-            isNetworkDisabledException(throwable) -> NetworkDisableException(networkDisabledMessage, throwable)
+            isNetworkDisabledException(throwable) -> throwable
             getCode(throwable) == NetworkContract.ResponseCode.UNAUTHORIZED -> NotAuthorizedException(getMessage(throwable) ?: "Not authorized!", throwable)
             else -> {
                 val errorBody = transformExceptionTo(throwable, MnassaErrorBody::class.java)

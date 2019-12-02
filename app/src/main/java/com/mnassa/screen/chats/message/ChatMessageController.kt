@@ -82,11 +82,12 @@ class ChatMessageController(data: Bundle) : MnassaControllerImpl<ChatMessageView
         }
 
 
-//        postModel?.let {
-//            view.rlReplyMessageContainer.visibility = View.VISIBLE
-//            view.tvReplyMessageText.text = it.formattedText
-//            replyPostModel = postModel
-//        }
+        postModel?.let {
+            view.rlReplyMessageContainer.visibility = View.VISIBLE
+            view.tvReplyMessageText.text = it.formattedText
+            replyPostModel = postModel
+        }
+
         adapter.accountId = viewModel.currentUserAccountId
         adapter.onUserMessageLongClick = { callDialog(view, false, it) }
         adapter.onMyMessageLongClick = { callDialog(view, true, it) }

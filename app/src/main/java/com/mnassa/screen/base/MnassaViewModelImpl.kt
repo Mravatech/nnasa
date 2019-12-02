@@ -36,9 +36,12 @@ abstract class MnassaViewModelImpl : BaseViewModelImpl(), KodeinAware, MnassaVie
         super.onCreate(savedInstanceState)
     }
 
+
     protected open suspend fun <T> handleExceptionsSuspend(function: suspend CoroutineScope.() -> T): T? {
         return internalResolveExceptions(true, function)
     }
+
+
 
     protected open fun showProgress(hideKeyboard: Boolean = ShowProgressEvent.HIDE_KEYBOARD) =
         launchWorkerNoExceptions {

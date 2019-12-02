@@ -263,7 +263,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button_colored"
                 android:layout_weight="1"
-                android:text="@string/i_offer" />
+                />
 
             <Button
                 android:visibility="gone"

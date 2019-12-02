@@ -60,6 +60,7 @@ abstract class MnassaControllerImpl<VM : MnassaViewModel> : BaseControllerImpl<V
         kodeinTrigger.trigger()
     }
 
+
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         subscribeToProgressEvents()

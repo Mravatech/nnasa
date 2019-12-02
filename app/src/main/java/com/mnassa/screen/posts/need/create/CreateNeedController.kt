@@ -77,6 +77,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         playServiceHelper.googleApiClient.connect()
 
 
+
 //        attachedImagesAdapter.onAddImageClickListener = {
 //            dialogHelper.showSelectImageSourceDialog(view.context) { imageSource -> launchCoroutineUI { selectImage(imageSource) } }
 //        }
@@ -90,7 +91,8 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
 
-            Log.d("photoUriUri", photoUri)
+            Log.d("dataStorageCount", attachedImagesAdapter.dataStorage.size.toString())
+
 
             if (photoUri == "") {
                 user_pics.setImageDrawable(resources.getDrawable(R.drawable.user_pics_dummy))
@@ -181,6 +183,7 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
             rvImages.layoutManager = mGridLayoutInflater
             rvImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
             rvImages.adapter = attachedImagesAdapter
+
         }
 
         if (args.containsKey(EXTRA_POST_TO_EDIT)) {

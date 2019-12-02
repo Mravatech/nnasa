@@ -59,6 +59,7 @@ val PostModel.formattedText: CharSequence?
                 spannable.append(" ")
                 spannable.append(text)
                 spannable
+
             }
             is PostType.PROFILE -> {
                 this as RecommendedProfilePostModel
