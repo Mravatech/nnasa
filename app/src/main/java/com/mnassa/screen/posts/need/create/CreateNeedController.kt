@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mnassa.App.Companion.context
 import com.mnassa.R
 import com.mnassa.activity.CropActivity
@@ -31,7 +32,9 @@ import com.mnassa.screen.posts.need.sharing.SharingOptionsController
 import com.mnassa.screen.posts.need.sharing.format
 import com.mnassa.screen.registration.PlaceAutocompleteAdapter
 import com.mnassa.translation.fromDictionary
+import com.mnassa.widget.FlowLayout
 import kotlinx.android.synthetic.main.chip_layout.view.*
+import kotlinx.android.synthetic.main.controller_need_create.*
 import kotlinx.android.synthetic.main.controller_need_create.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.consumeEach
@@ -83,6 +86,11 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 //        }
         attachedImagesAdapter.onRemoveImageClickListener = { _, item ->
             attachedImagesAdapter.dataStorage.remove(item)
+
+            //To collapse the RecyclerView's Height
+            if (attachedImagesAdapter.dataStorage.size - 1 == 0){
+                rvImages.layoutParams.height = 0
+            }
         }
         attachedImagesAdapter.onReplaceImageClickListener = { _, item ->
             imageToReplace = item
@@ -91,7 +99,6 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
 
         with(view) {
 
-            Log.d("dataStorageCount", attachedImagesAdapter.dataStorage.size.toString())
 
 
             if (photoUri == "") {
@@ -227,6 +234,9 @@ class CreateNeedController(args: Bundle) : MnassaControllerImpl<CreateNeedViewMo
         if (requestCode != REQUEST_CODE_CROP) return
         when (resultCode) {
             Activity.RESULT_OK -> {
+
+                //To change the RecyclerView back to WRAP_CONTENT if the View has been collapsed.
+                rvImages.layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
                 val uri: Uri? = data?.getParcelableExtra(CropActivity.URI_PHOTO_RESULT)
                 uri?.let {
                     val imageToReplaceLocal = imageToReplace

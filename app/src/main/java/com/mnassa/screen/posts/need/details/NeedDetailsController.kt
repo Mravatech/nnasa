@@ -73,17 +73,16 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
     //To get an instance of Shared Preference
     private var offerSharedPreference: SharedPreferences? = null
     private var offerSharedPreferenceEditor: SharedPreferences.Editor? = null
-    private var offerSharedPreferenceContent: String? = ""
-
+    private var offerSharedPreferenceContent: MutableSet<String>? = mutableSetOf("")
 
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-       offerSharedPreference = applicationContext?.getSharedPreferences("Offer-Shared-Prefs", Context.MODE_PRIVATE)
-       offerSharedPreferenceEditor = offerSharedPreference?.edit()
+        offerSharedPreference = applicationContext?.getSharedPreferences("Offer-Shared-Prefs", Context.MODE_PRIVATE)
+        offerSharedPreferenceEditor = offerSharedPreference?.edit()
 
-        offerSharedPreferenceContent = offerSharedPreference?.getString(I_OFFER, "")
+        offerSharedPreferenceContent = offerSharedPreference?.getStringSet(I_OFFER, mutableSetOf(""))
 
         with(view) {
             rvTags.layoutManager = ChipsLayoutManager.newBuilder(context)
@@ -166,7 +165,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             tvEventName.goneIfEmpty()
 
             if (offerSharedPreferenceContent != null) {
-                if (offerSharedPreferenceContent!!.isNotEmpty()) {
+
+                if (offerSharedPreferenceContent!!.contains(postId)) {
+
+
                     ivChat.text = applicationContext?.resources?.getString(R.string.my_offer)
 
                 } else {
@@ -176,8 +178,10 @@ open class NeedDetailsController(args: Bundle) : MnassaControllerImpl<NeedDetail
             }
 
 
+
+
             ivChat.setOnClickListener {
-                offerSharedPreferenceEditor?.putString(I_OFFER, "MY-OFFER")
+                offerSharedPreferenceEditor?.putStringSet(I_OFFER, mutableSetOf(postId))
                 offerSharedPreferenceEditor?.commit()
                 open(ChatMessageController.newInstance(post, post.author))
             }
